@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Directory</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 500;
+            color: #444;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            margin: 10px 0;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        li:hover {
+            background-color: #f0f0f0;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><b>IMTT Scoring Documents for  Archie Held Studio</b></h1>
+        <ul>
+            <?php
+            $directory = 'files/tobin_richmond/archie_held'; // Path to the folder
+            $files = scandir($directory);
+
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..') {
+                    echo '<li><a href="' . $directory . '/' . $file . '">' . $file . '</a></li>';
+                }
+            }
+            ?>
+        </ul>
+    </div>
+<br>
+    <div class="container">
+        <h1><b>IMTT Scoring Documents for  Eric Powell</b></h1>
+        <ul>
+            <?php
+            $directory = 'files/tobin_richmond/eric_powell'; // Path to the folder
+            $files = scandir($directory);
+
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..') {
+                    echo '<li><a href="' . $directory . '/' . $file . '">' . $file . '</a></li>';
+                }
+            }
+            ?>
+        </ul>
+    </div>
+<br>
+    <div class="container">
+        <h1><b>IMTT Scoring Documents for Gordon Huether</b></h1>
+        <ul>
+            <?php
+            $directory = 'files/tobin_richmond/gordon_huether'; // Path to the folder
+            $files = scandir($directory);
+
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..') {
+                    echo '<li><a href="' . $directory . '/' . $file . '">' . $file . '</a></li>';
+                }
+            }
+            ?>
+        </ul>
+    </div>
+  <br>
+    <div class="container">
+        <h1><b>IMTT Scoring Documents for James Moore</b></h1>
+        <ul>
+            <?php
+            $directory = 'files/tobin_richmond/james_moore'; // Path to the folder
+            $files = scandir($directory);
+
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..') {
+                    echo '<li><a href="' . $directory . '/' . $file . '">' . $file . '</a></li>';
+                }
+            }
+            ?>
+        </ul>
+    </div>
+  <br>
+    <div class="container">
+        <h1><b>IMTT Scoring Documents for Sean Orlando</b></h1>
+        <ul>
+            <?php
+            $directory = 'files/tobin_richmond/sean_orlando'; // Path to the folder
+            $files = scandir($directory);
+
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..') {
+                    echo '<li><a href="' . $directory . '/' . $file . '">' . $file . '</a></li>';
+                }
+            }
+            ?>
+        </ul>
+    </div>
+        
+</body>
+</html>
