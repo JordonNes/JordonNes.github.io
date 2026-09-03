@@ -51,11 +51,29 @@ The sport-level **20 PIECE is not a per-game QC column**.
 
 Never manufacture a prediction merely to fill a box. If a current verified prop or executable market is unavailable, keep the box visible and mark it WATCH / PASS / DATA-LIMITED. Started games may be marked CLOSED / LIVE so stale pregame bets are not presented as executable.
 
+## Mandatory source-sweep rule
+
+Before a Daily Predictions publication or refresh, LEGZ & JINX must make a good-faith sweep of **all available relevant resources** that can materially improve the publication. Do not stop after checking one sportsbook, one prediction site, or one statistics source when additional accessible sources can verify or improve the line, matchup, injury, role, trend, or projection.
+
+The source sweep should include, as available and relevant:
+- sportsbook/player-prop boards and betting-split pages;
+- odds-comparison and line-shopping services;
+- league/team schedules, injury reports, depth charts and official status information;
+- statistical and projection resources;
+- reputable sports analysis and matchup research;
+- connected data tools available to ChatGPT;
+- public web sources that provide current executable markets.
+
+Use the sweep to fill **every section that can be responsibly filled**: LEGZ HOT TOP, JINX GAME WINNERS, 20 PIECE, GAME SIDE, LEGZ PLAYER HOT TOP, both SNS/GOBLIN groups, NORMAL, and AGGRESSIVE/DEMON. A section may remain WATCH only after the available-source sweep fails to produce a sufficiently current and supportable market. Never use stale or invented data merely to eliminate a WATCH label.
+
+Where sources disagree, prefer the most recent executable market, identify material line sensitivity in the JINX case/kill switch, and recheck the line before publication or use.
+
 ## File ownership
 
 - `ljqc.css` — canonical QC visual layout. **Locked.**
 - `ljapp.js` — shared presentation renderer. **Locked.**
-- `ljdata.js` — daily schedules, odds, props, predictions and status. **This is the normal daily-update file.**
+- `ljdata.js` — baseline schedules, odds, props, predictions and status.
+- `ljlive.js` — optional same-day/current-market **data-only overlay** for verified market refreshes; it must never change presentation structure.
 - `LJ_index.html` and sport `.html` files — thin shells that call the shared renderer; they should not be rebuilt during ordinary prediction refreshes.
 
 This separation exists specifically to prevent a daily prediction update from accidentally redesigning or deleting the approved QC presentation.
