@@ -68,12 +68,23 @@ Use the sweep to fill **every section that can be responsibly filled**: LEGZ HOT
 
 Where sources disagree, prefer the most recent executable market, identify material line sensitivity in the JINX case/kill switch, and recheck the line before publication or use.
 
+## Mandatory kickoff + player-prop completeness rule
+
+For every active game/fight QC, the publication must show the scheduled event start time. For U.S. sports, display both **ET and PT** whenever practical so the user can immediately identify the betting window. A QC with a matchup but no kickoff/start time is incomplete.
+
+For every active sport/league slate, L&J must perform a dedicated player-prop search before publishing WATCH. This includes league/sportsbook boards, DFS projection boards such as PrizePicks when accessible, odds-comparison pages, current model/prop services, matchup previews, and reputable public analysis. When at least one supportable player market is found for a game, populate **LEGZ PLAYER HOT TOP** and any ticket sections that can be responsibly constructed from the available verified legs. Do not leave an entire league's player-prop board blank merely because one preferred source does not expose props.
+
+When only one or two trustworthy player props are available for a matchup, publish those props and leave the remaining ticket construction on WATCH rather than hiding the available information or inventing enough legs to make a parlay. When enough current props are available, complete SNS/Goblin, Normal and Aggressive/Demon according to their risk tiers.
+
+NCAA Football follows this rule exactly: every current slate must include kickoff times for all listed games and a multi-source CFB player-prop sweep before any game is left on WATCH.
+
 ## File ownership
 
 - `ljqc.css` — canonical QC visual layout. **Locked.**
 - `ljapp.js` — shared presentation renderer. **Locked.**
 - `ljdata.js` — baseline schedules, odds, props, predictions and status.
 - `ljlive.js` — optional same-day/current-market **data-only overlay** for verified market refreshes; it must never change presentation structure.
+- sport-specific data-only overlays such as `ncaarefresh.js` may update current markets and predictions without changing layout.
 - `LJ_index.html` and sport `.html` files — thin shells that call the shared renderer; they should not be rebuilt during ordinary prediction refreshes.
 
 This separation exists specifically to prevent a daily prediction update from accidentally redesigning or deleting the approved QC presentation.
