@@ -82,3 +82,21 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
 })();
+
+/* LJ RECAP FULL-IMAGE HERO FIT */
+(() => {
+  if (document.getElementById('lj-recap-full-image-hero-fit')) return;
+  const style = document.createElement('style');
+  style.id = 'lj-recap-full-image-hero-fit';
+  style.textContent = `
+    body.recap-page .hero.recap-hero{
+      min-height:clamp(420px,42.86vw,590px)!important;
+      aspect-ratio:21/9!important;
+      background-size:contain!important;
+      background-position:center!important;
+      background-color:#090713!important;
+    }
+    @media(max-width:620px){body.recap-page .hero.recap-hero{min-height:420px!important}}
+  `;
+  document.head.appendChild(style);
+})();

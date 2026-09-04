@@ -1,2 +1,25 @@
 /* L&J LIVE-only accents. The completed L&JDP stylesheets are reused but not modified. */
 .live-hero{position:relative}.live-hero:before{content:"LIVE";display:inline-block;margin-bottom:8px;padding:4px 9px;border-radius:999px;background:#ffd84d;color:#151515;font-weight:900;letter-spacing:.08em}.live-back{border-color:#ffd84d!important;color:#ffd84d!important}.live-qc{box-shadow:0 0 0 1px rgba(255,216,77,.12)}.live-empty{margin-top:12px}.live-launch{position:fixed;right:18px;top:14px;z-index:9999;background:#ffd84d;color:#151515!important;border:2px solid #151515;border-radius:8px;padding:10px 14px;font-weight:900;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}.live-launch:hover{transform:translateY(-1px)}
+
+/* LJ LIVE SHARED HIGH-RES HEADER FULL FIT */
+.live-hero{min-height:clamp(420px,42.86vw,590px)!important}
+.live-hero:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  opacity:1!important;
+  filter:none!important;
+  background-color:#0c0d11!important;
+  background-image:linear-gradient(90deg,#0c0d11 0%,rgba(12,13,17,.96) 20%,rgba(12,13,17,.78) 42%,rgba(12,13,17,.28) 64%,rgba(12,13,17,.05) 100%),url('../assets/headers/lj-live-shared.png')!important;
+  background-size:100% 100%,contain!important;
+  background-position:center,center!important;
+  background-repeat:no-repeat!important;
+  image-rendering:auto!important;
+  transform:translateZ(0)
+}
+.live-hero>*{position:relative;z-index:2}
+@media(max-width:620px){.live-hero{min-height:420px!important}}

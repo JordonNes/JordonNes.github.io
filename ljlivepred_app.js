@@ -140,3 +140,20 @@
     };
   }
 })();
+
+/* LJ LIVE FULL-IMAGE HERO FIT */
+(() => {
+  if (document.getElementById('lj-live-full-image-hero-fit')) return;
+  const style = document.createElement('style');
+  style.id = 'lj-live-full-image-hero-fit';
+  style.textContent = `
+    .hero.lj-live-hero{min-height:clamp(420px,42.86vw,590px)!important}
+    .hero.lj-live-hero:after{
+      background-size:100% 100%,contain!important;
+      background-position:center,center!important;
+      background-color:#0c0d11!important;
+    }
+    @media(max-width:620px){.hero.lj-live-hero{min-height:420px!important}}
+  `;
+  document.head.appendChild(style);
+})();
