@@ -1,6 +1,4 @@
-/* L&J LIVE PREDICTIONS — ISOLATED PRESENTATION LAYER
-   This renderer belongs only to /live/. It does not modify the completed L&JDP renderer.
-   Live refreshes update ljlivedata.js only unless the user explicitly requests a redesign. */
+/* L&J LIVE PREDICTIONS — ISOLATED PRESENTATION LAYER */
 (() => {
   const D = window.LJ_LIVE_DATA;
   const esc = v => String(v ?? "").replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -8,19 +6,37 @@
   const watch = x => /WATCH|NO LIVE|DATA-LIMITED|UNVERIFIED|PASS/i.test(String(x||""));
   const list = xs => `<ul>${((xs&&xs.length)?xs:["WATCH — no verified live market"]).map(x=>`<li class="${watch(x)?"qc-watch":""}">${esc(x)}</li>`).join("")}</ul>`;
   const liveHeaders = {
-    MLB:"../assets/headers/live-mlb.png",
-    NFL:"../assets/headers/live-nfl.png",
-    NBA:"../assets/headers/live-nba.png",
-    WNBA:"../assets/headers/live-wnba.png",
-    NHL:"../assets/headers/live-nhl.png",
-    NCAA_Football:"../assets/headers/live-ncaa-football.png",
-    UFC:"../assets/headers/live-ufc.png",
-    Boxing:"../assets/headers/live-boxing.png",
+    MLB:"../assets/headers/live-mlb.png", NFL:"../assets/headers/live-nfl.png",
+    NBA:"../assets/headers/live-nba.png", WNBA:"../assets/headers/live-wnba.png",
+    NHL:"../assets/headers/live-nhl.png", NCAA_Football:"../assets/headers/live-ncaa-football.png",
+    UFC:"../assets/headers/live-ufc.png", Boxing:"../assets/headers/live-boxing.png",
     Tennis:"../assets/headers/dp-tennis.webp",
-    FIBA_Men:"../assets/headers/lj-live-shared.png",
-    FIBA_Women:"../assets/headers/lj-live-shared.png",
+    FIBA_Men:"../assets/headers/lj-live-shared.png", FIBA_Women:"../assets/headers/lj-live-shared.png",
     NCAA_Basketball:"../assets/headers/lj-live-shared.png"
   };
+
+  function installLiveHeaderStyle(){
+    if(document.getElementById('lj-live-clean-header-style')) return;
+    const s=document.createElement('style');
+    s.id='lj-live-clean-header-style';
+    s.textContent=`
+      .live-hero{min-height:0!important;padding:0!important;overflow:hidden!important;background:#fff!important;color:#241d2f!important;border:1px solid #d8d1e4!important;box-shadow:0 10px 26px rgba(79,47,131,.08)!important}
+      .live-hero:before,.live-hero:after{display:none!important}
+      .live-header-art{display:block!important;width:100%!important;aspect-ratio:3/1!important;min-height:230px!important;background-image:var(--live-sport-header)!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;border-bottom:1px solid #ddd7e7!important}
+      .live-hero>.kicker,.live-hero>h1,.live-hero>p,.live-hero>.chips,.live-hero>.actions{position:relative!important;z-index:2!important;margin-left:clamp(18px,3.2vw,48px)!important;margin-right:clamp(18px,3.2vw,48px)!important}
+      .live-hero>.kicker{margin-top:22px!important;background:#247f95!important;color:#fff!important}
+      .live-hero>h1{margin-top:10px!important;margin-bottom:8px!important;color:#4f2f83!important;text-shadow:none!important;font-size:clamp(1.8rem,4vw,3.2rem)!important;line-height:1.04!important}
+      .live-hero>p{max-width:900px!important;color:#4d4555!important;text-shadow:none!important;margin-bottom:14px!important}
+      .live-hero>.chips{margin-bottom:14px!important}
+      .live-hero>.actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important;padding-bottom:22px!important}
+      .live-hero .action{background:#fff!important;color:#4f2f83!important;border:1px solid #c9bfd9!important;box-shadow:none!important}
+      .live-hero .action:hover,.live-hero .action:focus{background:#f5f2f9!important;border-color:#7551a6!important}
+      @media(max-width:620px){.live-header-art{min-height:170px!important}.live-hero>.kicker{margin-top:18px!important}.live-hero>.actions{padding-bottom:18px!important}}
+      @media print{.live-header-art{display:none!important}}
+    `;
+    document.head.appendChild(s);
+  }
+
   const topbar = (meta,home=false) => `<div class="topbar">${home?'<span class="lj-mini">L&amp;J LIVE</span>':'<a class="lj-mini" href="index.html">L&amp;J LIVE</a>'}<div class="meta">${esc(meta)}</div></div>`;
   function hero(kicker,title,description,chips=[],home=false,headerImage=""){
     const actions = home ? `<a class="action live-back" href="../LJ_index.html">← L&amp;J Daily</a>` : `<a class="action" href="index.html">← Live Home</a><a class="action live-back" href="../LJ_index.html">L&amp;J Daily</a>`;
@@ -35,6 +51,6 @@
   function qcs(title,rows){return `<section class="section"><div class="section-head"><h2>${esc(title||"LIVE QUICKIES")}</h2><span class="muted">In-progress events only</span></div>${rules()}<div class="qc-list">${(rows&&rows.length)?rows.map(row).join(""):`<div class="status-panel live-empty"><b>NO LIVE EVENT RIGHT NOW</b><p>The page remains active and will populate on the next source sweep when a monitored event enters live status.</p></div>`}</div><div class="layout-seal">L&amp;J LIVE PRESENTATION LOCK • refresh data, never architecture</div></section>`;}
   function statusGrid(){return `<section class="section"><div class="section-head"><h2>LIVE STATUS</h2><span class="muted">${esc(D.updated)}</span></div><div class="quickie-grid">${Object.entries(D.sports).map(([k,s])=>`<div class="ticket"><div class="ticket-h ${s.qcs&&s.qcs.length?"sns":"purple"}">${s.icon} ${esc(k.replace(/_/g," "))} • ${s.qcs&&s.qcs.length?"LIVE":"WATCH"}</div><ul><li>${s.qcs&&s.qcs.length?`${s.qcs.length} live event(s) currently tracked`:`No in-progress event at last sweep`}</li><li>Live Hot Top + JINX winner + Live 20 retained</li><li>Two-hour scheduled source sweep</li></ul><div class="note"><a href="${esc(s.url)}">Open live page →</a></div></div>`).join("")}</div></section>`;}
   const footer=()=>`<div class="footer">L&amp;J LIVE • ${esc(D.updated)} • Live market availability varies by source • Model confidence is not a guarantee • Daily site remains isolated</div>`;
-  window.renderLJLiveSport=key=>{const s=D.sports[key];if(!s)throw new Error(`Unknown live sport ${key}`);document.title=`L&J Live — ${s.title}`;document.getElementById("app").innerHTML=`<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`L&J LIVE — ${s.title}`,s.description,s.chips,false,liveHeaders[key]||"../assets/headers/lj-live-shared.png")}${nav()}${headliners(s.hotTop,s.winners)}${twenty(s.twenty,s.twentyNote)}${qcs(s.qcTitle,s.qcs)}${footer()}</div>`;};
-  window.renderLJLiveHome=()=>{const h=D.home;document.title="L&J Live Predictions";document.getElementById("app").innerHTML=`<div class="page">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true,"../assets/headers/lj-live-shared.png")}${nav()}${statusGrid()}${headliners(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${footer()}</div>`;};
+  window.renderLJLiveSport=key=>{installLiveHeaderStyle();const s=D.sports[key];if(!s)throw new Error(`Unknown live sport ${key}`);document.title=`L&J Live — ${s.title}`;document.getElementById("app").innerHTML=`<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`L&J LIVE — ${s.title}`,s.description,s.chips,false,liveHeaders[key]||"../assets/headers/lj-live-shared.png")}${nav()}${headliners(s.hotTop,s.winners)}${twenty(s.twenty,s.twentyNote)}${qcs(s.qcTitle,s.qcs)}${footer()}</div>`;};
+  window.renderLJLiveHome=()=>{installLiveHeaderStyle();const h=D.home;document.title="L&J Live Predictions";document.getElementById("app").innerHTML=`<div class="page">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true,"../assets/headers/lj-live-shared.png")}${nav()}${statusGrid()}${headliners(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${footer()}</div>`;};
 })();
