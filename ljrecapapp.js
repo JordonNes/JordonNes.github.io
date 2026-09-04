@@ -10,6 +10,14 @@
   const metric = (label,value,note="") => `<div class="key-item"><b>${esc(label)}</b><span>${esc(value)}${note?` • ${esc(note)}`:""}</span></div>`;
   const rows = (items,cols,empty) => arr(items).length ? items.map(r=>`<tr>${Array.from({length:cols},(_,i)=>`<td>${cell(r[i])}</td>`).join("")}</tr>`).join("") : `<tr><td colspan="${cols}" class="muted">${esc(empty)}</td></tr>`;
   const bucket = (title,items,empty) => `<div class="bucket-item"><b>${esc(title)}</b>${arr(items).length?items.map(x=>`<span>${esc(x)}</span>`).join(""):`<span>${esc(empty)}</span>`}</div>`;
+  const ensureRecapHeader = () => {
+    if (window.LJPDApplyRecapHeader) { window.LJPDApplyRecapHeader(); return; }
+    if (document.getElementById('ljpd-recap-header-loader')) return;
+    const script = document.createElement('script');
+    script.id = 'ljpd-recap-header-loader';
+    script.src = 'assets/ljpd-recap-loader.js';
+    document.body.appendChild(script);
+  };
 
   window.renderLJSportRecap = key => {
     if (!R || !R.sports || !R.sports[key]) throw new Error(`Unknown L&J sport recap: ${key}`);
@@ -32,5 +40,6 @@
       <section class="section"><div class="section-head"><h2>RUN IT BACK / WATCH / AVOID / MARKET SWITCH</h2><span class="muted">Derived only from verified previous-day evidence</span></div><div class="bucket">${bucket("RUN IT BACK",s.followups.runItBack,"Pending verified audit")}${bucket("WATCH",s.followups.watch,"Pending verified audit")}${bucket("AVOID / DOWNGRADE",s.followups.avoid,"Pending verified audit")}${bucket("MARKET SWITCH",s.followups.marketSwitch,"Pending verified audit")}</div></section>
       <div class="footer">LEGZ &amp; JINX • ${esc(s.label)} Previous-Day Recap • Exact published lines only • Ungraded when evidence is incomplete</div>
     </div>`;
+    ensureRecapHeader();
   };
 })();
