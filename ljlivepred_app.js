@@ -78,3 +78,65 @@
     document.getElementById("app").innerHTML = `<div class="page">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${statusGrid()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${footer("Live publication hub • L&JDP remains separate")}</div>`;
   };
 })();
+/* L&J LIVE HIGH-RES HEADER PATCH */
+(() => {
+  function installLiveHeaderStyle(){
+    if(document.getElementById('lj-live-highres-header-style')) return;
+    const style=document.createElement('style');
+    style.id='lj-live-highres-header-style';
+    style.textContent=`
+      .hero.lj-live-hero:after{
+        left:0!important;
+        right:auto!important;
+        width:100%!important;
+        height:100%!important;
+        opacity:1!important;
+        filter:none!important;
+        background-image:
+          linear-gradient(90deg,#0c0d11 0%,rgba(12,13,17,.96) 20%,rgba(12,13,17,.78) 42%,rgba(12,13,17,.28) 64%,rgba(12,13,17,.05) 100%),
+          url('/assets/headers/lj-live-shared.png')!important;
+        background-size:100% 100%,cover!important;
+        background-position:center,center!important;
+        background-repeat:no-repeat!important;
+        image-rendering:auto!important;
+        backface-visibility:hidden;
+        transform:translateZ(0);
+      }
+      @media(max-width:900px){
+        .hero.lj-live-hero:after{width:100%!important;opacity:1!important;background-position:center,center!important}
+      }
+      @media(max-width:620px){
+        .hero.lj-live-hero:after{
+          width:100%!important;
+          opacity:.84!important;
+          background-image:
+            linear-gradient(90deg,rgba(12,13,17,.98) 0%,rgba(12,13,17,.9) 45%,rgba(12,13,17,.55) 75%,rgba(12,13,17,.28) 100%),
+            url('/assets/headers/lj-live-shared.png')!important;
+        }
+      }
+      @media print{.hero.lj-live-hero:after{display:none!important}}
+    `;
+    document.head.appendChild(style);
+  }
+  function applyLiveHeader(){
+    installLiveHeaderStyle();
+    const hero=document.querySelector('.hero');
+    if(hero) hero.classList.add('lj-live-hero');
+  }
+  const renderSport=window.renderLJLiveSport;
+  if(typeof renderSport==='function'){
+    window.renderLJLiveSport=function(){
+      const result=renderSport.apply(this,arguments);
+      applyLiveHeader();
+      return result;
+    };
+  }
+  const renderHome=window.renderLJLiveHome;
+  if(typeof renderHome==='function'){
+    window.renderLJLiveHome=function(){
+      const result=renderHome.apply(this,arguments);
+      applyLiveHeader();
+      return result;
+    };
+  }
+})();
