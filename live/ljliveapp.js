@@ -7,10 +7,25 @@
   const cls = v => String(v||"").toLowerCase().replace(/[^a-z0-9_-]/g,"");
   const watch = x => /WATCH|NO LIVE|DATA-LIMITED|UNVERIFIED|PASS/i.test(String(x||""));
   const list = xs => `<ul>${((xs&&xs.length)?xs:["WATCH — no verified live market"]).map(x=>`<li class="${watch(x)?"qc-watch":""}">${esc(x)}</li>`).join("")}</ul>`;
+  const liveHeaders = {
+    MLB:"../assets/headers/live-mlb.png",
+    NFL:"../assets/headers/live-nfl.png",
+    NBA:"../assets/headers/live-nba.png",
+    WNBA:"../assets/headers/live-wnba.png",
+    NHL:"../assets/headers/live-nhl.png",
+    NCAA_Football:"../assets/headers/live-ncaa-football.png",
+    UFC:"../assets/headers/live-ufc.png",
+    Boxing:"../assets/headers/live-boxing.png",
+    Tennis:"../assets/headers/dp-tennis.webp",
+    FIBA_Men:"../assets/headers/lj-live-shared.png",
+    FIBA_Women:"../assets/headers/lj-live-shared.png",
+    NCAA_Basketball:"../assets/headers/lj-live-shared.png"
+  };
   const topbar = (meta,home=false) => `<div class="topbar">${home?'<span class="lj-mini">L&amp;J LIVE</span>':'<a class="lj-mini" href="index.html">L&amp;J LIVE</a>'}<div class="meta">${esc(meta)}</div></div>`;
-  function hero(kicker,title,description,chips=[],home=false){
+  function hero(kicker,title,description,chips=[],home=false,headerImage=""){
     const actions = home ? `<a class="action live-back" href="../LJ_index.html">← L&amp;J Daily</a>` : `<a class="action" href="index.html">← Live Home</a><a class="action live-back" href="../LJ_index.html">L&amp;J Daily</a>`;
-    return `<section class="hero live-hero"><div class="kicker">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="chips">${chips.map(([t,c])=>`<span class="chip ${cls(c)}">${esc(t)}</span>`).join("")}</div><div class="actions">${actions}</div></section>`;
+    const style = headerImage ? ` style="--live-sport-header:url('${esc(headerImage)}')"` : "";
+    return `<section class="hero live-hero"${style}><div class="live-header-art" role="img" aria-label="L&J Live sport header"></div><div class="kicker">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="chips">${chips.map(([t,c])=>`<span class="chip ${cls(c)}">${esc(t)}</span>`).join("")}</div><div class="actions">${actions}</div></section>`;
   }
   function nav(){return `<section class="section"><div class="section-head"><h2>SPORTS / LEAGUES — LIVE</h2><span class="muted">Same publication architecture; in-game data only</span></div><nav class="sports-nav">${D.nav.map(([n,i,u])=>`<a class="sport-link" href="${esc(u)}"><span class="sport-icon">${i}</span><span class="sport-name">${esc(n)}</span></a>`).join("")}</nav></section>`;}
   function headliners(hot,wins,home=false){return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS LIVE HEADLINERS":"LIVE HEADLINERS"}</h2><span class="muted">LEGZ live player trajectories + JINX live winners</span></div><div class="headliner-grid"><div class="headliner-card"><div class="card-title black"><span>LEGZ LIVE HOT TOP</span><span>IN-GAME / LIVE MARKET EXPRESSIONS</span></div>${hot&&hot.length?`<ul class="headliner-list">${hot.map((r,i)=>`<li><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">L&amp;J Live Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>`:`<div class="status-panel"><b>NO LIVE PLAYER BOARD</b><p>No current live player market or model trajectory has cleared verification.</p></div>`}</div><div class="headliner-card"><div class="card-title gold"><span>JINX LIVE GAME WINNERS</span><span>IN-GAME WIN PROJECTION</span></div>${wins&&wins.length?`<ul class="headliner-list">${wins.map(r=>`<li><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">JINX Live Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>`:`<div class="status-panel"><b>NO LIVE GAMES</b><p>No monitored game is currently in progress.</p></div>`}</div></div></section>`;}
@@ -20,6 +35,6 @@
   function qcs(title,rows){return `<section class="section"><div class="section-head"><h2>${esc(title||"LIVE QUICKIES")}</h2><span class="muted">In-progress events only</span></div>${rules()}<div class="qc-list">${(rows&&rows.length)?rows.map(row).join(""):`<div class="status-panel live-empty"><b>NO LIVE EVENT RIGHT NOW</b><p>The page remains active and will populate on the next source sweep when a monitored event enters live status.</p></div>`}</div><div class="layout-seal">L&amp;J LIVE PRESENTATION LOCK • refresh data, never architecture</div></section>`;}
   function statusGrid(){return `<section class="section"><div class="section-head"><h2>LIVE STATUS</h2><span class="muted">${esc(D.updated)}</span></div><div class="quickie-grid">${Object.entries(D.sports).map(([k,s])=>`<div class="ticket"><div class="ticket-h ${s.qcs&&s.qcs.length?"sns":"purple"}">${s.icon} ${esc(k.replace(/_/g," "))} • ${s.qcs&&s.qcs.length?"LIVE":"WATCH"}</div><ul><li>${s.qcs&&s.qcs.length?`${s.qcs.length} live event(s) currently tracked`:`No in-progress event at last sweep`}</li><li>Live Hot Top + JINX winner + Live 20 retained</li><li>Two-hour scheduled source sweep</li></ul><div class="note"><a href="${esc(s.url)}">Open live page →</a></div></div>`).join("")}</div></section>`;}
   const footer=()=>`<div class="footer">L&amp;J LIVE • ${esc(D.updated)} • Live market availability varies by source • Model confidence is not a guarantee • Daily site remains isolated</div>`;
-  window.renderLJLiveSport=key=>{const s=D.sports[key];if(!s)throw new Error(`Unknown live sport ${key}`);document.title=`L&J Live — ${s.title}`;document.getElementById("app").innerHTML=`<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`L&J LIVE — ${s.title}`,s.description,s.chips)}${nav()}${headliners(s.hotTop,s.winners)}${twenty(s.twenty,s.twentyNote)}${qcs(s.qcTitle,s.qcs)}${footer()}</div>`;};
-  window.renderLJLiveHome=()=>{const h=D.home;document.title="L&J Live Predictions";document.getElementById("app").innerHTML=`<div class="page">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${statusGrid()}${headliners(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${footer()}</div>`;};
+  window.renderLJLiveSport=key=>{const s=D.sports[key];if(!s)throw new Error(`Unknown live sport ${key}`);document.title=`L&J Live — ${s.title}`;document.getElementById("app").innerHTML=`<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`L&J LIVE — ${s.title}`,s.description,s.chips,false,liveHeaders[key]||"../assets/headers/lj-live-shared.png")}${nav()}${headliners(s.hotTop,s.winners)}${twenty(s.twenty,s.twentyNote)}${qcs(s.qcTitle,s.qcs)}${footer()}</div>`;};
+  window.renderLJLiveHome=()=>{const h=D.home;document.title="L&J Live Predictions";document.getElementById("app").innerHTML=`<div class="page">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true,"../assets/headers/lj-live-shared.png")}${nav()}${statusGrid()}${headliners(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${footer()}</div>`;};
 })();
