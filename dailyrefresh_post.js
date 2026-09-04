@@ -23,18 +23,31 @@
     MLB:"MLB.html",NCAA_Football:"NCAA_Football.html",FIBA_Women:"FIBA_Women.html",Tennis:"Tennis.html",Boxing:"Boxing.html",UFC:"UFC.html",NFL:"NFL.html",WNBA:"WNBA.html",NBA:"NBA.html",NHL:"NHL.html",NCAA_Basketball:"NCAA_Basketball.html",FIBA_Men:"FIBA_Men.html"
   };
   const esc = v => String(v ?? "").replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  /* Keep the all-sports recap out of the large sports grid, but expose it as a clear home-header action. */
+  const heroActions = document.querySelector('.hero .actions');
+  if (heroActions && !heroActions.querySelector('.all-sports-recap-link')) {
+    const a = document.createElement('a');
+    a.className = 'action all-sports-recap-link';
+    a.href = 'Recap.html';
+    a.textContent = '📊 September 3 Recap';
+    heroActions.appendChild(a);
+  }
+
   const heads = [...document.querySelectorAll('.section-head h2')];
   const head = heads.find(h => h.textContent.trim() === 'CURRENT STATUS');
-  if (!head) return;
-  const section = head.closest('.section');
-  const grid = section && section.querySelector('.quickie-grid');
-  if (!grid) return;
-  grid.innerHTML = status.map(([k,state,note]) => {
-    const s = D.sports[k];
-    if (!s) return '';
-    const cls = /ACTIVE/.test(state)?'sns':/WATCH|NEXT/.test(state)?'purple':'normal';
-    return `<div class="ticket"><div class="ticket-h ${cls}">${s.icon} ${esc(k.replace(/_/g,' '))} • ${esc(state)}</div><ul><li>${esc(note)}</li><li>LEGZ HOT TOP + JINX Winners + 20 Piece retained</li><li>Approved QC layout retained</li></ul><div class="note"><a href="${file[k]}">Open page →</a></div></div>`;
-  }).join('');
+  if (head) {
+    const section = head.closest('.section');
+    const grid = section && section.querySelector('.quickie-grid');
+    if (grid) {
+      grid.innerHTML = status.map(([k,state,note]) => {
+        const s = D.sports[k];
+        if (!s) return '';
+        const cls = /ACTIVE/.test(state)?'sns':/WATCH|NEXT/.test(state)?'purple':'normal';
+        return `<div class="ticket"><div class="ticket-h ${cls}">${s.icon} ${esc(k.replace(/_/g,' '))} • ${esc(state)}</div><ul><li>${esc(note)}</li><li>LEGZ HOT TOP + JINX Winners + 20 Piece retained</li><li>Approved QC layout retained</li></ul><div class="note"><a href="${file[k]}">Open page →</a></div></div>`;
+      }).join('');
+    }
+  }
 
   document.querySelectorAll('.sports-nav .sport-link').forEach(a => {
     if ((a.getAttribute('href') || '') === 'Recap.html') a.remove();
