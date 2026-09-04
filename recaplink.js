@@ -1,6 +1,6 @@
 /* LEGZ & JINX SPORT RECAP HEADER LINK + DP HEADER ART
-   Adds the sport-specific previous-day recap button and approved sport header art.
-   Does not alter Quickie Card architecture or page layout. */
+   Keeps sport artwork clean and places the existing report content/actions below it.
+   Does not alter Quickie Card architecture. */
 (() => {
   const labels = {
     MLB:"MLB", NFL:"NFL", NBA:"NBA", WNBA:"WNBA", NHL:"NHL",
@@ -9,15 +9,18 @@
     UFC:"UFC", Boxing:"Boxing", Tennis:"Tennis"
   };
 
+  /* Revised character artwork is used where installed. Existing DP art remains
+     the fallback until its revised file is installed, so no sport loses a header. */
   const headers = {
-    MLB:"assets/headers/dp-mlb.png",
+    MLB:"assets/headers/dp-mlb-revised.webp",
     NFL:"assets/headers/dp-nfl.png",
     NBA:"assets/headers/dp-nba.png",
     WNBA:"assets/headers/dp-wnba.png",
     NHL:"assets/headers/dp-nhl.png",
     NCAA_Football:"assets/headers/dp-ncaa-football.png",
     UFC:"assets/headers/dp-ufc.png",
-    Boxing:"assets/headers/dp-boxing.png"
+    Boxing:"assets/headers/dp-boxing.png",
+    Tennis:"assets/headers/dp-tennis.webp"
   };
 
   function installHeaderStyle(){
@@ -25,40 +28,78 @@
     const style = document.createElement('style');
     style.id = 'ljdp-sport-header-style';
     style.textContent = `
-      .hero.ljdp-sport-hero:after{
-        left:0!important;
-        right:auto!important;
-        width:100%!important;
-        height:100%!important;
-        opacity:1!important;
-        filter:none!important;
-        background-image:
-          linear-gradient(90deg,#0c0d11 0%,rgba(12,13,17,.96) 20%,rgba(12,13,17,.78) 42%,rgba(12,13,17,.28) 64%,rgba(12,13,17,.05) 100%),
-          var(--ljdp-sport-header)!important;
-        background-size:100% 100%,cover!important;
-        background-position:center,center!important;
-        background-repeat:no-repeat!important;
-        image-rendering:auto!important;
-        backface-visibility:hidden;
-        transform:translateZ(0);
+      .hero.ljdp-sport-hero{
+        min-height:0!important;
+        padding:0!important;
+        overflow:hidden!important;
+        background:linear-gradient(180deg,#111019 0%,#17131f 100%)!important;
+        border:1px solid rgba(185,148,64,.34)!important;
+        box-shadow:0 14px 34px rgba(0,0,0,.20)!important;
       }
-      @media(max-width:900px){
-        .hero.ljdp-sport-hero:after{
-          width:100%!important;
-          opacity:1!important;
-          background-position:center,center!important;
-        }
+      .hero.ljdp-sport-hero:before,.hero.ljdp-sport-hero:after{display:none!important}
+      .ljdp-sport-header-image{
+        display:block;
+        width:100%;
+        aspect-ratio:3/1;
+        min-height:230px;
+        background-image:var(--ljdp-sport-header);
+        background-size:cover;
+        background-position:center;
+        background-repeat:no-repeat;
+        border-bottom:1px solid rgba(185,148,64,.34);
+      }
+      .hero.ljdp-sport-hero>.kicker,
+      .hero.ljdp-sport-hero>h1,
+      .hero.ljdp-sport-hero>p,
+      .hero.ljdp-sport-hero>.chips,
+      .hero.ljdp-sport-hero>.actions{
+        position:relative!important;
+        z-index:2!important;
+        margin-left:clamp(18px,3.2vw,48px)!important;
+        margin-right:clamp(18px,3.2vw,48px)!important;
+      }
+      .hero.ljdp-sport-hero>.kicker{margin-top:24px!important}
+      .hero.ljdp-sport-hero>h1{
+        margin-top:10px!important;
+        margin-bottom:8px!important;
+        font-size:clamp(1.8rem,4.2vw,3.35rem)!important;
+        line-height:1.02!important;
+        color:#f6f2fb!important;
+        text-shadow:none!important;
+      }
+      .hero.ljdp-sport-hero>p{
+        max-width:900px!important;
+        color:#cfc5da!important;
+        margin-bottom:14px!important;
+      }
+      .hero.ljdp-sport-hero>.chips{margin-bottom:14px!important}
+      .hero.ljdp-sport-hero>.actions{
+        display:flex!important;
+        flex-wrap:wrap!important;
+        gap:8px!important;
+        padding-bottom:24px!important;
+      }
+      .hero.ljdp-sport-hero .action{
+        background:rgba(255,255,255,.055)!important;
+        border:1px solid rgba(194,157,72,.42)!important;
+        color:#f2e7c5!important;
+        box-shadow:none!important;
+      }
+      .hero.ljdp-sport-hero .action:hover,.hero.ljdp-sport-hero .action:focus{
+        background:rgba(116,78,166,.26)!important;
+        border-color:#a888d0!important;
+        color:#fff!important;
+      }
+      .hero.ljdp-sport-hero .sport-recap-link{
+        border-color:rgba(155,116,207,.72)!important;
+        color:#d8c4f1!important;
       }
       @media(max-width:620px){
-        .hero.ljdp-sport-hero:after{
-          width:100%!important;
-          opacity:.84!important;
-          background-image:
-            linear-gradient(90deg,rgba(12,13,17,.98) 0%,rgba(12,13,17,.9) 45%,rgba(12,13,17,.55) 75%,rgba(12,13,17,.28) 100%),
-            var(--ljdp-sport-header)!important;
-        }
+        .ljdp-sport-header-image{min-height:170px;background-size:cover}
+        .hero.ljdp-sport-hero>.kicker{margin-top:18px!important}
+        .hero.ljdp-sport-hero>.actions{padding-bottom:18px!important}
       }
-      @media print{.hero.ljdp-sport-hero:after{display:none!important}}
+      @media print{.ljdp-sport-header-image{display:none!important}}
     `;
     document.head.appendChild(style);
   }
@@ -72,6 +113,13 @@
       installHeaderStyle();
       hero.classList.add('ljdp-sport-hero');
       hero.style.setProperty('--ljdp-sport-header', `url("${headers[file]}")`);
+      if (!hero.querySelector('.ljdp-sport-header-image')) {
+        const art = document.createElement('div');
+        art.className = 'ljdp-sport-header-image';
+        art.setAttribute('role','img');
+        art.setAttribute('aria-label', `${labels[file]} LEGZ & JINX header artwork`);
+        hero.insertBefore(art, hero.firstChild);
+      }
     }
 
     const actions = document.querySelector('.hero .actions');
@@ -85,41 +133,4 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', add);
   else add();
-})();
-
-/* LJDP FULL-IMAGE HERO FIT */
-(() => {
-  if (document.getElementById('ljdp-full-image-hero-fit')) return;
-  const style = document.createElement('style');
-  style.id = 'ljdp-full-image-hero-fit';
-  style.textContent = `
-    .hero.ljdp-sport-hero{min-height:clamp(420px,42.86vw,590px)!important}
-    .hero.ljdp-sport-hero:after{
-      background-size:100% 100%,contain!important;
-      background-position:center,center!important;
-      background-color:#0c0d11!important;
-    }
-    @media(max-width:620px){.hero.ljdp-sport-hero{min-height:420px!important}}
-  `;
-  document.head.appendChild(style);
-})();
-
-/* LJ UNIFIED DP HEADER IMAGE FIT */
-(() => {
-  if(document.getElementById('lj-unified-dp-header-fit')) return;
-  const s=document.createElement('style');
-  s.id='lj-unified-dp-header-fit';
-  s.textContent=`
-    .hero.ljdp-sport-hero{min-height:clamp(420px,42.86vw,590px)!important}
-    .hero.ljdp-sport-hero:after{
-      left:0!important;right:auto!important;width:100%!important;height:100%!important;
-      background-size:100% 100%,contain!important;
-      background-position:center,center!important;
-      background-repeat:no-repeat!important;
-      background-color:#0c0d11!important;
-      image-rendering:auto!important;
-    }
-    @media(max-width:620px){.hero.ljdp-sport-hero{min-height:420px!important}}
-  `;
-  document.head.appendChild(s);
 })();
