@@ -1,0 +1,38 @@
+name: LJ Live Header Patch
+
+on:
+  push:
+    paths:
+      - '.github/workflows/live-header-patch.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch live renderer
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q 'L&J LIVE HIGH-RES HEADER PATCH' ljlivepred_app.js; then
+            printf '%s' 'Ci8qIEwmSiBMSVZFIEhJR0gtUkVTIEhFQURFUiBQQVRDSCAqLwooKCkgPT4gewogIGZ1bmN0aW9uIGluc3RhbGxMaXZlSGVhZGVyU3R5bGUoKXsKICAgIGlmKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsai1saXZlLWhpZ2hyZXMtaGVhZGVyLXN0eWxlJykpIHJldHVybjsKICAgIGNvbnN0IHN0eWxlPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ3N0eWxlJyk7CiAgICBzdHlsZS5pZD0nbGotbGl2ZS1oaWdocmVzLWhlYWRlci1zdHlsZSc7CiAgICBzdHlsZS50ZXh0Q29udGVudD1gCiAgICAgIC5oZXJvLmxqLWxpdmUtaGVybzphZnRlcnsKICAgICAgICBsZWZ0OjAhaW1wb3J0YW50OwogICAgICAgIHJpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgICAgIHdpZHRoOjEwMCUhaW1wb3J0YW50OwogICAgICAgIGhlaWdodDoxMDAlIWltcG9ydGFudDsKICAgICAgICBvcGFjaXR5OjEhaW1wb3J0YW50OwogICAgICAgIGZpbHRlcjpub25lIWltcG9ydGFudDsKICAgICAgICBiYWNrZ3JvdW5kLWltYWdlOgogICAgICAgICAgbGluZWFyLWdyYWRpZW50KDkwZGVnLCMwYzBkMTEgMCUscmdiYSgxMiwxMywxNywuOTYpIDIwJSxyZ2JhKDEyLDEzLDE3LC43OCkgNDIlLHJnYmEoMTIsMTMsMTcsLjI4KSA2NCUscmdiYSgxMiwxMywxNywuMDUpIDEwMCUpLAogICAgICAgICAgdXJsKCcvYXNzZXRzL2hlYWRlcnMvbGotbGl2ZS1zaGFyZWQucG5nJykhaW1wb3J0YW50OwogICAgICAgIGJhY2tncm91bmQtc2l6ZToxMDAlIDEwMCUsY292ZXIhaW1wb3J0YW50OwogICAgICAgIGJhY2tncm91bmQtcG9zaXRpb246Y2VudGVyLGNlbnRlciFpbXBvcnRhbnQ7CiAgICAgICAgYmFja2dyb3VuZC1yZXBlYXQ6bm8tcmVwZWF0IWltcG9ydGFudDsKICAgICAgICBpbWFnZS1yZW5kZXJpbmc6YXV0byFpbXBvcnRhbnQ7CiAgICAgICAgYmFja2ZhY2UtdmlzaWJpbGl0eTpoaWRkZW47CiAgICAgICAgdHJhbnNmb3JtOnRyYW5zbGF0ZVooMCk7CiAgICAgIH0KICAgICAgQG1lZGlhKG1heC13aWR0aDo5MDBweCl7CiAgICAgICAgLmhlcm8ubGotbGl2ZS1oZXJvOmFmdGVye3dpZHRoOjEwMCUhaW1wb3J0YW50O29wYWNpdHk6MSFpbXBvcnRhbnQ7YmFja2dyb3VuZC1wb3NpdGlvbjpjZW50ZXIsY2VudGVyIWltcG9ydGFudH0KICAgICAgfQogICAgICBAbWVkaWEobWF4LXdpZHRoOjYyMHB4KXsKICAgICAgICAuaGVyby5sai1saXZlLWhlcm86YWZ0ZXJ7CiAgICAgICAgICB3aWR0aDoxMDAlIWltcG9ydGFudDsKICAgICAgICAgIG9wYWNpdHk6Ljg0IWltcG9ydGFudDsKICAgICAgICAgIGJhY2tncm91bmQtaW1hZ2U6CiAgICAgICAgICAgIGxpbmVhci1ncmFkaWVudCg5MGRlZyxyZ2JhKDEyLDEzLDE3LC45OCkgMCUscmdiYSgxMiwxMywxNywuOSkgNDUlLHJnYmEoMTIsMTMsMTcsLjU1KSA3NSUscmdiYSgxMiwxMywxNywuMjgpIDEwMCUpLAogICAgICAgICAgICB1cmwoJy9hc3NldHMvaGVhZGVycy9sai1saXZlLXNoYXJlZC5wbmcnKSFpbXBvcnRhbnQ7CiAgICAgICAgfQogICAgICB9CiAgICAgIEBtZWRpYSBwcmludHsuaGVyby5sai1saXZlLWhlcm86YWZ0ZXJ7ZGlzcGxheTpub25lIWltcG9ydGFudH19CiAgICBgOwogICAgZG9jdW1lbnQuaGVhZC5hcHBlbmRDaGlsZChzdHlsZSk7CiAgfQogIGZ1bmN0aW9uIGFwcGx5TGl2ZUhlYWRlcigpewogICAgaW5zdGFsbExpdmVIZWFkZXJTdHlsZSgpOwogICAgY29uc3QgaGVybz1kb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcuaGVybycpOwogICAgaWYoaGVybykgaGVyby5jbGFzc0xpc3QuYWRkKCdsai1saXZlLWhlcm8nKTsKICB9CiAgY29uc3QgcmVuZGVyU3BvcnQ9d2luZG93LnJlbmRlckxKTGl2ZVNwb3J0OwogIGlmKHR5cGVvZiByZW5kZXJTcG9ydD09PSdmdW5jdGlvbicpewogICAgd2luZG93LnJlbmRlckxKTGl2ZVNwb3J0PWZ1bmN0aW9uKCl7CiAgICAgIGNvbnN0IHJlc3VsdD1yZW5kZXJTcG9ydC5hcHBseSh0aGlzLGFyZ3VtZW50cyk7CiAgICAgIGFwcGx5TGl2ZUhlYWRlcigpOwogICAgICByZXR1cm4gcmVzdWx0OwogICAgfTsKICB9CiAgY29uc3QgcmVuZGVySG9tZT13aW5kb3cucmVuZGVyTEpMaXZlSG9tZTsKICBpZih0eXBlb2YgcmVuZGVySG9tZT09PSdmdW5jdGlvbicpewogICAgd2luZG93LnJlbmRlckxKTGl2ZUhvbWU9ZnVuY3Rpb24oKXsKICAgICAgY29uc3QgcmVzdWx0PXJlbmRlckhvbWUuYXBwbHkodGhpcyxhcmd1bWVudHMpOwogICAgICBhcHBseUxpdmVIZWFkZXIoKTsKICAgICAgcmV0dXJuIHJlc3VsdDsKICAgIH07CiAgfQp9KSgpOwo=' | base64 -d >> ljlivepred_app.js
+          fi
+      - name: Commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'L&J Site Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add ljlivepred_app.js
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'Apply shared high-resolution L&J Live header'
+          git push origin HEAD:master
