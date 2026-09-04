@@ -19,8 +19,9 @@ jobs:
           fetch-depth: 0
 
       - name: Apply recap-tab removal and full-image header fit
-        shell: python
+        shell: bash
         run: |
+          python - <<'PY'
           from pathlib import Path
 
           def append_once(path, marker, block):
@@ -29,8 +30,6 @@ jobs:
               if marker not in text:
                   p.write_text(text.rstrip() + '\n\n' + block.strip() + '\n', encoding='utf-8')
 
-          # Global: remove only the large RECAP tile inside SPORTS / LEAGUES grids.
-          # Header/action recap buttons remain available.
           append_once(
               'ljstyle.css',
               'LJ REMOVE RECAP SPORTS-NAV TILE',
@@ -41,8 +40,6 @@ jobs:
 '''
           )
 
-          # Daily Prediction pages: preserve layout/text, but make hero tall enough for the approved artwork
-          # and fit the entire image instead of cropping the desk/table edges.
           append_once(
               'recaplink.js',
               'LJDP FULL-IMAGE HERO FIT',
@@ -70,7 +67,6 @@ jobs:
 '''
           )
 
-          # Top-level L&J Live renderer: same shared image, no crop.
           append_once(
               'ljlivepred_app.js',
               'LJ LIVE FULL-IMAGE HERO FIT',
@@ -98,7 +94,6 @@ jobs:
 '''
           )
 
-          # Actual /live/ publication pages used by the home-page launcher.
           append_once(
               'live/live.css',
               'LJ LIVE SHARED HIGH-RES HEADER FULL FIT',
@@ -128,7 +123,6 @@ jobs:
 '''
           )
 
-          # All recap pages: same approved recap image, now fit entirely inside the 21:9 hero.
           append_once(
               'assets/ljpd-recap-loader.js',
               'LJ RECAP FULL-IMAGE HERO FIT',
@@ -154,6 +148,7 @@ jobs:
 })();
 '''
           )
+          PY
 
       - name: Commit site fixes
         shell: bash
