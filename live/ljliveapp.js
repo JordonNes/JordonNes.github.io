@@ -29,18 +29,30 @@
     s.textContent=`
       .live-hero{min-height:0!important;padding:0!important;overflow:hidden!important;background:#fff!important;color:#241d2f!important;border:1px solid #d8d1e4!important;border-radius:18px!important;box-shadow:0 12px 28px rgba(79,47,131,.09)!important}
       .live-hero:before,.live-hero:after{display:none!important}
-      .live-header-art{display:block!important;width:100%!important;aspect-ratio:3/1!important;min-height:220px!important;background-image:var(--live-sport-header)!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;border-bottom:2px solid #c9972b!important}
-      .live-hero>.kicker,.live-hero>h1,.live-hero>p,.live-hero>.chips,.live-hero>.actions{position:relative!important;z-index:2!important;margin-left:clamp(16px,2.4vw,32px)!important;margin-right:clamp(16px,2.4vw,32px)!important}
-      .live-hero>.kicker{margin-top:14px!important;margin-bottom:0!important;background:#247f95!important;color:#fff!important;font-size:.68rem!important;padding:5px 9px!important}
-      .live-hero>h1{margin-top:7px!important;margin-bottom:5px!important;color:#4f2f83!important;text-shadow:none!important;font-size:clamp(1.35rem,2.45vw,2.15rem)!important;line-height:1.1!important}
-      .live-hero>p{max-width:980px!important;color:#4d4555!important;text-shadow:none!important;margin-bottom:9px!important;font-size:clamp(.82rem,1.05vw,.92rem)!important;line-height:1.45!important}
-      .live-hero>.chips{margin-top:8px!important;margin-bottom:8px!important;gap:6px!important}
-      .live-hero .chip,.live-hero .action{font-size:.68rem!important;padding:5px 9px!important}
-      .live-hero>.actions{display:flex!important;flex-wrap:wrap!important;gap:6px!important;margin-top:7px!important;padding-bottom:14px!important}
-      .live-hero .action{background:#fff!important;color:#4f2f83!important;border:1px solid #c9bfd9!important;box-shadow:none!important}
-      .live-hero .action:hover,.live-hero .action:focus{background:#f5f2f9!important;border-color:#7551a6!important}
-      .live-hero .live-back{border-color:#d4b35f!important;color:#765510!important}
-      @media(max-width:720px){.live-header-art{min-height:150px!important}.live-hero>.kicker{margin-top:12px!important}.live-hero>.actions{padding-bottom:13px!important}}
+      .live-header-art{display:block!important;width:100%!important;aspect-ratio:3/1!important;min-height:300px!important;background-image:var(--live-sport-header)!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important}
+      .live-header-overlay{
+        position:absolute!important;z-index:2!important;inset:0 auto 0 0!important;
+        width:40%!important;max-width:40%!important;
+        display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;
+        padding:clamp(16px,2.25vw,32px)!important;
+        background:linear-gradient(90deg,rgba(7,5,12,.93) 0%,rgba(7,5,12,.82) 68%,rgba(7,5,12,.24) 92%,transparent 100%)!important;
+      }
+      .live-header-overlay>.kicker{margin:0 0 8px!important;background:#247f95!important;color:#fff!important;font-size:.75rem!important;padding:5px 9px!important}
+      .live-header-overlay>h1{margin:0 0 7px!important;color:#fff!important;text-shadow:0 2px 10px rgba(0,0,0,.78)!important;font-size:clamp(1.2rem,2.15vw,1.9rem)!important;line-height:1.08!important}
+      .live-header-overlay>p{margin:0 0 10px!important;max-width:100%!important;color:#eee9f5!important;text-shadow:0 2px 8px rgba(0,0,0,.8)!important;font-size:clamp(.75rem,.92vw,.86rem)!important;line-height:1.4!important}
+      .live-header-overlay>.chips{display:flex!important;flex-wrap:wrap!important;gap:5px!important;margin:0 0 8px!important}
+      .live-header-overlay>.actions{display:flex!important;flex-wrap:wrap!important;gap:5px!important;margin:0!important}
+      .live-header-overlay .chip,.live-header-overlay .action{font-size:.75rem!important;padding:5px 8px!important}
+      .live-header-overlay .action{background:rgba(13,10,20,.72)!important;color:#fff!important;border:1px solid rgba(255,255,255,.42)!important;box-shadow:none!important}
+      .live-header-overlay .action:hover,.live-header-overlay .action:focus{background:rgba(117,81,166,.78)!important;border-color:#fff!important}
+      .live-header-overlay .live-back{border-color:#d4b35f!important;color:#f5d988!important}
+      @media(max-width:720px){
+        .live-header-art{min-height:360px!important}
+        .live-header-overlay{width:40%!important;max-width:40%!important;padding:12px!important}
+        .live-header-overlay>h1{font-size:1rem!important}
+        .live-header-overlay>p{font-size:.7rem!important;line-height:1.3!important}
+        .live-header-overlay .chip,.live-header-overlay .action{font-size:.67rem!important;padding:4px 6px!important}
+      }
       @media print{.live-header-art{display:none!important}}
     `;
     document.head.appendChild(s);
@@ -50,7 +62,7 @@
   function hero(kicker,title,description,chips=[],home=false,headerImage=""){
     const actions = home ? `<a class="action live-back" href="../LJ_index.html">← L&amp;J Daily</a>` : `<a class="action" href="index.html">← Live Home</a><a class="action live-back" href="../LJ_index.html">L&amp;J Daily</a>`;
     const style = headerImage ? ` style="--live-sport-header:url('${esc(headerImage)}')"` : "";
-    return `<section class="hero live-hero"${style}><div class="live-header-art" role="img" aria-label="L&J Live sport header"></div><div class="kicker">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="chips">${chips.map(([t,c])=>`<span class="chip ${cls(c)}">${esc(t)}</span>`).join("")}</div><div class="actions">${actions}</div></section>`;
+    return `<section class="hero live-hero"${style}><div class="live-header-art" role="img" aria-label="L&J Live sport header"></div><div class="live-header-overlay"><div class="kicker">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="chips">${chips.map(([t,c])=>`<span class="chip ${cls(c)}">${esc(t)}</span>`).join("")}</div><div class="actions">${actions}</div></div></section>`;
   }
   function nav(){return `<section class="section"><div class="section-head"><h2>SPORTS / LEAGUES — LIVE</h2><span class="muted">Same publication architecture; in-game data only</span></div><nav class="sports-nav">${D.nav.map(([n,i,u])=>`<a class="sport-link" href="${esc(u)}"><span class="sport-icon">${i}</span><span class="sport-name">${esc(n)}</span></a>`).join("")}</nav></section>`;}
   function headliners(hot,wins,home=false){return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS LIVE HEADLINERS":"LIVE HEADLINERS"}</h2><span class="muted">LEGZ live player trajectories + JINX live winners</span></div><div class="headliner-grid"><div class="headliner-card"><div class="card-title black"><span>LEGZ LIVE HOT TOP</span><span>IN-GAME / LIVE MARKET EXPRESSIONS</span></div>${hot&&hot.length?`<ul class="headliner-list">${hot.map((r,i)=>`<li><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">L&amp;J Live Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>`:`<div class="status-panel"><b>NO LIVE PLAYER BOARD</b><p>No current live player market or model trajectory has cleared verification.</p></div>`}</div><div class="headliner-card"><div class="card-title gold"><span>JINX LIVE GAME WINNERS</span><span>IN-GAME WIN PROJECTION</span></div>${wins&&wins.length?`<ul class="headliner-list">${wins.map(r=>`<li><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">JINX Live Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>`:`<div class="status-panel"><b>NO LIVE GAMES</b><p>No monitored game is currently in progress.</p></div>`}</div></div></section>`;}

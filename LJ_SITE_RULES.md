@@ -98,7 +98,7 @@ The Recap page must grade all published Tennis selections after final results ar
 
 ## Header presentation lock
 
-Every sport's Daily Predictions page and matching L&J Live page must use the same full-resolution sport-specific LEGZ & JINX header artwork. The artwork appears by itself at the top of the hero; page title, description, status chips, Daily/Live navigation, and sport recap link must remain in a compact thematic band below the image and may not overlay or obscure the characters. Daily prediction and live-data refreshes must not change this header presentation.
+Every sport's Daily Predictions page and matching L&J Live page must use the same full-resolution sport-specific LEGZ & JINX header artwork. On Daily Predictions pages, the page title, description, status chips, navigation and sport recap link remain in the compact thematic band below the image. On L&J Live pages, the corresponding content remains overlaid on the left side of the header and may not extend beyond 40% of the header width. Daily prediction and live-data refreshes must not change either header presentation.
 
 ## Previous-day Recap standard
 
