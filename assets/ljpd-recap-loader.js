@@ -1,0 +1,1 @@
+(function(){var p=window.__LJPD_PARTS||[];if(!p.length)return;var u='url("data:image/webp;base64,'+p.join('')+'")';document.documentElement.style.setProperty('--ljpd-recap-image',u);var e=document.querySelector('.recap-visual');if(e)e.classList.add('is-loaded');window.__LJPD_PARTS=[];})();
