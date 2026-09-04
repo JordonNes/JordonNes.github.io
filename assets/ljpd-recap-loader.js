@@ -100,3 +100,23 @@
   `;
   document.head.appendChild(style);
 })();
+
+/* LJ UNIFIED RECAP HEADER IMAGE FIT */
+(() => {
+  if(document.getElementById('lj-unified-recap-header-fit')) return;
+  const s=document.createElement('style');
+  s.id='lj-unified-recap-header-fit';
+  s.textContent=`
+    body.recap-page .hero.recap-hero{
+      width:100%!important;
+      min-height:clamp(420px,42.86vw,590px)!important;
+      background-size:contain!important;
+      background-position:center!important;
+      background-repeat:no-repeat!important;
+      background-color:#090713!important;
+      image-rendering:auto!important;
+    }
+    @media(max-width:620px){body.recap-page .hero.recap-hero{min-height:420px!important}}
+  `;
+  document.head.appendChild(s);
+})();

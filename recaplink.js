@@ -103,3 +103,23 @@
   `;
   document.head.appendChild(style);
 })();
+
+/* LJ UNIFIED DP HEADER IMAGE FIT */
+(() => {
+  if(document.getElementById('lj-unified-dp-header-fit')) return;
+  const s=document.createElement('style');
+  s.id='lj-unified-dp-header-fit';
+  s.textContent=`
+    .hero.ljdp-sport-hero{min-height:clamp(420px,42.86vw,590px)!important}
+    .hero.ljdp-sport-hero:after{
+      left:0!important;right:auto!important;width:100%!important;height:100%!important;
+      background-size:100% 100%,contain!important;
+      background-position:center,center!important;
+      background-repeat:no-repeat!important;
+      background-color:#0c0d11!important;
+      image-rendering:auto!important;
+    }
+    @media(max-width:620px){.hero.ljdp-sport-hero{min-height:420px!important}}
+  `;
+  document.head.appendChild(s);
+})();
