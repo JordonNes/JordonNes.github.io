@@ -78,13 +78,31 @@ When only one or two trustworthy player props are available for a matchup, publi
 
 NCAA Football follows this rule exactly: every current slate must include kickoff times for all listed games and a multi-source CFB player-prop sweep before any game is left on WATCH.
 
+## Permanent Tennis coverage
+
+**Tennis is a permanent L&J sport/league of interest** and must remain in the Sports / Leagues navigation, Daily Home publication, Global 20 Piece consideration, and Yesterday Recap. Coverage includes ATP, WTA, Grand Slams and other material professional tournaments when current schedules and markets are available.
+
+For each active Tennis slate, L&J should use the official order of play plus current market sources and tennis data resources to evaluate, as available:
+- match winner;
+- game handicap / games won spread;
+- total games;
+- set winner, set handicap, exact-set or straight-sets markets;
+- aces, double faults and other player statistical projections when independently verified;
+- surface, round, recent form, head-to-head record, fatigue/rest, injury/retirement context and draw position.
+
+Tennis QCs must show the scheduled or official-order start designation. When an exact court time is not assigned because a match follows an earlier match, state the official **FOLLOWS / NOT BEFORE / NIGHT SESSION** designation rather than inventing a clock time.
+
+Match-winner favorites with very expensive prices may carry high L&J hit confidence but must not automatically be treated as good value. The preferred market should be the best probability-to-price expression after comparing winner, handicap, total and set markets.
+
+The Recap page must grade all published Tennis selections after final results are verified. Retirements, walkovers, defaults and sportsbook-specific settlement issues must be classified as HIT, MISS, PUSH/VOID or UNGRADED according to the exact published market and verifiable settlement context; never force an ambiguous retirement into a win/loss grade.
+
 ## File ownership
 
 - `ljqc.css` — canonical QC visual layout. **Locked.**
 - `ljapp.js` — shared presentation renderer. **Locked.**
 - `ljdata.js` — baseline schedules, odds, props, predictions and status.
 - `ljlive.js` — optional same-day/current-market **data-only overlay** for verified market refreshes; it must never change presentation structure.
-- sport-specific data-only overlays such as `ncaarefresh.js` may update current markets and predictions without changing layout.
+- sport-specific data-only overlays such as `ncaarefresh.js` and `tennisrefresh.js` may update current markets and predictions without changing layout.
 - `LJ_index.html` and sport `.html` files — thin shells that call the shared renderer; they should not be rebuilt during ordinary prediction refreshes.
 
 This separation exists specifically to prevent a daily prediction update from accidentally redesigning or deleting the approved QC presentation.
