@@ -1,37 +1,177 @@
-/* L&J LIVE-only accents. The completed L&JDP stylesheets are reused but not modified. */
-.live-hero{position:relative}.live-hero:before{content:"LIVE";display:inline-block;margin-bottom:8px;padding:4px 9px;border-radius:999px;background:#ffd84d;color:#151515;font-weight:900;letter-spacing:.08em}.live-back{border-color:#ffd84d!important;color:#ffd84d!important}.live-qc{box-shadow:0 0 0 1px rgba(255,216,77,.12)}.live-empty{margin-top:12px}.live-launch{position:fixed;right:18px;top:14px;z-index:9999;background:#ffd84d;color:#151515!important;border:2px solid #151515;border-radius:8px;padding:10px 14px;font-weight:900;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}.live-launch:hover{transform:translateY(-1px)}
+/* L&J LIVE — WHITE THEME / IMAGE-COORDINATED PALETTE
+   Theme-only update. Live architecture and QC structure remain unchanged.
+   Palette is keyed to the L&J Live thematic image: deep violet/plum, warm gold,
+   restrained blue-cyan, charcoal and light lavender neutrals. */
+:root{
+  --live-white:#ffffff;
+  --live-paper:#fbfafc;
+  --live-soft:#f5f2f9;
+  --live-soft-2:#eee9f5;
+  --live-ink:#241d2f;
+  --live-plum:#4f2f83;
+  --live-violet:#7551a6;
+  --live-gold:#c9972b;
+  --live-gold-dark:#8f6914;
+  --live-cyan:#247f95;
+  --live-green:#2f7b57;
+  --live-red:#a83b55;
+  --live-slate:#706879;
+  --live-border:#ddd7e7;
+  --live-border-strong:#c9bfd9;
+}
 
-/* LJ LIVE SHARED HIGH-RES HEADER FULL FIT */
-.live-hero{min-height:clamp(420px,42.86vw,590px)!important}
+html,body{background:var(--live-white)!important;color:var(--live-ink)!important}
+body{min-height:100vh}
+.page{background:var(--live-white)!important}
+a{color:var(--live-plum)}
+.meta,.muted,.source-note,.footer{color:var(--live-slate)!important}
+.section-head h2{color:var(--live-plum)!important}
+
+/* Header / thematic image */
+.live-hero{
+  position:relative;
+  min-height:clamp(420px,42.86vw,590px)!important;
+  background:var(--live-white)!important;
+  border-color:var(--live-border-strong)!important;
+  box-shadow:0 10px 28px rgba(79,47,131,.08);
+}
+.live-hero:before{
+  content:"LIVE"!important;
+  position:relative!important;
+  left:auto!important;top:auto!important;
+  width:auto!important;height:auto!important;
+  display:inline-block!important;
+  z-index:3!important;
+  margin:0 0 10px 0!important;
+  padding:5px 11px!important;
+  border-radius:999px!important;
+  background:var(--live-gold)!important;
+  color:#24190a!important;
+  font-weight:900!important;
+  letter-spacing:.09em!important;
+  box-shadow:0 2px 8px rgba(143,105,20,.18);
+}
 .live-hero:after{
   content:""!important;
   position:absolute!important;
   inset:0!important;
-  width:100%!important;
-  height:100%!important;
+  width:100%!important;height:100%!important;
   z-index:1!important;
   pointer-events:none!important;
   opacity:1!important;
   filter:none!important;
-  background-color:#0c0d11!important;
-  background-image:linear-gradient(90deg,#0c0d11 0%,rgba(12,13,17,.96) 20%,rgba(12,13,17,.78) 42%,rgba(12,13,17,.28) 64%,rgba(12,13,17,.05) 100%),url('../assets/headers/lj-live-shared.png')!important;
+  background-color:var(--live-white)!important;
+  background-image:
+    linear-gradient(90deg,#fff 0%,rgba(255,255,255,.99) 18%,rgba(255,255,255,.93) 34%,rgba(255,255,255,.72) 49%,rgba(255,255,255,.28) 68%,rgba(255,255,255,.04) 100%),
+    url('../assets/headers/lj-live-shared.png')!important;
   background-size:100% 100%,contain!important;
   background-position:center,center!important;
   background-repeat:no-repeat!important;
   image-rendering:auto!important;
-  transform:translateZ(0)
+  transform:translateZ(0);
 }
 .live-hero>*{position:relative;z-index:2}
-@media(max-width:620px){.live-hero{min-height:420px!important}}
+.live-hero h1{color:var(--live-plum)!important;text-shadow:0 1px 0 rgba(255,255,255,.9),0 2px 10px rgba(79,47,131,.08)!important}
+.live-hero p{color:#40364a!important;text-shadow:0 1px 0 rgba(255,255,255,.92)!important}
+.live-hero .kicker{background:var(--live-cyan)!important;color:#fff!important}
+.live-hero .action{background:#fff!important;color:var(--live-plum)!important;border-color:var(--live-border-strong)!important;box-shadow:0 2px 8px rgba(79,47,131,.07)}
+.live-hero .action:hover,.live-hero .action:focus{background:var(--live-soft)!important;border-color:var(--live-violet)!important}
+.live-back{border-color:var(--live-gold)!important;color:var(--live-gold-dark)!important}
 
-/* LJ UNIFIED LIVE PAGE HEADER IMAGE FIT */
-.live-hero{min-height:clamp(420px,42.86vw,590px)!important}
-.live-hero:after{
-  left:0!important;right:auto!important;width:100%!important;height:100%!important;
-  background-size:100% 100%,contain!important;
-  background-position:center,center!important;
-  background-repeat:no-repeat!important;
-  background-color:#0c0d11!important;
-  image-rendering:auto!important;
+/* Brand chips */
+.chip{background:var(--live-soft)!important;color:var(--live-ink)!important;border-color:var(--live-border)!important}
+.chip.green,.green{background:#edf7f1!important;border-color:#b9ddc9!important;color:#246744!important}
+.chip.purple,.purple{background:#f0eafb!important;border-color:#cabbe5!important;color:var(--live-plum)!important}
+.chip.gold,.gold{background:#fbf5e7!important;border-color:#e4cd95!important;color:#72510e!important}
+.chip.red,.red{background:#faedf1!important;border-color:#e4bac5!important;color:#8d2d47!important}
+.chip.cyan,.cyan{background:#eaf6f8!important;border-color:#b9dce3!important;color:#176779!important}
+
+/* Navigation and general panels */
+.sport-link,.card,.ticket,.headliner-card,.status-panel,.confidence-key .key-item,.bucket-item,.winner{
+  background:var(--live-white)!important;
+  color:var(--live-ink)!important;
+  border-color:var(--live-border)!important;
 }
-@media(max-width:620px){.live-hero{min-height:420px!important}}
+.sport-link:hover,.sport-link:focus{background:var(--live-soft)!important;border-color:var(--live-violet)!important}
+.sport-icon{filter:none}
+.sport-name{color:var(--live-plum)!important}
+.card-body{background:var(--live-white)!important;color:var(--live-ink)!important}
+.card-title.black{background:var(--live-plum)!important;color:#fff!important}
+.card-title.purple{background:var(--live-violet)!important;color:#fff!important}
+.card-title.gold{background:var(--live-gold)!important;color:#251b0a!important}
+.card-title.green{background:var(--live-green)!important;color:#fff!important}
+.card-title.red{background:var(--live-red)!important;color:#fff!important}
+.card-title.cyan{background:var(--live-cyan)!important;color:#fff!important}
+
+/* Tables / ranked boards */
+table{background:var(--live-white)!important;color:var(--live-ink)!important}
+th{color:var(--live-slate)!important;border-color:var(--live-border)!important;background:var(--live-soft)!important}
+td{color:var(--live-ink)!important;border-color:#e9e4ef!important}
+.rank{color:var(--live-gold-dark)!important}
+.conf,.confidence{color:var(--live-green)!important}
+.headliner-list li{border-color:#e8e3ee!important}
+.headliner-main{color:var(--live-ink)!important}
+.headliner-sub{color:var(--live-slate)!important}
+.status-panel p{color:var(--live-slate)!important}
+
+/* Quickie cards — same locked structure, light presentation */
+.qc-standard{background:var(--live-paper)!important;border-color:var(--live-border)!important}
+.qc-rule{background:var(--live-white)!important;border-color:var(--live-border)!important}
+.qc-rule b{color:var(--live-plum)!important}
+.qc-rule span,.qc-lock-note{color:var(--live-slate)!important}
+.qc-row{
+  background:var(--live-white)!important;
+  color:var(--live-ink)!important;
+  border-color:var(--live-border-strong)!important;
+  box-shadow:0 3px 12px rgba(79,47,131,.05)!important;
+}
+.qc-cell{border-color:var(--live-border)!important}
+.qc-game,.qc-hot,.qc-ticket{background:var(--live-white)!important;color:var(--live-ink)!important}
+.qc-time,.qc-market,.qc-vs,.qc-meta,.qc-foot{color:var(--live-slate)!important}
+.qc-teams,.qc-hot h4{color:var(--live-ink)!important}
+.qc-winner{background:var(--live-soft)!important;border-color:var(--live-border)!important}
+.qc-label{color:var(--live-plum)!important}
+.qc-pick{color:var(--live-gold-dark)!important;font-weight:800}
+.qc-hot p,.qc-ticket li{color:#443b4c!important}
+.qc-ticket li{border-color:#ebe6f0!important}
+.qc-ticket-h.sns{background:var(--live-green)!important;color:#fff!important}
+.qc-ticket-h.normal{background:var(--live-plum)!important;color:#fff!important}
+.qc-ticket-h.demon{background:var(--live-red)!important;color:#fff!important}
+.qc-watch{color:#8b8192!important}
+.layout-seal{color:#92879c!important}
+.live-qc{box-shadow:0 3px 12px rgba(79,47,131,.06)!important}
+.live-empty{margin-top:12px}
+
+/* Status / utility cards */
+.ticket-h.sns{background:var(--live-green)!important;color:#fff!important}
+.ticket-h.normal{background:var(--live-plum)!important;color:#fff!important}
+.ticket-h.demon{background:var(--live-red)!important;color:#fff!important}
+.ticket-h.best{background:var(--live-gold)!important;color:#24190a!important}
+.ticket-h.purple{background:var(--live-violet)!important;color:#fff!important}
+.ticket li{border-color:#e8e3ed!important;color:#443b4c!important}
+.ticket .note,.note{color:var(--live-slate)!important}
+.ticket .note a,.note a{color:var(--live-plum)!important;font-weight:800}
+
+/* Floating live launcher, when used */
+.live-launch{position:fixed;right:18px;top:14px;z-index:9999;background:var(--live-gold);color:#211707!important;border:2px solid var(--live-plum);border-radius:8px;padding:10px 14px;font-weight:900;text-decoration:none;box-shadow:0 4px 14px rgba(79,47,131,.18)}
+.live-launch:hover{transform:translateY(-1px)}
+
+@media(max-width:900px){
+  .live-hero:after{
+    background-image:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.98) 28%,rgba(255,255,255,.84) 51%,rgba(255,255,255,.26) 78%),url('../assets/headers/lj-live-shared.png')!important;
+  }
+}
+@media(max-width:620px){
+  .live-hero{min-height:420px!important}
+  .live-hero:after{
+    background-image:linear-gradient(180deg,rgba(255,255,255,.94) 0%,rgba(255,255,255,.88) 46%,rgba(255,255,255,.48) 100%),url('../assets/headers/lj-live-shared.png')!important;
+    background-size:100% 100%,cover!important;
+    background-position:center,center!important;
+  }
+}
+
+@media print{
+  html,body,.page{background:#fff!important;color:#111!important}
+  .live-hero:after{display:none!important}
+  .live-hero{min-height:auto!important;box-shadow:none!important}
+}
