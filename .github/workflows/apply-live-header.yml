@@ -1,4 +1,4 @@
-name: Apply L&J Live Header
+name: "Apply L&J Live Header"
 
 on:
   push:
@@ -19,79 +19,12 @@ jobs:
           fetch-depth: 0
 
       - name: Add shared L&J Live hero wiring
-        shell: python
+        shell: bash
         run: |
-          from pathlib import Path
-          path = Path('ljlivepred_app.js')
-          text = path.read_text(encoding='utf-8')
-          marker = '/* L&J LIVE HIGH-RES HEADER PATCH */'
-          if marker not in text:
-              patch = r'''
-
-/* L&J LIVE HIGH-RES HEADER PATCH */
-(() => {
-  function installLiveHeaderStyle(){
-    if(document.getElementById('lj-live-highres-header-style')) return;
-    const style=document.createElement('style');
-    style.id='lj-live-highres-header-style';
-    style.textContent=`
-      .hero.lj-live-hero:after{
-        left:0!important;
-        right:auto!important;
-        width:100%!important;
-        height:100%!important;
-        opacity:1!important;
-        filter:none!important;
-        background-image:
-          linear-gradient(90deg,#0c0d11 0%,rgba(12,13,17,.96) 20%,rgba(12,13,17,.78) 42%,rgba(12,13,17,.28) 64%,rgba(12,13,17,.05) 100%),
-          url('/assets/headers/lj-live-shared.png')!important;
-        background-size:100% 100%,cover!important;
-        background-position:center,center!important;
-        background-repeat:no-repeat!important;
-        image-rendering:auto!important;
-        backface-visibility:hidden;
-        transform:translateZ(0);
-      }
-      @media(max-width:900px){
-        .hero.lj-live-hero:after{width:100%!important;opacity:1!important;background-position:center,center!important}
-      }
-      @media(max-width:620px){
-        .hero.lj-live-hero:after{
-          width:100%!important;
-          opacity:.84!important;
-          background-image:
-            linear-gradient(90deg,rgba(12,13,17,.98) 0%,rgba(12,13,17,.9) 45%,rgba(12,13,17,.55) 75%,rgba(12,13,17,.28) 100%),
-            url('/assets/headers/lj-live-shared.png')!important;
-        }
-      }
-      @media print{.hero.lj-live-hero:after{display:none!important}}
-    `;
-    document.head.appendChild(style);
-  }
-  function applyLiveHeader(){
-    installLiveHeaderStyle();
-    const hero=document.querySelector('.hero');
-    if(hero) hero.classList.add('lj-live-hero');
-  }
-  const renderSport=window.renderLJLiveSport;
-  if(typeof renderSport==='function'){
-    window.renderLJLiveSport=function(){
-      const result=renderSport.apply(this,arguments);
-      applyLiveHeader();
-      return result;
-    };
-  }
-  const renderHome=window.renderLJLiveHome;
-  if(typeof renderHome==='function'){
-    window.renderLJLiveHome=function(){
-      const result=renderHome.apply(this,arguments);
-      applyLiveHeader();
-      return result;
-    };
-  }
-})();
-'''
-              path.write_text(text + patch, encoding='utf-8')
+          set -euo pipefail
+          if ! grep -q 'L&J LIVE HIGH-RES HEADER PATCH' ljlivepred_app.js; then
+            printf '%s' 'Ci8qIEwmSiBMSVZFIEhJR0gtUkVTIEhFQURFUiBQQVRDSCAqLwooKCkgPT4gewogIGZ1bmN0aW9uIGluc3RhbGxMaXZlSGVhZGVyU3R5bGUoKXsKICAgIGlmKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsai1saXZlLWhpZ2hyZXMtaGVhZGVyLXN0eWxlJykpIHJldHVybjsKICAgIGNvbnN0IHN0eWxlPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ3N0eWxlJyk7CiAgICBzdHlsZS5pZD0nbGotbGl2ZS1oaWdocmVzLWhlYWRlci1zdHlsZSc7CiAgICBzdHlsZS50ZXh0Q29udGVudD1gCiAgICAgIC5oZXJvLmxqLWxpdmUtaGVybzphZnRlcnsKICAgICAgICBsZWZ0OjAhaW1wb3J0YW50OwogICAgICAgIHJpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgICAgIHdpZHRoOjEwMCUhaW1wb3J0YW50OwogICAgICAgIGhlaWdodDoxMDAlIWltcG9ydGFudDsKICAgICAgICBvcGFjaXR5OjEhaW1wb3J0YW50OwogICAgICAgIGZpbHRlcjpub25lIWltcG9ydGFudDsKICAgICAgICBiYWNrZ3JvdW5kLWltYWdlOgogICAgICAgICAgbGluZWFyLWdyYWRpZW50KDkwZGVnLCMwYzBkMTEgMCUscmdiYSgxMiwxMywxNywuOTYpIDIwJSxyZ2JhKDEyLDEzLDE3LC43OCkgNDIlLHJnYmEoMTIsMTMsMTcsLjI4KSA2NCUscmdiYSgxMiwxMywxNywuMDUpIDEwMCUpLAogICAgICAgICAgdXJsKCcvYXNzZXRzL2hlYWRlcnMvbGotbGl2ZS1zaGFyZWQucG5nJykhaW1wb3J0YW50OwogICAgICAgIGJhY2tncm91bmQtc2l6ZToxMDAlIDEwMCUsY292ZXIhaW1wb3J0YW50OwogICAgICAgIGJhY2tncm91bmQtcG9zaXRpb246Y2VudGVyLGNlbnRlciFpbXBvcnRhbnQ7CiAgICAgICAgYmFja2dyb3VuZC1yZXBlYXQ6bm8tcmVwZWF0IWltcG9ydGFudDsKICAgICAgICBpbWFnZS1yZW5kZXJpbmc6YXV0byFpbXBvcnRhbnQ7CiAgICAgICAgYmFja2ZhY2UtdmlzaWJpbGl0eTpoaWRkZW47CiAgICAgICAgdHJhbnNmb3JtOnRyYW5zbGF0ZVooMCk7CiAgICAgIH0KICAgICAgQG1lZGlhKG1heC13aWR0aDo5MDBweCl7CiAgICAgICAgLmhlcm8ubGotbGl2ZS1oZXJvOmFmdGVye3dpZHRoOjEwMCUhaW1wb3J0YW50O29wYWNpdHk6MSFpbXBvcnRhbnQ7YmFja2dyb3VuZC1wb3NpdGlvbjpjZW50ZXIsY2VudGVyIWltcG9ydGFudH0KICAgICAgfQogICAgICBAbWVkaWEobWF4LXdpZHRoOjYyMHB4KXsKICAgICAgICAuaGVyby5sai1saXZlLWhlcm86YWZ0ZXJ7CiAgICAgICAgICB3aWR0aDoxMDAlIWltcG9ydGFudDsKICAgICAgICAgIG9wYWNpdHk6Ljg0IWltcG9ydGFudDsKICAgICAgICAgIGJhY2tncm91bmQtaW1hZ2U6CiAgICAgICAgICAgIGxpbmVhci1ncmFkaWVudCg5MGRlZyxyZ2JhKDEyLDEzLDE3LC45OCkgMCUscmdiYSgxMiwxMywxNywuOSkgNDUlLHJnYmEoMTIsMTMsMTcsLjU1KSA3NSUscmdiYSgxMiwxMywxNywuMjgpIDEwMCUpLAogICAgICAgICAgICB1cmwoJy9hc3NldHMvaGVhZGVycy9sai1saXZlLXNoYXJlZC5wbmcnKSFpbXBvcnRhbnQ7CiAgICAgICAgfQogICAgICB9CiAgICAgIEBtZWRpYSBwcmludHsuaGVyby5sai1saXZlLWhlcm86YWZ0ZXJ7ZGlzcGxheTpub25lIWltcG9ydGFudH19CiAgICBgOwogICAgZG9jdW1lbnQuaGVhZC5hcHBlbmRDaGlsZChzdHlsZSk7CiAgfQogIGZ1bmN0aW9uIGFwcGx5TGl2ZUhlYWRlcigpewogICAgaW5zdGFsbExpdmVIZWFkZXJTdHlsZSgpOwogICAgY29uc3QgaGVybz1kb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcuaGVybycpOwogICAgaWYoaGVybykgaGVyby5jbGFzc0xpc3QuYWRkKCdsai1saXZlLWhlcm8nKTsKICB9CiAgY29uc3QgcmVuZGVyU3BvcnQ9d2luZG93LnJlbmRlckxKTGl2ZVNwb3J0OwogIGlmKHR5cGVvZiByZW5kZXJTcG9ydD09PSdmdW5jdGlvbicpewogICAgd2luZG93LnJlbmRlckxKTGl2ZVNwb3J0PWZ1bmN0aW9uKCl7CiAgICAgIGNvbnN0IHJlc3VsdD1yZW5kZXJTcG9ydC5hcHBseSh0aGlzLGFyZ3VtZW50cyk7CiAgICAgIGFwcGx5TGl2ZUhlYWRlcigpOwogICAgICByZXR1cm4gcmVzdWx0OwogICAgfTsKICB9CiAgY29uc3QgcmVuZGVySG9tZT13aW5kb3cucmVuZGVyTEpMaXZlSG9tZTsKICBpZih0eXBlb2YgcmVuZGVySG9tZT09PSdmdW5jdGlvbicpewogICAgd2luZG93LnJlbmRlckxKTGl2ZUhvbWU9ZnVuY3Rpb24oKXsKICAgICAgY29uc3QgcmVzdWx0PXJlbmRlckhvbWUuYXBwbHkodGhpcyxhcmd1bWVudHMpOwogICAgICBhcHBseUxpdmVIZWFkZXIoKTsKICAgICAgcmV0dXJuIHJlc3VsdDsKICAgIH07CiAgfQp9KSgpOwo=' | base64 -d >> ljlivepred_app.js
+          fi
 
       - name: Commit live header wiring
         shell: bash
