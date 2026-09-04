@@ -1,6 +1,4 @@
 (function(){
-  var imageStarted=false;
-
   function installStyle(){
     if(document.getElementById('ljpd-recap-header-style')) return;
     var s=document.createElement('style');
@@ -15,7 +13,7 @@
         border-radius:14px;
         overflow:hidden;
         background-color:#090713!important;
-        background-image:var(--ljpd-recap-image,linear-gradient(135deg,#090713,#1b0c31))!important;
+        background-image:url('assets/headers/lj-recap-shared.png')!important;
         background-size:cover!important;
         background-position:center center!important;
         background-repeat:no-repeat!important;
@@ -75,36 +73,10 @@
 
   window.LJPDApplyRecapHeader=applyHeader;
 
-  function loadImage(){
-    if(imageStarted) return;
-    imageStarted=true;
-    window.__LJPD_PARTS=[];
-    var i=1;
-    function finish(){
-      var p=window.__LJPD_PARTS||[];
-      if(!p.length) return;
-      document.documentElement.style.setProperty('--ljpd-recap-image','url("data:image/webp;base64,'+p.join('')+'")');
-      window.__LJPD_PARTS=[];
-      applyHeader();
-    }
-    function next(){
-      if(i>10){finish();return;}
-      var sc=document.createElement('script');
-      sc.src='assets/ljpd-img-part-'+String(i).padStart(2,'0')+'.js';
-      sc.onload=function(){i++;next();};
-      sc.onerror=function(){console.error('L&JPD recap image segment failed:',i);};
-      document.head.appendChild(sc);
-    }
-    next();
-  }
-
   function boot(){
-    applyHeader();
-    loadImage();
-    if(!document.querySelector('.hero')){
-      var mo=new MutationObserver(function(){if(applyHeader()) mo.disconnect();});
-      mo.observe(document.documentElement,{childList:true,subtree:true});
-    }
+    if(applyHeader()) return;
+    var mo=new MutationObserver(function(){if(applyHeader()) mo.disconnect();});
+    mo.observe(document.documentElement,{childList:true,subtree:true});
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
