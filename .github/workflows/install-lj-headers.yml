@@ -1,0 +1,59 @@
+name: Install L&J Header Assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/install-lj-headers.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-headers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download approved high-resolution headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/headers
+          curl -L --fail --retry 3 -o assets/headers/lj-live-shared.png 'https://at.adobe.com/GqviM0q6NWM4gqBt'
+          curl -L --fail --retry 3 -o assets/headers/lj-recap-shared.png 'https://at.adobe.com/CyzTuVJCjhm0LjgK'
+          curl -L --fail --retry 3 -o assets/headers/dp-mlb.png 'https://at.adobe.com/H6DKeqxqZQL3tUqj'
+          curl -L --fail --retry 3 -o assets/headers/dp-nfl.png 'https://at.adobe.com/QOP6GTWCzLj8uC1K'
+          curl -L --fail --retry 3 -o assets/headers/dp-nba.png 'https://at.adobe.com/mYDJoYJat9QQ2R4o'
+          curl -L --fail --retry 3 -o assets/headers/dp-wnba.png 'https://at.adobe.com/Ki535vYzacTxXkPW'
+          curl -L --fail --retry 3 -o assets/headers/dp-nhl.png 'https://at.adobe.com/SEXFWfrXElCB5B0Z'
+          curl -L --fail --retry 3 -o assets/headers/dp-ncaa-football.png 'https://at.adobe.com/rwSRaKuoZVHfKs9T'
+          curl -L --fail --retry 3 -o assets/headers/dp-ufc.png 'https://at.adobe.com/pHPWkVxO6Y0XluJG'
+          curl -L --fail --retry 3 -o assets/headers/dp-boxing.png 'https://at.adobe.com/3AYzTnxg2t8wYIr0'
+          test -s assets/headers/lj-live-shared.png
+          test -s assets/headers/lj-recap-shared.png
+          test -s assets/headers/dp-mlb.png
+          test -s assets/headers/dp-nfl.png
+          test -s assets/headers/dp-nba.png
+          test -s assets/headers/dp-wnba.png
+          test -s assets/headers/dp-nhl.png
+          test -s assets/headers/dp-ncaa-football.png
+          test -s assets/headers/dp-ufc.png
+          test -s assets/headers/dp-boxing.png
+
+      - name: Commit header assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'L&J Site Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add assets/headers
+          if git diff --cached --quiet; then
+            echo 'Header assets are already current.'
+            exit 0
+          fi
+          git commit -m 'Install high-resolution L&J header artwork'
+          git push origin HEAD:master
