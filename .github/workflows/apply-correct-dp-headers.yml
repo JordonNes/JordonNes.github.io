@@ -1,0 +1,80 @@
+name: Apply Correct L&J DP Headers
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/apply-correct-dp-headers.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-headers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Download approved full-resolution header artwork
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/headers
+
+          download_png() {
+            local url="$1"
+            local out="$2"
+            curl -L --fail --show-error --silent --retry 3 --retry-delay 2 -A 'Mozilla/5.0' "$url" -o "$out"
+            python3 - "$out" <<'PY'
+          import struct, sys
+          p = sys.argv[1]
+          with open(p, 'rb') as f:
+              head = f.read(24)
+          if head[:8] != b'\x89PNG\r\n\x1a\n':
+              raise SystemExit(f'{p}: downloaded file is not a PNG')
+          w, h = struct.unpack('>II', head[16:24])
+          if (w, h) != (2172, 724):
+              raise SystemExit(f'{p}: expected 2172x724, got {w}x{h}')
+          print(f'{p}: verified {w}x{h}')
+          PY
+          }
+
+          # The attached approved artwork is deliberately mapped by sport.
+          download_png 'https://at.adobe.com/6wsP11DwZnYQ51PG' 'assets/headers/dp-ufc.png'
+          cp 'assets/headers/dp-ufc.png' 'assets/headers/dp-boxing.png'
+          download_png 'https://at.adobe.com/arMfkAJ4N0M30kBp' 'assets/headers/dp-ncaa-basketball.png'
+          download_png 'https://at.adobe.com/i2BxPu4sRPnGTUHL' 'assets/headers/dp-ncaa-football.png'
+          download_png 'https://at.adobe.com/BNKPkTy3PJnHDKYL' 'assets/headers/dp-fiba.png'
+          download_png 'https://at.adobe.com/bfprVHc3Qk8rgUkb' 'assets/headers/dp-nhl.png'
+          download_png 'https://at.adobe.com/82RnhMBLggIDKPp4' 'assets/headers/dp-wnba.png'
+          download_png 'https://at.adobe.com/cmeilRdInMtjuPIn' 'assets/headers/dp-nba.png'
+          download_png 'https://at.adobe.com/TGrwh52xrKz7pqH7' 'assets/headers/dp-nfl.png'
+          download_png 'https://at.adobe.com/ohpx81cjP65J3H37' 'assets/headers/dp-mlb.png'
+          download_png 'https://at.adobe.com/gds4WnB4ddQg2Kdo' 'assets/headers/dp-tennis-v2.png'
+
+      - name: Commit approved header assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'Jordon Nesbitt'
+          git config user.email '61303614+JordonNes@users.noreply.github.com'
+          git add assets/headers/dp-mlb.png \
+                  assets/headers/dp-nfl.png \
+                  assets/headers/dp-nba.png \
+                  assets/headers/dp-wnba.png \
+                  assets/headers/dp-nhl.png \
+                  assets/headers/dp-fiba.png \
+                  assets/headers/dp-ncaa-football.png \
+                  assets/headers/dp-ncaa-basketball.png \
+                  assets/headers/dp-ufc.png \
+                  assets/headers/dp-boxing.png \
+                  assets/headers/dp-tennis-v2.png
+          if git diff --cached --quiet; then
+            echo 'Header assets already match the approved files.'
+            exit 0
+          fi
+          git commit -m 'Replace DP headers with approved full-resolution artwork'
+          git push origin HEAD:master
