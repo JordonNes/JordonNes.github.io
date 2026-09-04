@@ -1,0 +1,108 @@
+name: Apply L&J Live Header
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-live-header.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-live-header:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add shared L&J Live hero wiring
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('ljlivepred_app.js')
+          text = path.read_text(encoding='utf-8')
+          marker = '/* L&J LIVE HIGH-RES HEADER PATCH */'
+          if marker not in text:
+              patch = r'''
+
+/* L&J LIVE HIGH-RES HEADER PATCH */
+(() => {
+  function installLiveHeaderStyle(){
+    if(document.getElementById('lj-live-highres-header-style')) return;
+    const style=document.createElement('style');
+    style.id='lj-live-highres-header-style';
+    style.textContent=`
+      .hero.lj-live-hero:after{
+        left:0!important;
+        right:auto!important;
+        width:100%!important;
+        height:100%!important;
+        opacity:1!important;
+        filter:none!important;
+        background-image:
+          linear-gradient(90deg,#0c0d11 0%,rgba(12,13,17,.96) 20%,rgba(12,13,17,.78) 42%,rgba(12,13,17,.28) 64%,rgba(12,13,17,.05) 100%),
+          url('/assets/headers/lj-live-shared.png')!important;
+        background-size:100% 100%,cover!important;
+        background-position:center,center!important;
+        background-repeat:no-repeat!important;
+        image-rendering:auto!important;
+        backface-visibility:hidden;
+        transform:translateZ(0);
+      }
+      @media(max-width:900px){
+        .hero.lj-live-hero:after{width:100%!important;opacity:1!important;background-position:center,center!important}
+      }
+      @media(max-width:620px){
+        .hero.lj-live-hero:after{
+          width:100%!important;
+          opacity:.84!important;
+          background-image:
+            linear-gradient(90deg,rgba(12,13,17,.98) 0%,rgba(12,13,17,.9) 45%,rgba(12,13,17,.55) 75%,rgba(12,13,17,.28) 100%),
+            url('/assets/headers/lj-live-shared.png')!important;
+        }
+      }
+      @media print{.hero.lj-live-hero:after{display:none!important}}
+    `;
+    document.head.appendChild(style);
+  }
+  function applyLiveHeader(){
+    installLiveHeaderStyle();
+    const hero=document.querySelector('.hero');
+    if(hero) hero.classList.add('lj-live-hero');
+  }
+  const renderSport=window.renderLJLiveSport;
+  if(typeof renderSport==='function'){
+    window.renderLJLiveSport=function(){
+      const result=renderSport.apply(this,arguments);
+      applyLiveHeader();
+      return result;
+    };
+  }
+  const renderHome=window.renderLJLiveHome;
+  if(typeof renderHome==='function'){
+    window.renderLJLiveHome=function(){
+      const result=renderHome.apply(this,arguments);
+      applyLiveHeader();
+      return result;
+    };
+  }
+})();
+'''
+              path.write_text(text + patch, encoding='utf-8')
+
+      - name: Commit live header wiring
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'L&J Site Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add ljlivepred_app.js
+          if git diff --cached --quiet; then
+            echo 'Live header wiring is already current.'
+            exit 0
+          fi
+          git commit -m 'Apply shared high-resolution L&J Live header'
+          git push origin HEAD:master
