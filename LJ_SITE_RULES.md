@@ -96,6 +96,23 @@ Match-winner favorites with very expensive prices may carry high L&J hit confide
 
 The Recap page must grade all published Tennis selections after final results are verified. Retirements, walkovers, defaults and sportsbook-specific settlement issues must be classified as HIT, MISS, PUSH/VOID or UNGRADED according to the exact published market and verifiable settlement context; never force an ambiguous retirement into a win/loss grade.
 
+## Previous-day Recap standard
+
+The **Recap page is a previous-publication-day L&J prediction audit**, not a generic sports-results page and not a new prediction slate.
+
+Every daily recap must:
+- review the exact predictions L&J published the previous day across every active sport;
+- grade each recoverable prediction as **HIT, MISS, PUSH/VOID or UNGRADED** using verified final results;
+- measure **overall prediction accuracy**, **player/participant prop accuracy**, **JINX game/match winner accuracy**, **parlay/ticket hit rate**, and **SNS/Goblin vs Normal vs Aggressive/Demon accuracy**;
+- compare actual hit rates with the published **L&J/JINX confidence percentages** to evaluate calibration;
+- provide a sport-by-sport accuracy scorecard;
+- identify the most **significant or surprising positive results** from the prior day, including unexpected ceilings, strong matchup reads, successful upsets or markets that performed materially better than expected;
+- identify the most **significant or surprising negative results**, especially high-confidence misses, role/workload failures, injuries, blowout effects, bad game scripts, market-selection errors or other model failures;
+- explain what the result teaches L&J and what should change in the next publication;
+- maintain **RUN IT BACK / WATCH / AVOID-DOWNGRADE / MARKET SWITCH** follow-up categories based on the prior day's evidence.
+
+The recap denominator may include only predictions that were actually published and can be audited. If the exact original threshold, market wording or result cannot be recovered, mark the selection **UNGRADED** and exclude it from accuracy calculations rather than reconstructing it from memory.
+
 ## File ownership
 
 - `ljqc.css` — canonical QC visual layout. **Locked.**
