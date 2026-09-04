@@ -10,21 +10,22 @@
     UFC:"UFC", Boxing:"Boxing", Tennis:"Tennis"
   };
 
-  /* Full-resolution standalone files keep every header crisp and prevent one bad
-     sprite download from affecting every sport page. */
+  /* Approved 2172×724 (3:1) full-resolution artwork. The version token forces
+     browsers/CDNs to refresh the corrected files immediately after deployment. */
+  const v = "20260904-approved";
   const headerImage = {
-    MLB:"assets/headers/dp-mlb.png",
-    NFL:"assets/headers/dp-nfl.png",
-    NBA:"assets/headers/dp-nba.png",
-    WNBA:"assets/headers/dp-wnba.png",
-    NHL:"assets/headers/dp-nhl.png",
-    FIBA_Men:"assets/headers/dp-fiba.png",
-    FIBA_Women:"assets/headers/dp-fiba.png",
-    NCAA_Football:"assets/headers/dp-ncaa-football.png",
-    NCAA_Basketball:"assets/headers/dp-ncaa-basketball.png",
-    UFC:"assets/headers/dp-ufc.png",
-    Boxing:"assets/headers/dp-boxing.png",
-    Tennis:"assets/headers/dp-tennis-v2.png"
+    MLB:`assets/headers/dp-mlb.png?v=${v}`,
+    NFL:`assets/headers/dp-nfl.png?v=${v}`,
+    NBA:`assets/headers/dp-nba.png?v=${v}`,
+    WNBA:`assets/headers/dp-wnba.png?v=${v}`,
+    NHL:`assets/headers/dp-nhl.png?v=${v}`,
+    FIBA_Men:`assets/headers/dp-fiba.png?v=${v}`,
+    FIBA_Women:`assets/headers/dp-fiba.png?v=${v}`,
+    NCAA_Football:`assets/headers/dp-ncaa-football.png?v=${v}`,
+    NCAA_Basketball:`assets/headers/dp-ncaa-basketball.png?v=${v}`,
+    UFC:`assets/headers/dp-ufc.png?v=${v}`,
+    Boxing:`assets/headers/dp-boxing.png?v=${v}`,
+    Tennis:`assets/headers/dp-tennis-v2.png?v=${v}`
   };
 
   function installHeaderStyle(){
@@ -43,11 +44,12 @@
       }
       .hero.ljdp-sport-hero:before,.hero.ljdp-sport-hero:after{display:none!important}
       .ljdp-sport-header-image{
-        display:block;width:100%;aspect-ratio:3/1;min-height:220px;
+        display:block;width:100%;aspect-ratio:3/1;
         background-image:var(--ljdp-header-image);
-        background-size:cover;
+        background-size:contain;
         background-position:center;
         background-repeat:no-repeat;
+        background-color:#08070b;
         border-bottom:1px solid rgba(197,158,69,.45);
         box-shadow:inset 0 -1px rgba(255,255,255,.03);
       }
@@ -94,7 +96,6 @@
         border-color:rgba(166,126,218,.76)!important;color:#dfcaf6!important;
       }
       @media(max-width:720px){
-        .ljdp-sport-header-image{min-height:150px}
         .hero.ljdp-sport-hero>.kicker{margin-top:12px!important}
         .hero.ljdp-sport-hero>.actions{padding-bottom:13px!important}
       }
