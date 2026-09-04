@@ -9,7 +9,7 @@ window.LJ_LIVE_DATA = (() => {
   const nav = [
     ["MLB","⚾","MLB.html"],["NFL","🏈","NFL.html"],["NBA","🏀","NBA.html"],["WNBA","🏀","WNBA.html"],["NHL","🏒","NHL.html"],
     ["FIBA MEN","🌍🏀","FIBA_Men.html"],["FIBA WOMEN","🌍🏀","FIBA_Women.html"],["NCAA FOOTBALL","🏈","NCAA_Football.html"],
-    ["NCAA BASKETBALL","🏀","NCAA_Basketball.html"],["UFC","🥊","UFC.html"],["BOXING","🥊","Boxing.html"]
+    ["NCAA BASKETBALL","🏀","NCAA_Basketball.html"],["TENNIS","🎾","Tennis.html"],["UFC","🥊","UFC.html"],["BOXING","🥊","Boxing.html"]
   ];
 
   const live20 = [
@@ -63,6 +63,7 @@ window.LJ_LIVE_DATA = (() => {
     FIBA_Women:empty("FIBA_Women","🌍🏀","FIBA WOMEN","FIBA_Women.html"),
     NCAA_Football:empty("NCAA_Football","🏈","NCAA FOOTBALL","NCAA_Football.html"),
     NCAA_Basketball:empty("NCAA_Basketball","🏀","NCAA BASKETBALL","NCAA_Basketball.html"),
+    Tennis:empty("Tennis","🎾","TENNIS","Tennis.html"),
     UFC:empty("UFC","🥊","UFC","UFC.html"),
     Boxing:empty("Boxing","🥊","BOXING","Boxing.html")
   };

@@ -10,15 +10,21 @@
     UFC:"UFC", Boxing:"Boxing", Tennis:"Tennis"
   };
 
-  /* One optimized sprite keeps the character designs consistent and avoids loading
-     ten separate hero files. Slice order: MLB, NFL, NBA, WNBA, NHL, FIBA,
-     NCAA Football, NCAA Basketball, Combat, Tennis. */
-  const sprite = "assets/headers/character-headers-sprite.jpg";
-  const position = {
-    MLB:"0%", NFL:"11.111%", NBA:"22.222%", WNBA:"33.333%", NHL:"44.444%",
-    FIBA_Men:"55.556%", FIBA_Women:"55.556%",
-    NCAA_Football:"66.667%", NCAA_Basketball:"77.778%",
-    UFC:"88.889%", Boxing:"88.889%", Tennis:"100%"
+  /* Full-resolution standalone files keep every header crisp and prevent one bad
+     sprite download from affecting every sport page. */
+  const headerImage = {
+    MLB:"assets/headers/dp-mlb.png",
+    NFL:"assets/headers/dp-nfl.png",
+    NBA:"assets/headers/dp-nba.png",
+    WNBA:"assets/headers/dp-wnba.png",
+    NHL:"assets/headers/dp-nhl.png",
+    FIBA_Men:"assets/headers/dp-fiba.png",
+    FIBA_Women:"assets/headers/dp-fiba.png",
+    NCAA_Football:"assets/headers/dp-ncaa-football.png",
+    NCAA_Basketball:"assets/headers/dp-ncaa-basketball.png",
+    UFC:"assets/headers/dp-ufc.png",
+    Boxing:"assets/headers/dp-boxing.png",
+    Tennis:"assets/headers/dp-tennis-v2.png"
   };
 
   function installHeaderStyle(){
@@ -38,9 +44,9 @@
       .hero.ljdp-sport-hero:before,.hero.ljdp-sport-hero:after{display:none!important}
       .ljdp-sport-header-image{
         display:block;width:100%;aspect-ratio:3/1;min-height:220px;
-        background-image:url('${sprite}');
-        background-size:100% 1000%;
-        background-position:center var(--ljdp-sprite-y);
+        background-image:var(--ljdp-header-image);
+        background-size:cover;
+        background-position:center;
         background-repeat:no-repeat;
         border-bottom:1px solid rgba(197,158,69,.45);
         box-shadow:inset 0 -1px rgba(255,255,255,.03);
@@ -51,28 +57,30 @@
       .hero.ljdp-sport-hero>.chips,
       .hero.ljdp-sport-hero>.actions{
         position:relative!important;z-index:2!important;
-        margin-left:clamp(18px,3vw,42px)!important;
-        margin-right:clamp(18px,3vw,42px)!important;
+        margin-left:clamp(16px,2.4vw,32px)!important;
+        margin-right:clamp(16px,2.4vw,32px)!important;
       }
       .hero.ljdp-sport-hero>.kicker{
-        margin-top:20px!important;
+        margin-top:14px!important;
         display:inline-flex!important;
         background:linear-gradient(90deg,#4b2d78,#6e49a2)!important;
         border:1px solid rgba(214,184,245,.25)!important;
         color:#fff!important;
+        font-size:.68rem!important;padding:5px 9px!important;margin-bottom:0!important;
       }
       .hero.ljdp-sport-hero>h1{
-        margin-top:9px!important;margin-bottom:7px!important;
-        font-size:clamp(1.65rem,3.2vw,2.8rem)!important;line-height:1.05!important;
+        margin-top:7px!important;margin-bottom:5px!important;
+        font-size:clamp(1.35rem,2.45vw,2.15rem)!important;line-height:1.1!important;
         color:#f7f2fb!important;text-shadow:none!important;
       }
       .hero.ljdp-sport-hero>p{
-        max-width:980px!important;margin-bottom:13px!important;
-        color:#cfc7d7!important;font-size:clamp(.9rem,1.25vw,1rem)!important;line-height:1.55!important;
+        max-width:980px!important;margin-bottom:9px!important;
+        color:#cfc7d7!important;font-size:clamp(.82rem,1.05vw,.92rem)!important;line-height:1.45!important;
       }
-      .hero.ljdp-sport-hero>.chips{margin-bottom:12px!important}
+      .hero.ljdp-sport-hero>.chips{margin-top:8px!important;margin-bottom:8px!important;gap:6px!important}
+      .hero.ljdp-sport-hero .chip,.hero.ljdp-sport-hero .action{font-size:.68rem!important;padding:5px 9px!important}
       .hero.ljdp-sport-hero>.actions{
-        display:flex!important;flex-wrap:wrap!important;gap:8px!important;padding-bottom:20px!important;
+        display:flex!important;flex-wrap:wrap!important;gap:6px!important;margin-top:7px!important;padding-bottom:14px!important;
       }
       .hero.ljdp-sport-hero .action{
         background:rgba(255,255,255,.055)!important;
@@ -87,8 +95,8 @@
       }
       @media(max-width:720px){
         .ljdp-sport-header-image{min-height:150px}
-        .hero.ljdp-sport-hero>.kicker{margin-top:16px!important}
-        .hero.ljdp-sport-hero>.actions{padding-bottom:17px!important}
+        .hero.ljdp-sport-hero>.kicker{margin-top:12px!important}
+        .hero.ljdp-sport-hero>.actions{padding-bottom:13px!important}
       }
       @media print{.ljdp-sport-header-image{display:none!important}}
     `;
@@ -97,13 +105,13 @@
 
   function add(){
     const file = decodeURIComponent((location.pathname.split('/').pop() || '').replace(/\.html$/i,''));
-    if (!labels[file] || !position[file]) return;
+    if (!labels[file] || !headerImage[file]) return;
 
     const hero = document.querySelector('.hero');
     if (hero) {
       installHeaderStyle();
       hero.classList.add('ljdp-sport-hero');
-      hero.style.setProperty('--ljdp-sprite-y', position[file]);
+      hero.style.setProperty('--ljdp-header-image', `url('${headerImage[file]}')`);
       if (!hero.querySelector('.ljdp-sport-header-image')) {
         const art = document.createElement('div');
         art.className = 'ljdp-sport-header-image';

@@ -96,6 +96,10 @@ Match-winner favorites with very expensive prices may carry high L&J hit confide
 
 The Recap page must grade all published Tennis selections after final results are verified. Retirements, walkovers, defaults and sportsbook-specific settlement issues must be classified as HIT, MISS, PUSH/VOID or UNGRADED according to the exact published market and verifiable settlement context; never force an ambiguous retirement into a win/loss grade.
 
+## Header presentation lock
+
+Every sport's Daily Predictions page and matching L&J Live page must use the same full-resolution sport-specific LEGZ & JINX header artwork. The artwork appears by itself at the top of the hero; page title, description, status chips, Daily/Live navigation, and sport recap link must remain in a compact thematic band below the image and may not overlay or obscure the characters. Daily prediction and live-data refreshes must not change this header presentation.
+
 ## Previous-day Recap standard
 
 The **Recap page is a previous-publication-day L&J prediction audit**, not a generic sports-results page and not a new prediction slate.

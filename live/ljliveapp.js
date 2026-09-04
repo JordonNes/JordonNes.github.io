@@ -6,8 +6,7 @@
   const watch = x => /WATCH|NO LIVE|DATA-LIMITED|UNVERIFIED|PASS/i.test(String(x||""));
   const list = xs => `<ul>${((xs&&xs.length)?xs:["WATCH — no verified live market"]).map(x=>`<li class="${watch(x)?"qc-watch":""}">${esc(x)}</li>`).join("")}</ul>`;
 
-  /* Live uses the legacy DP sport artwork that preceded the character-header update.
-     Sports that did not have a legacy individual DP image use the established shared Live art. */
+  /* Live deliberately reuses the exact corrected DP artwork for each matching sport. */
   const liveHeaders = {
     MLB:"../assets/headers/dp-mlb.png",
     NFL:"../assets/headers/dp-nfl.png",
@@ -17,10 +16,10 @@
     NCAA_Football:"../assets/headers/dp-ncaa-football.png",
     UFC:"../assets/headers/dp-ufc.png",
     Boxing:"../assets/headers/dp-boxing.png",
-    Tennis:"../assets/headers/lj-live-shared.png",
-    FIBA_Men:"../assets/headers/lj-live-shared.png",
-    FIBA_Women:"../assets/headers/lj-live-shared.png",
-    NCAA_Basketball:"../assets/headers/lj-live-shared.png"
+    Tennis:"../assets/headers/dp-tennis-v2.png",
+    FIBA_Men:"../assets/headers/dp-fiba.png",
+    FIBA_Women:"../assets/headers/dp-fiba.png",
+    NCAA_Basketball:"../assets/headers/dp-ncaa-basketball.png"
   };
 
   function installLiveHeaderStyle(){
@@ -31,16 +30,17 @@
       .live-hero{min-height:0!important;padding:0!important;overflow:hidden!important;background:#fff!important;color:#241d2f!important;border:1px solid #d8d1e4!important;border-radius:18px!important;box-shadow:0 12px 28px rgba(79,47,131,.09)!important}
       .live-hero:before,.live-hero:after{display:none!important}
       .live-header-art{display:block!important;width:100%!important;aspect-ratio:3/1!important;min-height:220px!important;background-image:var(--live-sport-header)!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;border-bottom:2px solid #c9972b!important}
-      .live-hero>.kicker,.live-hero>h1,.live-hero>p,.live-hero>.chips,.live-hero>.actions{position:relative!important;z-index:2!important;margin-left:clamp(18px,3vw,42px)!important;margin-right:clamp(18px,3vw,42px)!important}
-      .live-hero>.kicker{margin-top:20px!important;background:#247f95!important;color:#fff!important}
-      .live-hero>h1{margin-top:9px!important;margin-bottom:7px!important;color:#4f2f83!important;text-shadow:none!important;font-size:clamp(1.65rem,3.2vw,2.8rem)!important;line-height:1.05!important}
-      .live-hero>p{max-width:980px!important;color:#4d4555!important;text-shadow:none!important;margin-bottom:13px!important;font-size:clamp(.9rem,1.25vw,1rem)!important;line-height:1.55!important}
-      .live-hero>.chips{margin-bottom:12px!important}
-      .live-hero>.actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important;padding-bottom:20px!important}
+      .live-hero>.kicker,.live-hero>h1,.live-hero>p,.live-hero>.chips,.live-hero>.actions{position:relative!important;z-index:2!important;margin-left:clamp(16px,2.4vw,32px)!important;margin-right:clamp(16px,2.4vw,32px)!important}
+      .live-hero>.kicker{margin-top:14px!important;margin-bottom:0!important;background:#247f95!important;color:#fff!important;font-size:.68rem!important;padding:5px 9px!important}
+      .live-hero>h1{margin-top:7px!important;margin-bottom:5px!important;color:#4f2f83!important;text-shadow:none!important;font-size:clamp(1.35rem,2.45vw,2.15rem)!important;line-height:1.1!important}
+      .live-hero>p{max-width:980px!important;color:#4d4555!important;text-shadow:none!important;margin-bottom:9px!important;font-size:clamp(.82rem,1.05vw,.92rem)!important;line-height:1.45!important}
+      .live-hero>.chips{margin-top:8px!important;margin-bottom:8px!important;gap:6px!important}
+      .live-hero .chip,.live-hero .action{font-size:.68rem!important;padding:5px 9px!important}
+      .live-hero>.actions{display:flex!important;flex-wrap:wrap!important;gap:6px!important;margin-top:7px!important;padding-bottom:14px!important}
       .live-hero .action{background:#fff!important;color:#4f2f83!important;border:1px solid #c9bfd9!important;box-shadow:none!important}
       .live-hero .action:hover,.live-hero .action:focus{background:#f5f2f9!important;border-color:#7551a6!important}
       .live-hero .live-back{border-color:#d4b35f!important;color:#765510!important}
-      @media(max-width:720px){.live-header-art{min-height:150px!important}.live-hero>.kicker{margin-top:16px!important}.live-hero>.actions{padding-bottom:17px!important}}
+      @media(max-width:720px){.live-header-art{min-height:150px!important}.live-hero>.kicker{margin-top:12px!important}.live-hero>.actions{padding-bottom:13px!important}}
       @media print{.live-header-art{display:none!important}}
     `;
     document.head.appendChild(s);
