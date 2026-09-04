@@ -7,6 +7,7 @@
   const D = window.LJ_DATA;
   if (!D || !D.sports) return;
   if (!D.nav.some(r => r[0] === "TENNIS")) D.nav.push(["TENNIS","🎾","Tennis.html"]);
+  if (!D.nav.some(r => r[0] === "RECAP")) D.nav.push(["RECAP","📊","Recap.html"]);
   const W = "WATCH — exact current secondary market not independently verified";
   const q = (time,away,home,market,winner,conf,hot,sns1,sns2,normal,demon,foot="") => ({time,away,home,market,winner,conf,hot,sns1,sns2,normal,demon,foot});
 
