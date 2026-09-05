@@ -1,7 +1,8 @@
 /* LEGZ & JINX PRESENTATION LAYER — LAYOUT LOCK
    Owns the approved page + Per-Game QC presentation.
    DAILY REFRESHES EDIT ljdata.js ONLY.
-   Change this file only when the user explicitly requests a QC/site redesign. */
+   Change this file only when the user explicitly requests a QC/site redesign.
+   2026-09-05: statusGrid data literals refreshed only; presentation structure unchanged. */
 (() => {
   const D = window.LJ_DATA;
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -63,9 +64,20 @@
 
   function statusGrid(){
     const map = [
-      ["MLB","ACTIVE TODAY","9-game Sep 3 slate • per-game QCs live"],["NCAA_Football","ACTIVE TODAY","11 Thursday games • team sides live; player props gated"],["FIBA_Women","NEXT: SEP 4","Opening-day World Cup QCs staged"],["WNBA","BREAK","Resumes Sep 17 • no stale props"],["NFL","WEEK 1 WATCH","Regular season starts Sep 9"],["NBA","OFFSEASON","Preseason Oct 3 • regular season Oct 20"],["NHL","OFFSEASON","Regular season Sep 29"],["NCAA_Basketball","OFFSEASON","Season starts Nov 2"],["UFC","NEXT: SEP 5","UFC Paris QC live"],["Boxing","ACTIVE WINDOW","Sep 3–5 fight QCs live"],["FIBA_Men","CALENDAR WATCH","Next announced window Sep 9+"]
+      ["MLB","ACTIVE TODAY","15-game Sep 5 slate • all per-game QCs refreshed"],
+      ["NCAA_Football","ACTIVE TODAY","Saturday Week 1 slate • kickoff + prop sweep refreshed"],
+      ["Tennis","ACTIVE TODAY","US Open Round 3 • official order of play + current markets"],
+      ["FIBA_Women","ACTIVE TODAY","World Cup Day 2 • next-game-only logic"],
+      ["UFC","ACTIVE TODAY","UFC Paris • weigh-ins complete • prelims 9 AM PT"],
+      ["Boxing","ACTIVE TODAY","Katie Taylor vs Flora Pili • Croke Park"],
+      ["WNBA","BREAK","World Cup pause • resumes Sep 17"],
+      ["NFL","NEXT: SEP 9","Week 1 all-game QCs staged • player props gated"],
+      ["NBA","OFFSEASON","No stale game/prop slate"],
+      ["NHL","OFFSEASON","No stale game/prop slate"],
+      ["NCAA_Basketball","OFFSEASON","Market activation awaits season slate"],
+      ["FIBA_Men","CALENDAR WATCH","No Sep 5 game verified • next announced event gate"]
     ];
-    const file = {MLB:"MLB.html",NCAA_Football:"NCAA_Football.html",FIBA_Women:"FIBA_Women.html",WNBA:"WNBA.html",NFL:"NFL.html",NBA:"NBA.html",NHL:"NHL.html",NCAA_Basketball:"NCAA_Basketball.html",UFC:"UFC.html",Boxing:"Boxing.html",FIBA_Men:"FIBA_Men.html"};
+    const file = {MLB:"MLB.html",NCAA_Football:"NCAA_Football.html",Tennis:"Tennis.html",FIBA_Women:"FIBA_Women.html",UFC:"UFC.html",Boxing:"Boxing.html",WNBA:"WNBA.html",NFL:"NFL.html",NBA:"NBA.html",NHL:"NHL.html",NCAA_Basketball:"NCAA_Basketball.html",FIBA_Men:"FIBA_Men.html"};
     return `<section class="section"><div class="section-head"><h2>CURRENT STATUS</h2><span class="muted">${esc(D.updated)}</span></div><div class="quickie-grid">${map.map(([k,state,note])=>{const s=D.sports[k]; return `<div class="ticket"><div class="ticket-h ${/ACTIVE/.test(state)?"sns":/WATCH|NEXT/.test(state)?"purple":"normal"}">${s.icon} ${esc(k.replace(/_/g," "))} • ${esc(state)}</div><ul><li>${esc(note)}</li><li>LEGZ HOT TOP + JINX Winners + 20 Piece retained</li><li>Approved QC layout retained</li></ul><div class="note"><a href="${file[k]}">Open page →</a></div></div>`;}).join("")}</div></section>`;
   }
   function footer(extra=""){
