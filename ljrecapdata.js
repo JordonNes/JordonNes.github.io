@@ -1,213 +1,93 @@
 /* LEGZ & JINX SPORT RECAP DATA
-   DAILY RECAP REFRESH FILE.
-   Audit target: predictions published September 3, 2026.
-   Finals verified where available; unresolved/future events remain UNGRADED/PENDING.
-*/
+   2026-09-05 PREVIOUS-PUBLICATION-DAY AUDIT.
+   Exact recoverable published markets only. Missing/unsettled items are UNGRADED and excluded. */
 window.LJ_RECAP_DATA = (() => {
-  const blank = (label,icon,currentPage,status="NO PUBLISHED PREDICTIONS / NOT SCORED") => ({
-    label,icon,currentPage,priorDate:"September 3, 2026",status,
-    summary:{published:"0",hits:"0",misses:"0",voids:"0",ungraded:"0",accuracy:"NOT SCORED",props:"NOT SCORED",winners:"NOT SCORED",tickets:"NOT SCORED",tiers:"NOT SCORED",calibration:"NOT SCORED"},
-    ledger:[],tickets:[],positive:[],negative:[],
-    jinx:"No settled previous-day prediction from this sport enters the September 3 accuracy denominator. L&J does not invent a grade for a market that was not published or for a future event that has not settled.",
-    followups:{runItBack:[],watch:[],avoid:[],marketSwitch:[]}
-  });
+  const blank=(label,icon,currentPage,status="NO SETTLED RECOVERABLE PREDICTIONS / NOT SCORED")=>({label,icon,currentPage,priorDate:"September 5, 2026",status,summary:{published:"0 graded",hits:"0",misses:"0",voids:"0",ungraded:"0",accuracy:"NOT SCORED",props:"NOT SCORED",winners:"NOT SCORED",tickets:"NOT SCORED",tiers:"NOT SCORED",calibration:"NOT SCORED"},ledger:[],tickets:[],positive:[],negative:[],jinx:"No exact settled September 5 prediction from this sport enters the audit denominator. L&J does not reconstruct missing markets, thresholds or confidence from memory.",followups:{runItBack:[],watch:[],avoid:[],marketSwitch:[]}});
 
-  const mlb = {
-    label:"MLB",icon:"⚾",currentPage:"MLB.html",priorDate:"September 3, 2026",status:"VERIFIED FINAL AUDIT",
-    summary:{published:"34 recoverable unique predictions • 33 graded • 1 PASS",hits:"16",misses:"17",voids:"0",ungraded:"1 PASS",accuracy:"48.5%",props:"44.0% • 11/25",winners:"62.5% • 5/8 graded",tickets:"21.7% • 5/23 graded",tiers:"SNS 18.2% • Normal 16.7% • Demon 33.3%",calibration:"TOP CONFIDENCE OVERSTATED • 69/68/65% top three props all missed"},
-    ledger:[
-      ["SF @ PIT","Pirates pregame lean","Winner • 60%","60%","PIT 5, SF 2","HIT","Correct side; Pittsburgh closed the game cleanly."],
-      ["TOR @ CLE","Blue Jays pregame lean","Winner • 54%","54%","TOR 6, CLE 3","HIT","Low-confidence lean landed."],
-      ["CWS @ HOU","Astros ML","Winner • 65%","65%","HOU 6, CWS 2","HIT","Strong team-side read."],
-      ["BOS @ BAL","Red Sox ML lean","Winner • 58%","58%","BOS 6, BAL 5","HIT","One-run game validated keeping confidence moderate."],
-      ["MIL @ CHC","Brewers ML lean","Winner • 55%","55%","CHC 2, MIL 1","MISS","Milwaukee offense failed; side edge was too thin."],
-      ["MIA @ KC","PASS / Royals hairline lean","PASS","51%","KC 7, MIA 3","UNGRADED","Correct directional instinct, but PASS is excluded from accuracy."],
-      ["TB @ TEX","Rays ML lean","Winner • 56%","56%","TEX 6, TB 0","MISS","Major side miss; Tampa produced no runs."],
-      ["ATH @ SEA","Mariners ML","Winner • 66%","66%","ATH 7, SEA 4","MISS","High-confidence side failed; Seattle pitching/game script broke."],
-      ["STL @ LAD","Dodgers ML","Winner • 73%","73%","LAD 3, STL 2","HIT","Strongest MLB side won, but only by one run."],
+  const MLB={label:"MLB",icon:"⚾",currentPage:"MLB.html",priorDate:"September 5, 2026",status:"VERIFIED PARTIAL FINAL AUDIT • TWO LATE GAMES PENDING",summary:{published:"16 graded • 10 ungraded/PASS/targets/pending",hits:"5",misses:"11",voids:"0",ungraded:"10",accuracy:"31.3% • 5/16",props:"16.7% • 1/6 exact executable props",winners:"40.0% • 4/10 settled graded sides",tickets:"25.0% • 1/4 fully recoverable settled tickets",tiers:"SNS 33.3% • Normal 50.0% • Demon 0.0% on recoverable settled tickets",calibration:"OVERCONFIDENT TEAM FAVORITES • MESSICK K CHANNEL WAS THE CLEAR WIN"},ledger:[
+    ["SF @ NYM","Mets ML lean","Winner • 55%","55%","SF 9, NYM 5","MISS","New York side failed decisively."],
+    ["CHC @ MIA","Cubs ML lean","Winner • 54%","54%","CHC 6, MIA 5","HIT","Modest side edge landed by one run."],
+    ["ATL @ PHI","Phillies ML","Winner • 61%","61%","PHI 4, ATL 2","HIT","Philadelphia side converted."],
+    ["DET @ CLE","Guardians ML","Winner • 59%","59%","DET 6, CLE 0","MISS","Complete side miss despite Messick's strikeout performance."],
+    ["MIL @ CIN","Brewers ML","Winner • 69%","69%","CIN 5, MIL 3","MISS","Highest-confidence settled team side failed."],
+    ["LAA @ PIT","Pirates ML","Winner • 68%","68%","LAA 6, PIT 1","MISS","Favorite-side calibration failure."],
+    ["BOS @ BAL","Red Sox ML lean","Winner • 56%","56%","BOS 5, BAL 0","HIT","Boston side landed comfortably."],
+    ["TOR @ KC","Royals ML lean","Winner • 61%","61%","TOR 4, KC 3","MISS","One-run loss; edge was overstated."],
+    ["MIN @ CWS","Twins value lean","Winner • 55%","55%","MIN 6, CWS 4","HIT","Value side was correctly preferred to the market favorite."],
+    ["STL @ COL","Cardinals ML","Winner • 60%","60%","COL 10, STL 7","MISS","Coors variance and run prevention broke the side."],
+    ["LAA @ PIT","Oneil Cruz HIGHER 1.5 Hits + Runs + RBI","H+R+RBI >1.5 • Underdog","67%","1 hit + 0 runs + 0 RBI = 1","MISS","Correct player interest, wrong composite threshold/channel."],
+    ["DET @ CLE","Parker Messick OVER 6.5 strikeouts","O6.5 K • +114 snapshot","64%","12 strikeouts in 6 IP","HIT","Best pitcher ceiling selection cleared by a wide margin."],
+    ["ATL @ PHI","Matt Olson 1+ HR","+334 DK snapshot","30%","0 HR","MISS","Demon ceiling did not manifest."],
+    ["ATL @ PHI","Bryce Harper 1+ HR","+438 DK snapshot","24%","0 HR","MISS","Two hits but wrong market selection; contact channel was better."],
+    ["ATL @ PHI","Michael Harris II 1+ HR","+484 DK snapshot","21%","0 HR","MISS","No hit; Demon miss."],
+    ["MIL @ CIN","Sal Stewart 1+ HR","+392 DK snapshot","25%","2 hits, 0 HR","MISS","Player produced contact but not home-run ceiling."],
+    ["TB @ TEX","PASS / Rangers hairline lean","PASS","51%","TB 6, TEX 3","UNGRADED","PASS excluded."],
+    ["NYY @ SD","PASS / Yankees hairline lean","PASS","52%","NYY 5, SD 1","UNGRADED","PASS excluded despite directional lean."],
+    ["ARI @ HOU","PASS / Astros hairline lean","PASS","52%","ARI 4, HOU 3","UNGRADED","PASS excluded."],
+    ["WSH @ LAD","Dodgers ML","Winner • 63%","63%","Game not final at recap cutoff","UNGRADED","Do not grade an unsettled game."],
+    ["ATH @ SEA","Mariners ML","Winner • 61%","61%","Game not final at recap cutoff","UNGRADED","Do not grade an unsettled game."],
+    ["ATL @ PHI","Zack Wheeler 5+ K","ACTIVATION TARGET","63%","9 K","UNGRADED","Outcome would clear, but publication labeled this a target rather than a verified executable market."],
+    ["TB @ TEX","Jacob deGrom 5+ K","ACTIVATION TARGET","62%","—","UNGRADED","Target not converted to exact verified market in publication."],
+    ["WSH @ LAD","Tyler Glasnow 5+ K","ACTIVATION TARGET","61%","—","UNGRADED","Target not converted to exact verified market in publication."],
+    ["CHC @ MIA","Pete Crow-Armstrong 1+ hit","WATCH exact price / target","65% target","—","UNGRADED","Target only; exact executable price was not published."],
+    ["CHC @ MIA","Seiya Suzuki 1+ hit","WATCH exact price / target","63% target","—","UNGRADED","Target only; exact executable price was not published."]
+  ],tickets:[
+    ["DET@CLE • SNS/Goblin 1","HIT","1-0","—","Messick cleared the strikeout threshold with 12 K."],
+    ["DET@CLE • Normal","HIT","1-0","—","Messick O6.5 K cleared."],
+    ["LAA@PIT • SNS/Goblin 1","MISS","0-1","Cruz H+R+RBI","Composite produced only 1."],
+    ["ATL@PHI • Demon","MISS","0-3","All HR legs","Olson, Harper and Harris all failed to homer."],
+    ["Other WATCH/target constructions","UNGRADED","Target/WATCH included","—","Not counted as fully executable tickets."]
+  ],positive:["Parker Messick O6.5 K was the strongest model-selection success: 12 K versus a 6.5 line.","Twins value lean correctly opposed the market favorite and won 6-4.","Red Sox and Phillies team positions both converted."],negative:["Brewers 69% and Pirates 68% were major favorite-side calibration failures.","Three ATL-PHI home-run Demons all missed; Harper still had two hits, underscoring a market-selection miss rather than a player-identification miss.","Oneil Cruz produced a hit and steal but only one H+R+RBI, so the composite threshold was the wrong expression."],jinx:"September 5 MLB was below standard on the recoverable settled ledger. The strongest lesson is to separate player identification from market selection: Messick's strikeout ceiling was correctly identified, while Harper and Cruz were useful players but were expressed through weaker markets. Team confidence also needs a stronger favorite-price penalty. September 6 SNS should favor low thresholds and repeatable contact/strikeout outcomes after lineups are confirmed.",followups:{runItBack:["Messick-style pitcher K plays when role + matchup + price align","Value underdog/short-side positions when market and model disagree constructively"],watch:["Heavy favorite team confidence","Late lineup changes before hitter activation"],avoid:["Stacking multiple HR Demons from one game","Composite H+R+RBI when a simpler hit/total-base channel is available"],marketSwitch:["Harper: contact/total bases before HR-only ceiling","Cruz: 1+ hit/total bases before H+R+RBI when threshold is 1.5+"]}};
 
-      ["ATH @ SEA","Kade Anderson OVER 5.5 strikeouts","O5.5 K • -105","69%","3 K in 5.0 IP","MISS","Highest-confidence player prop missed badly; strikeout projection overshot actual whiff conversion."],
-      ["MIL @ CHC","Jake Bauers OVER 0.5 hits","O0.5 H • -156","68%","0-for-3, 1 BB","MISS","Contact-floor read failed despite four plate appearances."],
-      ["BOS @ BAL","Brandon Young UNDER 17.5 outs","U17.5 outs • -125","65%","20 outs","MISS","Leash assumption was wrong; Young worked 6.2 innings."],
-      ["CWS @ HOU","Yordan Alvarez OVER 0.5 walks","O0.5 BB • -117","64%","1 BB","HIT","Walk-channel read landed exactly."],
-      ["TB @ TEX","Shane McClanahan UNDER 4.5 strikeouts","U4.5 K • +105","61%","3 K in 5.0 IP","HIT","Workload/strikeout ceiling read was correct."],
-      ["MIA @ KC","Bobby Witt Jr. OVER 1.5 total bases","O1.5 TB • -104","59%","0 TB","MISS","Zero-hit outcome defeated the contact/ceiling thesis."],
-      ["MIA @ KC","Heriberto Hernández OVER 1.5 total bases","O1.5 TB • +130","58%","4 TB • HR","HIT","Power-ceiling read landed strongly."],
-      ["ATH @ SEA","Lawrence Butler OVER 0.5 singles","O0.5 singles • +133","56%","2 singles","HIT","Lower-threshold contact expression worked."],
-      ["MIL @ CHC","Pete Crow-Armstrong OVER 1.5 total bases","O1.5 TB • +117","55%","4 TB • HR","HIT","Ceiling market hit decisively."],
-      ["MIL @ CHC","Seiya Suzuki OVER 1.5 total bases","O1.5 TB • +165","49%","0 TB","MISS","No-hit result; appropriately lower confidence."],
-      ["MIL @ CHC","Jackson Chourio OVER 0.5 RBI","O0.5 RBI • +152","48%","0 RBI","MISS","RBI sequencing failed."],
-      ["MIA @ KC","Salvador Perez OVER 0.5 RBI","O0.5 RBI • +165","46%","1 RBI","HIT","Lower-confidence ceiling leg converted."],
-      ["MIL @ CHC","Alex Bregman OVER 0.5 RBI","O0.5 RBI • +200","43%","0 RBI","MISS","RBI ceiling did not materialize."],
-      ["MIL @ CHC","Michael Busch OVER 0.5 RBI","O0.5 RBI • +200","42%","0 RBI","MISS","RBI sequencing failed."],
-      ["BOS @ BAL","Luis Robert Jr. OVER 1.5 total bases","O1.5 TB • +175","42%","4 TB • HR","HIT","Low-confidence ceiling leg produced a home run."],
-      ["MIL @ CHC","Ian Happ OVER 0.5 RBI","O0.5 RBI • +210","40%","0 RBI","MISS","No RBI."],
-      ["TB @ TEX","Wyatt Langford OVER 0.5 RBI","O0.5 RBI • +226","39%","0 RBI","MISS","Texas scored six, but Langford did not drive one in."],
-      ["BOS @ BAL","Gunnar Henderson OVER 0.5 RBI","O0.5 RBI • +233","38%","0 RBI","MISS","One hit, no RBI."],
-      ["MIL @ CHC","Brice Turang OVER 0.5 RBI","O0.5 RBI • +231","38%","0 RBI","MISS","No RBI."],
-      ["CWS @ HOU","Miguel Vargas OVER 0.5 RBI","O0.5 RBI • +195","37%","0 RBI","MISS","Two hits and two steals, but no RBI — wrong statistical channel."],
+  const NCAA={label:"NCAA FOOTBALL",icon:"🏈",currentPage:"NCAA_Football.html",priorDate:"September 5, 2026",status:"VERIFIED PROP/TICKET AUDIT • CLEMSON-LSU PENDING",summary:{published:"9 graded player props • 2 pending",hits:"7",misses:"2",voids:"0",ungraded:"2",accuracy:"77.8% • 7/9 graded props",props:"77.8% • 7/9",winners:"NOT SCORED • exact recoverable winner ledger incomplete",tickets:"80.0% • 8/10 fully settled recoverable tickets",tiers:"SNS 71.4% • Normal 100% • Demon NOT SCORED",calibration:"STRONG • TWO MARKET-SELECTION MISSES: STEWART RECEPTIONS, HANSEN TD"},ledger:[
+    ["Boise State @ Oregon","Maddux Madsen OVER 175.5 passing yards","O175.5 • -115 DK","67%","181 passing yards","HIT","Low passing threshold cleared narrowly."],
+    ["Boise State @ Oregon","Evan Stewart UNDER 4.5 receptions","U4.5 • -130 DK","66%","8 receptions","MISS","Role suppression thesis was wrong; target volume remained strong."],
+    ["Boise State @ Oregon","Jordon Davison OVER 70.5 rushing yards","O70.5 • -115","64%","90 rushing yards","HIT","Rushing ceiling manifested exactly where LEGZ ranked it."],
+    ["Texas State @ Texas","Arch Manning 2+ passing TDs","2+ pass TD • -510 DK","78%","4 passing TDs","HIT","Floor expression cleared comfortably."],
+    ["Texas State @ Texas","Ryan Wingo anytime TD","ATD • -140 DK","58%","1 receiving TD","HIT","Normal/value TD leg converted."],
+    ["Baylor @ Auburn","Byrum Brown anytime TD","ATD • -240 DK","67%","1 rushing TD","HIT","Dual-threat red-zone channel was correct."],
+    ["Marshall @ Penn State","Carson Hansen anytime TD","ATD • -370 DK","72%","0 TD","MISS","Goal-line assumption failed despite blowout environment."],
+    ["Northern Illinois @ Iowa","Kamari Moulton anytime TD","ATD • -400 DK","73%","2 rushing TDs","HIT","Floor TD role converted twice."],
+    ["FAU @ Florida","Jadan Baugh 100+ rushing yards","100+ rush yds • -108 DK","55%","160 rushing yards","HIT","Ceiling rushing market hit decisively."],
+    ["Clemson @ LSU","Sam Leavitt OVER 1.5 passing TDs","O1.5 pass TD • -125","58%","Game unsettled at recap cutoff","UNGRADED","Pending final; excluded."],
+    ["Clemson @ LSU","Trey'Dez Green anytime TD","ATD • +125","53%","Game unsettled at recap cutoff","UNGRADED","Pending final; excluded."]
+  ],tickets:[
+    ["Boise@Oregon • SNS/Goblin 1","MISS","1-1","Stewart U4.5 receptions","Madsen hit; Stewart received eight catches."],
+    ["Boise@Oregon • SNS/Goblin 2","HIT","1-0","—","Davison O70.5 rush cleared."],
+    ["Boise@Oregon • Normal","HIT","1-0","—","Davison cleared."],
+    ["Texas State@Texas • SNS/Goblin 1","HIT","1-0","—","Manning threw four TDs."],
+    ["Texas State@Texas • Normal","HIT","1-0","—","Wingo scored."],
+    ["Baylor@Auburn • SNS/Goblin 1","HIT","1-0","—","Brown scored rushing TD."],
+    ["Baylor@Auburn • Normal","HIT","1-0","—","Brown TD leg cleared."],
+    ["Marshall@Penn State • SNS/Goblin 1","MISS","0-1","Hansen ATD","Penn State scored 45 but Hansen did not score."],
+    ["NIU@Iowa • SNS/Goblin 1","HIT","1-0","—","Moulton scored twice."],
+    ["FAU@Florida • Normal","HIT","1-0","—","Baugh reached 160 rushing yards."],
+    ["Clemson@LSU Normal/Demon","UNGRADED","PENDING","—","Game unsettled at recap cutoff."]
+  ],positive:["Seven of nine settled player props hit.","Rushing-channel selections Davison and Baugh materially outperformed their thresholds.","Manning, Wingo, Brown and Moulton validated role-based touchdown selection."],negative:["Stewart U4.5 receptions failed with eight catches: role/target assumptions were materially wrong.","Hansen ATD failed even in a 45-0 Penn State win, showing team scoring dominance does not guarantee a specific scorer."],jinx:"The NCAA player board was strong, especially when LEGZ selected stable volume or role channels rather than guessing pure game outcomes. The two misses were both role-distribution errors. Sunday cards should keep exact player markets concentrated in the two games where current prop boards are genuinely open and use WATCH elsewhere rather than force filler.",followups:{runItBack:["Low passing-yard thresholds when volume is stable","Rushing yards for clearly defined lead backs","TD floor only when red-zone role is demonstrated"],watch:["Specific scorer concentration in blowouts","Receiver unders when target share is uncertain"],avoid:["Treating team blowout probability as proof a specific player scores"],marketSwitch:["Stewart-type targets: receiving yards may be safer than reception unders when explosive role persists"]}};
 
-      ["ATH @ SEA","Cal Raleigh UNDER 1.5 total bases","U1.5 TB • -180","66%","1 TB","HIT","Floor-style under landed."],
-      ["TB @ TEX","Cedric Mullins OVER 0.5 RBI","O0.5 RBI • +230","38%","0 RBI","MISS","No RBI."],
-      ["BOS @ BAL","Luis Robert Jr. OVER 0.5 RBI","O0.5 RBI • +226","39%","1 RBI","HIT","RBI ceiling converted."],
-      ["MIA @ KC","Heriberto Hernández OVER 0.5 RBI","O0.5 RBI • +155","45%","1 RBI","HIT","Home run also cleared RBI market."],
-      ["ATH @ SEA","Lawrence Butler OVER 0.5 RBI","O0.5 RBI • +277","34%","2 RBI","HIT","Aggressive ceiling leg landed despite low confidence."]
-    ],
-    tickets:[
-      ["CWS@HOU • SNS/Goblin 1","HIT","1-0","—","Alvarez walk cleared."],
-      ["CWS@HOU • SNS/Goblin 2","MISS","1-1","Vargas RBI","Alvarez hit; Vargas produced no RBI."],
-      ["CWS@HOU • Normal","HIT","1-0","—","Single Alvarez leg cleared."],
-      ["CWS@HOU • Demon","MISS","0-1","Vargas RBI","Wrong ceiling channel."],
-      ["MIL@CHC • SNS/Goblin 1","MISS","1-1","Bauers hit","PCA hit; Bauers went hitless."],
-      ["MIL@CHC • SNS/Goblin 2","MISS","1-2","Bauers/Chourio","PCA hit; two legs failed."],
-      ["MIL@CHC • Normal","MISS","1-2","Bauers/Suzuki","Only PCA cleared."],
-      ["MIL@CHC • Demon","MISS","0-3","All RBI legs","No Bregman/Busch/Turang RBI."],
-      ["BOS@BAL • SNS/Goblin 1","MISS","0-1","Young U17.5 outs","Young recorded 20 outs."],
-      ["BOS@BAL • SNS/Goblin 2","MISS","1-1","Young U17.5 outs","Robert TB hit; Young under failed."],
-      ["BOS@BAL • Normal","MISS","1-1","Young U17.5 outs","Same failure channel."],
-      ["BOS@BAL • Demon","MISS","1-1","Henderson RBI","Robert RBI hit; Henderson did not."],
-      ["MIA@KC • SNS/Goblin 1","MISS","0-1","Witt TB","Witt finished with 0 TB."],
-      ["MIA@KC • SNS/Goblin 2","MISS","1-1","Witt TB","Hernández hit; Witt failed."],
-      ["MIA@KC • Normal","MISS","1-1","Witt TB","Same failure channel."],
-      ["MIA@KC • Demon","HIT","2-0","—","Perez RBI + Hernández RBI both cleared."],
-      ["TB@TEX • SNS/Goblin 1","HIT","1-0","—","McClanahan K under cleared."],
-      ["TB@TEX • SNS/Goblin 2","UNGRADED","1 graded + WATCH","WATCH leg","Not a fully executable two-leg ticket."],
-      ["TB@TEX • Normal","MISS","1-1","Langford RBI","McClanahan hit; Langford did not."],
-      ["TB@TEX • Demon","MISS","0-2","Both RBI legs","Neither Langford nor Mullins recorded an RBI."],
-      ["ATH@SEA • SNS/Goblin 1","MISS","1-1","Anderson K","Raleigh under hit; Anderson had only 3 K."],
-      ["ATH@SEA • SNS/Goblin 2","MISS","1-1","Anderson K","Butler singles hit; Anderson failed."],
-      ["ATH@SEA • Normal","MISS","2-1","Anderson K","Raleigh and Butler hit; Anderson killed the card."],
-      ["ATH@SEA • Demon","HIT","1-0","—","Butler RBI ceiling hit with 2 RBI."]
-    ],
-    positive:[
-      "JINX winner board went 5-3 on graded sides; Pirates, Blue Jays, Astros, Red Sox and Dodgers all hit.",
-      "Yordan Alvarez walk and Shane McClanahan strikeout-under validated the discipline of choosing the statistical channel rather than only the player.",
-      "Heriberto Hernández, Pete Crow-Armstrong and Luis Robert Jr. all produced extra-base ceiling outcomes that cleared plus-money total-base/RBI positions.",
-      "The MIA@KC Demon and ATH@SEA Demon constructions both hit, showing that selected ceiling legs can outperform when the underlying player read is correct."
-    ],
-    negative:[
-      "The three highest-confidence MLB props all missed: Kade Anderson O5.5 K (69%), Jake Bauers O0.5 H (68%) and Brandon Young U17.5 outs (65%).",
-      "Seattle ML at 66% was a meaningful calibration failure; Oakland won 7-4.",
-      "Rays ML lost 6-0, a complete game-side miss rather than a close variance result.",
-      "RBI-heavy Cubs/Brewers constructions performed poorly; sequencing-dependent markets were overused relative to lower-threshold contact markets."
-    ],
-    jinx:"September 3 was below standard on MLB: 48.5% across the recoverable graded winner/prop ledger and only 21.7% of fully graded tickets hit. The largest issue was confidence calibration at the top of the player board: projection strength was converted into percentages too aggressively before role/workload/contact uncertainty was fully discounted. Going forward, L&J should cap confidence on young-pitcher strikeout overs and pitcher-outs assumptions until recent workload evidence is stronger, reduce RBI concentration in SNS/Normal constructions, and prefer walk/contact/low-threshold total-base markets when the player read is strong but sequencing is uncertain.",
-    followups:{
-      runItBack:["Alvarez-style walk markets when discipline + matchup both support them","Pitcher strikeout unders when workload/leash evidence is explicit","Low-threshold contact/total-base markets with confirmed lineup"],
-      watch:["Seattle favorite pricing after the Sep 3 upset","Young-pitcher K projections until workload/whiff conversion stabilizes","Bobby Witt total-base ceiling after 0-TB miss"],
-      avoid:["RBI-heavy SNS constructions","Treating high model projection as high audited probability without workload discount","Using a favorite side when independent models materially disagree"],
-      marketSwitch:["Miguel Vargas: hits/stolen-base channels were live; RBI was wrong","Luis Robert Jr.: total bases was materially cleaner than pure RBI dependence","Use lower-threshold hitter markets before sequencing-dependent RBI legs"]
-    }
-  };
+  const UFC={label:"UFC",icon:"🥊",currentPage:"UFC.html",priorDate:"September 5, 2026",status:"VERIFIED UFC PARIS MONEYLINE AUDIT",summary:{published:"6 exact participant winners",hits:"3",misses:"3",voids:"0",ungraded:"0",accuracy:"50.0% • 3/6",props:"50.0% • 3/6 fight-winner positions",winners:"50.0% • 3/6",tickets:"NOT SCORED • no exact fully recoverable multi-leg UFC ticket",tiers:"Winner board only",calibration:"TOP PICK PARNASSE HIT • WOOD/SY/ZIAIM FAVORITES FAILED"},ledger:[
+    ["Hooker vs Parnasse","Salahdine Parnasse","ML • -550","84%","Parnasse TKO R1","HIT","Top pick dominated."],
+    ["Wood vs Andrusca","Nathaniel Wood","ML • -315","76%","Andrusca UD","MISS","Heavy favorite upset."],
+    ["Pinto vs Spann","Mario Pinto","ML • -305","75%","Pinto TKO R2","HIT","Favorite converted."],
+    ["Sy vs Bukauskas","Oumar Sy","ML • -230","69%","Bukauskas TKO R2","MISS","Favorite stopped; meaningful calibration miss."],
+    ["Charriere vs Lima","Felipe Lima","ML • -185","65%","Lima UD","HIT","Moderate favorite converted."],
+    ["Ziam vs Sola","Farès Ziam","ML • -150","59%","Sola KO R1","MISS","Sola's power invalidated the lean quickly."]
+  ],tickets:[],positive:["Parnasse, Pinto and Lima all converted.","Parnasse's first-round finish validated the strongest fighter identification."],negative:["Wood at 76% lost a clear unanimous decision.","Sy at 69% and Ziam at 59% were stopped, showing favorite pricing was over-trusted."],jinx:"UFC Paris finished 3-3 on the recoverable winner board. Price alone is not enough. The next event should place more weight on opponent finishing threat, stylistic volatility and late-replacement uncertainty before promoting a favorite to SNS-level confidence.",followups:{runItBack:["Parnasse-style favorites with multiple independent matchup advantages"],watch:["Heavy favorites against live finishers","Late replacements"],avoid:["Treating market favorite status as low variance"],marketSwitch:["Separate winner confidence from method/round markets; do not infer one from the other"]}};
 
-  const ncaa = {
-    label:"NCAA FOOTBALL",icon:"🏈",currentPage:"NCAA_Football.html",priorDate:"September 3, 2026",status:"VERIFIED FINAL AUDIT",
-    summary:{published:"34 recoverable unique predictions • 30 graded • 4 ungraded",hits:"21",misses:"9",voids:"0",ungraded:"4",accuracy:"70.0%",props:"63.2% • 12/19 graded",winners:"81.8% • 9/11",tickets:"52.4% • 11/21 graded",tiers:"SNS 63.6% • Normal 57.1% • Demon 0%",calibration:"WINNER BOARD STRONG • DEMON TIER FAILED • PLAYER CEILING MIXED"},
-    ledger:[
-      ["UMass @ Rutgers","Rutgers","Winner","82%","UMass 37, Rutgers 21","MISS","High-confidence upset loss; talent/home assumptions were materially wrong."],
-      ["Bethune-Cookman @ UCF","UCF","Winner","91%","UCF 73, B-C 6","HIT","Dominant favorite read."],
-      ["Akron @ Wake Forest","Wake Forest","Winner","84%","Wake 38, Akron 16","HIT","Strong favorite read."],
-      ["Merrimack @ Delaware","Delaware","Winner","79%","Delaware 42, Merrimack 7","HIT","Comfortable favorite win."],
-      ["West Georgia @ Kennesaw State","Kennesaw State","Winner","78%","Kennesaw 47, West Georgia 0","HIT","Dominant result."],
-      ["UAlbany @ Buffalo","Buffalo","Winner","77%","Buffalo 21, UAlbany 17","HIT","Winner landed, but margin was narrow."],
-      ["UAPB @ Missouri","Missouri","Winner","96%","Missouri 54, UAPB 14","HIT","High-confidence favorite converted."],
-      ["Colorado @ Georgia Tech","Georgia Tech","Winner","70%","Colorado 14, Georgia Tech 13","MISS","One-point loss; side edge was overstated."],
-      ["Eastern Illinois @ Minnesota","Minnesota","Winner","93%","Minnesota 59, EIU 7","HIT","Dominant favorite win."],
-      ["Idaho @ Utah","Utah","Winner","94%","Utah 66, Idaho 14","HIT","Dominant favorite win."],
-      ["UAB @ Illinois","Illinois","Winner","92%","Illinois 42, UAB 23","HIT","Strong favorite converted."],
+  const Boxing={label:"BOXING",icon:"🥊",currentPage:"Boxing.html",priorDate:"September 5, 2026",status:"VERIFIED FINAL AUDIT",summary:{published:"2 exact Katie Taylor positions",hits:"2",misses:"0",voids:"0",ungraded:"0",accuracy:"100% • 2/2",props:"100% • 1/1 method position",winners:"100% • 1/1",tickets:"NOT SCORED",tiers:"Winner + method",calibration:"STRONG • DECISION MARKET WAS THE BETTER MULTIPLIER"},ledger:[
+    ["Katie Taylor vs Flora Pili","Katie Taylor fight winner","1.04 / about -2500","94%","Taylor unanimous decision","HIT","Raw winner floor converted."],
+    ["Katie Taylor vs Flora Pili","Katie Taylor by decision","1.44 / about -227","76%","Taylor unanimous decision","HIT","Correct method selection delivered materially better price."]
+  ],tickets:[],positive:["Winner and decision method both hit; the decision market was the superior probability-to-multiplier expression."],negative:[],jinx:"This was the cleanest example of the market-ranking rule: Taylor was correctly identified, but the decision method offered substantially more useful payout while retaining a strong evidence base.",followups:{runItBack:["Rank method markets after identifying the likely winner"],watch:["Farewell-fight emotion should never substitute for matchup evidence"],avoid:["Ultra-expensive ML when a well-supported method market exists"],marketSwitch:["Winner → decision when durability and style support a full-distance fight"]}};
 
-      ["Colorado @ Georgia Tech","Justice Haynes 100+ rushing yards","100+ rush • +193 DK","64%","64 rush yards","MISS","Volume was present but efficiency/ceiling did not materialize."],
-      ["Colorado @ Georgia Tech","Julian Lewis UNDER 220.5 passing yards","U220.5 pass • -115","63%","116 pass yards","HIT","Under cleared comfortably."],
-      ["UMass @ Rutgers","Dylan Lonergan OVER 228.5 passing yards","O228.5 pass • PrizePicks","62%","242 pass yards","HIT","Cleared by 13 yards despite three interceptions."],
-      ["UAB @ Illinois","Ca'Lil Valentine OVER 76.5 rushing yards","O76.5 rush • PrizePicks","61%","88 rush yards","HIT","Favorite run-script thesis worked."],
-      ["Colorado @ Georgia Tech","Danny Scudero 50+ receiving yards","50+ rec • -119 DK","60%","4 receiving yards","MISS","Major receiving-volume miss."],
-      ["UMass @ Rutgers","KJ Duff OVER 84.5 receiving yards","O84.5 rec • PrizePicks","59%","196 rec yards • 3 TD","HIT","Massive ceiling performance."],
-      ["UAB @ Illinois","Hudson Clement UNDER 64.5 receiving yards","U64.5 rec • -115","59%","26 rec yards","HIT","Positive-script volume suppression worked."],
-      ["Akron @ Wake Forest","Carlos Hernandez OVER 67.5 receiving yards","O67.5 rec","57%","165 rec yards • TD","HIT","Explosive ceiling outcome."],
-      ["UMass @ Rutgers","Antwan Raymond OVER 92.5 rushing yards","O92.5 rush • -115","57%","42 rush yards","MISS","Rutgers game script collapsed; rushing thesis failed."],
-      ["UAB @ Illinois","Collin Dixon anytime TD","ATD • -105 DK","55%","2 receiving TD","HIT","Strong red-zone role."],
-      ["Akron @ Wake Forest","Gio Lopez OVER 243.5 passing yards","O243.5 pass • PrizePicks","55%","350 pass yards","HIT","Passing ceiling cleared strongly."],
-      ["UMass @ Rutgers","William Watson III OVER 0.5 passing TD","O0.5 pass TD • PrizePicks","54%","3 passing TD","HIT","Cleared comfortably."],
-      ["Bethune-Cookman @ UCF","Alonza Barnett III OVER 0.5 rushing TD","O0.5 rush TD","54%","1 rushing TD","HIT","Red-zone rushing thesis converted."],
-      ["UAPB @ Missouri","Cayden Lee MORE 0.5 player TD","0.5 TD • PrizePicks Goblin","53%","1 receiving TD","HIT","Scored once."],
-      ["Colorado @ Georgia Tech","DeKalon Taylor anytime TD","ATD • +220","43%","0 TD","MISS","No touchdown."],
-      ["UMass @ Rutgers","Jourdin Houston anytime TD","ATD • +275","26%","0 TD","MISS","No touchdown."],
-      ["Akron @ Wake Forest","Jack Foley anytime TD","ATD • +320","26%","Participation/settlement not fully verified","UNGRADED","Do not force a loss without verified settlement context."],
-      ["UAB @ Illinois","Christian Abney anytime TD","ATD • +360","24%","Participation/settlement not fully verified","UNGRADED","No reliable exact settlement evidence recovered."],
-      ["Colorado @ Georgia Tech","Gavin Harris anytime TD","ATD • +390","24%","Participation/settlement not fully verified","UNGRADED","No reliable exact settlement evidence recovered."],
-      ["Akron @ Wake Forest","Conner Cravaack anytime TD","ATD • +650","14%","1 catch, 5 yards, 0 TD","MISS","Longshot did not score."],
-      ["Akron @ Wake Forest","Carlos Hernandez anytime TD","ATD • +110 DK","51%","1 receiving TD","HIT","Secondary Hernandez market also hit."],
-      ["Idaho @ Utah","Devon Dampier OVER 49.5 rushing yards","O49.5 rush","56%","31 rush yards","MISS","Blowout/rotation suppressed the rushing total."],
-      ["UAB @ Illinois","Collin Dixon first touchdown","First TD • +850","12%","Dixon scored twice; first-TD sequence not independently verified","UNGRADED","Exact first-score settlement not reconstructed from memory."]
-    ],
-    tickets:[
-      ["UMass@Rutgers • SNS/Goblin 1","HIT","2-0","—","Duff receiving + Lonergan passing both cleared."],
-      ["UMass@Rutgers • SNS/Goblin 2","MISS","1-1","Raymond rush","Duff hit; Raymond missed."],
-      ["UMass@Rutgers • Normal","MISS","2-1","Raymond rush","Lonergan/Duff hit; Raymond killed card."],
-      ["UMass@Rutgers • Demon","MISS","1-1","Jourdin Houston TD","Watson TD hit; Houston did not score."],
-      ["B-C@UCF • SNS/Goblin 1","HIT","1-0","—","Barnett rushing TD cleared."],
-      ["B-C@UCF • Normal","HIT","1-0","—","Barnett rushing TD cleared."],
-      ["Akron@Wake • SNS/Goblin 1","HIT","2-0","—","Hernandez yards + Lopez passing both cleared."],
-      ["Akron@Wake • SNS/Goblin 2","HIT","1-0","—","Hernandez anytime TD cleared."],
-      ["Akron@Wake • Normal","HIT","2-0","—","Lopez + Hernandez yardage both hit."],
-      ["Akron@Wake • Demon","MISS","0-1 + 1 ungraded","Cravaack TD","Cravaack failed; Foley settlement not needed to determine ticket loss."],
-      ["UAPB@Missouri • SNS/Goblin 1","HIT","1-0","—","Cayden Lee TD cleared."],
-      ["UAPB@Missouri • Normal","HIT","1-0","—","Cayden Lee TD cleared."],
-      ["Colorado@GT • SNS/Goblin 1","MISS","1-1","Scudero 50+ rec","Lewis under hit; Scudero finished with 4 yards."],
-      ["Colorado@GT • SNS/Goblin 2","MISS","1-1","Haynes 100+ rush","Lewis under hit; Haynes missed."],
-      ["Colorado@GT • Normal","MISS","1-2","Haynes + Scudero","Only Lewis under cleared."],
-      ["Colorado@GT • Demon","MISS","0-1 + 1 ungraded","DeKalon Taylor TD","Taylor did not score; Harris settlement not required to determine loss."],
-      ["Idaho@Utah • SNS/Goblin 1","MISS","0-1","Dampier O49.5 rush","Dampier finished with 31 rush yards."],
-      ["Idaho@Utah • Normal","MISS","0-1","Dampier O49.5 rush","Same failed leg."],
-      ["UAB@Illinois • SNS/Goblin 1","HIT","2-0","—","Valentine over + Clement under both cleared."],
-      ["UAB@Illinois • SNS/Goblin 2","HIT","2-0","—","Valentine over + Dixon TD both cleared."],
-      ["UAB@Illinois • Normal","HIT","3-0","—","Valentine, Clement and Dixon all cleared."],
-      ["UAB@Illinois • Demon","UNGRADED","Dixon scored twice • exact first-TD/Abney settlement incomplete","First-TD sequence","Exact settlement evidence is incomplete; do not reconstruct it."]
-    ],
-    positive:[
-      "JINX game-winner board finished 9-2 (81.8%), with UCF, Wake, Delaware, Kennesaw, Buffalo, Missouri, Minnesota, Utah and Illinois all winning.",
-      "KJ Duff erupted for 196 yards and three TDs, validating the receiving-ceiling read at only 59% confidence.",
-      "Carlos Hernandez (165 yards + TD) and Gio Lopez (350 passing yards) both crushed their thresholds.",
-      "Illinois prop architecture was excellent: Valentine O76.5 rush, Clement U64.5 rec and Dixon ATD all hit, producing three winning graded tickets."
-    ],
-    negative:[
-      "Rutgers lost outright to UMass 37-21 despite an 82% JINX winner confidence — the largest team-side calibration failure.",
-      "Georgia Tech lost 14-13 to Colorado at 70% confidence; the side was too aggressively priced for a competitive matchup.",
-      "Justice Haynes 100+ rushing yards (64%) finished at 64 yards, and Danny Scudero 50+ receiving yards (60%) finished with only 4 yards.",
-      "Aggressive/Demon constructions went 0-3 on fully graded tickets; sparse Week 1 touchdown longshots were not a productive risk tier."
-    ],
-    jinx:"NCAA Football was materially stronger than MLB on September 3: 70.0% overall on the recoverable unique winner/prop ledger, with the winner board at 81.8%. The key lesson is tier separation. Team-side favorites with clear talent/depth advantages performed well, while player ceiling markets were more volatile and Demon touchdown constructions were poor. L&J should preserve high-confidence winner calls on true mismatch games, but cap player confidence when roles are new and eliminate low-information Demon filler. The Rutgers upset also shows that a large market spread cannot substitute for current roster/coaching/game-state evidence.",
-    followups:{
-      runItBack:["Clear mismatch moneyline/winner calls with strong roster/depth separation","Receiver overs where target hierarchy and opponent secondary weakness align","Favorite-script rushing + receiver-under combinations when role is established"],
-      watch:["Rutgers after the UMass upset","Georgia Tech offense after 13-point opener","Devon Dampier rushing volume in blowout environments"],
-      avoid:["Week 1 longshot anytime-TD Demon stacking","Treating large favorite spreads as automatic player-over support","High-confidence player ceilings without established 2026 role evidence"],
-      marketSwitch:["Justice Haynes: consider lower rushing milestones instead of 100+ ceiling","Danny Scudero: target/reception floor must be verified before yardage milestone","Dampier: passing/TD channels may be cleaner than rush yards in heavy-favorite rotations"]
-    }
-  };
+  const Tennis={label:"TENNIS",icon:"🎾",currentPage:"Tennis.html",priorDate:"September 5, 2026",status:"VERIFIED PARTIAL US OPEN WINNER AUDIT",summary:{published:"6 graded match winners • 1 ungraded",hits:"3",misses:"3",voids:"0",ungraded:"1",accuracy:"50.0% • 3/6",props:"N/A • match-winner board",winners:"50.0% • 3/6",tickets:"NOT SCORED",tiers:"Winner board only",calibration:"HIGH-PRICE FAVORITES FRITZ/ANISIMOVA FAILED"},ledger:[
+    ["Gauff vs Bucsa","Coco Gauff match winner","-2500 to -3300","93%","Gauff won 6-3, 6-4","HIT","Top women's floor converted."],
+    ["Fritz vs Cerundolo","Taylor Fritz match winner","-680 to -700","86%","Cerundolo won in five sets","MISS","Large favorite price concealed comeback/variance risk."],
+    ["Anisimova vs Potapova","Amanda Anisimova match winner","-500","83%","Potapova won 6-2, 7-5","MISS","High-confidence favorite failed in straight sets."],
+    ["Swiatek vs Bouzkova","Iga Swiatek match winner","-600","85%","Swiatek won in straight sets","HIT","Favorite converted through two tiebreaks."],
+    ["Rybakina vs Starodubtseva","Elena Rybakina match winner","-1200","90%","Rybakina won in straight sets","HIT","Strong favorite converted."],
+    ["Cobolli vs Blockx","Flavio Cobolli match winner","-116 to -125","56%","Blockx won","MISS","Near-market pick failed; Blockx's serve/winner profile was underweighted."],
+    ["Zverev vs Tabilo","Alexander Zverev match winner","-690 to -770","86%","Exact final not recovered in this audit sweep","UNGRADED","Do not reconstruct result from memory."]
+  ],tickets:[],positive:["Gauff, Swiatek and Rybakina all advanced."],negative:["Fritz and Anisimova were major high-confidence favorite failures.","Cobolli's loss to Blockx was a player-selection miss at a near-evener price."],jinx:"The September 5 tennis board was only 50% on verified recoverable winners despite several short prices. Sunday needs stronger opponent-quality and recent-match fatigue weighting; an expensive favorite is not automatically an SNS-quality selection.",followups:{runItBack:["Elite favorite only when form + matchup + physical state align"],watch:["Players coming off long matches","Crowd/nationality narratives"],avoid:["Using short money as a proxy for confidence"],marketSwitch:["Consider set/game spreads only after winner edge is independently established"]}};
 
-  const boxing = blank("BOXING","🥊","Boxing.html","RESULT NOT YET INDEPENDENTLY VERIFIED / UNGRADED");
-  boxing.summary = {published:"1 settled-date winner + related Perez tickets",hits:"—",misses:"—",voids:"0",ungraded:"1+",accuracy:"UNGRADED",props:"NOT SCORED",winners:"UNGRADED",tickets:"UNGRADED",tiers:"UNGRADED",calibration:"PENDING VERIFIED FINAL RESULT"};
-  boxing.ledger = [["Sep 3 • Lenar Perez vs Thabiso Mchunu","Lenar Perez to win","ML roughly -1200 to -1600","88%","Final result not independently verified at recap sweep","UNGRADED","Do not infer the result from pre-fight sources or memory."]];
-  boxing.tickets = [["Perez • SNS/Normal ML constructions","UNGRADED","Result pending verification","Perez ML","Exact final outcome still needs an independently verified result source."]];
-  boxing.jinx = "Perez vs Mchunu was a September 3 published prediction, but the accessible recap sweep did not produce a sufficiently reliable final-result source. L&J therefore leaves the pick and associated tickets UNGRADED rather than manufacturing a win/loss. Once the final is independently verified, this audit can be completed.";
-  boxing.followups.watch = ["Perez vs Mchunu final-result verification"];
-
-  const nfl = blank("NFL","🏈","NFL.html","FUTURE WEEK 1 PREDICTIONS PUBLISHED • NOT SETTLED / NOT SCORED");
-  nfl.summary.ungraded = "Future event";
-  const nba = blank("NBA","🏀","NBA.html");
-  const wnba = blank("WNBA","🏀","WNBA.html","WORLD CUP BREAK • NO SETTLED WNBA PREDICTIONS");
-  const nhl = blank("NHL","🏒","NHL.html");
-  const fibaMen = blank("FIBA MEN","🌍🏀","FIBA_Men.html");
-  const fibaWomen = blank("FIBA WOMEN","🌍🏀","FIBA_Women.html","SEP 4 WORLD CUP PREDICTIONS WERE PUBLISHED EARLY • NOT YET SETTLED AT PRIOR-DAY AUDIT");
-  fibaWomen.summary.ungraded = "Future event predictions";
-  const ncaaB = blank("NCAA BASKETBALL","🏀","NCAA_Basketball.html");
-  const ufc = blank("UFC","🥊","UFC.html","SEP 5 UFC PARIS PREDICTIONS PUBLISHED • FUTURE EVENT / NOT SCORED");
-  ufc.summary.ungraded = "Future event predictions";
-  const tennis = blank("TENNIS","🎾","Tennis.html","SEP 4 US OPEN PREDICTIONS PUBLISHED • EVENT DAY NOT YET COMPLETE / NOT SCORED");
-  tennis.summary.ungraded = "Future/current-day event predictions";
-
-  return {
-    updated:"September 4, 2026 • September 3 prediction audit • verified finals only",
-    sports:{MLB:mlb,NFL:nfl,NBA:nba,WNBA:wnba,NHL:nhl,FIBA_Men:fibaMen,FIBA_Women:fibaWomen,NCAA_Football:ncaa,NCAA_Basketball:ncaaB,UFC:ufc,Boxing:boxing,Tennis:tennis}
-  };
+  return {updated:"Recap audited Sep 5, 2026 • master publication cutoff",sports:{MLB,NFL:blank("NFL","🏈","NFL.html"),NBA:blank("NBA","🏀","NBA.html"),WNBA:blank("WNBA","🏀","WNBA.html"),NHL:blank("NHL","🏒","NHL.html"),FIBA_Men:blank("FIBA MEN","🌍🏀","FIBA_Men.html"),FIBA_Women:blank("FIBA WOMEN","🌍🏀","FIBA_Women.html","NO EXACT SETTLED SEPTEMBER 5 MARKET RECOVERED / NOT SCORED"),NCAA_Football:NCAA,NCAA_Basketball:blank("NCAA BASKETBALL","🏀","NCAA_Basketball.html"),UFC,Boxing,Tennis}};
 })();
