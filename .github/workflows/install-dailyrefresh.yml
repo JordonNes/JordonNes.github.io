@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
-      - name: Insert current refresh layer into DP pages
+      - name: Insert current refresh layers into DP pages
         shell: bash
         run: |
           python3 - <<'PY'
@@ -26,25 +26,26 @@ jobs:
               'FIBA_Men.html','FIBA_Women.html','NCAA_Football.html','NCAA_Basketball.html',
               'UFC.html','Boxing.html','Tennis.html'
           ]
-          refresh = '<script src="dailyrefresh.js"></script>'
+          daily = '<script src="dailyrefresh.js"></script>'
+          morning = '<script src="morningrefresh.js"></script>'
           for name in pages:
               p = Path(name)
               s = p.read_text(encoding='utf-8')
-              if refresh not in s:
-                  marker = '<script src="ljapp.js"></script>'
-                  if marker not in s:
-                      raise SystemExit(f'{name}: ljapp marker missing')
-                  s = s.replace(marker, refresh + marker, 1)
-              if name == 'LJ_index.html' and '<script src="dailyrefresh_post.js"></script>' not in s:
-                  s = s.replace('</body>', '<script src="dailyrefresh_post.js"></script></body>', 1)
+              marker = '<script src="ljapp.js"></script>'
+              if marker not in s:
+                  raise SystemExit(f'{name}: ljapp marker missing')
+              if daily not in s:
+                  s = s.replace(marker, daily + marker, 1)
+              if morning not in s:
+                  s = s.replace(marker, morning + marker, 1)
               p.write_text(s, encoding='utf-8')
           PY
           git config user.name 'Jordon Nesbitt'
           git config user.email '61303614+JordonNes@users.noreply.github.com'
           git add LJ_index.html MLB.html NFL.html NBA.html WNBA.html NHL.html FIBA_Men.html FIBA_Women.html NCAA_Football.html NCAA_Basketball.html UFC.html Boxing.html Tennis.html
           if git diff --cached --quiet; then
-            echo 'Refresh layer already installed.'
+            echo 'Refresh layers already installed.'
             exit 0
           fi
-          git commit -m 'Load current daily refresh overlay across L&J DP pages'
+          git commit -m 'Load Sep 6 morning refresh layer across L&J DP pages'
           git push origin HEAD:master
