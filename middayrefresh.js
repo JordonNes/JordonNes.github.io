@@ -89,12 +89,33 @@
       ["Carlos Alcaraz","Win 3-0 2.38-2.75 decimal snapshot","47%","Demon-only because Shelton's serve raises straight-set variance."]
     ];
     T.winners=[["Pegula vs Navarro","Jessica Pegula","81%","NIGHT SESSION first match."],["Shelton vs Alcaraz","Carlos Alcaraz","82%","FOLLOWS Pegula-Navarro; no invented start time."]];
+    T.hotTopLabel="LEGZ TOP";
+    T.winnerLabel="JINX GAME WINNERS";
     T.twenty=[row("TENNIS","Jessica Pegula","Match winner","-437 snapshot","81%"),row("TENNIS","Carlos Alcaraz","Match winner","-421 snapshot","82%"),row("TENNIS","Ben Shelton","Win at least one set","1.44 decimal","64%"),row("TENNIS","Carlos Alcaraz","Win 3-0","2.38-2.75 decimal","47%","★★★☆☆","🔥🔥🔥")];
     T.twentyNote="Sabalenka-Noskova is completed; Tiafoe-Michelsen is live and removed from fresh pre-match recommendations. Only the night-session matches remain actionable pre-match at this sweep.";
     T.qcTitle="TENNIS — US OPEN SEPTEMBER 8 REMAINING QCs";
     T.qcs=[
       q("NIGHT SESSION • FIRST MATCH","EMMA NAVARRO","JESSICA PEGULA","Pegula -437 current snapshot","Pegula","81%",["Pegula ML -437 • 81%"],["Pegula ML • 81%"],[WATCH],["Pegula ML • 81%"],[WATCH],"No fabricated player-stat line; match winner is the cleanest verified market."),
       q("FOLLOWS • NO INVENTED START TIME","BEN SHELTON","CARLOS ALCARAZ","Alcaraz -421 snapshot • Shelton 4.00 / Alcaraz 1.20 alternate market","Alcaraz","82%",["Alcaraz ML • 82%","Shelton wins 1+ set • 64%"],["Alcaraz ML • 82%"],["Shelton wins 1+ set • 64%"],["Alcaraz ML • 82%"],["Alcaraz 3-0 • 47%"],"Shelton's serve is the kill switch for straight-set constructions.")
+    ];
+    T.qcGroups=[
+      {title:"Men's Singles",note:"Current and next US Open men's singles matches",rows:[
+        T.qcs[1],
+        q("SEP 9 • 7:30 PM ET / 4:30 PM PT","BOTIC VAN DE ZANDSCHULP","ALEXANDER ZVEREV","Kalshi snapshot: Zverev 87-88¢","Zverev","87%",["Zverev ML • 87%","Zverev -1.5 sets • 73%"],["Zverev ML • 87%"],[WATCH],["Zverev ML • 87%"],["Zverev 3-0 • 57%"],"Botic's first-serve ceiling is the upset channel; Zverev's hold/return baseline is the dominant edge."),
+        q("SEP 9 • OFFICIAL ORDER WATCH","ALEXANDER BLOCKX","KAREN KHACHANOV","Khachanov approximately 58-60% market probability","Khachanov","59%",["Khachanov ML • 59%","Over 3.5 sets • 66%"],[WATCH],[WATCH],["Over 3.5 sets • 66%"],["Khachanov 3-2 • 25%"],"Lowest-confidence singles winner; keep off accuracy-first tickets.")
+      ]},
+      {title:"Men's Doubles",note:"Dedicated board remains visible between rounds",rows:[
+        q("NEXT ROUND • OFFICIAL ORDER PENDING","SEMIFINALIST A","SEMIFINALIST B","WATCH — semifinal pairing/time and executable market pending","WATCH","—",[WATCH],[WATCH],[WATCH],[WATCH],[WATCH],"Granollers/Zeballos advanced from the completed quarterfinal; publish the semifinal only after the official draw and market are verified.")
+      ]},
+      {title:"Women's Singles",note:"Current and next US Open women's singles matches",rows:[
+        T.qcs[0],
+        q("SEP 9 • 11:30 AM ET / 8:30 AM PT","QINWEN ZHENG","ELENA RYBAKINA","Kalshi snapshot: Rybakina 73¢ / Zheng 28¢","Rybakina","71%",["Rybakina ML • 71%","Rybakina 2-0 • 51%"],["Rybakina ML • 71%"],[WATCH],["Rybakina ML • 71%"],["Rybakina 2-0 • 51%"],"Zheng's upset run is real; Rybakina's no-set-lost form and first-strike advantage carry the forecast."),
+        q("SEP 9 • OFFICIAL ORDER WATCH","MIRRA ANDREEVA","COCO GAUFF","Current model range: Gauff approximately 60-61%","Gauff","61%",["Gauff ML • 61%","Andreeva +1.5 sets • 63%"],[WATCH],[WATCH],["Gauff ML • 61%"],["Gauff 2-1 • 31%"],"Gauff leads the recorded H2H 5-0, but Andreeva's current level makes this a volatile favorite.")
+      ]},
+      {title:"Women's Doubles",note:"Quarterfinal results roll forward to the semifinal board",rows:[
+        q("SEP 9 • SEMIFINAL • TIME WATCH","MERTENS / SHNAIDER","SINIAKOVA / TOWNSEND","WATCH — executable semifinal moneyline pending","Siniakova / Townsend","63%",["Siniakova / Townsend ML • 63% model lean"],[WATCH],[WATCH],["Siniakova / Townsend ML • line pending"],[WATCH],"Do not publish a price until the semifinal market is independently verified."),
+        q("SEP 9 • SEMIFINAL • OPPONENT PENDING","ROUTLIFFE / SUTJIADI OR KRUEGER / MONTGOMERY","DABROWSKI / STEFANI","WATCH — second finalist and executable market pending","Dabrowski / Stefani","64%",["Dabrowski / Stefani ML • 64% preliminary lean"],[WATCH],[WATCH],["Dabrowski / Stefani ML • line pending"],[WATCH],"Opponent must be finalized before the preliminary confidence becomes actionable.")
+      ]}
     ];
   }
 

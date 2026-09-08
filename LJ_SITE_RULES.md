@@ -92,6 +92,8 @@ For each active Tennis slate, L&J should use the official order of play plus cur
 
 Tennis QCs must show the scheduled or official-order start designation. When an exact court time is not assigned because a match follows an earlier match, state the official **FOLLOWS / NOT BEFORE / NIGHT SESSION** designation rather than inventing a clock time.
 
+The Tennis Daily Predictions page permanently separates its Quickie Cards into four labeled subsections: **Men's Singles, Men's Doubles, Women's Singles, and Women's Doubles**. Each subsection remains visible between rounds and displays WATCH rather than disappearing when a draw, start time, opponent, or executable market is not yet verified. The page also retains the sport-level **LEGZ TOP** and **JINX GAME WINNERS** sections above those four QC boards.
+
 Match-winner favorites with very expensive prices may carry high L&J hit confidence but must not automatically be treated as good value. The preferred market should be the best probability-to-price expression after comparing winner, handicap, total and set markets.
 
 The Recap page must grade all published Tennis selections after final results are verified. Retirements, walkovers, defaults and sportsbook-specific settlement issues must be classified as HIT, MISS, PUSH/VOID or UNGRADED according to the exact published market and verifiable settlement context; never force an ambiguous retirement into a win/loss grade.

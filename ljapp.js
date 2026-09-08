@@ -37,8 +37,8 @@
   function winners(items,label="JINX GAME WINNERS"){
     return `<div class="headliner-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">JINX Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>MARKET WATCH</b><p>No executable side/winner board today.</p></div>`}</div>`;
   }
-  function headlineSection(hot,wins,home=false){
-    return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ market ranking + JINX game/fight winners</span></div><div class="headliner-grid">${hotTop(hot)}${winners(wins)}</div></section>`;
+  function headlineSection(hot,wins,home=false,hotLabel="LEGZ HOT TOP",winnerLabel="JINX GAME WINNERS"){
+    return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ market ranking + JINX game/fight winners</span></div><div class="headliner-grid">${hotTop(hot,hotLabel)}${winners(wins,winnerLabel)}</div></section>`;
   }
 
   function twenty(rows,note,home=false){
@@ -60,6 +60,10 @@
   }
   function qcs(title,rows){
     return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Approved compact horizontal Quickie Cards</span></div>${rules()}<div class="qc-list">${(rows || []).map(qcRow).join("")}</div><div class="layout-seal">QC PRESENTATION LOCK • daily refreshes change data, never layout</div></section>`;
+  }
+  function groupedQcs(groups){
+    if (!groups || !groups.length) return "";
+    return `<section class="section"><div class="section-head"><h2>TENNIS QUICKIE CARDS</h2><span class="muted">Singles and doubles maintained as separate permanent boards</span></div>${rules()}${groups.map(g=>`<div class="qc-division"><div class="qc-division-head"><h3>${esc(g.title)}</h3><span>${esc(g.note || "Current verified matches only")}</span></div><div class="qc-list">${(g.rows || []).map(qcRow).join("")}</div></div>`).join("")}<div class="layout-seal">TENNIS QC STRUCTURE LOCK • MEN'S SINGLES • MEN'S DOUBLES • WOMEN'S SINGLES • WOMEN'S DOUBLES</div></section>`;
   }
 
   function statusGrid(){
@@ -88,7 +92,8 @@
     const s = D.sports[key];
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
     document.title = `LEGZ & JINX — ${s.title}`;
-    document.getElementById("app").innerHTML = `<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${headlineSection(s.hotTop,s.winners)}${twenty(s.twenty,s.twentyNote)}${qcs(s.qcTitle,s.qcs)}${footer("QC layout locked")}</div>`;
+    const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : qcs(s.qcTitle,s.qcs);
+    document.getElementById("app").innerHTML = `<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel)}${twenty(s.twenty,s.twentyNote)}${quickies}${footer("QC layout locked")}</div>`;
   };
   window.renderLJHome = () => {
     const h = D.home;
