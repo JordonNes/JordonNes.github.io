@@ -1,190 +1,104 @@
 /* LEGZ & JINX — 9:00 PM PT NEXT-DAY MASTER PUBLICATION
-   Target publication date: September 7, 2026.
-   FULL HARD REPLACEMENT. DATA ONLY; presentation remains locked in ljapp.js + ljqc.css.
-   Previous-day audit is stored separately in ljrecapdata.js. */
+   Target publication date: September 8, 2026.
+   FULL HARD REPLACEMENT. DATA ONLY; approved presentation remains locked in ljapp.js + ljqc.css.
+   Prior-day audit is stored separately in ljrecapdata.js. */
 (() => {
   const D=window.LJ_DATA; if(!D) return;
-  const WATCH="WATCH — exact current player/participant market not independently verified after multi-source sweep";
+  const WATCH="WATCH — exact current market not independently verified after multi-source sweep";
   const q=(time,away,home,market,winner,conf,hot=[],sns1=[],sns2=[],normal=[],demon=[],foot="")=>({time,away,home,market,winner,conf,hot,sns1,sns2,normal,demon,foot});
   const row=(sport,name,pred,price,conf,quality="★★★★☆",risk="🔥")=>[sport,name,pred,price,conf,quality,risk];
   const nav=[["MLB","⚾","MLB.html"],["NFL","🏈","NFL.html"],["NBA","🏀","NBA.html"],["WNBA","🏀","WNBA.html"],["NHL","🏒","NHL.html"],["FIBA MEN","🌍🏀","FIBA_Men.html"],["FIBA WOMEN","🌍🏀","FIBA_Women.html"],["NCAA FOOTBALL","🏈","NCAA_Football.html"],["NCAA BASKETBALL","🏀","NCAA_Basketball.html"],["UFC","🥊","UFC.html"],["BOXING","🥊","Boxing.html"],["TENNIS","🎾","Tennis.html"]];
-  D.updated="Updated Sep 6, 2026 • 9:00 PM PT — SEP 7 MASTER PUBLICATION"; D.nav=nav;
-  const status=(icon,title,state,detail,next="")=>({icon,title,meta:`${title} • ${state} • SEP 7 MASTER`,kicker:title,description:detail,chips:[[state,"purple"],["SEP 7 HARD REPLACEMENT","gold"]],hotTop:[],winners:[],twenty:[],twentyNote:next||detail,qcTitle:`${title} — ${state}`,qcs:[]});
+  D.updated="Updated Sep 7, 2026 • 9:00 PM PT — SEP 8 MASTER PUBLICATION"; D.nav=nav;
+  const status=(icon,title,state,detail,next="")=>({icon,title,meta:`${title} • ${state} • SEP 8 MASTER`,kicker:title,description:detail,chips:[[state,"purple"],["SEP 8 HARD REPLACEMENT","gold"]],hotTop:[],winners:[],twenty:[],twentyNote:next||detail,qcTitle:`${title} — ${state}`,qcs:[]});
 
-  const MLB={icon:"⚾",title:"MLB",meta:"MLB • MONDAY SEPTEMBER 7, 2026 • MASTER",kicker:"MLB DAILY PREDICTIONS",
-    description:"Eleven Monday games receive Per-Game Quickies. Current team prices come from the Sep. 7 FanDuel/consensus board; probable pitchers are cross-checked against MLB/StatsHawk. Player props are prediction targets until exact Monday markets open; no Sunday prop is reused.",
-    chips:[["11 GAME QCs","green"],["SEP 7 ONLY","gold"],["LINEUP + MARKET GATE","purple"]],
+  const MLB={icon:"⚾",title:"MLB",meta:"MLB • TUESDAY SEPTEMBER 8, 2026 • MASTER",kicker:"MLB DAILY PREDICTIONS",
+    description:"All 15 Tuesday MLB games receive Per-Game Quickies. StatsHawk confirms the full slate and probable pitchers. Exact player props are not broadly open at the 9 PM PT master sweep, so player sections use explicit activation targets or WATCH rather than recycling Monday lines.",
+    chips:[["15 GAME QCs","green"],["SEP 8 ONLY","gold"],["PROBABLE PITCHERS VERIFIED","purple"]],
     hotTop:[
-      ["Jesús Luzardo","6+ strikeouts PREDICTION TARGET","70%","209 K entering the slate; strikeout floor is the preferred channel vs Atlanta."],
-      ["Eury Pérez","5+ strikeouts PREDICTION TARGET","67%","145 K; home matchup. Activate only if exact line is 5.5 or lower at tolerable juice."],
-      ["Dylan Cease","6+ strikeouts PREDICTION TARGET","66%","Strikeout ceiling preferred over expensive Toronto ML."],
-      ["Logan Webb","6+ innings / 5+ K TARGET","64%","San Francisco is a supported home favorite; workload channel may beat raw K price."],
-      ["Nick Pivetta","5+ strikeouts PREDICTION TARGET","63%","Padres ML is expensive relative to projection; player floor may be cleaner."],
-      ["Kyle Schwarber","1+ hit PREDICTION TARGET","68%","Simple contact floor ranks ahead of HR chasing."],
-      ["Francisco Lindor","1+ hit PREDICTION TARGET","66%","Mets-Marlins near-market coin flip; player contact channel preferred."],
-      ["Rafael Devers","1+ hit PREDICTION TARGET","65%","Lefty/righty matchup gate to be rechecked with final starter confirmation."],
-      ["Vladimir Guerrero Jr.","1+ hit PREDICTION TARGET","65%","Toronto is a strong market favorite; contact floor preferred to HR."],
-      ["Shohei Ohtani","1+ hit PREDICTION TARGET","64%","Late-game lineup/status gate remains mandatory."]
+      ["Tarik Skubal","6+ strikeouts ACTIVATION TARGET","70%","Dodgers matchup is difficult, but Skubal remains the strongest raw K-ceiling arm on the slate; exact line required."],
+      ["Jacob Misiorowski","6+ strikeouts ACTIVATION TARGET","67%","High-variance strikeout profile vs Cubs; do not activate above 6.5 without morning recheck."],
+      ["Corbin Burnes","5+ strikeouts ACTIVATION TARGET","66%","Road matchup at Kansas City; workload floor preferred to aggressive milestones."],
+      ["Freddy Peralta","5+ strikeouts ACTIVATION TARGET","65%","Atlanta matchup; exact price/threshold pending."],
+      ["Sandy Alcantara","5+ strikeouts ACTIVATION TARGET","62%","Mets matchup suppresses confidence; Normal only until line opens."],
+      ["Aaron Judge","1+ hit ACTIVATION TARGET","61%","Reinstated from 60-day IL for Tuesday; return-to-lineup workload is the kill switch."],
+      ["Shohei Ohtani","1+ hit ACTIVATION TARGET","64%","Returned Monday but went hitless; final lineup/status still required Tuesday."],
+      ["Kyle Schwarber","1+ hit ACTIVATION TARGET","66%","Contact floor remains preferable to HR-only exposure after Monday's homer."],
+      ["Bobby Witt Jr.","1+ hit ACTIVATION TARGET","65%","Home contact floor vs Arizona; exact book price pending."],
+      ["Vladimir Guerrero Jr.","1+ hit ACTIVATION TARGET","64%","Toronto-Athletics rematch; lineup confirmation required after Monday night game."]
     ],
     winners:[
-      ["ATL @ PHI","Phillies ML -174","62%","numberFire 62.05%; Luzardo edge."],
-      ["NYM @ MIA","Marlins ML -112","64%","numberFire 64.34%; market price is much closer to pick'em."],
-      ["CLE @ BAL","Orioles ML -120","51%","PASS-quality edge only."],
-      ["LAA @ BOS","Red Sox ML -168","63%","numberFire 63.07%."],
-      ["CHC @ MIL","Brewers ML -124","53%","Small edge; not SNS."],
-      ["ARI @ KC","Royals lean","57%","numberFire 56.54%; exact ML not captured in same board."],
-      ["MIN @ DET","Tigers lean","59%","numberFire 58.91%; exact ML pending."],
-      ["WSH @ SD","Padres ML -205","52%","Price is too rich for the projection; player markets preferred."],
-      ["STL @ SF","Giants ML -142","65%","numberFire 64.52%; strongest price/projection alignment among late games."],
-      ["CIN @ LAD","Dodgers ML -148","60%","numberFire 59.51%."],
-      ["TOR @ ATH","Blue Jays ML -196","54%","Raw win edge modest relative to price."]
+      ["HOU @ PHI","Phillies ML -150 snapshot","56%","Current Action/Kalshi market makes Philadelphia a modest favorite despite Wesneski's stronger ERA."],
+      ["CIN @ LAD","Dodgers ML -151 snapshot","66%","Current market and recent form align; Skubal/Lodolo listing requires morning recheck because provider probable-pitcher feeds can move."],
+      ["COL @ NYY","Yankees lean","63%","Aaron Judge is expected back; exact side price was not cleanly exposed at master sweep."],
+      ["CHC @ MIL","Brewers lean","58%","Milwaukee enters with the stronger record; Misiorowski volatility keeps confidence moderate."],
+      ["ARI @ KC","Diamondbacks lean","57%","Corbin Burnes return materially strengthens Arizona's pitching channel."],
+      ["NYM @ MIA","Mets lean","55%","Monday's 9-run Mets win and Manaea/Alcantara matchup; price pending."],
+      ["TB @ ATL","Rays lean","54%","Freddy Peralta gives Tampa the cleaner starting-pitcher channel; market pending."],
+      ["PIT @ CWS","PASS / Pirates hairline lean","52%","Chandler-Burke matchup requires price confirmation."],
+      ["CLE @ BAL","Orioles lean","55%","Baltimore won Monday; Bibee-Young matchup keeps it near moderate confidence."],
+      ["LAA @ BOS","Red Sox lean","57%","Boston won Monday and remains home; lefty-lefty starter matchup lowers certainty."],
+      ["MIN @ DET","Tigers lean","55%","Detroit won Monday 5-4; current starter listing is Kremer-Anderson."],
+      ["TOR @ ATH","Blue Jays lean","56%","Monday game still live at master cutoff; Tuesday side must be revalidated after final."],
+      ["WSH @ SD","Padres lean","60%","San Diego won Monday and remains home; Cornelio-Mize matchup."],
+      ["STL @ SF","Giants lean","58%","San Francisco won Monday 5-4; Roupp-Mathews matchup."],
+      ["TEX @ SEA","WATCH","—","Probable pitchers were not yet posted by StatsHawk at master sweep; no invented side." ]
     ],
     twenty:[
-      row("MLB","Jesús Luzardo","6+ strikeouts","TARGET","70%"),row("MLB","Kyle Schwarber","1+ hit","TARGET","68%"),
-      row("MLB","Eury Pérez","5+ strikeouts","TARGET","67%"),row("MLB","Francisco Lindor","1+ hit","TARGET","66%"),
-      row("MLB","Dylan Cease","6+ strikeouts","TARGET","66%"),row("MLB","Vladimir Guerrero Jr.","1+ hit","TARGET","65%"),
-      row("MLB","Logan Webb","5+ strikeouts","TARGET","64%"),row("MLB","Nick Pivetta","5+ strikeouts","TARGET","63%")
+      row("MLB","Tarik Skubal","6+ strikeouts","TARGET","70%"),row("MLB","Jacob Misiorowski","6+ strikeouts","TARGET","67%"),row("MLB","Corbin Burnes","5+ strikeouts","TARGET","66%"),row("MLB","Kyle Schwarber","1+ hit","TARGET","66%"),row("MLB","Freddy Peralta","5+ strikeouts","TARGET","65%"),row("MLB","Bobby Witt Jr.","1+ hit","TARGET","65%"),row("MLB","Shohei Ohtani","1+ hit","TARGET","64%"),row("MLB","Vladimir Guerrero Jr.","1+ hit","TARGET","64%"),row("MLB","Aaron Judge","1+ hit","STATUS-GATED TARGET","61%","★★★☆☆","🔥🔥")
     ],
-    twentyNote:"Prediction targets are not executable until the 9:00 AM refresh verifies exact Monday thresholds/prices and lineups. No Sunday market is carried forward.",
-    qcTitle:"MLB — SEPTEMBER 7 PER-GAME QUICKIES",
+    twentyNote:"Targets are analytical placeholders, not executable props. The 9:00 AM refresh must translate or reject them using exact sportsbook/DFS thresholds, confirmed lineups and starter status.",
+    qcTitle:"MLB — SEPTEMBER 8 PER-GAME QUICKIES",
     qcs:[
-      q("1:05 ET • 10:05 PT","ATL","PHI","PHI -174 / ATL +146 • total 8","Phillies ML","62%",["Jesús Luzardo 6+ K TARGET • 70%","Kyle Schwarber 1+ hit TARGET • 68%"],["Schwarber 1+ hit TARGET • 68%"],["Luzardo 5+ K floor TARGET • 74%"],["Luzardo 6+ K TARGET • 70%"],[WATCH],"Final lineups and exact K/hit markets required."),
-      q("1:10 ET • 10:10 PT","NYM","MIA","MIA -112 / NYM -104 • total 8","Marlins ML","64%",["Eury Pérez 5+ K TARGET • 67%","Francisco Lindor 1+ hit TARGET • 66%"],["Lindor 1+ hit TARGET • 66%"],["Pérez 4+ K floor TARGET • 72%"],["Pérez 5+ K TARGET • 67%"],[WATCH],"Jonah Tong/Eury Pérez confirmed probable pairing; lineups pending."),
-      q("1:35 ET • 10:35 PT","CLE","BAL","BAL -120 / CLE +102 • total 8.5","PASS / Orioles lean","51%",["Trevor Rogers 5+ K TARGET • 59%"],[WATCH],[WATCH],["Rogers 5+ K TARGET • 59%"],[WATCH],"Team side is too thin for SNS."),
-      q("1:35 ET • 10:35 PT","LAA","BOS","BOS -168 / LAA +142 • total 8.5","Red Sox ML","63%",["Rafael Devers 1+ hit TARGET • 65%"],["Devers 1+ hit TARGET • 65%"],[WATCH],[WATCH],[WATCH],"Boston starter feed conflict requires morning reconciliation; do not force pitcher props."),
-      q("2:10 ET • 11:10 PT","CHC","MIL","MIL -124 / CHC +106 • total 8.5","Brewers lean","53%",["Matthew Boyd 5+ K TARGET • 60%"],[WATCH],[WATCH],["Boyd 5+ K TARGET • 60%"],[WATCH],"Small team edge; pitcher market only if exact line supports it."),
-      q("2:10 ET • 11:10 PT","ARI","KC","KC model 56.54% • exact ML recheck","Royals lean","57%",["Noah Cameron 5+ K TARGET • 60%"],[WATCH],[WATCH],["Cameron 5+ K TARGET • 60%"],[WATCH],"Arizona starter unresolved at master sweep."),
-      q("3:10 ET • 12:10 PT","MIN","DET","DET model 58.91% • exact ML recheck","Tigers lean","59%",["Troy Melton 4+ K TARGET • 58%"],[WATCH],[WATCH],["Melton 4+ K TARGET • 58%"],[WATCH],"Minnesota starter unresolved at master sweep."),
-      q("5:10 ET • 2:10 PT","WSH","SD","SD -205 / WSH +172","Padres ML lean","52%",["Nick Pivetta 5+ K TARGET • 63%"],["Pivetta 4+ K floor TARGET • 70%"],[WATCH],["Pivetta 5+ K TARGET • 63%"],[WATCH],"Market price is much stronger than numberFire projection; avoid ML in SNS."),
-      q("8:10 ET • 5:10 PT","STL","SF","SF -142 / STL +120 • total 7.5","Giants ML","65%",["Logan Webb 5+ K TARGET • 64%"],["Webb 5+ K TARGET • 64%"],[WATCH],[WATCH],[WATCH],"Webb workload/strikeout channel preferred."),
-      q("9:10 ET • 6:10 PT","CIN","LAD","LAD -148 / CIN +126 • total 8","Dodgers ML","60%",["Shohei Ohtani 1+ hit TARGET • 64%","Chase Burns 6+ K TARGET • 58%"],["Ohtani 1+ hit TARGET • 64%"],[WATCH],["Burns 6+ K TARGET • 58%"],[WATCH],"Dodgers starter not resolved in master feed; no invented pitcher prop."),
-      q("10:05 ET • 7:05 PT","TOR","ATH","TOR -196 / ATH +164 • total 8.5","Blue Jays ML lean","54%",["Dylan Cease 6+ K TARGET • 66%","Vladimir Guerrero Jr. 1+ hit TARGET • 65%"],["Guerrero 1+ hit TARGET • 65%"],["Cease 5+ K floor TARGET • 72%"],["Cease 6+ K TARGET • 66%"],[WATCH],"Expensive team ML; player floors rank higher.")
+      q("6:35 ET • 3:35 PT","CLE","BAL","Opening market WATCH • Bibee vs Brandon Young","Orioles lean","55%",["Tanner Bibee 5+ K TARGET • 59%"],[WATCH],[WATCH],["Bibee 5+ K TARGET • 59%"],[WATCH],"Exact side/prop prices not yet independently verified."),
+      q("6:40 ET • 3:40 PT","HOU","PHI","PHI -150 / HOU +125 • total 8.5 snapshot","Phillies ML","56%",["Kyle Schwarber 1+ hit TARGET • 66%","Andrew Painter 5+ K TARGET • 57%"],["Schwarber 1+ hit TARGET • 66%"],[WATCH],["Painter 5+ K TARGET • 57%"],[WATCH],"Action board exposed no player props at master sweep; morning line activation required."),
+      q("6:40 ET • 3:40 PT","MIN","DET","Opening market WATCH • Kremer vs Drew Anderson","Tigers lean","55%",["Riley Greene 1+ hit TARGET • 63%"],["Greene 1+ hit TARGET • 63%"],[WATCH],[WATCH],[WATCH],"Monday final was DET 5-4; do not reuse Monday player lines."),
+      q("6:40 ET • 3:40 PT","NYM","MIA","Opening market WATCH • Manaea vs Alcantara","Mets lean","55%",["Sandy Alcantara 5+ K TARGET • 62%","Bo Bichette 1+ hit TARGET • 65%"],["Bichette 1+ hit TARGET • 65%"],[WATCH],["Alcantara 5+ K TARGET • 62%"],[WATCH],"Exact market pending."),
+      q("6:45 ET • 3:45 PT","LAA","BOS","Opening market WATCH • Detmers vs Sandoval","Red Sox lean","57%",["Roman Anthony 1+ hit TARGET • 62%"],[WATCH],[WATCH],[WATCH],[WATCH],"Lefty-lefty starter matchup; lineup gate mandatory."),
+      q("7:05 ET • 4:05 PT","COL","NYY","Opening market WATCH • Hughes vs Schlittler","Yankees lean","63%",["Aaron Judge 1+ hit STATUS-GATED TARGET • 61%","Cam Schlittler 5+ K TARGET • 60%"],[WATCH],[WATCH],["Schlittler 5+ K TARGET • 60%"],["Judge HR — WATCH until exact price + lineup"],"Judge was reinstated from the 60-day IL for Tuesday; no prop activates without confirmed lineup."),
+      q("7:15 ET • 4:15 PT","TB","ATL","Opening market WATCH • Peralta vs Smith-Shawver","Rays lean","54%",["Freddy Peralta 5+ K TARGET • 65%"],["Peralta 5+ K TARGET • 65%"],[WATCH],[WATCH],[WATCH],"Starter listing verified; exact market pending."),
+      q("7:40 ET • 4:40 PT","ARI","KC","Opening market WATCH • Burnes vs Wacha","Diamondbacks lean","57%",["Corbin Burnes 5+ K TARGET • 66%","Bobby Witt Jr. 1+ hit TARGET • 65%"],["Witt 1+ hit TARGET • 65%"],[WATCH],["Burnes 5+ K TARGET • 66%"],[WATCH],"Burnes return is meaningful; confirm no pitch-count restriction."),
+      q("7:40 ET • 4:40 PT","CHC","MIL","Opening market WATCH • Peterson vs Misiorowski","Brewers lean","58%",["Jacob Misiorowski 6+ K TARGET • 67%"],["Misiorowski 5+ K floor TARGET • 72%"],[WATCH],["Misiorowski 6+ K TARGET • 67%"],[WATCH],"High K ceiling but volatile workload/command; exact line controls activation."),
+      q("7:40 ET • 4:40 PT","PIT","CWS","Opening market WATCH • Chandler vs Burke","PASS / Pirates lean","52%",["Bubba Chandler 5+ K TARGET • 58%"],[WATCH],[WATCH],["Chandler 5+ K TARGET • 58%"],[WATCH],"PASS-quality team edge until market opens."),
+      q("9:40 ET • 6:40 PT","TEX","SEA","Pitchers not yet posted • full market WATCH","WATCH","—",[WATCH],[WATCH],[WATCH],[WATCH],[WATCH],"StatsHawk had no probable pitchers posted at master sweep. Do not invent a side or prop."),
+      q("9:40 ET • 6:40 PT","TOR","ATH","Opening market WATCH • Soriano vs Perkins","Blue Jays lean","56%",["Vladimir Guerrero Jr. 1+ hit TARGET • 64%"],["Guerrero 1+ hit TARGET • 64%"],[WATCH],[WATCH],[WATCH],"Monday matchup was still in progress at master cutoff; Tuesday analysis must be refreshed after final."),
+      q("9:40 ET • 6:40 PT","WSH","SD","Opening market WATCH • Cornelio vs Mize","Padres lean","60%",["Fernando Tatis Jr. 1+ hit TARGET • 66%"],["Tatis 1+ hit TARGET • 66%"],[WATCH],[WATCH],[WATCH],"Monday Tatis produced three hits; Tuesday line/lineup must be independently rechecked."),
+      q("9:45 ET • 6:45 PT","STL","SF","Opening market WATCH • Mathews vs Roupp","Giants lean","58%",["Rafael Devers 1+ hit TARGET • 64%"],["Devers 1+ hit TARGET • 64%"],[WATCH],[WATCH],[WATCH],"No Monday strikeout threshold is reused."),
+      q("10:10 ET • 7:10 PT","CIN","LAD","LAD -151 / CIN +125 • total 8.5 snapshot","Dodgers ML","66%",["Tarik Skubal 6+ K TARGET • 70%","Shohei Ohtani 1+ hit TARGET • 64%"],["Ohtani 1+ hit TARGET • 64%"],[WATCH],["Skubal 6+ K TARGET • 70%"],[WATCH],"Current market favors LAD. Probable-pitcher feed lists Skubal vs Lodolo; revalidate in morning because late rotation listings can change.")
     ]};
 
-  const NCAA={icon:"🏈",title:"NCAA FOOTBALL",meta:"NCAA FOOTBALL • MONDAY SEPTEMBER 7, 2026 • MASTER",kicker:"NCAA FOOTBALL",
-    description:"Monday Week 1 has one material FBS game: SMU at Florida State, 7:30 PM ET / 4:30 PM PT. Current side/total, weather and continuity context are verified. Public exact player props were not sufficiently exposed in the master sweep, so player QCs use explicit activation targets rather than invented lines.",
-    chips:[["1 GAME QC","green"],["7:30 ET • 4:30 PT","gold"],["PLAYER PROP SWEEP COMPLETE","purple"]],
-    hotTop:[
-      ["Kevin Jennings","225+ passing yards PREDICTION TARGET","64%","Proven SMU QB; activate only at 225.5 or lower."],
-      ["Kendrick Raphael","60+ rushing yards PREDICTION TARGET","62%","SMU run-game edge behind experienced OL."],
-      ["Ashton Daniels","Under 225.5 passing yards TARGET","61%","FSU passing efficiency/turnover profile remains a concern."],
-      ["Kevin Jennings","2+ passing TD TARGET","58%","Ceiling expression; Normal/Demon only."],
-      ["Kendrick Raphael","Anytime TD TARGET","56%","Role-based ceiling; exact price required."]
-    ],
-    winners:[["SMU @ Florida State","SMU -2.5","61%","SMU continuity edge; Under 53.5 also supported. Thunderstorm/field conditions reinforce lower-total risk."]],
-    twenty:[
-      row("NCAA FOOTBALL","Kevin Jennings","225+ passing yards","TARGET","64%"),
-      row("NCAA FOOTBALL","Kendrick Raphael","60+ rushing yards","TARGET","62%"),
-      row("NCAA FOOTBALL","Ashton Daniels","U225.5 passing yards","TARGET","61%"),
-      row("NCAA FOOTBALL","Kevin Jennings","2+ passing TD","TARGET","58%","★★★☆☆","🔥🔥"),
-      row("NCAA FOOTBALL","Kendrick Raphael","Anytime TD","TARGET","56%","★★★☆☆","🔥🔥")
-    ],
-    twentyNote:"No exact player price is invented. Morning refresh must translate or reject every target using posted markets.",
-    qcTitle:"NCAA FOOTBALL — SEPTEMBER 7 PER-GAME QUICKIE",
-    qcs:[q("7:30 ET • 4:30 PT","SMU","FLORIDA STATE","SMU -2.5 • total 53.5 • SMU ML implied ~58%","SMU -2.5","61%",["Kevin Jennings 225+ pass TARGET • 64%","Kendrick Raphael 60+ rush TARGET • 62%","Ashton Daniels U225.5 pass TARGET • 61%"],["Jennings 200+ pass floor TARGET • 70%"],["Raphael 50+ rush floor TARGET • 68%"],["Jennings 225+ pass TARGET • 64%","Daniels U225.5 pass TARGET • 61%"],["Raphael anytime TD TARGET • 56%","Jennings 2+ pass TD TARGET • 58%"],"Thunderstorms and natural-grass conditions are a material JINX risk; recheck weather and exact props Monday morning.")]};
+  const NFL=status("🏈","NFL","SEASON START / NEXT ANNOUNCED","The 2026 NFL regular season is upcoming. Connected league configuration starts the season on September 10 UTC; no September 8 NFL game is published as a current QC.","Week 1 QCs remain next-announced-event content and must be refreshed when exact active markets are verified.");
+  NFL.qcTitle="NFL — WEEK 1 NEXT ANNOUNCED EVENT";
+  NFL.qcs=[q("NEXT: WEEK 1","—","—","Current Week 1 market sweep continues","WATCH — no Sep 8 game","—",[WATCH],[WATCH],[WATCH],[WATCH],[WATCH],"Do not present a future Week 1 game as a Sep 8 event.")];
 
-  const FIBA={icon:"🌍🏀",title:"FIBA WOMEN",meta:"FIBA WOMEN • MONDAY SEPTEMBER 7, 2026 • MASTER",kicker:"FIBA WOMEN'S WORLD CUP",
-    description:"Next-game-only logic advances to all eight September 7 group games. Team markets are current where independently exposed; player markets remain activation targets unless an exact threshold is verified.",
-    chips:[["8 GROUP QCs","green"],["SEP 7 ONLY","gold"],["NEXT-GAME LOGIC","purple"]],
-    hotTop:[
-      ["Caitlin Clark","8+ assists TARGET","66%","11 assists vs China; USA-Czechia. Exact line required."],
-      ["Breanna Stewart","8+ rebounds TARGET","64%","10 rebounds vs Italy; stable glass role."],
-      ["Emma Meesseman","15+ points TARGET","63%","Belgium-Australia primary scoring channel."],
-      ["Sika Koné","10+ rebounds TARGET","62%","Mali frontcourt ceiling; Germany matchup."],
-      ["Han Xu","15+ points TARGET","61%","China size channel vs Italy."],
-      ["Marine Johannès","3+ made threes TARGET","58%","France-Nigeria ceiling expression."]
-    ],
-    winners:[
-      ["Belgium vs Australia","Belgium ML -145","59%","Current spread Belgium -2.5."],
-      ["Puerto Rico vs Türkiye","Türkiye lean","58%","Both 0-2; exact market recheck."],
-      ["Hungary vs South Korea","South Korea lean","60%","Korea has higher offensive ceiling; market pending."],
-      ["Nigeria vs France","France win","88%","France 2-0 with +72 point differential."],
-      ["Japan vs Spain","Spain lean","66%","Spain rebound spot after Mali loss."],
-      ["Germany vs Mali","Mali +19 value / Germany ML","59% spread / 90% ML","Mali already beat Spain; +19 is more attractive than Germany -1600."],
-      ["USA vs Czechia","Czechia +35.5 value / USA ML","58% spread / 97% ML","USA survived Italy 55-52; huge spread creates value concern."],
-      ["Italy vs China","Italy ML -125","56%","Current market slightly favors Italy; near coin flip."]
-    ],
-    twenty:[row("FIBA WOMEN","Caitlin Clark","8+ assists","TARGET","66%"),row("FIBA WOMEN","Breanna Stewart","8+ rebounds","TARGET","64%"),row("FIBA WOMEN","Emma Meesseman","15+ points","TARGET","63%"),row("FIBA WOMEN","Sika Koné","10+ rebounds","TARGET","62%"),row("FIBA WOMEN","Han Xu","15+ points","TARGET","61%"),row("FIBA WOMEN","Marine Johannès","3+ threes","TARGET","58%","★★★☆☆","🔥🔥")],
-    twentyNote:"Exact participant props remain target-only until a public book/DFS threshold is independently verified.",
-    qcTitle:"FIBA WOMEN — SEPTEMBER 7 PER-GAME QUICKIES",
-    qcs:[
-      q("5:30 ET • 2:30 PT","AUSTRALIA","BELGIUM","BEL -145 / AUS +115 • BEL -2.5","Belgium ML","59%",["Emma Meesseman 15+ pts TARGET • 63%"],[WATCH],[WATCH],["Meesseman 15+ pts TARGET • 63%"],[WATCH],"Tight elite matchup; do not force SNS side."),
-      q("5:30 ET • 2:30 PT","PUERTO RICO","TÜRKIYE","Market recheck","Türkiye lean","58%",[WATCH],[WATCH],[WATCH],[WATCH],[WATCH],"Both 0-2; exact current market required."),
-      q("8:30 ET • 5:30 PT","HUNGARY","SOUTH KOREA","Market recheck","South Korea lean","60%",[WATCH],[WATCH],[WATCH],[WATCH],[WATCH],"No player threshold cleared source gate."),
-      q("8:30 ET • 5:30 PT","NIGERIA","FRANCE","France heavy favorite • exact spread recheck","France win","88%",["Marine Johannès 3+ 3PM TARGET • 58%"],[WATCH],[WATCH],["Johannès 3+ 3PM TARGET • 58%"],[WATCH],"France team edge is stronger than any unverified player line."),
-      q("11:50 ET • 8:50 PT","JAPAN","SPAIN","Market recheck","Spain lean","66%",[WATCH],[WATCH],[WATCH],[WATCH],[WATCH],"Mali result shows Group A volatility; no automatic favorite promotion."),
-      q("11:50 ET • 8:50 PT","MALI","GERMANY","GER -1600 / MLI +1025 • MLI +19 -115 • total 145.5","Mali +19 value / Germany ML","59% / 90%",["Sika Koné 10+ reb TARGET • 62%"],["Mali +19 is TEAM market — not player SNS"],[WATCH],["Koné 10+ reb TARGET • 62%"],[WATCH],"Mali beat Spain outright; do not treat Germany's ML price as spread certainty."),
-      q("2:45 ET • 11:45 PT","CZECHIA","USA","USA -35.5 / CZE +35.5 • total 154.5","Czechia +35.5 value / USA ML","58% / 97%",["Caitlin Clark 8+ ast TARGET • 66%","Breanna Stewart 8+ reb TARGET • 64%"],["Clark 7+ ast floor TARGET • 72%"],["Stewart 7+ reb floor TARGET • 70%"],["Clark 8+ ast TARGET • 66%"],[WATCH],"USA's 55-52 win over Italy sharply lowers confidence in giant-spread assumptions."),
-      q("2:45 ET • 11:45 PT","CHINA","ITALY","ITA -125 / CHN +100","Italy ML","56%",["Han Xu 15+ pts TARGET • 61%"],[WATCH],[WATCH],["Han Xu 15+ pts TARGET • 61%"],[WATCH],"Near coin flip; no SNS side.")
-    ]};
+  const NCAA=status("🏈","NCAA FOOTBALL","NEXT ANNOUNCED EVENT","Week 1 concludes Monday night with SMU-Florida State. No material FBS game is scheduled Tuesday, September 8, so the page advances to the next announced college-football slate rather than retaining Monday props.","Next slate requires kickoff times and a fresh player-prop sweep before publication.");
 
-  const Tennis={icon:"🎾",title:"TENNIS",meta:"US OPEN • MONDAY SEPTEMBER 7, 2026 • ROUND OF 16",kicker:"US OPEN",
-    description:"Official Monday order of play is preserved using session/order language. Arthur Ashe begins 11:30 ET; Louis Armstrong begins 11:00 ET. Later matches are FOLLOWS rather than assigned invented start times.",
-    chips:[["ROUND OF 16","green"],["OFFICIAL OOP","gold"],["NO INVENTED TIMES","purple"]],
-    hotTop:[
-      ["Alexander Blockx","Match winner -167","62%","Freshness edge over Cerundolo after nearly three fewer hours on court."],
-      ["Karen Khachanov","Match winner +149","44%","Value upset position; sharp form, Tien coming off five sets."],
-      ["Anastasia Potapova","Win a set +170","42%","Preferred expression over +475 moneyline."],
-      ["Coco Gauff","Match winner TARGET","72%","Unbeaten in sets through three rounds; Jovic has pushed her before."],
-      ["Iga Swiatek","Match winner TARGET","68%","7-1 H2H vs Zheng but Zheng's comeback form raises risk."],
-      ["Alexander Zverev","Match winner TARGET","64%","Form improving; Darderi beat him in Rome, so no elite confidence."]
-    ],
-    winners:[["Blockx vs Cerundolo","Blockx -167","62%","Freshness + serve profile."],["Khachanov vs Tien","Khachanov +149 value","44%","Upset/value only."],["Potapova vs Andreeva","Andreeva win / Potapova to win a set +170","72% / 42%","Market-expression split."],["Jovic vs Gauff","Gauff lean","72%","Do not overprice."],["Swiatek vs Zheng","Swiatek lean","68%","Zheng is live upset threat."],["Zverev vs Darderi","Zverev lean","64%","Prior loss to Darderi keeps confidence moderate."],["Osaka vs Rybakina","PASS","—","Elite matchup; no forced winner."]],
-    twenty:[row("TENNIS","Alexander Blockx","Match winner","-167","62%"),row("TENNIS","Anastasia Potapova","Win a set","+170","42%","★★★☆☆","🔥🔥"),row("TENNIS","Karen Khachanov","Match winner","+149","44%","★★★☆☆","🔥🔥"),row("TENNIS","Coco Gauff","Match winner","TARGET","72%"),row("TENNIS","Iga Swiatek","Match winner","TARGET","68%"),row("TENNIS","Alexander Zverev","Match winner","TARGET","64%")],
-    twentyNote:"Only independently exposed prices are shown as executable; other match winners remain prediction targets until morning odds verification.",
-    qcTitle:"US OPEN — MONDAY ROUND-OF-16 QUICKIES",
-    qcs:[
-      q("11:30 ET • ARTHUR ASHE FIRST","ZHENG QINWEN","IGA SWIATEK","Exact ML recheck","Swiatek lean","68%",["Swiatek winner TARGET • 68%"],[WATCH],[WATCH],["Swiatek winner TARGET • 68%"],[WATCH],"Zheng's comeback vs Keys and prior Olympic win over Swiatek are material risks."),
-      q("FOLLOWS • ARTHUR ASHE","FRANCISCO CERUNDOLO","ALEXANDER BLOCKX","Blockx -167","Blockx","62%",["Blockx ML -167 • 62%"],["Blockx ML -167 • 62%"],[WATCH],[WATCH],[WATCH],"Cerundolo has nearly 10 hours on court; freshness is the edge."),
-      q("FOLLOWS • ARTHUR ASHE","IVA JOVIC","COCO GAUFF","Exact ML recheck","Gauff lean","72%",["Gauff winner TARGET • 72%"],[WATCH],[WATCH],["Gauff winner TARGET • 72%"],[WATCH],"Gauff needed a comeback in their May meeting; no overconfidence."),
-      q("FOLLOWS • ARTHUR ASHE","LUCIANO DARDERI","ALEXANDER ZVEREV","Exact ML recheck","Zverev lean","64%",["Zverev winner TARGET • 64%"],[WATCH],[WATCH],["Zverev winner TARGET • 64%"],[WATCH],"Darderi beat Zverev in Rome and saved four match points."),
-      q("11:00 ET • LOUIS ARMSTRONG FIRST","ANASTASIA POTAPOVA","MIRRA ANDREEVA","Potapova set +170 • ML +475","Andreeva winner / Potapova set value","72% / 42%",["Potapova to win a set +170 • 42%"],[WATCH],[WATCH],["Potapova set +170 • 42%"],["Potapova ML +475 • 20%"],"Market selection matters: set market ranks above outright upset."),
-      q("FOLLOWS • LOUIS ARMSTRONG","NAOMI OSAKA","ELENA RYBAKINA","Exact ML recheck","PASS","—",[WATCH],[WATCH],[WATCH],[WATCH],[WATCH],"Elite match; no forced edge."),
-      q("FOLLOWS • LOUIS ARMSTRONG","KAREN KHACHANOV","LEARNER TIEN","Khachanov +149","Khachanov value","44%",["Khachanov ML +149 • 44%"],[WATCH],[WATCH],["Khachanov +149 • 44%"],[WATCH],"Value position, not a high-confidence SNS leg.")
-    ]};
+  const FIBA={icon:"🌍🏀",title:"FIBA WOMEN",meta:"FIBA WOMEN • TUESDAY SEPTEMBER 8, 2026 • MASTER",kicker:"FIBA WOMEN'S WORLD CUP",
+    description:"The group phase is complete. Tuesday's official Qualification to Quarter-Finals schedule contains Hungary vs Japan and Italy vs Australia. Next-game-only logic is applied; no September 7 group-game prediction is retained.",chips:[["2 QUALIFICATION QCs","green"],["SEP 8 ONLY","gold"],["OFFICIAL FIBA SCHEDULE","purple"]],
+    hotTop:[["Dorka Juhasz","10+ rebounds ACTIVATION TARGET","64%","Hungary's interior channel is the preferred player angle; exact line required."],["Ezi Magbegor","8+ rebounds ACTIVATION TARGET","63%","Australia's interior matchup vs Italy."],["Cecilia Zandalasini","15+ points ACTIVATION TARGET","60%","Italy's primary scoring channel in elimination setting."],["Japan perimeter","Made-threes market WATCH","—","Exact participant thresholds not yet independently exposed."]],
+    winners:[["Hungary vs Japan","Hungary lean","57%","Official qualifier; Hungary size vs Japan pace creates a close stylistic matchup."],["Italy vs Australia","Australia lean","64%","Australia's depth and interior strength rate higher, but Italy nearly upset USA in the group phase."]],
+    twenty:[row("FIBA WOMEN","Dorka Juhasz","10+ rebounds","TARGET","64%"),row("FIBA WOMEN","Ezi Magbegor","8+ rebounds","TARGET","63%"),row("FIBA WOMEN","Cecilia Zandalasini","15+ points","TARGET","60%")],twentyNote:"Player thresholds are activation targets until an exact sportsbook/DFS market is independently verified.",qcTitle:"FIBA WOMEN — SEPTEMBER 8 QUALIFICATION QUICKIES",
+    qcs:[q("17:45 Berlin • 8:45 AM PT","HUN","JPN","Official Qualification to Quarter-Finals • exact betting market WATCH","Hungary lean","57%",["Dorka Juhasz 10+ rebounds TARGET • 64%"],[WATCH],[WATCH],["Juhasz 10+ rebounds TARGET • 64%"],[WATCH],"Official FIBA time. Do not invent a spread or player threshold."),q("20:45 Berlin • 11:45 AM PT","ITA","AUS","Official Qualification to Quarter-Finals • exact betting market WATCH","Australia lean","64%",["Ezi Magbegor 8+ rebounds TARGET • 63%","Cecilia Zandalasini 15+ points TARGET • 60%"],["Magbegor 8+ rebounds TARGET • 63%"],[WATCH],["Zandalasini 15+ points TARGET • 60%"],[WATCH],"Italy's close USA game materially lowers spread confidence; winner confidence is not margin confidence.")]};
 
-  const nflGames=[
-    ["WED 9/9 • 8:20 ET","NE","SEA","SEA opener; current exact side recheck","Seattle lean","57%"],
-    ["THU 9/10 • Melbourne","SF","LAR","Current exact side recheck","Rams lean","55%"],
-    ["SUN 9/13","CHI","CAR","Week 1 market","Chicago lean","55%"],
-    ["SUN 9/13","CLE","JAX","Week 1 market","Jaguars lean","60%"],
-    ["SUN 9/13","BUF","HOU","Week 1 market","PASS / Bills hairline","54%"],
-    ["SUN 9/13","BAL","IND","Week 1 market","Ravens lean","60%"],
-    ["SUN 9/13","ATL","PIT","Week 1 market","Steelers lean","55%"],
-    ["SUN 9/13","NYJ","TEN","Week 1 market","PASS","52%"],
-    ["SUN 9/13","NO","DET","Week 1 market","Lions lean","64%"],
-    ["SUN 9/13","TB","CIN","Week 1 market","Bengals lean","58%"],
-    ["SUN 9/13","MIA","LV","Week 1 market","Raiders lean","57%"],
-    ["SUN 9/13","WAS","PHI","Week 1 market","Eagles lean","62%"],
-    ["SUN 9/13","GB","MIN","Week 1 market","PASS","52%"],
-    ["SUN 9/13","ARI","LAC","Week 1 market","Chargers lean","65%"],
-    ["SUN 9/13","DAL","NYG","Week 1 market","Cowboys lean","57%"],
-    ["MON 9/14","DEN","KC","Week 1 market","Chiefs lean","60%"]
-  ];
-  const NFL={icon:"🏈",title:"NFL",meta:"NFL • NEXT ANNOUNCED EVENT • WEEK 1",kicker:"NFL WEEK 1",description:"No NFL game occurs Sep. 7. The page remains on the full Week 1 next-announced slate. Kalshi now has player contracts on all 16 games; highest-interest early opener markets are shown without pretending longshot contracts are safe props.",chips:[["NEXT: SEP 9","green"],["16 GAME QCs","purple"],["PLAYER MARKETS OPEN","gold"]],
-    hotTop:[
-      ["Drake Maye","250+ passing yards — Kalshi 33¢ vs panel 60%","60%","Largest current model/market disagreement; value, not certainty."],
-      ["AJ Barner","Anytime TD — Kalshi 21.5¢ vs panel 32%","32%","Demon/value only."],
-      ["Brock Purdy","3+ passing TDs — Kalshi 16¢ vs panel 29%","29%","Demon only."],
-      ["Jaxon Smith-Njigba","Anytime TD — Kalshi 35.5¢ vs panel 44%","44%","Normal/Demon."],
-      ["Rhamondre Stevenson","50+ rushing yards — Kalshi 52.5¢","55%","More floor-like than TD ladders; exact book comparison needed."]
-    ],
-    winners:nflGames.map(x=>[`${x[1]} @ ${x[2]}`,x[4],x[5],"Early-week side; refresh Wed/Thu/Sat with injuries/inactives."]),
-    twenty:[row("NFL","Drake Maye","250+ passing yards","Kalshi 33¢","60%"),row("NFL","Rhamondre Stevenson","50+ rushing yards","Kalshi 52.5¢","55%"),row("NFL","Jaxon Smith-Njigba","Anytime TD","Kalshi 35.5¢","44%","★★★☆☆","🔥🔥"),row("NFL","AJ Barner","Anytime TD","Kalshi 21.5¢","32%","★★★☆☆","🔥🔥🔥"),row("NFL","Brock Purdy","3+ passing TDs","Kalshi 16¢","29%","★★★☆☆","🔥🔥🔥")],
-    twentyNote:"Kalshi contracts are event-market prices, not sportsbook odds. L&J confidence is independent; longshot ladders stay Demon-only.",
-    qcTitle:"NFL WEEK 1 — NEXT ANNOUNCED PER-GAME QUICKIES",
-    qcs:nflGames.map((x,i)=>q(x[0],x[1],x[2],x[3],x[4],x[5],i===0?["Drake Maye 250+ pass yds • 60%","Rhamondre Stevenson 50+ rush yds • 55%","JSN anytime TD • 44%"]:i===1?["Brock Purdy 3+ pass TD • 29%"]:[WATCH],i===0?["Maye 250+ pass yds • 60%"]:[WATCH],[WATCH],i===0?["Stevenson 50+ rush yds • 55%"]:[WATCH],i===1?["Purdy 3+ pass TD • 29%"]:[WATCH],"Exact sportsbook thresholds/injury status must be refreshed before execution."))};
+  const Tennis={icon:"🎾",title:"TENNIS",meta:"US OPEN • TUESDAY SEPTEMBER 8, 2026 • QUARTERFINALS",kicker:"US OPEN TENNIS",
+    description:"Tuesday begins the singles quarterfinals. Arthur Ashe day session: Sabalenka-Noskova followed by Tiafoe-Michelsen. Night session: Pegula-Navarro followed by Shelton-Alcaraz. Official session/FOLLOWS language is preserved; no invented start time is assigned to the second match of either session.",chips:[["4 QUARTERFINAL QCs","green"],["OFFICIAL SESSION ORDER","gold"],["CURRENT MARKETS","purple"]],
+    hotTop:[["Aryna Sabalenka","Match winner (-225 to -250 snapshot)","69%","Leads Noskova 2-0; unbeaten in sets this tournament."],["Frances Tiafoe","Match winner -156 snapshot","58%","All-American quarterfinal; price is playable but not SNS."],["Jessica Pegula","Match winner","67%","4-0 H2H vs Navarro; exact ML recheck required."],["Carlos Alcaraz","Match winner","76%","3-0 H2H vs Shelton and stronger all-court baseline; exact ML not independently captured in same sweep."]],
+    winners:[["Sabalenka vs Noskova","Sabalenka","69%","Winner preferred over large spread."],["Tiafoe vs Michelsen","Tiafoe","58%","Thin edge; Normal only."],["Pegula vs Navarro","Pegula","67%","H2H and hard-court matchup favor Pegula."],["Shelton vs Alcaraz","Alcaraz","76%","Shelton serve creates upset risk, but Alcaraz owns the stronger overall profile."]],
+    twenty:[row("TENNIS","Carlos Alcaraz","Match winner","MARKET RECHECK","76%"),row("TENNIS","Aryna Sabalenka","Match winner","-225 to -250","69%"),row("TENNIS","Jessica Pegula","Match winner","MARKET RECHECK","67%"),row("TENNIS","Frances Tiafoe","Match winner","-156","58%","★★★☆☆","🔥🔥")],twentyNote:"Current market snapshots are retained only where independently recovered. Secondary set/game markets remain WATCH until exact prices are verified.",qcTitle:"US OPEN — SEPTEMBER 8 QUARTERFINAL QUICKIES",
+    qcs:[q("DAY SESSION • FIRST","Linda Noskova","Aryna Sabalenka","Sabalenka -225 to -250 • Noskova about +212 • total around 21.5","Sabalenka","69%",["Sabalenka ML • 69%"],["Sabalenka ML • 69%"],[WATCH],["Over 21.5 games lean • 56%"],["Sabalenka 2-0 TARGET • 55%"],"Official day-session opener; market source range requires final morning price check."),q("DAY SESSION • FOLLOWS","Alex Michelsen","Frances Tiafoe","Tiafoe -156 / Michelsen +127 • spread Tiafoe -3.5 +105 • total 40.5","Tiafoe","58%",["Tiafoe ML -156 • 58%"],[WATCH],[WATCH],["Tiafoe ML -156 • 58%"],["Tiafoe -3.5 +105 • 47%"],"Use FOLLOWS; do not invent exact start time."),q("NIGHT SESSION • FIRST • 7:00 PM ET","Emma Navarro","Jessica Pegula","Exact ML WATCH • current matchup edge Pegula","Pegula","67%",["Pegula ML TARGET • 67%"],["Pegula ML TARGET • 67%"],[WATCH],["Pegula -4.5 games TARGET • 56%"],["Pegula 2-0 TARGET • 54%"],"Official night-session opener."),q("NIGHT SESSION • FOLLOWS","Ben Shelton","Carlos Alcaraz","Exact ML WATCH • quarterfinal market active","Alcaraz","76%",["Alcaraz ML TARGET • 76%"],["Alcaraz ML TARGET • 76%"],[WATCH],["Shelton +games WATCH — serve ceiling","Alcaraz 3-1 TARGET • 44%"],"Use FOLLOWS. Alcaraz leads H2H 3-0; Shelton's 150-mph serve raises variance.")]};
 
-  const UFC={icon:"🥊",title:"UFC",meta:"UFC • NEXT ANNOUNCED EVENT • SEPTEMBER 12",kicker:"NOCHE UFC",description:"No UFC event Sep. 7. Next announced event remains Noche UFC on Sep. 12. Current winner markets stay event-level; method/round props populate only when verified.",chips:[["NEXT: SEP 12","green"],["EVENT QC","purple"]],hotTop:[["Jean Silva","Fight winner -400 snapshot","79%","Current favorite; opponent/style review remains required."],["Ignacio Bahamondes","Fight winner -550 snapshot","83%","Large favorite; price reduces value."],["Yousri Belgaroui","Fight winner -700 snapshot","86%","High raw win confidence, low payout efficiency."]],winners:[["Noche UFC","Jean Silva / Bahamondes / Belgaroui favorite cluster","79-86%","Do not combine blindly; method and matchup risk still matter."]],twenty:[row("UFC","Jean Silva","Fight winner","-400 snapshot","79%"),row("UFC","Ignacio Bahamondes","Fight winner","-550 snapshot","83%"),row("UFC","Yousri Belgaroui","Fight winner","-700 snapshot","86%")],twentyNote:"Current winner prices only; no invented method/round props.",qcTitle:"UFC — NEXT ANNOUNCED EVENT QUICKIE",qcs:[q("SEP 12","NOCHE UFC","MAIN CARD","Current winner markets open","Event board active","—",["Jean Silva ML -400 • 79%","Bahamondes ML -550 • 83%","Belgaroui ML -700 • 86%"],[WATCH],[WATCH],["Jean Silva ML -400 • 79%"],[WATCH],"Recheck weigh-ins, late replacements and method markets.")]};
+  const UFC={icon:"🥊",title:"UFC",meta:"UFC • NEXT ANNOUNCED EVENT • NOCHE UFC SEP 12",kicker:"UFC NEXT EVENT",description:"Noche UFC: Silva vs Delgado is officially scheduled Saturday, September 12 in Glendale. Event-level Quickie remains active immediately; odds are current where UFC exposes them.",chips:[["NEXT EVENT SEP 12","green"],["OFFICIAL UFC CARD","gold"],["ODDS ACTIVE","purple"]],hotTop:[["Jean Silva","Fight winner -400","80%","Current UFC listed price."],["Joseph Morales","Fight winner -130","56%","Current UFC listed price vs Brandon Moreno +110."]],winners:[["Jean Silva vs Jose Miguel Delgado","Jean Silva -400","80%","Main event favorite."],["Brandon Moreno vs Joseph Morales","Joseph Morales -130","56%","Current UFC listed side."]],twenty:[row("UFC","Jean Silva","Fight winner","-400","80%"),row("UFC","Joseph Morales","Fight winner","-130","56%","★★★☆☆","🔥🔥")],twentyNote:"Method/round markets remain WATCH until exact prices are verified.",qcTitle:"NOCHE UFC — SEP 12 EVENT QUICKIE",qcs:[q("SAT SEP 12 • MAIN CARD 2:00 PM PT","Jose Miguel Delgado","Jean Silva","Silva -400 / Delgado +310","Jean Silva","80%",["Silva ML -400 • 80%"],["Silva ML -400 • 80%"],[WATCH],[WATCH],[WATCH],"Official UFC main event; no method/round line invented."),q("SAT SEP 12","Brandon Moreno","Joseph Morales","Moreno +110 / Morales -130","Joseph Morales","56%",["Morales ML -130 • 56%"],[WATCH],[WATCH],["Morales ML -130 • 56%"],[WATCH],"Thin favorite; not SNS.")]};
 
-  const Boxing={icon:"🥊",title:"BOXING",meta:"BOXING • NEXT ANNOUNCED EVENT • SEPTEMBER 12",kicker:"BOXING",description:"No monitored boxing event Sep. 7. Garcia vs Benn remains the next announced monitored card on Sep. 12. Winner/method markets will expand as independently verified.",chips:[["NEXT: SEP 12","green"],["EVENT QC","purple"]],hotTop:[],winners:[["Garcia vs Benn","WATCH — exact current winner market refresh required","—","Event remains announced; no stale price copied."]],twenty:[],twentyNote:"No exact Sep. 12 participant market cleared this master sweep.",qcTitle:"BOXING — NEXT ANNOUNCED EVENT QUICKIE",qcs:[q("SEP 12","GARCIA","BENN","Event announced • current market refresh pending","WATCH","—",[WATCH],[WATCH],[WATCH],[WATCH],[WATCH],"Populate exact winner/method/round prices once independently verified.")]};
+  const Boxing={icon:"🥊",title:"BOXING",meta:"BOXING • NEXT ANNOUNCED EVENT • SEP 12",kicker:"BOXING NEXT EVENT",description:"Ryan Garcia vs Conor Benn is scheduled Saturday, September 12 at T-Mobile Arena in Las Vegas. Event-level Quickie remains active. Exact market prices were not cleanly exposed in the master sweep, so outcome props stay WATCH rather than fabricated.",chips:[["NEXT EVENT SEP 12","green"],["EVENT QC ACTIVE","gold"],["PRICE WATCH","purple"]],hotTop:[["Ryan Garcia","Fight winner lean","62%","Speed/power edge; Benn's difficult return to 147 lb is a material condition factor."],["Jai Opetaia","Fight winner lean","72%","Cruiserweight title undercard; exact price pending."]],winners:[["Ryan Garcia vs Conor Benn","Ryan Garcia lean","62%","Benn's weight cut materially increases uncertainty; no KO round is published without a price."],["Jai Opetaia vs Noel Mikaelyan","Jai Opetaia lean","72%","Undercard title bout; exact market pending."]],twenty:[row("BOXING","Ryan Garcia","Fight winner","MARKET WATCH","62%"),row("BOXING","Jai Opetaia","Fight winner","MARKET WATCH","72%")],twentyNote:"No fabricated method/round prices. Exact odds will be added when independently verified.",qcTitle:"GARCIA–BENN — SEP 12 EVENT QUICKIE",qcs:[q("SAT SEP 12 • MAIN CARD 8:00 PM ET","Conor Benn","Ryan Garcia","WBC welterweight title • exact odds WATCH","Ryan Garcia lean","62%",["Garcia ML — price WATCH"],[WATCH],[WATCH],[WATCH],[WATCH],"Benn's severe weight cut is a meaningful risk variable; no KO-round forecast is promoted without exact market support.")]};
 
-  const NBA=status("🏀","NBA","OFFSEASON / SEASON START STATUS","No Sep. 7 NBA game. Prior-day content removed.");
-  const WNBA=status("🏀","WNBA","WORLD CUP BREAK","No Sep. 7 WNBA game. League play resumes after the FIBA break; no stale WNBA props carried.");
-  const NHL=status("🏒","NHL","OFFSEASON / SEASON START STATUS","No Sep. 7 NHL game. Prior-day content removed.");
-  const NCAAB=status("🏀","NCAA BASKETBALL","OFFSEASON / SEASON START STATUS","No Sep. 7 NCAA Basketball slate.");
-  const FIBAM=status("🌍🏀","FIBA MEN","NEXT ANNOUNCED EVENT STATUS","No Sep. 7 monitored senior men's FIBA event; next official window remains calendar-gated.");
+  const NBA=status("🏀","NBA","SEASON START","2026-27 NBA regular season begins October 20. No September 8 game or stale prop slate is shown.","Opening-night QCs activate when current markets become available.");
+  const NHL=status("🏒","NHL","SEASON START","2026-27 NHL regular season begins September 29. No September 8 regular-season slate.","Opening-night QCs activate when current markets become available.");
+  const NCAAB=status("🏀","NCAA BASKETBALL","OFFSEASON / SEASON START WATCH","No September 8 NCAA Basketball slate is published; season-start markets are not yet the current event.","Advance only when official opening slate is current.");
+  const WNBA=status("🏀","WNBA","NEXT ANNOUNCED EVENT","WNBA club play is paused during the Women's World Cup window; no September 8 club game is published.","Next club slate remains date-gated and will be activated only from the official schedule.");
+  const FIBAM=status("🌍🏀","FIBA MEN","NEXT ANNOUNCED EVENT","No monitored senior FIBA Men's game is verified for September 8 in the current publication scope.","Next announced senior event will receive an event-level QC when verified.");
 
   D.sports={MLB,NFL,NBA,WNBA,NHL,FIBA_Men:FIBAM,FIBA_Women:FIBA,NCAA_Football:NCAA,NCAA_Basketball:NCAAB,UFC,Boxing,Tennis};
-  D.home={meta:"L&J DAILY PREDICTIONS • SEPTEMBER 7, 2026",kicker:"L&J DAILY PREDICTIONS",title:"LEGZ & JINX — SEPTEMBER 7",description:"Monday master publication: 11 MLB games, SMU-Florida State, eight FIBA Women's World Cup group games, US Open Round of 16, and next-announced NFL/UFC/Boxing boards. Every prior Sep. 6 slate element has been hard-replaced or moved to recap.",chips:[["SEP 7 MASTER","green"],["FULL HARD REPLACEMENT","gold"],["RECAPPED SEP 6","purple"]],hotTop:[...MLB.hotTop.slice(0,5),...NCAA.hotTop.slice(0,3),...FIBA.hotTop.slice(0,3),...Tennis.hotTop.slice(0,3),...NFL.hotTop.slice(0,2)],winners:[...MLB.winners.slice(0,6),...NCAA.winners,...FIBA.winners.slice(0,5),...Tennis.winners.slice(0,3)],twenty:[...MLB.twenty,...NCAA.twenty,...FIBA.twenty,...Tennis.twenty,...NFL.twenty].slice(0,20),twentyNote:"Global 20 Piece uses unique participant rows and current Sep. 7 / next-announced markets only. Prediction targets require morning activation."};
+  const allHot=[...MLB.hotTop.slice(0,6),...Tennis.hotTop.slice(0,4),...FIBA.hotTop.slice(0,2),...UFC.hotTop.slice(0,2)];
+  const allWins=[...MLB.winners.filter(x=>x[2]!=="—").slice(0,6),...Tennis.winners,...FIBA.winners,...UFC.winners];
+  const all20=[...MLB.twenty,...Tennis.twenty,...FIBA.twenty,...UFC.twenty].slice(0,20);
+  D.home={meta:"L&J DAILY PREDICTIONS • TUESDAY SEPTEMBER 8, 2026",kicker:"LEGZ & JINX DAILY PREDICTIONS",title:"TUESDAY • SEPTEMBER 8",description:"Hard-replaced Sep. 8 publication: 15 MLB game QCs, FIBA Women's qualification games, US Open quarterfinals, and next-announced UFC/Boxing event cards. NCAA Football has no Tuesday FBS game; NBA/NHL/NCAA Basketball remain season-start/offseason states. No Sep. 7 prop is carried forward as an executable Sep. 8 market.",chips:[["SEP 8 MASTER","gold"],["HARD REPLACEMENT","purple"],["CURRENT MARKETS ONLY","green"]],hotTop:allHot,winners:allWins,twenty:all20,twentyNote:"Global 20 Piece contains current Sep. 8 predictions and explicitly labeled activation targets only. Exact thresholds/prices are revalidated at the 9 AM and noon refreshes."};
 })();
