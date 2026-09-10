@@ -134,4 +134,18 @@
    T.qcs[1].foot="Official order-of-play language remains FOLLOWS. Fresh US Open Day 12 analysis favors Gauff in three; no exact second-match clock time is invented.";
   }
  }
+ /* HOME — rebuilt after all midday overlays so the hub always reflects current active boards. */
+ const active=[D.sports.MLB,D.sports.NFL,D.sports.NCAA_Football,D.sports.Tennis,D.sports.UFC,D.sports.Boxing].filter(Boolean);
+ D.home={
+  meta:D.updated,
+  kicker:"DAILY PREDICTIONS CONTROL BOARD",
+  title:"LEGZ & JINX — DAILY PREDICTIONS",
+  description:"Current, confidence-first boards for football, basketball, baseball, boxing, UFC and tennis. Standard publication windows: 7:30 AM, 12:00 PM and 8:30 PM PT, with a 30–45 minute pregame verification when injuries, line movement or event volume require it. Qualified picks use normal type; conditional or below-standard leans are italicized and never forced into parlays.",
+  chips:[["12:00 PM BOARD CURRENT","green"],["3 CORE UPDATES + PREGAME","gold"],["KALSHI • PREDICTION MARKET","purple"]],
+  hotTop:active.flatMap(s=>s.hotTop||[]).slice(0,12),
+  winners:active.flatMap(s=>s.winners||[]).slice(0,16),
+  twenty:active.flatMap(s=>s.twenty||[]),
+  twentyNote:"All-sports pool uses current verified markets only. Market-unavailable targets remain WATCH; below-standard leans are conditional, italicized and excluded from approved parlays."
+ };
+
 })();
