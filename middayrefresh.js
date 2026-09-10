@@ -110,29 +110,52 @@
   F.qcs=[{time:"STARTED 11:45 AM PT",away:"AUSTRALIA",home:"SPAIN",market:"LIVE / STARTED — NO NEW BET",winner:"NO NEW PREDICTION",conf:"LIVE",hot:[],sns1:[],sns2:[],normal:[],demon:[],foot:"The noon refresh occurs after tip-off. Morning Spain lean is not presented as a new live prediction."}];
  }
 
- /* Tennis — official US Open editorial previews materially challenge one morning lean. */
+ /* Tennis — full US Open inventory across four permanent divisions. */
  const T=D.sports.Tennis;
  if(T){
-  T.meta="TENNIS • US OPEN • SEP 10 • 12:00 PM PT REFRESH";
-  T.description="Women's semifinals remain ahead: Sabalenka-Pegula at 7:00 PM ET / 4:00 PM PT on Arthur Ashe, followed by Gauff-Rybakina. The official US Open Day 12 analysis picks Pegula over Sabalenka and Gauff over Rybakina. L&J keeps Sabalenka as a reduced-confidence lean because of her 9-4 career H2H and championship profile, but reverses the second match from Rybakina to Gauff after the fresh official matchup analysis and Gauff's 2-1 H2H edge. No invented start time is assigned to the second semifinal.";
+  const tq=(time,away,home,market,winner,conf,foot)=>({time,away,home,market,winner,conf,hot:[WATCH],sns1:[WATCH],sns2:[WATCH],normal:[WATCH],demon:[WATCH],foot});
+  T.meta="TENNIS • US OPEN • SEP 10–12 • 12:00 PM PT FULL INVENTORY";
+  T.description="The Tennis board now separates men's singles, men's doubles, women's singles and women's doubles as permanent Quickie Card divisions. It shows today's women's singles semifinals, the active men's doubles semifinal round, the women's doubles final, and Friday's men's singles semifinals. Exact sportsbook/DFS thresholds remain WATCH when a synchronized market is unavailable; completed or started matches are labeled CLOSED rather than omitted or backfilled.";
+  T.chips=[["4 PERMANENT DIVISIONS","green"],["8 EVENT QCs","gold"],["SEP 10–12 US OPEN","purple"]];
   T.hotTop=[
-   ["Aryna Sabalenka","Match winner vs Jessica Pegula","60%","Career H2H remains 9-4, but the official US Open preview picks the Pegula upset; confidence reduced from 62%."],
-   ["Coco Gauff","Match winner vs Elena Rybakina","56%","Fresh official US Open analysis favors Gauff in three and notes her 2-1 H2H edge; this materially reverses the morning lean."]
+   ["Aryna Sabalenka","Match winner vs Jessica Pegula","60%","Career H2H remains 9-4, but the official tournament preview supports meaningful upset risk."],
+   ["Coco Gauff","Match winner vs Elena Rybakina","56%","Fresh tournament analysis and a 2-1 H2H edge support only a narrow lean."],
+   ["Alexander Zverev","Match winner vs Karen Khachanov","WATCH","Friday semifinal is now visible; exact current price requires verification."],
+   ["Ben Shelton vs Frances Tiafoe","Match winner / player markets","WATCH","All-American Friday semifinal is listed without inventing an unsupported side or threshold."],
+   ["Siniakova / Townsend","Women's doubles final","WATCH","Final against Krueger / Montgomery is visible; exact current market remains gated."]
   ];
   T.winners=[
-   ["Sabalenka vs Pegula","Sabalenka lean","60%","Still the L&J side, but disagreement with the official tournament preview increases upset risk."],
-   ["Gauff vs Rybakina","Gauff lean","56%","Reversed from Rybakina after fresh matchup evidence; near coin-flip exposure only."]
+   ["Sabalenka vs Pegula","Sabalenka lean","60%","Tournament-preview disagreement keeps exposure moderate."],
+   ["Gauff vs Rybakina","Gauff lean","56%","Near coin-flip; no aggressive exposure."],
+   ["Men's singles semifinals","WATCH","—","Both Friday semifinals are displayed pending exact synchronized markets."],
+   ["Men's and women's doubles","WATCH","—","Current semifinal/final inventory is displayed; no fabricated prices."]
   ];
   T.twenty=[
    ["Tennis","Aryna Sabalenka","Match winner","WATCH exact price","60%","★★★★☆","🔥"],
-   ["Tennis","Coco Gauff","Match winner","WATCH exact price","56%","★★★☆☆","🔥"]
+   ["Tennis","Coco Gauff","Match winner","WATCH exact price","56%","★★★☆☆","🔥"],
+   ["Tennis","Alexander Zverev vs Karen Khachanov","Match / player markets","WATCH","—","★★★☆☆","🔥"],
+   ["Tennis","Ben Shelton vs Frances Tiafoe","Match / player markets","WATCH","—","★★★☆☆","🔥"],
+   ["Tennis","Siniakova / Townsend vs Krueger / Montgomery","Women's doubles final","WATCH","—","★★★☆☆","🔥"]
   ];
-  if(T.qcs&&T.qcs.length>=2){
-   T.qcs[0].winner="Sabalenka lean"; T.qcs[0].conf="60%"; T.qcs[0].hot=["Sabalenka match winner lean • 60%"];
-   T.qcs[0].foot="7:00 PM ET / 4:00 PM PT official start. Tournament editorial preview picks Pegula, so confidence is explicitly reduced.";
-   T.qcs[1].winner="Gauff lean"; T.qcs[1].conf="56%"; T.qcs[1].hot=["Gauff match winner lean • 56%"];
-   T.qcs[1].foot="Official order-of-play language remains FOLLOWS. Fresh US Open Day 12 analysis favors Gauff in three; no exact second-match clock time is invented.";
-  }
+  T.twentyNote="Full late-round US Open inventory is now visible by division. WATCH means the event is real and scheduled, but an exact current betting or DFS market was not independently synchronized.";
+  T.qcGroups=[
+   {title:"MEN'S SINGLES",note:"Friday, September 11 • semifinals",rows:[
+    tq("FRIDAY • OFFICIAL ORDER/TIME WATCH","KAREN KHACHANOV","ALEXANDER ZVEREV","Men's semifinal • exact market WATCH","WATCH","—","Confirmed Friday semifinal. Exact court time and market must be rechecked before activation."),
+    tq("FRIDAY • OFFICIAL ORDER/TIME WATCH","FRANCES TIAFOE","BEN SHELTON","Men's semifinal • exact market WATCH","WATCH","—","Confirmed all-American Friday semifinal. No unsupported winner or player threshold is forced.")
+   ]},
+   {title:"MEN'S DOUBLES",note:"September 10 • semifinal round",rows:[
+    tq("FINAL • CLOSED","RAJEEV RAM / JOE SALISBURY","KEVIN KRAWIETZ / TIM PÜTZ","Completed semifinal — NO NEW BET","NO NEW PREDICTION","FINAL","Krawietz/Pütz advanced to the final. This row records current event state and does not backfill a selection."),
+    tq("SEP 10 • OFFICIAL COURT/TIME WATCH","HARRI HELIÖVAARA / HENRY PATTEN","CHRISTIAN HARRISON / NEAL SKUPSKI","Men's semifinal • exact market WATCH","WATCH","—","Second men's doubles semifinal is visible; verify live/start status and exact market before use.")
+   ]},
+   {title:"WOMEN'S SINGLES",note:"September 10 • Arthur Ashe evening session",rows:[
+    tq("7:00 PM ET • 4:00 PM PT","JESSICA PEGULA","ARYNA SABALENKA","Women's semifinal • exact market WATCH","Sabalenka lean","60%","Official start time. Tournament editorial preview picks Pegula, so confidence is explicitly reduced."),
+    tq("FOLLOWS • ARTHUR ASHE","ELENA RYBAKINA","COCO GAUFF","Women's semifinal • exact market WATCH","Gauff lean","56%","Official order uses FOLLOWS; no invented second-match clock time.")
+   ]},
+   {title:"WOMEN'S DOUBLES",note:"Championship match • official time watch",rows:[
+    tq("FINAL • OFFICIAL DATE/TIME WATCH","ASHLYN KRUEGER / ROBIN MONTGOMERY","KATERINA SINIAKOVA / TAYLOR TOWNSEND","Women's doubles final • exact market WATCH","WATCH","—","Confirmed championship matchup. Exact start time and current market must be verified before activation."),
+    tq("FINAL • CLOSED","GABRIELA DABROWSKI / LUISA STEFANI","ASHLYN KRUEGER / ROBIN MONTGOMERY","Completed semifinal — NO NEW BET","NO NEW PREDICTION","FINAL","Krueger/Montgomery advanced. Completed action remains visible without a backfilled prediction.")
+   ]}
+  ];
  }
  /* HOME — rebuilt after all midday overlays so the hub always reflects current active boards. */
  const active=[D.sports.MLB,D.sports.NFL,D.sports.NCAA_Football,D.sports.Tennis,D.sports.UFC,D.sports.Boxing].filter(Boolean);
