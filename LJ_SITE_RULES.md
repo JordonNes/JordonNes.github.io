@@ -129,3 +129,45 @@ The recap denominator may include only predictions that were actually published 
 - `LJ_index.html` and sport `.html` files — thin shells that call the shared renderer; they should not be rebuilt during ordinary prediction refreshes.
 
 This separation exists specifically to prevent a daily prediction update from accidentally redesigning or deleting the approved QC presentation.
+
+
+## Accepted daily operating cadence — effective September 10, 2026
+
+All public timestamps use Pacific Time. The standard publication cadence is:
+
+- **7:30 AM — Morning Scan:** overnight results, schedules, injuries, opening markets and preliminary selections.
+- **12:00 PM — Lunch Finalization:** current player/participant props, availability, material line movement and completed QCs.
+- **8:30 PM — Night Preview:** next-day matchups, early markets and preliminary tickets.
+- **30–45 minutes before the event — Pregame Verification:** activated on high-interest or high-volatility events when lineups, scratches, weather, weigh-ins or meaningful line movement could change a recommendation.
+
+High-volume Saturdays, Sundays, major tournament days and multi-league slates use all four windows. Lighter days use the first three. Material news triggers an event-driven ALERT UPDATE rather than waiting for the next scheduled cycle.
+
+NFL Sunday receives Saturday 8:30 PM preparation plus Sunday 7:00 AM, 9:30 AM, 12:30 PM and 4:45 PM PT verification windows as applicable. Basketball receives the standard cadence plus a 30–45 minute pre-tip lineup check. MLB receives the standard cadence plus lineup, pitcher and weather exceptions. UFC and Boxing receive early-week research, post-weigh-in review, event-day noon publication and a pre-card verification when material information changes.
+
+## Qualified prediction and conditional-lean rule
+
+Every scheduled event receives a documented QC review. No selection may be invented to fill a card.
+
+- A prediction that clears the current L&J evidence and confidence gate is presented in normal type.
+- When no available prediction clears that gate, publish the best researched opportunity only as an explicitly labeled *BELOW L&J STANDARD — LEAN ONLY* or *CONDITIONAL LEAN*.
+- All below-standard and conditional entries must render in italics, show their confidence, identify the maximum acceptable line or target threshold when available, and explain the principal failure risk.
+- If the market has not opened, use *MARKET NOT YET AVAILABLE — TARGET LINE* and state the line required before activation.
+- A conditional lean is not an approved pick and may not be counted as a qualified parlay leg.
+- If fewer than the required qualified legs exist, the construction must be labeled *RESEARCHED WATCHLIST — NOT AN L&J-APPROVED PARLAY*.
+
+The QC remains populated with the research result, status and target condition; it must not present a visually blank decision area merely because no wager qualifies.
+
+## Market-platform classification
+
+Source reviews may include, when available and lawful:
+
+- **Sportsbooks:** DraftKings, FanDuel, BetMGM, bet365 and other licensed books.
+- **DFS / pick’em boards:** PrizePicks and Underdog.
+- **Prediction markets:** Kalshi and Polymarket.
+- **Validation sources:** official leagues and teams, StatsHawk, current injury/depth-chart feeds, reputable statistical databases and current matchup research.
+
+Kalshi is a regulated prediction market, not a sportsbook, and must be labeled accurately wherever cited.
+
+## Deferred athlete visualizations
+
+Pentagon/radar athlete-statistic graphics are intentionally excluded from the current site update. They require a separate metric, normalization and presentation review before integration.
