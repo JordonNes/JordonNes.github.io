@@ -7,7 +7,7 @@
   const D = window.LJ_DATA;
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
-  const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|PASS/i.test(String(s || ""));
+  const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|PASS|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
   const unique20 = rows => {
     const seen = new Set();
     return (rows || []).filter(r => {
@@ -32,10 +32,10 @@
   }
 
   function hotTop(items,label="LEGZ HOT TOP"){
-    return `<div class="headliner-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">L&amp;J Accuracy Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>MARKET WATCH</b><p>No current verified player/participant market has cleared the L&amp;J gate.</p></div>`}</div>`;
+    return `<div class="headliner-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">L&amp;J Accuracy Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>MARKET WATCH</b><p>No current verified player/participant market has cleared the L&amp;J gate.</p></div>`}</div>`;
   }
   function winners(items,label="JINX GAME WINNERS"){
-    return `<div class="headliner-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">JINX Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>MARKET WATCH</b><p>No executable side/winner board today.</p></div>`}</div>`;
+    return `<div class="headliner-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">JINX Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>MARKET WATCH</b><p>No executable side/winner board today.</p></div>`}</div>`;
   }
   function headlineSection(hot,wins,home=false,hotLabel="LEGZ HOT TOP",winnerLabel="JINX GAME WINNERS"){
     return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ market ranking + JINX game/fight winners</span></div><div class="headliner-grid">${hotTop(hot,hotLabel)}${winners(wins,winnerLabel)}</div></section>`;
@@ -43,11 +43,11 @@
 
   function twenty(rows,note,home=false){
     const clean = unique20(rows);
-    return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">Top player / participant prediction-prop pool • one player counts once</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20 PIECE":"SPORT 20 PIECE"}</span><span>RANKED BY L&amp;J HIT CONFIDENCE</span></div>${clean.length ? `<div class="card-body"><table class="twenty-table"><thead><tr><th>#</th><th>Sport</th><th>Player / Participant</th><th>Prediction</th><th>Price</th><th>L&amp;J Conf.</th><th>Quality</th><th>Risk</th></tr></thead><tbody>${clean.map((r,i)=>`<tr><td class="rank">${i+1}</td><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="conf">${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status-panel"><b>MARKET WATCH — 0/20 VERIFIED</b><p>The 20 Piece section remains in place. L&amp;J will not use stale or invented selections merely to fill twenty slots.</p></div>`}<div class="card-body"><p class="source-note">${esc(note || "20 Piece populates only from current verified markets.")}</p></div></div></section>`;
+    return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">Top player / participant prediction-prop pool • one player counts once</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20 PIECE":"SPORT 20 PIECE"}</span><span>RANKED BY L&amp;J HIT CONFIDENCE</span></div>${clean.length ? `<div class="card-body"><table class="twenty-table"><thead><tr><th>#</th><th>Sport</th><th>Player / Participant</th><th>Prediction</th><th>Price</th><th>L&amp;J Conf.</th><th>Quality</th><th>Risk</th></tr></thead><tbody>${clean.map((r,i)=>`<tr class="${isWatch(r.join(" • "))?"qc-watch":""}"><td class="rank">${i+1}</td><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="conf">${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status-panel"><b>MARKET WATCH — 0/20 VERIFIED</b><p>The 20 Piece section remains in place. L&amp;J will not use stale or invented selections merely to fill twenty slots.</p></div>`}<div class="card-body"><p class="source-note">${esc(note || "20 Piece populates only from current verified markets.")}</p></div></div></section>`;
   }
 
   function rules(){
-    return `<div class="card qc-standard"><div class="card-title purple"><span>REQUIRED PER-GAME QUICKIE FORMAT</span><span>APPLIES TO EVERY FULL GAME / FIGHT CARD</span></div><div class="qc-rules"><div class="qc-rule"><b>1. Game Side</b><span>Teams/participants, current market and JINX game-winner prediction with confidence.</span></div><div class="qc-rule"><b>2. LEGZ Player Hot Top</b><span>Best available player/participant market expressions for this matchup.</span></div><div class="qc-rule"><b>3. SNS / Goblin</b><span>Two separate accuracy-first mini-ticket constructions; no forced filler.</span></div><div class="qc-rule"><b>4. Normal</b><span>Balanced probability-to-payout construction using verified current legs.</span></div><div class="qc-rule"><b>5. Aggressive / Demon</b><span>Higher-variance ceiling construction; lower hit probability remains visible.</span></div><div class="qc-rule"><b>6. JINX Case</b><span>Why the selected statistical channel can go green and what invalidates the play.</span></div></div><p class="qc-lock-note">If current verified markets are unavailable, cells remain WATCH / PASS / DATA-LIMITED. No stale or fabricated prop is substituted.</p></div>`;
+    return `<div class="card qc-standard"><div class="card-title purple"><span>REQUIRED PER-GAME QUICKIE FORMAT</span><span>APPLIES TO EVERY FULL GAME / FIGHT CARD</span></div><div class="qc-rules"><div class="qc-rule"><b>1. Game Side</b><span>Teams/participants, current market and JINX game-winner prediction with confidence.</span></div><div class="qc-rule"><b>2. LEGZ Player Hot Top</b><span>Best available player/participant market expressions for this matchup.</span></div><div class="qc-rule"><b>3. SNS / Goblin</b><span>Two separate accuracy-first mini-ticket constructions; no forced filler.</span></div><div class="qc-rule"><b>4. Normal</b><span>Balanced probability-to-payout construction using verified current legs.</span></div><div class="qc-rule"><b>5. Aggressive / Demon</b><span>Higher-variance ceiling construction; lower hit probability remains visible.</span></div><div class="qc-rule"><b>6. JINX Case</b><span>Why the selected statistical channel can go green and what invalidates the play.</span></div><div class="qc-rule"><b>7. Publication Gate</b><span>7:30 AM, 12:00 PM and 8:30 PM PT; add a 30–45 minute pregame check when needed.</span></div></div><p class="qc-lock-note">Qualified predictions use normal type. Below-standard or conditional leans are italicized and are not approved parlay legs. If a current market is unavailable, the page publishes a researched WATCH / target line instead of stale or fabricated props. Kalshi is tracked as a prediction market, not a sportsbook.</p></div>`;
   }
   function ticketList(items){
     const arr = items && items.length ? items : ["WATCH — no current verified leg"];
@@ -68,14 +68,14 @@
 
   function statusGrid(){
     const map = [
-      ["MLB","ACTIVE TODAY","15-game Sep 5 slate • all per-game QCs refreshed"],
-      ["NCAA_Football","ACTIVE TODAY","Saturday Week 1 slate • kickoff + prop sweep refreshed"],
-      ["Tennis","ACTIVE TODAY","US Open Round 3 • official order of play + current markets"],
-      ["FIBA_Women","ACTIVE TODAY","World Cup Day 2 • next-game-only logic"],
-      ["UFC","ACTIVE TODAY","UFC Paris • weigh-ins complete • prelims 9 AM PT"],
-      ["Boxing","ACTIVE TODAY","Katie Taylor vs Flora Pili • Croke Park"],
-      ["WNBA","BREAK","World Cup pause • resumes Sep 17"],
-      ["NFL","NEXT: SEP 9","Week 1 all-game QCs staged • player props gated"],
+      ["MLB","ACTIVE TODAY","3 upcoming games • 2 early games closed/live • player props refreshed"],
+      ["NCAA_Football","ACTIVE TODAY","Florida A&M at Miami • current player-prop board refreshed"],
+      ["Tennis","ACTIVE TODAY","US Open women’s semifinals • current matchup sweep"],
+      ["FIBA_Women","LIVE / CLOSED","Quarterfinal pregame windows passed • no backfilled props"],
+      ["UFC","NEXT: SEP 12","Noche UFC board • method/round props market-gated"],
+      ["Boxing","NEXT: SEP 12","Garcia-Benn card • exact fight props market-gated"],
+      ["WNBA","CALENDAR WATCH","No Sep 10 club game independently verified"],
+      ["NFL","ACTIVE TODAY","49ers-Rams • current player props refreshed • final inactive gate"],
       ["NBA","OFFSEASON","No stale game/prop slate"],
       ["NHL","OFFSEASON","No stale game/prop slate"],
       ["NCAA_Basketball","OFFSEASON","Market activation awaits season slate"],
