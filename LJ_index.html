@@ -10,122 +10,96 @@
 <body>
   <div id="app"></div>
 
-  <!-- DAILY PREDICTIONS DATA STACK ONLY.
-       L&J LIVE is paused and intentionally has no hook on this page. -->
-  <script src="ljdata.js?v=20260911-homefix"></script>
-  <script src="nflrefresh.js?v=20260911-homefix"></script>
-  <script src="ncaarefresh.js?v=20260911-homefix"></script>
-  <script src="tennisrefresh.js?v=20260911-homefix"></script>
-  <script src="dailyrefresh.js?v=20260911-homefix"></script>
-  <script src="morningrefresh.js?v=20260911-homefix"></script>
-  <script src="middayrefresh.js?v=20260911-homefix"></script>
-  <script src="ljapp.js?v=20260911-homefix"></script>
+  <!-- DAILY PREDICTIONS ONLY. L&J LIVE remains paused and isolated. -->
+  <script src="ljdata.js?v=20260911-homefix2"></script>
+  <script src="nflrefresh.js?v=20260911-homefix2"></script>
+  <script src="ncaarefresh.js?v=20260911-homefix2"></script>
+  <script src="tennisrefresh.js?v=20260911-homefix2"></script>
+  <script src="dailyrefresh.js?v=20260911-homefix2"></script>
+  <script src="morningrefresh.js?v=20260911-homefix2"></script>
+  <script src="middayrefresh.js?v=20260911-homefix2"></script>
+  <script src="ljapp.js?v=20260911-homefix2"></script>
 
   <script>
   (() => {
     const app = document.getElementById('app');
+    const D = window.LJ_DATA;
+    const order = ['MLB','NFL','WNBA','NCAA_Football','Tennis','FIBA_Women','UFC','Boxing','NBA','NHL','NCAA_Basketball','FIBA_Men'];
+    const files = {
+      MLB:'MLB.html',NFL:'NFL.html',WNBA:'WNBA.html',NCAA_Football:'NCAA_Football.html',
+      Tennis:'Tennis.html',FIBA_Women:'FIBA_Women.html',UFC:'UFC.html',Boxing:'Boxing.html',
+      NBA:'NBA.html',NHL:'NHL.html',NCAA_Basketball:'NCAA_Basketball.html',FIBA_Men:'FIBA_Men.html'
+    };
+    const esc = v => String(v ?? '').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const confNum = v => Number(String(v||'0').replace(/[^0-9.]/g,'')) || 0;
 
-    function esc(v) {
-      return String(v ?? '').replace(/[&<>\"]/g, c => ({
-        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'
-      }[c]));
-    }
-
-    function stateFromSport(s) {
-      if (s && Array.isArray(s.chips) && s.chips[0] && s.chips[0][0]) {
-        return String(s.chips[0][0]);
-      }
-      if (s && s.meta) {
-        const parts = String(s.meta).split('•').map(x => x.trim()).filter(Boolean);
-        if (parts.length > 1) return parts[1];
-      }
+    function stateFromSport(s){
+      if(s && Array.isArray(s.chips) && s.chips[0] && s.chips[0][0]) return String(s.chips[0][0]);
+      if(s && s.meta){ const p=String(s.meta).split('•').map(x=>x.trim()).filter(Boolean); if(p.length>1) return p[1]; }
       return 'CURRENT BOARD';
     }
 
-    function syncHomeStatus() {
-      const D = window.LJ_DATA;
-      if (!D || !D.sports) return;
-
-      const order = [
-        'MLB','NFL','WNBA','NCAA_Football','Tennis','FIBA_Women',
-        'UFC','Boxing','NBA','NHL','NCAA_Basketball','FIBA_Men'
-      ];
-      const file = {
-        MLB:'MLB.html', NFL:'NFL.html', WNBA:'WNBA.html',
-        NCAA_Football:'NCAA_Football.html', Tennis:'Tennis.html',
-        FIBA_Women:'FIBA_Women.html', UFC:'UFC.html', Boxing:'Boxing.html',
-        NBA:'NBA.html', NHL:'NHL.html', NCAA_Basketball:'NCAA_Basketball.html',
-        FIBA_Men:'FIBA_Men.html'
+    function buildHomeData(){
+      if(!D || !D.sports) throw new Error('LJ_DATA sports layer unavailable');
+      const hot=[]; const wins=[]; const twenty=[];
+      order.forEach(key=>{
+        const s=D.sports[key]; if(!s) return;
+        (s.hotTop||[]).forEach(r=>hot.push([`${key.replace(/_/g,' ')} • ${r[0]}`,r[1],r[2],r[3]||'']));
+        (s.winners||[]).forEach(r=>wins.push([`${key.replace(/_/g,' ')} • ${r[0]}`,r[1],r[2],r[3]||'']));
+        (s.twenty||[]).forEach(r=>twenty.push(r));
+      });
+      hot.sort((a,b)=>confNum(b[2])-confNum(a[2]));
+      wins.sort((a,b)=>confNum(b[2])-confNum(a[2]));
+      twenty.sort((a,b)=>confNum(b[4])-confNum(a[4]));
+      D.home={
+        meta:`DAILY PREDICTIONS • ${D.updated || 'CURRENT REFRESH'}`,
+        kicker:'LEGZ & JINX DAILY PREDICTIONS',
+        title:'TODAY’S L&J PREDICTION BOARD',
+        description:'Daily Predictions is the active publication. LEGZ HOT TOP, JINX GAME WINNERS and complete Per-Game Quickies are the priority. L&J LIVE is paused and does not feed this page.',
+        chips:[["DAILY PREDICTIONS ACTIVE","green"],["HOT TOP + WINNERS + QCs","gold"],["LIVE PROJECT PAUSED","purple"]],
+        hotTop:hot.slice(0,10),
+        winners:wins.slice(0,12),
+        twenty:twenty.slice(0,20),
+        twentyNote:'All-sports 20 Piece is rebuilt from the current Daily Predictions sport boards after each refresh; stale LIVE content is excluded.'
       };
+    }
 
-      const head = [...document.querySelectorAll('.section-head h2')]
-        .find(h => h.textContent.trim() === 'CURRENT STATUS');
-      const grid = head && head.closest('.section')
-        ? head.closest('.section').querySelector('.quickie-grid')
-        : null;
-      if (!grid) return;
-
-      grid.innerHTML = order.map(key => {
-        const s = D.sports[key];
-        if (!s) return '';
-        const state = stateFromSport(s);
-        const qcCount = Array.isArray(s.qcs)
-          ? s.qcs.length
-          : (Array.isArray(s.qcGroups)
-              ? s.qcGroups.reduce((n,g) => n + (Array.isArray(g.rows) ? g.rows.length : 0), 0)
-              : 0);
-        const stateClass = /TODAY|ACTIVE/i.test(state)
-          ? 'sns'
-          : /NEXT|WATCH|OFFSEASON|SEASON/i.test(state)
-            ? 'purple'
-            : 'normal';
-        const detail = s.description || s.twentyNote || 'Current Daily Predictions board.';
-        const qcText = qcCount
-          ? `${qcCount} Quickie Card${qcCount === 1 ? '' : 's'} currently loaded`
-          : 'Quickie Card section retained; current market gate applies';
-
-        return `<div class="ticket">
-          <div class="ticket-h ${stateClass}">${s.icon || ''} ${esc(key.replace(/_/g,' '))} • ${esc(state)}</div>
-          <ul>
-            <li>${esc(detail)}</li>
-            <li>${esc(qcText)}</li>
-            <li>LEGZ HOT TOP + JINX GAME WINNERS + approved QC structure retained</li>
-          </ul>
-          <div class="note"><a href="${file[key]}">Open page →</a></div>
-        </div>`;
+    function syncHomeStatus(){
+      const head=[...document.querySelectorAll('.section-head h2')].find(h=>h.textContent.trim()==='CURRENT STATUS');
+      const grid=head?.closest('.section')?.querySelector('.quickie-grid'); if(!grid) return;
+      grid.innerHTML=order.map(key=>{
+        const s=D.sports[key]; if(!s) return '';
+        const state=stateFromSport(s);
+        const qcCount=Array.isArray(s.qcs)?s.qcs.length:(Array.isArray(s.qcGroups)?s.qcGroups.reduce((n,g)=>n+(Array.isArray(g.rows)?g.rows.length:0),0):0);
+        const cls=/TODAY|ACTIVE|GAME QCs|SEMIFINAL/i.test(state)?'sns':/NEXT|WATCH|OFFSEASON|SEASON/i.test(state)?'purple':'normal';
+        const detail=s.description||s.twentyNote||'Current Daily Predictions board.';
+        return `<div class="ticket"><div class="ticket-h ${cls}">${s.icon||''} ${esc(key.replace(/_/g,' '))} • ${esc(state)}</div><ul><li>${esc(detail)}</li><li>${qcCount?`${qcCount} Quickie Card${qcCount===1?'':'s'} loaded`:'Quickie Card section retained; current market gate applies'}</li><li>${(s.hotTop||[]).length} HOT TOP entries • ${(s.winners||[]).length} JINX winner entries</li></ul><div class="note"><a href="${files[key]}">Open page →</a></div></div>`;
       }).join('');
     }
 
-    function postRenderQA() {
-      document.querySelectorAll('.sports-nav .sport-link').forEach(a => {
-        if ((a.getAttribute('href') || '') === 'Recap.html') a.remove();
-      });
-
-      const D = window.LJ_DATA;
-      const problems = [];
-      if (!document.querySelector('.hero')) problems.push('hero');
-      if (!document.querySelector('.sports-nav')) problems.push('sports navigation');
-      if (!document.querySelector('.headliner-grid')) problems.push('HOT TOP / GAME WINNERS');
-      if (!document.querySelector('.quickie-grid')) problems.push('current status');
-      if (!D || !D.home) problems.push('home data');
-
-      if (problems.length) {
-        console.error('L&J HOME QA — missing:', problems.join(', '));
-      } else {
-        console.info('L&J HOME QA PASS — core Daily Predictions sections rendered.');
-      }
+    function postRenderQA(){
+      document.querySelectorAll('.sports-nav .sport-link').forEach(a=>{if((a.getAttribute('href')||'')==='Recap.html')a.remove();});
+      const problems=[];
+      if(!document.querySelector('.hero')) problems.push('hero');
+      if(!document.querySelector('.sports-nav')) problems.push('sports navigation');
+      if(!document.querySelector('.headliner-grid')) problems.push('HOT TOP / GAME WINNERS');
+      if(!document.querySelector('.quickie-grid')) problems.push('current status');
+      if(!document.querySelector('.twenty-table') && !(D.home.twenty||[]).length) problems.push('20 Piece data');
+      if(!D.home || !(D.home.hotTop||[]).length) problems.push('home HOT TOP data');
+      if(!D.home || !(D.home.winners||[]).length) problems.push('home GAME WINNERS data');
+      if(problems.length) console.error('L&J HOME QA — missing:',problems.join(', '));
+      else console.info(`L&J HOME QA PASS — ${D.home.hotTop.length} HOT TOP, ${D.home.winners.length} GAME WINNERS, ${D.home.twenty.length} 20 PIECE entries rendered.`);
     }
 
-    try {
-      if (typeof window.renderLJHome !== 'function') {
-        throw new Error('renderLJHome is unavailable');
-      }
+    try{
+      buildHomeData();
+      if(typeof window.renderLJHome!=='function') throw new Error('renderLJHome unavailable');
       window.renderLJHome();
       syncHomeStatus();
       postRenderQA();
-    } catch (err) {
-      console.error('L&J Daily Predictions home render failed:', err);
-      app.innerHTML = `<div class="page"><section class="section"><div class="status-panel"><b>DAILY PREDICTIONS DISPLAY CHECK</b><p>The Daily Predictions home page did not complete its render. No LIVE data was substituted. Reload the page while the publication data is checked.</p></div></section></div>`;
+    }catch(err){
+      console.error('L&J Daily Predictions home render failed:',err);
+      app.innerHTML='<div class="page"><section class="section"><div class="status-panel"><b>DAILY PREDICTIONS DISPLAY CHECK</b><p>The Daily Predictions home page did not complete its render. LIVE data was not substituted.</p></div></section></div>';
     }
   })();
   </script>
