@@ -48,12 +48,12 @@ const NCAA=D.sports.NCAA_Football;if(NCAA){
 
 const T=D.sports.Tennis;if(T){
  T.meta="TENNIS • US OPEN • FRIDAY SEPTEMBER 11, 2026 • 12:00 PM REFRESH";
- T.description="The first men's semifinal has reached its official 3:00 PM ET start window and is closed to new L&J predictions. The 7:00 PM ET NIGHT SESSION semifinal remains actionable. Official timing is preserved; no invented start time or live-match backfill is used.";
+ T.description="Alexander Zverev vs Karen Khachanov reached the official 3:00 PM ET day-session start window and is closed to new L&J predictions. Frances Tiafoe vs Ben Shelton remains the 7:00 PM ET NIGHT SESSION semifinal. Official session timing is now corrected in the QC data; no live-match backfill is used.";
  const tq={};T.qcs.forEach(x=>tq[`${x.away}@${x.home}`]=x);
- if(tq["KAREN KHACHANOV@ALEXANDER ZVEREV"]){Object.assign(tq["KAREN KHACHANOV@ALEXANDER ZVEREV"],{market:"LIVE / START WINDOW — official 3:00 PM ET day-session semifinal",winner:"LIVE — NO NEW BET",conf:"—",hot:[],foot:"Match reached its official start window at the midday refresh. Morning Zverev/sets calls are closed to new action and are not replaced with an in-play prediction."});}
- if(tq["FRANCES TIAFOE@BEN SHELTON"]){Object.assign(tq["FRANCES TIAFOE@BEN SHELTON"],{market:"NIGHT SESSION • 7:00 PM ET • Shelton -295 to -315 / Tiafoe +235 to +255 current range",winner:"Shelton",conf:"75%",hot:["Shelton match winner • 75%","Over 3.5 sets — WATCH price efficiency"]});}
- T.hotTop=[["Ben Shelton","Match winner -295 to -315 current range","75%","Shelton remains the only actionable men's semifinal winner call after the day-session match entered its start window."]];
- T.winners=[["Zverev vs Khachanov","LIVE — NO NEW BET","—","official 3:00 PM ET start window"],["Tiafoe vs Shelton","Shelton","75%","-295 to -315 current range"]];
+ if(tq["KAREN KHACHANOV@ALEXANDER ZVEREV"]){Object.assign(tq["KAREN KHACHANOV@ALEXANDER ZVEREV"],{time:"3:00 PM ET • 12:00 PM PT • DAY SESSION",market:"LIVE / START WINDOW — official 3:00 PM ET day-session semifinal",winner:"LIVE — NO NEW BET",conf:"—",hot:[],foot:"Match reached its official start window at the midday refresh. Morning Zverev/sets calls are closed to new action and are not replaced with an in-play prediction."});}
+ if(tq["FRANCES TIAFOE@BEN SHELTON"]){Object.assign(tq["FRANCES TIAFOE@BEN SHELTON"],{time:"7:00 PM ET • 4:00 PM PT • NIGHT SESSION",market:"NIGHT SESSION • 7:00 PM ET • Shelton -295 to -315 / Tiafoe +235 to +255 current range",winner:"Shelton",conf:"75%",hot:["Shelton match winner • 75%","Over 3.5 sets — WATCH price efficiency"],foot:"Official US Open night-session semifinal. Shelton remains the pregame lean; no invented start time is used."});}
+ T.hotTop=[["Ben Shelton","Match winner -295 to -315 current range","75%","Shelton remains the only actionable men's semifinal winner call after Zverev-Khachanov entered its official day-session start window."]];
+ T.winners=[["Zverev vs Khachanov","LIVE — NO NEW BET","—","3:00 PM ET day session"],["Tiafoe vs Shelton","Shelton","75%","7:00 PM ET night session • -295 to -315 current range"]];
  T.twenty=[["Tennis","Ben Shelton","Match winner","-295 to -315 range","75%","★★★★☆","🔥"]];
 }
 
