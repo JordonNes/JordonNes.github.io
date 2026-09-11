@@ -1,1 +1,133 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>LEGZ &amp; JINX — Daily Predictions</title><link rel="stylesheet" href="ljstyle.css"><link rel="stylesheet" href="ljqc.css"><style>.lj-live-launch{position:fixed;top:14px;right:18px;z-index:9999;background:#ffd84d;color:#151515!important;border:2px solid #151515;border-radius:8px;padding:10px 14px;font-weight:900;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.35)}.lj-live-launch:hover{transform:translateY(-1px)}</style></head><body><a class="lj-live-launch" href="live/index.html">L&amp;J Live</a><div id="app"></div><script src="ljdata.js"></script><script src="ljlive.js"></script><script src="nflrefresh.js"></script><script src="ncaarefresh.js"></script><script src="tennisrefresh.js"></script><script src="dailyrefresh.js"></script><script src="morningrefresh.js"></script><script src="middayrefresh.js?v=20260910-home"></script><script src="ljapp.js?v=20260910-standard"></script><script>renderLJHome();document.querySelectorAll('.sports-nav .sport-link').forEach(function(a){if((a.getAttribute('href')||'')==='Recap.html')a.remove();});document.querySelectorAll('.ticket').forEach(function(t){var h=t.querySelector('.ticket-h');if(h&&h.textContent.indexOf('NFL • WEEK 1 WATCH')!==-1){h.textContent='🏈 NFL • WEEK 1 LIVE BOARD';var li=t.querySelector('li');if(li)li.textContent='16-game Sep 9–14 board • Sep 3 team markets refreshed • verified player props gated';}});</script><script src="dailyrefresh_post.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEGZ &amp; JINX — Daily Predictions</title>
+  <link rel="stylesheet" href="ljstyle.css">
+  <link rel="stylesheet" href="ljqc.css">
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- DAILY PREDICTIONS DATA STACK ONLY.
+       L&J LIVE is paused and intentionally has no hook on this page. -->
+  <script src="ljdata.js?v=20260911-homefix"></script>
+  <script src="nflrefresh.js?v=20260911-homefix"></script>
+  <script src="ncaarefresh.js?v=20260911-homefix"></script>
+  <script src="tennisrefresh.js?v=20260911-homefix"></script>
+  <script src="dailyrefresh.js?v=20260911-homefix"></script>
+  <script src="morningrefresh.js?v=20260911-homefix"></script>
+  <script src="middayrefresh.js?v=20260911-homefix"></script>
+  <script src="ljapp.js?v=20260911-homefix"></script>
+
+  <script>
+  (() => {
+    const app = document.getElementById('app');
+
+    function esc(v) {
+      return String(v ?? '').replace(/[&<>\"]/g, c => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'
+      }[c]));
+    }
+
+    function stateFromSport(s) {
+      if (s && Array.isArray(s.chips) && s.chips[0] && s.chips[0][0]) {
+        return String(s.chips[0][0]);
+      }
+      if (s && s.meta) {
+        const parts = String(s.meta).split('•').map(x => x.trim()).filter(Boolean);
+        if (parts.length > 1) return parts[1];
+      }
+      return 'CURRENT BOARD';
+    }
+
+    function syncHomeStatus() {
+      const D = window.LJ_DATA;
+      if (!D || !D.sports) return;
+
+      const order = [
+        'MLB','NFL','WNBA','NCAA_Football','Tennis','FIBA_Women',
+        'UFC','Boxing','NBA','NHL','NCAA_Basketball','FIBA_Men'
+      ];
+      const file = {
+        MLB:'MLB.html', NFL:'NFL.html', WNBA:'WNBA.html',
+        NCAA_Football:'NCAA_Football.html', Tennis:'Tennis.html',
+        FIBA_Women:'FIBA_Women.html', UFC:'UFC.html', Boxing:'Boxing.html',
+        NBA:'NBA.html', NHL:'NHL.html', NCAA_Basketball:'NCAA_Basketball.html',
+        FIBA_Men:'FIBA_Men.html'
+      };
+
+      const head = [...document.querySelectorAll('.section-head h2')]
+        .find(h => h.textContent.trim() === 'CURRENT STATUS');
+      const grid = head && head.closest('.section')
+        ? head.closest('.section').querySelector('.quickie-grid')
+        : null;
+      if (!grid) return;
+
+      grid.innerHTML = order.map(key => {
+        const s = D.sports[key];
+        if (!s) return '';
+        const state = stateFromSport(s);
+        const qcCount = Array.isArray(s.qcs)
+          ? s.qcs.length
+          : (Array.isArray(s.qcGroups)
+              ? s.qcGroups.reduce((n,g) => n + (Array.isArray(g.rows) ? g.rows.length : 0), 0)
+              : 0);
+        const stateClass = /TODAY|ACTIVE/i.test(state)
+          ? 'sns'
+          : /NEXT|WATCH|OFFSEASON|SEASON/i.test(state)
+            ? 'purple'
+            : 'normal';
+        const detail = s.description || s.twentyNote || 'Current Daily Predictions board.';
+        const qcText = qcCount
+          ? `${qcCount} Quickie Card${qcCount === 1 ? '' : 's'} currently loaded`
+          : 'Quickie Card section retained; current market gate applies';
+
+        return `<div class="ticket">
+          <div class="ticket-h ${stateClass}">${s.icon || ''} ${esc(key.replace(/_/g,' '))} • ${esc(state)}</div>
+          <ul>
+            <li>${esc(detail)}</li>
+            <li>${esc(qcText)}</li>
+            <li>LEGZ HOT TOP + JINX GAME WINNERS + approved QC structure retained</li>
+          </ul>
+          <div class="note"><a href="${file[key]}">Open page →</a></div>
+        </div>`;
+      }).join('');
+    }
+
+    function postRenderQA() {
+      document.querySelectorAll('.sports-nav .sport-link').forEach(a => {
+        if ((a.getAttribute('href') || '') === 'Recap.html') a.remove();
+      });
+
+      const D = window.LJ_DATA;
+      const problems = [];
+      if (!document.querySelector('.hero')) problems.push('hero');
+      if (!document.querySelector('.sports-nav')) problems.push('sports navigation');
+      if (!document.querySelector('.headliner-grid')) problems.push('HOT TOP / GAME WINNERS');
+      if (!document.querySelector('.quickie-grid')) problems.push('current status');
+      if (!D || !D.home) problems.push('home data');
+
+      if (problems.length) {
+        console.error('L&J HOME QA — missing:', problems.join(', '));
+      } else {
+        console.info('L&J HOME QA PASS — core Daily Predictions sections rendered.');
+      }
+    }
+
+    try {
+      if (typeof window.renderLJHome !== 'function') {
+        throw new Error('renderLJHome is unavailable');
+      }
+      window.renderLJHome();
+      syncHomeStatus();
+      postRenderQA();
+    } catch (err) {
+      console.error('L&J Daily Predictions home render failed:', err);
+      app.innerHTML = `<div class="page"><section class="section"><div class="status-panel"><b>DAILY PREDICTIONS DISPLAY CHECK</b><p>The Daily Predictions home page did not complete its render. No LIVE data was substituted. Reload the page while the publication data is checked.</p></div></section></div>`;
+    }
+  })();
+  </script>
+</body>
+</html>
