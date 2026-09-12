@@ -11,14 +11,14 @@
   <div id="app"></div>
 
   <!-- DAILY PREDICTIONS ONLY. L&J LIVE remains paused and isolated. -->
-  <script src="ljdata.js?v=20260912-am1"></script>
-  <script src="nflrefresh.js?v=20260912-am1"></script>
-  <script src="ncaarefresh.js?v=20260912-am1"></script>
-  <script src="tennisrefresh.js?v=20260912-am1"></script>
-  <script src="dailyrefresh.js?v=20260912-am1"></script>
-  <script src="morningrefresh.js?v=20260912-am1"></script>
-  <script src="middayrefresh.js?v=20260912-am1"></script>
-  <script src="ljapp.js?v=20260912-am1"></script>
+  <script src="ljdata.js?v=20260912-noon1"></script>
+  <script src="nflrefresh.js?v=20260912-noon1"></script>
+  <script src="ncaarefresh.js?v=20260912-noon1"></script>
+  <script src="tennisrefresh.js?v=20260912-noon1"></script>
+  <script src="dailyrefresh.js?v=20260912-noon1"></script>
+  <script src="morningrefresh.js?v=20260912-noon1"></script>
+  <script src="middayrefresh.js?v=20260912-noon1"></script>
+  <script src="ljapp.js?v=20260912-noon1"></script>
 
   <script>
   (() => {
@@ -70,7 +70,7 @@
       grid.innerHTML=order.map(key=>{
         const s=D.sports[key]; if(!s) return '';
         const state=stateFromSport(s);
-        const qcCount=Array.isArray(s.qcs)?s.qcs.length:(Array.isArray(s.qcGroups)?s.qcGroups.reduce((n,g)=>n+(Array.isArray(g.rows)?g.rows.length:0),0):0);
+        const qcCount=Array.isArray(s.qcs)?s.qcs.length:(Array.isArray(s.qcGroups)?s.qcGroups.reduce((n,g)=>n+(Array.isArray(g.rows)?g.rows.length:0),0):0;
         const cls=/TODAY|ACTIVE|GAME QCs|SEMIFINAL/i.test(state)?'sns':/NEXT|WATCH|OFFSEASON|SEASON/i.test(state)?'purple':'normal';
         const detail=s.description||s.twentyNote||'Current Daily Predictions board.';
         return `<div class="ticket"><div class="ticket-h ${cls}">${s.icon||''} ${esc(key.replace(/_/g,' '))} • ${esc(state)}</div><ul><li>${esc(detail)}</li><li>${qcCount?`${qcCount} Quickie Card${qcCount===1?'':'s'} loaded`:'Quickie Card section retained; current market gate applies'}</li><li>${(s.hotTop||[]).length} HOT TOP entries • ${(s.winners||[]).length} JINX winner entries</li></ul><div class="note"><a href="${files[key]}">Open page →</a></div></div>`;
