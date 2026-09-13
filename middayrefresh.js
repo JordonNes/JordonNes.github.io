@@ -1,142 +1,47 @@
-/* LEGZ & JINX — PLAYER-PROP COMPLETENESS PASS — SEP 13 2026
-   Runs after the morning layer. Daily Predictions only; L&J LIVE remains paused.
-   Separation rule: GAME SIDE owns moneyline/spread/total. QC ticket columns are player/participant props only.
-   Never backfill a player-prop card after its event has started. */
+/* LEGZ & JINX — DAY-OF MIDDAY REFRESH — SEP 13 2026 12:00 PM PT
+   DAILY PREDICTIONS ONLY. L&J LIVE remains paused and untouched.
+   Data/content overlay only; approved Daily Predictions architecture remains locked. */
 (()=>{
-  const D=window.LJ_DATA;
-  if(!D||!D.sports)return;
-  const now=()=>Date.now();
-  const hasStarted=iso=>now()>=Date.parse(iso);
-  const six=a=>(a||[]).slice(0,6);
-  const rot=(a,n=1)=>a.slice(n).concat(a.slice(0,n));
-  const q=(sport,away,home)=>((sport&&sport.qcs)||[]).find(x=>x.away===away&&x.home===home);
-  const rebuildWinners=s=>{s.winners=(s.qcs||[]).filter(x=>x.winner&&!/WATCH|NO BET|STARTED|LIVE|CLOSED/i.test(String(x.winner))).map(x=>[`${x.away} @ ${x.home}`,x.winner,x.conf,x.market]);};
-  const addChip=(s,label,color='green')=>{s.chips=Array.isArray(s.chips)?s.chips:[];if(!s.chips.some(x=>String(x&&x[0]).toUpperCase()===label.toUpperCase()))s.chips.unshift([label,color]);};
-  const applyPack=(card,pack)=>{
-    if(!card||!pack)return;
-    card.hot=six(pack.hot||pack.normal||pack.sns1);
-    card.sns1=six(pack.sns1);
-    card.sns2=six(pack.sns2);
-    card.normal=six(pack.normal);
-    card.demon=six(pack.demon);
-    card.foot=(pack.foot?pack.foot+' ':'')+'QC separation lock: GAME SIDE is separate; all ticket legs shown here are player/participant props. Recheck the live board immediately before entry.';
-  };
-  const closeCard=(card,label='STARTED / LIVE — NO NEW PREGAME BET')=>{
-    if(!card)return;
-    card.market=label+(card.market?` • ${card.market}`:'');
-    card.winner='CLOSED / LIVE — NO NEW PREGAME BET';
-    card.conf='—';
-    card.foot='Event crossed the pregame window. L&J does not backfill new player-prop predictions after start.';
-  };
-  const makeSix=(names,market='1+ hit')=>names.map((name,i)=>`${name} ${market} • L&J ${[66,64,63,62,60,59][i]}%`);
-  const makeAgg=(names)=>names.map((name,i)=>i<3?`${name} to score a run • verify live price`:`${name} 2+ total bases • verify live price`);
-  const standardPack=(names,foot='')=>{const b=makeSix(names);return{hot:b,sns1:six(b),sns2:six(rot(b,2)),normal:six(rot(b,4)),demon:six(makeAgg(names)),foot};};
+const D=window.LJ_DATA;if(!D||!D.sports)return;
+const WATCH='WATCH / NO BET — no additional current player prop independently verified';
+const q=(s,a,h)=>((s&&s.qcs)||[]).find(x=>x.away===a&&x.home===h);
+const six=(...legs)=>{const a=legs.filter(Boolean).slice(0,6);while(a.length<6)a.push(WATCH);return a;};
+const close=(c,label='STARTED / LIVE — NO NEW PREGAME BET')=>{if(!c)return;c.market=label+(c.market?` • ${c.market}`:'');c.winner='CLOSED / LIVE — NO NEW PREGAME BET';c.conf='—';c.hot=[];c.sns1=[WATCH];c.sns2=[WATCH];c.normal=[WATCH];c.demon=[WATCH];c.foot='Event crossed the pregame window. No new L&J prediction or prop is backfilled after start.';};
+const rebuild=s=>{s.winners=(s.qcs||[]).filter(c=>c.winner&&!/WATCH|NO BET|STARTED|LIVE|CLOSED|DELAY/i.test(String(c.winner))).map(c=>[`${c.away} @ ${c.home}`,c.winner,c.conf,c.market]);};
+D.updated='Updated Sep 13, 2026 • 12:00 PM PT — DAY-OF MIDDAY REFRESH';
 
-  D.updated='Updated Sep 13, 2026 • PLAYER-PROP COMPLETENESS PASS';
+/* MLB — StatsHawk noon sweep. Started/final games are audit-only. KC-BOS is delayed. */
+const M=D.sports.MLB;
+if(M){
+ M.meta='MLB • SUNDAY SEPTEMBER 13, 2026 • 12PM REFRESH';
+ M.description='Noon state sweep: the early board is live/final and closed to new action. Kansas City-Boston is delayed and gated. Seattle-Oakland and Texas-Arizona have confirmed lineups; Padres-Giants remains the late pregame QC. Exact player props stay WATCH unless independently verified.';
+ [['COL','DET'],['LAA','WSH'],['NYM','NYY'],['PHI','ATL'],['BAL','TOR'],['HOU','TB'],['LAD','MIA'],['CIN','MIL'],['CLE','MIN'],['CWS','STL'],['PIT','CHC']].forEach(x=>close(q(M,...x)));
+ const kb=q(M,'KC','BOS');if(kb){kb.market='DELAYED START — both lineups confirmed • Noah Cameron vs Payton Tolle';kb.winner='WATCH / NO BET — delayed start';kb.conf='—';kb.hot=[];kb.sns1=[WATCH];kb.sns2=[WATCH];kb.normal=[WATCH];kb.demon=[WATCH];kb.foot='StatsHawk noon status: delayed start. Re-open only after the game is officially cleared to begin and the pitching/lineup context remains intact.';}
+ const sea=q(M,'SEA','ATH');if(sea){Object.assign(sea,{market:'Bryce Miller vs Jacob Lopez • BOTH LINEUPS CONFIRMED',winner:'Mariners lean',conf:'57%',hot:['Mariners game winner lean • 57%'],sns1:[WATCH],sns2:[WATCH],normal:[WATCH],demon:[WATCH],foot:'Confirmed noon lineups. No exact current player-prop threshold was independently synchronized, so prop/ticket fields remain WATCH.'});}
+ const az=q(M,'TEX','AZ');if(az){Object.assign(az,{market:'Cal Quantrill vs Eduardo Rodriguez • BOTH LINEUPS CONFIRMED',winner:'Diamondbacks lean',conf:'56%',hot:['Diamondbacks game winner lean • 56%'],sns1:[WATCH],sns2:[WATCH],normal:[WATCH],demon:[WATCH],foot:'Confirmed noon lineups. No exact current player-prop threshold was independently synchronized, so prop/ticket fields remain WATCH.'});}
+ const sf=q(M,'SD','SF');if(sf){Object.assign(sf,{market:'Nick Pivetta vs Logan Webb • lineups pending at noon',winner:'Giants lean',conf:'54%',hot:['Giants game winner lean • 54%'],sns1:[WATCH],sns2:[WATCH],normal:[WATCH],demon:[WATCH],foot:'Late-window probable pitchers remain Pivetta/Webb. Final lineups and exact player props require a later verification; no stale prop is reused.'});}
+ M.hotTop=[['Mariners','Game winner lean','57%','Confirmed Seattle-Oakland lineups; Bryce Miller vs Jacob Lopez.'],['Diamondbacks','Game winner lean','56%','Confirmed Texas-Arizona lineups; Eduardo Rodriguez at home vs Cal Quantrill.'],['Giants','Game winner lean','54%','Late game remains pregame; Logan Webb vs Nick Pivetta, final lineups pending.']];
+ rebuild(M);M.twenty=M.hotTop.map(x=>['MLB',x[0],x[1],'NOON CURRENT',x[2],'★★★☆☆','🔥']);M.twentyNote='Noon MLB 20 Piece excludes every game already underway. Exact player props remain WATCH where a current market was not independently verified.';
+}
 
-  /* MLB — only populate games that are still pregame at page-load time. Started games stay locked; no retroactive props. */
-  const M=D.sports.MLB;
-  if(M){
-    const mlb=[
-      ['COL','DET','2026-09-13T09:10:00-07:00',null],
-      ['NYM','NYY','2026-09-13T10:35:00-07:00',null],
-      ['PHI','ATL','2026-09-13T10:35:00-07:00',null],
-      ['LAA','WSH','2026-09-13T10:35:00-07:00',null],
-      ['BAL','TOR','2026-09-13T10:37:00-07:00',null],
-      ['LAD','MIA','2026-09-13T10:40:00-07:00',null],
-      ['HOU','TB','2026-09-13T10:40:00-07:00',null],
-      ['CIN','MIL','2026-09-13T11:10:00-07:00',standardPack(['Elly De La Cruz','Jackson Chourio','William Contreras','Christian Yelich','Sal Stewart','Tyler Stephenson'],'Confirmed/expected starters were swept this morning; 1+ hit is the floor-style L&J expression and must match the live book.')],
-      ['CLE','MIN','2026-09-13T11:10:00-07:00',standardPack(['Steven Kwan','José Ramírez','Luke Keaschall','Royce Lewis','Kody Clemens','Chase DeLauter'],'Current Sunday lineups were checked; use only if each named player remains in the official starting lineup.')],
-      ['CWS','STL','2026-09-13T11:15:00-07:00',standardPack(['Miguel Vargas','Munetaka Murakami','Kyle Teel','Iván Herrera','Alec Burleson','Masyn Winn'],'Current Sunday lineups were checked; batter props are lineup-dependent.')],
-      ['PIT','CHC','2026-09-13T11:20:00-07:00',standardPack(['Oneil Cruz','Bryan Reynolds','Pete Crow-Armstrong','Alex Bregman','Michael Busch','Ian Happ'],'Current Sunday lineup context is used; do not enter a leg if the player is scratched or the market is unavailable.')],
-      ['KC','BOS','2026-09-13T12:05:00-07:00',standardPack(['Bobby Witt Jr.','Salvador Perez','Vinnie Pasquantino','Roman Anthony','Wilyer Abreu','Trevor Story'],'Player-specific hit props are preferred to replacing the ticket with a team side.')],
-      ['SEA','ATH','2026-09-13T13:05:00-07:00',standardPack(['Cal Raleigh','Julio Rodríguez','Randy Arozarena','J.P. Crawford','Lawrence Butler','Shea Langeliers'],'Late-game lineup verification remains mandatory before action.')],
-      ['TEX','AZ','2026-09-13T13:10:00-07:00',standardPack(['Corey Seager','Ketel Marte','Corbin Carroll','Wyatt Langford','Josh Jung','Lars Nootbaar'],'Current series participants are used; confirm official Sunday starters and exact prop availability.')],
-      ['SD','SF','2026-09-13T16:20:00-07:00',standardPack(['Fernando Tatis Jr.','Manny Machado','Jackson Merrill','Xander Bogaerts','Rafael Devers','Bryce Eldridge'],'Late-window player props require the final lineup check before entry.')]
-    ];
-    mlb.forEach(([away,home,start,pack])=>{const card=q(M,away,home);if(!card)return;if(hasStarted(start)){closeCard(card);return;}if(pack)applyPack(card,pack);});
-    M.hotTop=(M.qcs||[]).filter(x=>Array.isArray(x.hot)&&x.hot.length).flatMap(x=>x.hot.map(p=>[p,`${x.away} @ ${x.home}`,'PLAYER PROP','Six-leg QC source pool'])).slice(0,10);
-    M.twenty=(M.qcs||[]).filter(x=>Array.isArray(x.hot)&&x.hot.length).flatMap(x=>x.hot.map(p=>['MLB',p,`${x.away} @ ${x.home}`,'PLAYER PROP','—','★★★★☆','🔥'])).slice(0,20);
-    M.twentyNote='Player-prop completeness pass: active pregame MLB QCs use six player props per ticket. Games already started are locked and are not retroactively backfilled.';
-    addChip(M,'ML + 6-PROP QCs','green');
-    rebuildWinners(M);
-  }
+/* NFL — StatsHawk confirms all eight 10AM PT games are in progress. Only the four 1:25 PM games and SNF remain actionable. */
+const N=D.sports.NFL;
+if(N){
+ N.meta='NFL • WEEK 1 SUNDAY • SEP 13 • 12PM REFRESH';
+ N.description='All eight 10:00 AM PT games are live and closed to new L&J pregame action. The four 1:25 PM PT games and Cowboys-Giants SNF remain actionable with current side/total snapshots and only independently recoverable player props.';
+ [['TB','CIN'],['BAL','IND'],['BUF','HOU'],['NO','DET'],['CLE','JAX'],['NYJ','TEN'],['ATL','PIT'],['CHI','CAR']].forEach(x=>close(q(N,...x)));
+ const phi=q(N,'WAS','PHI');if(phi){Object.assign(phi,{market:'PHI -5.5 • ML -250 • O/U 44.5',winner:'Eagles',conf:'68%',hot:['Eagles game winner • 68%','Saquon Barkley O77.5 rushing yards • 66%','Jayden Daniels O36.5 rushing yards • 63%','DeVonta Smith O66.5 receiving yards • 60%'],sns1:six('Saquon Barkley O77.5 rushing yards','Jayden Daniels O36.5 rushing yards','Jalen Hurts O209.5 passing yards','DeVonta Smith O66.5 receiving yards','Terry McLaurin O49.5 receiving yards','Saquon Barkley O2.5 receptions'),sns2:six('Saquon Barkley O77.5 rushing yards','Jayden Daniels O36.5 rushing yards','DeVonta Smith O66.5 receiving yards','Terry McLaurin O49.5 receiving yards'),normal:six('Saquon Barkley O77.5 rushing yards','Jayden Daniels O36.5 rushing yards','Jalen Hurts O209.5 passing yards','DeVonta Smith O66.5 receiving yards','Terry McLaurin O49.5 receiving yards','Saquon Barkley O2.5 receptions'),demon:six('Jayden Daniels O36.5 rushing yards','Saquon Barkley O77.5 rushing yards','DeVonta Smith O66.5 receiving yards','Terry McLaurin O49.5 receiving yards'),foot:'Noon market: PHI -5.5 / -250 / 44.5. Player thresholds were independently published across DraftKings/FanDuel/Fanatics snapshots; recheck price and threshold immediately before entry.'});}
+ const lac=q(N,'ARI','LAC');if(lac){Object.assign(lac,{market:'LAC -9.5 • ML -490 • O/U 47.5',winner:'Chargers',conf:'80%',hot:['Chargers game winner • 80%','Omarion Hampton O65.5 rushing yards • 64%','Ladd McConkey O56.5 receiving yards • 60%'],sns1:six('Omarion Hampton O65.5 rushing yards','Ladd McConkey O56.5 receiving yards','Justin Herbert O233.5 passing yards','Jacoby Brissett U221.5 passing yards'),sns2:six('Omarion Hampton O65.5 rushing yards','Ladd McConkey O56.5 receiving yards'),normal:six('Omarion Hampton O65.5 rushing yards','Ladd McConkey O56.5 receiving yards','Justin Herbert O233.5 passing yards','Jacoby Brissett U221.5 passing yards'),demon:six('Omarion Hampton 70+ rushing yards','Justin Herbert 240+ passing yards','Ladd McConkey O56.5 receiving yards'),foot:'FanDuel matchup snapshot: LAC -9.5 / -490 / 47.5. FanDuel Research published Herbert 233.5 pass, Hampton 65.5 rush, McConkey 56.5 receiving and Brissett 221.5 pass thresholds; prices can move.'});}
+ const min=q(N,'GB','MIN');if(min){Object.assign(min,{market:'MIN -1.5 • ML -126 • O/U 46.5',winner:'Vikings lean',conf:'55%',hot:['Vikings game winner lean • 55%','Justin Jefferson O79.5 receiving yards • 61%'],sns1:six('Justin Jefferson O79.5 receiving yards'),sns2:six('Justin Jefferson O79.5 receiving yards'),normal:six('Justin Jefferson O79.5 receiving yards'),demon:six('Justin Jefferson O79.5 receiving yards'),foot:'Current FanDuel snapshot: MIN -1.5 / -126 / 46.5. Jefferson O79.5 is the only player threshold promoted after the noon verification sweep; remaining prop fields stay WATCH.'});}
+ const lv=q(N,'MIA','LV');if(lv){Object.assign(lv,{market:'LV -3.5 • ML -176 • O/U 40.5',winner:'Raiders',conf:'58%',hot:['Raiders game winner • 58%','Michael Mayer O2.5 receptions • 62%'],sns1:six('Michael Mayer O2.5 receptions'),sns2:six('Michael Mayer O2.5 receptions'),normal:six('Michael Mayer O2.5 receptions'),demon:six('Michael Mayer O2.5 receptions'),foot:'Consensus noon market: LV -3.5 / -176 / 40.5. Brock Bowers is out; Mayer O2.5 receptions is the verified usage-based player-prop target. No unsupported extra prop is added.'});}
+ const dal=q(N,'DAL','NYG');if(dal){Object.assign(dal,{market:'DAL -3 • ML -158 • O/U 48.5',winner:'Cowboys',conf:'60%',hot:['Cowboys game winner • 60%','Javonte Williams O74.5 rushing yards • 61%','Dak Prescott U263.5 passing yards • 58%'],sns1:six('Javonte Williams O74.5 rushing yards','Dak Prescott U263.5 passing yards','CeeDee Lamb anytime TD +110','George Pickens anytime TD +125'),sns2:six('Javonte Williams O74.5 rushing yards','Dak Prescott U263.5 passing yards'),normal:six('Javonte Williams O74.5 rushing yards','Dak Prescott U263.5 passing yards','CeeDee Lamb anytime TD +110','George Pickens anytime TD +125'),demon:six('Javonte Williams anytime TD -167','CeeDee Lamb anytime TD +110','George Pickens anytime TD +125','Jaxson Dart anytime TD +175'),foot:'Current FanDuel side snapshot: DAL -3 / -158 / 48.5. FanDuel Research published Prescott 263.5 passing and Williams 74.5 rushing; current anytime-TD prices are separately listed and remain price-sensitive.'});}
+ N.hotTop=[['Chargers','Game winner','80%','Current LAC -9.5 / -490 profile remains the strongest remaining NFL side.'],['Eagles','Game winner','68%','Philadelphia -5.5 / -250 with total down to 44.5.'],['Saquon Barkley','Over 77.5 rushing yards','66%','Published DraftKings threshold with projection support materially above the line.'],['Omarion Hampton','Over 65.5 rushing yards','64%','FanDuel published threshold; Arizona allowed 126.9 rush yards per game last season.'],['Jayden Daniels','Over 36.5 rushing yards','63%','Published DraftKings threshold with mobile-QB matchup support.'],['Michael Mayer','Over 2.5 receptions','62%','Bowers absence materially expands Mayer route/target opportunity.'],['Justin Jefferson','Over 79.5 receiving yards','61%','Verified Week 1 target number; Minnesota remains a slight home favorite.'],['Javonte Williams','Over 74.5 rushing yards','61%','FanDuel published threshold versus a Giants run defense that ranked near the bottom last season.']];
+ rebuild(N);N.twenty=N.hotTop.slice(0,20).map(x=>['NFL',x[0],x[1],'NOON CURRENT',x[2],'★★★★☆','🔥']);N.twentyNote='Noon NFL 20 Piece contains only games that have not kicked off. Early-window picks are retained only inside their closed audit cards and are excluded from actionable HOT TOP / GAME WINNERS.';
+}
 
-  /* FIBA Women — Final. Team side stays in GAME SIDE; tickets are player props only. */
-  const F=D.sports.FIBA_Women;
-  if(F){
-    const final=q(F,'France','USA');
-    const start='2026-09-13T11:00:00-07:00';
-    if(final){
-      if(hasStarted(start)) closeCard(final);
-      else {
-        final.market='USA 1.29 • France 3.30 • USA -7.5 • O/U 156.5';
-        final.winner='USA'; final.conf='74%';
-        applyPack(final,{
-          hot:['Caitlin Clark O5.5 assists • 79%','Dominique Malonga O6.5 rebounds • 76%','Gabby Williams O16.5 points • 74%','Breanna Stewart O6.5 rebounds • 72%','Jackie Young O9.5 points • 69%','Marine Johannes O14.5 points • 67%'],
-          sns1:['Caitlin Clark 5+ assists','Dominique Malonga 6+ rebounds','Gabby Williams 14+ points','Breanna Stewart 6+ rebounds','Jackie Young 8+ points','Marine Johannes 12+ points'],
-          sns2:['Caitlin Clark 6+ assists','Dominique Malonga 7+ rebounds','Gabby Williams 4+ rebounds','Breanna Stewart 5+ rebounds','Jackie Young 9+ points','Marine Johannes 2+ made threes'],
-          normal:['Caitlin Clark O5.5 assists','Dominique Malonga O6.5 rebounds','Gabby Williams O16.5 points','Breanna Stewart O6.5 rebounds','Jackie Young O9.5 points','Marine Johannes O14.5 points'],
-          demon:['Gabby Williams 20+ points','Caitlin Clark 8+ assists','Breanna Stewart 15+ points','Dominique Malonga 10+ rebounds','Marine Johannes 3+ made threes','Jackie Young 12+ points'],
-          foot:'World Cup Final player-prop board. Thresholds are line-sensitive and should be matched to the current DFS/book board.'
-        });
-      }
-    }
-    F.hotTop=final&&Array.isArray(final.hot)?final.hot.map((p,i)=>[p,'USA vs France',i===0?'79%':'PLAYER PROP','Final player-prop projection']):[];
-    F.twenty=F.hotTop.slice(0,20).map(x=>['FIBA Women',x[0],x[1],'PLAYER PROP',x[2],'★★★★☆','🔥']);
-    F.twentyNote='Moneyline/game-side call remains separate from the six-leg player-prop constructions.';
-    addChip(F,'ML + 6-PROP QCs','green');
-    rebuildWinners(F);
-  }
+/* FIBA Women and Tennis crossed their pregame windows before noon. */
+const F=D.sports.FIBA_Women;if(F){(F.qcs||[]).forEach(c=>close(c));F.hotTop=[];F.winners=[];F.twenty=[];F.twentyNote='World Cup medal games have started/completed their pregame windows. No new noon prediction is backfilled.';}
+const T=D.sports.Tennis;if(T){(T.qcs||[]).forEach(c=>close(c));T.hotTop=[];T.winners=[];T.twenty=[];T.twentyNote='US Open men’s final began before the noon refresh. No new noon prediction or participant prop is backfilled.';}
 
-  /* Tennis — participant-specific markets are the sport-equivalent player props. Match winner remains GAME SIDE only. */
-  const T=D.sports.Tennis;
-  if(T){
-    const final=q(T,'Ben Shelton','Alexander Zverev');
-    const start='2026-09-13T11:00:00-07:00';
-    if(final){
-      if(hasStarted(start)) closeCard(final);
-      else {
-        final.market='Zverev -150 range • Shelton +130 range • participant-prop markets active';
-        final.winner='Zverev'; final.conf='64%';
-        applyPack(final,{
-          hot:['Alexander Zverev O12.5 aces • 60%','Ben Shelton most double faults • 59%','Ben Shelton 8+ aces • 72% target','Alexander Zverev 8+ aces • 66% target','Ben Shelton 2+ double faults • 73% model rate','Alexander Zverev 2+ double faults • 55% model rate'],
-          sns1:['Ben Shelton 5+ aces','Alexander Zverev 5+ aces','Ben Shelton 1+ double fault','Alexander Zverev 1+ double fault','Ben Shelton to win 1+ set','Alexander Zverev to win 2+ sets'],
-          sns2:['Ben Shelton 8+ aces','Alexander Zverev 8+ aces','Ben Shelton 2+ double faults','Alexander Zverev 1+ double fault','Ben Shelton +2.5 sets — verify market','Alexander Zverev 2+ sets'],
-          normal:['Alexander Zverev O12.5 aces','Ben Shelton most double faults','Ben Shelton 8+ aces','Alexander Zverev 8+ aces','Ben Shelton 2+ double faults','Alexander Zverev 2+ double faults'],
-          demon:['Alexander Zverev 15+ aces','Ben Shelton 15+ aces','Ben Shelton 4+ double faults','Alexander Zverev 3+ double faults','Ben Shelton 2+ sets','Alexander Zverev 3+ sets'],
-          foot:'Tennis uses player/participant-specific serve, double-fault and set markets. Zverev O12.5 aces and Shelton most double faults were among current published final markets; target/milestone legs require live-board confirmation.'
-        });
-      }
-    }
-    T.hotTop=final&&Array.isArray(final.hot)?final.hot.map((p,i)=>[p,'US Open Final',i===0?'60%':'PLAYER PROP','Participant-prop board']):[];
-    T.twenty=T.hotTop.slice(0,20).map(x=>['Tennis',x[0],x[1],'PLAYER PROP',x[2],'★★★★☆','🔥']);
-    T.twentyNote='Match winner is kept in GAME SIDE; QC parlay columns use participant-specific props rather than the moneyline.';
-    addChip(T,'ML + 6-PROP QCs','green');
-    rebuildWinners(T);
-  }
-
-  /* NFL — nfl_sunday_final.js supplies six props per ticket. Lock already-started 10:00 AM PT games without rewriting their published pregame prop cards. */
-  const N=D.sports.NFL;
-  if(N){
-    const early=[['TB','CIN'],['BAL','IND'],['BUF','HOU'],['NO','DET'],['CLE','JAX'],['NYJ','TEN'],['ATL','PIT'],['CHI','CAR']];
-    if(hasStarted('2026-09-13T10:00:00-07:00')) early.forEach(([a,h])=>{const c=q(N,a,h);if(c){c.market='STARTED / LIVE — NO NEW PREGAME BET • '+c.market;c.winner='CLOSED / LIVE — PRE-GAME JINX PICK '+String(c.winner||'');c.foot='Pregame six-prop QC retained for audit only; no new entry after kickoff. '+(c.foot||'');}});
-    addChip(N,'ML + 6-PROP QCs','green');
-    rebuildWinners(N);
-  }
-
-  /* Runtime completeness audit for actionable pregame QCs. Never replace missing props with moneylines, spreads or game totals. */
-  const sideLeg=/\b(?:ML|moneyline)\b|(?:^|\s)[+-]\d+(?:\.5)?\s*(?:$|•)|\b(?:game|team)\s+total\b/i;
-  Object.entries(D.sports).forEach(([key,s])=>{
-    const actionable=(s.qcs||[]).filter(card=>!/WATCH|NO BET|STARTED|LIVE|CLOSED/i.test(String(card.winner||'')));
-    const bad=[];
-    actionable.forEach(card=>{
-      ['sns1','sns2','normal','demon'].forEach(bucket=>{
-        const legs=Array.isArray(card[bucket])?card[bucket]:[];
-        if(legs.length!==6||legs.some(x=>sideLeg.test(String(x))))bad.push(`${card.away}@${card.home}:${bucket}`);
-      });
-    });
-    s.propQcAudit={status:bad.length?'INCOMPLETE':'PASS',failures:bad};
-    if(!bad.length&&actionable.length)addChip(s,'PROP QC AUDIT PASS','green');
-  });
+/* Explicit states remain unchanged for no-event/offseason pages. */
 })();
