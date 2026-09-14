@@ -173,3 +173,11 @@ Kalshi is a regulated prediction market, not a sportsbook, and must be labeled a
 ## Deferred athlete visualizations
 
 Pentagon/radar athlete-statistic graphics are intentionally excluded from the current site update. They require a separate metric, normalization and presentation review before integration.
+
+## Mandatory 20 Piece completeness and unsupported-threshold fallback — effective September 14, 2026
+
+The NFL, WNBA, NBA, MLB, NHL, NCAA Football, and NCAA Basketball Daily Predictions pages must display exactly 20 player/participant prop entries in the 20 Piece section. Game winners, moneylines, spreads, team totals, and game totals never count toward the 20.
+
+L&J-qualified predictions retain the normal 20 Piece presentation. When fewer than 20 qualified or conditional player props are available, remaining positions must be filled with clearly labeled **UNSUPPORTED PLAYER THRESHOLD — TARGET / VERIFY LIVE LINE** entries instead of WATCH. Unsupported thresholds render in dark pink, carry no L&J confidence, and state that they are not L&J predictions or approved parlay legs. They may be promoted to normal styling only after current player identity, availability, market line, and analytical support are verified.
+
+Inactive-season and future-slate thresholds must identify that roster, matchup, and market verification is pending. An unsupported threshold is transparent planning context, not an invented sportsbook offer.
