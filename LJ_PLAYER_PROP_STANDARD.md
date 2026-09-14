@@ -9,7 +9,7 @@ Every active game/fight/match QC must contain both:
 - **GAME SIDE / JINX GAME WINNER** — the L&J moneyline/winner prediction, with spread/total context when useful; and
 - **PLAYER / PARTICIPANT PROP PREDICTIONS** — the prop board used to construct the QC tickets.
 
-A moneyline, spread, game total, team total, or match winner belongs in **GAME SIDE**. It does **not** count as a player-prop leg and may not be used to fill a missing prop slot in SNS/Goblin, Normal, or Aggressive/Demon tickets.
+A moneyline, spread, game total, team total, or match/fight winner belongs in **GAME SIDE / JINX GAME WINNERS**. It does **not** count as a player-prop leg and may not appear in the **20 PIECE** or be used to fill a missing prop slot in SNS/Goblin, Normal, or Aggressive/Demon tickets.
 
 ## 2. Six-prop completeness requirement
 
@@ -64,6 +64,7 @@ This prevents hindsight from contaminating the next-day L&J recap and calibratio
 
 The final Daily Predictions data layer should validate every actionable pregame QC before render. A card is incomplete if any of these conditions are true:
 
+- the sport or all-sports 20 Piece contains a moneyline, match/fight winner, spread, team total or game total;
 - LEGZ PLAYER HOT TOP is empty for an active pregame event with an available participant-prop board;
 - SNS 1 has fewer or more than six player/participant props, unless the card carries the documented market-limited exception;
 - SNS 2 has fewer or more than six player/participant props, unless the card carries the documented market-limited exception;
