@@ -77,3 +77,7 @@ A refresh that fails this audit is not a completed Daily Predictions publication
 ## 8. Refresh precedence
 
 Night-preview, late/current player-prop overlays must execute **after** master and morning market layers so an older refresh cannot overwrite a complete six-prop card with a moneyline-only or shortened ticket. Daily data refreshes may change lines, projections, confidence and status, but they may not relax this standard.
+
+## 9. Exactly-20 display fallback
+
+NFL, WNBA, NBA, MLB, NHL, NCAA Football, and NCAA Basketball must always render 20 player-prop rows in the 20 Piece. Missing supported selections are replaced by dark-pink **UNSUPPORTED PLAYER THRESHOLD — TARGET / VERIFY LIVE LINE** rows, never WATCH and never a team/game-side market. Unsupported rows have no L&J confidence and are not approved picks or parlay legs. They remain visually and semantically separate from supported and conditional L&J predictions.
