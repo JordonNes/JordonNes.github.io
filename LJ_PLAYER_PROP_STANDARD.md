@@ -13,7 +13,7 @@ A moneyline, spread, game total, team total, or match winner belongs in **GAME S
 
 ## 2. Six-prop completeness requirement
 
-For every active pregame QC with a sufficiently open player/participant market, the following are required:
+For every active pregame QC, the following are required whenever any participant-prop market is available. The requirement begins with the 8:30 PM PT Night Preview for events scheduled within the next 24+ hours and is refreshed as boards expand:
 
 - **LEGZ PLAYER HOT TOP:** six ranked player/participant prop predictions for that event;
 - **SNS / GOBLIN 1:** six player/participant props;
@@ -42,15 +42,17 @@ Before an active QC is published, L&J must make a good-faith player-prop sweep u
 
 Exact thresholds and prices are line-sensitive. If a model likes a market but the exact executable line cannot be independently synchronized, the prediction may be shown as a **TARGET / VERIFY LIVE LINE** participant prop, but it must not be misrepresented as a verified sportsbook line.
 
-## 5. No substitution and no invented props
+## 5. Mandatory favorable-prop fallback
 
-If fewer than six supportable participant props are available for an active event after the source sweep:
+If no available prediction clears the normal L&J evidence/confidence gate, L&J must still rank the available participant props and publish the most favorable researched options in LEGZ PLAYER HOT TOP and both SNS constructions. These fallback selections must:
 
-- do not replace missing prop legs with moneylines, spreads or game totals;
-- do not invent an unavailable threshold;
-- keep the QC visible and label the affected construction **RESEARCHED WATCHLIST — NOT AN L&J-APPROVED 6-LEG PROP PARLAY** until six qualified legs exist.
+- remain player/participant props; never substitute moneylines, spreads, team totals or game totals;
+- use a currently visible line, or state **TARGET / VERIFY LIVE LINE** when the analysis is threshold-based;
+- be marked *CONDITIONAL LEAN — BELOW L&J STANDARD* when they do not clear the normal gate;
+- show confidence and the principal failure risk; and
+- be assembled into six-leg SNS cards when six distinct supportable props exist on the available board.
 
-The objective is complete cards, but data integrity takes precedence over cosmetic completeness.
+A lower-confidence SNS card is a transparent ranked forecast, not an assertion that the ticket is low risk. If the entire accessible market sweep produces fewer than six participant props, publish every available ranked prop and label the card **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. This exception is based only on actual market scarcity—not lack of research, one inaccessible preferred source, or failure to look 24+ hours ahead. Never invent a player, market, line, or price.
 
 ## 6. Started-event lock
 
@@ -62,14 +64,15 @@ This prevents hindsight from contaminating the next-day L&J recap and calibratio
 
 The final Daily Predictions data layer should validate every actionable pregame QC before render. A card is incomplete if any of these conditions are true:
 
-- SNS 1 has fewer or more than six player/participant props;
-- SNS 2 has fewer or more than six player/participant props;
-- Normal has fewer or more than six player/participant props;
-- Aggressive/Demon has fewer or more than six player/participant props; or
+- LEGZ PLAYER HOT TOP is empty for an active pregame event with an available participant-prop board;
+- SNS 1 has fewer or more than six player/participant props, unless the card carries the documented market-limited exception;
+- SNS 2 has fewer or more than six player/participant props, unless the card carries the documented market-limited exception;
+- Normal has fewer or more than six player/participant props when the accessible board supports six;
+- Aggressive/Demon has fewer or more than six player/participant props when the accessible board supports six; or
 - a team moneyline, spread, game total or team total is being used as a substitute player-prop leg.
 
 A refresh that fails this audit is not a completed Daily Predictions publication.
 
 ## 8. Refresh precedence
 
-Late/current player-prop overlays must execute **after** master and morning market layers so an older refresh cannot overwrite a complete six-prop card with a moneyline-only or shortened ticket. Daily data refreshes may change lines, projections, confidence and status, but they may not relax this standard.
+Night-preview, late/current player-prop overlays must execute **after** master and morning market layers so an older refresh cannot overwrite a complete six-prop card with a moneyline-only or shortened ticket. Daily data refreshes may change lines, projections, confidence and status, but they may not relax this standard.
