@@ -23,7 +23,7 @@ Daily refreshes must not remove, rename, reorder or restyle the core publication
 4. **20 PIECE** — sport-level top player/participant prediction-prop pool. One player/participant counts once in the ranked pool; do not create filler simply to reach 20.
 5. **Per-Game / Per-Fight Quickie Cards** using the locked horizontal QC format.
 
-If a sport is inactive or verified markets are unavailable, the section remains visible and displays WATCH / PASS / DATA-LIMITED rather than disappearing.
+If a sport is inactive or no participant-prop market exists after a documented multi-source sweep, the section remains visible and displays MARKET NOT OPEN / DATA-LIMITED rather than disappearing. An active sport with an available prop board may not use a blank WATCH section.
 
 ## Required home-page sections
 
@@ -74,7 +74,9 @@ For every active game/fight QC, the publication must show the scheduled event st
 
 For every active sport/league slate, L&J must perform a dedicated player-prop search before publishing WATCH. This includes league/sportsbook boards, DFS projection boards such as PrizePicks when accessible, odds-comparison pages, current model/prop services, matchup previews, and reputable public analysis. When at least one supportable player market is found for a game, populate **LEGZ PLAYER HOT TOP** and any ticket sections that can be responsibly constructed from the available verified legs. Do not leave an entire league's player-prop board blank merely because one preferred source does not expose props.
 
-When only one or two trustworthy player props are available for a matchup, publish those props and leave the remaining ticket construction on WATCH rather than hiding the available information or inventing enough legs to make a parlay. When enough current props are available, complete SNS/Goblin, Normal and Aggressive/Demon according to their risk tiers.
+When an accessible player-prop board exists, publish the best researched props even if none clears the normal L&J qualification gate. Such selections must be italicized and labeled *CONDITIONAL LEAN — BELOW L&J STANDARD*, with confidence, maximum acceptable line or target threshold, and the principal failure risk. Both SNS/Goblin cards must contain six participant-prop legs whenever the accessible board supports six. Normal and Aggressive/Demon cards must likewise be completed from the best available participant props according to their risk tiers. Team sides, spreads and totals never count as player-prop legs.
+
+Only genuine market scarcity permits fewer than six legs. In that case, publish every available ranked prop and label the construction **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. “WATCH” is not an acceptable substitute merely because a preferred source is unavailable or because no prop clears the usual confidence gate.
 
 NCAA Football follows this rule exactly: every current slate must include kickoff times for all listed games and a multi-source CFB player-prop sweep before any game is left on WATCH.
 
@@ -137,7 +139,7 @@ All public timestamps use Pacific Time. The standard publication cadence is:
 
 - **7:30 AM — Morning Scan:** overnight results, schedules, injuries, opening markets and preliminary selections.
 - **12:00 PM — Lunch Finalization:** current player/participant props, availability, material line movement and completed QCs.
-- **8:30 PM — Night Preview:** next-day matchups, early markets and preliminary tickets.
+- **8:30 PM — Night Preview:** next-day matchups, early markets and preliminary player-prop tickets, establishing coverage at least 24 hours ahead whenever boards are open.
 - **30–45 minutes before the event — Pregame Verification:** activated on high-interest or high-volatility events when lineups, scratches, weather, weigh-ins or meaningful line movement could change a recommendation.
 
 High-volume Saturdays, Sundays, major tournament days and multi-league slates use all four windows. Lighter days use the first three. Material news triggers an event-driven ALERT UPDATE rather than waiting for the next scheduled cycle.
@@ -152,8 +154,8 @@ Every scheduled event receives a documented QC review. No selection may be inven
 - When no available prediction clears that gate, publish the best researched opportunity only as an explicitly labeled *BELOW L&J STANDARD — LEAN ONLY* or *CONDITIONAL LEAN*.
 - All below-standard and conditional entries must render in italics, show their confidence, identify the maximum acceptable line or target threshold when available, and explain the principal failure risk.
 - If the market has not opened, use *MARKET NOT YET AVAILABLE — TARGET LINE* and state the line required before activation.
-- A conditional lean is not an approved pick and may not be counted as a qualified parlay leg.
-- If fewer than the required qualified legs exist, the construction must be labeled *RESEARCHED WATCHLIST — NOT AN L&J-APPROVED PARLAY*.
+- A conditional lean may be used to complete the required SNS forecast when it is among the most favorable available participant props, but its below-standard status must remain explicit. It is not represented as a standard-qualified pick.
+- If fewer than six available participant props exist after the full source sweep, use the documented **MARKET-LIMITED** exception; do not leave the decision area blank.
 
 The QC remains populated with the research result, status and target condition; it must not present a visually blank decision area merely because no wager qualifies.
 
