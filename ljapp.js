@@ -8,9 +8,18 @@
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
   const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|PASS|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
+  const isPlayerProp20 = r => {
+    const subject = String((r || [])[1] || "");
+    const market = String((r || [])[2] || "");
+    const context = String((r || [])[3] || "");
+    const explicitGameSide = /\b(?:moneyline|game winner|match winner|fight winner|team total|game total)\b|(?:^|\s)ML(?:\s|$)/i.test(market);
+    const matchupTotal = /(?:@|\bvs\.?\b|\bv\b|\s-\s|^[A-Z]{2,4}-[A-Z]{2,4}$)/i.test(subject) &&
+      /\b(?:over|under|o\/u|total)\b/i.test(market + " " + context);
+    return !explicitGameSide && !matchupTotal;
+  };
   const unique20 = rows => {
     const seen = new Set();
-    return (rows || []).filter(r => {
+    return (rows || []).filter(isPlayerProp20).filter(r => {
       const key = `${String(r[0]).toLowerCase()}|${String(r[1]).toLowerCase()}`;
       if (seen.has(key)) return false;
       seen.add(key);
@@ -43,7 +52,7 @@
 
   function twenty(rows,note,home=false){
     const clean = unique20(rows);
-    return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">Top player / participant prediction-prop pool • one player counts once</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20 PIECE":"SPORT 20 PIECE"}</span><span>RANKED BY L&amp;J HIT CONFIDENCE</span></div>${clean.length ? `<div class="card-body"><table class="twenty-table"><thead><tr><th>#</th><th>Sport</th><th>Player / Participant</th><th>Prediction</th><th>Price</th><th>L&amp;J Conf.</th><th>Quality</th><th>Risk</th></tr></thead><tbody>${clean.map((r,i)=>`<tr class="${isWatch(r.join(" • "))?"qc-watch":""}"><td class="rank">${i+1}</td><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="conf">${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status-panel"><b>MARKET WATCH — 0/20 VERIFIED</b><p>The 20 Piece section remains in place. L&amp;J will not use stale or invented selections merely to fill twenty slots.</p></div>`}<div class="card-body"><p class="source-note">${esc(note || "20 Piece populates only from current verified markets.")}</p></div></div></section>`;
+    return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">Top player / participant prediction-prop pool • one player counts once</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20 PIECE":"SPORT 20 PIECE"}</span><span>RANKED BY L&amp;J HIT CONFIDENCE</span></div>${clean.length ? `<div class="card-body"><table class="twenty-table"><thead><tr><th>#</th><th>Sport</th><th>Player / Participant</th><th>Prediction</th><th>Price</th><th>L&amp;J Conf.</th><th>Quality</th><th>Risk</th></tr></thead><tbody>${clean.map((r,i)=>`<tr class="${isWatch(r.join(" • "))?"qc-watch":""}"><td class="rank">${i+1}</td><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="conf">${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status-panel"><b>PLAYER-PROP MARKET WATCH — 0/20 VERIFIED</b><p>The 20 Piece is reserved exclusively for player/participant props. Moneylines and other game-side markets remain under JINX Game Winners.</p></div>`}<div class="card-body"><p class="source-note">${esc(note || "20 Piece populates only from current verified markets.")}</p></div></div></section>`;
   }
 
   function rules(){
