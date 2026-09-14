@@ -8,6 +8,16 @@
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
   const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|PASS|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
+  const isUnsupported = s => /UNSUPPORTED PLAYER THRESHOLD/i.test(String(s || ""));
+  const unsupportedCatalog = {
+    MLB:[["Sean Newcomb","Strikeouts 4.5"],["Gavin Williams","Strikeouts 5.5"],["Tarik Skubal","Strikeouts 6.5"],["Nick Lodolo","Strikeouts 5.5"],["Troy Melton","Strikeouts 4.5"],["José Soriano","Strikeouts 5.5"],["Brandon Young","Strikeouts 4.5"],["Jonah Tong","Strikeouts 5.5"],["Reynaldo López","Strikeouts 4.5"],["David Peterson","Strikeouts 5.5"],["Will Warren","Strikeouts 5.5"],["Dean Kremer","Strikeouts 4.5"],["Landen Roupp","Strikeouts 4.5"],["Quinn Mathews","Strikeouts 5.5"],["Casey Mize","Strikeouts 4.5"],["Tomoyuki Sugano","Strikeouts 3.5"],["Kade Anderson","Strikeouts 5.5"],["Reid Detmers","Strikeouts 5.5"],["Sandy Alcantara","Strikeouts 5.5"],["Corbin Burnes","Strikeouts 5.5"]],
+    NFL:[["Patrick Mahomes","Passing yards 249.5"],["Bo Nix","Passing yards 225.5"],["Patrick Mahomes","Pass touchdowns 1.5"],["Bo Nix","Pass touchdowns 1.5"],["Patrick Mahomes","Completions 21.5"],["Bo Nix","Completions 20.5"],["Kansas City QB1","Pass attempts 33.5"],["Denver QB1","Pass attempts 31.5"],["Kansas City RB1","Rushing yards 59.5"],["Denver RB1","Rushing yards 61.5"],["Kansas City RB1","Receptions 2.5"],["Denver RB1","Receptions 2.5"],["Kansas City WR1","Receiving yards 69.5"],["Denver WR1","Receiving yards 64.5"],["Kansas City WR2","Receiving yards 49.5"],["Denver WR2","Receiving yards 44.5"],["Kansas City TE1","Receiving yards 49.5"],["Denver TE1","Receiving yards 39.5"],["Kansas City K","Field goals made 1.5"],["Denver K","Field goals made 1.5"]],
+    WNBA:[["A'ja Wilson","Points 24.5"],["A'ja Wilson","Rebounds 9.5"],["Jackie Young","Points 16.5"],["Chelsea Gray","Assists 6.5"],["Napheesa Collier","Points 22.5"],["Napheesa Collier","Rebounds 8.5"],["Caitlin Clark","Points 21.5"],["Caitlin Clark","Assists 8.5"],["Aliyah Boston","Rebounds 8.5"],["Kelsey Mitchell","Points 19.5"],["Breanna Stewart","Points 20.5"],["Sabrina Ionescu","Threes 2.5"],["Jonquel Jones","Rebounds 9.5"],["Paige Bueckers","Points 19.5"],["Arike Ogunbowale","Points 21.5"],["Rhyne Howard","Points 18.5"],["Allisha Gray","Points 17.5"],["Kelsey Plum","Points 19.5"],["Dearica Hamby","Rebounds 9.5"],["Skylar Diggins","Assists 6.5"]],
+    NBA:[["Stephen Curry","Threes 4.5"],["Stephen Curry","Points 26.5"],["Nikola Jokic","Assists 9.5"],["Nikola Jokic","Rebounds 12.5"],["Shai Gilgeous-Alexander","Points 31.5"],["Giannis Antetokounmpo","Rebounds 11.5"],["Luka Doncic","Assists 8.5"],["Anthony Edwards","Points 27.5"],["Jalen Brunson","Points 26.5"],["Kevin Durant","Points 25.5"],["LeBron James","Assists 7.5"],["Victor Wembanyama","Blocks 3.5"],["Donovan Mitchell","Threes 3.5"],["Devin Booker","Points 26.5"],["Trae Young","Assists 10.5"],["Ja Morant","Points 24.5"],["Jayson Tatum","Rebounds 8.5"],["Cade Cunningham","Assists 8.5"],["Tyrese Haliburton","Assists 10.5"],["Jalen Williams","Points 22.5"]],
+    NHL:[["Connor McDavid","Points 1.5"],["Connor McDavid","Shots 3.5"],["Nathan MacKinnon","Points 1.5"],["Nathan MacKinnon","Shots 4.5"],["Auston Matthews","Shots 4.5"],["Leon Draisaitl","Points 1.5"],["Nikita Kucherov","Points 1.5"],["David Pastrnak","Shots 4.5"],["Kirill Kaprizov","Shots 3.5"],["Cale Makar","Points 0.5"],["Jack Hughes","Shots 3.5"],["Mikko Rantanen","Shots 3.5"],["Artemi Panarin","Points 0.5"],["Matthew Tkachuk","Shots 3.5"],["Aleksander Barkov","Points 0.5"],["Connor Hellebuyck","Saves 27.5"],["Igor Shesterkin","Saves 28.5"],["Jake Oettinger","Saves 26.5"],["Jeremy Swayman","Saves 27.5"],["Juuse Saros","Saves 28.5"]],
+    NCAA_Football:[["Next listed QB1 — Game 1","Passing yards 224.5"],["Next listed QB2 — Game 1","Passing yards 199.5"],["Next listed RB1 — Game 1","Rushing yards 69.5"],["Next listed WR1 — Game 1","Receiving yards 59.5"],["Next listed QB1 — Game 2","Pass touchdowns 1.5"],["Next listed RB1 — Game 2","Rushing yards 64.5"],["Next listed WR1 — Game 2","Receptions 4.5"],["Next listed QB1 — Game 3","Passing yards 249.5"],["Next listed RB1 — Game 3","Rushing yards 74.5"],["Next listed WR1 — Game 3","Receiving yards 54.5"],["Next listed QB1 — Game 4","Pass attempts 29.5"],["Next listed RB1 — Game 4","Carries 14.5"],["Next listed WR1 — Game 4","Receptions 3.5"],["Next listed QB1 — Game 5","Rushing yards 29.5"],["Next listed RB1 — Game 5","Longest rush 17.5"],["Next listed WR1 — Game 5","Longest reception 21.5"],["Next listed QB1 — Game 6","Completions 19.5"],["Next listed RB1 — Game 6","Receiving yards 14.5"],["Next listed WR1 — Game 6","Receiving yards 49.5"],["Next listed TE1 — Game 6","Receptions 2.5"]],
+    NCAA_Basketball:[["Next listed G1 — Game 1","Points 15.5"],["Next listed F1 — Game 1","Rebounds 7.5"],["Next listed G2 — Game 1","Assists 4.5"],["Next listed C1 — Game 1","Blocks 1.5"],["Next listed G1 — Game 2","Points 17.5"],["Next listed F1 — Game 2","Rebounds 6.5"],["Next listed G2 — Game 2","Threes 2.5"],["Next listed C1 — Game 2","Rebounds 8.5"],["Next listed G1 — Game 3","Assists 5.5"],["Next listed F1 — Game 3","Points 13.5"],["Next listed G2 — Game 3","Points 14.5"],["Next listed C1 — Game 3","Blocks 1.5"],["Next listed G1 — Game 4","Threes 2.5"],["Next listed F1 — Game 4","Rebounds 7.5"],["Next listed G2 — Game 4","Assists 3.5"],["Next listed C1 — Game 4","Points 12.5"],["Next listed G1 — Game 5","Points 16.5"],["Next listed F1 — Game 5","Points 14.5"],["Next listed G2 — Game 5","Assists 4.5"],["Next listed C1 — Game 5","Rebounds 8.5"]]
+  };
   const isPlayerProp20 = r => {
     const subject = String((r || [])[1] || "");
     const market = String((r || [])[2] || "");
@@ -17,14 +27,23 @@
       /\b(?:over|under|o\/u|total)\b/i.test(market + " " + context);
     return !explicitGameSide && !matchupTotal;
   };
-  const unique20 = rows => {
+  const unique20 = (rows,sportKey) => {
     const seen = new Set();
-    return (rows || []).filter(isPlayerProp20).filter(r => {
-      const key = `${String(r[0]).toLowerCase()}|${String(r[1]).toLowerCase()}`;
+    const clean = (rows || []).filter(isPlayerProp20).filter(r => {
+      const key = `${String(r[1]).toLowerCase()}|${String(r[2]).toLowerCase()}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     }).slice(0,20);
+    if (!sportKey || !unsupportedCatalog[sportKey]) return clean;
+    for (const [player,threshold] of unsupportedCatalog[sportKey]) {
+      if (clean.length >= 20) break;
+      const key = `${player.toLowerCase()}|${threshold.toLowerCase()}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      clean.push([sportKey.replace("_"," "),player,threshold,"TARGET / VERIFY LIVE LINE","—","UNSUPPORTED PLAYER THRESHOLD","Not an L&J prediction"]);
+    }
+    return clean.slice(0,20);
   };
 
   function topbar(meta, home=false){
@@ -50,9 +69,9 @@
     return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ market ranking + JINX game/fight winners</span></div><div class="headliner-grid">${hotTop(hot,hotLabel)}${winners(wins,winnerLabel)}</div></section>`;
   }
 
-  function twenty(rows,note,home=false){
-    const clean = unique20(rows);
-    return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">Top player / participant prediction-prop pool • one player counts once</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20 PIECE":"SPORT 20 PIECE"}</span><span>RANKED BY L&amp;J HIT CONFIDENCE</span></div>${clean.length ? `<div class="card-body"><table class="twenty-table"><thead><tr><th>#</th><th>Sport</th><th>Player / Participant</th><th>Prediction</th><th>Price</th><th>L&amp;J Conf.</th><th>Quality</th><th>Risk</th></tr></thead><tbody>${clean.map((r,i)=>`<tr class="${isWatch(r.join(" • "))?"qc-watch":""}"><td class="rank">${i+1}</td><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="conf">${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status-panel"><b>PLAYER-PROP MARKET WATCH — 0/20 VERIFIED</b><p>The 20 Piece is reserved exclusively for player/participant props. Moneylines and other game-side markets remain under JINX Game Winners.</p></div>`}<div class="card-body"><p class="source-note">${esc(note || "20 Piece populates only from current verified markets.")}</p></div></div></section>`;
+  function twenty(rows,note,home=false,sportKey=""){
+    const clean = unique20(rows,sportKey);
+    return `<section class="section"><div class="section-head"><h2>${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">Top player / participant prediction-prop pool • one player counts once</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20 PIECE":"SPORT 20 PIECE"}</span><span>RANKED BY L&amp;J HIT CONFIDENCE</span></div>${clean.length ? `<div class="card-body"><table class="twenty-table"><thead><tr><th>#</th><th>Sport</th><th>Player / Participant</th><th>Prediction</th><th>Price</th><th>L&amp;J Conf.</th><th>Quality</th><th>Risk</th></tr></thead><tbody>${clean.map((r,i)=>`<tr class="${isUnsupported(r.join(" • "))?"qc-unsupported":isWatch(r.join(" • "))?"qc-watch":""}"><td class="rank">${i+1}</td><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="conf">${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status-panel"><b>PLAYER-PROP MARKET WATCH — 0/20 VERIFIED</b><p>The 20 Piece is reserved exclusively for player/participant props. Moneylines and other game-side markets remain under JINX Game Winners.</p></div>`}<div class="card-body"><p class="source-note">${esc(note || "20 Piece populates only from current verified markets.")}</p></div></div></section>`;
   }
 
   function rules(){
@@ -102,7 +121,7 @@
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
     document.title = `LEGZ & JINX — ${s.title}`;
     const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : qcs(s.qcTitle,s.qcs);
-    document.getElementById("app").innerHTML = `<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel)}${twenty(s.twenty,s.twentyNote)}${quickies}${footer("QC layout locked")}</div>`;
+    document.getElementById("app").innerHTML = `<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel)}${twenty(s.twenty,s.twentyNote,false,key)}${quickies}${footer("QC layout locked")}</div>`;
   };
   window.renderLJHome = () => {
     const h = D.home;
