@@ -31,7 +31,7 @@ The Daily Home page must retain:
 - all Sports / Leagues links and status;
 - **All-Sports LEGZ HOT TOP**;
 - **All-Sports JINX Game Winners**;
-- **Global 20 PIECE** across sports;
+- **Global 20 PIECE** across sports, containing player/participant props only;
 - links into the individual sport/league publications.
 
 ## Locked Per-Game QC structure
@@ -45,7 +45,7 @@ Every full game/fight QC uses these six presentation columns:
 5. **NORMAL** — balanced probability-to-payout construction.
 6. **AGGRESSIVE / DEMON** — higher-variance ceiling construction, with the **JINX CASE / KILL SWITCH** embedded in the card.
 
-The sport-level **20 PIECE is not a per-game QC column**.
+The sport-level **20 PIECE is not a per-game QC column**. It is exclusively a ranked player/participant-prop pool. All moneyline and outright winner predictions belong under **JINX GAME WINNERS** and must never appear in the 20 Piece.
 
 ## Verification rule
 
