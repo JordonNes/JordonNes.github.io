@@ -1,0 +1,2 @@
+/* LEGZ & JINX Daily Predictions — shared Quickie Generator header action */
+(()=>{function add(){const hero=document.querySelector('.hero'),actions=hero?.querySelector('.actions');if(!actions||actions.querySelector('[data-lj-quickie]'))return;const a=document.createElement('a');a.className='action';a.href='Quickie_Generator.html';a.dataset.ljQuickie='1';a.textContent='⚡ L&J Quickie';actions.appendChild(a)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add);else add();})();
