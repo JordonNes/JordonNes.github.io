@@ -10,7 +10,7 @@ LSI = Sources + Historical Workbook + LAE + JINX Context + Prediction Registry +
 ### LHW — L&J Historical Workbook
 The durable evidence/history layer. LHW stores timestamped market snapshots, game odds, player/participant props, source, results, context, predictions, model version, and grading. CSV/JSON tables are the portable storage format; the logical workbook is the combined historical dataset rather than one giant file.
 
-Planned tables:
+Tables:
 - data/market_history.csv
 - data/game_odds_history.csv
 - data/player_context.csv
@@ -22,7 +22,7 @@ Planned tables:
 The quantitative/modeling component inside LSI. LAE consumes LHW/current source data and estimates a prediction using performance, matchup, situation, availability, market, and verified context features. LAE produces LEGZ confidence on a 0–100% probability scale.
 
 ### JCI — JINX Context Intelligence
-The contextual/challenge layer. JCI reviews evidence not fully represented by LAE: coaching/roster behavior, role-management habits, unusual market movement, public player/team statements, credible reporting, legal/civil/personal/external matters when demonstrably relevant, and competing explanations. Rumors and conspiracy claims are retained only as attributed hypotheses and are not treated as facts without evidence.
+The contextual/challenge layer. JCI reviews evidence not fully represented by LAE: coaching/roster behavior, role-management habits, unusual market movement, public player/team statements, credible reporting, legal/civil/personal/external matters when demonstrably relevant, and competing explanations. Rumors and conspiracy claims may be retained as attributed hypotheses for testing but are not promoted to facts without evidence.
 
 JCI produces Jinx Input as a signed adjustment to the LEGZ baseline. Positive input strengthens the prediction; negative input challenges it; zero means no material adjustment.
 
@@ -32,9 +32,30 @@ Display convention:
 - Jinx Input: purple, signed adjustment.
 - L&J Confidence = LEGZ confidence + Jinx Input.
 
-Example: LEGZ 78% − Jinx 11% = L&J 67%.
+Examples:
+- LEGZ 78% − Jinx Input 11% = L&J 67%.
+- LEGZ 74% + Jinx Input 5% = L&J 79%.
 
-For analytical probability/calibration, the canonical final probability remains bounded at 0–100%. If the UI later uses a >100 'conviction index' (for example 96% + 7 = 103), it must be labeled L&J Conviction rather than probability/confidence so it cannot be mistaken for a probability.
+For analytical probability/calibration, canonical final probability is bounded at 0–100%. If raw additive conviction exceeds 100, display that separately as L&J Conviction rather than a probability.
+
+### Commentary rules
+Jinx comments and LEGZ comments must be concise: maximum 50 words, target under 25 words.
+
+JINX mandatory-comment triggers:
+- If absolute Jinx Input is greater than 4.4 percentage points, Jinx must give a brief, clear evidence-based justification.
+- If Jinx Input lowers final L&J Confidence below 73%, Jinx must give a brief, clear justification so the user can weigh the challenge.
+- If absolute Jinx Input is greater than 5.9 points OR positive Jinx Input raises final L&J Confidence above 80%, Jinx must comment with confident personality; edgy/shit-talking tone is permitted while keeping the factual basis clear.
+- Comments may be positive or negative and should identify the principal contextual signal rather than merely repeat the score.
+
+LEGZ mandatory-comment trigger:
+- If final L&J Confidence is over 78%, LEGZ gives a very brief, jokingly confident explanation of the quantitative foundation.
+
+Commentary must distinguish observed fact, statistical correlation, hypothesis, and allegation. Unverified claims about manipulation, gambling influence, officiating, player intent, legal/personal matters, or deliberate outcome steering cannot be presented as established fact.
+
+### Character canon
+LEGZ is a fictional cyborg sports-intelligence character: a striking Black woman with bright green hair and subtly semi-translucent synthetic skin that visually reveals her cybernetic nature. Her core programming is observation, learning, correlation discovery, opportunity detection, and decision support. After years of independently studying sports, she becomes the quantitative/modeling half of the LEGZ & JINX partnership.
+
+JINX is the contextual challenger and sports-behavior specialist: sharp, outspoken, skeptical, willing to inspect conventional and unconventional explanations, coaching habits, roster behavior, market anomalies, public narratives, and external context. Her personality can be provocative, but her analytical records distinguish evidence from speculation.
 
 ### PR — Prediction Registry
 Typed predictions used by publication and Quickie. Required market classes:
@@ -67,4 +88,4 @@ NFL/NCAA weekly expectation: Tuesday establishes schedule/initial market invento
 ## Source policy
 No single preferred source failure is sufficient to declare props unavailable. Perform multi-source discovery. Market observations must retain source and timestamp. Social/news/context sources are evidence inputs, not automatically predictive. Public personal/legal/civil/political/relationship matters receive weight only when there is a defensible pathway to availability, role, preparation, coaching strategy, market behavior, or performance.
 
-Claims that sportsbooks, gambling organizations, players, officials, or teams manipulate results must remain hypotheses unless supported by reliable evidence. LSI may study unusual statistical/market patterns and documented misconduct, but correlation or odd behavior alone is not proof of manipulation.
+Claims that sportsbooks, gambling organizations, players, officials, or teams manipulate results remain hypotheses unless supported by reliable evidence. LSI may study unusual statistical/market patterns, correlations, allegations, and documented misconduct without assuming causation from correlation alone.
