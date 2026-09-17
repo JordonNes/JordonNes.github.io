@@ -32,6 +32,16 @@ jobs:
         env:
           CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
         run: python scripts/lsi_ingest.py
+      - name: RotoWire context acquisition — public RSS first
+        env:
+          ROTOWIRE_API_KEY: ${{ secrets.ROTOWIRE_API_KEY }}
+        run: python scripts/rotowire_adapter.py
+      - name: PropLine Level-B prop acquisition — market discovery first
+        env:
+          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY }}
+          PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY }}
+          PROPLINE_ANALYTICS_ENABLED: ${{ vars.PROPLINE_ANALYTICS_ENABLED }}
+        run: python scripts/propline_adapter.py
       - name: NHL authoritative enrichment
         run: python scripts/nhl_adapter.py
       - name: Three-level prop acquisition — Level B
@@ -61,9 +71,20 @@ jobs:
           test -f data/openai_dry_run_router.json && test -f data/openai_usage_estimates.csv && test -f data/openai_usage_summary.json
           grep -q 'PLAYER_PROP' data/prediction_registry.json && grep -q 'GAME_ML' data/prediction_registry.json
           grep -q 'DRY_RUN_NO_NETWORK' data/openai_dry_run_router.json
+          python - <<'PY'
+          import json
+          payload=json.load(open('data/prediction_registry.json',encoding='utf-8'))
+          assert payload.get('schema_version')=='LSI-PR-2', payload.get('schema_version')
+          required=set(payload.get('player_prop_fields') or [])
+          assert required, 'PLAYER_PROP field contract missing'
+          props=[p for p in payload.get('predictions',[]) if p.get('market_class')=='PLAYER_PROP']
+          missing={p.get('prediction_id'):sorted(required-set(p)) for p in props if required-set(p)}
+          assert not missing, missing
+          print(f'LSI-PR-2 invariant: {len(props)} PLAYER_PROP records contain all {len(required)} intelligence fields')
+          PY
       - name: Commit durable LSI outputs
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
-          git add data/prediction_registry.json data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
+          git add data/prediction_registry.json data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
           if git diff --cached --quiet; then echo 'No LSI changes to publish.'; else git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT" && git push origin master; fi
