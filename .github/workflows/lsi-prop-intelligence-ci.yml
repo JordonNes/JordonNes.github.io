@@ -1,0 +1,48 @@
+name: LSI Prop Intelligence CI
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/lsi_pipeline.py'
+      - 'scripts/rotowire_adapter.py'
+      - 'scripts/propline_adapter.py'
+      - 'data/predictions.csv'
+      - 'data/market_history.csv'
+      - 'data/results.csv'
+      - '.github/workflows/lsi-*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+      - name: Compile LSI Python modules
+        run: python -m py_compile scripts/lsi_pipeline.py scripts/rotowire_adapter.py scripts/propline_adapter.py
+      - name: Build registry from repository evidence
+        run: python scripts/lsi_pipeline.py
+      - name: Validate PLAYER_PROP intelligence contract
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('data/prediction_registry.json',encoding='utf-8'))
+          required={
+            'player_id','event_id','market','threshold','side','book','retrieved_at',
+            'opening_line','current_line','closing_line','best_line','market_source_count',
+            'market_live','market_suspended','steam_score','books_moved','lineup_confirmed',
+            'player_status','rotowire_context_timestamp','sharp_market_signal','L5_hit_rate',
+            'L10_hit_rate','L20_hit_rate','actual_result','win_loss_push','CLV'
+          }
+          assert p.get('schema_version')=='LSI-PR-2'
+          props=[x for x in p.get('predictions',[]) if x.get('market_class')=='PLAYER_PROP']
+          assert props, 'No PLAYER_PROP records found in registry fixture'
+          missing={x.get('prediction_id'):sorted(required-set(x)) for x in props if required-set(x)}
+          assert not missing, missing
+          assert all(x.get('sharp_market_signal') in (None,'') for x in props), 'Sharp signal must not be inferred by default'
+          print(f'Validated {len(props)} player props with {len(required)} intelligence fields each')
+          PY
