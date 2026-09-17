@@ -15,7 +15,7 @@ The individual recap pages are:
 - `Recap_FIBA_Women.html`
 - `Recap_NCAA_Football.html`
 - `Recap_NCAA_Basketball.html`
-- `Recap_UFC.html`
+- `Recap_MMA.html`
 - `Recap_Boxing.html`
 - `Recap_Tennis.html`
 
