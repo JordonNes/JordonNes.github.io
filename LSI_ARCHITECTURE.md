@@ -89,3 +89,8 @@ NFL/NCAA weekly expectation: Tuesday establishes schedule/initial market invento
 No single preferred source failure is sufficient to declare props unavailable. Perform multi-source discovery. Market observations must retain source and timestamp. Social/news/context sources are evidence inputs, not automatically predictive. Public personal/legal/civil/political/relationship matters receive weight only when there is a defensible pathway to availability, role, preparation, coaching strategy, market behavior, or performance.
 
 Claims that sportsbooks, gambling organizations, players, officials, or teams manipulate results remain hypotheses unless supported by reliable evidence. LSI may study unusual statistical/market patterns, correlations, allegations, and documented misconduct without assuming causation from correlation alone.
+
+## JCI weather protocol
+Open-Meteo supplies event-hour forecast snapshots for outdoor NFL, NCAA football, and MLB games. JCI may flag precipitation, heat/cold, sustained wind, gusts, humidity, or pressure only when the game/market pathway is stated. Indoor events are excluded. Forecast snapshots remain timestamped because forecast error changes as start time approaches.
+
+The Open-Meteo archive supplies historical event-hour conditions for backtesting weather features against results. Historical correlation does not itself authorize a Jinx adjustment: the effect must be stable by sport and market class, have adequate sample size, and survive out-of-sample validation. Weather-derived adjustments and thresholds belong in `prediction_features.csv` with the Open-Meteo snapshot ID.

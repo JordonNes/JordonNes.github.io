@@ -7,6 +7,8 @@ This directory is the durable evidence layer for LEGZ Sports Intelligence (LSI).
 - `game_odds_history.csv` — timestamped ML/spread/total observations.
 - `player_context.csv` — attributable context observations with evidence status.
 - `prediction_features.csv` — LAE/JCI feature values used at scoring time.
+- `weather_history.csv` — timestamped event-hour Open-Meteo forecasts and historical observations used by JCI and weather backtests.
+- `venue_coordinates.json` — cached Open-Meteo geocoding results used to avoid repeated venue lookups.
 - `predictions.csv` — immutable prediction audit rows.
 - `results.csv` — verified settlement/result rows.
 - `prediction_registry.json` — current typed publication authority consumed by DP/QG.
@@ -20,3 +22,6 @@ Allowed `market_class` values: `PLAYER_PROP`, `GAME_ML`, `SPREAD`, `GAME_TOTAL`,
 
 ## Evidence discipline
 Store source and observation timestamp for market facts. Context must distinguish VERIFIED FACT, CORRELATION, HYPOTHESIS, and ALLEGATION. Personal/legal/civil/political/relationship/social information is included only when public, attributable, and relevant to availability, role, preparation, coaching, market behavior, or performance. Rumor or manipulation theories are never upgraded to facts without reliable evidence.
+
+## Weather intelligence
+`python scripts/lsi_ingest.py` collects event-time forecasts for outdoor NFL, NCAA football, and MLB events. Indoor venues are excluded. `python scripts/lsi_ingest.py --include-archive` also backfills completed events older than five days from the Open-Meteo archive. Weather is evidence, not an automatic betting direction; model adjustments must be validated against graded historical outcomes.
