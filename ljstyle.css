@@ -58,3 +58,26 @@
   filter:none!important;
   image-rendering:auto!important;
 }
+
+/* LJ INDEX GAME WINNERS DIVIDER — Current Status → LEGZ HOT TOP */
+.game-winners-divider{
+  margin:24px 0 0;
+  border:1px solid #5c4320;
+  border-radius:14px;
+  overflow:hidden;
+  background:#090807;
+  box-shadow:0 14px 38px rgba(0,0,0,.42),0 0 24px rgba(214,173,70,.08);
+}
+.game-winners-divider img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:3/1;
+  object-fit:cover;
+  object-position:center;
+}
+@media(max-width:620px){
+  .game-winners-divider{margin-top:18px;border-radius:10px}
+  .game-winners-divider img{aspect-ratio:16/9;object-position:center}
+}
+@media print{.game-winners-divider{display:none!important}}

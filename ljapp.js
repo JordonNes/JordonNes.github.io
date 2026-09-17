@@ -159,7 +159,8 @@
   window.renderLJHome = () => {
     const h = D.home;
     document.title = "LEGZ & JINX — Daily Predictions";
-    document.getElementById("app").innerHTML = `<div class="page">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${statusGrid()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${footer("All-sports publication hub • QC layout locked")}</div>`;
+    const divider = `<figure class="game-winners-divider" aria-label="LEGZ and JINX cooking predictions at the Game Winners restaurant"><img src="assets/headers/game-winners-divider.jpg?v=20260917" alt="LEGZ cooks sports parlays while JINX serves demon and goblin cookies inside the Game Winners restaurant" width="2048" height="683" loading="eager" decoding="async"></figure>`;
+    document.getElementById("app").innerHTML = `<div class="page">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${statusGrid()}${divider}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${footer("All-sports publication hub • QC layout locked")}</div>`;
   };
   loadMaterialAlerts();
 })();
