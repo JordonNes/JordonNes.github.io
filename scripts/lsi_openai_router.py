@@ -15,6 +15,7 @@ import csv
 import hashlib
 import json
 import math
+import os
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -204,14 +205,21 @@ def build_event_packages() -> list[dict]:
 
 def write_history(row: dict) -> None:
     fields = [
-        "generated_at_utc", "mode", "events_total", "changed_events", "unchanged_events",
+        "generated_at_utc", "mode", "telemetry_source", "events_total", "changed_events", "unchanged_events",
         "luna_calls", "terra_calls", "sol_calls", "estimated_input_tokens",
         "estimated_output_tokens", "estimated_cost_usd", "projected_calls_per_day_if_all_changed",
         "projected_cost_per_day_if_all_changed_usd", "pricing_as_of",
     ]
+    existing = read_csv(USAGE_HISTORY)
+    if existing and "telemetry_source" not in existing[0]:
+        with USAGE_HISTORY.open("w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=fields, lineterminator="\n")
+            writer.writeheader()
+            for prior in existing:
+                writer.writerow({**prior, "telemetry_source": "legacy_unspecified"})
     new_file = not USAGE_HISTORY.exists()
     with USAGE_HISTORY.open("a", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fields)
+        writer = csv.DictWriter(fh, fieldnames=fields, lineterminator="\n")
         if new_file:
             writer.writeheader()
         writer.writerow({k: row.get(k, "") for k in fields})
@@ -279,6 +287,7 @@ def main() -> None:
         "schema_version": "LSI-OAI-DRYRUN-1",
         "generated_at_utc": now,
         "mode": "DRY_RUN_NO_NETWORK",
+        "telemetry_source": os.environ.get("GITHUB_EVENT_NAME", "local_manual"),
         "api_calls_made": 0,
         "openai_key_read": False,
         "pricing_as_of": PRICING_AS_OF,
@@ -315,6 +324,7 @@ def main() -> None:
     history_row = {
         "generated_at_utc": now,
         "mode": "DRY_RUN_NO_NETWORK",
+        "telemetry_source": os.environ.get("GITHUB_EVENT_NAME", "local_manual"),
         "events_total": len(routes),
         "changed_events": changed_events,
         "unchanged_events": unchanged_events,
@@ -335,6 +345,7 @@ def main() -> None:
     costs = [float(r.get("estimated_cost_usd") or 0) for r in history]
     changed = [int(r.get("changed_events") or 0) for r in history]
     observation_days = sorted({str(r.get("generated_at_utc") or "")[:10] for r in history if r.get("generated_at_utc")})
+    scheduled_days = sorted({str(r.get("generated_at_utc") or "")[:10] for r in history if r.get("generated_at_utc") and r.get("telemetry_source") == "schedule"})
     summary = {
         "schema_version": "LSI-OAI-USAGE-1",
         "generated_at_utc": now,
@@ -345,8 +356,10 @@ def main() -> None:
         "average_changed_event_packets_per_run": round(sum(changed) / len(changed), 2) if changed else 0,
         "telemetry_days": observation_days,
         "distinct_telemetry_days": len(observation_days),
+        "scheduled_telemetry_days": scheduled_days,
+        "distinct_scheduled_telemetry_days": len(scheduled_days),
         "minimum_required_telemetry_days": 3,
-        "paid_api_decision_ready": len(observation_days) >= 3,
+        "paid_api_decision_ready": len(scheduled_days) >= 3,
         "api_calls_actually_made": 0,
         "recommendation_gate": "Remain $0 until at least 3 distinct scheduled telemetry days are recorded and measured demand and value justify prepaid API credits.",
     }

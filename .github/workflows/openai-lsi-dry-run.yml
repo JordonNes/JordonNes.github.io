@@ -39,7 +39,7 @@ jobs:
           python - <<'PY'
           import json
           s=json.load(open('data/openai_usage_summary.json'))
-          print(f"Telemetry days recorded: {s['distinct_telemetry_days']} / 3")
+          print(f"Scheduled telemetry days recorded: {s['distinct_scheduled_telemetry_days']} / 3")
           print(f"Paid decision ready: {s['paid_api_decision_ready']}")
           PY
       - name: Commit dry-run telemetry
