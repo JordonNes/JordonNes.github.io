@@ -28,7 +28,7 @@ The four parlay columns are therefore **six-leg player/participant-prop construc
 For sports without conventional points/rebounds/yardage-style markets, participant-specific markets count as player props when they are tied to an individual competitor rather than merely the match side. Examples include:
 
 - Tennis: aces, double faults, player games, player sets, player set handicaps and other participant-specific statistical/derivative markets;
-- UFC / Boxing: method, round, knockdowns, significant strikes, takedowns, fight-time or other fighter-specific markets when available;
+- MMA / Boxing: method, round, knockdowns, significant strikes, takedowns, fight-time or other fighter-specific markets when available;
 - MLB: hits, total bases, runs, RBIs, home runs, strikeouts, outs recorded and other batter/pitcher markets;
 - Basketball: points, rebounds, assists, PRA, threes and other individual statistics;
 - Football: passing, rushing, receiving, receptions, touchdowns and other individual statistics;
