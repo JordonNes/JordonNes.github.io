@@ -37,9 +37,9 @@ ANALYTICS = os.getenv("PROPLINE_ANALYTICS_ENABLED", "").strip().lower() in {"1",
 SPORT_KEYS = {
     "MLB": "baseball_mlb", "NBA": "basketball_nba", "WNBA": "basketball_wnba", "NCAA_Basketball": "basketball_ncaab",
     "NCAA_Football": "football_ncaaf", "NFL": "football_nfl", "NHL": "hockey_nhl",
-    "Tennis": "tennis", "UFC": "mma_ufc", "Boxing": "boxing",
+    "Tennis": "tennis", "MMA": "mma_ufc", "Boxing": "boxing",
 }
-MAX_EVENTS = {"MLB":16,"NBA":16,"WNBA":16,"NCAA_Basketball":16,"NCAA_Football":16,"NFL":16,"NHL":16,"Tennis":8,"UFC":8,"Boxing":8}
+MAX_EVENTS = {"MLB":16,"NBA":16,"WNBA":16,"NCAA_Basketball":16,"NCAA_Football":16,"NFL":16,"NHL":16,"Tennis":8,"MMA":8,"Boxing":8}
 MARKET_FIELDS = ["snapshot_id","collected_at_pt","sport","league","event_id","event_start_pt","source","market_class","participant","market","threshold","side","price","status"]
 UA = {"User-Agent": "LEGZ-JINX-LSI/2.1", "Accept": "application/json"}
 
@@ -105,7 +105,7 @@ def due(state,sport_key,event):
     return not last or NOW-last>=max_age
 
 def candidate_events(events,league,limit):
-    window=timedelta(days=7 if league in {"UFC","Boxing"} else 4 if league=="Tennis" else 3); out=[]
+    window=timedelta(days=7 if league in {"MMA","Boxing"} else 4 if league=="Tennis" else 3); out=[]
     for event in events:
         start=parse_dt(event.get("commence_time"))
         if start and NOW-timedelta(hours=6)<=start<=NOW+window:out.append(event)
