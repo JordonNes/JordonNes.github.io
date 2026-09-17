@@ -6,6 +6,9 @@ on:
       - 'scripts/lsi_pipeline.py'
       - 'scripts/rotowire_adapter.py'
       - 'scripts/propline_adapter.py'
+      - 'scripts/odds_adapter.py'
+      - 'scripts/qc_publication_audit.js'
+      - 'lsi_registry_bridge.js'
       - 'data/predictions.csv'
       - 'data/market_history.csv'
       - 'data/results.csv'
@@ -23,7 +26,9 @@ jobs:
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
       - name: Compile LSI Python modules
-        run: python -m py_compile scripts/lsi_pipeline.py scripts/rotowire_adapter.py scripts/propline_adapter.py
+        run: python -m py_compile scripts/lsi_pipeline.py scripts/rotowire_adapter.py scripts/propline_adapter.py scripts/odds_adapter.py
+      - name: Check QC JavaScript syntax
+        run: node --check lsi_registry_bridge.js && node --check scripts/qc_publication_audit.js
       - name: Build registry from repository evidence
         run: python scripts/lsi_pipeline.py
       - name: Validate PLAYER_PROP intelligence contract
@@ -46,3 +51,4 @@ jobs:
           assert all(x.get('sharp_market_signal') in (None,'') for x in props), 'Sharp signal must not be inferred by default'
           print(f'Validated {len(props)} player props with {len(required)} intelligence fields each')
           PY
+
