@@ -1,0 +1,94 @@
+name: OpenAI LSI Smoke Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify OpenAI secret is configured
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        shell: bash
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "::error::OPENAI_API_KEY is not configured in repository Actions secrets."
+            exit 1
+          fi
+          echo "OPENAI_API_KEY is configured."
+
+      - name: Run one GPT-5.6 Luna Responses API request
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.request
+
+          endpoint = "https://api.openai.com/v1/responses"
+          payload = {
+              "model": "gpt-5.6-luna",
+              "input": "LEGZ-JINX-LSI connectivity test. Reply with exactly: LSI_SMOKE_TEST_OK",
+              "max_output_tokens": 32,
+          }
+
+          request = urllib.request.Request(
+              endpoint,
+              data=json.dumps(payload).encode("utf-8"),
+              headers={
+                  "Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}",
+                  "Content-Type": "application/json",
+              },
+              method="POST",
+          )
+
+          try:
+              # Exactly one API request. No retries.
+              with urllib.request.urlopen(request, timeout=60) as response:
+                  data = json.loads(response.read().decode("utf-8"))
+          except urllib.error.HTTPError as exc:
+              body = exc.read().decode("utf-8", errors="replace")
+              print(f"::error::OpenAI API returned HTTP {exc.code}")
+              try:
+                  err = json.loads(body).get("error", {})
+                  print("Error type:", err.get("type", "unknown"))
+                  print("Error code:", err.get("code", "unknown"))
+                  print("Message:", err.get("message", "unknown"))
+              except Exception:
+                  print("Response body could not be parsed as JSON.")
+              sys.exit(1)
+          except Exception as exc:
+              print(f"::error::OpenAI request failed: {type(exc).__name__}: {exc}")
+              sys.exit(1)
+
+          output_text = data.get("output_text") or ""
+          if not output_text:
+              pieces = []
+              for item in data.get("output", []):
+                  for content in item.get("content", []):
+                      if content.get("type") == "output_text":
+                          pieces.append(content.get("text", ""))
+              output_text = "".join(pieces)
+
+          usage = data.get("usage", {})
+          print("LSI smoke test succeeded.")
+          print("Response ID:", data.get("id"))
+          print("Model:", data.get("model"))
+          print("Status:", data.get("status"))
+          print("Input tokens:", usage.get("input_tokens"))
+          print("Output tokens:", usage.get("output_tokens"))
+          print("Total tokens:", usage.get("total_tokens"))
+          print("Model output:", output_text.strip())
+
+          if output_text.strip() != "LSI_SMOKE_TEST_OK":
+              print("::warning::API connectivity succeeded, but the response text differed from the requested sentinel.")
+          PY
