@@ -8,7 +8,7 @@
   const n=v=>String(v??'').trim();
   const norm=v=>n(v).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   const watchRx=/WATCH|NO BET|PASS|CLOSED|STARTED|LIVE|UNSUPPORTED|VERIFY LIVE LINE|MARKET NOT|DATA-LIMITED/i;
-  const propRx=/yards|points|rebounds|assists|strikeouts|\\bks\\b|hits|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|games won|sets won|double.double|total bases|home runs|goals/i;
+  const propRx=/yards|points|rebounds|assists|strikeouts|\bks\b|hits|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|games won|sets won|double.double|total bases|home runs|goals/i;
   const source=p=>{
     const refs=(p.provenance||[]).filter(x=>x?.source);
     if(!refs.length) return 'SOURCE UNAVAILABLE';
@@ -61,11 +61,11 @@
   function manualCandidate(text){
     const s=n(text);
     if(!s || watchRx.test(s) || !propRx.test(s)) return null;
-    const m=s.match(/(?:L&J\\s*)?(\\d+(?:\\.\\d+)?)%/i);
+    const m=s.match(/(?:L&J\s*)?(\d+(?:\.\d+)?)%/i);
     return {
       display:s,
       confidence:m?Number(m[1]):60,
-      participant:n(s.split(/\\bOVER\\b|\\bUNDER\\b|\\bYES\\b|\\bNO\\b/i)[0]),
+      participant:n(s.split(/\bOVER\b|\bUNDER\b|\bYES\b|\bNO\b/i)[0]),
       market:n(s),
       best_price:null,
       market_source_count:1,
