@@ -131,7 +131,7 @@
       if (!list) return;
       const item = document.createElement('li');
       item.className = 'material-alert';
-      const source = /^https:\\/\\//i.test(String(a.source || ''))
+      const source = /^https:\/\//i.test(String(a.source || ''))
         ? ` <a href="${esc(a.source)}" target="_blank" rel="noopener">Source ↗</a>` : '';
       item.innerHTML = `<b>🚨 ${esc(a.game)}</b> — ${esc(a.summary)} <b>${esc(a.urgency || 'Re-analysis required')}:</b> ${esc(a.impact)} <span class="qc-meta">${esc(a.status || 'CURRENT')}</span>${source}`;
       list.prepend(item);
@@ -142,7 +142,7 @@
   }
 
   function loadMaterialAlerts(){
-    if (!/LJ_index\\.html$|\\/$/.test(location.pathname)) return;
+    if (!/LJ_index\.html$|\/$/.test(location.pathname)) return;
     const script = document.createElement('script');
     script.src = `materialalerts.js?v=${Date.now()}`;
     script.onload = () => setTimeout(renderMaterialAlerts,0);
