@@ -50,20 +50,40 @@ jobs:
         run: python scripts/odds_adapter.py
       - name: Build and validate Prediction Registry
         run: python scripts/lsi_pipeline.py
+      - name: Per-game QC player-prop completeness audit
+        run: node scripts/qc_publication_audit.js
       - name: OpenAI LSI router — dry run and usage estimate
         run: python scripts/lsi_openai_router.py --dry-run
       - name: Market Availability Monitor
         shell: bash
         run: |
           python - <<'PY'
-          import csv, pathlib
-          p=pathlib.Path('data/market_history.csv'); counts={}
+          import csv, json, pathlib
+          p=pathlib.Path('data/market_history.csv'); historical={}
           if p.exists():
             for r in csv.DictReader(p.open()):
-              if r.get('market_class')=='PLAYER_PROP': counts[r.get('league')]=counts.get(r.get('league'),0)+1
-          print('MAM PLAYER_PROP inventory:',counts)
-          for league in ('NFL','NCAA_Football'):
-            if counts.get(league,0)==0: print(f'::warning::MAM: zero {league} PLAYER_PROP observations; DP WATCH must not be treated as proof markets are unavailable.')
+              if r.get('market_class')=='PLAYER_PROP':
+                historical[r.get('league')]=historical.get(r.get('league'),0)+1
+          print('MAM historical PLAYER_PROP observations:',historical)
+          board=pathlib.Path('data/qc_prop_board.json')
+          if board.exists():
+            payload=json.load(board.open(encoding='utf-8'))
+            current={}
+            for event in payload.get('events',[]):
+              league=event.get('league')
+              current.setdefault(league,{'events':0,'props':0,'empty':0,'errors':0})
+              current[league]['events']+=1
+              current[league]['props']+=len(event.get('props') or [])
+              if not event.get('props'): current[league]['empty']+=1
+              if str(event.get('sweep_status','')).startswith('SOURCE_ERROR'): current[league]['errors']+=1
+            print('MAM current event-scoped QC prop board:',current)
+            for league,stat in current.items():
+              if stat['events'] and stat['props']==0:
+                print(f"::warning::MAM: {league} has {stat['events']} discovered event(s) but zero current player props after source sweep.")
+              if stat['errors']:
+                print(f"::warning::MAM: {league} has {stat['errors']} prop-source error event(s).")
+          else:
+            print('::warning::MAM: data/qc_prop_board.json not present; event-scoped prop sweep has not produced a board yet.')
           PY
       - name: Validate publication invariants
         run: |
@@ -87,5 +107,5 @@ jobs:
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
-          git add data/prediction_registry.json data/prediction_registry.js data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
+          git add data/prediction_registry.json data/prediction_registry.js data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/qc_prop_board.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
           if git diff --cached --quiet; then echo 'No LSI changes to publish.'; else git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT" && git push origin master; fi
