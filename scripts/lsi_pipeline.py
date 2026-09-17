@@ -1,67 +1,406 @@
 #!/usr/bin/env python3
 """LEGZ & JINX Sports Intelligence — registry build/validation.
 
-This stage normalizes durable LHW observations into a typed Prediction Registry.
-It never fabricates a market, threshold, price, confidence, or contextual adjustment.
-External acquisition adapters populate LHW separately; this builder only consumes
-records already present in data/predictions.csv.
+Builds the typed Prediction Registry from immutable prediction audit rows and
+joins durable market/context evidence. It never fabricates a market, threshold,
+price, confidence, player status, trend, steam signal, or result.
+
+PLAYER_PROP records use the LSI-PR-2 intelligence contract. Fields that are not
+supported by acquired evidence remain null rather than being guessed.
 """
 from __future__ import annotations
-import csv, json, math
+
+import csv
+import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT=Path(__file__).resolve().parents[1]
-DATA=ROOT/'data'
-PRED=DATA/'predictions.csv'
-REG=DATA/'prediction_registry.json'
-ALLOWED={'PLAYER_PROP','GAME_ML','SPREAD','GAME_TOTAL','TEAM_TOTAL'}
+ROOT = Path(__file__).resolve().parents[1]
+DATA = ROOT / "data"
+PRED = DATA / "predictions.csv"
+REG = DATA / "prediction_registry.json"
+MARKETS = DATA / "market_history.csv"
+RESULTS = DATA / "results.csv"
+CTX = DATA / "context_registry.json"
+PROPLINE = DATA / "propline_intelligence.json"
+ALLOWED = {"PLAYER_PROP", "GAME_ML", "SPREAD", "GAME_TOTAL", "TEAM_TOTAL"}
 
-def f(v):
-    try:return float(v)
-    except (TypeError,ValueError):return None
+PROP_FIELDS = [
+    "player_id", "event_id", "market", "threshold", "side", "book", "retrieved_at",
+    "opening_line", "current_line", "closing_line", "best_line", "market_source_count",
+    "market_live", "market_suspended", "steam_score", "books_moved", "lineup_confirmed",
+    "player_status", "rotowire_context_timestamp", "sharp_market_signal", "L5_hit_rate",
+    "L10_hit_rate", "L20_hit_rate", "actual_result", "win_loss_push", "CLV",
+]
 
-def first(row,*keys):
-    for k in keys:
-        if row.get(k) not in (None,''): return row[k]
-    return ''
+
+def f(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def first(row, *keys):
+    for key in keys:
+        if row.get(key) not in (None, ""):
+            return row[key]
+    return ""
+
+
+def norm(value):
+    return " ".join(str(value or "").lower().replace("-", " ").replace("_", " ").replace("/", " ").split())
+
+
+def parse_dt(value):
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def numeric_line(value):
+    if value in (None, ""):
+        return None
+    match = re.search(r"[-+]?\d+(?:\.\d+)?", str(value))
+    return float(match.group()) if match else None
+
+
+def infer_side(selection: str, source_side: str = "") -> str:
+    source_side = str(source_side or "").strip()
+    if source_side and norm(source_side) not in {"more less", "over under"}:
+        return source_side
+    match = re.search(r"\b(under|over|more|less|yes|no)\b", selection or "", re.I)
+    if match:
+        return match.group(1).title()
+    return source_side
+
+
+def book_from_source(source: str) -> str:
+    source = str(source or "").strip()
+    return source.split(":", 1)[1] if ":" in source else source
+
+
+def read_csv(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8-sig") as fh:
+        return [row for row in csv.DictReader(fh) if any((v or "").strip() for v in row.values())]
+
+
+def load_markets():
+    rows = read_csv(MARKETS)
+    by_snapshot = {row.get("snapshot_id", ""): row for row in rows if row.get("snapshot_id")}
+    return rows, by_snapshot
+
+
+def same_prop(row: dict, event_id: str, participant: str, market: str) -> bool:
+    return (
+        row.get("market_class", "").upper() == "PLAYER_PROP"
+        and row.get("event_id", "") == event_id
+        and norm(row.get("participant")) == norm(participant)
+        and norm(row.get("market")) == norm(market)
+    )
+
+
+def market_summary(all_markets: list[dict], base: dict, selection: str, event_id: str) -> dict:
+    participant = first(base, "participant", "player")
+    market = base.get("market", "")
+    source = base.get("source", "")
+    side = infer_side(selection, base.get("side", ""))
+    book = book_from_source(source)
+    series = [row for row in all_markets if same_prop(row, event_id, participant, market)]
+    if not series and base:
+        series = [base]
+
+    series.sort(key=lambda row: row.get("collected_at_pt") or "")
+    same_book = [row for row in series if book_from_source(row.get("source")) == book] or series
+    same_book.sort(key=lambda row: row.get("collected_at_pt") or "")
+    opening = same_book[0].get("threshold", "") if same_book else base.get("threshold", "")
+    current_row = same_book[-1] if same_book else base
+    current = current_row.get("threshold", "")
+
+    latest_by_book: dict[str, dict] = {}
+    for row in series:
+        key = book_from_source(row.get("source")) or row.get("source", "")
+        prior = latest_by_book.get(key)
+        if prior is None or (row.get("collected_at_pt") or "") >= (prior.get("collected_at_pt") or ""):
+            latest_by_book[key] = row
+
+    live_values = {"open", "active", "verified", "live"}
+    suspended_values = {"suspended", "closed", "off_the_board", "off board"}
+    statuses = {norm(row.get("status")) for row in latest_by_book.values()}
+    market_live = any(status in live_values for status in statuses) if statuses else None
+    market_suspended = any(status in suspended_values for status in statuses) if statuses else None
+
+    latest_lines = [(numeric_line(row.get("threshold")), row.get("threshold", "")) for row in latest_by_book.values()]
+    latest_lines = [(num, raw) for num, raw in latest_lines if num is not None]
+    best_line = ""
+    direction = norm(side)
+    if latest_lines:
+        if direction in {"over", "more", "yes"}:
+            best_line = min(latest_lines, key=lambda item: item[0])[1]
+        elif direction in {"under", "less", "no"}:
+            best_line = max(latest_lines, key=lambda item: item[0])[1]
+        else:
+            best_line = current
+
+    closing = ""
+    start = parse_dt(base.get("event_start_pt"))
+    if start and datetime.now(timezone.utc).astimezone(start.tzinfo or timezone.utc) >= start:
+        eligible = []
+        for row in same_book:
+            stamp = parse_dt(row.get("collected_at_pt"))
+            if stamp and stamp <= start:
+                eligible.append(row)
+        if eligible:
+            closing = eligible[-1].get("threshold", "")
+
+    return {
+        "participant": participant,
+        "market": market,
+        "threshold": base.get("threshold", ""),
+        "side": side,
+        "price": base.get("price", ""),
+        "book": book,
+        "retrieved_at": base.get("collected_at_pt", ""),
+        "opening_line": opening or None,
+        "current_line": current or None,
+        "closing_line": closing or None,
+        "best_line": best_line or None,
+        "market_source_count": len([key for key in latest_by_book if key]),
+        "market_live": market_live,
+        "market_suspended": market_suspended,
+    }
+
+
+def load_context_records() -> list[dict]:
+    if not CTX.exists():
+        return []
+    try:
+        payload = json.loads(CTX.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return []
+    return payload.get("records", []) if isinstance(payload, dict) else []
+
+
+def latest_context(records: list[dict], league: str, participant: str, event_id: str) -> dict:
+    candidates = []
+    for row in records:
+        if row.get("league") and row.get("league") != league:
+            continue
+        if norm(row.get("player")) != norm(participant):
+            continue
+        if row.get("event_id") and event_id and row.get("event_id") != event_id:
+            continue
+        candidates.append(row)
+    if not candidates:
+        return {}
+    candidates.sort(key=lambda row: row.get("published_at") or row.get("retrieved_at") or "")
+    return candidates[-1]
+
+
+def load_propline() -> list[dict]:
+    if not PROPLINE.exists():
+        return []
+    try:
+        payload = json.loads(PROPLINE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return []
+    return payload.get("records", []) if isinstance(payload, dict) else []
+
+
+def propline_match(records: list[dict], event_id: str, participant: str, market: str) -> dict:
+    candidates = []
+    for row in records:
+        if row.get("event_id") and row.get("event_id") != event_id:
+            continue
+        if row.get("player") and norm(row.get("player")) != norm(participant):
+            continue
+        if row.get("market") and market and norm(row.get("market")) != norm(market):
+            continue
+        candidates.append(row)
+    if not candidates:
+        return {}
+    candidates.sort(key=lambda row: row.get("retrieved_at") or row.get("updated_at") or "")
+    return candidates[-1]
+
+
+def load_results() -> dict[str, dict]:
+    out = {}
+    for row in read_csv(RESULTS):
+        prediction_id = row.get("prediction_id", "")
+        if prediction_id:
+            out[prediction_id] = row
+    return out
+
+
+def line_clv(side: str, selected_line, closing_line):
+    selected = numeric_line(selected_line)
+    closing = numeric_line(closing_line)
+    if selected is None or closing is None:
+        return None
+    direction = norm(side)
+    if direction in {"over", "more", "yes"}:
+        return round(closing - selected, 4)
+    if direction in {"under", "less", "no"}:
+        return round(selected - closing, 4)
+    return None
+
+
+def prop_intelligence(*, row: dict, base: dict, summary: dict, contexts: list[dict], propline: list[dict], results: dict[str, dict]) -> dict:
+    event_id = first(row, "event_id") or base.get("event_id", "")
+    participant = summary.get("participant") or first(row, "participant", "player")
+    market = summary.get("market") or first(row, "market")
+    context = latest_context(contexts, first(row, "league") or base.get("league", ""), participant, event_id)
+    pl = propline_match(propline, event_id, participant, market)
+    result = results.get(first(row, "prediction_id", "id"), {})
+
+    closing_line = first(pl, "closing_line", "closing_point") or result.get("closing_threshold") or summary.get("closing_line")
+    selected_line = summary.get("threshold") or first(row, "threshold", "line")
+    side = summary.get("side") or infer_side(first(row, "selection", "pick", "prediction"), base.get("side", ""))
+
+    intelligence = {
+        "player_id": first(pl, "player_id") or context.get("player_id") or first(row, "player_id") or None,
+        "event_id": event_id,
+        "market": market or None,
+        "threshold": selected_line or None,
+        "side": side or None,
+        "book": summary.get("book") or first(pl, "book", "bookmaker") or None,
+        "retrieved_at": summary.get("retrieved_at") or first(pl, "retrieved_at") or None,
+        "opening_line": first(pl, "opening_line", "opening_point") or summary.get("opening_line") or None,
+        "current_line": first(pl, "current_line", "line") or summary.get("current_line") or selected_line or None,
+        "closing_line": closing_line or None,
+        "best_line": first(pl, "best_line") or summary.get("best_line") or None,
+        "market_source_count": f(first(pl, "market_source_count")) if first(pl, "market_source_count") else summary.get("market_source_count"),
+        "market_live": pl.get("market_live") if pl.get("market_live") is not None else summary.get("market_live"),
+        "market_suspended": pl.get("market_suspended") if pl.get("market_suspended") is not None else summary.get("market_suspended"),
+        "steam_score": f(first(pl, "steam_score")) if first(pl, "steam_score") else None,
+        "books_moved": int(f(first(pl, "books_moved"))) if first(pl, "books_moved") else None,
+        "lineup_confirmed": pl.get("lineup_confirmed") if pl.get("lineup_confirmed") is not None else (context.get("lineup_confirmed") or None),
+        "player_status": context.get("player_status") or first(pl, "player_status") or None,
+        "rotowire_context_timestamp": (context.get("published_at") or context.get("retrieved_at") or None) if str(context.get("source", "")).startswith("ROTOWIRE") else None,
+        "sharp_market_signal": first(row, "sharp_market_signal") or context.get("sharp_market_signal") or None,
+        "L5_hit_rate": f(first(pl, "L5_hit_rate", "l5_hit_rate")) if first(pl, "L5_hit_rate", "l5_hit_rate") else None,
+        "L10_hit_rate": f(first(pl, "L10_hit_rate", "l10_hit_rate")) if first(pl, "L10_hit_rate", "l10_hit_rate") else None,
+        "L20_hit_rate": f(first(pl, "L20_hit_rate", "l20_hit_rate")) if first(pl, "L20_hit_rate", "l20_hit_rate") else None,
+        "actual_result": first(pl, "actual_result") or result.get("actual_result") or None,
+        "win_loss_push": first(pl, "win_loss_push", "result") or result.get("grade") or None,
+        "CLV": f(first(pl, "CLV", "clv")) if first(pl, "CLV", "clv") else line_clv(side, selected_line, closing_line),
+    }
+    for field in PROP_FIELDS:
+        intelligence.setdefault(field, None)
+    return intelligence
+
 
 def build():
-    if not PRED.exists(): raise SystemExit('Missing data/predictions.csv')
-    rows=[]; errors=[]
-    with PRED.open(newline='',encoding='utf-8-sig') as fh:
-        for n,row in enumerate(csv.DictReader(fh),2):
-            if not any((v or '').strip() for v in row.values()): continue
-            market=first(row,'market_class','market_type','type').strip().upper()
-            if market not in ALLOWED:
-                errors.append(f'line {n}: invalid market_class {market!r}'); continue
-            legz=f(first(row,'legz_confidence','legz','confidence'))
-            jinx=f(first(row,'jinx_input','jinx_delta'))
-            if legz is None or not 0<=legz<=100:
-                errors.append(f'line {n}: LEGZ confidence must be 0-100'); continue
-            if jinx is None: jinx=0.0
-            raw=legz+jinx; final=max(0.0,min(100.0,raw))
-            pick=first(row,'pick','prediction','selection').strip()
-            if not pick:
-                errors.append(f'line {n}: missing exact prediction/pick'); continue
-            rows.append({
-                'prediction_id':first(row,'prediction_id','id') or f'pred-{n}',
-                'created_at_pt':first(row,'created_at_pt','created_at','timestamp'),
-                'sport':first(row,'sport'),'league':first(row,'league'),
-                'event_id':first(row,'event_id'),'event_start_pt':first(row,'event_start_pt'),
-                'market_class':market,'participant':first(row,'participant','player'),
-                'market':first(row,'market'),'threshold':first(row,'threshold','line'),
-                'side':first(row,'side'),'price':first(row,'price','odds'),'pick':pick,
-                'source_snapshot_ids':[x for x in first(row,'source_snapshot_ids','source_snapshot_id').split('|') if x],
-                'legz_confidence':round(legz,2),'jinx_input':round(jinx,2),
-                'lj_confidence':round(final,2),'lj_conviction':round(raw,2) if raw>100 else None,
-                'tier':first(row,'tier','risk_tier').upper(),'model_version':first(row,'model_version') or 'LSI-DPv2',
-                'status':first(row,'status') or 'ACTIVE',
-                'legz_comment':first(row,'legz_comment'),'jinx_comment':first(row,'jinx_comment')
-            })
-    if errors: raise SystemExit('\n'.join(errors))
-    payload={'schema_version':'LSI-PR-1','generated_at_utc':datetime.now(timezone.utc).isoformat(),'allowed_market_classes':sorted(ALLOWED),'predictions':rows}
-    REG.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
-    print(f'Prediction Registry: {len(rows)} validated records')
+    if not PRED.exists():
+        raise SystemExit("Missing data/predictions.csv")
 
-if __name__=='__main__': build()
+    all_markets, by_snapshot = load_markets()
+    contexts = load_context_records()
+    propline = load_propline()
+    results = load_results()
+    rows = []
+    errors = []
+
+    with PRED.open(newline="", encoding="utf-8-sig") as fh:
+        for n, row in enumerate(csv.DictReader(fh), 2):
+            if not any((v or "").strip() for v in row.values()):
+                continue
+            market_class = first(row, "market_class", "market_type", "type").strip().upper()
+            if market_class not in ALLOWED:
+                errors.append(f"line {n}: invalid market_class {market_class!r}")
+                continue
+            legz = f(first(row, "legz_confidence", "legz", "confidence"))
+            jinx = f(first(row, "jinx_input", "jinx_delta"))
+            if legz is None or not 0 <= legz <= 100:
+                errors.append(f"line {n}: LEGZ confidence must be 0-100")
+                continue
+            if jinx is None:
+                jinx = 0.0
+            raw = legz + jinx
+            final = max(0.0, min(100.0, raw))
+            selection = first(row, "selection", "pick", "prediction").strip()
+            if not selection:
+                errors.append(f"line {n}: missing exact prediction/pick")
+                continue
+
+            snapshot_id = first(row, "market_snapshot_id", "source_snapshot_id")
+            base = by_snapshot.get(snapshot_id, {})
+            event_id = first(row, "event_id") or base.get("event_id", "")
+            summary = market_summary(all_markets, base, selection, event_id) if market_class == "PLAYER_PROP" else {}
+            participant = first(row, "participant", "player") or summary.get("participant") or base.get("participant", "")
+            threshold = first(row, "threshold", "line") or summary.get("threshold") or base.get("threshold", "")
+            side = first(row, "side") or summary.get("side") or infer_side(selection, base.get("side", ""))
+            price = first(row, "price", "odds") or summary.get("price") or base.get("price", "")
+            market_name = first(row, "market") or summary.get("market") or base.get("market", "")
+            created = first(row, "created_at_pt", "published_at_pt", "created_at", "timestamp")
+
+            record = {
+                "prediction_id": first(row, "prediction_id", "id") or f"pred-{n}",
+                "created_at_pt": created,
+                "updated_at_pt": first(row, "updated_at_pt") or created,
+                "sport": first(row, "sport") or base.get("sport", ""),
+                "league": first(row, "league") or base.get("league", ""),
+                "event_id": event_id,
+                "event_start_pt": first(row, "event_start_pt") or base.get("event_start_pt", ""),
+                "market_class": market_class,
+                "participant": participant,
+                "opponent": first(row, "opponent"),
+                "selection": selection,
+                "pick": selection,
+                "market": market_name,
+                "threshold": threshold,
+                "side": side,
+                "price": price,
+                "market_source": summary.get("book") or base.get("source", ""),
+                "market_observed_at_pt": summary.get("retrieved_at") or base.get("collected_at_pt", ""),
+                "source_snapshot_ids": [x for x in first(row, "source_snapshot_ids", "source_snapshot_id", "market_snapshot_id").split("|") if x],
+                "legz_confidence": round(legz, 2),
+                "jinx_input": round(jinx, 2),
+                "lj_probability": round(final, 2),
+                "lj_confidence": round(final, 2),
+                "lj_conviction": round(raw, 2),
+                "tier": first(row, "tier", "risk_tier").upper(),
+                "model_version": first(row, "model_version") or "LSI-DPv2",
+                "status": (first(row, "status") or "ACTIVE").upper(),
+                "legz_comment": first(row, "legz_comment"),
+                "jinx_comment": first(row, "jinx_comment"),
+                "evidence_ids": [x for x in first(row, "evidence_ids").split("|") if x],
+                "publication_tags": [x for x in first(row, "publication_tags").split("|") if x],
+            }
+            if market_class == "PLAYER_PROP":
+                record.update(prop_intelligence(row=row, base=base, summary=summary, contexts=contexts, propline=propline, results=results))
+            rows.append(record)
+
+    if errors:
+        raise SystemExit("\n".join(errors))
+
+    missing = []
+    for record in rows:
+        if record["market_class"] != "PLAYER_PROP":
+            continue
+        absent = [field for field in PROP_FIELDS if field not in record]
+        if absent:
+            missing.append(f"{record['prediction_id']}: {', '.join(absent)}")
+    if missing:
+        raise SystemExit("PLAYER_PROP schema incomplete:\n" + "\n".join(missing))
+
+    payload = {
+        "schema_version": "LSI-PR-2",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "allowed_market_classes": sorted(ALLOWED),
+        "player_prop_fields": PROP_FIELDS,
+        "clv_definition": "Line-based threshold CLV when a sourced closing line exists; positive means L&J captured the more favorable threshold. Price/implied-probability CLV is not inferred.",
+        "predictions": rows,
+    }
+    REG.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"Prediction Registry: {len(rows)} validated records; schema LSI-PR-2")
+
+
+if __name__ == "__main__":
+    build()
