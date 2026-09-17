@@ -1,0 +1,152 @@
+{
+  "schema_version": "LSI-OAI-DRYRUN-1",
+  "generated_at_utc": "2026-09-17T22:07:53.661812+00:00",
+  "mode": "DRY_RUN_NO_NETWORK",
+  "api_calls_made": 0,
+  "openai_key_read": false,
+  "pricing_as_of": "2026-09-17",
+  "pricing_usd_per_1m_tokens": {
+    "gpt-5.6-luna": {
+      "input": 0.2,
+      "output": 1.2
+    },
+    "gpt-5.6-terra": {
+      "input": 2.0,
+      "output": 12.0
+    },
+    "gpt-5.6-sol": {
+      "input": 4.0,
+      "output": 20.0
+    }
+  },
+  "assumptions": {
+    "scheduled_pipeline_runs_per_day": 6,
+    "token_estimator": "serialized_chars/3.6 + 350 system-overhead tokens",
+    "dedupe_policy": "future API call only when event evidence fingerprint changes",
+    "market_observations_capped_per_event": 40
+  },
+  "summary": {
+    "events_total": 6,
+    "changed_events": 6,
+    "unchanged_events": 0,
+    "would_call_if_enabled": 6,
+    "route_counts": {
+      "gpt-5.6-luna": 4,
+      "gpt-5.6-terra": 1,
+      "gpt-5.6-sol": 1
+    },
+    "estimated_input_tokens_for_changed_events": 4083,
+    "estimated_output_tokens_for_changed_events": 2300,
+    "estimated_cost_for_changed_events_usd": 0.027023,
+    "worst_case_if_every_event_changed_every_run": {
+      "calls_per_day": 36,
+      "estimated_cost_per_day_usd": 0.162138,
+      "note": "planning stress test, not expected usage"
+    }
+  },
+  "routes": [
+    {
+      "event_id": "DET-BUF-20260917",
+      "league": "NFL",
+      "evidence_fingerprint": "18b76b5d67b549de5539",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-sol",
+      "routing_reasons": [
+        "1 WATCH prediction(s)",
+        "1 AGGRESSIVE prediction(s)",
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (2 sources)",
+        "conflicting JINX signals + wide confidence dispersion"
+      ],
+      "estimated_input_tokens": 1421,
+      "estimated_output_tokens": 650,
+      "estimated_cost_usd": 0.018684,
+      "prediction_count": 4,
+      "market_observation_count": 10
+    },
+    {
+      "event_id": "FSU-BAMA-20260919",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "c9cd93fe07e7f7eb2b48",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "1 WATCH prediction(s)",
+        "1 AGGRESSIVE prediction(s)",
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 537,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006474,
+      "prediction_count": 1,
+      "market_observation_count": 1
+    },
+    {
+      "event_id": "HOU-TTU-20260918",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "ac1eaef7212e2b88292a",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-luna",
+      "routing_reasons": [
+        "routine event review"
+      ],
+      "estimated_input_tokens": 537,
+      "estimated_output_tokens": 300,
+      "estimated_cost_usd": 0.000467,
+      "prediction_count": 1,
+      "market_observation_count": 1
+    },
+    {
+      "event_id": "MIA-WF-20260918",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "2eb31b148787665a7e54",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-luna",
+      "routing_reasons": [
+        "routine event review"
+      ],
+      "estimated_input_tokens": 529,
+      "estimated_output_tokens": 300,
+      "estimated_cost_usd": 0.000466,
+      "prediction_count": 1,
+      "market_observation_count": 1
+    },
+    {
+      "event_id": "UGA-ARK-20260919",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "275da7880a2d5c6b44d6",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-luna",
+      "routing_reasons": [
+        "routine event review"
+      ],
+      "estimated_input_tokens": 530,
+      "estimated_output_tokens": 300,
+      "estimated_cost_usd": 0.000466,
+      "prediction_count": 1,
+      "market_observation_count": 1
+    },
+    {
+      "event_id": "USC-RUT-20260919",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "eb4ac78178359fa129fa",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-luna",
+      "routing_reasons": [
+        "routine event review"
+      ],
+      "estimated_input_tokens": 529,
+      "estimated_output_tokens": 300,
+      "estimated_cost_usd": 0.000466,
+      "prediction_count": 1,
+      "market_observation_count": 1
+    }
+  ]
+}
