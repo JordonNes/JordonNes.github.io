@@ -213,6 +213,88 @@ def aliases(team: str) -> list[str]:
             out.add("".join(w[0] for w in words).upper())
     return sorted(x for x in out if x)
 
+
+def board_key(event: dict) -> tuple[str, str, str]:
+    return (
+        str(event.get("league") or ""),
+        norm(event.get("away")),
+        norm(event.get("home")),
+    )
+
+
+def merge_board_events(existing: list[dict], incoming: list[dict], now: datetime, cutoff: datetime) -> list[dict]:
+    merged: dict[tuple[str, str, str], dict] = {}
+    for event in existing:
+        start = parse_dt(event.get("commence_time"))
+        if start and not (now < start <= cutoff):
+            continue
+        key = board_key(event)
+        if not all(key):
+            continue
+        merged[key] = dict(event)
+
+    for event in incoming:
+        key = board_key(event)
+        if not all(key):
+            continue
+        prior = merged.get(key)
+        if prior is None:
+            merged[key] = dict(event)
+            continue
+
+        props = {}
+        for prop in (prior.get("props") or []) + (event.get("props") or []):
+            pkey = (
+                norm(prop.get("participant")),
+                norm(prop.get("market_key") or prop.get("market")),
+                str(prop.get("threshold") if prop.get("threshold") is not None else ""),
+                norm(prop.get("side")),
+            )
+            if not any(pkey):
+                continue
+            old = props.get(pkey)
+            if old is None:
+                props[pkey] = dict(prop)
+            else:
+                old["market_source_count"] = max(
+                    int(old.get("market_source_count") or 0),
+                    int(prop.get("market_source_count") or 0),
+                )
+                old["consensus_probability"] = max(
+                    float(old.get("consensus_probability") or 0),
+                    float(prop.get("consensus_probability") or 0),
+                )
+                old["consensus_confidence_pct"] = round(
+                    max(float(old.get("consensus_confidence_pct") or 0),
+                        float(prop.get("consensus_confidence_pct") or 0)), 1
+                )
+                old["source_snapshot_ids"] = sorted(set(
+                    (old.get("source_snapshot_ids") or []) + (prop.get("source_snapshot_ids") or [])
+                ))
+                if prop.get("best_price") is not None:
+                    if old.get("best_price") is None or float(prop["best_price"]) > float(old["best_price"]):
+                        old["best_price"] = prop.get("best_price")
+                        old["best_book"] = prop.get("best_book")
+
+        combined = dict(prior)
+        for field in ("sport_key", "commence_time", "away", "home"):
+            if event.get(field):
+                combined[field] = event[field]
+        combined["away_aliases"] = sorted(set((prior.get("away_aliases") or []) + (event.get("away_aliases") or [])))
+        combined["home_aliases"] = sorted(set((prior.get("home_aliases") or []) + (event.get("home_aliases") or [])))
+        combined["props"] = sorted(
+            props.values(),
+            key=lambda p: (float(p.get("consensus_probability") or 0), int(p.get("market_source_count") or 0)),
+            reverse=True,
+        )
+        sources = {x for x in str(prior.get("source") or "").split("+") if x}
+        sources.update(x for x in str(event.get("source") or "").split("+") if x)
+        combined["source"] = "+".join(sorted(sources)) or "MULTI_SOURCE"
+        combined["sweep_status"] = "COMPLETE_WITH_PROPS" if combined["props"] else event.get("sweep_status") or prior.get("sweep_status")
+        combined["swept_at_utc"] = max(str(prior.get("swept_at_utc") or ""), str(event.get("swept_at_utc") or "")) or None
+        merged[key] = combined
+    return sorted(merged.values(), key=lambda e: e.get("commence_time") or "")
+
 def append_market_rows(rows: list[dict]) -> int:
     path = DATA / "market_history.csv"
     seen = set()
@@ -434,24 +516,25 @@ def run():
         board_events.append(board_event)
 
     added = append_market_rows(rows)
+    merged_events = merge_board_events(old_board.get("events", []), board_events, now, cutoff)
     payload = {
-        "schema_version": "LJ-QC-PROP-BOARD-1", "generated_at_utc": now.isoformat(),
-        "source": "THE_ODDS_API", "regions": REGIONS, "lookahead_hours": LOOKAHEAD_HOURS,
+        "schema_version": "LJ-QC-PROP-BOARD-2", "generated_at_utc": now.isoformat(),
+        "source": "MULTI_SOURCE_QC_PROP_BOARD", "regions": REGIONS, "lookahead_hours": LOOKAHEAD_HOURS,
         "quota": quota, "events_discovered": len(discovered),
-        "events_queried_this_run": queried, "source_errors": errors, "events": board_events,
+        "events_queried_this_run": queried, "source_errors": errors, "events": merged_events,
     }
     save_json(BOARD, payload)
     save_json(STATE, state)
 
-    total_props = sum(len(e.get("props") or []) for e in board_events)
+    total_props = sum(len(e.get("props") or []) for e in merged_events)
     by_league = defaultdict(int)
-    for e in board_events:
+    for e in merged_events:
         by_league[e.get("league")] += len(e.get("props") or [])
     print(
         f"The Odds API: discovered={len(discovered)} queried={queried} "
         f"board_props={total_props} appended_observations={added} source_errors={errors}"
     )
-    print("The Odds API QC prop inventory:", dict(sorted(by_league.items())))
+    print("Merged QC prop inventory after The Odds API overlay:", dict(sorted(by_league.items())))
     if quota.get("remaining") is not None:
         print("The Odds API quota:", quota)
 
