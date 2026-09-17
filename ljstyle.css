@@ -81,3 +81,92 @@
   .game-winners-divider img{aspect-ratio:16/9;object-position:center}
 }
 @media print{.game-winners-divider{display:none!important}}
+
+
+/* LJ INDEX HOME PALETTE — Game Winners image-derived, presentation-safe */
+.lj-home{
+  --lj-emerald-900:#102f29;
+  --lj-emerald-700:#185744;
+  --lj-emerald-500:#2f8468;
+  --lj-plum-900:#2d1d38;
+  --lj-plum-700:#53336a;
+  --lj-plum-500:#7b5590;
+  --lj-gold-700:#8a6827;
+  --lj-gold-500:#c6a35a;
+  --lj-gold-300:#ead49d;
+  --lj-ink:#101014;
+  --lj-panel:#121216;
+}
+.lj-home .headliner-section .section-head h2,
+.lj-home .twenty-section .section-head h2{
+  color:#eadfbf;
+  letter-spacing:.015em;
+}
+.lj-home .headliner-grid{gap:14px}
+.lj-home .headliner-card{
+  border-radius:14px;
+  overflow:hidden;
+  background:linear-gradient(180deg,#131418 0%,#0e0f12 100%);
+  box-shadow:0 14px 32px rgba(0,0,0,.30);
+}
+.lj-home .legz-hot-card{
+  border:1px solid rgba(47,132,104,.46);
+  box-shadow:0 14px 34px rgba(21,88,70,.16),0 0 0 1px rgba(234,212,157,.025) inset;
+}
+.lj-home .legz-hot-card .card-title{
+  background:linear-gradient(135deg,var(--lj-emerald-900) 0%,var(--lj-emerald-700) 56%,var(--lj-emerald-500) 100%)!important;
+  color:#f4faf7!important;
+  border-bottom:1px solid rgba(234,212,157,.22);
+}
+.lj-home .legz-hot-card .card-title span:last-child{color:#e9d7a4!important}
+.lj-home .legz-hot-card .headliner-list li{border-bottom-color:rgba(47,132,104,.18)}
+.lj-home .legz-hot-card .headliner-list li:hover{background:rgba(47,132,104,.055)}
+.lj-home .legz-hot-card .headliner-sub{color:#a9cbbd}
+
+.lj-home .jinx-winners-card{
+  border:1px solid rgba(123,85,144,.50);
+  box-shadow:0 14px 34px rgba(83,51,106,.18),0 0 0 1px rgba(234,212,157,.025) inset;
+}
+.lj-home .jinx-winners-card .card-title{
+  background:linear-gradient(135deg,var(--lj-plum-900) 0%,var(--lj-plum-700) 55%,var(--lj-plum-500) 100%)!important;
+  color:#fbf7ff!important;
+  border-bottom:1px solid rgba(234,212,157,.25);
+}
+.lj-home .jinx-winners-card .card-title span:last-child{color:#efd99e!important}
+.lj-home .jinx-winners-card .headliner-list li{border-bottom-color:rgba(123,85,144,.19)}
+.lj-home .jinx-winners-card .headliner-list li:hover{background:rgba(123,85,144,.06)}
+.lj-home .jinx-winners-card .headliner-sub{color:#c9b5d5}
+
+.lj-home .twenty-section>.card{
+  border:1px solid rgba(198,163,90,.38);
+  border-radius:14px;
+  background:linear-gradient(180deg,#131317 0%,#0d0e11 100%);
+  box-shadow:0 16px 38px rgba(0,0,0,.34),0 0 24px rgba(198,163,90,.055);
+}
+.lj-home .twenty-section .card-title.purple{
+  background:linear-gradient(120deg,#594217 0%,var(--lj-gold-700) 43%,#725033 69%,var(--lj-plum-700) 100%)!important;
+  color:#fff8e8!important;
+  border-bottom:1px solid rgba(239,217,158,.24);
+}
+.lj-home .twenty-section .card-title.purple span:last-child{color:#f3dfa8!important}
+.lj-home .twenty-section th{
+  color:#d6c7a0;
+  background:rgba(198,163,90,.035);
+  border-bottom-color:rgba(198,163,90,.22);
+}
+.lj-home .twenty-section td{border-bottom-color:rgba(198,163,90,.10)}
+.lj-home .twenty-section tbody tr{transition:background .16s ease}
+.lj-home .twenty-section tbody tr:hover{background:rgba(198,163,90,.055)}
+.lj-home .twenty-section .rank{color:#e7c671}
+.lj-home .twenty-section .conf,
+.lj-home .twenty-section .confidence{color:#91d8b5}
+.lj-home .twenty-section .source-note{color:#aaa18f}
+@media(max-width:620px){
+  .lj-home .headliner-card,
+  .lj-home .twenty-section>.card{border-radius:11px}
+}
+@media print{
+  .lj-home .legz-hot-card,
+  .lj-home .jinx-winners-card,
+  .lj-home .twenty-section>.card{box-shadow:none!important}
+}
