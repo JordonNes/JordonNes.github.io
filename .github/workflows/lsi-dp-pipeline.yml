@@ -29,6 +29,8 @@ jobs:
           case "$PT_HOUR" in 06) STAGE=DISCOVERY;;09) STAGE=MORNING_PUBLICATION;;12) STAGE=MIDDAY_PUBLICATION;;15) STAGE=MARKET_HISTORY;;18) STAGE=CONTEXT_MARKETS;;21) STAGE=MASTER_PUBLICATION;;*) STAGE=MANUAL_OR_DST_GUARD;;esac
           echo "hour=$PT_HOUR" >> "$GITHUB_OUTPUT"; echo "date=$PT_DATE" >> "$GITHUB_OUTPUT"; echo "stage=$STAGE" >> "$GITHUB_OUTPUT"
       - name: LSI free-first source acquisition
+        env:
+          CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
         run: python scripts/lsi_ingest.py
       - name: NHL authoritative enrichment
         run: python scripts/nhl_adapter.py
@@ -59,5 +61,5 @@ jobs:
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
-          git add data/prediction_registry.json data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json 2>/dev/null || true
+          git add data/prediction_registry.json data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json 2>/dev/null || true
           if git diff --cached --quiet; then echo 'No LSI changes to publish.'; else git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT" && git push origin master; fi

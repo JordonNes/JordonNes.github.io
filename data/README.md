@@ -9,6 +9,8 @@ This directory is the durable evidence layer for LEGZ Sports Intelligence (LSI).
 - `prediction_features.csv` — LAE/JCI feature values used at scoring time.
 - `weather_history.csv` — timestamped event-hour Open-Meteo forecasts and historical observations used by JCI and weather backtests.
 - `venue_coordinates.json` — cached Open-Meteo geocoding results used to avoid repeated venue lookups.
+- `cfbd/` — latest authenticated CFBD NCAA football snapshots for schedules/results, lines, player season statistics, and advanced team metrics.
+- `cfbd_state.json` — successful-fetch timestamps enforcing the CFBD free-tier request budget.
 - `predictions.csv` — immutable prediction audit rows.
 - `results.csv` — verified settlement/result rows.
 - `prediction_registry.json` — current typed publication authority consumed by DP/QG.
@@ -25,3 +27,6 @@ Store source and observation timestamp for market facts. Context must distinguis
 
 ## Weather intelligence
 `python scripts/lsi_ingest.py` collects event-time forecasts for outdoor NFL, NCAA football, and MLB events. Indoor venues are excluded. `python scripts/lsi_ingest.py --include-archive` also backfills completed events older than five days from the Open-Meteo archive. Weather is evidence, not an automatic betting direction; model adjustments must be validated against graded historical outcomes.
+
+## CFBD intelligence
+CFBD is the NCAA football specialist source. The adapter reads `CFBD_API_KEY` only from the server environment and never exposes it to browser JavaScript. Freshness gates target roughly 160 requests per month against the 1,000-request free-tier limit: lines every five hours, games and player season statistics every 20 hours, and advanced team metrics every six days. Use `--force-cfbd` only for a justified manual refresh.

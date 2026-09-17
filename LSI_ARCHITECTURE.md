@@ -94,3 +94,6 @@ Claims that sportsbooks, gambling organizations, players, officials, or teams ma
 Open-Meteo supplies event-hour forecast snapshots for outdoor NFL, NCAA football, and MLB games. JCI may flag precipitation, heat/cold, sustained wind, gusts, humidity, or pressure only when the game/market pathway is stated. Indoor events are excluded. Forecast snapshots remain timestamped because forecast error changes as start time approaches.
 
 The Open-Meteo archive supplies historical event-hour conditions for backtesting weather features against results. Historical correlation does not itself authorize a Jinx adjustment: the effect must be stable by sport and market class, have adequate sample size, and survive out-of-sample validation. Weather-derived adjustments and thresholds belong in `prediction_features.csv` with the Open-Meteo snapshot ID.
+
+## CFBD protocol
+CollegeFootballData is the NCAA football specialist adapter. CFBD schedules/results and player statistics support LAE baselines; advanced team metrics support opponent-strength, efficiency, explosiveness, field-position and garbage-time-adjusted features; CFBD lines provide market-history and movement validation for JCI. The free-tier key is server-side only. Freshness gates preserve the 1,000-request monthly allowance and source failures remain non-destructive.

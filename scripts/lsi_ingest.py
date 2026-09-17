@@ -18,6 +18,11 @@ def get(url,headers=None):
     req=urllib.request.Request(url,headers={**UA,**(headers or {})})
     with urllib.request.urlopen(req,timeout=20) as r:return json.load(r)
 
+def write_json(path,payload):
+    tmp=path.with_suffix(path.suffix+'.tmp')
+    tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    tmp.replace(path)
+
 def append_csv(path,fields,rows,key_fields):
     existing=set()
     if path.exists():
@@ -168,8 +173,35 @@ def ingest_manual_markets():
                 r.setdefault('source','MANUAL_MARKET'); r.setdefault('collected_at_pt',NOW.astimezone(PT).isoformat()); rows.append(r)
     n=append_csv(target,fields,rows,['snapshot_id']); print('market observations',n)
 
+def ingest_cfbd(force=False):
+    """Quota-controlled CollegeFootballData acquisition for NCAA football."""
+    key=os.getenv('CFBD_API_KEY','').strip()
+    if not key:
+        print('CFBD skipped: CFBD_API_KEY is not configured'); return
+    state_path=DATA/'cfbd_state.json'; out_dir=DATA/'cfbd'; out_dir.mkdir(parents=True,exist_ok=True)
+    try:state=json.loads(state_path.read_text(encoding='utf-8'))
+    except (FileNotFoundError,json.JSONDecodeError):state={}
+    plans=[
+        ('games','/games',{'year':TODAY.year,'seasonType':'regular'},20),
+        ('lines','/lines',{'year':TODAY.year,'seasonType':'regular'},5),
+        ('player_season','/stats/player/season',{'year':TODAY.year,'seasonType':'regular'},20),
+        ('team_advanced','/stats/season/advanced',{'year':TODAY.year,'excludeGarbageTime':'true','classification':'fbs'},144),
+    ]
+    headers={'Authorization':f'Bearer {key}'}; calls=0
+    for name,path,params,max_age_hours in plans:
+        last=parse_event_time(state.get(name,'')); fresh=last and (NOW-last)<timedelta(hours=max_age_hours)
+        if fresh and not force:continue
+        url='https://api.collegefootballdata.com'+path+'?'+urllib.parse.urlencode(params)
+        try:payload=get(url,headers)
+        except Exception as ex:print(f'WARN CFBD {name}: {ex}'); continue
+        write_json(out_dir/f'{name}.json',{'source':'CFBD','collected_at_utc':NOW.isoformat(),'endpoint':path,'parameters':params,'records':payload})
+        state[name]=NOW.isoformat(); calls+=1
+    write_json(state_path,state)
+    print(f'CFBD requests {calls}; estimated monthly budget target <= 160 of 1000')
+
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--include-archive',action='store_true',help='Backfill completed events older than five days from Open-Meteo Archive')
+    parser.add_argument('--force-cfbd',action='store_true',help='Ignore CFBD freshness gates for a manual refresh')
     args=parser.parse_args()
-    ingest_schedules(); ingest_manual_markets(); ingest_weather(args.include_archive)
+    ingest_schedules(); ingest_manual_markets(); ingest_weather(args.include_archive); ingest_cfbd(args.force_cfbd)
