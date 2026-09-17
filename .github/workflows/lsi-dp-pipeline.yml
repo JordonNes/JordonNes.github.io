@@ -1,0 +1,71 @@
+name: LSI Daily Predictions Pipeline
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub Actions cron is UTC. During PDT these map to 06:00, 09:00, 12:00,
+    # 15:00, 18:00 and 21:00 America/Los_Angeles. Runtime gating below protects
+    # the PT operating schedule across DST.
+    - cron: '0 13,16,19,22 * * *'
+    - cron: '0 1,4 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-dp-pipeline
+  cancel-in-progress: false
+
+jobs:
+  lsi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Resolve Pacific run stage
+        id: clock
+        shell: bash
+        run: |
+          PT_HOUR=$(TZ=America/Los_Angeles date +%H)
+          PT_DATE=$(TZ=America/Los_Angeles date +%F)
+          case "$PT_HOUR" in
+            06) STAGE=DISCOVERY ;;
+            09) STAGE=MORNING_PUBLICATION ;;
+            12) STAGE=MIDDAY_PUBLICATION ;;
+            15) STAGE=MARKET_HISTORY ;;
+            18) STAGE=CONTEXT_MARKETS ;;
+            21) STAGE=MASTER_PUBLICATION ;;
+            *) STAGE=MANUAL_OR_DST_GUARD ;;
+          esac
+          echo "hour=$PT_HOUR" >> "$GITHUB_OUTPUT"
+          echo "date=$PT_DATE" >> "$GITHUB_OUTPUT"
+          echo "stage=$STAGE" >> "$GITHUB_OUTPUT"
+          echo "LSI stage: $STAGE — $PT_DATE $PT_HOUR:00 PT"
+      - name: Build and validate Prediction Registry
+        run: python scripts/lsi_pipeline.py
+      - name: Validate publication invariants
+        shell: bash
+        run: |
+          test -f LJ_index.html
+          test -f Quickie_Generator.html
+          test -f data/prediction_registry.json
+          grep -q 'PLAYER_PROP' data/prediction_registry.json
+          grep -q 'GAME_ML' data/prediction_registry.json
+          # LIVE is paused: pipeline intentionally has no live/ write step.
+      - name: Commit durable LSI outputs
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX LSI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/prediction_registry.json
+          if git diff --cached --quiet; then
+            echo 'No registry changes to publish.'
+          else
+            git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT"
+            git push origin master
+          fi
