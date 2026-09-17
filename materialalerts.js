@@ -1,0 +1,15 @@
+/* LEGZ & JINX — MATERIAL CHANGE ALERT FEED
+   Maintained by the L&J Material Change Watch. Only active, re-analysis-worthy
+   items belong here. The Daily Home renderer groups them by league and drops
+   records automatically after expiresAt. */
+window.LJ_MATERIAL_ALERTS = {
+  updated: "September 17, 2026 • 10:00 AM PT",
+  alerts: [
+    {league:"NFL",game:"Lions at Bills — Sep 17",summary:"Detroit LG Christian Mahogany and RT Blake Miller are OUT; Buffalo CB D.J. Reed is questionable.",impact:"Downgrade Detroit run efficiency and pass protection; keep Lions receiver props conditional on Reed's final status.",urgency:"Immediate",status:"CONFIRMED / FINAL STATUS PENDING",source:"https://www.buffalobills.com/team/injury-report/",expiresAt:"2026-09-18T03:30:00Z"},
+    {league:"NFL",game:"Seahawks at Cardinals — Sep 20",summary:"Sam Darnold is OUT and Drew Lock will start for Seattle.",impact:"Rebuild Seattle passing, receiver, team-total and game-winner projections around Lock.",urgency:"High",status:"CONFIRMED",source:"https://www.seahawks.com/news/sam-darnold-ruled-out-for-seahawks-week-2-game-at-arizona-drew-lock-will-start",expiresAt:"2026-09-21T00:30:00Z"},
+    {league:"NFL",game:"Falcons vs. Panthers — Sep 20",summary:"Tua Tagovailoa did not practice with an oblique injury; Atlanta has not named its starter.",impact:"Keep Falcons passing props, team total and moneyline provisional; model Rush and Penix as the principal alternatives.",urgency:"High",status:"CONFIRMED INJURY / STARTER UNRESOLVED",source:"https://www.atlantafalcons.com/news/falcons-not-ruling-anyone-out-qb-panthers-michael-penix-tua-tagovailoa",expiresAt:"2026-09-21T00:30:00Z"},
+    {league:"NFL",game:"Vikings at Bears — Sep 20",summary:"Jordan Mason is on injured reserve; Kyler Murray remains in concussion protocol.",impact:"Raise Aaron Jones' workload range and retain separate Murray/Wentz projections for every Minnesota offensive market.",urgency:"High",status:"CONFIRMED / QB STATUS UNRESOLVED",source:"https://www.vikings.com/news/injury-report-week-2-chicago-bears-2026",expiresAt:"2026-09-21T04:30:00Z"},
+    {league:"NFL",game:"Bengals vs. Texans — Sep 20",summary:"Joe Burrow is managing back soreness but expects to play.",impact:"Retain him as expected starter but reduce confidence in aggressive passing and rushing overs until practice status improves.",urgency:"Moderate",status:"CONFIRMED INJURY / EXPECTED TO PLAY",source:"https://www.nfl.com/news/bengals-qb-joe-burrow-dealing-with-back-soreness-expects-to-play-week-2-vs-texans",expiresAt:"2026-09-21T23:59:00Z"},
+    {league:"MLB",game:"Yankees at Diamondbacks — Sep 18",summary:"Aaron Judge left Wednesday's game with lower-leg tightness; next-game availability remains unresolved.",impact:"Keep Judge props and Yankees offensive overs provisional until the confirmed lineup is posted.",urgency:"High",status:"CONFIRMED INJURY / AVAILABILITY UNRESOLVED",source:"https://www.mlb.com/",expiresAt:"2026-09-19T06:00:00Z"}
+  ]
+};
