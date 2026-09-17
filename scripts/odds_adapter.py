@@ -361,7 +361,8 @@ def run():
             start = parse_dt(event.get("commence_time"))
             if not start:
                 continue
-            if start < now - timedelta(minutes=30) or start > cutoff:
+            # Pregame QC acquisition only: never backfill a game after its scheduled start.
+            if start <= now or start > cutoff:
                 continue
             discovered.append((start, league, sport_key, markets, event))
 
