@@ -35,11 +35,11 @@ BASE = "https://api.prop-line.com/v1"
 ANALYTICS = os.getenv("PROPLINE_ANALYTICS_ENABLED", "").strip().lower() in {"1", "true", "yes", "on"}
 
 SPORT_KEYS = {
-    "MLB": "baseball_mlb", "NBA": "basketball_nba", "NCAA_Basketball": "basketball_ncaab",
+    "MLB": "baseball_mlb", "NBA": "basketball_nba", "WNBA": "basketball_wnba", "NCAA_Basketball": "basketball_ncaab",
     "NCAA_Football": "football_ncaaf", "NFL": "football_nfl", "NHL": "hockey_nhl",
     "Tennis": "tennis", "UFC": "mma_ufc", "Boxing": "boxing",
 }
-MAX_EVENTS = {"MLB":16,"NBA":16,"NCAA_Basketball":16,"NCAA_Football":16,"NFL":16,"NHL":16,"Tennis":8,"UFC":8,"Boxing":8}
+MAX_EVENTS = {"MLB":16,"NBA":16,"WNBA":16,"NCAA_Basketball":16,"NCAA_Football":16,"NFL":16,"NHL":16,"Tennis":8,"UFC":8,"Boxing":8}
 MARKET_FIELDS = ["snapshot_id","collected_at_pt","sport","league","event_id","event_start_pt","source","market_class","participant","market","threshold","side","price","status"]
 UA = {"User-Agent": "LEGZ-JINX-LSI/2.1", "Accept": "application/json"}
 
