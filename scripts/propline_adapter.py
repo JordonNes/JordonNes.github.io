@@ -21,6 +21,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -41,7 +42,39 @@ SPORT_KEYS = {
 }
 MAX_EVENTS = {"MLB":16,"NBA":16,"WNBA":16,"NCAA_Basketball":16,"NCAA_Football":16,"NFL":16,"NHL":16,"Tennis":8,"UFC":8,"Boxing":8}
 MARKET_FIELDS = ["snapshot_id","collected_at_pt","sport","league","event_id","event_start_pt","source","market_class","participant","market","threshold","side","price","status"]
-UA = {"User-Agent": "LEGZ-JINX-LSI/2.1", "Accept": "application/json"}
+UA = {"User-Agent": "LEGZ-JINX-LSI/2.2", "Accept": "application/json"}
+QC_BOARD = DATA / "qc_prop_board.json"
+QC_LOOKAHEAD = timedelta(hours=36)
+QC_MAX_SNAPSHOT_AGE = timedelta(hours=12)
+
+TEAM_ALIASES = {
+    "Connecticut Sun":["CON"],"Atlanta Dream":["ATL"],"Washington Mystics":["WSH","WAS"],
+    "Chicago Sky":["CHI"],"Los Angeles Sparks":["LA","LAS"],"Dallas Wings":["DAL"],
+    "Phoenix Mercury":["PHX"],"Portland Fire":["POR"],"Las Vegas Aces":["LV","LVA"],
+    "Seattle Storm":["SEA"],"Minnesota Lynx":["MIN"],"Indiana Fever":["IND"],
+    "New York Liberty":["NY","NYL"],"Golden State Valkyries":["GS","GSV"],"Toronto Tempo":["TOR"],
+    "Detroit Lions":["DET"],"Buffalo Bills":["BUF"],"New York Giants":["NYG"],"Los Angeles Rams":["LAR"],
+    "Carolina Panthers":["CAR"],"Atlanta Falcons":["ATL"],"Minnesota Vikings":["MIN"],"Chicago Bears":["CHI"],
+    "Philadelphia Eagles":["PHI"],"Tennessee Titans":["TEN"],"Pittsburgh Steelers":["PIT"],"New England Patriots":["NE"],
+    "Green Bay Packers":["GB"],"New York Jets":["NYJ"],"Cleveland Browns":["CLE"],"Tampa Bay Buccaneers":["TB"],
+    "New Orleans Saints":["NO"],"Baltimore Ravens":["BAL"],"Cincinnati Bengals":["CIN"],"Houston Texans":["HOU"],
+    "Jacksonville Jaguars":["JAX"],"Denver Broncos":["DEN"],"Las Vegas Raiders":["LV"],"Los Angeles Chargers":["LAC"],
+    "Washington Commanders":["WSH","WAS"],"Dallas Cowboys":["DAL"],"Seattle Seahawks":["SEA"],
+    "Arizona Cardinals":["ARI"],"Miami Dolphins":["MIA"],"San Francisco 49ers":["SF"],
+    "Indianapolis Colts":["IND"],"Kansas City Chiefs":["KC"],
+    "Arizona Diamondbacks":["AZ","ARI"],"Atlanta Braves":["ATL"],"Baltimore Orioles":["BAL"],"Boston Red Sox":["BOS"],
+    "Chicago Cubs":["CHC"],"Chicago White Sox":["CWS"],"Cincinnati Reds":["CIN"],"Cleveland Guardians":["CLE"],
+    "Colorado Rockies":["COL"],"Detroit Tigers":["DET"],"Houston Astros":["HOU"],"Kansas City Royals":["KC"],
+    "Los Angeles Angels":["LAA"],"Los Angeles Dodgers":["LAD"],"Miami Marlins":["MIA"],"Milwaukee Brewers":["MIL"],
+    "Minnesota Twins":["MIN"],"New York Mets":["NYM"],"New York Yankees":["NYY"],"Athletics":["ATH","OAK"],
+    "Oakland Athletics":["ATH","OAK"],"Philadelphia Phillies":["PHI"],"Pittsburgh Pirates":["PIT"],
+    "San Diego Padres":["SD"],"San Francisco Giants":["SF"],"Seattle Mariners":["SEA"],
+    "St. Louis Cardinals":["STL"],"Tampa Bay Rays":["TB"],"Texas Rangers":["TEX"],"Toronto Blue Jays":["TOR"],
+    "Washington Nationals":["WSH","WAS"],
+    "Florida State Seminoles":["FSU"],"Alabama Crimson Tide":["BAMA","ALA"],"Miami Hurricanes":["MIA"],
+    "Wake Forest Demon Deacons":["WF"],"Houston Cougars":["HOU"],"Texas Tech Red Raiders":["TTU"],
+    "USC Trojans":["USC"],"Rutgers Scarlet Knights":["RUT"],"Georgia Bulldogs":["UGA"],"Arkansas Razorbacks":["ARK"],
+}
 
 
 def norm(value):
@@ -52,6 +85,108 @@ def parse_dt(value):
     if not value: return None
     try: return datetime.fromisoformat(str(value).replace("Z", "+00:00")).astimezone(timezone.utc)
     except ValueError: return None
+
+
+def team_aliases(team):
+    raw=str(team or "").strip(); out={raw}
+    out.update(TEAM_ALIASES.get(raw,[]))
+    words=[w for w in raw.replace("-"," ").split() if w]
+    if words:
+        out.add(words[0][:3].upper())
+        if len(words)>=2:
+            out.add("".join(w[0] for w in words[:2]).upper())
+            out.add("".join(w[0] for w in words).upper())
+    return sorted(x for x in out if x)
+
+
+def implied_probability(price):
+    try:p=float(price)
+    except (TypeError,ValueError):return None
+    if p<=0 and p>-100:return None
+    if p<=-100:return (-p)/((-p)+100.0)
+    if p>=100:return 100.0/(p+100.0)
+    if 1.0<p<100.0:return 1.0/p
+    return None
+
+
+def qc_consensus(rows):
+    latest={}
+    for r in rows:
+        key=(r.get("source",""),norm(r.get("participant")),r.get("market",""),str(r.get("threshold","")),norm(r.get("side")))
+        prior=latest.get(key)
+        if prior is None or (r.get("collected_at_pt") or "")>=(prior.get("collected_at_pt") or ""):latest[key]=r
+    groups=defaultdict(list)
+    for r in latest.values():
+        groups[(norm(r.get("participant")),r.get("market",""),str(r.get("threshold","")))].append(r)
+    ranked=[]
+    for g in groups.values():
+        sample=g[0]; by_book=defaultdict(dict)
+        for r in g:
+            book=(r.get("source","").split(":",1)[1] if ":" in r.get("source","") else r.get("source",""))
+            by_book[book][norm(r.get("side"))]=r
+        side_probs=defaultdict(list); side_prices=defaultdict(list); snaps=set()
+        for book,sides in by_book.items():
+            probs={side:implied_probability(r.get("price")) for side,r in sides.items()}
+            probs={side:p for side,p in probs.items() if p is not None}
+            if len(probs)>=2:
+                total=sum(probs.values())
+                if total:
+                    for side,p in probs.items():side_probs[side].append(p/total)
+            else:
+                for side,p in probs.items():side_probs[side].append(p)
+            for side,r in sides.items():
+                try:price=float(r.get("price"))
+                except (TypeError,ValueError):price=None
+                if price is not None:side_prices[side].append((price,book))
+                if r.get("snapshot_id"):snaps.add(r["snapshot_id"])
+        avg={side:sum(vals)/len(vals) for side,vals in side_probs.items() if vals}
+        if not avg:continue
+        chosen=max(avg,key=avg.get); prob=avg[chosen]
+        if len(avg)>1 and prob<0.5:continue
+        prices=side_prices.get(chosen,[]); best=max(prices,key=lambda x:x[0]) if prices else (None,None)
+        ranked.append({
+            "participant":sample.get("participant"),"market_key":sample.get("market"),
+            "market":str(sample.get("market") or "").replace("_"," ").title(),
+            "threshold":sample.get("threshold"),"side":chosen.title(),
+            "best_price":int(best[0]) if best[0] is not None and float(best[0]).is_integer() else best[0],
+            "best_book":best[1],"market_source_count":len(by_book),
+            "consensus_probability":round(prob,4),"consensus_confidence_pct":round(prob*100,1),
+            "source_snapshot_ids":sorted(snaps),"classification":"CONDITIONAL_LEAN_MARKET_CONSENSUS",
+        })
+    ranked.sort(key=lambda x:(x["consensus_probability"],x["market_source_count"]),reverse=True)
+    return ranked
+
+
+def build_qc_board(event_catalog):
+    if not event_catalog:return
+    wanted={e["event_id"]:e for e in event_catalog}
+    rows=defaultdict(list); cutoff=NOW-QC_MAX_SNAPSHOT_AGE
+    path=DATA/"market_history.csv"
+    if path.exists():
+        with path.open(newline="",encoding="utf-8-sig") as fh:
+            for r in csv.DictReader(fh):
+                eid=r.get("event_id","")
+                if eid not in wanted or r.get("market_class")!="PLAYER_PROP":continue
+                if str(r.get("status","")).upper() not in {"OPEN","ACTIVE","VERIFIED","LIVE"}:continue
+                stamp=parse_dt(r.get("collected_at_pt"))
+                if stamp and stamp<cutoff:continue
+                rows[eid].append(r)
+    events=[]
+    for eid,e in wanted.items():
+        props=qc_consensus(rows.get(eid,[]))
+        events.append({
+            "league":e["league"],"sport_key":e["sport_key"],"source_event_id":eid,
+            "propline_event_id":e["propline_event_id"],"commence_time":e["commence_time"],
+            "away":e["away"],"home":e["home"],"away_aliases":team_aliases(e["away"]),
+            "home_aliases":team_aliases(e["home"]),"source":"MULTI_SOURCE_MARKET_HISTORY",
+            "sweep_status":"COMPLETE_WITH_PROPS" if props else "COMPLETE_NO_PROPS_RETURNED",
+            "swept_at_utc":NOW.isoformat(),"props":props,
+        })
+    payload={"schema_version":"LJ-QC-PROP-BOARD-2","generated_at_utc":NOW.isoformat(),
+             "source":"MULTI_SOURCE_MARKET_HISTORY","events":events}
+    QC_BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print("QC prop board from durable market history:",
+          {k:sum(len(e["props"]) for e in events if e["league"]==k) for k in sorted({e["league"] for e in events})})
 
 
 def get(path, params=None):
@@ -167,13 +302,17 @@ def write_intelligence(records):
 
 def run():
     if not KEY:print("PROPLINE_API_KEY absent: PropLine safely skipped.");return
-    state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None
+    state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
     for league,sport_key in SPORT_KEYS.items():
         try:events,quota=get(f"/sports/{sport_key}/events");last_quota=quota
         except Exception as exc:print(f"WARN PropLine events {league}: {exc}");continue
         for event in candidate_events(events if isinstance(events,list) else [],league,MAX_EVENTS[league]):
+            eid=str(event.get("id","")); ljid=best_lj_event_id(event,league); start=parse_dt(event.get("commence_time"))
+            if start and NOW<start<=NOW+QC_LOOKAHEAD:
+                event_catalog.append({"league":league,"sport_key":sport_key,"event_id":ljid,"propline_event_id":eid,
+                                      "commence_time":event.get("commence_time",""),"away":event.get("away_team",""),
+                                      "home":event.get("home_team","")})
             if not due(state,sport_key,event):continue
-            eid=str(event.get("id","")); ljid=best_lj_event_id(event,league)
             try:available,quota=get(f"/sports/{sport_key}/events/{eid}/markets");last_quota=quota
             except Exception as exc:print(f"WARN PropLine markets {league} {eid}: {exc}");continue
             prop_keys=[x.get("key") for x in (available or []) if isinstance(x,dict) and is_prop_market(x.get("key",""))]
@@ -187,7 +326,7 @@ def run():
                     if exc.code!=404:print(f"WARN PropLine context {league} {eid}: {exc}")
                 except Exception as exc:print(f"WARN PropLine context {league} {eid}: {exc}")
             collected=NOW.astimezone(PT).isoformat()
-            try:odds,quota=get(f"/sports/{sport_key}/events/{eid}/odds",{"markets":",".join(prop_keys)});last_quota=quota
+            try:odds,quota=get(f"/sports/{sport_key}/events/{eid}/odds",{"markets":",".join(prop_keys),"oddsFormat":"american"});last_quota=quota
             except Exception as exc:print(f"WARN PropLine odds {league} {eid}: {exc}");continue
             if isinstance(odds,dict):
                 mrows,irows=parse_odds(odds,league,ljid,collected,lineup); markets_out.extend(mrows); new.extend(irows)
@@ -205,7 +344,7 @@ def run():
                             if r.get("propline_event_id")==eid and norm(r.get("player")) in signals:r["steam_score"],r["books_moved"]=signals[norm(r.get("player"))]
                 except Exception as exc:print(f"WARN PropLine movement {league} {eid}: {exc}")
             state.setdefault("events",{})[f"{sport_key}:{eid}"]=NOW.isoformat()
-    added=append_market_rows(markets_out);write_intelligence(existing+new);save_state(state)
+    added=append_market_rows(markets_out);write_intelligence(existing+new);save_state(state);build_qc_board(event_catalog)
     print(f"PropLine observations parsed: {len(markets_out)}; newly appended: {added}; intelligence rows: {len(new)}")
     if last_quota:print("PropLine quota:",{k:v for k,v in last_quota.items() if v is not None})
     if not ANALYTICS:print("PropLine Hobby+ analytics disabled; steam/closing/trends/results remain null unless sourced elsewhere.")
