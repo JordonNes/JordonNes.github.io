@@ -14,7 +14,7 @@
     WNBA:"../assets/headers/dp-wnba.png",
     NHL:"../assets/headers/dp-nhl.png",
     NCAA_Football:"../assets/headers/dp-ncaa-football.png",
-    UFC:"../assets/headers/dp-ufc.png",
+    MMA:"../assets/headers/live-ufc.png",
     Boxing:"../assets/headers/dp-boxing.png",
     Tennis:"../assets/headers/dp-tennis-v2.png",
     FIBA_Men:"../assets/headers/dp-fiba.png",
