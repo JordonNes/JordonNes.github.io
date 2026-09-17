@@ -34,6 +34,18 @@ The Daily Home page must retain:
 - **Global 20 PIECE** across sports, containing player/participant props only;
 - links into the individual sport/league publications.
 
+## Material Change alerts on Daily Home
+
+The **Current Status** card for each sport/league must automatically display every active, re-analysis-worthy item produced by the L&J Material Change Watch. Each item must:
+
+- begin with the `🚨` icon and appear as a bullet under the affected league;
+- identify the game, what changed, confirmation/reporting status, analytical impact, urgency, and source;
+- be added only when the development materially changes or invalidates a game-winner or player-prop analysis;
+- replace an earlier alert when the same issue materially advances, rather than creating a duplicate;
+- be removed when resolved, superseded, expired, or no longer relevant to an upcoming/live betting window.
+
+`materialalerts.js` is the data-only alert feed. Automated alert sweeps update that file; they do not modify the locked QC layout or prediction data.
+
 ## Locked Per-Game QC structure
 
 Every full game/fight QC uses these six presentation columns:
