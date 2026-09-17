@@ -334,6 +334,7 @@ def main() -> None:
     history = read_csv(USAGE_HISTORY)
     costs = [float(r.get("estimated_cost_usd") or 0) for r in history]
     changed = [int(r.get("changed_events") or 0) for r in history]
+    observation_days = sorted({str(r.get("generated_at_utc") or "")[:10] for r in history if r.get("generated_at_utc")})
     summary = {
         "schema_version": "LSI-OAI-USAGE-1",
         "generated_at_utc": now,
@@ -342,8 +343,12 @@ def main() -> None:
         "estimated_total_cost_if_those_changed_packets_had_been_sent_usd": round(sum(costs), 6),
         "average_estimated_cost_per_pipeline_run_usd": round(sum(costs) / len(costs), 6) if costs else 0,
         "average_changed_event_packets_per_run": round(sum(changed) / len(changed), 2) if changed else 0,
+        "telemetry_days": observation_days,
+        "distinct_telemetry_days": len(observation_days),
+        "minimum_required_telemetry_days": 3,
+        "paid_api_decision_ready": len(observation_days) >= 3,
         "api_calls_actually_made": 0,
-        "recommendation_gate": "Remain $0 until measured demand and value justify prepaid API credits.",
+        "recommendation_gate": "Remain $0 until at least 3 distinct scheduled telemetry days are recorded and measured demand and value justify prepaid API credits.",
     }
     USAGE_SUMMARY.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 

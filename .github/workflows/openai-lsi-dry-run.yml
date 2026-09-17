@@ -2,6 +2,9 @@ name: OpenAI LSI Dry-Run Estimator
 
 on:
   workflow_dispatch:
+  schedule:
+    # 9:30 PM Pacific during daylight time. Remains zero-cost and never reads the API key.
+    - cron: '30 4 * * *'
 
 permissions:
   contents: write
@@ -33,6 +36,12 @@ jobs:
           grep -q '"api_calls_made": 0' data/openai_dry_run_router.json
           grep -q '"openai_key_read": false' data/openai_dry_run_router.json
           grep -q 'DRY_RUN_NO_NETWORK' data/openai_dry_run_router.json
+          python - <<'PY'
+          import json
+          s=json.load(open('data/openai_usage_summary.json'))
+          print(f"Telemetry days recorded: {s['distinct_telemetry_days']} / 3")
+          print(f"Paid decision ready: {s['paid_api_decision_ready']}")
+          PY
       - name: Commit dry-run telemetry
         shell: bash
         run: |
