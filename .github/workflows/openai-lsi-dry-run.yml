@@ -1,0 +1,47 @@
+name: OpenAI LSI Dry-Run Estimator
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: openai-lsi-dry-run
+  cancel-in-progress: false
+
+jobs:
+  estimate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run zero-cost OpenAI routing estimate
+        run: python scripts/lsi_openai_router.py --dry-run
+      - name: Verify safety invariants
+        shell: bash
+        run: |
+          test -f data/openai_dry_run_router.json
+          test -f data/openai_usage_estimates.csv
+          test -f data/openai_usage_summary.json
+          grep -q '"api_calls_made": 0' data/openai_dry_run_router.json
+          grep -q '"openai_key_read": false' data/openai_dry_run_router.json
+          grep -q 'DRY_RUN_NO_NETWORK' data/openai_dry_run_router.json
+      - name: Commit dry-run telemetry
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX LSI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json
+          if git diff --cached --quiet; then
+            echo 'No dry-run telemetry changes to publish.'
+          else
+            git commit -m 'LSI OpenAI dry-run usage estimate'
+            git push origin master
+          fi
