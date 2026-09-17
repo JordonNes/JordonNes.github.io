@@ -116,6 +116,39 @@
     return `<div class="footer">LEGZ &amp; JINX • ${esc(D.updated)} • Current markets only • Confidence is comparative analysis, not a guarantee${extra?` • ${esc(extra)}`:""}</div>`;
   }
 
+  function renderMaterialAlerts(){
+    const feed = window.LJ_MATERIAL_ALERTS;
+    if (!feed || !Array.isArray(feed.alerts)) return;
+    const now = Date.now();
+    const active = feed.alerts.filter(a => !a.expiresAt || Date.parse(a.expiresAt) > now);
+    document.querySelectorAll('.material-alert').forEach(n => n.remove());
+    active.forEach(a => {
+      const league = String(a.league || '').replace(/_/g,' ').toUpperCase();
+      const card = [...document.querySelectorAll('.ticket')].find(t =>
+        String(t.querySelector('.ticket-h')?.textContent || '').toUpperCase().includes(league)
+      );
+      const list = card?.querySelector('ul');
+      if (!list) return;
+      const item = document.createElement('li');
+      item.className = 'material-alert';
+      const source = /^https:\\/\\//i.test(String(a.source || ''))
+        ? ` <a href="${esc(a.source)}" target="_blank" rel="noopener">Source ↗</a>` : '';
+      item.innerHTML = `<b>🚨 ${esc(a.game)}</b> — ${esc(a.summary)} <b>${esc(a.urgency || 'Re-analysis required')}:</b> ${esc(a.impact)} <span class="qc-meta">${esc(a.status || 'CURRENT')}</span>${source}`;
+      list.prepend(item);
+    });
+    const statusHead = [...document.querySelectorAll('.section-head h2')].find(h => h.textContent.trim() === 'CURRENT STATUS');
+    const stamp = statusHead?.parentElement?.querySelector('.muted');
+    if (stamp && active.length) stamp.textContent = `${feed.updated} • ${active.length} active material alert${active.length===1?'':'s'}`;
+  }
+
+  function loadMaterialAlerts(){
+    if (!/LJ_index\\.html$|\\/$/.test(location.pathname)) return;
+    const script = document.createElement('script');
+    script.src = `materialalerts.js?v=${Date.now()}`;
+    script.onload = () => setTimeout(renderMaterialAlerts,0);
+    document.head.appendChild(script);
+  }
+
   window.renderLJSport = key => {
     const s = D.sports[key];
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
@@ -128,4 +161,5 @@
     document.title = "LEGZ & JINX — Daily Predictions";
     document.getElementById("app").innerHTML = `<div class="page">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${statusGrid()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${footer("All-sports publication hub • QC layout locked")}</div>`;
   };
+  loadMaterialAlerts();
 })();
