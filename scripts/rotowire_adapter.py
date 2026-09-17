@@ -144,13 +144,31 @@ def persist(rows):
     records=[]
     if path.exists():
         with path.open(newline='',encoding='utf-8-sig') as f: records=list(csv.DictReader(f))
-    latest={}
+
+    # One composite row per player prevents a newer depth-chart observation from
+    # accidentally masking a more important injury/availability status. Raw source
+    # observations remain append-only in rotowire_context.csv.
+    grouped={}
     for r in records:
         subject=r.get('player_id') or norm(r.get('player'))
         if not subject:continue
-        key=(r.get('league',''),subject,r.get('source_type',''))
-        if key not in latest or (r.get('published_at') or r.get('retrieved_at') or '') >= (latest[key].get('published_at') or latest[key].get('retrieved_at') or ''): latest[key]=r
-    payload={'schema_version':'LSI-CTX-1','generated_at_utc':NOW.isoformat(),'source_policy':'RotoWire is evidence only. RSS/news never creates a prediction or Sharp Market Signal.','records':sorted(latest.values(),key=lambda r:r.get('published_at') or r.get('retrieved_at') or '',reverse=True)[:1000]}
+        key=(r.get('league',''),subject); grouped.setdefault(key,[]).append(r)
+    current=[]
+    for observations in grouped.values():
+        observations.sort(key=lambda r:r.get('published_at') or r.get('retrieved_at') or '')
+        base=dict(observations[-1]); status_rows=[r for r in observations if r.get('player_status') and r.get('source_type') in {'INJURY_REPORT','PLAYER_NEWS'}]
+        lineup_rows=[r for r in observations if r.get('lineup_confirmed') not in ('',None)]
+        identity_rows=[r for r in observations if r.get('player_id')]
+        if status_rows:
+            status=status_rows[-1]; base['player_status']=status.get('player_status',''); base['context_type']=status.get('context_type',''); base['context_severity']=status.get('context_severity',''); base['headline']=status.get('headline','') or base.get('headline','')
+        if lineup_rows: base['lineup_confirmed']=lineup_rows[-1].get('lineup_confirmed','')
+        if identity_rows: base['player_id']=identity_rows[-1].get('player_id','')
+        base['source']='ROTOWIRE_COMPOSITE'; base['source_type']='COMPOSITE_CONTEXT'; base['context_id']='RW-CURRENT-'+ident(base.get('league'),base.get('player_id') or base.get('player'))
+        base['published_at']=max((r.get('published_at') or r.get('retrieved_at') or '' for r in observations),default='')
+        base['retrieved_at']=max((r.get('retrieved_at') or '' for r in observations),default='')
+        base['sharp_market_signal']=''
+        current.append(base)
+    payload={'schema_version':'LSI-CTX-1','generated_at_utc':NOW.isoformat(),'source_policy':'RotoWire is evidence only. RSS/news never creates a prediction or Sharp Market Signal.','records':sorted(current,key=lambda r:r.get('published_at') or r.get('retrieved_at') or '',reverse=True)[:1000]}
     tmp=DATA/'context_registry.json.tmp'; tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8'); tmp.replace(DATA/'context_registry.json')
     return len(fresh)
 
