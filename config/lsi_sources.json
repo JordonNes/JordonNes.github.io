@@ -1,0 +1,15 @@
+{
+  "schema_version": "LSI-SOURCES-1",
+  "policy": "free-first, provenance-required, no fabricated observations",
+  "adapters": [
+    {"id":"CFBD","sports":["NCAA_Football"],"roles":["schedule","stats","advanced","historical_odds"],"mode":"api","base_url":"https://api.collegefootballdata.com","secret_env":"CFBD_API_KEY","optional":true},
+    {"id":"OPEN_METEO","sports":["NFL","NCAA_Football","MLB"],"roles":["weather"],"mode":"api","base_url":"https://api.open-meteo.com","secret_env":null,"optional":false},
+    {"id":"ESPN_PUBLIC","sports":["NFL","NCAA_Football","MLB","NBA","WNBA","NHL"],"roles":["schedule","score","status"],"mode":"public_json","base_url":"https://site.api.espn.com/apis/site/v2/sports","secret_env":null,"optional":false},
+    {"id":"MLB_STATS","sports":["MLB"],"roles":["schedule","score","roster","stats"],"mode":"public_api","base_url":"https://statsapi.mlb.com/api","secret_env":null,"optional":true},
+    {"id":"MANUAL_MARKET","sports":["ALL"],"roles":["player_props","game_odds"],"mode":"checked_in_snapshot","base_url":null,"secret_env":null,"optional":false}
+  ],
+  "connected_chat_feeds": [
+    {"id":"STATSHawk","roles":["box_score","player_stats","validation"],"note":"Connected ChatGPT feed; not callable by GitHub Actions directly."},
+    {"id":"DRAFTKINGS_CHAT","sports":["NFL","NBA","MLB","NHL"],"roles":["schedule","score","team_stats"],"note":"Connected tool currently does not expose sportsbook player-prop inventory to the repository workflow."}
+  ]
+}
