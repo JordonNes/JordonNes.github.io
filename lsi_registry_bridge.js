@@ -99,20 +99,63 @@
       Number(b.market_source_count||0)-Number(a.market_source_count||0)
     );
 
-    s.hotTop=modeled.map(p=>[
-      p.participant||p.pick,
-      p.pick,
-      pct(p.lj_confidence),
-      `Canonical Registry • ${source(p)}`
-    ]);
-    s.winners=[...(gameByLeague[league]||[])]
-      .sort((a,b)=>Number(b.lj_confidence)-Number(a.lj_confidence))
-      .map(p=>[
+    const hotRows=[],hotSeen=new Set();
+    for(const p of modeled){
+      const key=canonicalKey(p); if(!key||hotSeen.has(key)) continue;
+      hotSeen.add(key);
+      const price=p.price!==null&&p.price!==undefined&&p.price!==''?`${Number(p.price)>0?'+':''}${p.price}`:'price recheck';
+      hotRows.push([
+        p.participant||p.pick,
+        p.pick,
+        pct(p.lj_confidence),
+        `${price} • Canonical Registry • ${source(p)}`
+      ]);
+      if(hotRows.length>=8) break;
+    }
+    for(const p of scouts){
+      if(hotRows.length>=8) break;
+      const key=[norm(p.participant),norm(p.market),norm(p.side)].join('|');
+      if(!key||hotSeen.has(key)) continue;
+      hotSeen.add(key);
+      const baseline=marketBaselineLj(p);
+      const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
+        ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
+        : 'price recheck';
+      hotRows.push([
+        p.participant,
+        scoutPick(p),
+        pct(baseline),
+        `${price} • L&J MODEL • MARKET BASELINE`
+      ]);
+    }
+    s.hotTop=hotRows;
+
+    const winnerRows=[],winnerEvents=new Set();
+    for(const p of [...(gameByLeague[league]||[])].sort((a,b)=>Number(b.lj_confidence)-Number(a.lj_confidence))){
+      const eventKey=String(p.event_id||'').toLowerCase();
+      if(eventKey) winnerEvents.add(eventKey);
+      const price=p.price!==null&&p.price!==undefined&&p.price!==''?`${Number(p.price)>0?'+':''}${p.price}`:'price recheck';
+      winnerRows.push([
         p.opponent? `${p.participant||p.selection} vs ${p.opponent}` : (p.event_id||p.participant||"Upcoming event"),
         p.pick||p.selection,
         pct(p.lj_confidence),
-        `Canonical L&J Registry • ${p.price||"price recheck"}`
+        `${price} • Canonical L&J Registry`
       ]);
+    }
+    for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x)).sort((a,b)=>eventStartMs(a)-eventStartMs(b))){
+      const eventKey=String(e.source_event_id||'').toLowerCase();
+      if(eventKey&&winnerEvents.has(eventKey)) continue;
+      const sides=[...(e.game_markets||[])].sort((a,b)=>Number(b.lj_confidence||0)-Number(a.lj_confidence||0));
+      const best=sides[0]; if(!best) continue;
+      const price=best.price!==null&&best.price!==undefined&&best.price!==''?`${Number(best.price)>0?'+':''}${best.price}${best.book?` ${best.book}`:''}`:'price recheck';
+      winnerRows.push([
+        `${e.away||''} @ ${e.home||''}`,
+        best.selection||best.participant,
+        pct(best.lj_confidence),
+        `${price} • L&J MODEL • MARKET BASELINE`
+      ]);
+    }
+    s.winners=winnerRows;
 
     const twenty=[],seen=new Set();
     for(const p of modeled){
