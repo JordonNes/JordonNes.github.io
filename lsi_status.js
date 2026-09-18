@@ -70,7 +70,7 @@
           <div class="lsi-cell"><h3>Memory</h3><div class="lsi-big">${fmt(counts.market_history)}</div><div class="lsi-sub">market observations • archive ${esc(a.status||'loading')}</div></div>
           <div class="lsi-cell"><h3>Settlement</h3><div class="lsi-big">${fmt(settled)} / ${fmt(total)}</div><div class="lsi-sub">${pct(s.settlement_rate_pct)} settled • final verified results only</div></div>
           <div class="lsi-cell"><h3>Evaluation</h3><div class="lsi-big">${fmt(e.eligible_learning_markets||g.eligible_market_count||0)}</div><div class="lsi-sub">market cells currently eligible for learning promotion</div></div>
-          <div class="lsi-cell"><h3>Live Influence</h3><div class="lsi-big">${enabled?'ON':'OFF'}</div><div class="lsi-sub">${enabled?'Only mature gated markets; ±3 max':'No historical adjustment is affecting current L&J confidence'}</div></div>
+          <div class="lsi-cell"><h3>Live Influence</h3><div class="lsi-big">${enabled?'ON':'OFF'}</div><div class="lsi-sub">${enabled?'Only mature gated markets; ±3 max':'No historical adjustment is affecting current LJPC'}</div></div>
         </div>
         <div class="lsi-front-foot"><span>Archive branch: <b>lsi-archive</b> • evaluation: ${esc(e.phase||'pending')}</span><a href="LSI_Status.html">Open LSI Intelligence →</a></div>
       </section>`;
