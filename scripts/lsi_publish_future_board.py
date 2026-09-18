@@ -65,6 +65,7 @@ def canonical_prop(p):
       "book":p.get("best_book"),
       "draftkings_available":bool(p.get("draftkings_available")),
       "market_source_count":int(p.get("market_source_count") or 1),
+      "ljpc":lj_baseline(p),
       "lj_confidence":lj_baseline(p),
       "model":"L&J MARKET BASELINE",
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
@@ -124,6 +125,7 @@ def load_game_markets():
           "price":int(best[0]) if float(best[0]).is_integer() else best[0],
           "book":best[1],
           "market_source_count":len(rows),
+          "ljpc":confidence,
           "lj_confidence":confidence,
           "model":"L&J MARKET BASELINE",
         })
@@ -213,9 +215,9 @@ def main():
             p=canonical_prop(raw)
             key=(str(p["participant"]).strip().lower(),str(p["market_key"]).strip().lower())
             prior=best.get(key)
-            if prior is None or p["lj_confidence"]>prior["lj_confidence"]:
+            if prior is None or p["ljpc"]>prior["ljpc"]:
                 best[key]=p
-        props=sorted(best.values(),key=lambda x:(-x["lj_confidence"],str(x["participant"]),str(x["market"])))
+        props=sorted(best.values(),key=lambda x:(-x["ljpc"],str(x["participant"]),str(x["market"])))
         events.append({
           "league":e.get("league"),"sport_key":e.get("sport_key"),
           "source_event_id":e.get("source_event_id"),"propline_event_id":e.get("propline_event_id"),
@@ -232,11 +234,42 @@ def main():
       "generated_at_utc":NOW.isoformat(),
       "default_horizon_days":7,
       "nfl_rollover_policy":"Tuesday-Monday slate stages beginning Monday 12:00 PT; current Monday game remains a runtime status shell after start.",
-      "actionable_policy":"Only not-yet-started events may expose props or odds. Every exposed player prop and game moneyline has L&J confidence.",
+      "actionable_policy":"Only not-yet-started events may expose props or odds. Every exposed player prop and game moneyline carries LJPC (final L&J estimated hit probability).",
       "events":events,
     }
-    OUT.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    OUTJS.write_text("/* Generated rolling future market board; do not edit manually. */\nwindow.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n",encoding="utf-8")
-    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {sum(len(e.get('game_markets') or []) for e in events)} L&J-evaluated moneylines.")
+    live_rows=[]
+    if live.exists():
+        try:
+            live_check=json.loads(live.read_text(encoding="utf-8"))
+            live_rows=[
+                row for row in (live_check.get("rows") or [])
+                if row.get("market_class")=="GAME_ML"
+                and parse(row.get("event_start_pt"))
+                and parse(row.get("event_start_pt"))>NOW
+                and row.get("price") not in (None,"")
+            ]
+        except (json.JSONDecodeError,OSError):
+            live_rows=[]
+    ml_count=sum(len(e.get("game_markets") or []) for e in events)
+    if live_rows and ml_count==0:
+        raise SystemExit(
+            f"Future-board candidate lost GAME_ML coverage despite {len(live_rows)} usable current moneyline row(s); "
+            "last-known-good future board preserved."
+        )
+    if source_events and not events:
+        raise SystemExit("Future-board candidate unexpectedly contains zero upcoming events; last-known-good future board preserved.")
+
+    json_text=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
+    js_text="/* Generated rolling future market board; do not edit manually. */\nwindow.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n"
+    tmp_json=OUT.with_suffix(".json.tmp")
+    tmp_js=OUTJS.with_suffix(".js.tmp")
+    tmp_json.write_text(json_text,encoding="utf-8")
+    tmp_js.write_text(js_text,encoding="utf-8")
+    check=json.loads(tmp_json.read_text(encoding="utf-8"))
+    if check.get("schema_version")!="LJ-FUTURE-MARKET-1" or not tmp_js.stat().st_size:
+        raise SystemExit("Future-board candidate validation failed; last-known-good artifacts preserved.")
+    tmp_json.replace(OUT)
+    tmp_js.replace(OUTJS)
+    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {ml_count} L&J-evaluated moneylines.")
 
 if __name__=="__main__":main()
