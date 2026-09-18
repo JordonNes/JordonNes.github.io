@@ -7,7 +7,7 @@
     MLB:"MLB", NFL:"NFL", NBA:"NBA", WNBA:"WNBA", NHL:"NHL",
     FIBA_Men:"FIBA Men", FIBA_Women:"FIBA Women",
     NCAA_Football:"NCAA Football", NCAA_Basketball:"NCAA Basketball",
-    UFC:"UFC", Boxing:"Boxing", Tennis:"Tennis"
+    MMA:"MMA", Boxing:"Boxing", Tennis:"Tennis"
   };
 
   /* Approved 2172×724 (3:1) full-resolution artwork. The version token forces
@@ -23,7 +23,7 @@
     FIBA_Women:`assets/headers/dp-fiba.png?v=${v}`,
     NCAA_Football:`assets/headers/dp-ncaa-football.png?v=${v}`,
     NCAA_Basketball:`assets/headers/dp-ncaa-basketball.png?v=${v}`,
-    UFC:`assets/headers/dp-ufc.png?v=${v}`,
+    MMA:`assets/headers/live-ufc.png?v=${v}`,
     Boxing:`assets/headers/dp-boxing.png?v=${v}`,
     Tennis:`assets/headers/dp-tennis-v2.png?v=${v}`
   };
