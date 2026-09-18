@@ -11,6 +11,7 @@ on:
       - 'scripts/odds_adapter.py'
       - 'scripts/lsi_pipeline.py'
       - 'scripts/lsi_publish_future_board.py'
+      - 'scripts/qc_publication_audit.js'
       - '.github/workflows/ljdp-moneylines.yml'
 
 permissions:
@@ -77,6 +78,9 @@ jobs:
           print("NFL board events:", " | ".join(pairs))
           print(f'NFL QC markets publishable: events={len(nfl_q)}/15 prop_events={len(prop_events)} props={prop_count} future_props={future_prop_count}. Missing event remains on the durable DP shell rather than blocking the week.')
           PY
+
+      - name: Verify rendered NFL QC population
+        run: node scripts/qc_publication_audit.js
 
       - name: Publish artifacts to master
         shell: bash
