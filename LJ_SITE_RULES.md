@@ -46,6 +46,17 @@ The **Current Status** card for each sport/league must automatically display eve
 
 `materialalerts.js` is the data-only alert feed. Automated alert sweeps update that file; they do not modify the locked QC layout or prediction data.
 
+## NFL complete-week retention rule
+
+For the NFL Daily Predictions page, the active game week is a single **Thursday-through-Monday publication unit**.
+
+- The full current NFL week must remain listed from TNF through MNF.
+- A completed Thursday, Sunday afternoon, or Sunday night QC is **retained in place** until the Monday Night Football game for that same NFL week is final.
+- Completed QCs are not replaced early by the next NFL week's pregame board.
+- When a retained game is complete, the QC converts to **FINAL status + ending box score** and suppresses executable parlay areas under the normal final-game rule.
+- Upcoming Sunday and Monday games in the same week remain visible as pregame QCs.
+- The transition to the next NFL week may occur only after the current week's MNF game has completed and its final state has been captured.
+
 ## Per-Game QC structure and event-state behavior
 
 The pregame QC may use these decision areas when they contain actual supportable selections:
