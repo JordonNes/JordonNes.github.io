@@ -95,21 +95,32 @@ jobs:
           python scripts/lsi_publish_future_board.py
           python - <<'PY'
           import json, pathlib
+          from datetime import datetime, timezone
           p=pathlib.Path('data/current_game_moneylines.json')
-          assert p.exists(), 'Fast GAME_ML board was not created'
+          assert p.exists() and p.stat().st_size>100, 'Fast GAME_ML board missing or empty'
           d=json.load(p.open(encoding='utf-8'))
+          assert d.get('schema_version')=='LJ-CURRENT-GAME-ML-1'
           rows=d.get('rows') or []
           events=d.get('events') or []
           assert rows, 'PropLine bulk h2h returned zero current GAME_ML rows'
           assert events, 'PropLine bulk h2h returned GAME_ML rows but no event catalog'
           assert all(e.get('source_event_id') and e.get('commence_time') for e in events), 'Fast GAME_ML event catalog is incomplete'
-          board=json.load(open('data/future_market_board.json',encoding='utf-8'))
+          usable=[r for r in rows if r.get('market_class')=='GAME_ML' and r.get('event_id') and r.get('participant') and r.get('price') not in (None,'')]
+          assert usable, 'Fast GAME_ML artifact has no usable quote rows'
+          stamp=datetime.fromisoformat(d['generated_at_utc'].replace('Z','+00:00'))
+          age=(datetime.now(timezone.utc)-stamp).total_seconds()/3600
+          assert age <= 8, f'Fast GAME_ML artifact is stale: {age:.1f}h'
+          board_path=pathlib.Path('data/future_market_board.json')
+          js_path=pathlib.Path('data/future_market_board.js')
+          assert board_path.stat().st_size>100 and js_path.stat().st_size>100, 'Future market board artifact is empty'
+          board=json.load(board_path.open(encoding='utf-8'))
           active=board.get('events',[]) or []
           covered=sum(1 for e in active if e.get('game_markets'))
           fast_ids={str(e.get('source_event_id')) for e in events if e.get('source_event_id')}
           board_ids={str(e.get('source_event_id')) for e in active if e.get('game_markets')}
-          assert fast_ids & board_ids, 'Fast GAME_ML events did not reach the future market board'
-          print(f"Fast GAME_ML publication: {len(rows)} quote rows; {covered}/{len(active)} future events matched; event catalog={len(events)}.")
+          missing=sorted(fast_ids-board_ids)
+          assert not missing, f'GAME_ML event(s) lost before future board: {missing[:12]}'
+          print(f"Fast GAME_ML publication: {len(usable)} usable quote rows; {covered}/{len(active)} future events matched; event catalog={len(events)}; age={age:.2f}h.")
           PY
       - name: Publish fast game lines before prop sweep
         shell: bash
@@ -225,6 +236,10 @@ jobs:
           missing={p.get('prediction_id'):sorted(required-set(p)) for p in props if required-set(p)}
           assert not missing, missing
           assert all(abs(float(p.get('learning_delta') or 0)) <= 3 for p in payload.get('predictions',[]))
+          assert all(p.get('ljpc') is not None for p in payload.get('predictions',[])), 'LJPC missing from Prediction Registry'
+          assert all(p.get('legz_value') is not None for p in payload.get('predictions',[])), 'LEGZ Value missing from Prediction Registry'
+          assert all(p.get('pom_value') is not None for p in payload.get('predictions',[])), 'POM Value missing from Prediction Registry'
+          assert all(float(p.get('ljpc'))==float(p.get('lj_probability'))==float(p.get('lj_confidence')) for p in payload.get('predictions',[])), 'LJPC compatibility aliases diverged'
           if payload.get('learning_overlay_enabled'):
               assert any(p.get('learning_applied') for p in payload.get('predictions',[])), 'learning overlay enabled but no prediction received a gated adjustment'
           print(f"LSI-PR-2 invariant: {len(props)} PLAYER_PROP records; learning_enabled={payload.get('learning_overlay_enabled')}")
