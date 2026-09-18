@@ -156,7 +156,7 @@ All public timestamps use Pacific Time. The standard publication cadence is:
 
 High-volume Saturdays, Sundays, major tournament days and multi-league slates use all four windows. Lighter days use the first three. Material news triggers an event-driven ALERT UPDATE rather than waiting for the next scheduled cycle.
 
-NFL Sunday receives Saturday 8:30 PM preparation plus Sunday 7:00 AM, 9:30 AM, 12:30 PM and 4:45 PM PT verification windows as applicable. Basketball receives the standard cadence plus a 30–45 minute pre-tip lineup check. MLB receives the standard cadence plus lineup, pitcher and weather exceptions. UFC and Boxing receive early-week research, post-weigh-in review, event-day noon publication and a pre-card verification when material information changes.
+NFL Sunday receives Saturday 8:30 PM preparation plus Sunday 7:00 AM, 9:30 AM, 12:30 PM and 4:45 PM PT verification windows as applicable. Basketball receives the standard cadence plus a 30–45 minute pre-tip lineup check. MLB receives the standard cadence plus lineup, pitcher and weather exceptions. MMA and Boxing receive early-week research, post-weigh-in review, event-day noon publication and a pre-card verification when material information changes. Promotion names such as UFC remain event/league identifiers under the MMA sport category.
 
 ## Qualified prediction and conditional-lean rule
 
