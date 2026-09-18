@@ -278,11 +278,16 @@ def append_market_rows(rows):
     return len(fresh)
 
 
-TENNIS_PARTICIPANT_MARKETS={"h2h","moneyline","match_winner","spreads","game_spread","player_games","player_sets"}
+TENNIS_PROP_MARKETS={"spreads","game_spread","player_games","player_sets"}
+GAME_WINNER_MARKETS={"h2h","moneyline","match_winner","fight_winner","winner","ml"}
+
+def is_game_winner_market(key):
+    value=str(key or "").lower()
+    return value in GAME_WINNER_MARKETS
 
 def is_prop_market(key,league=None):
     value=str(key or "").lower()
-    return value.startswith(("player_","batter_","pitcher_","goalie_")) or (league=="Tennis" and value in TENNIS_PARTICIPANT_MARKETS)
+    return value.startswith(("player_","batter_","pitcher_","goalie_")) or (league=="Tennis" and value in TENNIS_PROP_MARKETS)
 
 def sport_targets():
     """Return configured sports plus active tournament-specific tennis keys."""
@@ -342,23 +347,31 @@ def parse_odds(payload,league,lj_event_id,collected,lineup_confirmed=None):
     for bookmaker in payload.get("bookmakers") or []:
         book=bookmaker.get("key") or bookmaker.get("title") or "unknown"; title=bookmaker.get("title") or book
         for market in bookmaker.get("markets") or []:
-            raw_mkey=market.get("key","")
-            if not is_prop_market(raw_mkey,league):continue
+            raw_mkey=str(market.get("key",""))
+            is_game=is_game_winner_market(raw_mkey)
+            if not is_game and not is_prop_market(raw_mkey,league):continue
             for outcome in market.get("outcomes") or []:
                 mkey=raw_mkey
-                pid=outcome.get("player_id") or ""; side=outcome.get("name") or ""; participant=outcome.get("description") or outcome.get("player_name") or ""
-                if league=="Tennis" and mkey in TENNIS_PARTICIPANT_MARKETS and not participant:
+                pid=outcome.get("player_id") or ""
+                side=outcome.get("name") or ""
+                participant=outcome.get("description") or outcome.get("player_name") or ""
+                if is_game:
+                    participant=participant or side
+                    side="Yes"
+                    mkey="match_winner" if league=="Tennis" else "game_winner"
+                elif league=="Tennis" and mkey in TENNIS_PROP_MARKETS and not participant:
                     participant=side
                     side="Yes"
-                    if mkey in {"h2h","moneyline"}:mkey="match_winner"
-                    elif mkey in {"spreads","game_spread"}:mkey="player_game_handicap"
+                    if mkey in {"spreads","game_spread"}:mkey="player_game_handicap"
                 if not participant and pid and norm(side) not in {"over","under","yes","no","more","less"}:participant=side
                 if not participant:continue
                 threshold=outcome.get("point"); price=outcome.get("price"); status="SUSPENDED" if outcome.get("suspended") is True or market.get("suspended") is True else "OPEN"
                 raw=outcome.get("id") or outcome.get("outcome_id") or digest(book,mkey,pid,participant,side,threshold,price)
                 sid=f"PROPLINE|{digest(peid,book,mkey,raw,collected,threshold,price,status)}"
-                market_rows.append({"snapshot_id":sid,"collected_at_pt":collected,"sport":league,"league":league,"event_id":lj_event_id,"event_start_pt":event_start,"source":f"PROPLINE:{title}","market_class":"PLAYER_PROP","participant":participant,"market":mkey,"threshold":"" if threshold is None else threshold,"side":side,"price":"" if price is None else price,"status":status})
-                intel.append({"event_id":lj_event_id,"propline_event_id":peid,"sport_key":payload.get("sport_key",""),"player_id":pid or None,"player":participant,"market":mkey,"book":title,"retrieved_at":collected,"current_line":threshold,"current_price":price,"market_live":status=="OPEN","market_suspended":status=="SUSPENDED","lineup_confirmed":lineup_confirmed,"steam_score":None,"books_moved":None,"opening_line":None,"closing_line":None,"best_line":None,"L5_hit_rate":None,"L10_hit_rate":None,"L20_hit_rate":None,"actual_result":None,"win_loss_push":None,"CLV":None})
+                market_class="GAME_ML" if is_game else "PLAYER_PROP"
+                market_rows.append({"snapshot_id":sid,"collected_at_pt":collected,"sport":league,"league":league,"event_id":lj_event_id,"event_start_pt":event_start,"source":f"PROPLINE:{title}","market_class":market_class,"participant":participant,"market":mkey,"threshold":"" if threshold is None else threshold,"side":side,"price":"" if price is None else price,"status":status})
+                if not is_game:
+                    intel.append({"event_id":lj_event_id,"propline_event_id":peid,"sport_key":payload.get("sport_key",""),"player_id":pid or None,"player":participant,"market":mkey,"book":title,"retrieved_at":collected,"current_line":threshold,"current_price":price,"market_live":status=="OPEN","market_suspended":status=="SUSPENDED","lineup_confirmed":lineup_confirmed,"steam_score":None,"books_moved":None,"opening_line":None,"closing_line":None,"best_line":None,"L5_hit_rate":None,"L10_hit_rate":None,"L20_hit_rate":None,"actual_result":None,"win_loss_push":None,"CLV":None})
     return market_rows,intel
 
 
@@ -405,7 +418,9 @@ def run():
             try:available,quota=get(f"/sports/{sport_key}/events/{eid}/markets");last_quota=quota
             except Exception as exc:print(f"WARN PropLine markets {league} {eid}: {exc}");continue
             prop_keys=[x.get("key") for x in (available or []) if isinstance(x,dict) and is_prop_market(x.get("key",""),league)]
-            if not prop_keys:state.setdefault("events",{})[f"{sport_key}:{eid}"]=NOW.isoformat();continue
+            game_keys=[x.get("key") for x in (available or []) if isinstance(x,dict) and is_game_winner_market(x.get("key",""))]
+            requested_keys=list(dict.fromkeys([x for x in prop_keys+game_keys if x]))
+            if not requested_keys:state.setdefault("events",{})[f"{sport_key}:{eid}"]=NOW.isoformat();continue
             lineup=None
             if league in {"MLB","NFL","NCAA_Football"}:
                 try:
