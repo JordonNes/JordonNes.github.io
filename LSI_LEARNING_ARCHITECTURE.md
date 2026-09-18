@@ -42,11 +42,13 @@ During Phase 1 the archive:
 
 The archive workflow fails if its live-source checkout becomes dirty or if it changes anything outside `data/archive/`.
 
-## Phase 2: Evaluation — disabled
+## Phase 2: Evaluation — active in shadow mode
 
-Future evaluation will create derived performance data from immutable history. It must not rewrite historical source records.
+Evaluation creates derived performance data from immutable history and never rewrites historical source records. It runs against the `lsi-archive` branch and writes only under `data/archive/evaluation/`.
 
-Planned outputs include settlement accuracy, line CLV, price CLV, confidence calibration, source coverage, source reliability, model-version performance, and archive maturity by sport/market.
+Current outputs include settlement performance history, confidence-band calibration, archive maturity by league/market, market-source coverage, and evaluation health. If settlement data is missing, the evaluator reports insufficient results rather than fabricating metrics.
+
+Phase 2 cannot modify live predictions, pages, confidence, publication state, or model parameters.
 
 ## Phase 3: Influence — disabled
 
