@@ -18,15 +18,95 @@
   const quality=p=>String(p.status||'').toLowerCase()==='watch'?'WATCH':Number(p.lj_confidence)>=67?'★★★★☆':'★★★☆☆';
   const risk=p=>String(p.status||'').toLowerCase()==='watch'?'':String(p.tier||'').toUpperCase()==='AGGRESSIVE'?'⚠️':'🔥';
 
-  const byLeague={};
-  R.predictions.filter(p=>p.market_class==='PLAYER_PROP').forEach(p=>(byLeague[p.league]??=[]).push(p));
-  Object.entries(byLeague).forEach(([league,items])=>{
-    const s=D.sports[league]; if(!s) return;
-    items.sort((a,b)=>Number(b.lj_confidence)-Number(a.lj_confidence));
-    s.hotTop=items.map(p=>[p.participant||p.pick,p.pick,pct(p.lj_confidence),`Canonical Registry • ${source(p)}`]);
-    s.twenty=items.map(p=>[String(p.league||p.sport||'').replace(/_/g,' '),p.participant||p.pick,p.pick,p.price||'price recheck',pct(p.lj_confidence),quality(p),risk(p)]);
-    s.twentyNote=`Canonical LSI Prediction Registry ${R.schema_version} • generated ${R.generated_at_utc} • every displayed registry prediction is linked to durable source snapshots.`;
+  const registryByLeague={};
+  R.predictions.filter(p=>p.market_class==='PLAYER_PROP').forEach(p=>(registryByLeague[p.league]??=[]).push(p));
+
+  const boardByLeague={};
+  (B?.events||[]).forEach(event=>{
+    const league=event?.league;
+    if(!league) return;
+    for(const p of (event.props||[])){
+      if(!p?.participant || !p?.market) continue;
+      (boardByLeague[league]??=[]).push({...p,_event:event});
+    }
   });
+
+  const canonicalKey=p=>[
+    norm(p.participant||p.pick),
+    norm(p.market),
+    String(p.threshold??''),
+    norm(p.side)
+  ].join('|');
+
+  const scoutPick=p=>{
+    const side=n(p.side);
+    const threshold=p.threshold!==null&&p.threshold!==undefined&&p.threshold!==''?` ${p.threshold}`:'';
+    const market=n(p.market);
+    return `${side}${threshold} ${market}`.trim();
+  };
+
+  const allLeagues=new Set([...Object.keys(registryByLeague),...Object.keys(boardByLeague)]);
+  for(const league of allLeagues){
+    const s=D.sports[league]; if(!s) continue;
+    const modeled=[...(registryByLeague[league]||[])].sort((a,b)=>Number(b.lj_confidence)-Number(a.lj_confidence));
+    const scouts=[...(boardByLeague[league]||[])].sort((a,b)=>
+      Number(b.consensus_confidence_pct||0)-Number(a.consensus_confidence_pct||0) ||
+      Number(b.market_source_count||0)-Number(a.market_source_count||0)
+    );
+
+    s.hotTop=modeled.map(p=>[
+      p.participant||p.pick,
+      p.pick,
+      pct(p.lj_confidence),
+      `Canonical Registry • ${source(p)}`
+    ]);
+
+    const twenty=[],seen=new Set();
+    for(const p of modeled){
+      const key=canonicalKey(p);
+      if(!key || seen.has(key)) continue;
+      seen.add(key);
+      twenty.push([
+        String(p.league||p.sport||'').replace(/_/g,' '),
+        p.participant||p.pick,
+        p.pick,
+        p.price||'price recheck',
+        pct(p.lj_confidence),
+        `L&J MODEL • ${quality(p)}`,
+        risk(p),
+        Number(p.lj_confidence||0)
+      ]);
+    }
+    for(const p of scouts){
+      const key=[
+        norm(p.participant),
+        norm(p.market),
+        String(p.threshold??''),
+        norm(p.side)
+      ].join('|');
+      if(!key || seen.has(key)) continue;
+      seen.add(key);
+      const price=p.best_price!==null&&p.best_price!==undefined
+        ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
+        : 'price recheck';
+      twenty.push([
+        String(league).replace(/_/g,' '),
+        p.participant,
+        scoutPick(p),
+        price,
+        'JINX SCOUT',
+        `MARKET-SUPPORTED • ${Number(p.market_source_count||1)} SRC`,
+        '👀',
+        Number(p.consensus_confidence_pct||0)
+      ]);
+    }
+
+    s.twenty=twenty;
+    const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
+    const modeledCount=modeled.length;
+    const scoutCount=Math.max(0,twenty.length-modeledCount);
+    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${modeledCount} canonical L&J modeled props + ${scoutCount} JINX market-supported scouting props. Market-consensus percentages are ranking evidence only and are never relabeled as L&J confidence.`;
+  }
 
   const canonical=R.predictions.map(p=>({
     predictionId:p.prediction_id,sport:p.league,marketClass:p.market_class,selection:p.pick,
