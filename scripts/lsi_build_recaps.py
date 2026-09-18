@@ -83,7 +83,7 @@ def event_label(p):
     return str(p.get("event_id") or p.get("opponent") or "Published event")
 
 def confidence(p):
-    v=num(p.get("lj_confidence") if p.get("lj_confidence") is not None else p.get("lj_probability"))
+    v=num(p.get("ljpc") if p.get("ljpc") is not None else (p.get("lj_confidence") if p.get("lj_confidence") is not None else p.get("lj_probability")))
     return f"{v:.1f}%" if v is not None else "—"
 
 def factual_review(p,r):
@@ -143,7 +143,7 @@ def build_sport(key,preds,results,player_rows,ctx_records,target):
         actual=(r or {}).get("actual_result","—")
         ledger.append([event_label(p),str(p.get("selection") or p.get("pick") or line_text(p)),line_text(p),confidence(p),actual,g,factual_review(p,r)])
         if g=="HIT" and cv is not None and cv>=70:
-            positives.append(f"{p.get('participant') or p.get('selection')}: {line_text(p)} hit at {cv:.1f}% published L&J confidence.")
+            positives.append(f"{p.get('participant') or p.get('selection')}: {line_text(p)} hit at {cv:.1f}% published LJPC.")
         miss=classify_miss(p,r)
         if miss:
             negatives.append(f"{p.get('participant') or p.get('selection')}: {miss}")
