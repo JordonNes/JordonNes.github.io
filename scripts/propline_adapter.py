@@ -40,7 +40,7 @@ SPORT_KEYS = {
     "NCAA_Football": "football_ncaaf", "NFL": "football_nfl", "NHL": "hockey_nhl",
     "Tennis": "tennis", "MMA": "mma_ufc", "Boxing": "boxing",
 }
-MAX_EVENTS = {"MLB":48,"NBA":40,"WNBA":32,"NCAA_Basketball":40,"NCAA_Football":40,"NFL":32,"NHL":40,"Tennis":128,"MMA":24,"Boxing":24}
+MAX_EVENTS = {"MLB":48,"NBA":40,"WNBA":32,"NCAA_Basketball":40,"NCAA_Football":40,"NFL":32,"NHL":40,"Tennis":96,"MMA":24,"Boxing":24}
 MARKET_FIELDS = ["snapshot_id","collected_at_pt","sport","league","event_id","event_start_pt","source","market_class","participant","market","threshold","side","price","status"]
 UA = {"User-Agent": "LEGZ-JINX-LSI/2.2", "Accept": "application/json"}
 QC_BOARD = DATA / "qc_prop_board.json"
@@ -386,6 +386,7 @@ def run():
     if not KEY:print("PROPLINE_API_KEY absent: PropLine safely skipped.");return
     state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
     seen_provider_events=set()
+    processed_by_league=defaultdict(int)
     for league,sport_key in sport_targets():
         try:events,quota=get(f"/sports/{sport_key}/events");last_quota=quota
         except Exception as exc:print(f"WARN PropLine events {league}: {exc}");continue
@@ -393,7 +394,9 @@ def run():
             eid=str(event.get("id","")); ljid=best_lj_event_id(event,league); start=parse_dt(event.get("commence_time"))
             provider_key=(league,eid)
             if not eid or provider_key in seen_provider_events:continue
+            if processed_by_league[league]>=MAX_EVENTS[league]:continue
             seen_provider_events.add(provider_key)
+            processed_by_league[league]+=1
             if start and NOW<start<=NOW+QC_LOOKAHEAD:
                 event_catalog.append({"league":league,"sport_key":sport_key,"event_id":ljid,"propline_event_id":eid,
                                       "commence_time":event.get("commence_time",""),"away":event.get("away_team",""),
