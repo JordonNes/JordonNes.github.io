@@ -15,7 +15,15 @@
     if(!refs.length) return 'SOURCE UNAVAILABLE';
     return refs.map(x=>`${x.source} • ${x.snapshot_id} • ${x.collected_at_pt||'time unavailable'}`).join(' | ');
   };
-  const quality=p=>String(p.status||'').toLowerCase()==='watch'?'WATCH':Number(p.lj_confidence)>=67?'★★★★☆':'★★★☆☆';
+  const ljpcOf=p=>Number(p?.ljpc ?? p?.lj_confidence ?? p?.lj_probability ?? 0);
+  const legzValueOf=p=>Number(p?.legz_value ?? p?.legzValue ?? 0);
+  const pomValueOf=p=>{
+    const explicit=Number(p?.pom_value ?? p?.pomValue);
+    if(Number.isFinite(explicit)&&explicit>0) return explicit;
+    const lv=legzValueOf(p), lj=ljpcOf(p);
+    return lv>0&&lj>0 ? Math.sqrt(lv*lj) : lj;
+  };
+  const quality=p=>String(p.status||'').toLowerCase()==='watch'?'WATCH':ljpcOf(p)>=67?'★★★★☆':'★★★☆☆';
   const risk=p=>String(p.status||'').toLowerCase()==='watch'?'':String(p.tier||'').toUpperCase()==='AGGRESSIVE'?'⚠️':'🔥';
   const impliedProb=price=>{
     const x=Number(price);
@@ -86,7 +94,7 @@
     return t<=end;
   };
   const gameSummary=e=>{
-    const sides=[...(e?.game_markets||[])].sort((a,b)=>Number(b.lj_confidence||0)-Number(a.lj_confidence||0));
+    const sides=[...(e?.game_markets||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a));
     const best=sides[0]; if(!best) return null;
     const fmtPrice=s=>{
       if(s?.price===null||s?.price===undefined||s?.price==='') return 'price recheck';
@@ -96,8 +104,8 @@
     const odds=sides.slice(0,3).map(s=>`${s.participant||s.selection||'Side'} ${fmtPrice(s)}`).join(' • ');
     return {
       winner:`${best.selection||best.participant} ML • ${fmtPrice(best)}`,
-      conf:pct(best.lj_confidence),
-      market:`GAME ODDS • ${odds} • L&J MODEL: MARKET BASELINE`
+      conf:pct(ljpcOf(best)),
+      market:`GAME ODDS • ${odds} • PROVISIONAL LJPC: MARKET BASELINE`
     };
   };
   const isRecentEventShell=e=>{
@@ -128,10 +136,11 @@
     return `${side}${threshold} ${market}`.trim();
   };
 
-  const allLeagues=new Set([...Object.keys(registryByLeague),...Object.keys(boardByLeague)]);
+  const futureBoardLeagues=(B?.events||[]).filter(isUpcomingEvent).map(e=>e?.league).filter(Boolean);
+  const allLeagues=new Set([...Object.keys(registryByLeague),...Object.keys(gameByLeague),...Object.keys(boardByLeague),...futureBoardLeagues]);
   for(const league of allLeagues){
     const s=D.sports[league]; if(!s) continue;
-    const modeled=[...(registryByLeague[league]||[])].sort((a,b)=>Number(b.lj_confidence)-Number(a.lj_confidence));
+    const modeled=[...(registryByLeague[league]||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a));
     const scouts=[...(boardByLeague[league]||[])].sort((a,b)=>
       Number(b.consensus_confidence_pct||0)-Number(a.consensus_confidence_pct||0) ||
       Number(b.market_source_count||0)-Number(a.market_source_count||0)
@@ -145,8 +154,8 @@
       hotRows.push([
         p.participant||p.pick,
         p.pick,
-        pct(p.lj_confidence),
-        `${price} • Canonical Registry • ${source(p)}`
+        pct(ljpcOf(p)),
+        `${price} • POM Value ${pomValueOf(p).toFixed(1)} • Canonical Registry • ${source(p)}`
       ]);
       if(hotRows.length>=8) break;
     }
@@ -163,34 +172,34 @@
         p.participant,
         scoutPick(p),
         pct(baseline),
-        `${price} • L&J MODEL • MARKET BASELINE`
+        `${price} • PROVISIONAL MARKET BASELINE`
       ]);
     }
     s.hotTop=hotRows;
 
     const winnerRows=[],winnerEvents=new Set();
-    for(const p of [...(gameByLeague[league]||[])].sort((a,b)=>Number(b.lj_confidence)-Number(a.lj_confidence))){
+    for(const p of [...(gameByLeague[league]||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a))){
       const eventKey=String(p.event_id||'').toLowerCase();
       if(eventKey) winnerEvents.add(eventKey);
       const price=p.price!==null&&p.price!==undefined&&p.price!==''?`${Number(p.price)>0?'+':''}${p.price}`:'price recheck';
       winnerRows.push([
         p.opponent? `${p.participant||p.selection} vs ${p.opponent}` : (p.event_id||p.participant||"Upcoming event"),
         p.pick||p.selection,
-        pct(p.lj_confidence),
+        pct(ljpcOf(p)),
         `${price} • Canonical L&J Registry`
       ]);
     }
     for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x)).sort((a,b)=>eventStartMs(a)-eventStartMs(b))){
       const eventKey=String(e.source_event_id||'').toLowerCase();
       if(eventKey&&winnerEvents.has(eventKey)) continue;
-      const sides=[...(e.game_markets||[])].sort((a,b)=>Number(b.lj_confidence||0)-Number(a.lj_confidence||0));
+      const sides=[...(e.game_markets||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a));
       const best=sides[0]; if(!best) continue;
       const price=best.price!==null&&best.price!==undefined&&best.price!==''?`${Number(best.price)>0?'+':''}${best.price}${best.book?` ${best.book}`:''}`:'price recheck';
       winnerRows.push([
         `${e.away||''} @ ${e.home||''}`,
         best.selection||best.participant,
         pct(best.lj_confidence),
-        `${price} • L&J MODEL • MARKET BASELINE`
+        `${price} • PROVISIONAL MARKET BASELINE`
       ]);
     }
     s.winners=winnerRows;
@@ -205,10 +214,10 @@
         p.participant||p.pick,
         p.pick,
         p.price||'price recheck',
-        pct(p.lj_confidence),
-        `L&J MODEL • ${quality(p)}`,
+        pct(ljpcOf(p)),
+        `LJPC • POM VALUE ${pomValueOf(p).toFixed(1)} • ${quality(p)}`,
         risk(p),
-        Number(p.lj_confidence||0)
+        ljpcOf(p)
       ]);
     }
     for(const p of scouts){
@@ -230,7 +239,7 @@
         scoutPick(p),
         price,
         pct(baseline),
-        `L&J MODEL • MARKET BASELINE • ${Number(p.market_source_count||1)} SRC`,
+        `PROVISIONAL LJPC • MARKET BASELINE • ${Number(p.market_source_count||1)} SRC`,
         '👀',
         baseline
       ]);
@@ -240,13 +249,14 @@
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
     const modeledCount=modeled.length;
     const scoutCount=Math.max(0,twenty.length-modeledCount);
-    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${modeledCount} canonical L&J modeled props + ${scoutCount} market-baseline L&J modeled props. Only upcoming 0–7 day events are eligible. Market-baseline confidence blends consensus, available price-implied probability, and source depth; raw consensus is not displayed as L&J confidence.`;
+    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${modeledCount} canonical LJPC predictions + ${scoutCount} provisional market-baseline candidates. Only upcoming 0–7 day events are eligible. A market baseline is not treated as a fully contextualized L&J evaluation until JINX review/provenance requirements are satisfied.`;
   }
 
   const canonical=R.predictions.map(p=>({
     predictionId:p.prediction_id,sport:p.league,marketClass:p.market_class,selection:p.pick,
     participant:p.participant,market:p.market,threshold:p.threshold,side:p.side,price:p.price,
-    legzConfidence:p.legz_confidence,jinxInput:p.jinx_input,ljProbability:p.lj_confidence,
+    legzConfidence:p.legz_confidence,legzValue:p.legz_value,jinxInput:p.jinx_input,
+    ljpc:ljpcOf(p),ljProbability:ljpcOf(p),pomValue:pomValueOf(p),
     sourceSnapshotIds:p.source_snapshot_ids,provenance:p.provenance,status:p.status,
     sourceMode:'CANONICAL_PREDICTION_REGISTRY',modelVersion:p.model_version
   }));
@@ -277,7 +287,7 @@
   function manualCandidate(text){
     const s=n(text);
     if(!s || watchRx.test(s) || teamSideRx.test(s) || !propRx.test(s)) return null;
-    const m=s.match(/(?:L&J\s*)?(\d+(?:\.\d+)?)%/i);
+    const m=s.match(/(?:LJPC|L&J)\s*(\d+(?:\.\d+)?)%/i);
     return {
       display:s,
       confidence:m?Number(m[1]):60,
@@ -303,7 +313,7 @@
       : '';
     const conf=marketBaselineLj(p);
     return {
-      display:`${core}${price} • L&J ${conf.toFixed(conf%1?1:0)}%`,
+      display:`${core}${price} • PROVISIONAL LJPC ${conf.toFixed(conf%1?1:0)}%`,
       confidence:conf,
       participant:n(p.participant),
       market:`${market}|${side}|${p.threshold??''}`,
@@ -313,7 +323,7 @@
       best_price:Number.isFinite(Number(p.best_price))?Number(p.best_price):null,
       market_source_count:Number(p.market_source_count||0),
       pomType:explicitPomType(p)||'NORMAL',
-      sourceMode:'MULTI_SOURCE_MARKET_CONSENSUS'
+      sourceMode:'PROVISIONAL_MARKET_BASELINE'
     };
   }
 
@@ -329,11 +339,9 @@
   function candidateScore(c){
     const confidence=Number(c.confidence||0);
     const sources=Math.min(5,Number(c.market_source_count||0));
-    const price=Number(c.best_price);
-    const priceBonus=Number.isFinite(price)
-      ? Math.max(-2,Math.min(2,(price+110)/220))
-      : 0;
-    return confidence + (sources*.15) + priceBonus;
+    // Normal L&J ranking is prediction-first. Price economics are reserved
+    // for the Demon sorter after the LJPC gate.
+    return confidence + (sources*.15);
   }
 
   function dedupe(candidates){
@@ -395,7 +403,7 @@
 
     const hot=diverseTake([...pool].sort((a,b)=>b.confidence-a.confidence),6,0);
 
-    // SNS1: prioritize Goblin POMs carrying >=77% L&J prediction-accuracy confidence.
+    // SNS1: prioritize Goblin POMs carrying >=77% LJPC.
     // If fewer than six qualify, backfill only with the strongest remaining Goblins.
     const sns1Qualified=[...pool].filter(c=>c.pomType==='GOBLIN'&&c.confidence>=77).sort((a,b)=>
       (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
@@ -408,7 +416,7 @@
     }
     const usedAcross=new Set(sns1.map(keyOf));
 
-    // SNS2: prioritize eligible Goblin/Normal POMs carrying >=70% L&J prediction-accuracy
+    // SNS2: prioritize eligible Goblin/Normal POMs carrying >=70% LJPC
     // confidence, avoid exact SNS1 duplication, then use the strongest remaining eligible
     // SNS2 legs only if needed.
     const sns2Eligible=c=>c.pomType==='GOBLIN'||c.pomType==='NORMAL';
@@ -423,15 +431,14 @@
     }
     sns2.forEach(c=>usedAcross.add(keyOf(c)));
 
-    // NORMAL: standard/unmarked POMs only. Probability dominates economics; price/source
-    // depth are tie-breakers. This maximizes the strongest standard-market construction.
+    // NORMAL: standard/unmarked POMs only. POM Value/LJPC dominate; payout
+    // economics do not rescue a weaker prediction. Source depth is a tie-breaker.
     const normalBase=[...pool].filter(c=>c.pomType==='NORMAL').sort((a,b)=>
-      (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count) ||
-      ((b.best_price??-9999)-(a.best_price??-9999)));
+      (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count));
     const normal=diverseTake(normalBase,6,0,usedAcross);
     normal.forEach(c=>usedAcross.add(keyOf(c)));
 
-    // DEMON: economics-first among only Normal/Demon POMs that L&J still evaluates at
+    // DEMON: economics-first among only Normal/Demon POMs that LJPC is at
     // >=51.8%. A long price never rescues a probability that misses the gate.
     const demonBase=[...pool].filter(c=>(c.pomType==='DEMON'||c.pomType==='NORMAL')&&c.confidence>=51.8).sort((a,b)=>{
       const ap=a.best_price??-9999, bp=b.best_price??-9999;
