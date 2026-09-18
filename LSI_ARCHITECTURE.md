@@ -26,29 +26,44 @@ The contextual/challenge layer. JCI reviews evidence not fully represented by LA
 
 JCI produces Jinx Input as a signed adjustment to the LEGZ baseline. Positive input strengthens the prediction; negative input challenges it; zero means no material adjustment.
 
-### LJC — L&J Confidence
+### LJPC — L&J Prediction Confidence
+LJPC is the canonical final L&J estimated hit probability for the exact POM being evaluated.
+
 Display convention:
-- LEGZ confidence: green, 0–100%.
-- Jinx Input: purple, signed adjustment.
-- L&J Confidence = LEGZ confidence + Jinx Input.
+- **L** (green) = LEGZ baseline probability, 0–100%.
+- **J** (purple) = JINX signed contextual adjustment in percentage points.
+- **LJPC** = final bounded hit probability after the allowed gated learning adjustment.
+
+Formula:
+`LJPC = clamp(L + J + Δlearning, 0, 100)`
 
 Examples:
-- LEGZ 78% − Jinx Input 11% = L&J 67%.
-- LEGZ 74% + Jinx Input 5% = L&J 79%.
+- L 78% − J 11pp = LJPC 67%.
+- L 74% + J 5pp = LJPC 79%.
 
-For analytical probability/calibration, canonical final probability is bounded at 0–100%. If raw additive conviction exceeds 100, display that separately as L&J Conviction rather than a probability.
+Registry fields `lj_probability` and `lj_confidence` are compatibility aliases of `ljpc` and may not diverge from it. `lj_conviction` may retain the unbounded pre-clamp additive value for diagnostics, but it is not a probability.
+
+### LEGZ Value — evidence-strength / predictability score
+LEGZ Value is a 0–100 score describing the quality, depth, repeatability and predictive usefulness of the statistical evidence supporting a POM. It is distinct from LEGZ baseline probability and distinct from payout economics. Inputs may include durable source depth, relevant historical hit-rate coverage, consistency across samples, line-history coverage, feature quality and other auditable statistical structure.
+
+### POM Value — prediction desirability
+POM Value is the prediction-first desirability of an exact Prop, Odd or Moneyline. Under the current standard:
+
+`POM Value = sqrt(LEGZ Value × LJPC)`
+
+The geometric mean penalizes a serious weakness in either evidence strength or hit probability. Payout economics do not raise LJPC. Aggressive/Demon selection changes the ranking objective only after the LJPC gate is satisfied.
 
 ### Commentary rules
 Jinx comments and LEGZ comments must be concise: maximum 50 words, target under 25 words.
 
 JINX mandatory-comment triggers:
 - If absolute Jinx Input is greater than 4.4 percentage points, Jinx must give a brief, clear evidence-based justification.
-- If Jinx Input lowers final L&J Confidence below 73%, Jinx must give a brief, clear justification so the user can weigh the challenge.
-- If absolute Jinx Input is greater than 5.9 points OR positive Jinx Input raises final L&J Confidence above 80%, Jinx must comment with confident personality; edgy/shit-talking tone is permitted while keeping the factual basis clear.
+- If Jinx Input lowers final LJPC below 73%, Jinx must give a brief, clear justification so the user can weigh the challenge.
+- If absolute Jinx Input is greater than 5.9 points OR positive Jinx Input raises final LJPC above 80%, Jinx must comment with confident personality; edgy/shit-talking tone is permitted while keeping the factual basis clear.
 - Comments may be positive or negative and should identify the principal contextual signal rather than merely repeat the score.
 
 LEGZ mandatory-comment trigger:
-- If final L&J Confidence is over 78%, LEGZ gives a very brief, jokingly confident explanation of the quantitative foundation.
+- If final LJPC is over 78%, LEGZ gives a very brief, jokingly confident explanation of the quantitative foundation.
 
 Commentary must distinguish observed fact, statistical correlation, hypothesis, and allegation. Unverified claims about manipulation, gambling influence, officiating, player intent, legal/personal matters, or deliberate outcome steering cannot be presented as established fact.
 
@@ -67,9 +82,9 @@ Consumes PR/current DP collection only. Styles: SNS, NORMAL, AGGRESSIVE, JINX BE
 ## Operational layers
 1. Source Acquisition: official schedules, availability, lineups, StatsHawk, sportsbook/DFS/prediction-market inventory, reputable reporting, weather and other verified context.
 2. LHW: preserve timestamped raw/normalized observations and results.
-3. LAE: quantitative feature computation and LEGZ probability.
-4. JCI: contextual challenge/support and signed Jinx Input.
-5. PR: save typed prediction, source snapshot IDs, LEGZ confidence, Jinx Input, final bounded L&J probability, tier and model version.
+3. LAE: quantitative feature computation, LEGZ baseline probability, and LEGZ Value evidence-strength scoring.
+4. JCI: contextual challenge/support and signed JINX adjustment.
+5. PR: save typed prediction, source snapshot IDs, LEGZ baseline probability, LEGZ Value, JINX input, LJPC, POM Value, tier and model version.
 6. DP/QG Publication: Daily Predictions pages, HOT TOP, GAME WINNERS, 20 PIECE, QCs, Quickie.
 7. Recap/Audit: grade exact historical prediction records without reconstructing missing markets.
 
