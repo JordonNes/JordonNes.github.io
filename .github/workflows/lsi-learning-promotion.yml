@@ -1,0 +1,84 @@
+name: LSI Learning Promotion
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_promote_learning.py'
+      - '.github/workflows/lsi-learning-promotion.yml'
+  workflow_run:
+    workflows: ["LSI Self Evaluation"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-learning-promotion
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout live LSI
+        uses: actions/checkout@v7
+        with:
+          ref: master
+          path: source
+          fetch-depth: 0
+
+      - name: Checkout LSI archive
+        uses: actions/checkout@v7
+        with:
+          ref: lsi-archive
+          path: archive
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Build gate-approved learning overlay
+        run: |
+          python source/scripts/lsi_promote_learning.py \
+            --learning-gate archive/data/archive/evaluation/learning_gate.json \
+            --output source/data/learning_overlay.json
+
+      - name: Validate promotion boundary
+        shell: bash
+        run: |
+          cd source
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('data/learning_overlay.json').read_text(encoding='utf-8'))
+          assert p['schema_version']=='LSI-LEARNING-OVERLAY-1'
+          assert abs(float(p['max_abs_confidence_delta'])) <= 3
+          for row in p['markets']:
+              assert abs(float(row['confidence_delta'])) <= 3
+              assert all(row['gate_checks'].values())
+              assert int(row['settled_sample']) >= 200
+          print(f"Learning overlay validation: enabled={p['enabled']}; markets={len(p['markets'])}")
+          PY
+          CHANGED="$(git status --porcelain | awk '{print $2}')"
+          for f in $CHANGED; do
+            [ "$f" = "data/learning_overlay.json" ] || { echo "::error::Promotion changed unauthorized path: $f"; exit 1; }
+          done
+
+      - name: Commit overlay if changed
+        shell: bash
+        run: |
+          cd source
+          git config user.name 'LEGZ-JINX LSI Learning'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/learning_overlay.json
+          if git diff --cached --quiet; then
+            echo 'Learning overlay unchanged.'
+          else
+            git commit -m "LSI gated learning overlay"
+            git pull --rebase origin master
+            git push origin master
+          fi
