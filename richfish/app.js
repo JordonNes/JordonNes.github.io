@@ -131,7 +131,14 @@ function renderLocationDetail(){
     const sal=o.salinityPsu!=null?`${cleanNumber(o.salinityPsu,1)} PSU`:'Unavailable';
     const wind=o.windMph!=null?`${cleanNumber(o.windMph,1)} mph ${o.windDirection||''}`.trim():'Unavailable';
     const flow=o.freshwater?.value!=null?`${Math.round(o.freshwater.value).toLocaleString()} ${o.freshwater.unit||''}`.trim():'Unavailable';
+    const current=o.current?.speedKnots!=null?`${cleanNumber(o.current.speedKnots,2)} kt toward ${o.current.towardCardinal||o.current.towardDegreesTrue||'grid'}`:'Unavailable';
+    const currentNote=o.current?.trend?.direction?`SFBOFS · ${o.current.trend.direction}`:o.current?.validTime?`SFBOFS · valid ${new Date(o.current.validTime).toLocaleTimeString()}`:'SFBOFS unavailable';
+    const strength=live?.operational?.currentStrength;
+    const interaction=live?.operational?.windCurrentInteraction;
     cards.push(dataCard('Tide',tide,'NOAA-derived'));
+    cards.push(dataCard('Current',current,currentNote));
+    cards.push(dataCard('Current strength',strength?`${strength.category} · ${strength.index}/100`:'Unavailable','Descriptive index, not catch probability'));
+    cards.push(dataCard('Wind-current difficulty',interaction?`${interaction.category} · ${interaction.difficultyIndex}/100`:'Unavailable',interaction?`${interaction.relationship} · ${interaction.angularDifferenceDegrees}°`:'Requires wind direction + true current direction'));
     cards.push(dataCard('Water temp',temp,'Observed when available'));
     cards.push(dataCard('Salinity',sal,'Observed when available'));
     cards.push(dataCard('Wind',wind,'Observed when available'));
