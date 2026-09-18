@@ -25,6 +25,7 @@ RESULTS = DATA / "results.csv"
 CTX = DATA / "context_registry.json"
 PROPLINE = DATA / "propline_intelligence.json"
 QC_BOARD = DATA / "qc_prop_board.json"
+LEARNING = DATA / "learning_overlay.json"
 ALLOWED = {"PLAYER_PROP", "GAME_ML", "SPREAD", "GAME_TOTAL", "TEAM_TOTAL"}
 
 PROP_FIELDS = [
@@ -230,6 +231,34 @@ def propline_match(records: list[dict], event_id: str, participant: str, market:
     return candidates[-1]
 
 
+def load_learning_overlay() -> dict:
+    if not LEARNING.exists():
+        return {"enabled": False, "markets": []}
+    try:
+        payload = json.loads(LEARNING.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {"enabled": False, "markets": []}
+    if payload.get("schema_version") != "LSI-LEARNING-OVERLAY-1":
+        return {"enabled": False, "markets": []}
+    return payload
+
+
+def learning_adjustment(overlay: dict, league: str, market: str) -> tuple[float, dict | None]:
+    if not overlay.get("enabled"):
+        return 0.0, None
+    key = norm(market)
+    for row in overlay.get("markets") or []:
+        if row.get("league") == league and norm(row.get("market_key")) == key:
+            delta = f(row.get("confidence_delta"))
+            if delta is None or abs(delta) > 3:
+                return 0.0, None
+            checks = row.get("gate_checks") or {}
+            if not checks or not all(bool(v) for v in checks.values()):
+                return 0.0, None
+            return round(delta, 2), row
+    return 0.0, None
+
+
 def load_results() -> dict[str, dict]:
     out = {}
     for row in read_csv(RESULTS):
@@ -305,6 +334,7 @@ def build():
     contexts = load_context_records()
     propline = load_propline()
     results = load_results()
+    learning = load_learning_overlay()
     rows = []
     errors = []
 
@@ -345,6 +375,9 @@ def build():
             side = first(row, "side") or summary.get("side") or infer_side(selection, base.get("side", ""))
             price = first(row, "price", "odds") or summary.get("price") or base.get("price", "")
             market_name = first(row, "market") or summary.get("market") or base.get("market", "")
+            league_name = first(row, "league") or base.get("league", "")
+            learning_delta, learning_row = learning_adjustment(learning, league_name, market_name)
+            final = max(0.0, min(100.0, raw + learning_delta))
             created = first(row, "created_at_pt", "published_at_pt", "created_at", "timestamp")
 
             record = {
@@ -352,7 +385,7 @@ def build():
                 "created_at_pt": created,
                 "updated_at_pt": first(row, "updated_at_pt") or created,
                 "sport": first(row, "sport") or base.get("sport", ""),
-                "league": first(row, "league") or base.get("league", ""),
+                "league": league_name,
                 "event_id": event_id,
                 "event_start_pt": first(row, "event_start_pt") or base.get("event_start_pt", ""),
                 "market_class": market_class,
@@ -379,6 +412,14 @@ def build():
                 "lj_probability": round(final, 2),
                 "lj_confidence": round(final, 2),
                 "lj_conviction": round(raw, 2),
+                "learning_delta": learning_delta,
+                "learning_applied": bool(learning_row),
+                "learning_overlay_generated_at_utc": learning.get("generated_at_utc") if learning_row else None,
+                "learning_basis": {
+                    "settled_sample": learning_row.get("settled_sample"),
+                    "calibration_error_pp": learning_row.get("calibration_error_pp"),
+                    "avg_line_clv": learning_row.get("avg_line_clv"),
+                } if learning_row else None,
                 "tier": first(row, "tier", "risk_tier").upper(),
                 "model_version": first(row, "model_version") or "LSI-DPv2",
                 "status": (first(row, "status") or "ACTIVE").upper(),
@@ -411,6 +452,8 @@ def build():
         "player_prop_fields": PROP_FIELDS,
         "provenance_policy": "Every published prediction must resolve to one or more durable market-history snapshots.",
         "clv_definition": "Line-based threshold CLV when a sourced closing line exists; positive means L&J captured the more favorable threshold. Price/implied-probability CLV is not inferred.",
+        "learning_policy": "Historical adjustments apply only through LSI-LEARNING-OVERLAY-1 after every maturity gate passes; absolute adjustment is capped at 3 confidence points.",
+        "learning_overlay_enabled": bool(learning.get("enabled")),
         "predictions": rows,
     }
     REG.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
