@@ -1,0 +1,30 @@
+name: L&J Frontend QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'LJ_index.html'
+      - 'ljapp.js'
+      - 'ljqc.css'
+      - 'lsi_registry_bridge.js'
+      - 'data/prediction_registry.js'
+      - 'scripts/frontend_home_audit.js'
+      - '.github/workflows/lj-frontend-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: JavaScript syntax
+        run: |
+          node --check ljapp.js
+          node --check lsi_registry_bridge.js
+          node --check scripts/frontend_home_audit.js
+      - name: LJ_index + QC presentation audit
+        run: node scripts/frontend_home_audit.js
