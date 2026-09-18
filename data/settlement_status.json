@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-09-18T02:17:49.674360+00:00",
+  "generated_at_utc": "2026-09-18T03:55:08.966589+00:00",
   "source_registry_generated_at_utc": "2026-09-18T02:17:20.011020+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -29,52 +29,57 @@
     ]
   },
   "predictions_in_registry": 9,
-  "settled_predictions": 0,
-  "settlement_rate_pct": 0.0,
+  "settled_predictions": 3,
+  "settlement_rate_pct": 33.33,
   "run_counts": {
-    "PENDING_EVENT": 9
+    "settled": 3,
+    "PLAYER_NOT_IN_BOXSCORE": 1,
+    "PENDING_EVENT": 5
   },
   "by_league": {
     "NCAA_Football": {
       "PENDING_EVENT": 5
     },
     "NFL": {
-      "PENDING_EVENT": 4
+      "settled": 3,
+      "PLAYER_NOT_IN_BOXSCORE": 1
     }
   },
-  "recent_settlements": [],
-  "unresolved": [
+  "recent_settlements": [
     {
       "prediction_id": "NFL-DETBUF-GOFF-U2705",
       "league": "NFL",
-      "event_id": "DET-BUF-20260917",
+      "selection": "Jared Goff Under 270.5 Passing Yards",
+      "actual_result": "327",
+      "grade": "LOSS",
       "provider_event_id": "401872932",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "source": "ESPN_PUBLIC:401872932:BOX_SCORE"
     },
     {
       "prediction_id": "NFL-DETBUF-GIBBS-TD",
       "league": "NFL",
-      "event_id": "DET-BUF-20260917",
+      "selection": "Jahmyr Gibbs Anytime TD",
+      "actual_result": "1",
+      "grade": "WIN",
       "provider_event_id": "401872932",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "NFL-DETBUF-COOK-TD",
-      "league": "NFL",
-      "event_id": "DET-BUF-20260917",
-      "provider_event_id": "401872932",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "source": "ESPN_PUBLIC:401872932:BOX_SCORE"
     },
     {
       "prediction_id": "NFL-DETBUF-JW-U595",
       "league": "NFL",
-      "event_id": "DET-BUF-20260917",
+      "selection": "Jameson Williams Under 59.5 Receiving Yards",
+      "actual_result": "33",
+      "grade": "WIN",
       "provider_event_id": "401872932",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "source": "ESPN_PUBLIC:401872932:BOX_SCORE"
+    }
+  ],
+  "unresolved": [
+    {
+      "prediction_id": "NFL-DETBUF-COOK-TD",
+      "league": "NFL",
+      "market": "Anytime TD",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "NCAA-FSU-BAMA-KROMAH-60",
