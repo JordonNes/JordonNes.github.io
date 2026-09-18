@@ -1,4 +1,4 @@
-name: LJDP Fast Moneylines
+name: LJDP Fast Markets
 
 on:
   workflow_dispatch:
@@ -8,6 +8,8 @@ on:
     branches: [master]
     paths:
       - 'scripts/propline_adapter.py'
+      - 'scripts/odds_adapter.py'
+      - 'scripts/lsi_pipeline.py'
       - 'scripts/lsi_publish_future_board.py'
       - '.github/workflows/ljdp-moneylines.yml'
 
@@ -28,48 +30,50 @@ jobs:
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
 
-      - name: Acquire and publish GAME_ML
+      - name: Acquire current NFL markets
         env:
           PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
           PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
           PROPLINE_HTTP_TIMEOUT_SEC: '8'
           PROPLINE_HTTP_ATTEMPTS: '1'
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          ENABLE_THE_ODDS_API: 'true'
+          ODDS_API_LEAGUES: 'NFL'
+          ODDS_API_LOOKAHEAD_HOURS: '96'
+          ODDS_API_MAX_EVENTS_PER_RUN: '16'
+          ODDS_API_PROP_TTL_MIN: '120'
         run: |
-          python - <<'PY'
-          import os
-          present=bool((os.getenv('PROPLINE_API_KEY') or os.getenv('PROP_LINE_API_KEY') or '').strip())
-          print(f'PropLine credential available: {present}')
-          if not present:
-              raise SystemExit('No PROPLINE_API_KEY / PROP_LINE_API_KEY is available to this workflow')
-          PY
+          set +e
           python scripts/propline_adapter.py --game-odds-only
+          echo "PropLine fast pass exit=$?; continuing to NFL prop fallback."
+          set -e
+          python scripts/odds_adapter.py
+          python scripts/lsi_pipeline.py
           python scripts/lsi_publish_future_board.py
 
-      - name: Validate moneyline publication
+      - name: Validate NFL QC market publication
         run: |
           python - <<'PY'
           import json, pathlib
-          from datetime import datetime, timezone
-          ml=pathlib.Path('data/current_game_moneylines.json')
+          qc=pathlib.Path('data/qc_prop_board.json')
           future=pathlib.Path('data/future_market_board.json')
           futurejs=pathlib.Path('data/future_market_board.js')
-          assert ml.exists() and ml.stat().st_size>100, 'current_game_moneylines.json missing/empty'
+          registry=pathlib.Path('data/prediction_registry.json')
+          assert qc.exists() and qc.stat().st_size>100, 'qc_prop_board.json missing/empty'
           assert future.exists() and future.stat().st_size>100, 'future_market_board.json missing/empty'
           assert futurejs.exists() and futurejs.stat().st_size>100, 'future_market_board.js missing/empty'
-          m=json.load(ml.open(encoding='utf-8'))
+          assert registry.exists() and registry.stat().st_size>100, 'prediction_registry.json missing/empty'
+          q=json.load(qc.open(encoding='utf-8'))
           f=json.load(future.open(encoding='utf-8'))
-          assert m.get('schema_version')=='LJ-CURRENT-GAME-ML-1'
-          assert f.get('schema_version')=='LJ-FUTURE-MARKET-1'
-          rows=[r for r in m.get('rows',[]) if r.get('market_class')=='GAME_ML' and r.get('event_id') and r.get('participant') and r.get('price') not in (None,'')]
-          assert rows, 'No usable GAME_ML rows'
-          stamp=datetime.fromisoformat(m['generated_at_utc'].replace('Z','+00:00'))
-          age=(datetime.now(timezone.utc)-stamp).total_seconds()/3600
-          assert age<=2, f'GAME_ML candidate stale at publication: {age:.2f}h'
-          source_ids={str(e.get('source_event_id')) for e in m.get('events',[]) if e.get('source_event_id')}
-          future_ids={str(e.get('source_event_id')) for e in f.get('events',[]) if e.get('game_markets')}
-          missing=sorted(source_ids-future_ids)
-          assert not missing, f'Future board lost GAME_ML event(s): {missing[:12]}'
-          print(f'GAME_ML healthy: {len(rows)} quotes; {len(source_ids)} events; future coverage complete; age={age:.2f}h')
+          nfl_q=[e for e in q.get('events',[]) if e.get('league')=='NFL']
+          nfl_f=[e for e in f.get('events',[]) if e.get('league')=='NFL']
+          prop_events=[e for e in nfl_q if e.get('props')]
+          prop_count=sum(len(e.get('props') or []) for e in nfl_q)
+          future_prop_count=sum(len(e.get('props') or []) for e in nfl_f)
+          assert len(nfl_q)>=15, f'NFL event catalog incomplete: {len(nfl_q)}/15'
+          assert prop_events, 'NFL event catalog contains no player props'
+          assert prop_count>0 and future_prop_count>0, 'NFL props did not reach future market board'
+          print(f'NFL QC markets healthy: events={len(nfl_q)} prop_events={len(prop_events)} props={prop_count} future_props={future_prop_count}')
           PY
 
       - name: Publish artifacts to master
@@ -77,16 +81,20 @@ jobs:
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/current_game_moneylines.json data/future_market_board.json data/future_market_board.js
+          files=()
+          for f in data/current_game_moneylines.json data/qc_prop_board.json data/the_odds_api_state.json data/market_history.csv data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js; do
+            [ -s "$f" ] && files+=("$f")
+          done
+          git add "${files[@]}"
           if git diff --cached --quiet; then
-            echo 'GAME_ML artifacts already current.'
+            echo 'NFL market artifacts already current.'
             exit 0
           fi
-          git commit -m "LJDP fast GAME_ML $(TZ=America/Los_Angeles date +%F-%H%M) PT"
+          git commit -m "LJDP fast NFL markets $(TZ=America/Los_Angeles date +%F-%H%M) PT"
           for attempt in 1 2 3 4 5; do
             git pull --rebase origin master
             if git push origin master; then exit 0; fi
-            echo "GAME_ML push race; retrying ${attempt}/5"
+            echo "NFL market push race; retrying ${attempt}/5"
             sleep 3
           done
           exit 1
