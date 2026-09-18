@@ -23,13 +23,13 @@
 <div class="section-head"><h2>CORE TERMINOLOGY</h2><span class="muted">Canonical public meanings</span></div>
 <div class="card"><div class="card-body"><table class="term-table"><thead><tr><th>Term</th><th>Canonical meaning</th><th>What it answers</th></tr></thead><tbody>
 <tr><td>POM</td><td>The exact Prop, Odd or Moneyline being evaluated, including threshold and price when applicable.</td><td>What exactly is L&amp;J evaluating?</td></tr>
-<tr><td>LEGZ Value</td><td>A 0–100 evidence-strength / predictability score. It reflects the quality, depth, repeatability and usefulness of statistical evidence, patterns, correlations, trends, inconsistencies and source support. It is not primarily a payout score.</td><td>How much trustworthy predictive structure exists around this POM?</td></tr>
-<tr><td>JINX Evaluation</td><td>Contextual and adversarial review of the LEGZ thesis. JINX checks injuries, role, lineup, matchup, coaching, game state, transactions, market anomalies and other attributable factors that can strengthen or weaken the forecast.</td><td>Will the statistical thesis survive the actual event conditions?</td></tr>
-<tr><td>LJPC</td><td><strong>L&amp;J Prediction Confidence</strong>: the final L&amp;J estimated probability that the exact POM hits. LJPC and “L&amp;J modeled hit probability” are the same canonical measure.</td><td>What probability does L&amp;J assign to this POM hitting?</td></tr>
-<tr><td>POM Value</td><td>The overall prediction desirability of the exact POM, driven primarily by LEGZ Value and LJPC. Normal operation is prediction-first; payout does not rescue weak evidence.</td><td>How desirable is this POM for L&amp;J to use?</td></tr>
-<tr><td>L&amp;J Evaluation</td><td>The complete evidence package: POM, LEGZ analysis, JINX review, LJPC, POM Value, provenance, risks, kill switches and classification.</td><td>Why did L&amp;J reach this conclusion?</td></tr>
+<tr><td>LEGZ Value</td><td>How strong, useful and consistent the supporting evidence is.</td><td>How much does LEGZ trust the evidence behind this pick?</td></tr>
+<tr><td>JINX Evaluation</td><td>JINX’s review of injuries, roles, matchups, coaching, news and other real-world factors that may strengthen or weaken the pick.</td><td>Is there anything the raw numbers may be missing?</td></tr>
+<tr><td>LJPC</td><td><strong>L&amp;J Prediction Confidence</strong>: L&amp;J’s final estimated chance that the exact pick will hit.</td><td>How likely does L&amp;J think this pick is to win?</td></tr>
+<tr><td>POM Value</td><td>A ranking measure that combines evidence strength and L&amp;J’s hit probability.</td><td>How attractive is this prediction compared with the others?</td></tr>
+<tr><td>L&amp;J Evaluation</td><td>The complete LEGZ + JINX review behind a pick.</td><td>Why does L&amp;J like or dislike this prediction?</td></tr>
 <tr><td>L&amp;J Accuracy</td><td>Retrospective settled performance. Accuracy is measured only after verified results exist and is never used as a synonym for a current prediction’s confidence.</td><td>How accurate were previously published predictions?</td></tr>
-<tr><td>Calibration</td><td>Comparison of historical LJPC bands to actual hit rates.</td><td>Do 70% predictions really behave like approximately 70% predictions?</td></tr>
+<tr><td>Calibration</td><td>A check of whether past confidence levels matched real results.</td><td>Has L&amp;J been estimating probabilities accurately over time?</td></tr>
 </tbody></table></div></div>
 </section>
 
@@ -44,31 +44,16 @@
 <span class="flow-node">Ticket Mode</span><span class="flow-arrow">→</span>
 <span class="flow-node">Settlement &amp; Calibration</span>
 </div>
-<p class="small-note">Market price remains evidence and an execution constraint. It becomes a primary ranking objective only in Demon-oriented economics-first selection after the required LJPC gate is met.</p>
+<p class="small-note">L&amp;J separates prediction quality from payout. A higher payout does not automatically make a pick better.</p>
 </section>
 
 <section class="section">
-<div class="section-head"><h2>FORMULAS</h2><span class="muted">Current public specification</span></div>
+<div class="section-head"><h2>HOW L&amp;J READS A PICK</h2><span class="muted">Simple version</span></div>
 <div class="method-grid">
-<div class="method-card"><h3>LJPC — final hit probability</h3>
-<p>LEGZ produces the quantitative baseline probability. JINX contributes a signed contextual adjustment. A tightly gated historical-learning adjustment may be applied only after LSI maturity checks pass.</p>
-<div class="formula">LJPC = clamp(L + J + Δlearning, 0, 100)</div>
-<ul><li><span class="green-txt"><strong>L</strong></span> = LEGZ baseline probability.</li><li><span class="purple-txt"><strong>J</strong></span> = JINX signed percentage-point adjustment.</li><li><strong>Δlearning</strong> = gated historical calibration adjustment; currently capped by LSI safety rules.</li></ul>
-</div>
-<div class="method-card"><h3>POM Value — prediction desirability</h3>
-<p>POM Value should reward both strong evidence and strong hit probability, while penalizing a serious weakness in either dimension. The standard normal-operation score uses their geometric mean.</p>
-<div class="formula">POM Value = √(LEGZ Value × LJPC)</div>
-<p>This keeps a high projected probability with weak evidence from automatically becoming an elite POM, and prevents strong evidence around a low-probability outcome from being mistaken for a safe play.</p>
-</div>
-<div class="method-card"><h3>LEGZ Value — evidence strength</h3>
-<p>LEGZ Value is not a second hit probability. It measures how much reliable predictive structure is available: sample quality, historical relevance, repeatability, source depth, line/history coverage, matchup features and traceable statistical signals.</p>
-<p>The implementation may mature as LSI gains more historical data. New components must be documented and backtested before their weight can influence future predictions.</p>
-</div>
-<div class="method-card"><h3>Demon economics</h3>
-<p>Demon mode reverses the normal priority only after an LJPC eligibility gate is satisfied. It hunts payout/upside among qualified Normal and Demon POMs; payout never changes LJPC itself.</p>
-<div class="formula">Demon eligibility → LJPC gate first → then rank qualified POMs by payout / edge opportunity</div>
-<p>Market-implied probability, offered price and modeled edge are execution/economics signals, not replacements for prediction confidence.</p>
-</div>
+<div class="method-card"><h3>1. LEGZ studies the numbers</h3><p>LEGZ reviews statistics, trends, matchup history, recent performance, market information and other useful evidence. Stronger and more consistent evidence creates a stronger LEGZ Value.</p></div>
+<div class="method-card"><h3>2. JINX checks the situation</h3><p>JINX looks for things that can change the outcome: injuries, lineup changes, coaching decisions, role changes, travel, weather, unusual market movement and other relevant context.</p></div>
+<div class="method-card"><h3>3. LJPC gives the final probability</h3><p><strong>LJPC</strong> is L&amp;J’s final estimated chance that the exact pick will hit. Higher LJPC means L&amp;J believes the pick is more likely to succeed.</p></div>
+<div class="method-card"><h3>4. POM Value helps rank the best options</h3><p><strong>POM Value</strong> helps compare picks by combining how strong the evidence is with how likely L&amp;J believes the pick is to hit. It is used to identify the most attractive prediction opportunities.</p></div>
 </div>
 </section>
 
@@ -84,16 +69,10 @@
 
 <section class="section">
 <div class="section-head"><h2>PROVENANCE &amp; SETTLEMENT RULES</h2><span class="muted">No reconstructed certainty</span></div>
-<div class="method-callout"><strong>Every published prediction must be traceable.</strong> The Prediction Registry retains source snapshot IDs, market class, exact selection/threshold, event identity, model version and evidence references. Started/completed events are not republished as new pregame opportunities. After settlement, only verified recoverable predictions enter accuracy calculations; unresolved records remain UNGRADED rather than being reconstructed from memory.</div>
+<div class="method-callout"><strong>Every published pick should have a clear reason behind it.</strong> L&amp;J does not treat guesses, missing markets or old completed events as fresh predictions. After games finish, results are graded and used to evaluate how well the system performed.</div>
 </section>
 
-<section class="section">
-<div class="section-head"><h2>SCHEMA COMPATIBILITY</h2><span class="muted">Public language vs internal legacy fields</span></div>
-<div class="method-card">
-<p><strong>LJPC</strong> is the canonical public term. During migration, internal fields <code>lj_probability</code> and <code>lj_confidence</code> remain compatibility aliases for the same final hit-probability value. <code>legz_confidence</code> remains the LEGZ baseline probability input; it is not the same thing as LEGZ Value. <code>jinx_input</code> remains JINX’s signed contextual percentage-point adjustment.</p>
-<p>Where an evidence-strength <code>legz_value</code> and combined <code>pom_value</code> are available, they must not be substituted for LJPC. Historical accuracy and calibration remain separate retrospective measures.</p>
-</div>
-</section>
+
 
 <div class="footer">LEGZ &amp; JINX • LSI/LJDP methodology standard • Prediction confidence is analytical probability, not a guarantee.</div>
 </div></body></html>
