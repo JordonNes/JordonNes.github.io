@@ -125,9 +125,17 @@ for (const [page, league] of Object.entries(PAGES)) {
     if (!cols.hot.length) {
       errors.push(`${label}: acquired prop board has ${count} usable props but LEGZ Hot Top is empty.`);
     }
-    const ticketLegs=[...cols.sns1,...cols.sns2,...cols.normal,...cols.demon];
+    const ticketModes=[cols.sns1,cols.sns2,cols.normal,cols.demon];
+    const ticketLegs=ticketModes.flat();
+    const publishedParlays=ticketModes.filter(arr=>arr.length>=2);
     if (!ticketLegs.length) {
       errors.push(`${label}: acquired prop board has ${count} usable props but every QC ticket mode is empty.`);
+    }
+    if (q._qcParlayRequired && !publishedParlays.length) {
+      errors.push(`${label}: 2+ qualified POMs exist in an eligible ticket mode, but no 2–6 leg QC parlay was published.`);
+    }
+    if (q._qcParlayPublished && !publishedParlays.length) {
+      errors.push(`${label}: QC metadata says a parlay was published, but no rendered ticket contains at least 2 legs.`);
     }
     for (const [name, clean] of Object.entries(cols)) {
       for (const text of clean) {
@@ -152,4 +160,4 @@ if (errors.length) {
   for (const e of errors) console.error(`::error::QC AUDIT ${e}`);
   process.exit(1);
 }
-console.log('QC publication invariant passed: acquired player-prop boards populate QC ticket columns; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
+console.log('QC publication invariant passed: acquired player-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
