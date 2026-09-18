@@ -99,10 +99,17 @@ jobs:
           assert p.exists(), 'Fast GAME_ML board was not created'
           d=json.load(p.open(encoding='utf-8'))
           rows=d.get('rows') or []
+          events=d.get('events') or []
           assert rows, 'PropLine bulk h2h returned zero current GAME_ML rows'
+          assert events, 'PropLine bulk h2h returned GAME_ML rows but no event catalog'
+          assert all(e.get('source_event_id') and e.get('commence_time') for e in events), 'Fast GAME_ML event catalog is incomplete'
           board=json.load(open('data/future_market_board.json',encoding='utf-8'))
-          covered=sum(1 for e in board.get('events',[]) if e.get('game_markets'))
-          print(f"Fast GAME_ML publication: {len(rows)} quote rows; {covered}/{len(board.get('events',[]))} future events matched.")
+          active=board.get('events',[]) or []
+          covered=sum(1 for e in active if e.get('game_markets'))
+          fast_ids={str(e.get('source_event_id')) for e in events if e.get('source_event_id')}
+          board_ids={str(e.get('source_event_id')) for e in active if e.get('game_markets')}
+          assert fast_ids & board_ids, 'Fast GAME_ML events did not reach the future market board'
+          print(f"Fast GAME_ML publication: {len(rows)} quote rows; {covered}/{len(active)} future events matched; event catalog={len(events)}.")
           PY
       - name: Publish fast game lines before prop sweep
         shell: bash
