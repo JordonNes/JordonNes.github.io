@@ -16,7 +16,7 @@ const WNBA={icon:'🏀',title:'WNBA',meta:'WNBA • FRIDAY SEPTEMBER 18, 2026 �
 'Kelsey Mitchell • MORE 25.5 Points • NORMAL • LJPC 70%',
 'Makayla Timpson • LESS 8.5 Points (-119 DK) • NORMAL • LJPC 61%'
 ],demon:[],foot:'Boston 11.5 and Mitchell 25.5 are user-verified PrizePicks thresholds from Sep 18. Timpson current market support is from the synchronized Friday board. If live, only the locked Normal construction should remain beside the runtime box score.'},
-{time:'FRI SEP 18 • 4:30 PM PT',away:'NY',home:'MIN',market:'Liberty @ Lynx • current prop board active',winner:'Lynx',conf:'72%',hot:[
+{time:'FRI SEP 18 • 4:30 PM PT',away:'NYL',home:'MIN',market:'Liberty @ Lynx • current prop board active',winner:'Lynx',conf:'72%',hot:[
 'Napheesa Collier • MORE 17.5 Points • GOBLIN • LJPC 74%',
 'Olivia Miles • MORE 19.5 Points • NORMAL • LJPC 65%',
 'Breanna Stewart • LESS 8.5 Rebounds (-149 DK) • NORMAL • LJPC 64%',
