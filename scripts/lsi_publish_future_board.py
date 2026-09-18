@@ -10,7 +10,7 @@ Rules:
 - Alternate thresholds for the same participant/market collapse to one preferred line.
 """
 from __future__ import annotations
-import json, math
+import csv, json, math
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -70,8 +70,55 @@ def canonical_prop(p):
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
     }
 
+
+def load_game_markets():
+    """Return best current GAME_ML market evidence by event/team from market_history."""
+    path=DATA/"market_history.csv"
+    if not path.exists(): return {}
+    latest={}
+    with path.open(newline="",encoding="utf-8-sig") as fh:
+        for row in csv.DictReader(fh):
+            if str(row.get("market_class") or "").upper()!="GAME_ML": continue
+            eid=str(row.get("event_id") or "").strip()
+            participant=str(row.get("participant") or row.get("selection") or "").strip()
+            if not eid or not participant: continue
+            key=(eid,participant.lower(),str(row.get("source") or ""))
+            stamp=str(row.get("collected_at_pt") or "")
+            if key not in latest or stamp>=str(latest[key].get("collected_at_pt") or ""):
+                latest[key]=row
+    grouped={}
+    for row in latest.values():
+        eid=str(row.get("event_id") or "").strip()
+        participant=str(row.get("participant") or row.get("selection") or "").strip()
+        try: price=float(row.get("price"))
+        except (TypeError,ValueError): continue
+        if price==0: continue
+        grouped.setdefault((eid,participant),[]).append((price,str(row.get("source") or "MARKET"),row))
+    out={}
+    for (eid,participant),rows in grouped.items():
+        probs=[implied(price) for price,_,_ in rows]
+        probs=[p for p in probs if p is not None]
+        if not probs: continue
+        base=sum(probs)/len(probs)
+        count=max(1,min(5,len(rows)))
+        confidence=round(max(50.0,min(85.0,base*100+(count-1)*0.35)),1)
+        best=max(rows,key=lambda x:x[0])
+        out.setdefault(eid,[]).append({
+          "participant":participant,
+          "selection":participant,
+          "price":int(best[0]) if float(best[0]).is_integer() else best[0],
+          "book":best[1],
+          "market_source_count":len(rows),
+          "lj_confidence":confidence,
+          "model":"L&J MARKET BASELINE",
+        })
+    for eid in out:
+        out[eid].sort(key=lambda x:(-x["lj_confidence"],str(x["participant"])))
+    return out
+
 def main():
     src=json.loads(SRC.read_text(encoding="utf-8")) if SRC.exists() else {"events":[]}
+    game_markets=load_game_markets()
     events=[]
     for e in src.get("events") or []:
         start=parse(e.get("commence_time"))
@@ -92,7 +139,8 @@ def main():
           "away_aliases":e.get("away_aliases") or [],"home_aliases":e.get("home_aliases") or [],
           "source":e.get("source"),"sweep_status":e.get("sweep_status"),
           "unique_players":len({str(x["participant"]).lower() for x in props}),
-          "props":props
+          "props":props,
+          "game_markets":game_markets.get(str(e.get("source_event_id") or ""),[])
         })
     events.sort(key=lambda x:(x.get("commence_time") or "",x.get("league") or "",x.get("away") or ""))
     payload={
@@ -100,11 +148,11 @@ def main():
       "generated_at_utc":NOW.isoformat(),
       "default_horizon_days":7,
       "nfl_rollover_policy":"Tuesday-Monday slate stages beginning Monday 12:00 PT; current Monday game remains a runtime status shell after start.",
-      "actionable_policy":"Only not-yet-started events may expose props or odds. Every exposed prop has L&J confidence.",
+      "actionable_policy":"Only not-yet-started events may expose props or odds. Every exposed player prop and game moneyline has L&J confidence.",
       "events":events,
     }
     OUT.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     OUTJS.write_text("/* Generated rolling future market board; do not edit manually. */\nwindow.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n",encoding="utf-8")
-    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props.")
+    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {sum(len(e.get('game_markets') or []) for e in events)} L&J-evaluated moneylines.")
 
 if __name__=="__main__":main()
