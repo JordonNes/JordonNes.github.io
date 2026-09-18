@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Richmond Ray's Fishin' Tavern — the RICHFISH fishing intelligence home for Richmond, San Pablo Bay, the Bay-Delta and nearby coast." />
+  <title>Richmond Ray's Fishin' Tavern | RICHFISH</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Richmond Ray's Fishin' Tavern home">
+      <span class="brand-mark">⚓</span>
+      <span><strong>RICHMOND RAY'S</strong><small>FISHIN' TAVERN · POWERED BY RICHFISH</small></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open navigation">☰</button>
+    <nav>
+      <a href="#home">Tavern</a>
+      <a href="#rooms">Rooms</a>
+      <a href="#spots">Fishing Spots</a>
+      <a href="#finder">Fish Now</a>
+      <a href="#documents">Field Library</a>
+      <a href="#guide">Fishing Bible</a>
+      <a href="#sources">Data Lab</a>
+      <a class="phase" href="#frmap">FRmap <small>PHASE 2</small></a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-overlay"></div><div class="ray-portrait" role="img" aria-label="Richmond Ray, veteran Bay fishing guide in his tavern"></div>
+      <div class="hero-content">
+        <span class="live-pill">● RICHFISH v0.2 · LIVE PROTOTYPE</span>
+        <p class="kicker">WELCOME TO</p>
+        <h1>RICHMOND RAY'S</h1>
+        <h2>FISHIN' TAVERN</h2>
+        <p class="script">Pull up a stool. Let's figure out where the fish are.</p>
+        <p>Richmond-centered fishing intelligence for the shoreline, San Pablo Bay, Carquinez Strait, Suisun Bay, the Sacramento–San Joaquin Delta and nearby coast. Conditions, target species, local spots, rigs, field knowledge and transparent source tracking—organized the way an angler actually plans a trip.</p>
+        <div class="actions">
+          <a class="btn primary" href="#finder">What should I fish for?</a>
+          <a class="btn" href="#spots">Where should I fish?</a>
+        </div>
+      </div>
+      <div class="hero-cards" id="condition-strip"></div>
+    </section>
+
+    <section id="rooms" class="section shell rooms">
+      <div class="section-heading">
+        <div><span class="eyebrow">THE TAVERN ROOMS</span><h2>Everything RICHFISH lives here.</h2></div>
+        <span class="sync">One fishing system · separate from LEGZ/JINX</span>
+      </div>
+      <div class="room-grid">
+        <a class="room-card featured" href="#finder"><span>01</span><h3>Fish Right Now</h3><p>Choose a target species and let RICHFISH rank available prototype spots using habitat, tide, access and field logic.</p><b>Open Fish Finder →</b></a>
+        <a class="room-card" href="#spots"><span>02</span><h3>Where Should I Fish?</h3><p>Richmond Ray's spot profiles: access, target fish, bait, rigs, windows, cautions and current dataset conditions.</p><b>Explore Spots →</b></a>
+        <a class="room-card" href="#finder"><span>03</span><h3>Species Explorer</h3><p>The growing species intelligence layer connects fish behavior, bait, rigs and condition logic to fishing locations.</p><b>Browse Species →</b></a>
+        <a class="room-card" href="#guide"><span>04</span><h3>The Fishing Bible</h3><p>A web-native field manual covering water reading, Bay shoreline, Delta, piers, surf, species, bait, rigs and seasons.</p><b>Enter the Guide →</b></a>
+        <a class="room-card" href="#documents"><span>05</span><h3>Bait & Rig Room</h3><p>Bootcamps and field resources for soaking bait, lures, bobbers, crabbing, live bait and priority species.</p><b>Open Field Library →</b></a>
+        <a class="room-card" href="#frmap"><span>06</span><h3>Maps & Water</h3><p>FRmap will connect fishing access, conditions, spatial layers, bathymetry references and Richmond Ray's area judgment.</p><b>See FRmap Plan →</b></a>
+        <a class="room-card" href="#sources"><span>07</span><h3>Rules, Safety & Sources</h3><p>Official-source hierarchy for regulations, consumption advisories, tides, weather, water data and access notices.</p><b>Inspect Data Lab →</b></a>
+        <div class="room-card locked"><span>08</span><h3>Ask Richmond Ray</h3><p>The future conversational fishing mentor will use the RICHFISH knowledge system—not the sports LSI stack—to help plan real trips.</p><b>In development</b></div>
+      </div>
+    </section>
+
+    <section id="spots" class="section shell">
+      <div class="section-heading"><div><span class="eyebrow">RAY'S SPOT BOARD</span><h2>Select a place. Get the field profile.</h2></div><span class="sync">● JSON dataset connected</span></div>
+      <div class="workspace">
+        <aside class="selector-panel"><label for="spot-search">Find a spot</label><input id="spot-search" placeholder="Search spot or region" /><div id="spot-list" class="select-list"></div></aside>
+        <article id="spot-detail" class="detail-panel loading">Loading spot intelligence…</article>
+      </div>
+    </section>
+
+    <section id="finder" class="section shell alt">
+      <div class="section-heading"><div><span class="eyebrow">FISH RIGHT NOW</span><h2>Choose a species. See where RICHFISH points you.</h2></div><span class="sync">Rule-based prototype ranking</span></div>
+      <div class="workspace">
+        <aside class="selector-panel"><label>Select species</label><div id="species-list" class="select-list"></div></aside>
+        <article id="finder-detail" class="detail-panel loading">Loading species recommendations…</article>
+      </div>
+    </section>
+
+    <section id="documents" class="section shell">
+      <div class="section-heading"><div><span class="eyebrow">THE FIELD LIBRARY</span><h2>Bootcamps, master guides and working datasets.</h2></div><span class="sync" id="doc-count"></span></div>
+      <div id="document-grid" class="document-grid"></div>
+      <p class="notice">The catalog identifies previously developed RICHFISH assets. Download controls activate as original files are imported into the repository or connected storage.</p>
+    </section>
+
+    <section id="guide" class="section shell alt">
+      <div class="section-heading"><div><span class="eyebrow">RICHMOND RAY'S FISHING BIBLE</span><h2>Field knowledge built to connect directly to spots, species and conditions.</h2></div><button class="btn" disabled>Master PDF pending import</button></div>
+      <div class="guide-layout">
+        <aside class="toc"><strong>Table of contents</strong><ol><li>Getting Started</li><li>Reading Water</li><li>Bay Shoreline Fishing</li><li class="active">Delta Water<ul><li>Tides & currents</li><li>Channels & cuts</li><li>Productive areas</li><li>Techniques & tactics</li></ul></li><li>Piers & Docks</li><li>Surf & Jetty</li><li>Rivers & Lakes</li><li>Species Behavior</li><li>Bait & Lure Selection</li><li>Rigs & Knots</li><li>Seasonal Patterns</li><li>Safety & Stewardship</li><li>Troubleshooting</li></ol></aside>
+        <article class="guide-page"><span class="eyebrow">4. DELTA WATER</span><h3>Read movement before choosing tackle.</h3><p>The Delta is a system of moving water, channels, levee edges and forage migration. RICHFISH is being structured so each guide chapter can connect directly to relevant spots, species and conditions.</p><div class="principles"><div><b>Current</b><span>Locate seams and protected edges.</span></div><div><b>Depth</b><span>Match presentation to channel shape.</span></div><div><b>Forage</b><span>Follow shad, anchovy and smelt signals.</span></div><div><b>Access</b><span>Confirm legal, safe entry before travel.</span></div></div><blockquote>“Follow the bait, but verify the water, access and regulations before you follow the rumor.” — Richmond Ray</blockquote></article>
+      </div>
+    </section>
+
+    <section id="sources" class="section shell">
+      <div class="section-heading"><div><span class="eyebrow">BEHIND THE BAR · DATA LAB</span><h2>Know what Richmond Ray is relying on.</h2></div></div>
+      <div id="source-grid" class="source-grid"></div>
+    </section>
+
+    <section id="frmap" class="section shell frmap">
+      <div><span class="eyebrow">FRmap · PHASE 2</span><h2>Click the water. Read the water. Fish smarter.</h2><p>The next spatial layer will combine fishing locations, tide and weather overlays, access boundaries, bathymetry references, community reports and Richmond Ray's area-specific field judgment.</p><span class="coming">COMING NEXT</span></div>
+      <div class="map-art"><span class="pin p1">●</span><span class="pin p2">●</span><span class="pin p3">●</span><span class="map-label">Richmond → San Pablo Bay → Carquinez → Delta</span></div>
+    </section>
+  </main>
+
+  <footer><strong>RICHMOND RAY'S FISHIN' TAVERN · RICHFISH</strong><span>Fishing intelligence is educational. Always verify current regulations, advisories, access rules and conditions before fishing.</span></footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
