@@ -60,11 +60,24 @@
     });
     const out=[...groups.values()];
     out.forEach(g=>{
-      g.props=[...g.propMap.values()].sort((a,b)=>score20(b)-score20(a)).slice(0,3);
+      const ranked=[...g.propMap.values()].sort((a,b)=>score20(b)-score20(a));
+      const kept=[];
+      if(ranked.length){
+        kept.push(ranked[0]);
+        for(let i=1;i<ranked.length && kept.length<3;i++){
+          const candidate=ranked[i];
+          const top=kept[0];
+          const topScore=score20(top);
+          const candScore=score20(candidate);
+          const combined=topScore+candScore;
+          const pairQualifies=combined>132 && Math.max(topScore,candScore)>73 && candScore>=69;
+          if(pairQualifies) kept.push(candidate);
+        }
+      }
+      g.props=kept;
       delete g.propMap;
       g.score=g.props.length?Math.max(...g.props.map(score20)):0;
     });
-    out.filter(g=>g.props.length);
     out.sort((a,b)=>(b.score-a.score)||a.player.localeCompare(b.player));
     return out.filter(g=>g.props.length).slice(0,24);
   };
@@ -100,7 +113,7 @@
       ? `<div class="twenty-shortfall" role="status"><b>ACQUISITION SHORTFALL — ${groups.length}/20 UNIQUE PLAYERS</b><span>The upstream prop sweep must expand this board. No unsupported or fabricated thresholds are inserted to fill space.</span></div>`
       : "";
     const playerHtml=groups.map((g,i)=>`<li class="twenty-player" data-rank="${i+1}"><div class="twenty-player-head"><span class="twenty-rank" aria-label="Rank ${i+1}">${i+1}</span><span class="twenty-sport">${esc(g.sport)}</span><strong class="twenty-player-name">${esc(g.player)}</strong><span class="twenty-prop-count">${g.props.length} prop${g.props.length===1?"":"s"}</span></div><div class="twenty-player-props">${g.props.map(r=>`<div class="twenty-prop"><div class="twenty-prop-pick"><span class="twenty-mobile-label">Prediction</span><b>${esc(r[2])}</b></div><div class="twenty-prop-meta"><span><span class="twenty-mobile-label">Price</span>${esc(r[3]||"—")}</span><span class="conf"><span class="twenty-mobile-label">L&J / JINX</span>${esc(r[4]||"—")}</span><span><span class="twenty-mobile-label">Quality</span>${esc(r[5]||"—")}</span><span><span class="twenty-mobile-label">Risk</span>${esc(r[6]||"—")}</span></div></div>`).join("")}</div></li>`).join("");
-    return `<section class="section twenty-section" aria-labelledby="${headingId}"><div class="section-head"><h2 id="${headingId}">${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">20+ unique players when games are active • maximum 3 distinct prop markets per player • one threshold per market</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20+ PIECE":"SPORT 20+ PIECE"}</span><span>RANKED BY JINX + LEGZ PREFERENCE</span></div>${groups.length?`<div class="card-body"><div class="twenty-summary" aria-live="polite"><b>${groups.length} unique player${groups.length===1?"":"s"}</b><span>${totalProps} total player-prop prediction${totalProps===1?"":"s"}</span></div><ol class="twenty-player-board">${playerHtml}</ol>${shortfall}</div>`:`<div class="status-panel"><b>PROP ACQUISITION REQUIRED</b><p>An active game slate requires a 20+ unique-player board. No unsupported placeholder thresholds will be manufactured.</p></div>`}<div class="card-body"><p class="source-note">${esc(note||"20 Piece is player-first: JINX + LEGZ rank the strongest acquired player props; each player is capped at 3 distinct prop markets, and conflicting/alternate thresholds for the same market collapse to one selection.")}</p></div></div></section>`;
+    return `<section class="section twenty-section" aria-labelledby="${headingId}"><div class="section-head"><h2 id="${headingId}">${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">20+ unique players when games are active • extra props require >132 combined L&J confidence, at least one >73%, and each added prop ≥69% • max 3 per player</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20+ PIECE":"SPORT 20+ PIECE"}</span><span>RANKED BY JINX + LEGZ PREFERENCE</span></div>${groups.length?`<div class="card-body"><div class="twenty-summary" aria-live="polite"><b>${groups.length} unique player${groups.length===1?"":"s"}</b><span>${totalProps} total player-prop prediction${totalProps===1?"":"s"}</span></div><ol class="twenty-player-board">${playerHtml}</ol>${shortfall}</div>`:`<div class="status-panel"><b>PROP ACQUISITION REQUIRED</b><p>An active game slate requires a 20+ unique-player board. No unsupported placeholder thresholds will be manufactured.</p></div>`}<div class="card-body"><p class="source-note">${esc(note||"20 Piece is player-first: JINX + LEGZ rank the strongest acquired player props; each player is capped at 3 distinct prop markets, and conflicting/alternate thresholds for the same market collapse to one selection.")}</p></div></div></section>`;
   }
 
   function rules(){
