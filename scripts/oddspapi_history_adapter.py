@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Activation verification trigger: 2026-09-17
 """OddsPapi -> LSI historical market calibration adapter.
 
 Purpose
