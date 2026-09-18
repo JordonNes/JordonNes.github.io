@@ -28,7 +28,7 @@ L&J deliberately separates three evidence classes:
 LEGZ may use performance and market evidence to form a prediction. JINX challenges that prediction with independent market and contextual evidence. A source feed does not create an L&J pick by itself.
 
 ## Prediction Registry contract — LSI-PR-2
-Every active record retains the common publication fields: `prediction_id`, `created_at_pt`, `updated_at_pt`, `sport`, `league`, `event_id`, `event_start_pt`, `market_class`, `participant`, `opponent`, `selection`, `threshold`, `price`, `market_source`, `market_observed_at_pt`, `legz_confidence`, `jinx_input`, `lj_probability`, `lj_conviction`, `tier`, `status`, `model_version`, `evidence_ids`, and `publication_tags`.
+Every active record retains the common publication fields: `prediction_id`, `created_at_pt`, `updated_at_pt`, `sport`, `league`, `event_id`, `event_start_pt`, `market_class`, `participant`, `opponent`, `selection`, `threshold`, `price`, `market_source`, `market_observed_at_pt`, `legz_confidence`, `legz_value`, `jinx_input`, `ljpc`, `lj_probability`, `lj_confidence`, `pom_value`, `lj_conviction`, `tier`, `status`, `model_version`, `evidence_ids`, and `publication_tags`.
 
 Every `PLAYER_PROP` record additionally contains this intelligence contract:
 
@@ -38,7 +38,7 @@ A field being present does **not** mean L&J has evidence for its value. If the c
 
 Allowed `market_class` values: `PLAYER_PROP`, `GAME_ML`, `SPREAD`, `GAME_TOTAL`, `TEAM_TOTAL`. A GAME_ML must never be reclassified as PLAYER_PROP.
 
-`legz_confidence` and `lj_probability` are bounded 0–100 probabilities. `jinx_input` is a signed percentage-point adjustment. `lj_conviction` is a separate display/conviction metric and is not substituted for probability.
+`legz_confidence` is the LEGZ baseline probability input. `jinx_input` is a signed JINX contextual adjustment in percentage points. `ljpc` is the canonical final L&J estimated hit probability. `lj_probability` and `lj_confidence` are compatibility aliases of `ljpc` and may not diverge from it. `legz_value` is the distinct 0–100 evidence-strength/predictability score. `pom_value` is prediction-first desirability using the current formula `sqrt(legz_value × ljpc)`. `lj_conviction` is a separate diagnostic/additive metric and is not substituted for probability.
 
 ### CLV definition
 The current registry calculates **line-threshold CLV only when a sourced closing line exists**. Positive CLV means L&J captured the more favorable threshold for the selected side. Price/implied-probability CLV is not inferred from missing evidence. PropLine closing/history endpoints can replace/enrich this value when an entitled analytics plan is intentionally enabled.
