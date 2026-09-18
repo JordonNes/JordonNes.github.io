@@ -73,6 +73,8 @@ jobs:
           assert len(nfl_q)>=14, f'NFL event catalog too incomplete to publish: {len(nfl_q)}/15'
           assert len(prop_events)>=10, f'NFL player-prop coverage too thin: {len(prop_events)} event(s)'
           assert prop_count>0 and future_prop_count>0, 'NFL props did not reach future market board'
+          pairs=sorted(f"{e.get('away')} @ {e.get('home')}" for e in nfl_q)
+          print("NFL board events:", " | ".join(pairs))
           print(f'NFL QC markets publishable: events={len(nfl_q)}/15 prop_events={len(prop_events)} props={prop_count} future_props={future_prop_count}. Missing event remains on the durable DP shell rather than blocking the week.')
           PY
 
