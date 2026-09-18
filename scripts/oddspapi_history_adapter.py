@@ -332,12 +332,14 @@ def run():
         state["sport_catalog"] = find_sport_targets(sports if isinstance(sports, list) else [])
         if rem is not None:
             rem -= 1
+        time.sleep(1.05)
 
     if not state.get("market_catalog"):
         markets, _ = request("/markets", {"language": "en"})
         state["market_catalog"] = compact_market_catalog(markets)
         if rem is not None:
             rem -= 1
+        time.sleep(1.05)
 
     targets = sorted((state.get("sport_catalog") or {}).items())
     if not targets:
@@ -396,7 +398,10 @@ def run():
         fid = fx.get("fixtureId")
         try:
             hist, _ = request("/historical-odds", {"fixtureId": fid, "bookmakers": ",".join(BOOKMAKERS)})
-            rows = parse_history(fx, hist if isinstance(hist, dict) else {}, state, collected)
+            hist_obj = hist if isinstance(hist, dict) else {}
+            if "bookmakers" not in hist_obj and isinstance(hist_obj.get(fid), dict):
+                hist_obj = hist_obj[fid]
+            rows = parse_history(fx, hist_obj, state, collected)
             all_rows.extend(rows)
             processed[fid] = {
                 "processed_at_utc": collected,
