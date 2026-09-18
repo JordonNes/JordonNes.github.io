@@ -13,7 +13,7 @@
   const isEmptyDecision = value => {
     const s=String(value??"").trim();
     if(!s) return true;
-    return /^(?:WATCH(?:\s*\/\s*NO BET)?|NO BET|PASS\b|CLOSED\b|STARTED\b|DATA-LIMITED\b|MARKET NOT YET AVAILABLE\b|UNSUPPORTED PLAYER THRESHOLD\b)/i.test(s);
+    return /^(?:WATCH(?:\s*\/\s*NO BET)?|NO BET|PASS\b|CLOSED\b|STARTED\b|LIVE\b|FINAL\b|PAUSED\b|DELAYED\b|SUSPENDED\b|POSTPONED\b|RESCHEDULED\b|CANCELLED\b|DATA-LIMITED\b|MARKET NOT YET AVAILABLE\b|UNSUPPORTED PLAYER THRESHOLD\b)/i.test(s);
   };
   const cleanDecisionItems = value => asItems(value).filter(x=>!isEmptyDecision(x));
   const unsupportedCatalog = {
