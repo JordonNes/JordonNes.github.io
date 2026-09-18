@@ -165,9 +165,46 @@ def game_markets_for_event(event, by_event):
 
 def main():
     src=json.loads(SRC.read_text(encoding="utf-8")) if SRC.exists() else {"events":[]}
+    source_events=list(src.get("events") or [])
+
+    # GAME_ML publication must not depend on the player-prop sweep.  The fast
+    # moneyline acquisition writes its own event catalog; merge those shells
+    # into the future board even when qc_prop_board is stale, empty, or late.
+    live=DATA/"current_game_moneylines.json"
+    if live.exists():
+        try:
+            live_payload=json.loads(live.read_text(encoding="utf-8"))
+            live_events=live_payload.get("events") or []
+            seen={
+                (
+                    str(e.get("league") or ""),
+                    str(e.get("source_event_id") or ""),
+                    norm_team(e.get("away")),
+                    norm_team(e.get("home")),
+                    str(e.get("commence_time") or "")
+                )
+                for e in source_events
+            }
+            for e in live_events:
+                key=(
+                    str(e.get("league") or ""),
+                    str(e.get("source_event_id") or ""),
+                    norm_team(e.get("away")),
+                    norm_team(e.get("home")),
+                    str(e.get("commence_time") or "")
+                )
+                if key in seen: continue
+                shell=dict(e)
+                shell.setdefault("props",[])
+                shell.setdefault("sweep_status","GAME_ML_ONLY_FAST_BOARD")
+                source_events.append(shell)
+                seen.add(key)
+        except (json.JSONDecodeError,OSError) as exc:
+            print(f"WARN current game moneyline event catalog unreadable: {exc}")
+
     game_markets=load_game_markets()
     events=[]
-    for e in src.get("events") or []:
+    for e in source_events:
         start=parse(e.get("commence_time"))
         if not start or start<=NOW or start>horizon_for(e.get("league")):continue
         best={}
