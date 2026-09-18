@@ -506,14 +506,39 @@
         foot:"Recent-event shell retained temporarily for runtime final/live status only.",
         _propEventId:e.source_event_id||null
       }));
-    if(future.length){
-      s.qcs=[...recent,...future.map(qcFromBoardEvent)];
-      s.qcTitle=`${s.title||league} — ROLLING 0–7 DAY PRE-GAME QCs`;
-    }else if(recent.length){
-      s.qcs=recent;
-    }else{
-      s.qcs=[];
+
+    // Never let an empty or partial acquisition board erase the published DP slate.
+    // The refresh layer is the durable weekly/day schedule; the registry bridge only
+    // enriches it with newly acquired events/props/odds.
+    const existing=Array.isArray(s.qcs)?s.qcs:[];
+    const key=q=>`${norm(q?.away)}|${norm(q?.home)}`;
+    const merged=[...existing];
+    const index=new Map(merged.map((q,i)=>[key(q),i]));
+
+    for(const shell of recent){
+      const k=key(shell);
+      if(!index.has(k)){ index.set(k,merged.length); merged.push(shell); }
     }
+    for(const e of future){
+      const boardQc=qcFromBoardEvent(e);
+      const k=key(boardQc);
+      if(index.has(k)){
+        const i=index.get(k), prior=merged[i];
+        // Preserve explicit DP schedule/grouping and completed-game shells.
+        // Enrich only fields that the board can improve without deleting prior content.
+        if(boardQc._propEventId) prior._propEventId=boardQc._propEventId;
+        if((boardQc.hot||[]).length) prior.hot=boardQc.hot;
+        if((boardQc.sns1||[]).length) prior.sns1=boardQc.sns1;
+        if((boardQc.sns2||[]).length) prior.sns2=boardQc.sns2;
+        if((boardQc.normal||[]).length) prior.normal=boardQc.normal;
+        if((boardQc.demon||[]).length) prior.demon=boardQc.demon;
+        if(!prior.winner && boardQc.winner){ prior.winner=boardQc.winner; prior.conf=boardQc.conf; prior._winnerProvisional=boardQc._winnerProvisional; }
+        if((!prior.market || /WATCH|MARKET NOT/i.test(String(prior.market))) && boardQc.market) prior.market=boardQc.market;
+      }else{
+        index.set(k,merged.length); merged.push(boardQc);
+      }
+    }
+    s.qcs=merged;
   });
 
   window.LJ_QC_PROP_STATUS={
