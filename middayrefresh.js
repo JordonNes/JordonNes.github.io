@@ -22,7 +22,16 @@ NQ('SUN SEP 20 • 1:25 PM PT','SEA','AZ','Seahawks -3.5 • total 40.5 • PROV
 NQ('SUN SEP 20 • 1:25 PM PT','MIA','SF','49ers -13.5 • total 45.5 • PROVISIONAL MARKET BASELINE','49ers ML','91%','Current game-side baseline; full JINX contextual review continues.'),
 NQ('SUN SEP 20 • 1:25 PM PT','WSH','DAL','Cowboys -4.5 • total 50.5 • PROVISIONAL MARKET BASELINE','Cowboys ML','69%','Current game-side baseline; full JINX contextual review continues.'),
 NQ('SUN SEP 20 • 5:20 PM PT','IND','KC','Chiefs -6.5 • total 46.5 • PROVISIONAL MARKET BASELINE','Chiefs ML','74%','Sunday Night Football game-side baseline; full JINX contextual review continues.'),
-{time:'MON SEP 21 • 5:15 PM PT',away:'NYG',home:'LAR',market:'Rams -7 • total 47.5 • PROVISIONAL MARKET BASELINE',winner:'Rams ML',conf:'79%',hot:['Cam Skattebo • MORE 0.5 Anytime TD • DEMON • LJPC 52%'],sns1:[],sns2:[],normal:[],demon:['Cam Skattebo • MORE 0.5 Anytime TD • DEMON • LJPC 52%'],foot:'Monday Night Football QC retained through final. Cam Skattebo MORE 0.5 Anytime TD is a user-verified current PrizePicks Demon POM captured Sep 18 at 3:24 PM PT; no additional MNF prop is invented until synchronized market coverage arrives.'}
+{time:'MON SEP 21 • 5:15 PM PT',away:'NYG',home:'LAR',market:'Rams -7 • total 47.5 • PROVISIONAL MARKET BASELINE',winner:'Rams ML',conf:'79%',hot:[
+'Jaxson Dart • LESS 214.5 Passing Yards • NORMAL • LJPC 65%',
+'Kyren Williams • LESS 62.5 Rushing Yards • NORMAL • LJPC 63%',
+'Matthew Stafford • LESS 242.5 Passing Yards • NORMAL • LJPC 61%',
+'Cam Skattebo • MORE 0.5 Anytime TD • DEMON • LJPC 52%'
+],sns1:[],sns2:[],normal:[
+'Jaxson Dart • LESS 214.5 Passing Yards • NORMAL • LJPC 65%',
+'Kyren Williams • LESS 62.5 Rushing Yards • NORMAL • LJPC 63%',
+'Matthew Stafford • LESS 242.5 Passing Yards • NORMAL • LJPC 61%'
+],demon:['Cam Skattebo • MORE 0.5 Anytime TD • DEMON • LJPC 52%'],foot:'MNF market coverage is verified across PrizePicks, DraftKings and Kalshi. Normal QC uses exact current PrizePicks thresholds with L&J evaluation; Skattebo 0.5 anytime TD remains a separate Demon POM. Recheck executable lines before entry.'}
 ];
 NFL.winners=NFL.qcs.filter(q=>q.winner&&q.conf).map(q=>[q.away+' @ '+q.home,q.winner,q.conf,q.market]);
 NFL.hotTop=[];NFL.twenty=[];NFL.twentyNote='Week 2 retention rule: Thursday remains visible through MNF final as a final-score/box-score record. Sunday and Monday retain game-winner calls. Player props populate separately when current exact markets clear acquisition and L&J evaluation.';
