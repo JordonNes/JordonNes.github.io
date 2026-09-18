@@ -11,7 +11,7 @@ Daily refreshes may update only:
 - moneylines, spreads, totals and other current odds;
 - player/participant props and prices;
 - LEGZ/JINX predictions, confidence, quality/risk and rationale;
-- WATCH / PASS / DATA-LIMITED / CLOSED status.
+- explicit event-state labels such as SCHEDULED, LIVE, FINAL, PAUSED/DELAYED, POSTPONED, RESCHEDULED or CANCELLED.
 
 Daily refreshes must not remove, rename, reorder or restyle the core publication architecture.
 
@@ -23,7 +23,7 @@ Daily refreshes must not remove, rename, reorder or restyle the core publication
 4. **20 PIECE** — sport-level top player/participant prediction-prop pool. One player/participant counts once in the ranked pool; do not create filler simply to reach 20.
 5. **Per-Game / Per-Fight Quickie Cards** using the locked horizontal QC format.
 
-If a sport is inactive or no participant-prop market exists after a documented multi-source sweep, the section remains visible and displays MARKET NOT OPEN / DATA-LIMITED rather than disappearing. An active sport with an available prop board may not use a blank WATCH section.
+If a sport is inactive or no participant-prop market exists after a documented multi-source sweep, the sport page may retain a concise status panel, but it must not render empty parlay columns. An active sport with an available prop board must populate the applicable prediction sections.
 
 ## Required home-page sections
 
@@ -46,9 +46,9 @@ The **Current Status** card for each sport/league must automatically display eve
 
 `materialalerts.js` is the data-only alert feed. Automated alert sweeps update that file; they do not modify the locked QC layout or prediction data.
 
-## Locked Per-Game QC structure
+## Per-Game QC structure and event-state behavior
 
-Every full game/fight QC uses these six presentation columns:
+The pregame QC may use these decision areas when they contain actual supportable selections:
 
 1. **GAME SIDE** — matchup/participants, current market and **JINX GAME WINNER** with confidence.
 2. **LEGZ PLAYER HOT TOP** — best available player/participant markets for that matchup.
@@ -57,11 +57,21 @@ Every full game/fight QC uses these six presentation columns:
 5. **NORMAL** — balanced probability-to-payout construction.
 6. **AGGRESSIVE / DEMON** — higher-variance ceiling construction, with the **JINX CASE / KILL SWITCH** embedded in the card.
 
+Empty prediction/parlay areas are omitted rather than displayed as placeholders.
+
+**Runtime event-state override:**
+- **Pregame:** show only populated prediction/parlay areas.
+- **Started / live:** hide LEGZ Hot Top, both SNS/Goblin areas and Aggressive/Demon. Retain only the populated **NORMAL** construction, identified as the locked pregame Normal ticket, and display a current box score to the right.
+- **Final / over:** remove every parlay/prediction area and show only FINAL status plus the ending box score.
+- **Paused / delayed / suspended:** state the interruption clearly and suppress executable parlay areas until live play resumes.
+- **Postponed / rescheduled / cancelled:** state the official status clearly and suppress stale executable parlay areas.
+- The runtime game-state/box-score snapshot should be refreshed from an available public status feed when the page is opened; the capture time and source must be visible.
+
 The sport-level **20 PIECE is not a per-game QC column**. It is exclusively a ranked player/participant-prop pool. All moneyline and outright winner predictions belong under **JINX GAME WINNERS** and must never appear in the 20 Piece.
 
 ## Verification rule
 
-Never manufacture a prediction merely to fill a box. If a current verified prop or executable market is unavailable, keep the box visible and mark it WATCH / PASS / DATA-LIMITED. Started games may be marked CLOSED / LIVE so stale pregame bets are not presented as executable.
+Never manufacture a prediction merely to fill a box. If L&J has no supportable prediction for a parlay tier, **do not render that empty parlay tier**. The game/match card may remain visible with its schedule or official event status. Started and completed games follow the event-state override above so stale pregame constructions are never presented as newly executable bets.
 
 ## Mandatory source-sweep rule
 
@@ -76,7 +86,7 @@ The source sweep should include, as available and relevant:
 - connected data tools available to ChatGPT;
 - public web sources that provide current executable markets.
 
-Use the sweep to fill **every section that can be responsibly filled**: LEGZ HOT TOP, JINX GAME WINNERS, 20 PIECE, GAME SIDE, LEGZ PLAYER HOT TOP, both SNS/GOBLIN groups, NORMAL, and AGGRESSIVE/DEMON. A section may remain WATCH only after the available-source sweep fails to produce a sufficiently current and supportable market. Never use stale or invented data merely to eliminate a WATCH label.
+Use the sweep to fill **every section that can be responsibly filled**: LEGZ HOT TOP, JINX GAME WINNERS, 20 PIECE, GAME SIDE, LEGZ PLAYER HOT TOP, both SNS/GOBLIN groups, NORMAL, and AGGRESSIVE/DEMON. If the available-source sweep produces no supportable selection for a specific parlay tier, omit that tier from the QC rather than displaying an empty placeholder. Never use stale or invented data merely to fill presentation space.
 
 Where sources disagree, prefer the most recent executable market, identify material line sensitivity in the JINX case/kill switch, and recheck the line before publication or use.
 
@@ -84,13 +94,13 @@ Where sources disagree, prefer the most recent executable market, identify mater
 
 For every active game/fight QC, the publication must show the scheduled event start time. For U.S. sports, display both **ET and PT** whenever practical so the user can immediately identify the betting window. A QC with a matchup but no kickoff/start time is incomplete.
 
-For every active sport/league slate, L&J must perform a dedicated player-prop search before publishing WATCH. This includes league/sportsbook boards, DFS projection boards such as PrizePicks when accessible, odds-comparison pages, current model/prop services, matchup previews, and reputable public analysis. When at least one supportable player market is found for a game, populate **LEGZ PLAYER HOT TOP** and any ticket sections that can be responsibly constructed from the available verified legs. Do not leave an entire league's player-prop board blank merely because one preferred source does not expose props.
+For every active sport/league slate, L&J must perform a dedicated player-prop search before concluding that no supportable prop prediction is available. This includes league/sportsbook boards, DFS projection boards such as PrizePicks when accessible, odds-comparison pages, current model/prop services, matchup previews, and reputable public analysis. When at least one supportable player market is found for a game, populate **LEGZ PLAYER HOT TOP** and any ticket sections that can be responsibly constructed from the available verified legs. Do not leave an entire league's player-prop board blank merely because one preferred source does not expose props.
 
 When an accessible player-prop board exists, publish the best researched props even if none clears the normal L&J qualification gate. Such selections must be italicized and labeled *CONDITIONAL LEAN — BELOW L&J STANDARD*, with confidence, maximum acceptable line or target threshold, and the principal failure risk. Both SNS/Goblin cards must contain six participant-prop legs whenever the accessible board supports six. Normal and Aggressive/Demon cards must likewise be completed from the best available participant props according to their risk tiers. Team sides, spreads and totals never count as player-prop legs.
 
-Only genuine market scarcity permits fewer than six legs. In that case, publish every available ranked prop and label the construction **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. “WATCH” is not an acceptable substitute merely because a preferred source is unavailable or because no prop clears the usual confidence gate.
+Only genuine market scarcity permits fewer than six legs. In that case, publish every available ranked prop and label the construction **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. Empty placeholder text is not an acceptable substitute merely because a preferred source is unavailable or because no prop clears the usual confidence gate.
 
-NCAA Football follows this rule exactly: every current slate must include kickoff times for all listed games and a multi-source CFB player-prop sweep before any game is left on WATCH.
+NCAA Football follows this rule exactly: every current slate must include kickoff times for all listed games and a multi-source CFB player-prop sweep before L&J concludes that no supportable player-prop prediction is available.
 
 ## Permanent Tennis coverage
 
@@ -106,7 +116,7 @@ For each active Tennis slate, L&J should use the official order of play plus cur
 
 Tennis QCs must show the scheduled or official-order start designation. When an exact court time is not assigned because a match follows an earlier match, state the official **FOLLOWS / NOT BEFORE / NIGHT SESSION** designation rather than inventing a clock time.
 
-The Tennis Daily Predictions page permanently separates its Quickie Cards into four labeled subsections: **Men's Singles, Men's Doubles, Women's Singles, and Women's Doubles**. Each subsection remains visible between rounds and displays WATCH rather than disappearing when a draw, start time, opponent, or executable market is not yet verified. The page also retains the sport-level **LEGZ TOP** and **JINX GAME WINNERS** sections above those four QC boards.
+The Tennis Daily Predictions page permanently separates its Quickie Cards into four labeled subsections: **Men's Singles, Men's Doubles, Women's Singles, and Women's Doubles**. Each subsection remains identifiable between rounds; however, empty parlay/prediction boxes are not rendered when a draw, start time, opponent, or executable market is not yet verified. The page also retains the sport-level **LEGZ TOP** and **JINX GAME WINNERS** sections above those four QC boards.
 
 Match-winner favorites with very expensive prices may carry high L&J hit confidence but must not automatically be treated as good value. The preferred market should be the best probability-to-price expression after comparing winner, handicap, total and set markets.
 
@@ -167,9 +177,10 @@ Every scheduled event receives a documented QC review. No selection may be inven
 - All below-standard and conditional entries must render in italics, show their confidence, identify the maximum acceptable line or target threshold when available, and explain the principal failure risk.
 - If the market has not opened, use *MARKET NOT YET AVAILABLE — TARGET LINE* and state the line required before activation.
 - A conditional lean may be used to complete the required SNS forecast when it is among the most favorable available participant props, but its below-standard status must remain explicit. It is not represented as a standard-qualified pick.
-- If fewer than six available participant props exist after the full source sweep, use the documented **MARKET-LIMITED** exception; do not leave the decision area blank.
+- If fewer than six available participant props exist after the full source sweep, use the documented **MARKET-LIMITED** exception for any tier that is actually published.
+- If no supportable prediction exists for a parlay tier, omit that tier entirely rather than displaying an empty or generic no-bet placeholder.
 
-The QC remains populated with the research result, status and target condition; it must not present a visually blank decision area merely because no wager qualifies.
+The QC game/status area remains visible while unsupported parlay columns are omitted.
 
 ## Market-platform classification
 
