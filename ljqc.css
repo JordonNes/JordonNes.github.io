@@ -259,3 +259,98 @@ td{font-size:12px!important;line-height:1.45}
   .qc-live-row .qc-cell,.qc-final-row .qc-cell{border-right:0!important;border-bottom:1px solid #252936}
   .qc-live-row .qc-cell:last-child,.qc-final-row .qc-cell:last-child{border-bottom:0}
 }
+
+
+/* NFL DP QC LAYOUT — day-grouped horizontal cards, aligned to current L&J palette. */
+.sport-nfl .nfl-qc-section{overflow:visible}
+.sport-nfl .nfl-qc-day{margin:0 0 22px}
+.sport-nfl .nfl-qc-daybar{
+  margin:0 0 10px;
+  padding:12px 16px;
+  border-radius:8px;
+  font-size:18px;
+  line-height:1.15;
+  font-weight:900;
+  text-align:center;
+  letter-spacing:.2px;
+  color:#f8f5ea;
+  background:linear-gradient(135deg,#2f8468 0%,#155a4a 70%,#12372f 100%);
+  border:1px solid rgba(214,180,90,.22);
+  box-shadow:0 8px 20px rgba(0,0,0,.22);
+}
+.sport-nfl .nfl-qc-monday .nfl-qc-daybar{
+  background:linear-gradient(135deg,#53336a 0%,#3a254a 64%,#24182f 100%);
+}
+.sport-nfl .nfl-qc-thursday .nfl-qc-daybar{
+  background:linear-gradient(135deg,#2f8468 0%,#237b78 72%,#163f46 100%);
+}
+.sport-nfl .nfl-qc-sunday .nfl-qc-daybar{
+  background:linear-gradient(135deg,#8d6a19 0%,#b78922 55%,#d4af37 100%);
+  color:#1c1607;
+}
+.sport-nfl .nfl-qc-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.sport-nfl .nfl-qc-list .qc-row{
+  display:grid!important;
+  grid-template-columns:minmax(220px,1.15fr) repeat(5,minmax(175px,1fr))!important;
+  min-width:1120px;
+  min-height:170px;
+  align-items:stretch;
+}
+.sport-nfl .nfl-qc-list .qc-game{
+  background:linear-gradient(180deg,#0e1116,#0a0c10);
+}
+.sport-nfl .nfl-qc-list .qc-hot h4{
+  background:linear-gradient(135deg,#b78922 0%,#d4af37 58%,#e1c46a 100%)!important;
+  color:#241a07!important;
+}
+.sport-nfl .nfl-qc-list .qc-ticket-h.sns1{
+  background:linear-gradient(135deg,#174f3b,#2f8468)!important;
+}
+.sport-nfl .nfl-qc-list .qc-ticket-h.sns2{
+  background:linear-gradient(135deg,#17585a,#237b78)!important;
+}
+.sport-nfl .nfl-qc-list .qc-ticket-h.normal{
+  background:linear-gradient(135deg,#2d1d38,#53336a)!important;
+  color:#fff!important;
+}
+.sport-nfl .nfl-qc-list .qc-ticket-h.demon{
+  background:linear-gradient(135deg,#502437,#7a3955)!important;
+}
+.sport-nfl .nfl-qc-section>.nfl-qc-day{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+}
+.sport-nfl .nfl-qc-section .qc-list+.qc-standard{margin-top:16px}
+@media(max-width:1180px){
+  .sport-nfl .nfl-qc-day{overflow-x:auto}
+  .sport-nfl .nfl-qc-list{min-width:1120px}
+}
+@media(max-width:690px){
+  .sport-nfl .nfl-qc-daybar{
+    position:sticky;
+    left:0;
+    z-index:2;
+    min-width:calc(100vw - 24px);
+    font-size:16px;
+    padding:11px 14px;
+  }
+  .sport-nfl .nfl-qc-list{
+    min-width:980px;
+  }
+  .sport-nfl .nfl-qc-list .qc-row{
+    grid-template-columns:minmax(190px,1.1fr) repeat(5,minmax(158px,1fr))!important;
+    min-width:980px;
+    border-radius:10px;
+  }
+  .sport-nfl .nfl-qc-list .qc-game,
+  .sport-nfl .nfl-qc-list .qc-hot,
+  .sport-nfl .nfl-qc-list .qc-ticket{
+    padding-top:0;
+    padding-bottom:0;
+  }
+}
