@@ -321,22 +321,23 @@
     const core=yesNo
       ? `${n(p.participant)} ${market} — ${side}`
       : `${n(p.participant)} ${side}${line} ${market}`;
-    const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
-      ? ` (${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''})`
+    const price=p.price!==null&&p.price!==undefined&&p.price!==''
+      ? ` (${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''})`
       : '';
-    const conf=marketBaselineLj(p);
+    const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
+    const conf=evaluated?Number(p.ljpc):marketBaselineLj(p);
     return {
-      display:`${core}${price} • PROVISIONAL LJPC ${conf.toFixed(conf%1?1:0)}%`,
+      display:`${core}${price} • ${evaluated?'LJPC':'PROVISIONAL HIT ESTIMATE'} ${conf.toFixed(conf%1?1:0)}%`,
       confidence:conf,
       participant:n(p.participant),
       market:`${market}|${side}|${p.threshold??''}`,
       marketFamily:market,
       side,
       threshold:p.threshold,
-      best_price:Number.isFinite(Number(p.best_price))?Number(p.best_price):null,
+      best_price:Number.isFinite(Number(p.price))?Number(p.price):null,
       market_source_count:Number(p.market_source_count||0),
       pomType:explicitPomType(p)||'NORMAL',
-      sourceMode:'PROVISIONAL_MARKET_BASELINE'
+      sourceMode:evaluated?'LJ_EVALUATED_OVERRIDE':'PROVISIONAL_MARKET_BASELINE'
     };
   }
 
@@ -401,8 +402,8 @@
 
     pool.sort((a,b)=>{
       if(a.sourceMode!==b.sourceMode){
-        if(a.sourceMode==='PUBLISHED_QC_PROP') return -1;
-        if(b.sourceMode==='PUBLISHED_QC_PROP') return 1;
+        const rank=x=>x==='PUBLISHED_QC_PROP'?0:x==='LJ_EVALUATED_OVERRIDE'?1:2;
+        return rank(a.sourceMode)-rank(b.sourceMode);
       }
       return (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count);
     });
