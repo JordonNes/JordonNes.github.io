@@ -90,3 +90,37 @@ Night-preview, late/current player-prop overlays must execute **after** master a
 ## 9. Exactly-20 display fallback
 
 NFL, WNBA, NBA, MLB, NHL, NCAA Football, and NCAA Basketball must always render 20 player-prop rows in the 20 Piece. Missing supported selections are replaced by dark-pink **UNSUPPORTED PLAYER THRESHOLD — TARGET / VERIFY LIVE LINE** rows, never WATCH and never a team/game-side market. Unsupported rows have no L&J confidence and are not approved picks or parlay legs. They remain visually and semantically separate from supported and conditional L&J predictions.
+
+
+## 10. POM market-variant and QC ticket-construction standard
+
+Effective September 18, 2026, **POM** means **Props, Odds, Moneyline**. For QC player-prop construction, Goblin, Normal/Market and Demon identify the **user-selectable market variant actually offered by the betting/DFS platform**. They are not internal L&J confidence labels.
+
+- **Goblin POM:** an easier/discounted projection line whose easier threshold generally reduces payout economics.
+- **Normal / Market POM:** the standard, regular or unmarked projection.
+- **Demon POM:** a harder/elevated projection line whose added difficulty generally increases payout economics.
+
+L&J evaluates the exact offered POM independently. A Goblin is not automatically a good prediction, and a Demon is not automatically a bad prediction. **L&J modeled hit probability is separate from POM class.**
+
+### QC ticket objectives
+
+These rules apply to both **Per-Game/Event QC** and **All-Sports QC** player-prop tickets:
+
+1. **SNS1 / GOBLIN 1 — probability first.** Goblin POMs only. Target individual L&J confidence above **77%**. The objective is the most secure / “MISS Proof” construction LSI can support. If fewer than six Goblins clear 77%, use the strongest remaining verified Goblins before considering a shorter POM-gated ticket; never silently substitute a Normal or Demon as a Goblin.
+2. **SNS2 / GOBLIN 2 — probability first with diversity.** Goblin and/or Normal POMs only. Target individual L&J confidence above **70%**. Avoid repeating SNS1’s exact legs and prefer different players/prop families when the board supports it.
+3. **NORMAL / MARKET — standard-market strength.** Normal/Market POMs only; no Goblins and no Demons. Rank primarily by L&J hit probability. Market economics and source depth are tie-breakers, not the primary objective. JINX support is part of the L&J evaluation.
+4. **AGGRESSIVE / DEMON — economics first after a probability gate.** Normal and Demon POMs only. Eligible legs must carry **L&J modeled hit probability of at least 69.6%**. Within that qualified pool, prioritize payout/upside economics while still seeking the combination most likely to go green.
+
+### Diversity and probability integrity
+
+QC tickets are separate constructions, not four cosmetic versions of the same parlay. The builder must avoid repeating the same player + prop + threshold POM across tickets when alternatives exist, and should diversify players and prop families where the board supports it.
+
+**Per-leg confidence and ticket hit probability are different metrics.** Ticket hit probability must never be represented by averaging leg confidences. A baseline joint probability may be calculated by multiplying leg probabilities, but it must be labeled as an independence baseline until correlation/dependence is explicitly modeled. LSI should ultimately evaluate whole-ticket economics, correlation, duplicated game-script exposure and payout interaction in addition to isolated legs.
+
+### Probability versus economics
+
+Under normal L&J operation, **probability has priority over economics when assessing POM value**. Payout economics are secondary unless a dedicated Devil Mode is invoked. Devil Mode is reserved for later development and will hunt high-payout Normal/Demon POMs subject to its own probability gate.
+
+### POM provenance requirement
+
+A market may be labeled Goblin or Demon only when that variant is explicit in the source data or platform presentation. If variant provenance is absent, LSI must treat the market as Normal/standard rather than inventing a Goblin/Demon classification from confidence alone.
