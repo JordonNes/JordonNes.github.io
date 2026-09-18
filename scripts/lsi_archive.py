@@ -368,6 +368,8 @@ def main():
         "weather_history": src / "data/weather_history.csv",
         "event_inventory": src / "data/event_inventory.csv",
         "results": src / "data/results.csv",
+        "settlement_status": src / "data/settlement_status.json",
+        "settlement_aliases": src / "data/settlement_aliases.json",
         "qc_prop_board": src / "data/qc_prop_board.json",
     }
 
@@ -388,6 +390,8 @@ def main():
 
     event_rows = load_csv(files["event_inventory"])
     result_rows = load_csv(files["results"])
+    settlement_status = load_json(files["settlement_status"]) or {}
+    settlement_aliases = load_json(files["settlement_aliases"]) or {}
 
     qc = load_json(files["qc_prop_board"]) or {}
     qc_events = qc.get("events", []) if isinstance(qc, dict) else []
@@ -479,6 +483,23 @@ def main():
         src_commit=commit,
         identity=result_identity,
     )
+    new_counts["settlement_status"] = append_items(
+        archive / "settlement_history.jsonl",
+        kind="SETTLEMENT_STATUS",
+        dataset="settlement_status",
+        items=[settlement_status] if settlement_status else [],
+        src_commit=commit,
+        source_generated_at=settlement_status.get("generated_at_utc") if isinstance(settlement_status, dict) else None,
+    )
+    new_counts["settlement_aliases"] = append_items(
+        archive / "settlement_history.jsonl",
+        kind="SETTLEMENT_ALIASES",
+        dataset="settlement_aliases",
+        items=[settlement_aliases] if settlement_aliases else [],
+        src_commit=commit,
+        source_generated_at=settlement_aliases.get("generated_at_utc") if isinstance(settlement_aliases, dict) else None,
+    )
+
     new_counts["qc_prop_board"] = append_items(
         archive / "publication_history.jsonl",
         kind="PUBLICATION_STATE",
@@ -503,6 +524,7 @@ def main():
         "context_history": archive / "context_history.jsonl",
         "event_history": archive / "event_history.jsonl",
         "result_history": archive / "result_history.jsonl",
+        "settlement_history": archive / "settlement_history.jsonl",
         "publication_history": archive / "publication_history.jsonl",
     }
     counts = {name: count_jsonl_tree(path) for name, path in archive_files.items()}
@@ -537,6 +559,8 @@ def main():
     source_summaries["weather_history"]["items"] = len(weather_rows)
     source_summaries["event_inventory"]["items"] = len(event_rows)
     source_summaries["results"]["items"] = len(result_rows)
+    source_summaries["settlement_status"]["items"] = 1 if settlement_status else 0
+    source_summaries["settlement_aliases"]["items"] = len((settlement_aliases.get("events") or {})) if isinstance(settlement_aliases, dict) else 0
     source_summaries["qc_prop_board"]["items"] = len(qc_events)
 
     health = {
