@@ -44,10 +44,10 @@ MAX_EVENTS = {"MLB":16,"NBA":16,"WNBA":16,"NCAA_Basketball":16,"NCAA_Football":1
 MARKET_FIELDS = ["snapshot_id","collected_at_pt","sport","league","event_id","event_start_pt","source","market_class","participant","market","threshold","side","price","status"]
 UA = {"User-Agent": "LEGZ-JINX-LSI/2.2", "Accept": "application/json"}
 QC_BOARD = DATA / "qc_prop_board.json"
-QC_LOOKAHEAD = timedelta(hours=48)
+QC_LOOKAHEAD = timedelta(days=7)
 QC_TARGET_UNIQUE_PLAYERS = 20
 QC_MAX_SNAPSHOT_AGE = timedelta(hours=12)
-QC_POST_START_RETENTION = timedelta(hours=8)
+QC_POST_START_RETENTION = timedelta(hours=7)
 
 TEAM_ALIASES = {
     "Connecticut Sun":["CON"],"Atlanta Dream":["ATL"],"Washington Mystics":["WSH","WAS"],
