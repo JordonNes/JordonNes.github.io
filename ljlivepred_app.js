@@ -6,7 +6,7 @@
   const D = window.LJ_LIVE_DATA;
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
-  const isWatch = s => /WATCH|NO LIVE|DATA-LIMITED|PASS|PRICE WATCH/i.test(String(s || ""));
+  const isWatch = s => /WATCH|NO LIVE|DATA-LIMITED|\\bPASS\\b|PRICE WATCH/i.test(String(s || ""));
   const unique20 = rows => {
     const seen = new Set();
     return (rows || []).filter(r => {
