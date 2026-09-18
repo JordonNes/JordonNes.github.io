@@ -425,7 +425,7 @@ def run_game_odds_only():
         return
     collected=NOW.astimezone(PT).isoformat()
     rows=[]; seen=set(); calls=0; failures=0
-    for league,sport_key in sport_targets():
+    for league,sport_key in SPORT_KEYS.items():
         try:
             payload,quota=get(f"/sports/{sport_key}/odds",{"markets":"h2h","oddsFormat":"american"})
             calls+=1
