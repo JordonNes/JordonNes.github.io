@@ -29,7 +29,7 @@ Each sport recap reviews only the exact LEGZ & JINX predictions published for th
 - JINX game/match/fight winner accuracy;
 - parlay/ticket hit rate;
 - SNS/Goblin vs Normal vs Aggressive/Demon accuracy;
-- confidence calibration against the originally published L&J/JINX confidence percentages;
+- LJPC calibration against the originally published L&J Prediction Confidence percentages;
 - an exact prediction ledger showing matchup, original market/threshold, confidence, actual result, grade, and JINX review;
 - significant or surprising positive results;
 - significant or surprising negative results;
@@ -54,11 +54,11 @@ Every one of the 12 sport/league recap pages and the all-sports recap must separ
 
 ### LEGZ — Candid Results Report
 LEGZ owns the factual audit. Her section must be comprehensive, concise, and unsentimental:
-- exact prediction, market, threshold, price when recoverable, and originally published confidence;
+- exact prediction, market, threshold, price when recoverable, and originally published LJPC;
 - actual final result and HIT / MISS / PUSH-VOID / UNGRADED grade;
 - straight-pick, player-prop, winner, and ticket records;
-- performance by confidence band, market family, player, game, and ticket tier when sample size permits;
-- largest confidence successes and failures;
+- performance by LJPC band, market family, player, game, and ticket tier when sample size permits;
+- largest LJPC successes and failures;
 - misses caused by bad projection, bad market selection, bad threshold selection, stale information, or execution/timing;
 - no excuse-making, no reconstructed historical lines, and no exclusion of legitimate misses from the denominator.
 
@@ -102,3 +102,8 @@ When evidence exists, every recap should contain:
 10. **Run It Back / Watch / Avoid-Downgrade / Market Switch**
 
 The all-sports recap must aggregate the same framework across the 12 sport/league recap pages.
+
+
+## LJPC calibration standard
+
+Current predictions use **LJPC (L&J Prediction Confidence)** as the single canonical forward-looking hit probability. Recaps must never relabel LJPC as historical accuracy. After settlement, calibration compares each published LJPC band with the actual hit rate for that band. LEGZ Value and POM Value may be analyzed as explanatory features, but they are not substitutes for the settled accuracy denominator.
