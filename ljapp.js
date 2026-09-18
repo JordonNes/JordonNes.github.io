@@ -173,13 +173,16 @@
     const mainHtml=player
       ? `<span class="qc-leg-player">${esc(player)}</span> <span class="qc-leg-prop">${esc(prop)}</span>`
       : `<span class="qc-leg-prop">${esc(prop)}</span>`;
-    const bookHtml=book?`<span class="qc-leg-book">${esc(book)}</span>`:"";
+    const bookHtml=book?` <span class="qc-leg-book">${esc(book)}</span>`:"";
+    const provisional=/\bPROVISIONAL\b/i.test(raw);
     const scoreHtml=consensus
-      ? `<span class="qc-consensus" title="Conditional lean — market consensus">Consensus ${esc(consensus[1])}%</span>`
+      ? ` <span class="qc-score-sep">•</span> <span class="qc-consensus" title="Conditional lean — market consensus">MARKET CONSENSUS ${esc(consensus[1])}%</span>`
       : lj
-        ? `<span class="qc-lj-score"><span class="qc-score">LJPC ${esc(lj[1])}%</span></span>`
+        ? provisional
+          ? ` <span class="qc-score-sep">•</span> <span class="qc-provisional-score">PROVISIONAL HIT ESTIMATE ${esc(lj[1])}%</span>`
+          : ` <span class="qc-score-sep">•</span> <span class="qc-lj-score"><span class="qc-score">LJPC ${esc(lj[1])}%</span></span>`
         : "";
-    return `<span class="qc-leg-main">${mainHtml}</span>${bookHtml}${scoreHtml}`;
+    return `<span class="qc-leg-main">${mainHtml}${bookHtml}${scoreHtml}</span>`;
   }
   function ticketList(items){
     const arr=cleanDecisionItems(items);
