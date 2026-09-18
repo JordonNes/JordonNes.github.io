@@ -78,18 +78,22 @@ jobs:
           root=Path("archive/data/archive/evaluation")
           health=json.loads((root/"evaluation_health.json").read_text(encoding="utf-8"))
           latest=json.loads((root/"latest_evaluation.json").read_text(encoding="utf-8"))
-          assert health["phase"]=="EVALUATION_SHADOW"
-          assert latest["influence_enabled"] is False
           assert latest["live_prediction_write_authority"] is False
-          for value in health["authority_boundary"].values():
-              assert value is False
+          assert health["authority_boundary"]["can_modify_live_predictions"] is False
+          assert health["authority_boundary"]["can_modify_live_pages"] is False
+          assert health["authority_boundary"]["can_change_confidence"] is False
+          assert health["authority_boundary"]["can_publish"] is False
+          assert health["authority_boundary"]["can_promote_without_gate"] is False
           for name in (
               "latest_evaluation.json","maturity_by_market.json",
               "calibration_by_band.json","performance_history.jsonl",
+              "performance_summary.json","source_quality.json","learning_gate.json",
               "evaluation_health.json"
           ):
               assert (root/name).exists(), name
-          print("Self-evaluation validated in shadow mode; influence remains disabled.")
+          gate=json.loads((root/"learning_gate.json").read_text(encoding="utf-8"))
+          assert gate["production_influence_enabled"] == (gate["eligible_market_count"] > 0)
+          print(f"Self-evaluation validated; {gate['eligible_market_count']} market(s) eligible for controlled promotion.")
           PY
 
       - name: Commit evaluation-only outputs

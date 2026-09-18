@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""LSI Self-Evaluation v1.
+"""LSI historical self-evaluation and maturity gating.
 
-Phase 2 policy: evaluate historical behavior in shadow mode. This script may
-measure LSI; it may not modify, publish, promote, suppress, or score a live
-prediction for operational use.
+Reads immutable archive history, evaluates settled predictions, and produces
+calibration/performance/maturity outputs. It never writes to the live site and
+never alters a historical observation.
+
+Phase 3 eligibility is mechanical and conservative: a league/market must pass
+all data-quality and sample-size gates before it can be exported as a learning
+overlay candidate.
 """
 from __future__ import annotations
 
@@ -16,25 +20,20 @@ from pathlib import Path
 
 NOW = datetime.now(timezone.utc).isoformat()
 
-
 def norm(v):
     return " ".join(str(v or "").lower().replace("_"," ").replace("-"," ").replace("/"," ").split())
-
 
 def canonical(v):
     return json.dumps(v, ensure_ascii=False, sort_keys=True, separators=(",",":"))
 
-
 def digest(v):
     return hashlib.sha256(canonical(v).encode("utf-8")).hexdigest()
-
 
 def read_json(path):
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         return {}
-
 
 def read_jsonl(path):
     if not path.exists():
@@ -48,7 +47,6 @@ def read_jsonl(path):
             except json.JSONDecodeError: continue
     return out
 
-
 def iter_jsonl_tree(root):
     if not root.exists():
         return
@@ -60,8 +58,7 @@ def iter_jsonl_tree(root):
                 try: yield json.loads(line)
                 except json.JSONDecodeError: continue
 
-
-def latest_by(items, keyfn):
+def latest_by(items,keyfn):
     out={}
     for item in items:
         key=keyfn(item)
@@ -71,231 +68,314 @@ def latest_by(items, keyfn):
             out[key]=item
     return out
 
+def num(v):
+    try: return float(v)
+    except (TypeError,ValueError): return None
 
-def grade_value(v):
+def pct(a,b):
+    return round((a/b)*100,2) if b else None
+
+def grade(v):
     g=norm(v)
     if g in {"win","won","w","hit"}: return "WIN"
     if g in {"loss","lost","l","miss"}: return "LOSS"
     if g in {"push","tie","void"}: return "PUSH"
     return None
 
-
-def confidence_band(v):
-    try: p=float(v)
-    except (TypeError,ValueError): return "UNKNOWN"
-    lo=int(p//5)*5
+def conf_band(v):
+    p=num(v)
+    if p is None: return "UNKNOWN"
+    lo=min(int(p//5)*5,100)
     hi=min(lo+4,100)
     return f"{lo:02d}-{hi:02d}"
 
+def line_clv(side, selected, closing):
+    s=num(selected); c=num(closing)
+    if s is None or c is None: return None
+    d=norm(side)
+    if d in {"over","more","yes"}: return round(c-s,4)
+    if d in {"under","less","no"}: return round(s-c,4)
+    return None
 
-def pct(a,b):
-    return round((a/b)*100,2) if b else None
-
-
-def numeric(v):
-    try: return float(v)
-    except (TypeError,ValueError): return None
-
-
-def append_performance(path, records):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    seen=set()
-    if path.exists():
-        for item in read_jsonl(path):
-            if item.get("evaluation_id"): seen.add(item["evaluation_id"])
+def append_performance(path,rows):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    seen={x.get("evaluation_id") for x in read_jsonl(path) if x.get("evaluation_id")} if path.exists() else set()
     added=0
     with path.open("a",encoding="utf-8") as fh:
-        for rec in records:
-            eid="EVAL:"+digest(rec)
+        for row in rows:
+            eid="EVAL:"+digest(row)
             if eid in seen: continue
-            env={"evaluation_id":eid,"schema_version":"LSI-EVAL-PERF-1","evaluated_at_utc":NOW,**rec}
-            fh.write(canonical(env)+"\n")
+            fh.write(canonical({"evaluation_id":eid,"schema_version":"LSI-EVAL-PERF-2","evaluated_at_utc":NOW,**row})+"\n")
             seen.add(eid); added+=1
     return added
 
+def summarize(rows):
+    settled=[r for r in rows if r.get("grade") in {"WIN","LOSS","PUSH"}]
+    decisive=[r for r in settled if r.get("grade") in {"WIN","LOSS"}]
+    wins=sum(r["grade"]=="WIN" for r in decisive)
+    losses=sum(r["grade"]=="LOSS" for r in decisive)
+    pushes=sum(r["grade"]=="PUSH" for r in settled)
+    predicted=[r for r in decisive if r.get("confidence") is not None]
+    avg_pred=sum(r["confidence"] for r in predicted)/len(predicted) if predicted else None
+    hit=pct(wins,wins+losses)
+    brier=None
+    if predicted:
+        brier=round(sum(((r["confidence"]/100)-(1 if r["grade"]=="WIN" else 0))**2 for r in predicted)/len(predicted),6)
+    cal_error=round(hit-avg_pred,2) if hit is not None and avg_pred is not None else None
+    clvs=[r["clv"] for r in settled if r.get("clv") is not None]
+    return {
+        "predictions":len(rows),
+        "settled":len(settled),
+        "wins":wins,"losses":losses,"pushes":pushes,
+        "hit_rate_pct":hit,
+        "avg_predicted_probability_pct":round(avg_pred,2) if avg_pred is not None else None,
+        "calibration_error_pp":cal_error,
+        "brier_score":brier,
+        "avg_line_clv":round(sum(clvs)/len(clvs),4) if clvs else None,
+        "positive_clv_rate_pct":pct(sum(x>0 for x in clvs),len(clvs)) if clvs else None,
+    }
 
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--archive-root",required=True)
     args=ap.parse_args()
     root=Path(args.archive_root).resolve()
-    out=root/"evaluation"
-    out.mkdir(parents=True,exist_ok=True)
+    out=root/"evaluation"; out.mkdir(parents=True,exist_ok=True)
 
-    health=read_json(root/"archive_health.json")
+    archive_health=read_json(root/"archive_health.json")
     manifest=read_json(root/"archive_manifest.json")
     pred_env=[x for x in read_jsonl(root/"prediction_history.jsonl") if x.get("kind")=="PREDICTION"]
     result_env=read_jsonl(root/"result_history.jsonl")
+    settlement_env=[x for x in read_jsonl(root/"settlement_history.jsonl") if x.get("kind")=="SETTLEMENT_STATUS"]
 
     latest_preds=latest_by(pred_env,lambda x:(x.get("payload") or {}).get("prediction_id"))
     latest_results=latest_by(result_env,lambda x:(x.get("payload") or {}).get("prediction_id"))
+    latest_settlement=max(settlement_env,key=lambda x:x.get("captured_at_utc") or "",default={}).get("payload") or {}
 
-    market_stats=defaultdict(lambda:{"observations":0,"sources":set(),"books":set()})
     source_counts=defaultdict(int)
+    market_group_obs=defaultdict(int)
+    market_group_books=defaultdict(set)
+    market_group_sources=defaultdict(set)
     for env in iter_jsonl_tree(root/"market_history"):
         p=env.get("payload") or {}
-        league=p.get("league") or ""
-        event=p.get("event_id") or p.get("fixture_id") or ""
-        market=p.get("market") or p.get("market_name") or ""
-        key=(league,event,norm(market))
-        stat=market_stats[key]
-        stat["observations"]+=1
+        league=p.get("league") or "UNKNOWN"
+        market_key=norm(p.get("market") or p.get("market_name") or "UNKNOWN")
+        key=(league,market_key)
+        market_group_obs[key]+=1
         source=str(p.get("source") or env.get("dataset") or "")
         book=str(p.get("book") or p.get("bookmaker") or "")
-        if source: stat["sources"].add(source)
-        if book: stat["books"].add(book)
+        if source: market_group_sources[key].add(source)
+        if book: market_group_books[key].add(book)
         source_counts[env.get("dataset") or "unknown"]+=1
 
-    perf=[]
-    groups=defaultdict(list)
-    overall=[]
+    rows=[]
     for pid,env in latest_preds.items():
         p=dict(env.get("payload") or {})
         r=(latest_results.get(pid) or {}).get("payload") or {}
-        grade=grade_value(r.get("grade") or r.get("result") or p.get("win_loss_push"))
-        actual=r.get("actual_result") if r.get("actual_result") not in (None,"") else p.get("actual_result")
+        g=grade(r.get("grade") or p.get("win_loss_push"))
+        selected=p.get("threshold")
         closing=r.get("closing_threshold") if r.get("closing_threshold") not in (None,"") else p.get("closing_line")
-        clv=p.get("CLV")
-        conf=numeric(p.get("lj_confidence") if p.get("lj_confidence") is not None else p.get("lj_probability"))
-        mcount=numeric(p.get("market_source_count"))
-        row={
+        clv=num(p.get("CLV"))
+        if clv is None:
+            clv=line_clv(p.get("side"),selected,closing)
+        mcount=num(p.get("market_source_count"))
+        status=norm(p.get("status"))
+        rows.append({
             "prediction_id":pid,
-            "league":p.get("league"),
+            "league":p.get("league") or "UNKNOWN",
             "sport":p.get("sport"),
-            "market":p.get("market"),
+            "market":p.get("market") or "UNKNOWN",
+            "market_key":norm(p.get("market") or "UNKNOWN"),
             "market_class":p.get("market_class"),
             "participant":p.get("participant"),
-            "model_version":p.get("model_version"),
-            "tier":p.get("tier"),
-            "confidence":conf,
-            "confidence_band":confidence_band(conf),
-            "grade":grade,
-            "actual_result":actual,
+            "model_version":p.get("model_version") or "UNKNOWN",
+            "tier":p.get("tier") or "UNKNOWN",
+            "publication_status":status or "unknown",
+            "confidence":num(p.get("lj_confidence") if p.get("lj_confidence") is not None else p.get("lj_probability")),
+            "confidence_band":conf_band(p.get("lj_confidence") if p.get("lj_confidence") is not None else p.get("lj_probability")),
+            "grade":g,
+            "actual_result":r.get("actual_result") if r.get("actual_result") not in (None,"") else p.get("actual_result"),
+            "selected_line":selected,
             "closing_line":closing,
-            "clv":numeric(clv),
+            "clv":clv,
             "provenance_present":bool(p.get("source_snapshot_ids")),
+            "market_source_count":mcount,
             "multi_source":bool(mcount is not None and mcount>=2),
-        }
-        if grade:
-            perf.append(row)
-        overall.append(row)
-        groups[(p.get("league") or "UNKNOWN", norm(p.get("market") or "UNKNOWN"))].append(row)
-
-    added_perf=append_performance(out/"performance_history.jsonl",perf)
-
-    cal=defaultdict(lambda:{"wins":0,"losses":0,"pushes":0,"predicted_sum":0.0,"graded_binary":0,"brier_sum":0.0})
-    for r in perf:
-        band=r["confidence_band"]; g=r["grade"]; conf=r["confidence"]
-        d=cal[band]
-        if g=="WIN": d["wins"]+=1
-        elif g=="LOSS": d["losses"]+=1
-        elif g=="PUSH": d["pushes"]+=1
-        if g in {"WIN","LOSS"} and conf is not None:
-            y=1.0 if g=="WIN" else 0.0
-            prob=conf/100.0
-            d["predicted_sum"]+=prob
-            d["brier_sum"]+=(prob-y)**2
-            d["graded_binary"]+=1
-
-    calibration=[]
-    for band,d in sorted(cal.items()):
-        n=d["graded_binary"]
-        calibration.append({
-            "confidence_band":band,
-            "wins":d["wins"],"losses":d["losses"],"pushes":d["pushes"],
-            "graded_binary":n,
-            "observed_hit_rate_pct":pct(d["wins"],d["wins"]+d["losses"]),
-            "avg_predicted_probability_pct":round((d["predicted_sum"]/n)*100,2) if n else None,
-            "brier_score":round(d["brier_sum"]/n,6) if n else None,
+            "settlement_source":r.get("source"),
         })
+
+    settled_rows=[r for r in rows if r["grade"]]
+    added_perf=append_performance(out/"performance_history.jsonl",settled_rows)
+
+    # Calibration by confidence band.
+    bands=defaultdict(list)
+    for r in settled_rows:
+        bands[r["confidence_band"]].append(r)
+    band_output=[]
+    for band,group in sorted(bands.items()):
+        summary=summarize(group)
+        summary["confidence_band"]=band
+        band_output.append(summary)
+    write_status="ACTIVE_SHADOW" if settled_rows else "INSUFFICIENT_RESULTS"
     (out/"calibration_by_band.json").write_text(json.dumps({
-        "schema_version":"LSI-EVAL-CAL-1","generated_at_utc":NOW,
-        "status":"INSUFFICIENT_RESULTS" if not perf else "ACTIVE_SHADOW",
-        "bands":calibration,
+        "schema_version":"LSI-EVAL-CAL-2","generated_at_utc":NOW,
+        "status":write_status,"bands":band_output,
         "influence_enabled":False,
     },indent=2)+"\n",encoding="utf-8")
 
+    # Performance summaries by useful audit dimensions.
+    dimensions={}
+    for dim in ("league","market_key","model_version","tier","publication_status"):
+        grouped=defaultdict(list)
+        for r in rows: grouped[str(r.get(dim) or "UNKNOWN")].append(r)
+        dimensions[dim]={k:summarize(v) for k,v in sorted(grouped.items())}
+    dimensions["overall"]=summarize(rows)
+    (out/"performance_summary.json").write_text(json.dumps({
+        "schema_version":"LSI-EVAL-SUMMARY-1","generated_at_utc":NOW,
+        "dimensions":dimensions,
+    },indent=2)+"\n",encoding="utf-8")
+
+    # Conservative market maturity gates.
+    grouped=defaultdict(list)
+    for r in rows: grouped[(r["league"],r["market_key"])].append(r)
     maturity=[]
-    for (league,market_key),rows in sorted(groups.items()):
-        total=len(rows)
-        settled=sum(1 for r in rows if r["grade"])
-        provenance=sum(1 for r in rows if r["provenance_present"])
-        closing=sum(1 for r in rows if r["closing_line"] not in (None,""))
-        clv=sum(1 for r in rows if r["clv"] is not None)
-        multi=sum(1 for r in rows if r["multi_source"])
-        example=rows[0]
-        key=(league, example.get("prediction_id") and "" or "", market_key)
-        ext_obs=sum(v["observations"] for k,v in market_stats.items() if k[0]==league and k[2]==market_key)
+    gate_markets=[]
+    for (league,market_key),group in sorted(grouped.items()):
+        total=len(group)
+        settled=[r for r in group if r["grade"]]
+        settled_n=len(settled)
+        provenance=sum(r["provenance_present"] for r in group)
+        closing=sum(r["closing_line"] not in (None,"") for r in group)
+        clv_n=sum(r["clv"] is not None for r in settled)
+        multi=sum(r["multi_source"] for r in group)
+        stats=summarize(group)
+        obs=market_group_obs[(league,market_key)]
+        books=len(market_group_books[(league,market_key)])
+        sources=len(market_group_sources[(league,market_key)])
         checks={
-            "provenance_ge_95pct": (pct(provenance,total) or 0)>=95,
-            "closing_line_ge_90pct": (pct(closing,total) or 0)>=90,
-            "settled_sample_ge_200": settled>=200,
-            "multi_source_ge_50pct": (pct(multi,total) or 0)>=50,
-            "clv_ge_90pct_of_settled": ((clv/settled)*100 if settled else 0)>=90,
+            "archive_healthy":archive_health.get("status")=="HEALTHY",
+            "provenance_ge_95pct":(pct(provenance,total) or 0)>=95,
+            "settlement_rate_ge_98pct":(pct(settled_n,total) or 0)>=98,
+            "settled_sample_ge_200":settled_n>=200,
+            "closing_line_ge_90pct":(pct(closing,total) or 0)>=90,
+            "clv_ge_90pct_of_settled":((clv_n/settled_n)*100 if settled_n else 0)>=90,
+            "multi_source_ge_50pct":(pct(multi,total) or 0)>=50,
+            "external_market_observations_ge_500":obs>=500,
+            "independent_books_ge_2":books>=2,
+            "calibration_error_within_7_5pp":stats["calibration_error_pp"] is not None and abs(stats["calibration_error_pp"])<=7.5,
         }
-        maturity.append({
+        mature=all(checks.values())
+        record={
             "league":league,"market_key":market_key,
-            "predictions":total,"settled":settled,
-            "settlement_rate_pct":pct(settled,total),
+            **stats,
+            "settlement_rate_pct":pct(settled_n,total),
             "provenance_rate_pct":pct(provenance,total),
             "closing_line_rate_pct":pct(closing,total),
-            "clv_rate_pct":pct(clv,total),
+            "clv_completion_rate_pct":pct(clv_n,settled_n),
             "multi_source_rate_pct":pct(multi,total),
-            "external_market_observations":ext_obs,
+            "external_market_observations":obs,
+            "independent_books":books,
+            "independent_sources":sources,
             "evaluation_readiness_checks":checks,
-            "mature_candidate":all(checks.values()),
+            "mature_candidate":mature,
             "influence_authorized":False,
+        }
+        maturity.append(record)
+
+        # Learning proposal: calibration correction, strongly shrunk and capped.
+        raw_delta=stats["calibration_error_pp"]
+        shrink=(settled_n/(settled_n+400)) if settled_n else 0
+        proposed=round(max(-3.0,min(3.0,(raw_delta or 0)*shrink)),2)
+        gate_markets.append({
+            "league":league,"market_key":market_key,
+            "eligible_for_promotion":mature,
+            "settled_sample":settled_n,
+            "proposed_confidence_delta":proposed if mature else 0.0,
+            "calibration_error_pp":raw_delta,
+            "avg_line_clv":stats["avg_line_clv"],
+            "checks":checks,
         })
+
     (out/"maturity_by_market.json").write_text(json.dumps({
-        "schema_version":"LSI-EVAL-MATURITY-1","generated_at_utc":NOW,
-        "policy":"Maturity is measured only. No maturity state authorizes prediction influence in Phase 2.",
+        "schema_version":"LSI-EVAL-MATURITY-2","generated_at_utc":NOW,
+        "policy":"Maturity is measured per league/market. Promotion requires every listed check.",
         "markets":maturity,
     },indent=2)+"\n",encoding="utf-8")
 
-    latest={
-        "schema_version":"LSI-EVALUATION-1",
+    eligible=[x for x in gate_markets if x["eligible_for_promotion"]]
+    learning_gate={
+        "schema_version":"LSI-LEARNING-GATE-1",
         "generated_at_utc":NOW,
-        "phase":"EVALUATION_SHADOW",
+        "policy":"Only mature league/market cells may be promoted. Confidence deltas are calibration corrections, shrunk toward zero and capped at +/-3 points.",
+        "eligible_market_count":len(eligible),
+        "production_influence_enabled":bool(eligible),
+        "markets":gate_markets,
+        "safety":{
+            "max_abs_confidence_delta":3.0,
+            "requires_200_settled":True,
+            "requires_98pct_settlement":True,
+            "requires_archive_healthy":True,
+            "requires_multi_source_evidence":True,
+            "requires_closing_line_and_clv":True,
+        },
+    }
+    (out/"learning_gate.json").write_text(json.dumps(learning_gate,indent=2)+"\n",encoding="utf-8")
+
+    source_quality={
+        "schema_version":"LSI-EVAL-SOURCES-1","generated_at_utc":NOW,
+        "market_observations_by_dataset":dict(sorted(source_counts.items())),
+        "market_cells": [{
+            "league":k[0],"market_key":k[1],"observations":market_group_obs[k],
+            "independent_books":len(market_group_books[k]),
+            "independent_sources":len(market_group_sources[k]),
+        } for k in sorted(market_group_obs)],
+        "settlement_provider_status":latest_settlement.get("providers",{}),
+    }
+    (out/"source_quality.json").write_text(json.dumps(source_quality,indent=2)+"\n",encoding="utf-8")
+
+    latest={
+        "schema_version":"LSI-EVALUATION-2","generated_at_utc":NOW,
+        "phase":"EVALUATION_SHADOW" if not eligible else "EVALUATION_WITH_PROMOTION_ELIGIBILITY",
         "archive_source_commit":manifest.get("source_commit"),
-        "archive_health":health.get("status"),
-        "predictions_evaluated":len(overall),
-        "settled_predictions":len(perf),
+        "archive_health":archive_health.get("status"),
+        "predictions_evaluated":len(rows),
+        "settled_predictions":len(settled_rows),
         "performance_records_added":added_perf,
         "market_observations_available":manifest.get("counts",{}).get("market_history",0),
-        "source_observation_counts":dict(sorted(source_counts.items())),
-        "influence_enabled":False,
+        "eligible_learning_markets":len(eligible),
+        "production_influence_enabled":bool(eligible),
         "live_prediction_write_authority":False,
     }
     (out/"latest_evaluation.json").write_text(json.dumps(latest,indent=2)+"\n",encoding="utf-8")
 
     eval_health={
-        "schema_version":"LSI-EVALUATION-HEALTH-1",
-        "generated_at_utc":NOW,
-        "status":"HEALTHY" if health.get("status")=="HEALTHY" else "DEGRADED",
-        "phase":"EVALUATION_SHADOW",
+        "schema_version":"LSI-EVALUATION-HEALTH-2","generated_at_utc":NOW,
+        "status":"HEALTHY" if archive_health.get("status")=="HEALTHY" else "DEGRADED",
+        "phase":latest["phase"],
         "checks":{
-            "archive_healthy":health.get("status")=="HEALTHY",
+            "archive_healthy":archive_health.get("status")=="HEALTHY",
             "prediction_history_present":bool(pred_env),
             "market_history_present":manifest.get("counts",{}).get("market_history",0)>0,
-            "settlement_data_present":bool(perf),
+            "settlement_data_present":bool(settled_rows),
+            "learning_gate_generated":True,
         },
         "authority_boundary":{
             "can_modify_live_predictions":False,
             "can_modify_live_pages":False,
             "can_change_confidence":False,
             "can_publish":False,
-            "can_authorize_influence":False,
+            "can_promote_without_gate":False,
         },
-        "warnings":[] if perf else ["No settled prediction results are archived yet; calibration metrics remain unpopulated."],
+        "warnings":[] if settled_rows else ["No settled prediction results are archived yet; calibration and promotion remain unavailable."],
     }
     (out/"evaluation_health.json").write_text(json.dumps(eval_health,indent=2)+"\n",encoding="utf-8")
 
-    print("LSI self-evaluation complete")
-    print("phase: EVALUATION_SHADOW")
-    print("predictions:",len(overall),"settled:",len(perf),"performance_added:",added_perf)
-    print("market_observations:",manifest.get("counts",{}).get("market_history",0))
-    print("influence_enabled: false")
-
+    print("LSI evaluation:",json.dumps({
+        "predictions":len(rows),"settled":len(settled_rows),
+        "market_observations":manifest.get("counts",{}).get("market_history",0),
+        "eligible_learning_markets":len(eligible),
+        "production_influence_enabled":bool(eligible),
+    },sort_keys=True))
 
 if __name__=="__main__":
     main()

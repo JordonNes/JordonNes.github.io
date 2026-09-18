@@ -9,6 +9,8 @@ on:
       - 'scripts/propline_adapter.py'
       - 'scripts/oddspapi_history_adapter.py'
       - 'scripts/lsi_pipeline.py'
+      - 'scripts/lsi_promote_learning.py'
+      - 'data/learning_overlay.json'
       - 'scripts/qc_publication_audit.js'
       - 'lsi_registry_bridge.js'
       - '.github/workflows/lsi-dp-pipeline.yml'
@@ -122,7 +124,10 @@ jobs:
           props=[p for p in payload.get('predictions',[]) if p.get('market_class')=='PLAYER_PROP']
           missing={p.get('prediction_id'):sorted(required-set(p)) for p in props if required-set(p)}
           assert not missing, missing
-          print(f'LSI-PR-2 invariant: {len(props)} PLAYER_PROP records contain all {len(required)} intelligence fields')
+          assert all(abs(float(p.get('learning_delta') or 0)) <= 3 for p in payload.get('predictions',[]))
+          if payload.get('learning_overlay_enabled'):
+              assert any(p.get('learning_applied') for p in payload.get('predictions',[])), 'learning overlay enabled but no prediction received a gated adjustment'
+          print(f"LSI-PR-2 invariant: {len(props)} PLAYER_PROP records; learning_enabled={payload.get('learning_overlay_enabled')}")
           PY
           python scripts/validate_registry.py
       - name: Commit durable LSI outputs

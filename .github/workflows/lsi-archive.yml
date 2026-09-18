@@ -5,6 +5,9 @@ on:
     branches: [master]
     paths:
       - 'scripts/lsi_archive.py'
+      - 'data/results.csv'
+      - 'data/settlement_status.json'
+      - 'data/settlement_aliases.json'
       - '.github/workflows/lsi-archive.yml'
   workflow_run:
     workflows: ["LSI Daily Predictions Pipeline"]
@@ -86,7 +89,7 @@ jobs:
           assert health["phase"] == "MEMORY_ONLY"
           for name in (
               "prediction_history.jsonl","context_history.jsonl",
-              "event_history.jsonl","result_history.jsonl","publication_history.jsonl",
+              "event_history.jsonl","result_history.jsonl","settlement_history.jsonl","publication_history.jsonl",
               "entity_map.json","archive_health.json","archive_manifest.json"
           ):
               assert (root/name).exists(), name
