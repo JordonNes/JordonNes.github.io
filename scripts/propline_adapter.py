@@ -420,6 +420,7 @@ def run():
     if not KEY:print("PROPLINE_API_KEY absent: PropLine safely skipped.");return
     state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
     seen_provider_events=set()
+    seen_bulk_moneyline_events=set()
     processed_by_league=defaultdict(int)
     refresh_attempts_by_league=defaultdict(int)
     deferred_due_by_league=defaultdict(int)
@@ -427,8 +428,24 @@ def run():
     for league,sport_key in sport_targets():
         try:events,quota=get(f"/sports/{sport_key}/events");last_quota=quota
         except Exception as exc:print(f"WARN PropLine events {league}: {exc}");continue
-        for event in candidate_events(events if isinstance(events,list) else [],league,MAX_EVENTS[league]):
-            eid=str(event.get("id","")); ljid=best_lj_event_id(event,league); start=parse_dt(event.get("commence_time"))
+        candidates=candidate_events(events if isinstance(events,list) else [],league,MAX_EVENTS[league])
+        event_ljids={str(event.get("id","")):best_lj_event_id(event,league) for event in candidates if event.get("id")}
+        collected_bulk=NOW.astimezone(PT).isoformat()
+        try:
+            bulk_odds,quota=get(f"/sports/{sport_key}/odds",{"markets":"h2h","oddsFormat":"american"});last_quota=quota
+            for payload in bulk_odds if isinstance(bulk_odds,list) else []:
+                peid=str(payload.get("id",""))
+                if not peid or (sport_key,peid) in seen_bulk_moneyline_events:continue
+                ljid=event_ljids.get(peid) or best_lj_event_id(payload,league)
+                start=parse_dt(payload.get("commence_time"))
+                if not start or not (NOW-timedelta(hours=6)<=start<=NOW+QC_LOOKAHEAD):continue
+                seen_bulk_moneyline_events.add((sport_key,peid))
+                mrows,_=parse_odds(payload,league,ljid,collected_bulk)
+                markets_out.extend(r for r in mrows if r.get("market_class")=="GAME_ML")
+        except Exception as exc:
+            print(f"WARN PropLine bulk h2h {league} {sport_key}: {exc}")
+        for event in candidates:
+            eid=str(event.get("id","")); ljid=event_ljids.get(eid) or best_lj_event_id(event,league); start=parse_dt(event.get("commence_time"))
             provider_key=(league,eid)
             if not eid or provider_key in seen_provider_events:continue
             if processed_by_league[league]>=MAX_EVENTS[league]:continue
@@ -488,6 +505,7 @@ def run():
         "http_timeout_sec":HTTP_TIMEOUT_SEC,
         "http_attempts":HTTP_ATTEMPTS,
         "max_prop_markets_per_event":MAX_PROP_MARKETS_PER_EVENT,
+        "bulk_moneyline_events":len(seen_bulk_moneyline_events),
     })
     if last_quota:print("PropLine quota:",{k:v for k,v in last_quota.items() if v is not None})
     if not ANALYTICS:print("PropLine Hobby+ analytics disabled; steam/closing/trends/results remain null unless sourced elsewhere.")
