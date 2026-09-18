@@ -8,6 +8,7 @@ const state={
   communityEvidence:null,
   selectedLocation:null,
   selectedSpecies:null,
+  publicWater:null,
   noaaLive:null,
   usgsLive:null,
   conditionEngine:null,
@@ -18,6 +19,7 @@ const state={
 const $=(q)=>document.querySelector(q);
 const escapeHtml=(value)=>String(value??'').replace(/[&<>'"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const DATA_ROOT='data';
+const RICHFISH_API='https://richfish-web-production.up.railway.app';
 
 async function getJson(file){
   const response=await fetch(`${DATA_ROOT}/${file}`);
@@ -54,10 +56,21 @@ function resolveSpeciesId(name){
   };
   return aliases[n]||slugify(n);
 }
-function noaaProduct(stationId,key){return state.noaaLive?.stations?.[stationId]?.products?.[key]?.ok?state.noaaLive.stations[stationId].products[key].value:null;}
+function noaaProduct(stationId,key){
+  const pub=state.publicWater?.coopsStations?.[stationId]?.products?.[key];
+  if(pub?.value!=null)return pub.value;
+  return state.noaaLive?.stations?.[stationId]?.products?.[key]?.ok?state.noaaLive.stations[stationId].products[key].value:null;
+}
 function usgsCurrent(stationId,pcode){
+  const publicRows=state.publicWater?.usgsStations?.[stationId]?.readings||[];
+  const pub=publicRows.find(r=>r.parameterCode===pcode&&r.numericValue!==null&&r.freshnessStatus!=='stale');
+  if(pub)return pub;
   const rows=state.usgsLive?.latestContinuous?.byStation?.[stationId]||[];
   return rows.find(r=>r.parameterCode===pcode&&r.numericValue!==null&&r.freshnessStatus!=='stale')||null;
+}
+function weatherForLocation(location){
+  const engineId=location?.verification?.engine_spot_id;
+  return engineId?state.publicWater?.weatherBySpot?.[engineId]||null:null;
 }
 function evidenceForLocation(location){
   const records=state.communityEvidence?.records||[];
@@ -110,6 +123,7 @@ function selectLocation(id){
   state.selectedLocation=state.locations.find(s=>s.id===id)||null;
   renderSpotList($('#spot-search')?.value||'');
   renderLocationDetail();
+  updateRayContext();
   if(state.selectedLocation?.coordinates&&state.map){
     state.map.setView([state.selectedLocation.coordinates.lat,state.selectedLocation.coordinates.lng],13);
     renderMapEvaluation(state.selectedLocation.coordinates.lat,state.selectedLocation.coordinates.lng,state.selectedLocation);
@@ -123,6 +137,8 @@ function renderLocationDetail(){
   const o=live?.observations||{};
   const evidence=evidenceForLocation(loc);
   const tier=strongestEvidenceTier(evidence);
+  const weather=weatherForLocation(loc);
+  const nextWeather=weather?.hourly?.[0]||null;
   const updated=live?.generatedAt||state.conditionEngine?.generatedAt||loc.updated_at;
   const cards=[];
   if(live){
@@ -145,6 +161,8 @@ function renderLocationDetail(){
     cards.push(dataCard('Salinity',sal,'Observed when available'));
     cards.push(dataCard('Wind',wind,'Observed when available'));
     cards.push(dataCard('Freshwater flow',flow,o.freshwater?.stationId||'USGS unavailable'));
+    if(nextWeather)cards.push(dataCard('NWS next hour',`${nextWeather.temperature ?? '—'}°${nextWeather.temperatureUnit||''} · ${nextWeather.windSpeed||'wind n/a'}`,nextWeather.shortForecast||'NWS hourly forecast'));
+    if(weather?.alerts?.length)cards.push(dataCard('NWS alerts',weather.alerts.length,weather.alerts[0]?.event||'Active weather alert'));
   }else{
     cards.push(dataCard('Live-water binding','Pending','Static catalog record only'));
     cards.push(dataCard('Verification',loc.verification?.label||'Unverified','Master dataset status'));
@@ -152,6 +170,7 @@ function renderLocationDetail(){
   }
   cards.push(dataCard('Habitat',loc.habitat||'Not recorded','Master location inventory'));
   if(loc.coordinates)cards.push(dataCard('Coordinates',`${loc.coordinates.lat}, ${loc.coordinates.lng}`,'Mapped record'));
+  if(loc.access_gate)cards.push(dataCard('Access gate',String(loc.access_gate.status||'').replaceAll('_',' '),loc.access_gate.scope||'Access restriction'));
   cards.push(dataCard('Community evidence',tierLabel(tier),`${evidence.length} registered report${evidence.length===1?'':'s'}`));
 
   const primary=(loc.targets?.primary||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join('');
@@ -184,8 +203,9 @@ function renderLocationDetail(){
         <li>Master location inventory · row ${escapeHtml(sourceRow||'unknown')} · ${escapeHtml(loc.verification?.label||'Unverified')}</li>
         ${sourceLinks(loc.provenance?.source_urls)}
         ${live?`<li>Condition Engine snapshot: ${escapeHtml(state.conditionEngine?.generatedAt||'unknown')}</li>`:''}
-        ${live&&state.noaaLive?.generatedAt?`<li>NOAA CO-OPS snapshot: ${escapeHtml(state.noaaLive.generatedAt)}</li>`:''}
-        ${live&&state.usgsLive?.generatedAt?`<li>USGS snapshot: ${escapeHtml(state.usgsLive.generatedAt)}</li>`:''}
+        ${live&&state.publicWater?.sourceStatus?.noaaGeneratedAt?`<li>NOAA CO-OPS snapshot: ${escapeHtml(state.publicWater.sourceStatus.noaaGeneratedAt)}</li>`:''}
+        ${live&&state.publicWater?.sourceStatus?.usgsGeneratedAt?`<li>USGS snapshot: ${escapeHtml(state.publicWater.sourceStatus.usgsGeneratedAt)}</li>`:''}
+        ${weather?`<li>NWS snapshot: ${escapeHtml(state.publicWater?.sourceStatus?.nwsGeneratedAt||'unavailable')}</li>`:''}
       </ul>
     </div>`;
 }
@@ -220,6 +240,7 @@ function selectSpecies(id){
   state.selectedSpecies=catalogSpeciesFor(id);
   renderSpeciesList($('#species-search')?.value||'');
   renderSpeciesDetail(id);
+  updateRayContext();
 }
 function renderSpeciesDetail(id){
   const species=catalogSpeciesFor(id);
@@ -309,6 +330,10 @@ function renderMapEvaluation(lat,lng,forcedLocation=null){
   if(!panel)return;
   const nearest=forcedLocation?{location:forcedLocation,distanceKm:0}:nearestMappedLocation(lat,lng);
   const loc=nearest?.location;
+  if(loc?.access_gate?.status==='closed'){
+    panel.innerHTML=`<span class="eyebrow">ACCESS HARD GATE</span><h3>${escapeHtml(loc.name)}</h3><p>${escapeHtml(loc.access_status_note||'This access point is closed.')}</p><div class="ray-note"><b>RAY'S CALL BLOCKED</b><br>RICHFISH will not recommend fishing from a closed access structure.</div>`;
+    return;
+  }
   if(!loc||nearest.distanceKm>2){
     panel.innerHTML=`<span class="eyebrow">COORDINATE CAPTURED</span><h3>${lat.toFixed(5)}, ${lng.toFixed(5)}</h3><p>No map-ready RICHFISH location record is within 2 km. The v0.3 spatial resolver must identify waterbody, jurisdiction, habitat, bathymetry and legal/advisory layers before Richmond Ray can issue an evidence-backed call here.</p><div class="ray-note"><b>RAY'S CALL BLOCKED</b><br>No invented location or fishing recommendation will be substituted.</div>`;
     return;
@@ -355,8 +380,9 @@ function renderMapEvaluation(lat,lng,forcedLocation=null){
       <li>Location master row ${escapeHtml(loc.provenance?.source_row||'unknown')} · ${escapeHtml(loc.verification?.label||'Unverified')}</li>
       ${sourceLinks(provenanceUrls)}
       <li>Condition Engine: ${escapeHtml(state.conditionEngine?.generatedAt||'unavailable')}</li>
-      <li>NOAA CO-OPS: ${escapeHtml(state.noaaLive?.generatedAt||'unavailable')}</li>
-      <li>USGS: ${escapeHtml(state.usgsLive?.generatedAt||'unavailable')}</li>
+      <li>NOAA CO-OPS: ${escapeHtml(state.publicWater?.sourceStatus?.noaaGeneratedAt||'unavailable')}</li>
+      <li>USGS: ${escapeHtml(state.publicWater?.sourceStatus?.usgsGeneratedAt||'unavailable')}</li>
+      <li>NWS: ${escapeHtml(state.publicWater?.sourceStatus?.nwsGeneratedAt||'unavailable')}</li>
     </ul></div>
     <p><button class="btn" data-open-location="${loc.id}">Open full location file</button></p>`;
   panel.querySelector('[data-open-location]')?.addEventListener('click',()=>selectLocation(loc.id));
@@ -371,7 +397,8 @@ function initMap(){
   }).addTo(map);
   const access=L.layerGroup().addTo(map);
   const stations=L.layerGroup().addTo(map);
-  state.mapLayers={access,stations};
+  const buoys=L.layerGroup().addTo(map);
+  state.mapLayers={access,stations,buoys};
 
   for(const loc of state.locations.filter(l=>l.coordinates)){
     const marker=L.circleMarker([loc.coordinates.lat,loc.coordinates.lng],{radius:7,weight:2,fillOpacity:.8});
@@ -379,13 +406,24 @@ function initMap(){
     marker.on('click',()=>renderMapEvaluation(loc.coordinates.lat,loc.coordinates.lng,loc));
     marker.addTo(access);
   }
-  for(const station of Object.values(state.noaaLive?.stations||{})){
-    const lat=Number(station?.metadata?.lat),lng=Number(station?.metadata?.lng);
+  for(const station of Object.values(state.publicWater?.coopsStations||{})){
+    const lat=Number(station?.lat),lng=Number(station?.lng);
     if(!Number.isFinite(lat)||!Number.isFinite(lng))continue;
     const marker=L.circleMarker([lat,lng],{radius:5,weight:1,fillOpacity:.45});
-    marker.bindTooltip(`NOAA ${station.name||station.metadata?.name||station.id}`);
-    marker.on('click',()=>{$('#frmap-report').innerHTML=`<span class="eyebrow">NOAA CO-OPS STATION</span><h3>${escapeHtml(station.name||station.metadata?.name||station.id)}</h3><p>${escapeHtml(station.role||'Environmental observation station')}</p><p>Snapshot: ${escapeHtml(state.noaaLive?.generatedAt||'unavailable')}</p>`;});
+    marker.bindTooltip(`NOAA ${station.name||station.id}`);
+    marker.on('click',()=>{$('#frmap-report').innerHTML=`<span class="eyebrow">NOAA CO-OPS STATION</span><h3>${escapeHtml(station.name||station.id)}</h3><p>${escapeHtml(station.role||'Environmental observation station')}</p><p>Snapshot: ${escapeHtml(state.publicWater?.sourceStatus?.noaaGeneratedAt||'unavailable')}</p>`;});
     marker.addTo(stations);
+  }
+  for(const station of Object.values(state.publicWater?.ndbcStations||{})){
+    const lat=Number(station?.lat),lng=Number(station?.lng);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng))continue;
+    const marker=L.circleMarker([lat,lng],{radius:5,weight:1,fillOpacity:.5});
+    marker.bindTooltip(`NDBC ${station.id} · ${station.name}`);
+    marker.on('click',()=>{
+      const latest=station.latest||{};
+      $('#frmap-report').innerHTML=`<span class="eyebrow">NOAA NDBC BUOY</span><h3>${escapeHtml(station.id)} · ${escapeHtml(station.name)}</h3><div class="ray-call-grid">${dataCard('Wave height',latest.waveHeightFt!=null?latest.waveHeightFt+' ft':'Unavailable')}${dataCard('Dominant period',latest.dominantPeriodSec!=null?latest.dominantPeriodSec+' sec':'Unavailable')}${dataCard('Wind',latest.windSpeedKnots!=null?latest.windSpeedKnots+' kt':'Unavailable')}${dataCard('Water temp',latest.waterTempF!=null?latest.waterTempF+'°F':'Unavailable')}</div><p>${escapeHtml(station.caveat||'')}</p><p>Observed: ${escapeHtml(latest.observedAt||'unavailable')}</p>`;
+    });
+    marker.addTo(buoys);
   }
   document.querySelectorAll('[data-map-layer]').forEach(input=>{
     input.addEventListener('change',()=>{
@@ -399,6 +437,111 @@ function initMap(){
   if(eckley?.coordinates)renderMapEvaluation(eckley.coordinates.lat,eckley.coordinates.lng,eckley);
   setTimeout(()=>map.invalidateSize(),100);
 }
+
+function updateRayContext(){
+  const locationEl=$('#ray-location-context');
+  const speciesEl=$('#ray-species-context');
+  if(locationEl)locationEl.textContent=`Location: ${state.selectedLocation?.name||'No location selected'}`;
+  if(speciesEl)speciesEl.textContent=`Species: ${state.selectedSpecies?.common_name||'No species selected'}`;
+}
+
+function renderRayAnswer(text){
+  const panel=$('#ray-answer');
+  if(!panel)return;
+  const paragraphs=String(text||'').split(/\n{2,}/).map(x=>x.trim()).filter(Boolean);
+  panel.classList.remove('empty');
+  panel.innerHTML=paragraphs.map(p=>`<p>${escapeHtml(p).replace(/\n/g,'<br>')}</p>`).join('');
+}
+
+async function checkRayBackend(){
+  const status=$('#ray-api-status');
+  if(!status)return;
+  try{
+    const response=await fetch(`${RICHFISH_API}/health`,{headers:{Accept:'application/json'}});
+    const payload=await response.json().catch(()=>({}));
+    if(response.ok&&payload.ai==='configured'){
+      status.textContent=`● AI online · ${payload.model||'model configured'}`;
+      status.classList.add('online');
+      return true;
+    }
+    status.textContent='AI backend reachable · configuration incomplete';
+    return false;
+  }catch(error){
+    console.warn('RICHFISH AI health check failed',error);
+    status.textContent='AI backend temporarily unavailable';
+    return false;
+  }
+}
+
+function initRayChat(){
+  const form=$('#ray-form');
+  const input=$('#ray-question');
+  const submit=$('#ray-submit');
+  const formStatus=$('#ray-form-status');
+  const meta=$('#ray-answer-meta');
+  if(!form||!input||!submit)return;
+
+  updateRayContext();
+  checkRayBackend();
+
+  document.querySelectorAll('[data-ray-prompt]').forEach(button=>{
+    button.addEventListener('click',()=>{
+      input.value=button.dataset.rayPrompt||'';
+      input.focus();
+    });
+  });
+
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();
+    const question=input.value.trim();
+    if(!question){
+      formStatus.textContent='Enter a fishing question first.';
+      input.focus();
+      return;
+    }
+
+    submit.disabled=true;
+    submit.textContent='Ray is checking the water…';
+    formStatus.textContent='RICHFISH is assembling your current context.';
+    if(meta)meta.textContent='';
+    const answer=$('#ray-answer');
+    if(answer){
+      answer.classList.remove('empty');
+      answer.innerHTML='<p>Reading the RICHFISH files and asking Richmond Ray…</p>';
+    }
+
+    try{
+      const response=await fetch(`${RICHFISH_API}/api/richfish/analyze`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          question,
+          locationId:state.selectedLocation?.id||null,
+          speciesId:state.selectedSpecies?.id||null
+        })
+      });
+      const payload=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(payload.error||`Backend returned ${response.status}`);
+      renderRayAnswer(payload.answer);
+      if(meta){
+        const when=payload.generatedAt?new Date(payload.generatedAt).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'now';
+        meta.textContent=`${payload.model||'RICHFISH AI'} · ${when}`;
+      }
+      formStatus.textContent='Answer generated from the available RICHFISH context.';
+    }catch(error){
+      console.error('Ask Richmond Ray failed',error);
+      if(answer){
+        answer.classList.add('empty');
+        answer.innerHTML=`<h3>Ray could not answer this one.</h3><p>${escapeHtml(error.message||'The RICHFISH AI backend is temporarily unavailable.')}</p>`;
+      }
+      formStatus.textContent='No API key or secret was exposed to the browser.';
+    }finally{
+      submit.disabled=false;
+      submit.textContent='Ask Richmond Ray';
+    }
+  });
+}
+
 function nav(){
   const b=document.querySelector('.nav-toggle'),n=document.querySelector('.topbar nav');
   if(!b||!n)return;
@@ -407,7 +550,7 @@ function nav(){
 }
 async function boot(){
   try{
-    [state.liveSpots,state.liveSpecies,state.locations,state.speciesCatalog,state.documents,state.sources,state.communityEvidence,state.noaaLive,state.usgsLive,state.conditionEngine]=await Promise.all([
+    [state.liveSpots,state.liveSpecies,state.locations,state.speciesCatalog,state.documents,state.sources,state.communityEvidence,state.publicWater,state.conditionEngine]=await Promise.all([
       getJson('spots.json'),
       getJson('species.json'),
       getJson('catalog/locations.json'),
@@ -415,8 +558,7 @@ async function boot(){
       getJson('documents.json'),
       getJson('sources.json'),
       getJson('community-evidence.json'),
-      getJsonOptional('live/noaa-coops.json'),
-      getJsonOptional('live/usgs-waterdata.json'),
+      getJsonOptional('live/public-water.json'),
       getJsonOptional('live/condition-engine.json')
     ]);
     state.selectedLocation=state.locations.find(l=>l.id==='eckley-pier')||state.locations[0];
@@ -429,6 +571,7 @@ async function boot(){
     renderDocuments();
     renderSources();
     renderEvidenceStatus();
+    initRayChat();
     $('#spot-search')?.addEventListener('input',e=>renderSpotList(e.target.value));
     $('#species-search')?.addEventListener('input',e=>renderSpeciesList(e.target.value));
     nav();
