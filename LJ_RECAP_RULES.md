@@ -47,3 +47,58 @@ Grades are limited to `HIT`, `MISS`, `PUSH/VOID`, or `UNGRADED`. If L&J publishe
 - The `Recap_<Sport>.html` files are thin page shells and should not be rebuilt during ordinary daily recap refreshes.
 
 The daily publication workflow must grade yesterday before publishing today.
+
+## Refined recap roles: LEGZ reports, JINX investigates
+
+Every one of the 12 sport/league recap pages and the all-sports recap must separate factual result reporting from analytical interpretation.
+
+### LEGZ — Candid Results Report
+LEGZ owns the factual audit. Her section must be comprehensive, concise, and unsentimental:
+- exact prediction, market, threshold, price when recoverable, and originally published confidence;
+- actual final result and HIT / MISS / PUSH-VOID / UNGRADED grade;
+- straight-pick, player-prop, winner, and ticket records;
+- performance by confidence band, market family, player, game, and ticket tier when sample size permits;
+- largest confidence successes and failures;
+- misses caused by bad projection, bad market selection, bad threshold selection, stale information, or execution/timing;
+- no excuse-making, no reconstructed historical lines, and no exclusion of legitimate misses from the denominator.
+
+LEGZ may state what happened and how the prediction performed. She must not manufacture causal explanations.
+
+### JINX — Comprehensive Post-Mortem
+JINX owns the analytical review after LEGZ establishes the factual record. JINX should examine:
+- what the model read correctly and incorrectly;
+- matchup and role assumptions;
+- minutes, usage, rotation, lineup, bullpen, pitch-count, pace, possession, matchup, injury/availability, and game-state mechanisms as relevant to the sport;
+- coaching decisions and tactical changes that materially affected the prediction;
+- late scratches, depth-chart changes, transactions, disciplinary/suspension news, public press-conference information, contract/role changes, weather, travel/rest, venue, schedule compression, officiating patterns where supported, and other attributable pregame or in-game context;
+- market movement, price/line movement, cross-book disagreement, liquidity anomalies, and timing irregularities;
+- correlations between prediction failures/successes and contextual variables across the archive.
+
+### Market / "Vegas influence" discipline
+JINX may flag an outcome or market as unusual, anomalous, or worthy of investigation. She may also identify a hypothesis that market behavior could be consistent with informed money, stale pricing, liquidity effects, book-specific risk management, or other market influence.
+
+She must **not** state or imply that a sportsbook, "Vegas," officials, coaches, players, or another actor manipulated a game unless there is attributable, independently verifiable evidence supporting that claim.
+
+Each irregularity must be labeled as one of:
+- **VERIFIED FACT** — directly supported by reliable evidence;
+- **SUPPORTED CORRELATION** — repeatable association in LSI data, not proof of causation;
+- **MARKET ANOMALY** — objectively unusual line/price/consensus behavior;
+- **HYPOTHESIS / WATCH** — plausible mechanism requiring more evidence;
+- **NO EVIDENCE OF EXTERNAL INFLUENCE** — anomaly reviewed but no support found.
+
+The recap should preserve source provenance and timestamps for material external-context or market-anomaly claims.
+
+### Required refined recap sections
+When evidence exists, every recap should contain:
+1. **LEGZ Results Report**
+2. **Exact Prediction Ledger**
+3. **Ticket / Parlay Audit**
+4. **LEGZ Accuracy & Calibration Breakdown**
+5. **JINX Comprehensive Analysis**
+6. **Coaching / Tactical Review**
+7. **Market & Irregularity Review**
+8. **Exterior Context Correlations**
+9. **What LSI Learned / What Remains Locked**
+10. **Run It Back / Watch / Avoid-Downgrade / Market Switch**
+
+The all-sports recap must aggregate the same framework across the 12 sport/league recap pages.
