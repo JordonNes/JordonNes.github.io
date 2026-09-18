@@ -424,7 +424,7 @@ def run_game_odds_only():
         print("PROPLINE_API_KEY absent: fast game-odds pass safely skipped.")
         return
     collected=NOW.astimezone(PT).isoformat()
-    rows=[]; seen=set(); calls=0; failures=0
+    rows=[]; seen=set(); event_records=[]; calls=0; failures=0
     for league,sport_key in SPORT_KEYS.items():
         try:
             payload,quota=get(f"/sports/{sport_key}/odds",{"markets":"h2h","oddsFormat":"american"})
@@ -441,6 +441,16 @@ def run_game_odds_only():
             key=(league,peid,str(event.get("commence_time") or ""))
             if key in seen: continue
             seen.add(key)
+            away=str(event.get("away_team") or "").strip()
+            home=str(event.get("home_team") or "").strip()
+            event_records.append({
+                "league":league,"sport_key":sport_key,
+                "source_event_id":f"PL-{peid}","propline_event_id":peid,
+                "commence_time":event.get("commence_time"),
+                "away":away,"home":home,
+                "away_aliases":team_aliases(away),"home_aliases":team_aliases(home),
+                "source":"PROPLINE_BULK_H2H",
+            })
             parsed,_=parse_odds(event,league,f"PL-{peid}",collected)
             rows.extend(r for r in parsed if r.get("market_class")=="GAME_ML" and r.get("status")=="OPEN")
     payload={
@@ -449,11 +459,12 @@ def run_game_odds_only():
         "source":"PROPLINE_BULK_H2H",
         "calls":calls,
         "failures":failures,
-        "events":len(seen),
+        "event_count":len(event_records),
+        "events":event_records,
         "rows":rows,
     }
     GAME_ML_BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"PropLine fast h2h: calls={calls} events={len(seen)} rows={len(rows)} failures={failures}")
+    print(f"PropLine fast h2h: calls={calls} events={len(event_records)} rows={len(rows)} failures={failures}")
 
 
 def run():
