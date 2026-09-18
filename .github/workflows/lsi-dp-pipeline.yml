@@ -132,12 +132,15 @@ jobs:
         run: |
           python - <<'PY'
           import csv, json, pathlib
-          p=pathlib.Path('data/market_history.csv'); historical={}
+          p=pathlib.Path('data/market_history.csv'); historical={}; game_ml={}
           if p.exists():
             for r in csv.DictReader(p.open()):
               if r.get('market_class')=='PLAYER_PROP':
                 historical[r.get('league')]=historical.get(r.get('league'),0)+1
+              elif r.get('market_class')=='GAME_ML':
+                game_ml[r.get('league')]=game_ml.get(r.get('league'),0)+1
           print('MAM historical PLAYER_PROP observations:',historical)
+          print('MAM historical GAME_ML observations:',game_ml)
           board=pathlib.Path('data/qc_prop_board.json')
           if board.exists():
             payload=json.load(board.open(encoding='utf-8'))
@@ -168,6 +171,7 @@ jobs:
           grep -q 'DRY_RUN_NO_NETWORK' data/openai_dry_run_router.json
           grep -q 'LSI-QC-TICKETS-1' data/qc_ticket_registry.json
           grep -q 'LJ-FUTURE-MARKET-1' data/future_market_board.json
+          grep -q 'GAME ODDS' lsi_registry_bridge.js
           python - <<'PY'
           import json
           payload=json.load(open('data/prediction_registry.json',encoding='utf-8'))
@@ -181,6 +185,12 @@ jobs:
           if payload.get('learning_overlay_enabled'):
               assert any(p.get('learning_applied') for p in payload.get('predictions',[])), 'learning overlay enabled but no prediction received a gated adjustment'
           print(f"LSI-PR-2 invariant: {len(props)} PLAYER_PROP records; learning_enabled={payload.get('learning_overlay_enabled')}")
+          board=json.load(open('data/future_market_board.json',encoding='utf-8'))
+          active=list(board.get('events') or [])
+          ml_events=[e for e in active if e.get('game_markets')]
+          print(f"Future-board invariant: {len(ml_events)}/{len(active)} upcoming event(s) carry GAME_ML odds.")
+          if active and not ml_events:
+              raise AssertionError('Upcoming market board has events but zero GAME_ML odds; DP/QG moneyline publication would be empty')
           PY
           python scripts/validate_registry.py
       - name: Commit durable LSI outputs
