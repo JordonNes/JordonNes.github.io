@@ -166,7 +166,7 @@
     const bookMatch=main.match(/\s*(\([+-]?\d+(?:\.\d+)?(?:\s+[^)]+)?\))\s*$/);
     if(bookMatch){book=bookMatch[1];main=main.slice(0,bookMatch.index).trim();}
     let player="",prop=main;
-    const sideSplit=main.match(/^(.+?)(\s+(?:OVER|UNDER)\b.*)$/i);
+    const sideSplit=main.match(/^(.+?)(\s+(?:OVER|UNDER|MORE|LESS)\b.*)$/i);
     const typeSplit=!sideSplit?main.match(/^(.+?)(\s+(?:Player|Batter|Pitcher|Goalie)\b.*)$/i):null;
     const split=sideSplit||typeSplit;
     if(split){player=split[1].trim();prop=split[2].trim();}
