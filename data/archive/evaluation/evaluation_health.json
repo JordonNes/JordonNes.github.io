@@ -1,22 +1,23 @@
 {
-  "schema_version": "LSI-EVALUATION-HEALTH-1",
-  "generated_at_utc": "2026-09-18T01:32:29.720408+00:00",
+  "schema_version": "LSI-EVALUATION-HEALTH-2",
+  "generated_at_utc": "2026-09-18T01:38:50.828562+00:00",
   "status": "HEALTHY",
   "phase": "EVALUATION_SHADOW",
   "checks": {
     "archive_healthy": true,
     "prediction_history_present": true,
     "market_history_present": true,
-    "settlement_data_present": false
+    "settlement_data_present": false,
+    "learning_gate_generated": true
   },
   "authority_boundary": {
     "can_modify_live_predictions": false,
     "can_modify_live_pages": false,
     "can_change_confidence": false,
     "can_publish": false,
-    "can_authorize_influence": false
+    "can_promote_without_gate": false
   },
   "warnings": [
-    "No settled prediction results are archived yet; calibration metrics remain unpopulated."
+    "No settled prediction results are archived yet; calibration and promotion remain unavailable."
   ]
 }
