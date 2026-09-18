@@ -95,7 +95,19 @@
 
       <section class="section grid-2"><div class="card"><div class="card-title green"><span>SIGNIFICANT POSITIVE RESULTS</span><span>MODEL WINS / SURPRISES</span></div>${list(positives.slice(0,10),'No verified positive results.')}</div><div class="card"><div class="card-title red"><span>SIGNIFICANT NEGATIVE RESULTS</span><span>MODEL FAILURES / SURPRISES</span></div>${list(negatives.slice(0,10),'No verified negative results.')}</div></section>
 
-      <section class="section"><div class="card"><div class="card-title purple"><span>JINX ACCURACY POST-MORTEM</span><span>WHAT CHANGES IN THE NEXT PUBLICATION</span></div><div class="card-body"><p>${esc(postMortem)}</p></div></div></section>
+      <section class="section grid-2">
+        <div class="card"><div class="card-title green"><span>LEGZ ALL-SPORTS RESULTS REPORT</span><span>CANDID FACTUAL AUDIT</span></div><div class="card-body"><p>${esc(`Graded recoverable straight predictions finished ${grades.HIT}-${grades.MISS} (${pct(grades.HIT,straightDen)}). Player/participant props finished ${propH}/${propD}; JINX winner calls finished ${winH}/${winD}; fully graded tickets finished ${ticketGrades.HIT}/${ticketDen}. PUSH/VOID and UNGRADED rows remain outside the accuracy denominator.`)}</p></div></div>
+        <div class="card"><div class="card-title purple"><span>JINX ALL-SPORTS ANALYSIS</span><span>MODEL, CONTEXT & NEXT-SLATE IMPLICATIONS</span></div><div class="card-body"><p>${esc(postMortem)}</p></div></div>
+      </section>
+
+      <section class="section grid-2">
+        <div class="card"><div class="card-title gold"><span>COACHING / TACTICAL REVIEW</span><span>SPORT-BY-SPORT MATERIAL DECISIONS</span></div>${list(entries.flatMap(([k,s])=>arr(s.coachingReview).map(x=>`${s.label}: ${x}`)).slice(0,12),'No verified coaching/tactical factors have been aggregated yet.')}</div>
+        <div class="card"><div class="card-title red"><span>MARKET & IRREGULARITY REVIEW</span><span>VERIFIED FACT • CORRELATION • ANOMALY • HYPOTHESIS</span></div>${list(entries.flatMap(([k,s])=>arr(s.irregularities).map(x=>`${s.label}: ${x}`)).slice(0,12),'No verified market anomalies or external-influence evidence have been aggregated yet.')}</div>
+      </section>
+
+      <section class="section"><div class="card"><div class="card-title black"><span>EXTERIOR CONTEXT CORRELATIONS</span><span>ATTRIBUTABLE CONTEXT • NOT CAUSAL WITHOUT EVIDENCE</span></div>${list(entries.flatMap(([k,s])=>arr(s.externalFactors).map(x=>`${s.label}: ${x}`)).slice(0,16),'No material exterior-context correlations have been aggregated yet.')}</div></section>
+
+      <section class="section"><div class="card"><div class="card-title purple"><span>WHAT LSI LEARNED / WHAT REMAINS LOCKED</span><span>ARCHIVE → SETTLEMENT → EVALUATION → GATED LEARNING</span></div><div class="card-body"><p>Results and contextual observations are retained for evaluation. Historical effects remain descriptive until the applicable LSI maturity gates are satisfied; correlation alone does not alter live L&amp;J confidence.</p></div></div></section>
 
       <section class="section"><div class="section-head"><h2>RUN IT BACK / WATCH / AVOID / MARKET SWITCH</h2><span class="muted">Cross-sport lessons from September 3</span></div><div class="bucket">${bucket('RUN IT BACK',follow.runItBack.slice(0,8))}${bucket('WATCH',follow.watch.slice(0,8))}${bucket('AVOID / DOWNGRADE',follow.avoid.slice(0,8))}${bucket('MARKET SWITCH',follow.marketSwitch.slice(0,8))}</div></section>
 
