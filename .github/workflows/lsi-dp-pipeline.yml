@@ -12,6 +12,7 @@ on:
       - 'scripts/lsi_promote_learning.py'
       - 'data/learning_overlay.json'
       - 'scripts/qc_publication_audit.js'
+      - 'scripts/lsi_snapshot_tickets.js'
       - 'lsi_registry_bridge.js'
       - '.github/workflows/lsi-dp-pipeline.yml'
   schedule:
@@ -76,6 +77,8 @@ jobs:
         run: python scripts/lsi_pipeline.py
       - name: Per-game QC player-prop completeness audit
         run: node scripts/qc_publication_audit.js
+      - name: Snapshot immutable published Quickie tickets
+        run: node scripts/lsi_snapshot_tickets.js
       - name: OpenAI LSI router — dry run and usage estimate
         run: python scripts/lsi_openai_router.py --dry-run
       - name: Market Availability Monitor
@@ -112,9 +115,11 @@ jobs:
       - name: Validate publication invariants
         run: |
           test -f LJ_index.html && test -f Quickie_Generator.html && test -f data/prediction_registry.json && test -f data/prediction_registry.js
+          test -f data/qc_ticket_registry.json
           test -f data/openai_dry_run_router.json && test -f data/openai_usage_estimates.csv && test -f data/openai_usage_summary.json
           grep -q 'PLAYER_PROP' data/prediction_registry.json && grep -q 'GAME_ML' data/prediction_registry.json
           grep -q 'DRY_RUN_NO_NETWORK' data/openai_dry_run_router.json
+          grep -q 'LSI-QC-TICKETS-1' data/qc_ticket_registry.json
           python - <<'PY'
           import json
           payload=json.load(open('data/prediction_registry.json',encoding='utf-8'))
@@ -134,5 +139,5 @@ jobs:
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
-          git add data/prediction_registry.json data/prediction_registry.js data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json data/oddspapi_market_lookup.json data/qc_prop_board.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
+          git add data/prediction_registry.json data/prediction_registry.js data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json data/oddspapi_market_lookup.json data/qc_prop_board.json data/qc_ticket_registry.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
           if git diff --cached --quiet; then echo 'No LSI changes to publish.'; else git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT" && git pull --rebase origin master && git push origin master; fi
