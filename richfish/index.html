@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Richmond Ray's Fishin' Tavern — the RICHFISH fishing intelligence home for Richmond, San Pablo Bay, the Bay-Delta and nearby coast." />
   <title>Richmond Ray's Fishin' Tavern | RICHFISH</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -22,7 +23,8 @@
       <a href="#documents">Field Library</a>
       <a href="#guide">Fishing Bible</a>
       <a href="#sources">Data Lab</a>
-      <a class="phase" href="#frmap">FRmap <small>PHASE 2</small></a>
+      <a href="#ask-ray">Ask Ray</a>
+      <a class="phase" href="#frmap">FRmap <small>LIVE WATER</small></a>
     </nav>
   </header>
 
@@ -55,14 +57,14 @@
         <a class="room-card" href="#finder"><span>03</span><h3>Species Explorer</h3><p>The growing species intelligence layer connects fish behavior, bait, rigs and condition logic to fishing locations.</p><b>Browse Species →</b></a>
         <a class="room-card" href="#guide"><span>04</span><h3>The Fishing Bible</h3><p>A web-native field manual covering water reading, Bay shoreline, Delta, piers, surf, species, bait, rigs and seasons.</p><b>Enter the Guide →</b></a>
         <a class="room-card" href="#documents"><span>05</span><h3>Bait & Rig Room</h3><p>Bootcamps and field resources for soaking bait, lures, bobbers, crabbing, live bait and priority species.</p><b>Open Field Library →</b></a>
-        <a class="room-card" href="#frmap"><span>06</span><h3>Maps & Water</h3><p>FRmap will connect fishing access, conditions, spatial layers, bathymetry references and Richmond Ray's area judgment.</p><b>See FRmap Plan →</b></a>
+        <a class="room-card" href="#frmap"><span>06</span><h3>FRmap · Live Water</h3><p>Interactive fishing access, NOAA stations, coastal buoys and evidence-gated Richmond Ray location evaluation.</p><b>Open FRmap →</b></a>
         <a class="room-card" href="#sources"><span>07</span><h3>Rules, Safety & Sources</h3><p>Official-source hierarchy for regulations, consumption advisories, tides, weather, water data and access notices.</p><b>Inspect Data Lab →</b></a>
-        <div class="room-card locked"><span>08</span><h3>Ask Richmond Ray</h3><p>The future conversational fishing mentor will use the RICHFISH knowledge system—not the sports LSI stack—to help plan real trips.</p><b>In development</b></div>
+        <a class="room-card featured" href="#ask-ray"><span>08</span><h3>Ask Richmond Ray</h3><p>Ask a fishing question and Ray will reason from the RICHFISH knowledge system, selected location, selected species and live Condition Engine context.</p><b>Ask Ray now →</b></a>
       </div>
     </section>
 
     <section id="spots" class="section shell">
-      <div class="section-heading"><div><span class="eyebrow">RAY'S LOCATION FILES</span><h2>Full location inventory — not four demo records.</h2></div><span class="sync">40 normalized master records</span></div>
+      <div class="section-heading"><div><span class="eyebrow">RAY'S LOCATION FILES</span><h2>Full location inventory — not four demo records.</h2></div><span class="sync">41 normalized master records</span></div>
       <div class="workspace">
         <aside class="selector-panel"><label for="spot-search">Find a spot</label><input id="spot-search" placeholder="Search spot or region" /><div id="spot-list" class="select-list"></div></aside>
         <article id="spot-detail" class="detail-panel loading">Loading spot intelligence…</article>
@@ -91,18 +93,80 @@
       </div>
     </section>
 
+
+    <section id="ask-ray" class="section shell ask-ray-section">
+      <div class="section-heading">
+        <div><span class="eyebrow">ASK RICHMOND RAY · LIVE AI</span><h2>Talk to the RICHFISH fishing guide.</h2></div>
+        <span class="sync" id="ray-api-status">Checking backend…</span>
+      </div>
+      <div class="ask-ray-layout">
+        <article class="ray-chat-panel">
+          <div class="ray-chat-context">
+            <span class="eyebrow">CURRENT RICHFISH CONTEXT</span>
+            <div class="ray-context-chips">
+              <span id="ray-location-context">Location: loading…</span>
+              <span id="ray-species-context">Species: loading…</span>
+            </div>
+            <p>Ray uses the currently selected Fishing Spot and Species Explorer records when they are available. Change either elsewhere on the page, then come back here and ask again.</p>
+          </div>
+          <form id="ray-form" class="ray-form">
+            <label for="ray-question">What do you want to know?</label>
+            <textarea id="ray-question" maxlength="2000" rows="5" placeholder="Example: I want striped bass from shore this evening. Is Eckley Pier worth the trip, what water movement should I look for, and what should I throw?"></textarea>
+            <div class="ray-quick-prompts" aria-label="Quick fishing questions">
+              <button type="button" data-ray-prompt="What is the best target at my selected location right now, and why?">Best target now</button>
+              <button type="button" data-ray-prompt="How should I fish my selected species at this location based on the available conditions?">How should I fish it?</button>
+              <button type="button" data-ray-prompt="What are the biggest uncertainties, safety issues, access issues, or rules I need to verify before I go?">What must I verify?</button>
+            </div>
+            <div class="ray-form-actions">
+              <button id="ray-submit" class="btn primary" type="submit">Ask Richmond Ray</button>
+              <span id="ray-form-status" aria-live="polite"></span>
+            </div>
+          </form>
+        </article>
+        <article class="ray-answer-panel">
+          <div class="ray-answer-heading"><span class="eyebrow">RAY'S ANSWER</span><span id="ray-answer-meta"></span></div>
+          <div id="ray-answer" class="ray-answer empty">
+            <h3>Pull up a stool.</h3>
+            <p>Ask a trip-planning, location, species, bait, rig, tide, current or condition question. RICHFISH will send Ray the available system context without exposing the OpenAI key to your browser.</p>
+          </div>
+          <p class="notice">Ray's answer is planning guidance, not a catch guarantee. Verify current CDFW regulations, consumption advisories, legal access and field safety before fishing.</p>
+        </article>
+      </div>
+    </section>
+
     <section id="sources" class="section shell">
       <div class="section-heading"><div><span class="eyebrow">BEHIND THE BAR · DATA LAB</span><h2>Know what Richmond Ray is relying on.</h2></div></div>
       <div id="source-grid" class="source-grid"></div>
     </section>
 
-    <section id="frmap" class="section shell frmap">
-      <div><span class="eyebrow">FRmap · PHASE 2</span><h2>Click the water. Read the water. Fish smarter.</h2><p>The next spatial layer will combine fishing locations, tide and weather overlays, access boundaries, bathymetry references, community reports and Richmond Ray's area-specific field judgment.</p><span class="coming">COMING NEXT</span></div>
-      <div class="map-art"><span class="pin p1">●</span><span class="pin p2">●</span><span class="pin p3">●</span><span class="map-label">Richmond → San Pablo Bay → Carquinez → Delta</span></div>
+    <section id="frmap" class="section shell frmap-live">
+      <div class="section-heading">
+        <div><span class="eyebrow">FRmap · LIVE WATER</span><h2>Click the water. Read the evidence. Fish smarter.</h2></div>
+        <span class="sync">Evidence-gated map · no invented calls</span>
+      </div>
+      <div class="map-workspace">
+        <aside class="map-controls">
+          <strong>Visible layers</strong>
+          <label><input type="checkbox" data-map-layer="access" checked /> RICHFISH fishing locations</label>
+          <label><input type="checkbox" data-map-layer="stations" checked /> NOAA CO-OPS stations</label>
+          <label><input type="checkbox" data-map-layer="buoys" checked /> NOAA NDBC coastal buoys</label>
+          <div class="future-layer">NWS weather / hazards <small>Live context on bound fishing locations</small></div>
+          <div class="future-layer">Bathymetry / channels <small>NOAA ENC Direct to GIS next spatial layer</small></div>
+          <div class="future-layer">MPAs / advisories / closures <small>Hard-gate resolver still required</small></div>
+          <p class="notice">FRmap blocks Richmond Ray from issuing a live fishing call when a coordinate lacks a validated RICHFISH location and environmental binding.</p>
+        </aside>
+        <div id="frmap-canvas" class="frmap-canvas" aria-label="Interactive RICHFISH fishing map"></div>
+        <article id="frmap-report" class="map-report">
+          <span class="eyebrow">RAY'S CALL</span>
+          <h3>Select a mapped fishing location or click the water.</h3>
+          <p>RICHFISH will tell you what the evidence supports and what is still missing.</p>
+        </article>
+      </div>
     </section>
   </main>
 
   <footer><strong>RICHMOND RAY'S FISHIN' TAVERN · RICHFISH</strong><span>Fishing intelligence is educational. Always verify current regulations, advisories, access rules and conditions before fishing.</span></footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>
