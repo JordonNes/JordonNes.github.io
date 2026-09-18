@@ -1,5 +1,5 @@
 {
-  "schema_version": "LSI-SOURCES-2",
+  "schema_version": "LSI-SOURCES-3",
   "policy": "free-first, provenance-required, no fabricated observations",
   "prop_acquisition": {
     "level_a": "public/connected market discovery",
@@ -189,6 +189,37 @@
       "base_url": null,
       "secret_env": null,
       "optional": false
+    },
+    {
+      "id": "ODDSPAPI_HISTORY",
+      "sports": [
+        "NFL",
+        "NCAA_Football",
+        "MLB",
+        "NBA",
+        "WNBA",
+        "NHL",
+        "Tennis",
+        "MMA",
+        "Boxing",
+        "FIBA_Men",
+        "FIBA_Women"
+      ],
+      "roles": [
+        "historical_odds",
+        "closing_line_value",
+        "market_movement_backtesting",
+        "sharp_vs_retail_divergence",
+        "limit_context",
+        "external_provider_mapping"
+      ],
+      "mode": "authenticated_api",
+      "base_url": "https://api.oddspapi.io/v4",
+      "secret_env": "ODDSPAPI_API_KEY",
+      "optional": true,
+      "priority": "RESEARCH_CALIBRATION",
+      "quota_policy": "Historical odds are free; sports/markets/fixtures are quota-counted. Adapter runs at DISCOVERY only, checks unmetered /account first, defaults to <=4 discovery calls/day and preserves a quota reserve. No live /odds calls by default.",
+      "note": "Default comparison books: Pinnacle, DraftKings, FanDuel. Use for LSI calibration/backtesting, not automatic publication or confidence overrides."
     }
   ],
   "jinx_context_requirements": [
