@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - 'scripts/lsi_settle.py'
+      - 'scripts/lsi_build_recaps.py'
       - '.github/workflows/lsi-settlement.yml'
   workflow_run:
     workflows: ["LSI Daily Predictions Pipeline"]
@@ -36,6 +37,9 @@ jobs:
       - name: Settle completed LSI predictions
         run: python scripts/lsi_settle.py
 
+      - name: Build evidence-based recap data
+        run: python scripts/lsi_build_recaps.py
+
       - name: Validate settlement outputs
         shell: bash
         run: |
@@ -53,12 +57,16 @@ jobs:
           bad=[r for r in rows if r.get('grade') not in allowed]
           assert not bad, bad[:3]
           print(f"Settlement validation: {len(rows)} durable result rows; {len(aliases['events'])} resolved event aliases.")
+          recap=Path('ljrecapdata.js').read_text(encoding='utf-8')
+          assert 'LJ-RECAP-AUTO-2' in recap
+          assert 'window.LJ_RECAP_DATA=' in recap
+          assert 'MARKET ANOMALY' in Path('scripts/lsi_build_recaps.py').read_text(encoding='utf-8')
           PY
 
       - name: Commit settlement-only outputs
         shell: bash
         run: |
-          ALLOWED='data/results.csv data/settlement_status.json data/settlement_aliases.json'
+          ALLOWED='data/results.csv data/settlement_status.json data/settlement_aliases.json ljrecapdata.js'
           CHANGED="$(git status --porcelain | awk '{print $2}')"
           for f in $CHANGED; do
             case " $ALLOWED " in
