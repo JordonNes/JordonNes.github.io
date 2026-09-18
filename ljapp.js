@@ -411,7 +411,13 @@
     // NFL QCs retain the entire Thursday–Monday game week until MNF is final,
     // so runtime status hydration must still be able to find Thursday's completed game
     // when the page is opened on Friday/Saturday/Sunday/Monday.
-    const offsets=key==="NFL" ? [-4,-3,-2,-1,0,1,2,3] : [-1,0,1];
+    // Weekly retention windows:
+    // NFL keeps Thursday–Monday visible until MNF is final.
+    // NCAA Football keeps its Sunday–Saturday week visible through Sunday morning;
+    // the page rolls to the new Sunday–Saturday week Sunday afternoon.
+    let offsets=[-1,0,1];
+    if(key==="NFL") offsets=[-4,-3,-2,-1,0,1,2,3];
+    if(key==="NCAA_Football") offsets=[-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7];
     const dates=offsets.map(ptDate);
     const payloads=await Promise.all(dates.map(async date=>{
       const url=`https://site.api.espn.com/apis/site/v2/sports/${sport}/${slug}/scoreboard?dates=${date}&limit=300&_=${Date.now()}`;
