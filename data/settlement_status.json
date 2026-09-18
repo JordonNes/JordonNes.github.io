@@ -1,15 +1,121 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": null,
-  "source_registry_generated_at_utc": null,
+  "generated_at_utc": "2026-09-18T01:38:45.326830+00:00",
+  "source_registry_generated_at_utc": "2026-09-18T01:31:27.197844+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
-  "providers": {},
-  "predictions_in_registry": 0,
+  "providers": {
+    "ESPN_PUBLIC": {
+      "leagues": [
+        "MLB",
+        "NBA",
+        "NCAA_Basketball",
+        "NCAA_Football",
+        "NFL",
+        "NHL",
+        "WNBA"
+      ],
+      "cost": "free/public"
+    },
+    "VERIFIED_INBOX": {
+      "pattern": "data/inbox/results_*.csv",
+      "accepted_rows": 0
+    },
+    "pending_automatic_adapters": [
+      "Tennis",
+      "MMA",
+      "Boxing",
+      "FIBA_Men",
+      "FIBA_Women"
+    ]
+  },
+  "predictions_in_registry": 9,
   "settled_predictions": 0,
-  "settlement_rate_pct": 0,
-  "run_counts": {},
-  "by_league": {},
+  "settlement_rate_pct": 0.0,
+  "run_counts": {
+    "PENDING_EVENT": 9
+  },
+  "by_league": {
+    "NCAA_Football": {
+      "PENDING_EVENT": 5
+    },
+    "NFL": {
+      "PENDING_EVENT": 4
+    }
+  },
   "recent_settlements": [],
-  "unresolved": [],
+  "unresolved": [
+    {
+      "prediction_id": "NFL-DETBUF-GOFF-U2705",
+      "league": "NFL",
+      "event_id": "DET-BUF-20260917",
+      "provider_event_id": "401872932",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_IN_PROGRESS"
+    },
+    {
+      "prediction_id": "NFL-DETBUF-GIBBS-TD",
+      "league": "NFL",
+      "event_id": "DET-BUF-20260917",
+      "provider_event_id": "401872932",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_IN_PROGRESS"
+    },
+    {
+      "prediction_id": "NFL-DETBUF-COOK-TD",
+      "league": "NFL",
+      "event_id": "DET-BUF-20260917",
+      "provider_event_id": "401872932",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_IN_PROGRESS"
+    },
+    {
+      "prediction_id": "NFL-DETBUF-JW-U595",
+      "league": "NFL",
+      "event_id": "DET-BUF-20260917",
+      "provider_event_id": "401872932",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_IN_PROGRESS"
+    },
+    {
+      "prediction_id": "NCAA-FSU-BAMA-KROMAH-60",
+      "league": "NCAA_Football",
+      "event_id": "FSU-BAMA-20260919",
+      "provider_event_id": "401856685",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "NCAA-HOU-TTU-WEIGMAN-200",
+      "league": "NCAA_Football",
+      "event_id": "HOU-TTU-20260918",
+      "provider_event_id": "401856811",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "NCAA-MIA-WF-TONEY-TD",
+      "league": "NCAA_Football",
+      "event_id": "MIA-WF-20260918",
+      "provider_event_id": "401858226",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "NCAA-USC-RUT-MILLER-TD",
+      "league": "NCAA_Football",
+      "event_id": "USC-RUT-20260919",
+      "provider_event_id": "401858457",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "NCAA-UGA-ARK-FRAZIER-TD",
+      "league": "NCAA_Football",
+      "event_id": "UGA-ARK-20260919",
+      "provider_event_id": "401856686",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    }
+  ],
   "influence_effect": "NONE"
 }
