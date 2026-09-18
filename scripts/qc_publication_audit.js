@@ -88,6 +88,19 @@ for (const [page, league] of Object.entries(PAGES)) {
     }
   }
 
+  if (league === 'NFL') {
+    const seenEventIds=new Map();
+    for (const q of sport.qcs) {
+      const eid=String(q._propEventId||'').trim();
+      if (!eid) continue;
+      if (seenEventIds.has(eid)) {
+        errors.push(`NFL duplicate QC event detected: ${eid} appears more than once (${seenEventIds.get(eid)} and ${q.away || '?'} @ ${q.home || '?'}).`);
+      } else {
+        seenEventIds.set(eid,`${q.away || '?'} @ ${q.home || '?'}`);
+      }
+    }
+  }
+
   for (const q of sport.qcs) {
     const label = `${league} ${q.away || '?'} @ ${q.home || '?'}`;
     const count = Number(q._propSweepCount || 0);
@@ -160,4 +173,4 @@ if (errors.length) {
   for (const e of errors) console.error(`::error::QC AUDIT ${e}`);
   process.exit(1);
 }
-console.log('QC publication invariant passed: acquired player-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
+console.log('QC publication invariant passed: acquired player-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; NFL event IDs are unique after merge; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
