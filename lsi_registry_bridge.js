@@ -291,9 +291,11 @@
   function findBoardEvent(league,q){
     const events=(B?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e));
     if(!events.length) return null;
-    const exact=events.find(e=>aliasHit(q.away,e.away_aliases)&&aliasHit(q.home,e.home_aliases));
+    const awayAliases=e=>[e?.away,...(e?.away_aliases||[])].filter(Boolean);
+    const homeAliases=e=>[e?.home,...(e?.home_aliases||[])].filter(Boolean);
+    const exact=events.find(e=>aliasHit(q.away,awayAliases(e))&&aliasHit(q.home,homeAliases(e)));
     if(exact) return exact;
-    const one=events.filter(e=>aliasHit(q.away,e.away_aliases)||aliasHit(q.home,e.home_aliases));
+    const one=events.filter(e=>aliasHit(q.away,awayAliases(e))||aliasHit(q.home,homeAliases(e)));
     return one.length===1?one[0]:null;
   }
 
@@ -578,34 +580,72 @@
     // The refresh layer is the durable weekly/day schedule; the registry bridge only
     // enriches it with newly acquired events/props/odds.
     const existing=Array.isArray(s.qcs)?s.qcs:[];
-    const key=q=>`${norm(q?.away)}|${norm(q?.home)}`;
     const merged=[...existing];
-    const index=new Map(merged.map((q,i)=>[key(q),i]));
+    const exactKey=q=>`${norm(q?.away)}|${norm(q?.home)}`;
+    const boardKeyForQc=q=>{
+      const ev=findBoardEvent(league,q);
+      return ev ? `EVENT:${ev.source_event_id||exactKey(q)}` : `TEXT:${exactKey(q)}`;
+    };
+    const findExistingIndex=q=>{
+      const target=boardKeyForQc(q);
+      return merged.findIndex(row=>boardKeyForQc(row)===target);
+    };
+    const enrich=(prior,boardQc)=>{
+      if(boardQc._propEventId) prior._propEventId=boardQc._propEventId;
+      if((boardQc.hot||[]).length) prior.hot=boardQc.hot;
+      if((boardQc.sns1||[]).length) prior.sns1=boardQc.sns1;
+      if((boardQc.sns2||[]).length) prior.sns2=boardQc.sns2;
+      if((boardQc.normal||[]).length) prior.normal=boardQc.normal;
+      if((boardQc.demon||[]).length) prior.demon=boardQc.demon;
+      if(boardQc._qcMinimumLegs) prior._qcMinimumLegs=boardQc._qcMinimumLegs;
+      if(boardQc._qcEligibleModeCounts) prior._qcEligibleModeCounts=boardQc._qcEligibleModeCounts;
+      if(boardQc._qcParlayRequired!==undefined) prior._qcParlayRequired=boardQc._qcParlayRequired;
+      if(boardQc._qcParlayPublished!==undefined) prior._qcParlayPublished=boardQc._qcParlayPublished;
+      if(boardQc._qcMinimumParlayMode) prior._qcMinimumParlayMode=boardQc._qcMinimumParlayMode;
+      if(boardQc._ticketProbabilities) prior._ticketProbabilities=boardQc._ticketProbabilities;
+      if(boardQc._propSweepStatus) prior._propSweepStatus=boardQc._propSweepStatus;
+      if(boardQc._propSweepSource) prior._propSweepSource=boardQc._propSweepSource;
+      if(boardQc._propSweepCount!==undefined) prior._propSweepCount=boardQc._propSweepCount;
+      if(!prior.winner && boardQc.winner){ prior.winner=boardQc.winner; prior.conf=boardQc.conf; prior._winnerProvisional=boardQc._winnerProvisional; }
+      if((!prior.market || /WATCH|MARKET NOT/i.test(String(prior.market))) && boardQc.market) prior.market=boardQc.market;
+      if(boardQc.foot && (!prior.foot || /baseline|continues/i.test(String(prior.foot)))) prior.foot=boardQc.foot;
+      return prior;
+    };
 
     for(const shell of recent){
-      const k=key(shell);
-      if(!index.has(k)){ index.set(k,merged.length); merged.push(shell); }
+      const i=findExistingIndex(shell);
+      if(i<0) merged.push(shell);
     }
     for(const e of future){
       const boardQc=qcFromBoardEvent(e);
-      const k=key(boardQc);
-      if(index.has(k)){
-        const i=index.get(k), prior=merged[i];
-        // Preserve explicit DP schedule/grouping and completed-game shells.
-        // Enrich only fields that the board can improve without deleting prior content.
-        if(boardQc._propEventId) prior._propEventId=boardQc._propEventId;
-        if((boardQc.hot||[]).length) prior.hot=boardQc.hot;
-        if((boardQc.sns1||[]).length) prior.sns1=boardQc.sns1;
-        if((boardQc.sns2||[]).length) prior.sns2=boardQc.sns2;
-        if((boardQc.normal||[]).length) prior.normal=boardQc.normal;
-        if((boardQc.demon||[]).length) prior.demon=boardQc.demon;
-        if(!prior.winner && boardQc.winner){ prior.winner=boardQc.winner; prior.conf=boardQc.conf; prior._winnerProvisional=boardQc._winnerProvisional; }
-        if((!prior.market || /WATCH|MARKET NOT/i.test(String(prior.market))) && boardQc.market) prior.market=boardQc.market;
-      }else{
-        index.set(k,merged.length); merged.push(boardQc);
-      }
+      const i=findExistingIndex(boardQc);
+      if(i>=0) enrich(merged[i],boardQc);
+      else merged.push(boardQc);
     }
-    s.qcs=merged;
+
+    // Final de-duplication: one event may have an abbreviation shell and a full-name
+    // market-board row. Collapse them to a single card, preferring the row with the
+    // richest QC content.
+    const richness=q=>{
+      const tickets=[q?.sns1,q?.sns2,q?.normal,q?.demon].reduce((n,a)=>n+(Array.isArray(a)?a.length:0),0);
+      const hot=Array.isArray(q?.hot)?q.hot.length:0;
+      return tickets*100 + hot*10 + (q?._propSweepCount||0);
+    };
+    const deduped=[];
+    const byEvent=new Map();
+    for(const row of merged){
+      const k=boardKeyForQc(row);
+      if(!byEvent.has(k)){
+        byEvent.set(k,deduped.length);
+        deduped.push(row);
+        continue;
+      }
+      const i=byEvent.get(k);
+      const keep=richness(row)>richness(deduped[i])?row:deduped[i];
+      const other=keep===row?deduped[i]:row;
+      deduped[i]=enrich(keep,other);
+    }
+    s.qcs=deduped;
   });
 
   window.LJ_QC_PROP_STATUS={
