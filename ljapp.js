@@ -252,7 +252,7 @@
     sns2.forEach(x=>usedAcross.add(exactKey(x.text)));
     const normal=take(buckets.normal,6,usedAcross);
     normal.forEach(x=>usedAcross.add(exactKey(x.text)));
-    const demon=take(buckets.demon.filter(x=>x.conf>=69.6),6,usedAcross,true);
+    const demon=take(buckets.demon.filter(x=>x.conf>=51.8),6,usedAcross,true);
     const joint=arr=>arr.length?Math.round(arr.reduce((p,x)=>p*Math.max(0,Math.min(1,x.conf/100)),1)*1000)/10:null;
     const card=(label,kind,arr,extra='')=>{
       if(!arr.length) return '';
@@ -268,7 +268,7 @@
     ].filter(Boolean);
     if(!cards.length) return '';
     const grid=`grid-template-columns:repeat(${cards.length},minmax(200px,1fr))`;
-    return `<section class="section all-sports-qc"><div class="section-head"><h2>ALL-SPORTS QC — PLAYER PROPS ONLY</h2><span class="muted">Four distinct ticket objectives • probability-first SNS • Normal market strength • Demon upside after the 69.6% gate</span></div><div class="qc-list"><div class="qc-row" style="${grid}">${cards.join('')}</div></div><div class="layout-seal">ALL-SPORTS POM QC • exact offered market variants only • cross-ticket diversity active</div></section>`;
+    return `<section class="section all-sports-qc"><div class="section-head"><h2>ALL-SPORTS QC — PLAYER PROPS ONLY</h2><span class="muted">Four distinct ticket objectives • probability-first SNS • Normal market strength • Demon upside after the 51.8% gate</span></div><div class="qc-list"><div class="qc-row" style="${grid}">${cards.join('')}</div></div><div class="layout-seal">ALL-SPORTS POM QC • exact offered market variants only • cross-ticket diversity active</div></section>`;
   }
   function statusGrid(){
     const map = [
