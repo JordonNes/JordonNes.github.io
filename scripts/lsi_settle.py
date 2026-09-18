@@ -35,6 +35,7 @@ STATUS = DATA / "settlement_status.json"
 ALIASES = DATA / "settlement_aliases.json"
 MARKETS = DATA / "market_history.csv"
 PLAYER_CONTEXT = DATA / "player_context.csv"
+INBOX = DATA / "inbox"
 
 RESULT_FIELDS = [
     "result_id","settled_at_pt","sport","league","event_id","prediction_id",
@@ -100,6 +101,29 @@ def read_csv(path):
         return []
     with path.open(newline="", encoding="utf-8-sig") as fh:
         return [dict(r) for r in csv.DictReader(fh) if any(str(x or "").strip() for x in r.values())]
+
+def verified_inbox_results():
+    """Read explicitly verified settlement rows for markets without a safe automatic adapter."""
+    out={}
+    if not INBOX.exists():
+        return out
+    for path in sorted(INBOX.glob("results_*.csv")):
+        for row in read_csv(path):
+            pid=(row.get("prediction_id") or "").strip()
+            g=(row.get("grade") or "").strip().upper()
+            source=(row.get("source") or "").strip()
+            if not pid or g not in {"WIN","LOSS","PUSH","VOID"} or not source:
+                print(f"WARN settlement inbox rejected row in {path.name}: missing prediction_id/valid grade/source")
+                continue
+            row={k:row.get(k,"") for k in RESULT_FIELDS}
+            row["prediction_id"]=pid
+            row["grade"]=g
+            row["source"]="VERIFIED_INBOX:"+source
+            row["result_id"]=row.get("result_id") or f"VERIFIED-{pid}"
+            row["settled_at_pt"]=row.get("settled_at_pt") or NOW.astimezone(PT).isoformat()
+            out[pid]=row
+    return out
+
 
 def read_results():
     rows = read_csv(RESULTS)
@@ -490,6 +514,9 @@ def main():
     registry=json.loads(REGISTRY.read_text(encoding="utf-8"))
     predictions=registry.get("predictions") or []
     existing=read_results()
+    inbox=verified_inbox_results()
+    for pid,row in inbox.items():
+        existing[pid]=row
     aliases=load_aliases()
     context_rows=read_csv(PLAYER_CONTEXT)
     closing=closing_lookup(predictions)
@@ -599,7 +626,8 @@ def main():
         "policy":"Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
         "providers":{
             "ESPN_PUBLIC":{"leagues":sorted(ESPN.keys()),"cost":"free/public"},
-            "pending_adapters":["Tennis","MMA","Boxing","FIBA_Men","FIBA_Women"]
+            "VERIFIED_INBOX":{"pattern":"data/inbox/results_*.csv","accepted_rows":len(inbox)},
+            "pending_automatic_adapters":["Tennis","MMA","Boxing","FIBA_Men","FIBA_Women"]
         },
         "predictions_in_registry":total,
         "settled_predictions":settled_total,
