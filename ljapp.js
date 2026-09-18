@@ -189,6 +189,35 @@
   function qcs(title,rows){
     return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Approved compact horizontal Quickie Cards</span></div><div class="qc-list">${(rows || []).map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • daily refreshes change data, never layout</div></section>`;
   }
+  function nflDayBucket(row){
+    const raw=String(row?.time||'').toUpperCase();
+    if(/THU|THURSDAY/.test(raw)) return ['THURSDAY','Thursday Night Football'];
+    if(/MON|MONDAY/.test(raw)) return ['MONDAY','Monday Night Football'];
+    if(/SUN|SUNDAY/.test(raw)) return ['SUNDAY','Sunday Football'];
+    const m=raw.match(/SEP(?:TEMBER)?\s+(\d{1,2})/);
+    if(m){
+      const d=Number(m[1]);
+      const wd=new Intl.DateTimeFormat('en-US',{weekday:'long',timeZone:'America/Los_Angeles'}).format(new Date(`2026-09-${String(d).padStart(2,'0')}T12:00:00-07:00`)).toUpperCase();
+      if(wd==='THURSDAY') return ['THURSDAY','Thursday Night Football'];
+      if(wd==='MONDAY') return ['MONDAY','Monday Night Football'];
+      if(wd==='SUNDAY') return ['SUNDAY','Sunday Football'];
+    }
+    return ['OTHER','NFL Games'];
+  }
+  function nflQcs(title,rows){
+    const ordered=['THURSDAY','SUNDAY','MONDAY','OTHER'];
+    const groups=new Map();
+    (rows||[]).forEach((r,i)=>{
+      const [key,label]=nflDayBucket(r);
+      if(!groups.has(key)) groups.set(key,{label,rows:[]});
+      groups.get(key).rows.push([r,i]);
+    });
+    const body=ordered.filter(k=>groups.has(k)).map(k=>{
+      const g=groups.get(k);
+      return `<div class="nfl-qc-day nfl-qc-${k.toLowerCase()}"><div class="nfl-qc-daybar">${esc(g.label)}</div><div class="qc-list nfl-qc-list">${g.rows.map(([r,i])=>qcRow(r,i)).join("")}</div></div>`;
+    }).join("");
+    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL PREDICTIONS — ROLLING 0–7 DAY PRE-GAME QCs")}</h2><span class="muted">Per-game player-prop QCs • Game / Hot Top / SNS1 / SNS2 / Normal / Aggressive-Demon</span></div>${body}${rules()}<div class="layout-seal">NFL QC LAYOUT • day-grouped horizontal game cards • current L&J palette</div></section>`;
+  }
   function groupedQcs(groups){
     if (!groups || !groups.length) return "";
     return `<section class="section"><div class="section-head"><h2>TENNIS QUICKIE CARDS</h2><span class="muted">Singles and doubles maintained as separate permanent boards</span></div>${groups.map(g=>`<div class="qc-division"><div class="qc-division-head"><h3>${esc(g.title)}</h3><span>${esc(g.note || "Current verified matches only")}</span></div><div class="qc-list">${(g.rows || []).map((r,i)=>qcRow(r,i)).join("")}</div></div>`).join("")}${rules()}<div class="layout-seal">TENNIS QC STRUCTURE LOCK • MEN'S SINGLES • MEN'S DOUBLES • WOMEN'S SINGLES • WOMEN'S DOUBLES</div></section>`;
@@ -452,8 +481,8 @@
     const s = D.sports[key];
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
     document.title = `LEGZ & JINX — ${s.title}`;
-    const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : qcs(s.qcTitle,s.qcs);
-    document.getElementById("app").innerHTML = `<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel)}${twenty(s.twenty,s.twentyNote,false,key)}${quickies}${footer("QC layout locked")}</div>`;
+    const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : qcs(s.qcTitle,s.qcs));
+    document.getElementById("app").innerHTML = `<div class="page sport-page sport-${cls(key)}">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel)}${twenty(s.twenty,s.twentyNote,false,key)}${quickies}${footer("QC layout locked")}</div>`;
     setTimeout(()=>hydrateGameStates(key),0);
   };
   window.renderLJHome = () => {
