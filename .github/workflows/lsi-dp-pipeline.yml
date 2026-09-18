@@ -87,9 +87,12 @@ jobs:
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
       - name: Fast PropLine bulk moneyline acquisition
+        continue-on-error: true
         env:
           PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
           PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
+          PROPLINE_HTTP_TIMEOUT_SEC: '8'
+          PROPLINE_HTTP_ATTEMPTS: '1'
         run: |
           python scripts/propline_adapter.py --game-odds-only
           python scripts/lsi_publish_future_board.py
@@ -126,7 +129,15 @@ jobs:
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
-          git add data/current_game_moneylines.json data/future_market_board.json data/future_market_board.js
+          files=()
+          for f in data/current_game_moneylines.json data/future_market_board.json data/future_market_board.js; do
+            [ -s "$f" ] && files+=("$f")
+          done
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo 'Fast GAME_ML source unavailable; continuing to fallback acquisition.'
+            exit 0
+          fi
+          git add "${files[@]}"
           if git diff --cached --quiet; then
             echo 'No fast GAME_ML changes to publish.'
           else
@@ -147,10 +158,13 @@ jobs:
           ROTOWIRE_API_KEY: ${{ secrets.ROTOWIRE_API_KEY }}
         run: python scripts/rotowire_adapter.py
       - name: PropLine Level-B prop acquisition — market discovery first
+        continue-on-error: true
         env:
-          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY }}
-          PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY }}
+          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
+          PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
           PROPLINE_ANALYTICS_ENABLED: ${{ vars.PROPLINE_ANALYTICS_ENABLED }}
+          PROPLINE_HTTP_TIMEOUT_SEC: '8'
+          PROPLINE_HTTP_ATTEMPTS: '1'
         run: python scripts/propline_adapter.py
       - name: OddsPapi historical calibration — free-first
         env:
@@ -164,11 +178,14 @@ jobs:
         run: python scripts/oddspapi_history_adapter.py
       - name: NHL authoritative enrichment
         run: python scripts/nhl_adapter.py
-      - name: The Odds API overlay — paid source, disabled by default
-        if: ${{ vars.ENABLE_THE_ODDS_API == 'true' }}
+      - name: NFL player-prop fallback — The Odds API
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           ENABLE_THE_ODDS_API: 'true'
+          ODDS_API_LEAGUES: 'NFL'
+          ODDS_API_LOOKAHEAD_HOURS: '96'
+          ODDS_API_MAX_EVENTS_PER_RUN: '16'
+          ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
       - name: Build and validate Prediction Registry
         run: python scripts/lsi_pipeline.py
