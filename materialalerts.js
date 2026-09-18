@@ -3,9 +3,8 @@
    items belong here. The Daily Home renderer groups them by league and drops
    records automatically after expiresAt. */
 window.LJ_MATERIAL_ALERTS = {
-  updated: "September 17, 2026 • 7:44 PM PT",
+  updated: "September 17, 2026 • 9:15 PM PT",
   alerts: [
-    {league:"NFL",game:"Lions at Bills — Live Sep 17",summary:"Buffalo WR D.J. Moore is OUT after a shoulder/stinger injury, and Buffalo leads Detroit 34-17.",impact:"Moore props are invalidated. The multi-score Bills lead lowers second-half Josh Allen passing and Buffalo receiver volume while favoring James Cook and clock-draining rush usage; rebuild all live sides and totals from the current game state.",urgency:"Immediate",status:"CONFIRMED / LIVE",source:"https://www.buffalobills.com/news/bills-issue-injury-update-on-wr-dj-moore",expiresAt:"2026-09-18T05:00:00Z"},
     {league:"NFL",game:"Seahawks at Cardinals — Sep 20",summary:"Sam Darnold is OUT and Drew Lock will start for Seattle.",impact:"Rebuild Seattle passing, receiver, team-total and game-winner projections around Lock.",urgency:"High",status:"CONFIRMED",source:"https://www.seahawks.com/news/sam-darnold-ruled-out-for-seahawks-week-2-game-at-arizona-drew-lock-will-start",expiresAt:"2026-09-21T00:30:00Z"},
     {league:"NFL",game:"Falcons vs. Panthers — Sep 20",summary:"Tua Tagovailoa did not practice with an oblique injury; Atlanta has not named its starter.",impact:"Keep Falcons passing props, team total and moneyline provisional; model Rush and Penix as the principal alternatives.",urgency:"High",status:"CONFIRMED INJURY / STARTER UNRESOLVED",source:"https://www.atlantafalcons.com/news/falcons-not-ruling-anyone-out-qb-panthers-michael-penix-tua-tagovailoa",expiresAt:"2026-09-21T00:30:00Z"},
     {league:"NFL",game:"Vikings at Bears — Sep 20",summary:"Jordan Mason is on injured reserve; Kyler Murray remains in concussion protocol.",impact:"Raise Aaron Jones' workload range and retain separate Murray/Wentz projections for every Minnesota offensive market.",urgency:"High",status:"CONFIRMED / QB STATUS UNRESOLVED",source:"https://www.vikings.com/news/injury-report-week-2-chicago-bears-2026",expiresAt:"2026-09-21T04:30:00Z"},
