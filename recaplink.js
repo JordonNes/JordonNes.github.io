@@ -14,7 +14,7 @@
 
   /* Approved 2172×724 (3:1) full-resolution artwork. The version token forces
      browsers/CDNs to refresh the corrected files immediately after deployment. */
-  const v = "20260904-approved";
+  const v = "20260917-mma-header";
   const headerImage = {
     MLB:`assets/headers/dp-mlb.png?v=${v}`,
     NFL:`assets/headers/dp-nfl.png?v=${v}`,
@@ -25,7 +25,7 @@
     FIBA_Women:`assets/headers/dp-fiba.png?v=${v}`,
     NCAA_Football:`assets/headers/dp-ncaa-football.png?v=${v}`,
     NCAA_Basketball:`assets/headers/dp-ncaa-basketball.png?v=${v}`,
-    MMA:`assets/headers/live-ufc.png?v=${v}`,
+    MMA:`assets/headers/dp-mma.svg?v=${v}`,
     Boxing:`assets/headers/dp-boxing.png?v=${v}`,
     Tennis:`assets/headers/dp-tennis-v2.png?v=${v}`,
     LJ_index:`assets/headers/lj-live-shared.png?v=20260917-headerstandard1`,
@@ -126,7 +126,7 @@
       }
     }
 
-    const sportPages = new Set(["MLB","NFL","NBA","WNBA","NHL","FIBA_Men","FIBA_Women","NCAA_Football","NCAA_Basketball","UFC","Boxing","Tennis"]);
+    const sportPages = new Set(["MLB","NFL","NBA","WNBA","NHL","FIBA_Men","FIBA_Women","NCAA_Football","NCAA_Basketball","MMA","Boxing","Tennis"]);
     if (!sportPages.has(file)) return;
     const actions = document.querySelector('.hero .actions');
     if (!actions || actions.querySelector('.sport-recap-link')) return;
