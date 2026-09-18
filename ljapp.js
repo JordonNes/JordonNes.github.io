@@ -516,9 +516,9 @@
     const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : qcs(s.qcTitle,s.qcs));
     const headliners=headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel);
     const twentyPiece=twenty(s.twenty,s.twentyNote,false,key);
-    // NFL is weekly/QC-first: put the Thursday–Monday game cards immediately after
-    // the headliners so users do not have to scroll through the large 20 Piece first.
-    const content=key==="NFL" ? `${headliners}${quickies}${twentyPiece}` : `${headliners}${twentyPiece}${quickies}`;
+    // Sport page order is locked: L&J Headliners → 20 Piece → Per-Game QCs.
+    // NFL follows the same publication architecture as every other DP page.
+    const content=`${headliners}${twentyPiece}${quickies}`;
     document.getElementById("app").innerHTML = `<div class="page sport-page sport-${cls(key)}">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${content}${footer("QC layout locked")}</div>`;
     setTimeout(()=>hydrateGameStates(key),0);
   };
