@@ -36,11 +36,16 @@ jobs:
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/prediction_registry.json -o /tmp/registry.json
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/settlement_status.json -o /tmp/settlement.json
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/future_market_board.json -o /tmp/future.json
+          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/current_game_moneylines.json -o /tmp/moneylines.json
+          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/LJ_Methodology.html -o /tmp/methodology.html
+          test -s /tmp/future.json && test -s /tmp/moneylines.json
           grep -q 'LEGZ &amp; JINX — Daily Predictions' /tmp/ljdp.html
           grep -q 'provenance_policy' /tmp/registry.json
+          grep -q 'LJPC = HIT PROBABILITY' /tmp/methodology.html
           cmp --silent data/prediction_registry.json /tmp/registry.json || { echo '::error::Pages registry does not match master'; exit 1; }
           cmp --silent data/settlement_status.json /tmp/settlement.json || { echo '::error::Pages settlement status does not match master'; exit 1; }
           cmp --silent data/future_market_board.json /tmp/future.json || { echo '::error::Pages future market board does not match master'; exit 1; }
+          cmp --silent data/current_game_moneylines.json /tmp/moneylines.json || { echo '::error::Pages GAME_ML artifact does not match master'; exit 1; }
       - name: Validate deployed data semantics
         run: |
           python - <<'PY'
@@ -49,16 +54,28 @@ jobs:
           registry=json.load(open('/tmp/registry.json'))
           settlement=json.load(open('/tmp/settlement.json'))
           future=json.load(open('/tmp/future.json'))
+          moneylines=json.load(open('/tmp/moneylines.json'))
           assert registry.get('schema_version')=='LSI-PR-2'
           assert settlement.get('schema_version')=='LSI-SETTLEMENT-1'
           assert future.get('schema_version')=='LJ-FUTURE-MARKET-1'
+          assert moneylines.get('schema_version')=='LJ-CURRENT-GAME-ML-1'
           assert all(p.get('source_snapshot_ids') and p.get('provenance') and p.get('evidence_ids') for p in registry.get('predictions',[]))
+          assert all(p.get('ljpc') is not None and p.get('legz_value') is not None and p.get('pom_value') is not None for p in registry.get('predictions',[]))
           now=datetime.now(timezone.utc)
+          ml_stamp=datetime.fromisoformat(moneylines['generated_at_utc'].replace('Z','+00:00'))
+          ml_age=(now-ml_stamp).total_seconds()/3600
+          assert ml_age <= 8, f'GAME_ML artifact stale: {ml_age:.1f}h'
+          usable_ml=[r for r in moneylines.get('rows',[]) if r.get('market_class')=='GAME_ML' and r.get('event_id') and r.get('participant') and r.get('price') not in (None,'')]
+          assert usable_ml, 'No usable GAME_ML rows in deployed artifact'
+          future_ids={str(e.get('source_event_id')) for e in future.get('events',[]) if e.get('game_markets')}
+          current_ids={str(e.get('source_event_id')) for e in moneylines.get('events',[]) if e.get('source_event_id')}
+          missing=sorted(current_ids-future_ids)
+          assert not missing, f'Deployed future board lost current GAME_ML event(s): {missing[:12]}'
           for event in future.get('events',[]):
               start=datetime.fromisoformat(event['commence_time'].replace('Z','+00:00'))
               assert start>now, f"started event exposed as actionable: {event.get('source_event_id')}"
               for prop in event.get('props',[]):
-                  assert prop.get('lj_confidence') is not None
+                  assert prop.get('ljpc') is not None or prop.get('lj_confidence') is not None
                   assert prop.get('source_snapshot_ids')
-          print(f"Deployed semantic health: {len(registry.get('predictions',[]))} predictions; {len(future.get('events',[]))} future events")
+          print(f"Deployed semantic health: {len(registry.get('predictions',[]))} predictions; {len(future.get('events',[]))} future events; {len(usable_ml)} GAME_ML rows; moneyline age={ml_age:.2f}h")
           PY
