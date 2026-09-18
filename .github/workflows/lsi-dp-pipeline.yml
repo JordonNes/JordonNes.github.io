@@ -53,9 +53,11 @@ jobs:
         run: python scripts/propline_adapter.py
       - name: NHL authoritative enrichment
         run: python scripts/nhl_adapter.py
-      - name: Three-level prop acquisition — Level B
+      - name: The Odds API overlay — paid source, disabled by default
+        if: ${{ vars.ENABLE_THE_ODDS_API == 'true' }}
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          ENABLE_THE_ODDS_API: 'true'
         run: python scripts/odds_adapter.py
       - name: Build and validate Prediction Registry
         run: python scripts/lsi_pipeline.py
