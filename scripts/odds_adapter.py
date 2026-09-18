@@ -39,6 +39,7 @@ NORMAL_TTL_MIN = int(os.getenv("ODDS_API_PROP_TTL_MIN", "480"))
 PREGAME_TTL_MIN = int(os.getenv("ODDS_API_PREGAME_TTL_MIN", "30"))
 PREGAME_WINDOW_MIN = int(os.getenv("ODDS_API_PREGAME_WINDOW_MIN", "75"))
 MAX_EVENTS_PER_RUN = int(os.getenv("ODDS_API_MAX_EVENTS_PER_RUN", "16"))
+POST_START_RETENTION_HOURS = int(os.getenv("QC_POST_START_RETENTION_HOURS", "8"))
 
 STATE = DATA / "the_odds_api_state.json"
 BOARD = DATA / "qc_prop_board.json"
@@ -224,14 +225,20 @@ def board_key(event: dict) -> tuple[str, str, str]:
 
 def merge_board_events(existing: list[dict], incoming: list[dict], now: datetime, cutoff: datetime) -> list[dict]:
     merged: dict[tuple[str, str, str], dict] = {}
+    retention_floor = now - timedelta(hours=POST_START_RETENTION_HOURS)
     for event in existing:
         start = parse_dt(event.get("commence_time"))
-        if start and not (now < start <= cutoff):
+        if start and not (retention_floor <= start <= cutoff):
             continue
         key = board_key(event)
         if not all(key):
             continue
-        merged[key] = dict(event)
+        cached = dict(event)
+        if start and start <= now and cached.get("props"):
+            cached["sweep_status"] = "PREGAME_LOCKED_STARTED"
+            cached["pregame_locked"] = True
+            cached["locked_at_utc"] = start.isoformat()
+        merged[key] = cached
 
     for event in incoming:
         key = board_key(event)
@@ -518,7 +525,7 @@ def run():
     added = append_market_rows(rows)
     merged_events = merge_board_events(old_board.get("events", []), board_events, now, cutoff)
     payload = {
-        "schema_version": "LJ-QC-PROP-BOARD-2", "generated_at_utc": now.isoformat(),
+        "schema_version": "LJ-QC-PROP-BOARD-3", "generated_at_utc": now.isoformat(),
         "source": "MULTI_SOURCE_QC_PROP_BOARD", "regions": REGIONS, "lookahead_hours": LOOKAHEAD_HOURS,
         "quota": quota, "events_discovered": len(discovered),
         "events_queried_this_run": queried, "source_errors": errors, "events": merged_events,
