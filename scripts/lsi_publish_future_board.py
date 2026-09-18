@@ -101,9 +101,12 @@ def load_game_markets():
         if not probs: continue
         base=sum(probs)/len(probs)
         count=max(1,min(5,len(rows)))
-        confidence=round(max(50.0,min(85.0,base*100+(count-1)*0.35)),1)
+        confidence=round(max(50.0,min(85.0,base+(count-1)*0.35)),1)
         best=max(rows,key=lambda x:x[0])
         out.setdefault(eid,[]).append({
+          "event_id":eid,
+          "league":str(best[2].get("league") or ""),
+          "event_start_pt":str(best[2].get("event_start_pt") or ""),
           "participant":participant,
           "selection":participant,
           "price":int(best[0]) if float(best[0]).is_integer() else best[0],
@@ -115,6 +118,38 @@ def load_game_markets():
     for eid in out:
         out[eid].sort(key=lambda x:(-x["lj_confidence"],str(x["participant"])))
     return out
+
+def norm_team(value):
+    return " ".join(str(value or "").lower().replace("&"," and ").replace("-"," ").replace("."," ").split())
+
+def game_markets_for_event(event, by_event):
+    """Resolve GAME_ML evidence even when source adapters use different event IDs."""
+    event_id=str(event.get("source_event_id") or "").strip()
+    exact=by_event.get(event_id) or []
+    if exact:
+        return exact
+    league=str(event.get("league") or "")
+    start=parse(event.get("commence_time"))
+    aliases=set()
+    for value in [event.get("away"),event.get("home"),*(event.get("away_aliases") or []),*(event.get("home_aliases") or [])]:
+        v=norm_team(value)
+        if v: aliases.add(v)
+    best=[]
+    best_score=(-1,float("-inf"))
+    for rows in by_event.values():
+        if not rows: continue
+        sample=rows[0]
+        if league and str(sample.get("league") or "") not in {"",league}: continue
+        mstart=parse(sample.get("event_start_pt"))
+        if start and mstart and abs((mstart-start).total_seconds())>45*60: continue
+        participants={norm_team(x.get("participant")) for x in rows if x.get("participant")}
+        overlap=len(aliases & participants)
+        if aliases and overlap==0: continue
+        delta=-abs((mstart-start).total_seconds()) if start and mstart else 0
+        score=(overlap,delta)
+        if score>best_score:
+            best_score=score; best=rows
+    return best
 
 def main():
     src=json.loads(SRC.read_text(encoding="utf-8")) if SRC.exists() else {"events":[]}
@@ -140,7 +175,7 @@ def main():
           "source":e.get("source"),"sweep_status":e.get("sweep_status"),
           "unique_players":len({str(x["participant"]).lower() for x in props}),
           "props":props,
-          "game_markets":game_markets.get(str(e.get("source_event_id") or ""),[])
+          "game_markets":game_markets_for_event(e,game_markets)
         })
     events.sort(key=lambda x:(x.get("commence_time") or "",x.get("league") or "",x.get("away") or ""))
     payload={
