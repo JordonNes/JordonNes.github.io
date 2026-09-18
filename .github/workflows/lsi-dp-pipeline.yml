@@ -51,6 +51,16 @@ jobs:
           PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY }}
           PROPLINE_ANALYTICS_ENABLED: ${{ vars.PROPLINE_ANALYTICS_ENABLED }}
         run: python scripts/propline_adapter.py
+      - name: OddsPapi historical calibration — free-first
+        env:
+          ODDSPAPI_API_KEY: ${{ secrets.ODDSPAPI_API_KEY }}
+          ODDS_PAPI_API_KEY: ${{ secrets.ODDS_PAPI_API_KEY }}
+          LSI_STAGE: ${{ steps.clock.outputs.stage }}
+          ODDSPAPI_MAX_DISCOVERY_CALLS: ${{ vars.ODDSPAPI_MAX_DISCOVERY_CALLS }}
+          ODDSPAPI_MAX_HISTORY_FIXTURES: ${{ vars.ODDSPAPI_MAX_HISTORY_FIXTURES }}
+          ODDSPAPI_MIN_QUOTA_REMAINING: ${{ vars.ODDSPAPI_MIN_QUOTA_REMAINING }}
+          ODDSPAPI_BOOKMAKERS: ${{ vars.ODDSPAPI_BOOKMAKERS }}
+        run: python scripts/oddspapi_history_adapter.py
       - name: NHL authoritative enrichment
         run: python scripts/nhl_adapter.py
       - name: The Odds API overlay — paid source, disabled by default
@@ -118,5 +128,5 @@ jobs:
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
-          git add data/prediction_registry.json data/prediction_registry.js data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/qc_prop_board.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
+          git add data/prediction_registry.json data/prediction_registry.js data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json data/qc_prop_board.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
           if git diff --cached --quiet; then echo 'No LSI changes to publish.'; else git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT" && git push origin master; fi
