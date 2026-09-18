@@ -71,12 +71,21 @@ const warnings = [];
 let auditedGames = 0;
 let fullGames = 0;
 let limitedGames = 0;
+let twentyShortfalls = 0;
 
 for (const [page, league] of Object.entries(PAGES)) {
   if (!fs.existsSync(path.join(ROOT, page))) continue;
   const ctx = evaluatePage(page);
   const sport = ctx.window.LJ_DATA?.sports?.[league];
   if (!sport || !Array.isArray(sport.qcs)) continue;
+
+  if (sport.qcs.length) {
+    const players = new Set((sport.twenty || []).map(r => String((r || [])[1] || '').trim().toLowerCase()).filter(Boolean));
+    if (players.size < 20) {
+      twentyShortfalls++;
+      warnings.push(`${league}: 20 Piece acquisition has ${players.size}/20 unique players for an active/future QC slate. Upstream prop acquisition must expand; filler thresholds are prohibited.`);
+    }
+  }
 
   for (const q of sport.qcs) {
     const label = `${league} ${q.away || '?'} @ ${q.home || '?'}`;
@@ -133,10 +142,10 @@ for (const [page, league] of Object.entries(PAGES)) {
   }
 }
 
-console.log(`QC prop audit: audited=${auditedGames} full-six=${fullGames} market-limited=${limitedGames}`);
+console.log(`QC prop audit: audited=${auditedGames} full-six=${fullGames} market-limited=${limitedGames} twenty-piece-shortfalls=${twentyShortfalls}`);
 for (const w of warnings) console.log(`::warning::QC AUDIT ${w}`);
 if (errors.length) {
   for (const e of errors) console.error(`::error::QC AUDIT ${e}`);
   process.exit(1);
 }
-console.log('QC publication invariant passed: acquired player-prop boards populate QC ticket columns.');
+console.log('QC publication invariant passed: acquired player-prop boards populate QC ticket columns; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
