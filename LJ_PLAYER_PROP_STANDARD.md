@@ -106,10 +106,10 @@ L&J evaluates the exact offered POM independently. A Goblin is not automatically
 
 These rules apply to both **Per-Game/Event QC** and **All-Sports QC** player-prop tickets:
 
-1. **SNS1 / GOBLIN 1 — probability first.** Goblin POMs only. Target individual L&J confidence above **77%**. The objective is the most secure / “MISS Proof” construction LSI can support. If fewer than six Goblins clear 77%, use the strongest remaining verified Goblins before considering a shorter POM-gated ticket; never silently substitute a Normal or Demon as a Goblin.
-2. **SNS2 / GOBLIN 2 — probability first with diversity.** Goblin and/or Normal POMs only. Target individual L&J confidence above **70%**. Avoid repeating SNS1’s exact legs and prefer different players/prop families when the board supports it.
+1. **SNS1 / GOBLIN 1 — probability first.** Prioritize Goblin POM legs carrying **77% or greater L&J prediction accuracy confidence**. If fewer than six qualifying Goblins are available, use the strongest remaining verified Goblins only as needed. The objective remains the most secure / “MISS Proof” construction LSI can support; never silently substitute a Normal or Demon as a Goblin.
+2. **SNS2 / GOBLIN 2 — probability first with diversity.** Prioritize eligible Goblin and/or Normal POM legs carrying **70% or greater L&J prediction accuracy confidence**. Avoid exact SNS1 duplication. If fewer than six qualifying legs are available, use the strongest remaining eligible SNS2 legs only as needed while continuing to prefer different players and prop families.
 3. **NORMAL / MARKET — standard-market strength.** Normal/Market POMs only; no Goblins and no Demons. Rank primarily by L&J hit probability. Market economics and source depth are tie-breakers, not the primary objective. JINX support is part of the L&J evaluation.
-4. **AGGRESSIVE / DEMON — economics first after a probability gate.** Normal and Demon POMs only. Eligible legs must carry **L&J modeled hit probability of at least 51.8%**. Within that qualified pool, prioritize payout/upside economics while still seeking the combination most likely to go green.
+4. **AGGRESSIVE / DEMON — economics first after a probability gate.** Use Normal and Demon POMs with **L&J modeled hit probability of at least 51.8%**. Once a candidate clears that floor, rank primarily for **economics/upside**, using confidence and source quality as supporting factors.
 
 ### Diversity and probability integrity
 
