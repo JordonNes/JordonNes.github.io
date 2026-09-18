@@ -96,6 +96,7 @@
     const c=a.archive_counts||m.counts||{};
     const markets=(g.markets||[]).slice().sort((x,y)=>(y.settled_sample||0)-(x.settled_sample||0));
     const rows=markets.map(x=>`<tr><td>${esc(x.league)}</td><td>${esc(x.market_key)}</td><td>${fmt(x.settled_sample)}</td><td>${x.eligible_for_promotion?'YES':'NO'}</td><td>${Number(x.proposed_confidence_delta||0).toFixed(2)}</td><td>${x.calibration_error_pp==null?'—':Number(x.calibration_error_pp).toFixed(2)}</td></tr>`).join('');
+    const settlements=(s.recent_settlements||[]).slice().reverse().slice(0,25).map(x=>`<tr><td>${esc(x.league)}</td><td>${esc(x.selection||x.prediction_id)}</td><td>${esc(x.actual_result)}</td><td><b>${esc(x.grade)}</b></td><td>${esc(x.source)}</td></tr>`).join('');
     root.innerHTML=`
       <main class="lsi-detail">
         <a href="LJ_index.html">← Daily Predictions</a>
@@ -105,7 +106,9 @@
           <section class="lsi-detail-card"><h2>2. Settlement & Evaluation</h2>${kv('Registry predictions',fmt(s.predictions_in_registry??e.predictions_evaluated))}${kv('Settled predictions',fmt(s.settled_predictions??e.settled_predictions))}${kv('Settlement rate',pct(s.settlement_rate_pct))}${kv('Evaluation health',eh.status||'—')}${kv('Evaluation phase',e.phase||'—')}</section>
           <section class="lsi-detail-card"><h2>3. Controlled Learning</h2>${kv('Eligible markets',fmt(g.eligible_market_count||0))}${kv('Overlay enabled',o.enabled?'YES':'NO')}${kv('Max adjustment','±'+Number(o.max_abs_confidence_delta||3).toFixed(0)+' pts')}${kv('Live influence',o.enabled?'ACTIVE':'LOCKED')}${kv('Gate policy','200+ settled / 98% settlement / CLV / multi-source')}</section>
         </div>
-        <h2>Learning Maturity by Market</h2>
+        <h2>Recent Verified Settlements</h2>
+        <div class="lsi-table-wrap"><table class="lsi-table"><thead><tr><th>League</th><th>Prediction</th><th>Actual</th><th>Grade</th><th>Evidence</th></tr></thead><tbody>${settlements||'<tr><td colspan="5">No verified automatic settlements yet. Pending games remain outside the accuracy denominator.</td></tr>'}</tbody></table></div>
+        <h2 style="margin-top:24px">Learning Maturity by Market</h2>
         <div class="lsi-table-wrap"><table class="lsi-table"><thead><tr><th>League</th><th>Market</th><th>Settled</th><th>Eligible</th><th>Proposed Δ</th><th>Calibration Error</th></tr></thead><tbody>${rows||'<tr><td colspan="6">No evaluated market cells yet.</td></tr>'}</tbody></table></div>
         <p style="margin-top:16px;color:#777;font-size:.76rem">Latest archive: ${esc(a.generated_at_utc||'—')} • Latest evaluation: ${esc(e.generated_at_utc||'—')} • Settlement: ${esc(s.generated_at_utc||'—')}</p>
       </main>`;
