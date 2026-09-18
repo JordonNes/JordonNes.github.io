@@ -27,6 +27,7 @@ const SAFE = new Set([
   'dailyrefresh.js',
   'morningrefresh.js',
   'middayrefresh.js',
+  'data/future_market_board.js',
   'data/prediction_registry.js',
   'lsi_registry_bridge.js',
 ]);
