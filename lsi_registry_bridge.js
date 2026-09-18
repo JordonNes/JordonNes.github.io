@@ -395,18 +395,32 @@
 
     const hot=diverseTake([...pool].sort((a,b)=>b.confidence-a.confidence),6,0);
 
-    // SNS1: probability first, Goblin-only. >77% is the target; if the board does not
-    // supply six qualifying Goblins, retain the strongest remaining Goblins rather than
-    // silently substituting Normal/Demon POMs.
-    const sns1Base=[...pool].filter(c=>c.pomType==='GOBLIN').sort((a,b)=>
-      ((b.confidence>=77)-(a.confidence>=77)) || (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count));
-    const sns1=diverseTake(sns1Base,6,0);
+    // SNS1: prioritize Goblin POMs carrying >=77% L&J prediction-accuracy confidence.
+    // If fewer than six qualify, backfill only with the strongest remaining Goblins.
+    const sns1Qualified=[...pool].filter(c=>c.pomType==='GOBLIN'&&c.confidence>=77).sort((a,b)=>
+      (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
+    const sns1=diverseTake(sns1Qualified,6,0);
+    if(sns1.length<6){
+      const avoid=new Set(sns1.map(keyOf));
+      const sns1Fallback=[...pool].filter(c=>c.pomType==='GOBLIN'&&c.confidence<77).sort((a,b)=>
+        (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
+      sns1.push(...diverseTake(sns1Fallback,6-sns1.length,0,avoid));
+    }
     const usedAcross=new Set(sns1.map(keyOf));
 
-    // SNS2: Goblin or Normal only, >70% target, and cross-ticket diversity from SNS1.
-    const sns2Base=[...pool].filter(c=>c.pomType==='GOBLIN'||c.pomType==='NORMAL').sort((a,b)=>
-      ((b.confidence>=70)-(a.confidence>=70)) || (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count));
-    const sns2=diverseTake(sns2Base,6,0,usedAcross);
+    // SNS2: prioritize eligible Goblin/Normal POMs carrying >=70% L&J prediction-accuracy
+    // confidence, avoid exact SNS1 duplication, then use the strongest remaining eligible
+    // SNS2 legs only if needed.
+    const sns2Eligible=c=>c.pomType==='GOBLIN'||c.pomType==='NORMAL';
+    const sns2Qualified=[...pool].filter(c=>sns2Eligible(c)&&c.confidence>=70).sort((a,b)=>
+      (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
+    const sns2=diverseTake(sns2Qualified,6,0,usedAcross);
+    if(sns2.length<6){
+      const avoid=new Set([...usedAcross,...sns2.map(keyOf)]);
+      const sns2Fallback=[...pool].filter(c=>sns2Eligible(c)&&c.confidence<70).sort((a,b)=>
+        (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
+      sns2.push(...diverseTake(sns2Fallback,6-sns2.length,0,avoid));
+    }
     sns2.forEach(c=>usedAcross.add(keyOf(c)));
 
     // NORMAL: standard/unmarked POMs only. Probability dominates economics; price/source
@@ -435,7 +449,7 @@
       sns1:jointProbability(sns1),sns2:jointProbability(sns2),
       normal:jointProbability(normal),demon:jointProbability(demon)
     };
-    q._pomPolicy={sns1:'GOBLIN_ONLY_TARGET_77',sns2:'GOBLIN_OR_NORMAL_TARGET_70',normal:'NORMAL_ONLY_PROBABILITY_FIRST',demon:'NORMAL_OR_DEMON_MIN_51_8_ECONOMICS_FIRST'};
+    q._pomPolicy={sns1:'GOBLIN_PRIORITY_MIN_77_THEN_STRONGEST_GOBLIN_FALLBACK',sns2:'GOBLIN_OR_NORMAL_PRIORITY_MIN_70_NO_SNS1_DUP_THEN_ELIGIBLE_FALLBACK',normal:'NORMAL_ONLY_PROBABILITY_FIRST',demon:'NORMAL_OR_DEMON_MIN_51_8_ECONOMICS_FIRST'};
 
     const shortages=[];
     if(pool.length<6) shortages.push(`TOTAL POOL ${pool.length}/6`);
