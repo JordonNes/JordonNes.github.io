@@ -389,7 +389,7 @@ def run():
         fixtures=fixtures if isinstance(fixtures,list) else []
         print(f"OddsPapi fixtures {target}:",len(fixtures))
         for fx in fixtures:
-            if classify_league(fx) and fx.get("fixtureId") and fx.get("hasOdds"):
+            if classify_league(fx) and fx.get("fixtureId"):
                 candidates.append(fx)
         time.sleep(2.05)
 
