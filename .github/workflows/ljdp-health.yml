@@ -34,5 +34,31 @@ jobs:
         run: |
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/LJ_index.html -o /tmp/ljdp.html
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/prediction_registry.json -o /tmp/registry.json
+          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/settlement_status.json -o /tmp/settlement.json
+          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/future_market_board.json -o /tmp/future.json
           grep -q 'LEGZ &amp; JINX — Daily Predictions' /tmp/ljdp.html
           grep -q 'provenance_policy' /tmp/registry.json
+          cmp --silent data/prediction_registry.json /tmp/registry.json || { echo '::error::Pages registry does not match master'; exit 1; }
+          cmp --silent data/settlement_status.json /tmp/settlement.json || { echo '::error::Pages settlement status does not match master'; exit 1; }
+          cmp --silent data/future_market_board.json /tmp/future.json || { echo '::error::Pages future market board does not match master'; exit 1; }
+      - name: Validate deployed data semantics
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime,timezone
+          registry=json.load(open('/tmp/registry.json'))
+          settlement=json.load(open('/tmp/settlement.json'))
+          future=json.load(open('/tmp/future.json'))
+          assert registry.get('schema_version')=='LSI-PR-2'
+          assert settlement.get('schema_version')=='LSI-SETTLEMENT-1'
+          assert future.get('schema_version')=='LJ-FUTURE-MARKET-1'
+          assert all(p.get('source_snapshot_ids') and p.get('provenance') and p.get('evidence_ids') for p in registry.get('predictions',[]))
+          now=datetime.now(timezone.utc)
+          for event in future.get('events',[]):
+              start=datetime.fromisoformat(event['commence_time'].replace('Z','+00:00'))
+              assert start>now, f"started event exposed as actionable: {event.get('source_event_id')}"
+              for prop in event.get('props',[]):
+                  assert prop.get('lj_confidence') is not None
+                  assert prop.get('source_snapshot_ids')
+          print(f"Deployed semantic health: {len(registry.get('predictions',[]))} predictions; {len(future.get('events',[]))} future events")
+          PY

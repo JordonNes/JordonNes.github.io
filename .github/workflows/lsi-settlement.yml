@@ -37,6 +37,9 @@ jobs:
       - name: Settle completed LSI predictions
         run: python scripts/lsi_settle.py
 
+      - name: Verify deterministic settlement rules
+        run: python -m unittest scripts/test_lsi_settle.py
+
       - name: Build evidence-based recap data
         run: python scripts/lsi_build_recaps.py
 

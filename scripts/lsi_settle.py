@@ -76,6 +76,17 @@ def write_json(path, payload):
     tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     tmp.replace(path)
 
+def write_json_if_semantic_change(path,payload,ignored=()):
+    try:old=json.loads(path.read_text(encoding="utf-8"))
+    except Exception:old=None
+    def clean(value):
+        if not isinstance(value,dict):return value
+        return {k:v for k,v in value.items() if k not in ignored}
+    if old is not None and clean(old)==clean(payload):
+        return False
+    write_json(path,payload)
+    return True
+
 def norm(v):
     return re.sub(r"[^a-z0-9]+", "", str(v or "").lower())
 
@@ -615,7 +626,7 @@ def main():
     save_results(existing)
     aliases["generated_at_utc"]=NOW.isoformat()
     aliases["provider"]="ESPN_PUBLIC"
-    write_json(ALIASES,aliases)
+    write_json_if_semantic_change(ALIASES,aliases,("generated_at_utc",))
 
     total=len(predictions)
     settled_total=sum(1 for r in existing.values() if r.get("grade") in {"WIN","LOSS","PUSH","VOID"})
@@ -638,7 +649,7 @@ def main():
         "unresolved":unresolved[-200:],
         "influence_effect":"NONE",
     }
-    write_json(STATUS,payload)
+    write_json_if_semantic_change(STATUS,payload,("generated_at_utc","source_registry_generated_at_utc"))
     print("LSI settlement:",json.dumps({
         "registry":total,"settled_total":settled_total,
         "run_counts":dict(counts),"aliases":len(aliases.get("events",{}))

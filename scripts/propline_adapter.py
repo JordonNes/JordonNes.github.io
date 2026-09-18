@@ -40,7 +40,7 @@ SPORT_KEYS = {
     "NCAA_Football": "football_ncaaf", "NFL": "football_nfl", "NHL": "hockey_nhl",
     "Tennis": "tennis", "MMA": "mma_ufc", "Boxing": "boxing",
 }
-MAX_EVENTS = {"MLB":16,"NBA":16,"WNBA":16,"NCAA_Basketball":16,"NCAA_Football":16,"NFL":16,"NHL":16,"Tennis":8,"MMA":8,"Boxing":8}
+MAX_EVENTS = {"MLB":48,"NBA":40,"WNBA":32,"NCAA_Basketball":40,"NCAA_Football":40,"NFL":32,"NHL":40,"Tennis":128,"MMA":24,"Boxing":24}
 MARKET_FIELDS = ["snapshot_id","collected_at_pt","sport","league","event_id","event_start_pt","source","market_class","participant","market","threshold","side","price","status"]
 UA = {"User-Agent": "LEGZ-JINX-LSI/2.2", "Accept": "application/json"}
 QC_BOARD = DATA / "qc_prop_board.json"
@@ -152,7 +152,11 @@ def qc_consensus(rows):
         if not avg:continue
         chosen=max(avg,key=avg.get); prob=avg[chosen]
         if prob<0.35:continue
-        prices=side_prices.get(chosen,[]); best=max(prices,key=lambda x:x[0]) if prices else (None,None)
+        prices=side_prices.get(chosen,[])
+        draftkings=[x for x in prices if norm(x[1]) in {"draftkings","dk"}]
+        # The public board follows the user's DraftKings-first rule. Other books
+        # still contribute to consensus and provenance, but DK is displayed when present.
+        best=max(draftkings,key=lambda x:x[0]) if draftkings else (max(prices,key=lambda x:x[0]) if prices else (None,None))
         if best[0] is not None and (best[0] < -1000 or best[0] > 1500):continue
         ranked.append({
             "participant":sample.get("participant"),"market_key":sample.get("market"),
@@ -160,6 +164,7 @@ def qc_consensus(rows):
             "threshold":sample.get("threshold"),"side":chosen.title(),
             "best_price":int(best[0]) if best[0] is not None and float(best[0]).is_integer() else best[0],
             "best_book":best[1],"market_source_count":len(by_book),
+            "draftkings_available":bool(draftkings),
             "consensus_probability":round(prob,4),"consensus_confidence_pct":round(prob*100,1),
             "source_snapshot_ids":sorted(snaps),"classification":"CONDITIONAL_LEAN_MARKET_CONSENSUS",
         })
@@ -273,7 +278,27 @@ def append_market_rows(rows):
     return len(fresh)
 
 
-def is_prop_market(key): return str(key or "").lower().startswith(("player_","batter_","pitcher_","goalie_"))
+TENNIS_PARTICIPANT_MARKETS={"h2h","moneyline","match_winner","spreads","game_spread","player_games","player_sets"}
+
+def is_prop_market(key,league=None):
+    value=str(key or "").lower()
+    return value.startswith(("player_","batter_","pitcher_","goalie_")) or (league=="Tennis" and value in TENNIS_PARTICIPANT_MARKETS)
+
+def sport_targets():
+    """Return configured sports plus active tournament-specific tennis keys."""
+    targets=[(league,key) for league,key in SPORT_KEYS.items() if league!="Tennis"]
+    tennis={SPORT_KEYS["Tennis"]}
+    try:
+        sports,_=get("/sports")
+        for item in sports if isinstance(sports,list) else []:
+            key=str(item.get("key") or "")
+            text=" ".join(str(item.get(k) or "") for k in ("key","group","title","description")).lower()
+            if key and (key.lower().startswith("tennis_") or "tennis" in text or " wta" in f" {text}" or " atp" in f" {text}"):
+                if not any(x in key.lower() for x in ("winner","outright","futures")):tennis.add(key)
+    except Exception as exc:
+        print(f"WARN PropLine sport discovery: {exc}")
+    targets.extend(("Tennis",key) for key in sorted(tennis))
+    return targets
 
 def load_state():
     try:return json.loads((DATA/"propline_state.json").read_text(encoding="utf-8"))
@@ -291,7 +316,7 @@ def due(state,sport_key,event):
     return not last or NOW-last>=max_age
 
 def candidate_events(events,league,limit):
-    window=timedelta(days=7 if league in {"MMA","Boxing"} else 4 if league=="Tennis" else 3); out=[]
+    window=QC_LOOKAHEAD; out=[]
     for event in events:
         start=parse_dt(event.get("commence_time"))
         if start and NOW-timedelta(hours=6)<=start<=NOW+window:out.append(event)
@@ -317,10 +342,16 @@ def parse_odds(payload,league,lj_event_id,collected,lineup_confirmed=None):
     for bookmaker in payload.get("bookmakers") or []:
         book=bookmaker.get("key") or bookmaker.get("title") or "unknown"; title=bookmaker.get("title") or book
         for market in bookmaker.get("markets") or []:
-            mkey=market.get("key","")
-            if not is_prop_market(mkey):continue
+            raw_mkey=market.get("key","")
+            if not is_prop_market(raw_mkey,league):continue
             for outcome in market.get("outcomes") or []:
+                mkey=raw_mkey
                 pid=outcome.get("player_id") or ""; side=outcome.get("name") or ""; participant=outcome.get("description") or outcome.get("player_name") or ""
+                if league=="Tennis" and mkey in TENNIS_PARTICIPANT_MARKETS and not participant:
+                    participant=side
+                    side="Yes"
+                    if mkey in {"h2h","moneyline"}:mkey="match_winner"
+                    elif mkey in {"spreads","game_spread"}:mkey="player_game_handicap"
                 if not participant and pid and norm(side) not in {"over","under","yes","no","more","less"}:participant=side
                 if not participant:continue
                 threshold=outcome.get("point"); price=outcome.get("price"); status="SUSPENDED" if outcome.get("suspended") is True or market.get("suspended") is True else "OPEN"
@@ -354,11 +385,15 @@ def write_intelligence(records):
 def run():
     if not KEY:print("PROPLINE_API_KEY absent: PropLine safely skipped.");return
     state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
-    for league,sport_key in SPORT_KEYS.items():
+    seen_provider_events=set()
+    for league,sport_key in sport_targets():
         try:events,quota=get(f"/sports/{sport_key}/events");last_quota=quota
         except Exception as exc:print(f"WARN PropLine events {league}: {exc}");continue
         for event in candidate_events(events if isinstance(events,list) else [],league,MAX_EVENTS[league]):
             eid=str(event.get("id","")); ljid=best_lj_event_id(event,league); start=parse_dt(event.get("commence_time"))
+            provider_key=(league,eid)
+            if not eid or provider_key in seen_provider_events:continue
+            seen_provider_events.add(provider_key)
             if start and NOW<start<=NOW+QC_LOOKAHEAD:
                 event_catalog.append({"league":league,"sport_key":sport_key,"event_id":ljid,"propline_event_id":eid,
                                       "commence_time":event.get("commence_time",""),"away":event.get("away_team",""),
@@ -366,7 +401,7 @@ def run():
             if not due(state,sport_key,event):continue
             try:available,quota=get(f"/sports/{sport_key}/events/{eid}/markets");last_quota=quota
             except Exception as exc:print(f"WARN PropLine markets {league} {eid}: {exc}");continue
-            prop_keys=[x.get("key") for x in (available or []) if isinstance(x,dict) and is_prop_market(x.get("key",""))]
+            prop_keys=[x.get("key") for x in (available or []) if isinstance(x,dict) and is_prop_market(x.get("key",""),league)]
             if not prop_keys:state.setdefault("events",{})[f"{sport_key}:{eid}"]=NOW.isoformat();continue
             lineup=None
             if league in {"MLB","NFL","NCAA_Football"}:

@@ -2,6 +2,13 @@ name: LSI Daily Predictions Pipeline
 
 on:
   workflow_dispatch:
+    inputs:
+      stage:
+        description: Publication stage for a manual run
+        required: true
+        default: DISCOVERY
+        type: choice
+        options: [DISCOVERY, MORNING_PUBLICATION, MIDDAY_PUBLICATION, MARKET_HISTORY, CONTEXT_MARKETS, MASTER_PUBLICATION]
   push:
     branches: [master]
     paths:
@@ -19,6 +26,8 @@ on:
   schedule:
     - cron: '0 13,16,19,22 * * *'
     - cron: '0 1,4 * * *'
+    - cron: '0 14,17,20,23 * * *'
+    - cron: '0 2,5 * * *'
 
 permissions:
   contents: write
@@ -28,20 +37,54 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  clock:
+    runs-on: ubuntu-latest
+    outputs:
+      stage: ${{ steps.resolve.outputs.stage }}
+      date: ${{ steps.resolve.outputs.date }}
+      run_allowed: ${{ steps.resolve.outputs.run_allowed }}
+    steps:
+      - name: Resolve DST-safe Pacific run stage
+        id: resolve
+        shell: bash
+        env:
+          MANUAL_STAGE: ${{ inputs.stage }}
+        run: |
+          PT_HOUR=$(TZ=America/Los_Angeles date +%H)
+          PT_DATE=$(TZ=America/Los_Angeles date +%F)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            STAGE="$MANUAL_STAGE"
+            RUN_ALLOWED=true
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            STAGE=DISCOVERY
+            RUN_ALLOWED=true
+          else
+            case "$PT_HOUR" in
+              06) STAGE=DISCOVERY;;
+              09) STAGE=MORNING_PUBLICATION;;
+              12) STAGE=MIDDAY_PUBLICATION;;
+              15) STAGE=MARKET_HISTORY;;
+              18) STAGE=CONTEXT_MARKETS;;
+              21) STAGE=MASTER_PUBLICATION;;
+              *) STAGE=NONCANONICAL_DST_DUPLICATE; RUN_ALLOWED=false;;
+            esac
+            RUN_ALLOWED=${RUN_ALLOWED:-true}
+          fi
+          echo "hour=$PT_HOUR" >> "$GITHUB_OUTPUT"
+          echo "date=$PT_DATE" >> "$GITHUB_OUTPUT"
+          echo "stage=$STAGE" >> "$GITHUB_OUTPUT"
+          echo "run_allowed=$RUN_ALLOWED" >> "$GITHUB_OUTPUT"
+          echo "Pacific stage: $STAGE; allowed: $RUN_ALLOWED"
+
   lsi:
+    needs: clock
+    if: needs.clock.outputs.run_allowed == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with: {ref: master, fetch-depth: 0}
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
-      - name: Resolve Pacific run stage
-        id: clock
-        shell: bash
-        run: |
-          PT_HOUR=$(TZ=America/Los_Angeles date +%H); PT_DATE=$(TZ=America/Los_Angeles date +%F)
-          case "$PT_HOUR" in 06) STAGE=DISCOVERY;;09) STAGE=MORNING_PUBLICATION;;12) STAGE=MIDDAY_PUBLICATION;;15) STAGE=MARKET_HISTORY;;18) STAGE=CONTEXT_MARKETS;;21) STAGE=MASTER_PUBLICATION;;*) STAGE=MANUAL_OR_DST_GUARD;;esac
-          echo "hour=$PT_HOUR" >> "$GITHUB_OUTPUT"; echo "date=$PT_DATE" >> "$GITHUB_OUTPUT"; echo "stage=$STAGE" >> "$GITHUB_OUTPUT"
       - name: LSI free-first source acquisition
         env:
           CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
@@ -60,7 +103,7 @@ jobs:
         env:
           ODDSPAPI_API_KEY: ${{ secrets.ODDSPAPI_API_KEY }}
           ODDS_PAPI_API_KEY: ${{ secrets.ODDS_PAPI_API_KEY }}
-          LSI_STAGE: ${{ steps.clock.outputs.stage }}
+          LSI_STAGE: ${{ needs.clock.outputs.stage }}
           ODDSPAPI_MAX_DISCOVERY_CALLS: ${{ vars.ODDSPAPI_MAX_DISCOVERY_CALLS }}
           ODDSPAPI_MAX_HISTORY_FIXTURES: ${{ vars.ODDSPAPI_MAX_HISTORY_FIXTURES }}
           ODDSPAPI_MIN_QUOTA_REMAINING: ${{ vars.ODDSPAPI_MIN_QUOTA_REMAINING }}
@@ -148,7 +191,7 @@ jobs:
           if git diff --cached --quiet; then
             echo 'No LSI changes to publish.'
           else
-            git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT"
+            git commit -m "LSI ${{ needs.clock.outputs.stage }} ${{ needs.clock.outputs.date }} PT"
             for attempt in 1 2 3 4 5; do
               git pull --rebase origin master
               if git push origin master; then exit 0; fi

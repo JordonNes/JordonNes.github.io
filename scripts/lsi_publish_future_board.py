@@ -63,6 +63,7 @@ def canonical_prop(p):
       "side":p.get("side"),
       "price":p.get("best_price"),
       "book":p.get("best_book"),
+      "draftkings_available":bool(p.get("draftkings_available")),
       "market_source_count":int(p.get("market_source_count") or 1),
       "lj_confidence":lj_baseline(p),
       "model":"L&J MARKET BASELINE",

@@ -425,7 +425,7 @@ def build():
                 "status": (first(row, "status") or "ACTIVE").upper(),
                 "legz_comment": first(row, "legz_comment"),
                 "jinx_comment": first(row, "jinx_comment"),
-                "evidence_ids": [x for x in first(row, "evidence_ids").split("|") if x],
+                "evidence_ids": [x for x in first(row, "evidence_ids").split("|") if x] or list(snapshot_ids),
                 "publication_tags": [x for x in first(row, "publication_tags").split("|") if x],
             }
             if market_class == "PLAYER_PROP":
