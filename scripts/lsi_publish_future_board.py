@@ -20,6 +20,7 @@ DATA=ROOT/"data"
 SRC=DATA/"qc_prop_board.json"
 OUT=DATA/"future_market_board.json"
 OUTJS=DATA/"future_market_board.js"
+OVERRIDES=DATA/"verified_market_overrides.json"
 PT=ZoneInfo("America/Los_Angeles")
 NOW=datetime.now(timezone.utc)
 
@@ -55,6 +56,12 @@ def horizon_for(league):
     return end
 
 def canonical_prop(p):
+    evaluated=str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"
+    try:
+        explicit=float(p.get("ljpc")) if evaluated and p.get("ljpc") not in (None,"") else None
+    except (TypeError,ValueError):
+        explicit=None
+    confidence=round(max(0.0,min(100.0,explicit)),1) if explicit is not None else lj_baseline(p)
     return {
       "participant":p.get("participant"),
       "market_key":p.get("market_key") or p.get("market"),
@@ -65,10 +72,15 @@ def canonical_prop(p):
       "book":p.get("best_book"),
       "draftkings_available":bool(p.get("draftkings_available")),
       "market_source_count":int(p.get("market_source_count") or 1),
-      "ljpc":lj_baseline(p),
-      "lj_confidence":lj_baseline(p),
-      "model":"L&J MARKET BASELINE",
+      "pom_type":p.get("pom_type") or p.get("pomType"),
+      "evaluation_status":"LJ_EVALUATED" if explicit is not None else "PROVISIONAL_MARKET_BASELINE",
+      "ljpc":confidence,
+      "lj_confidence":confidence,
+      "legz_value":p.get("legz_value"),
+      "pom_value":p.get("pom_value"),
+      "model":"L&J EVALUATED OVERRIDE" if explicit is not None else "L&J MARKET BASELINE",
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
+      "evidence_summary":p.get("evidence_summary"),
     }
 
 
@@ -203,6 +215,42 @@ def main():
                 seen.add(key)
         except (json.JSONDecodeError,OSError) as exc:
             print(f"WARN current game moneyline event catalog unreadable: {exc}")
+
+    # Merge short-lived, independently verified external markets when an automated
+    # adapter misses an event. These overrides expire at event start and only
+    # LJ_EVALUATED directional POMs are eligible for QC publication.
+    if OVERRIDES.exists():
+        try:
+            override_payload=json.loads(OVERRIDES.read_text(encoding="utf-8"))
+            for oe in override_payload.get("events") or []:
+                expiry=parse(oe.get("expires_at") or oe.get("commence_time"))
+                start=parse(oe.get("commence_time"))
+                if not start or start<=NOW or (expiry and expiry<=NOW):
+                    continue
+                match=None
+                for e in source_events:
+                    if str(e.get("league") or "")!=str(oe.get("league") or ""):
+                        continue
+                    estart=parse(e.get("commence_time"))
+                    if estart and abs((estart-start).total_seconds())>45*60:
+                        continue
+                    ealiases={norm_team(x) for x in [e.get("away"),e.get("home"),*(e.get("away_aliases") or []),*(e.get("home_aliases") or [])] if x}
+                    oaliases={norm_team(x) for x in [oe.get("away"),oe.get("home"),*(oe.get("away_aliases") or []),*(oe.get("home_aliases") or [])] if x}
+                    if ealiases & oaliases:
+                        match=e
+                        break
+                evaluated_props=[p for p in (oe.get("props") or []) if str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"]
+                if match is not None:
+                    match.setdefault("props",[]).extend(evaluated_props)
+                    match["source"]="MULTI_SOURCE_WITH_VERIFIED_OVERRIDE"
+                    match["sweep_status"]="VERIFIED_OVERRIDE_WITH_LJ_EVALUATIONS"
+                    match["verified_market_sources"]=oe.get("available_market_sources") or []
+                else:
+                    shell=dict(oe)
+                    shell["props"]=evaluated_props
+                    source_events.append(shell)
+        except (json.JSONDecodeError,OSError) as exc:
+            print(f"WARN verified market override unreadable: {exc}")
 
     game_markets=load_game_markets()
     events=[]
