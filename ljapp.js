@@ -7,7 +7,7 @@
   const D = window.LJ_DATA;
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
-  const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|^PASS\\b|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
+  const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|^PASS\b|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
   const isUnsupported = s => /UNSUPPORTED PLAYER THRESHOLD/i.test(String(s || ""));
   const asItems = value => Array.isArray(value) ? value : (value ? [value] : []);
   const isEmptyDecision = value => {
@@ -67,10 +67,10 @@
   }
 
   function hotTop(items,label="LEGZ HOT TOP"){
-    return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">L&amp;J Accuracy Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>MARKET WATCH</b><p>No current verified player/participant market has cleared the L&amp;J gate.</p></div>`}</div>`;
+    return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">L&amp;J Accuracy Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
   }
   function winners(items,label="JINX GAME WINNERS"){
-    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">JINX Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>MARKET WATCH</b><p>No executable side/winner board today.</p></div>`}</div>`;
+    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">JINX Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
   }
   function headlineSection(hot,wins,home=false,hotLabel="LEGZ HOT TOP",winnerLabel="JINX GAME WINNERS"){
     return `<section class="section headliner-section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ market ranking + JINX game/fight winners</span></div><div class="headliner-grid">${hotTop(hot,hotLabel)}${winners(wins,winnerLabel)}</div></section>`;
@@ -78,7 +78,7 @@
 
   function twenty(rows,note,home=false,sportKey=""){
     const clean = unique20(rows,sportKey);
-    return `<section class="section twenty-section"><div class="section-head"><h2>${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">Top player / participant prediction-prop pool • one player counts once</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20 PIECE":"SPORT 20 PIECE"}</span><span>RANKED BY L&amp;J HIT CONFIDENCE</span></div>${clean.length ? `<div class="card-body"><table class="twenty-table"><thead><tr><th>#</th><th>Sport</th><th>Player / Participant</th><th>Prediction</th><th>Price</th><th>L&amp;J Conf.</th><th>Quality</th><th>Risk</th></tr></thead><tbody>${clean.map((r,i)=>`<tr class="${isUnsupported(r.join(" • "))?"qc-unsupported":isWatch(r.join(" • "))?"qc-watch":""}"><td class="rank">${i+1}</td><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="conf">${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status-panel"><b>PLAYER-PROP MARKET WATCH — 0/20 VERIFIED</b><p>The 20 Piece is reserved exclusively for player/participant props. Moneylines and other game-side markets remain under JINX Game Winners.</p></div>`}<div class="card-body"><p class="source-note">${esc(note || "20 Piece populates only from current verified markets.")}</p></div></div></section>`;
+    return `<section class="section twenty-section"><div class="section-head"><h2>${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">Top player / participant prediction-prop pool • one player counts once</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20 PIECE":"SPORT 20 PIECE"}</span><span>RANKED BY L&amp;J HIT CONFIDENCE</span></div>${clean.length ? `<div class="card-body"><table class="twenty-table"><thead><tr><th>#</th><th>Sport</th><th>Player / Participant</th><th>Prediction</th><th>Price</th><th>L&amp;J Conf.</th><th>Quality</th><th>Risk</th></tr></thead><tbody>${clean.map((r,i)=>`<tr class="${isUnsupported(r.join(" • "))?"qc-unsupported":isWatch(r.join(" • "))?"qc-watch":""}"><td class="rank">${i+1}</td><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="conf">${esc(r[4])}</td><td>${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join("")}</tbody></table></div>` : `<div class="status-panel"><b>NO VERIFIED 20 PIECE ENTRIES</b><p>The 20 Piece is reserved exclusively for player/participant props. Moneylines and other game-side markets remain under JINX Game Winners.</p></div>`}<div class="card-body"><p class="source-note">${esc(note || "20 Piece populates only from current verified markets.")}</p></div></div></section>`;
   }
 
   function rules(){
@@ -234,7 +234,7 @@
   async function fetchCurrentEvents(key){
     const map=ESPN_SCOREBOARD[key]; if(!map) return [];
     const [sport,slug]=map;
-    const dates=[ptDate(-1),ptDate(0)];
+    const dates=[ptDate(-1),ptDate(0),ptDate(1)];
     const payloads=await Promise.all(dates.map(async date=>{
       const url=`https://site.api.espn.com/apis/site/v2/sports/${sport}/${slug}/scoreboard?dates=${date}&limit=300&_=${Date.now()}`;
       const res=await fetch(url,{cache:"no-store"});
