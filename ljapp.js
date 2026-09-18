@@ -209,7 +209,7 @@
 
   const ESPN_SCOREBOARD = {
     NFL:["football","nfl"], NCAA_Football:["football","college-football"],
-    MLB:["baseball","mlb"], NBA:["basketball","nba"], WNBA:["basketball","wnba"], NHL:["hockey","nhl"]
+    MLB:["baseball","mlb"], NBA:["basketball","nba"], WNBA:["basketball","wnba"], NCAA_Basketball:["basketball","mens-college-basketball"], NHL:["hockey","nhl"]
   };
   const teamNorm=v=>String(v??"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
   function teamAliases(comp){
@@ -272,7 +272,7 @@
   function lineLabel(key,i){
     if(key==="MLB") return String(i+1);
     if(key==="NHL") return i<3?`P${i+1}`:`OT${i-2}`;
-    if(key==="NFL"||key==="NCAA_Football"||key==="NBA"||key==="WNBA") return i<4?`Q${i+1}`:`OT${i-3}`;
+    if(key==="NFL"||key==="NCAA_Football"||key==="NBA"||key==="WNBA"||key==="NCAA_Basketball") return i<4?`Q${i+1}`:`OT${i-3}`;
     return String(i+1);
   }
   function boxScoreHTML(key,event,state){
