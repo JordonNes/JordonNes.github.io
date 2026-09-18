@@ -26,7 +26,7 @@ BASE = "https://api.oddspapi.io/v4"
 KEY = (os.getenv("ODDSPAPI_API_KEY") or os.getenv("ODDS_PAPI_API_KEY") or "").strip()
 STAGE = (os.getenv("LSI_STAGE") or "").strip()
 FORCE = (os.getenv("ODDSPAPI_FORCE") or "").strip().lower() in {"1","true","yes","on"}
-MAX_DISCOVERY = max(0, int(os.getenv("ODDSPAPI_MAX_DISCOVERY_CALLS") or "4"))
+MAX_DISCOVERY = max(0, int(os.getenv("ODDSPAPI_MAX_DISCOVERY_CALLS") or "3"))
 MAX_HISTORY = max(0, int(os.getenv("ODDSPAPI_MAX_HISTORY_FIXTURES") or "8"))
 MIN_REMAINING = max(0, int(os.getenv("ODDSPAPI_MIN_QUOTA_REMAINING") or "20"))
 LOOKBACK_HOURS = max(6, min(47, int(os.getenv("ODDSPAPI_LOOKBACK_HOURS") or "47")))
@@ -403,7 +403,7 @@ def run():
     for fx in pending:
         fid=fx.get("fixtureId")
         try:
-            hist,_=request("/historical-odds",{"fixtureId":fid,"bookmakers":",".join(BOOKMAKERS)})
+            hist,_=request("/historical-odds",{"fixtureId":fid,"bookmakers":",".join(BOOKMAKERS)},allow_404_empty=True)
             hist_obj=hist if isinstance(hist,dict) else {}
             if "bookmakers" not in hist_obj and isinstance(hist_obj.get(fid),dict):
                 hist_obj=hist_obj[fid]
