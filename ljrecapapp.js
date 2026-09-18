@@ -35,7 +35,19 @@
 
       <section class="section grid-2"><div class="card"><div class="card-title green"><span>SIGNIFICANT POSITIVE RESULTS</span><span>MODEL WINS / SURPRISES</span></div>${list(s.positive,"No verified positive surprise has been entered yet.")}</div><div class="card"><div class="card-title red"><span>SIGNIFICANT NEGATIVE RESULTS</span><span>MODEL FAILURES / SURPRISES</span></div>${list(s.negative,"No verified negative surprise has been entered yet.")}</div></section>
 
-      <section class="section"><div class="card"><div class="card-title purple"><span>LEGZ &amp; JINX RECAP</span><span>WHAT YESTERDAY TEACHES THE NEXT SLATE</span></div><div class="card-body"><p>${esc(s.jinx)}</p></div></div></section>
+      <section class="section grid-2">
+        <div class="card"><div class="card-title green"><span>LEGZ RESULTS REPORT</span><span>CANDID FACTUAL AUDIT</span></div><div class="card-body"><p>${esc(s.legzReport||('LEGZ record: '+s.summary.accuracy+'. '+s.summary.props+' props; '+s.summary.winners+' winners; '+s.summary.tickets+' tickets.'))}</p></div></div>
+        <div class="card"><div class="card-title purple"><span>JINX COMPREHENSIVE ANALYSIS</span><span>CAUSES, CONTEXT & NEXT-SLATE IMPLICATIONS</span></div><div class="card-body"><p>${esc(s.jinxAnalysis||s.jinx)}</p></div></div>
+      </section>
+
+      <section class="section grid-2">
+        <div class="card"><div class="card-title gold"><span>COACHING / TACTICAL REVIEW</span><span>MATERIAL DECISIONS ONLY</span></div>${list(s.coachingReview,"No verified coaching or tactical decision has been identified as materially affecting the graded predictions.")}</div>
+        <div class="card"><div class="card-title red"><span>MARKET & IRREGULARITY REVIEW</span><span>FACT ≠ CORRELATION ≠ HYPOTHESIS</span></div>${list(s.irregularities,"No verified market anomaly or external-influence evidence has been entered for this recap.")}</div>
+      </section>
+
+      <section class="section"><div class="card"><div class="card-title black"><span>EXTERIOR CONTEXT CORRELATIONS</span><span>ATTRIBUTABLE CONTEXT • NOT CAUSAL WITHOUT EVIDENCE</span></div>${list(s.externalFactors,"No material exterior-context correlation has been verified for this recap.")}</div></section>
+
+      <section class="section"><div class="card"><div class="card-title purple"><span>WHAT LSI LEARNED / WHAT REMAINS LOCKED</span><span>SETTLED EVIDENCE BEFORE LIVE INFLUENCE</span></div><div class="card-body"><p>${esc(s.learningReview||"LSI records the settled result and context. No historical adjustment may influence future L&J confidence until the applicable learning gate is satisfied.")}</p></div></div></section>
 
       <section class="section"><div class="section-head"><h2>RUN IT BACK / WATCH / AVOID / MARKET SWITCH</h2><span class="muted">Derived only from verified previous-day evidence</span></div><div class="bucket">${bucket("RUN IT BACK",s.followups.runItBack,"Pending verified audit")}${bucket("WATCH",s.followups.watch,"Pending verified audit")}${bucket("AVOID / DOWNGRADE",s.followups.avoid,"Pending verified audit")}${bucket("MARKET SWITCH",s.followups.marketSwitch,"Pending verified audit")}</div></section>
       <div class="footer">LEGZ &amp; JINX • ${esc(s.label)} Previous-Day Recap • Exact published lines only • Ungraded when evidence is incomplete</div>
