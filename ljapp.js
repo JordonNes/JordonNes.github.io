@@ -31,6 +31,13 @@
     const visible=Number(String((r||[])[4]||"").replace(/[^0-9.]/g,""));
     return Number.isFinite(visible)?visible:0;
   };
+  const ljConfidence20 = r => {
+    const label=String((r||[])[4]||"");
+    const quality=String((r||[])[5]||"");
+    if(!/L&J MODEL/i.test(quality)) return 0;
+    const v=Number(label.replace(/[^0-9.]/g,""));
+    return Number.isFinite(v)?v:0;
+  };
   const marketFamily20 = r => {
     const pick=String((r||[])[2]||"").toLowerCase()
       .replace(/\b(?:over|under|yes|no)\b/g," ")
@@ -67,10 +74,10 @@
         for(let i=1;i<ranked.length && kept.length<3;i++){
           const candidate=ranked[i];
           const top=kept[0];
-          const topScore=score20(top);
-          const candScore=score20(candidate);
+          const topScore=ljConfidence20(top);
+          const candScore=ljConfidence20(candidate);
           const combined=topScore+candScore;
-          const pairQualifies=combined>132 && Math.max(topScore,candScore)>73 && candScore>=69;
+          const pairQualifies=topScore>0 && candScore>0 && combined>132 && Math.max(topScore,candScore)>73 && candScore>=69;
           if(pairQualifies) kept.push(candidate);
         }
       }
