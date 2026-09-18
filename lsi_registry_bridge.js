@@ -1,7 +1,7 @@
 /* LEGZ & JINX — canonical Prediction Registry + per-game QC prop bridge.
    Data-only bridge. It may populate QC ticket content, but it does not change the locked QC layout. */
 (()=>{
-  const D=window.LJ_DATA, R=window.LSI_PR, B=window.LJ_QC_PROP_BOARD;
+  const D=window.LJ_DATA, R=window.LSI_PR, RAW=window.LJ_QC_PROP_BOARD, B=window.LJ_FUTURE_MARKET_BOARD||RAW;
   if(!D?.sports || !Array.isArray(R?.predictions)) return;
 
   const pct=v=>`${Number(v||0).toFixed(Number(v||0)%1?1:0)}%`;
@@ -39,7 +39,15 @@
   const eventStartMs=e=>Date.parse(e?.commence_time||e?.event_start_pt||"");
   const isUpcomingEvent=e=>{
     const t=eventStartMs(e);
-    return Number.isFinite(t) && t>nowMs && t<=horizonMs;
+    if(!Number.isFinite(t)||t<=nowMs) return false;
+    let end=horizonMs;
+    if(e?.league==="NFL"){
+      const local=new Date();
+      const pt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",hour:"numeric",hour12:false}).formatToParts(local);
+      const wd=pt.find(x=>x.type==="weekday")?.value, hr=Number(pt.find(x=>x.type==="hour")?.value||0);
+      if(wd==="Mon"&&hr>=12) end=nowMs+8*86400000;
+    }
+    return t<=end;
   };
   const isRecentEventShell=e=>{
     const t=eventStartMs(e);
@@ -327,7 +335,7 @@
     const future=(B?.events||[])
       .filter(e=>e.league===league && isUpcomingEvent(e))
       .sort((a,b)=>eventStartMs(a)-eventStartMs(b));
-    const recent=(B?.events||[])
+    const recent=(RAW?.events||[])
       .filter(e=>e.league===league && isRecentEventShell(e))
       .sort((a,b)=>eventStartMs(b)-eventStartMs(a))
       .slice(0,1)
