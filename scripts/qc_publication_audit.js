@@ -30,8 +30,8 @@ const SAFE = new Set([
   'data/prediction_registry.js',
   'lsi_registry_bridge.js',
 ]);
-const WATCH = /WATCH|NO BET|PASS|DATA-LIMITED|MARKET NOT|UNSUPPORTED|VERIFY LIVE LINE/i;
-const PROP = /yards|points|rebounds|assists|strikeouts|\bks\b|hits|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|double.double|total bases|home runs|goals/i;
+const WATCH = /WATCH|NO BET|\bPASS\b|DATA-LIMITED|MARKET NOT|UNSUPPORTED|VERIFY LIVE LINE/i;
+const PROP = /yards|points|rebounds|assists|strikeouts|\bks\b|hits|singles|doubles|triples|stolen bases|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|double.?double|triple.?double|total bases|home runs|goals|turnovers|steals/i;
 const TEAM_SIDE = /\bML\b|moneyline|game winner|spread|game total|team total/i;
 
 function scriptsFor(html) {
@@ -84,7 +84,7 @@ for (const [page, league] of Object.entries(PAGES)) {
     const status = String(q._propSweepStatus || 'NO_AUDIT_STATUS');
 
     if (status === 'NO_BOARD_MATCH') {
-      warnings.push(`${label}: no event-scoped The Odds API board match; existing researched QC content retained.`);
+      warnings.push(`${label}: no event-scoped multi-source prop board match; existing researched QC content retained.`);
       continue;
     }
     auditedGames++;
