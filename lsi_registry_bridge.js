@@ -35,8 +35,18 @@
   const registryByLeague={};
   R.predictions.filter(p=>p.market_class==='PLAYER_PROP').forEach(p=>(registryByLeague[p.league]??=[]).push(p));
 
+  const nowMs=Date.now(), horizonMs=nowMs+7*86400000;
+  const eventStartMs=e=>Date.parse(e?.commence_time||e?.event_start_pt||"");
+  const isUpcomingEvent=e=>{
+    const t=eventStartMs(e);
+    return Number.isFinite(t) && t>nowMs && t<=horizonMs;
+  };
+  const isRecentEventShell=e=>{
+    const t=eventStartMs(e);
+    return Number.isFinite(t) && t<=nowMs && t>=nowMs-7*3600000;
+  };
   const boardByLeague={};
-  (B?.events||[]).forEach(event=>{
+  (B?.events||[]).filter(isUpcomingEvent).forEach(event=>{
     const league=event?.league;
     if(!league) return;
     for(const p of (event.props||[])){
@@ -120,7 +130,7 @@
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
     const modeledCount=modeled.length;
     const scoutCount=Math.max(0,twenty.length-modeledCount);
-    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${modeledCount} canonical L&J modeled props + ${scoutCount} market-baseline L&J modeled props. Market-baseline confidence blends consensus, available price-implied probability, and source depth; raw consensus is not displayed as L&J confidence.`;
+    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${modeledCount} canonical L&J modeled props + ${scoutCount} market-baseline L&J modeled props. Only upcoming 0–7 day events are eligible. Market-baseline confidence blends consensus, available price-implied probability, and source depth; raw consensus is not displayed as L&J confidence.`;
   }
 
   const canonical=R.predictions.map(p=>({
@@ -146,7 +156,7 @@
   }
 
   function findBoardEvent(league,q){
-    const events=(B?.events||[]).filter(e=>e.league===league);
+    const events=(B?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e));
     if(!events.length) return null;
     const exact=events.find(e=>aliasHit(q.away,e.away_aliases)&&aliasHit(q.home,e.home_aliases));
     if(exact) return exact;
@@ -180,9 +190,9 @@
     const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
       ? ` (${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''})`
       : '';
-    const conf=Number(p.consensus_confidence_pct||0);
+    const conf=marketBaselineLj(p);
     return {
-      display:`${core}${price} • CONDITIONAL LEAN — MARKET CONSENSUS ${conf.toFixed(conf%1?1:0)}%`,
+      display:`${core}${price} • L&J ${conf.toFixed(conf%1?1:0)}%`,
       confidence:conf,
       participant:n(p.participant),
       market:`${market}|${side}|${p.threshold??''}`,
@@ -297,9 +307,45 @@
     }
   }
 
+  const fmtEventTime=e=>{
+    const t=eventStartMs(e);
+    if(!Number.isFinite(t)) return "TIME TBD";
+    return new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(new Date(t));
+  };
+  const qcFromBoardEvent=e=>{
+    const q={
+      time:fmtEventTime(e),away:e.away||"",home:e.home||"",
+      market:`Upcoming event • ${e.source||"verified market board"}`,
+      winner:"",conf:"",hot:[],sns1:[],sns2:[],normal:[],demon:[],
+      foot:"0–7 day rolling L&J board • exact price/threshold must remain current at entry time.",
+      _propEventId:e.source_event_id||null
+    };
+    populateGameQc(e.league,q);
+    return q;
+  };
   Object.entries(D.sports).forEach(([league,s])=>{
-    if(!Array.isArray(s?.qcs)) return;
-    s.qcs.forEach(q=>populateGameQc(league,q));
+    const future=(B?.events||[])
+      .filter(e=>e.league===league && isUpcomingEvent(e))
+      .sort((a,b)=>eventStartMs(a)-eventStartMs(b));
+    const recent=(B?.events||[])
+      .filter(e=>e.league===league && isRecentEventShell(e))
+      .sort((a,b)=>eventStartMs(b)-eventStartMs(a))
+      .slice(0,1)
+      .map(e=>({
+        time:fmtEventTime(e),away:e.away||"",home:e.home||"",
+        market:"EVENT STARTED / RECENT — no pregame props or odds displayed",
+        winner:"",conf:"",hot:[],sns1:[],sns2:[],normal:[],demon:[],
+        foot:"Recent-event shell retained temporarily for runtime final/live status only.",
+        _propEventId:e.source_event_id||null
+      }));
+    if(future.length){
+      s.qcs=[...recent,...future.map(qcFromBoardEvent)];
+      s.qcTitle=`${s.title||league} — ROLLING 0–7 DAY PRE-GAME QCs`;
+    }else if(recent.length){
+      s.qcs=recent;
+    }else{
+      s.qcs=[];
+    }
   });
 
   window.LJ_QC_PROP_STATUS={
