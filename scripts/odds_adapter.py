@@ -2,7 +2,7 @@
 """The Odds API v4 -> LSI player-prop acquisition adapter.
 
 Goals:
-- use the configured ODDS_API_KEY against https://api.the-odds-api.com/v4;
+- remain dormant unless ENABLE_THE_ODDS_API=true; when enabled, use ODDS_API_KEY against https://api.the-odds-api.com/v4;
 - query the free /events endpoint to discover upcoming games;
 - query a compact set of high-yield player-prop markets only when a refresh is due;
 - append durable observations to data/market_history.csv;
@@ -32,6 +32,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 PT = ZoneInfo("America/Los_Angeles")
 KEY = os.getenv("ODDS_API_KEY", "").strip()
+ENABLED = os.getenv("ENABLE_THE_ODDS_API", "").strip().lower() in {"1","true","yes","on"}
 BASE = "https://api.the-odds-api.com/v4"
 REGIONS = os.getenv("ODDS_API_REGIONS", "us").strip() or "us"
 LOOKAHEAD_HOURS = int(os.getenv("ODDS_API_LOOKAHEAD_HOURS", "36"))
@@ -427,6 +428,9 @@ def should_refresh(event_id: str, start: datetime, state: dict, now: datetime) -
 
 def run():
     DATA.mkdir(parents=True, exist_ok=True)
+    if not ENABLED:
+        print("The Odds API disabled: paid/subscription source is dormant; existing QC board retained.")
+        return
     if not KEY:
         print("ODDS_API_KEY absent: The Odds API safely skipped; existing QC board retained.")
         return
