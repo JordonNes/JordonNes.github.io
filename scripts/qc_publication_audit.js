@@ -30,8 +30,8 @@ const SAFE = new Set([
   'data/prediction_registry.js',
   'lsi_registry_bridge.js',
 ]);
-const WATCH = /WATCH|NO BET|\bPASS\b|DATA-LIMITED|MARKET NOT|UNSUPPORTED|VERIFY LIVE LINE/i;
-const PROP = /yards|points|rebounds|assists|strikeouts|\bks\b|hits|singles|doubles|triples|stolen bases|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|double.?double|triple.?double|total bases|home runs|goals|turnovers|steals/i;
+const WATCH = /WATCH|NO BET|^PASS\b|DATA-LIMITED|MARKET NOT|UNSUPPORTED|VERIFY LIVE LINE/i;
+const PROP = /\bplayer\b|\bbatter\b|\bpitcher\b|yards|points|rebounds|assists|strikeouts|\bks\b|hits|singles|doubles|triples|stolen bases|earned runs|outs|receptions|rush|passing|receiving|reception yds|shots|saves|sacks|completions|attempts|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|double.?double|triple.?double|total bases|home runs|goals|turnovers|steals/i;
 const TEAM_SIDE = /\bML\b|moneyline|game winner|spread|game total|team total/i;
 
 function scriptsFor(html) {

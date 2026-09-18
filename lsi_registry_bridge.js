@@ -7,8 +7,8 @@
   const pct=v=>`${Number(v||0).toFixed(Number(v||0)%1?1:0)}%`;
   const n=v=>String(v??'').trim();
   const norm=v=>n(v).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-  const watchRx=/WATCH|NO BET|\bPASS\b|CLOSED|STARTED|LIVE|UNSUPPORTED|VERIFY LIVE LINE|MARKET NOT|DATA-LIMITED/i;
-  const propRx=/yards|points|rebounds|assists|strikeouts|\bks\b|hits|singles|doubles|triples|stolen bases|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|games won|sets won|double.?double|triple.?double|total bases|home runs|goals|turnovers|steals/i;
+  const watchRx=/WATCH|NO BET|^PASS\b|CLOSED|STARTED|LIVE|UNSUPPORTED|VERIFY LIVE LINE|MARKET NOT|DATA-LIMITED/i;
+  const propRx=/\bplayer\b|\bbatter\b|\bpitcher\b|yards|points|rebounds|assists|strikeouts|\bks\b|hits|singles|doubles|triples|stolen bases|earned runs|outs|receptions|rush|passing|receiving|reception yds|shots|saves|sacks|completions|attempts|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|games won|sets won|double.?double|triple.?double|total bases|home runs|goals|turnovers|steals/i;
   const teamSideRx=/\bML\b|moneyline|game winner|match winner|spread|game total|team total/i;
   const source=p=>{
     const refs=(p.provenance||[]).filter(x=>x?.source);
