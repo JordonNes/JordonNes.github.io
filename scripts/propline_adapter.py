@@ -34,6 +34,10 @@ NOW = datetime.now(timezone.utc)
 KEY = (os.getenv("PROPLINE_API_KEY") or os.getenv("PROP_LINE_API_KEY") or "").strip()
 BASE = "https://api.prop-line.com/v1"
 ANALYTICS = os.getenv("PROPLINE_ANALYTICS_ENABLED", "").strip().lower() in {"1", "true", "yes", "on"}
+MAX_REFRESH_EVENTS = max(1, int(os.getenv("PROPLINE_MAX_EVENT_REFRESHES_PER_RUN", "36")))
+MAX_REFRESH_PER_LEAGUE = max(1, int(os.getenv("PROPLINE_MAX_REFRESH_PER_LEAGUE", "4")))
+HTTP_TIMEOUT_SEC = max(5, int(os.getenv("PROPLINE_HTTP_TIMEOUT_SEC", "15")))
+HTTP_ATTEMPTS = max(1, int(os.getenv("PROPLINE_HTTP_ATTEMPTS", "2")))
 
 SPORT_KEYS = {
     "MLB": "baseball_mlb", "NBA": "basketball_nba", "WNBA": "basketball_wnba", "NCAA_Basketball": "basketball_ncaab",
@@ -248,17 +252,17 @@ def build_qc_board(event_catalog):
 def get(path, params=None):
     q=dict(params or {}); q["apiKey"]=KEY
     url=BASE+path+"?"+urllib.parse.urlencode(q,doseq=True); req=urllib.request.Request(url,headers=UA)
-    for attempt in range(4):
+    for attempt in range(HTTP_ATTEMPTS):
         try:
-            with urllib.request.urlopen(req,timeout=45) as response:
+            with urllib.request.urlopen(req,timeout=HTTP_TIMEOUT_SEC) as response:
                 data=json.load(response); quota={"remaining":response.headers.get("X-RateLimit-Remaining"),"limit":response.headers.get("X-RateLimit-Limit"),"reset":response.headers.get("X-RateLimit-Reset")}
             return data,quota
         except urllib.error.HTTPError as exc:
-            if exc.code==429 and attempt<3:
+            if exc.code==429 and attempt<HTTP_ATTEMPTS-1:
                 retry=exc.headers.get("Retry-After"); time.sleep(float(retry) if retry else 2**(attempt+1)); continue
             raise
         except urllib.error.URLError:
-            if attempt>=3: raise
+            if attempt>=HTTP_ATTEMPTS-1: raise
             time.sleep(2**attempt)
     raise RuntimeError("unreachable")
 
@@ -400,6 +404,9 @@ def run():
     state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
     seen_provider_events=set()
     processed_by_league=defaultdict(int)
+    refresh_attempts_by_league=defaultdict(int)
+    deferred_due_by_league=defaultdict(int)
+    refresh_attempts_total=0
     for league,sport_key in sport_targets():
         try:events,quota=get(f"/sports/{sport_key}/events");last_quota=quota
         except Exception as exc:print(f"WARN PropLine events {league}: {exc}");continue
@@ -415,6 +422,11 @@ def run():
                                       "commence_time":event.get("commence_time",""),"away":event.get("away_team",""),
                                       "home":event.get("home_team","")})
             if not due(state,sport_key,event):continue
+            if refresh_attempts_total>=MAX_REFRESH_EVENTS or refresh_attempts_by_league[league]>=MAX_REFRESH_PER_LEAGUE:
+                deferred_due_by_league[league]+=1
+                continue
+            refresh_attempts_total+=1
+            refresh_attempts_by_league[league]+=1
             try:available,quota=get(f"/sports/{sport_key}/events/{eid}/markets");last_quota=quota
             except Exception as exc:print(f"WARN PropLine markets {league} {eid}: {exc}");continue
             prop_keys=[x.get("key") for x in (available or []) if isinstance(x,dict) and is_prop_market(x.get("key",""),league)]
@@ -450,6 +462,15 @@ def run():
             state.setdefault("events",{})[f"{sport_key}:{eid}"]=NOW.isoformat()
     added=append_market_rows(markets_out);write_intelligence(existing+new);save_state(state);build_qc_board(event_catalog)
     print(f"PropLine observations parsed: {len(markets_out)}; newly appended: {added}; intelligence rows: {len(new)}")
+    print("PropLine bounded refresh:",{
+        "attempted_total":refresh_attempts_total,
+        "attempted_by_league":dict(sorted(refresh_attempts_by_league.items())),
+        "deferred_due_by_league":dict(sorted(deferred_due_by_league.items())),
+        "max_events_per_run":MAX_REFRESH_EVENTS,
+        "max_per_league":MAX_REFRESH_PER_LEAGUE,
+        "http_timeout_sec":HTTP_TIMEOUT_SEC,
+        "http_attempts":HTTP_ATTEMPTS,
+    })
     if last_quota:print("PropLine quota:",{k:v for k,v in last_quota.items() if v is not None})
     if not ANALYTICS:print("PropLine Hobby+ analytics disabled; steam/closing/trends/results remain null unless sourced elsewhere.")
 
