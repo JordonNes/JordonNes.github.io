@@ -9,6 +9,13 @@
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
   const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|^PASS\\b|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
   const isUnsupported = s => /UNSUPPORTED PLAYER THRESHOLD/i.test(String(s || ""));
+  const asItems = value => Array.isArray(value) ? value : (value ? [value] : []);
+  const isEmptyDecision = value => {
+    const s=String(value??"").trim();
+    if(!s) return true;
+    return /^(?:WATCH(?:\s*\/\s*NO BET)?|NO BET|PASS\b|CLOSED\b|STARTED\b|DATA-LIMITED\b|MARKET NOT YET AVAILABLE\b|UNSUPPORTED PLAYER THRESHOLD\b)/i.test(s);
+  };
+  const cleanDecisionItems = value => asItems(value).filter(x=>!isEmptyDecision(x));
   const unsupportedCatalog = {
     MLB:[["Sean Newcomb","Strikeouts 4.5"],["Gavin Williams","Strikeouts 5.5"],["Tarik Skubal","Strikeouts 6.5"],["Nick Lodolo","Strikeouts 5.5"],["Troy Melton","Strikeouts 4.5"],["José Soriano","Strikeouts 5.5"],["Brandon Young","Strikeouts 4.5"],["Jonah Tong","Strikeouts 5.5"],["Reynaldo López","Strikeouts 4.5"],["David Peterson","Strikeouts 5.5"],["Will Warren","Strikeouts 5.5"],["Dean Kremer","Strikeouts 4.5"],["Landen Roupp","Strikeouts 4.5"],["Quinn Mathews","Strikeouts 5.5"],["Casey Mize","Strikeouts 4.5"],["Tomoyuki Sugano","Strikeouts 3.5"],["Kade Anderson","Strikeouts 5.5"],["Reid Detmers","Strikeouts 5.5"],["Sandy Alcantara","Strikeouts 5.5"],["Corbin Burnes","Strikeouts 5.5"]],
     NFL:[["Patrick Mahomes","Passing yards 249.5"],["Bo Nix","Passing yards 225.5"],["Patrick Mahomes","Pass touchdowns 1.5"],["Bo Nix","Pass touchdowns 1.5"],["Patrick Mahomes","Completions 21.5"],["Bo Nix","Completions 20.5"],["Kansas City QB1","Pass attempts 33.5"],["Denver QB1","Pass attempts 31.5"],["Kansas City RB1","Rushing yards 59.5"],["Denver RB1","Rushing yards 61.5"],["Kansas City RB1","Receptions 2.5"],["Denver RB1","Receptions 2.5"],["Kansas City WR1","Receiving yards 69.5"],["Denver WR1","Receiving yards 64.5"],["Kansas City WR2","Receiving yards 49.5"],["Denver WR2","Receiving yards 44.5"],["Kansas City TE1","Receiving yards 49.5"],["Denver TE1","Receiving yards 39.5"],["Kansas City K","Field goals made 1.5"],["Denver K","Field goals made 1.5"]],
@@ -75,7 +82,7 @@
   }
 
   function rules(){
-    return `<div class="card qc-standard"><div class="card-title purple"><span>REQUIRED PER-GAME QUICKIE FORMAT</span><span>APPLIES TO EVERY FULL GAME / FIGHT CARD</span></div><div class="qc-rules"><div class="qc-rule"><b>1. Game Side</b><span>Teams/participants, current market and JINX game-winner prediction with confidence.</span></div><div class="qc-rule"><b>2. LEGZ Player Hot Top</b><span>Best available player/participant market expressions for this matchup.</span></div><div class="qc-rule"><b>3. SNS / Goblin</b><span>Two separate accuracy-first mini-ticket constructions; no forced filler.</span></div><div class="qc-rule"><b>4. Normal</b><span>Balanced probability-to-payout construction using verified current legs.</span></div><div class="qc-rule"><b>5. Aggressive / Demon</b><span>Higher-variance ceiling construction; lower hit probability remains visible.</span></div><div class="qc-rule"><b>6. JINX Case</b><span>Why the selected statistical channel can go green and what invalidates the play.</span></div><div class="qc-rule"><b>7. Publication Gate</b><span>7:30 AM, 12:00 PM and 8:30 PM PT; add a 30–45 minute pregame check when needed.</span></div></div><p class="qc-lock-note">Qualified predictions use normal type. Below-standard or conditional leans are italicized and are not approved parlay legs. If a current market is unavailable, the page publishes a researched WATCH / target line instead of stale or fabricated props. Kalshi is tracked as a prediction market, not a sportsbook.</p></div>`;
+    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep only the populated Normal construction, locked from the pregame publication, plus a current box score.</span></div><div class="qc-rule"><b>Final</b><span>Remove all parlays and show only the final game status and ending box score.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Conditional market-consensus selections remain labeled as consensus, not L&amp;J confidence. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
   }
   function renderQcLeg(value){
     const raw=String(value??"").trim();
@@ -107,20 +114,42 @@
     return `<span class="qc-leg-main">${mainHtml}</span>${bookHtml}${scoreHtml}`;
   }
   function ticketList(items){
-    const arr = items && items.length ? items : ["WATCH — no current verified leg"];
+    const arr=cleanDecisionItems(items);
+    if(!arr.length) return "";
     return `<ul>${arr.map(x=>`<li class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</li>`).join("")}</ul>`;
   }
-  function qcRow(r){
-    const conf = r.conf && r.conf !== "—" ? ` • ${esc(r.conf)}` : "";
-    const hot = r.hot && r.hot.length ? r.hot : ["WATCH"];
-    return `<div class="qc-row"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams"><span>${esc(r.away)}</span><span class="qc-vs">VS</span><span>${esc(r.home)}</span></div><div class="qc-market">${esc(r.market)}</div><div class="qc-winner"><div class="qc-label">JINX GAME WINNER</div><div class="qc-pick">${esc(r.winner)}${conf}</div></div></div><div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</p>`).join("")}</div></div><div class="qc-cell qc-ticket"><div class="qc-ticket-h sns sns1">SNS / GOBLIN 1</div>${ticketList(r.sns1)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h sns sns2">SNS / GOBLIN 2</div>${ticketList(r.sns2)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h normal">NORMAL</div>${ticketList(r.normal)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h demon">AGGRESSIVE / DEMON</div>${ticketList(r.demon)}${r.foot?`<div class="qc-foot">JINX CASE / KILL SWITCH: ${esc(r.foot)}</div>`:""}</div></div>`;
+  function qcTicketCell(label,kind,items,extraClass=""){
+    const arr=cleanDecisionItems(items);
+    if(!arr.length) return "";
+    return `<div class="qc-cell qc-ticket ${extraClass}"><div class="qc-ticket-h ${kind}">${esc(label)}</div>${ticketList(arr)}</div>`;
+  }
+  function qcRow(r,index=0){
+    const hot=cleanDecisionItems(r.hot);
+    const sns1=cleanDecisionItems(r.sns1);
+    const sns2=cleanDecisionItems(r.sns2);
+    const normal=cleanDecisionItems(r.normal);
+    const demon=cleanDecisionItems(r.demon);
+    const market=isEmptyDecision(r.market)?"":String(r.market||"");
+    const winner=isEmptyDecision(r.winner)?"":String(r.winner||"");
+    const conf = winner && r.conf && r.conf !== "—" ? ` • ${esc(r.conf)}` : "";
+    const cells=[];
+    if(hot.length) cells.push(`<div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</p>`).join("")}</div></div>`);
+    const s1=qcTicketCell("SNS / GOBLIN 1","sns sns1",sns1,"qc-sns1"); if(s1) cells.push(s1);
+    const s2=qcTicketCell("SNS / GOBLIN 2","sns sns2",sns2,"qc-sns2"); if(s2) cells.push(s2);
+    const n=qcTicketCell("NORMAL","normal",normal,"qc-normal"); if(n) cells.push(n);
+    if(demon.length){
+      cells.push(`<div class="qc-cell qc-ticket qc-demon"><div class="qc-ticket-h demon">AGGRESSIVE / DEMON</div>${ticketList(demon)}${r.foot?`<div class="qc-foot">JINX CASE / KILL SWITCH: ${esc(r.foot)}</div>`:""}</div>`);
+    }
+    const cols=Math.max(1,cells.length);
+    const grid=`grid-template-columns:minmax(210px,1.18fr) repeat(${cols},minmax(150px,1fr))`;
+    return `<div class="qc-row" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||"")}" style="${grid}"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams"><span>${esc(r.away)}</span><span class="qc-vs">VS</span><span>${esc(r.home)}</span></div>${market?`<div class="qc-market">${esc(market)}</div>`:""}${winner?`<div class="qc-winner"><div class="qc-label">JINX GAME WINNER</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:""}<div class="qc-runtime-status" hidden></div></div>${cells.join("")}</div>`;
   }
   function qcs(title,rows){
-    return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Approved compact horizontal Quickie Cards</span></div><div class="qc-list">${(rows || []).map(qcRow).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • daily refreshes change data, never layout</div></section>`;
+    return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Approved compact horizontal Quickie Cards</span></div><div class="qc-list">${(rows || []).map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • daily refreshes change data, never layout</div></section>`;
   }
   function groupedQcs(groups){
     if (!groups || !groups.length) return "";
-    return `<section class="section"><div class="section-head"><h2>TENNIS QUICKIE CARDS</h2><span class="muted">Singles and doubles maintained as separate permanent boards</span></div>${groups.map(g=>`<div class="qc-division"><div class="qc-division-head"><h3>${esc(g.title)}</h3><span>${esc(g.note || "Current verified matches only")}</span></div><div class="qc-list">${(g.rows || []).map(qcRow).join("")}</div></div>`).join("")}${rules()}<div class="layout-seal">TENNIS QC STRUCTURE LOCK • MEN'S SINGLES • MEN'S DOUBLES • WOMEN'S SINGLES • WOMEN'S DOUBLES</div></section>`;
+    return `<section class="section"><div class="section-head"><h2>TENNIS QUICKIE CARDS</h2><span class="muted">Singles and doubles maintained as separate permanent boards</span></div>${groups.map(g=>`<div class="qc-division"><div class="qc-division-head"><h3>${esc(g.title)}</h3><span>${esc(g.note || "Current verified matches only")}</span></div><div class="qc-list">${(g.rows || []).map((r,i)=>qcRow(r,i)).join("")}</div></div>`).join("")}${rules()}<div class="layout-seal">TENNIS QC STRUCTURE LOCK • MEN'S SINGLES • MEN'S DOUBLES • WOMEN'S SINGLES • WOMEN'S DOUBLES</div></section>`;
   }
 
   function statusGrid(){
@@ -178,12 +207,136 @@
     document.head.appendChild(script);
   }
 
+  const ESPN_SCOREBOARD = {
+    NFL:["football","nfl"], NCAA_Football:["football","college-football"],
+    MLB:["baseball","mlb"], NBA:["basketball","nba"], WNBA:["basketball","wnba"], NHL:["hockey","nhl"]
+  };
+  const teamNorm=v=>String(v??"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+  function teamAliases(comp){
+    const t=comp?.team||{};
+    return [t.abbreviation,t.shortDisplayName,t.displayName,t.name,t.location]
+      .filter(Boolean).map(teamNorm);
+  }
+  function teamMatches(label,comp){
+    const q=teamNorm(label); if(!q) return false;
+    const aliases=teamAliases(comp);
+    return aliases.some(a=>a===q || (q.length>=3&&a.startsWith(q)) || (a.length>=3&&q.startsWith(a)));
+  }
+  function ptDate(offset=0){
+    const d=new Date(Date.now()+offset*86400000);
+    const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d);
+    const get=t=>parts.find(x=>x.type===t)?.value||"";
+    return `${get("year")}${get("month")}${get("day")}`;
+  }
+  function capturedPT(){
+    return new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit",second:"2-digit",timeZoneName:"short"}).format(new Date());
+  }
+  async function fetchCurrentEvents(key){
+    const map=ESPN_SCOREBOARD[key]; if(!map) return [];
+    const [sport,slug]=map;
+    const dates=[ptDate(-1),ptDate(0)];
+    const payloads=await Promise.all(dates.map(async date=>{
+      const url=`https://site.api.espn.com/apis/site/v2/sports/${sport}/${slug}/scoreboard?dates=${date}&limit=300&_=${Date.now()}`;
+      const res=await fetch(url,{cache:"no-store"});
+      if(!res.ok) throw new Error(`scoreboard HTTP ${res.status}`);
+      return res.json();
+    }));
+    const seen=new Set(),events=[];
+    payloads.flatMap(x=>x.events||[]).forEach(e=>{if(!seen.has(e.id)){seen.add(e.id);events.push(e);}});
+    return events;
+  }
+  function eventForRow(row,events){
+    const eid=row.dataset.eventId;
+    if(eid){
+      const direct=events.find(e=>String(e.id)===String(eid));
+      if(direct) return direct;
+    }
+    const away=row.dataset.away,home=row.dataset.home;
+    return events.find(e=>{
+      const c=(e.competitions||[{}])[0],teams=c.competitors||[];
+      const a=teams.find(x=>x.homeAway==="away"),h=teams.find(x=>x.homeAway==="home");
+      return teamMatches(away,a)&&teamMatches(home,h);
+    })||null;
+  }
+  function eventState(event){
+    const type=event?.status?.type||{};
+    const detail=String(type.shortDetail||type.detail||type.name||"");
+    const raw=`${type.name||""} ${detail}`.toUpperCase();
+    if(/POSTPON|RESCHEDUL/.test(raw)) return {kind:"postponed",label:/RESCHEDUL/.test(raw)?"RESCHEDULED":"POSTPONED",detail};
+    if(/CANCEL/.test(raw)) return {kind:"cancelled",label:"CANCELLED",detail};
+    if(/SUSPEND|DELAY|PAUSED|INTERRUPT/.test(raw)) return {kind:"paused",label:/SUSPEND/.test(raw)?"SUSPENDED":"PAUSED / DELAYED",detail};
+    if(type.completed||type.state==="post"||/FINAL|GAME OVER|FULL TIME/.test(raw)) return {kind:"final",label:"FINAL",detail};
+    if(type.state==="in"||/IN PROGRESS|HALFTIME|END OF|QTR|QUARTER|PERIOD|INNING/.test(raw)) return {kind:"live",label:"LIVE",detail};
+    return {kind:"pre",label:detail||"SCHEDULED",detail};
+  }
+  function lineLabel(key,i){
+    if(key==="MLB") return String(i+1);
+    if(key==="NHL") return i<3?`P${i+1}`:`OT${i-2}`;
+    if(key==="NFL"||key==="NCAA_Football"||key==="NBA"||key==="WNBA") return i<4?`Q${i+1}`:`OT${i-3}`;
+    return String(i+1);
+  }
+  function boxScoreHTML(key,event,state){
+    const comp=(event.competitions||[{}])[0],teams=comp.competitors||[];
+    const away=teams.find(x=>x.homeAway==="away")||teams[0]||{};
+    const home=teams.find(x=>x.homeAway==="home")||teams[1]||{};
+    const max=Math.max((away.linescores||[]).length,(home.linescores||[]).length,0);
+    const heads=Array.from({length:max},(_,i)=>`<th>${esc(lineLabel(key,i))}</th>`).join("");
+    const vals=(team)=>Array.from({length:max},(_,i)=>`<td>${esc(team.linescores?.[i]?.displayValue??team.linescores?.[i]?.value??"")}</td>`).join("");
+    const name=t=>esc(t.team?.abbreviation||t.team?.shortDisplayName||t.team?.displayName||"TEAM");
+    const score=t=>esc(t.score??"");
+    return `<div class="qc-cell qc-boxscore"><div class="qc-boxscore-head"><span>BOX SCORE</span><span>${esc(state.label)}</span></div><div class="qc-boxscore-status">${esc(state.detail||state.label)} • captured ${esc(capturedPT())}</div><div class="qc-score-summary"><span>${name(away)} <b>${score(away)}</b></span><span>${name(home)} <b>${score(home)}</b></span></div>${max?`<div class="qc-boxscore-table-wrap"><table class="qc-boxscore-table"><thead><tr><th>TEAM</th>${heads}<th>T</th></tr></thead><tbody><tr><th>${name(away)}</th>${vals(away)}<td class="qc-total">${score(away)}</td></tr><tr><th>${name(home)}</th>${vals(home)}<td class="qc-total">${score(home)}</td></tr></tbody></table></div>`:""}<div class="qc-boxscore-source">ESPN public scoreboard • refreshed when this page was opened</div></div>`;
+  }
+  function currentGameCell(row,state,event){
+    const comp=(event.competitions||[{}])[0],teams=comp.competitors||[];
+    const away=teams.find(x=>x.homeAway==="away")||teams[0]||{};
+    const home=teams.find(x=>x.homeAway==="home")||teams[1]||{};
+    const n=t=>esc(t.team?.abbreviation||t.team?.shortDisplayName||t.team?.displayName||"TEAM");
+    const s=t=>esc(t.score??"");
+    const cell=row.querySelector(".qc-game");
+    if(!cell) return null;
+    cell.innerHTML=`<div class="qc-state-pill qc-state-${esc(state.kind)}">${esc(state.label)}</div><div class="qc-teams"><span>${n(away)}</span><span class="qc-vs">VS</span><span>${n(home)}</span></div><div class="qc-live-score"><span>${n(away)} <b>${s(away)}</b></span><span>${n(home)} <b>${s(home)}</b></span></div><div class="qc-runtime-detail">${esc(state.detail||state.label)}</div><div class="qc-runtime-captured">Current state captured ${esc(capturedPT())}</div>`;
+    return cell;
+  }
+  function applyRuntimeState(key,row,event){
+    const state=eventState(event);
+    if(state.kind==="pre") return;
+    const game=currentGameCell(row,state,event);
+    const normal=row.querySelector(".qc-normal");
+    const box=boxScoreHTML(key,event,state);
+    if(state.kind==="live"){
+      const parts=[game?.outerHTML||"",normal?.outerHTML||"",box].filter(Boolean);
+      row.innerHTML=parts.join("");
+      row.classList.add("qc-live-row");
+      row.style.gridTemplateColumns=normal?"minmax(210px,.85fr) minmax(260px,1fr) minmax(330px,1.45fr)":"minmax(210px,.85fr) minmax(330px,1.45fr)";
+      const h=row.querySelector(".qc-normal .qc-ticket-h");
+      if(h) h.textContent="NORMAL — PREGAME LOCKED";
+      return;
+    }
+    const parts=[game?.outerHTML||"",box].filter(Boolean);
+    row.innerHTML=parts.join("");
+    row.classList.add("qc-final-row");
+    row.style.gridTemplateColumns="minmax(210px,.85fr) minmax(360px,1.6fr)";
+  }
+  async function hydrateGameStates(key){
+    if(!ESPN_SCOREBOARD[key]) return;
+    try{
+      const events=await fetchCurrentEvents(key);
+      document.querySelectorAll(".qc-row").forEach(row=>{
+        const event=eventForRow(row,events);
+        if(event) applyRuntimeState(key,row,event);
+      });
+    }catch(err){
+      console.warn("L&J runtime game-state refresh unavailable:",err);
+    }
+  }
+
   window.renderLJSport = key => {
     const s = D.sports[key];
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
     document.title = `LEGZ & JINX — ${s.title}`;
     const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : qcs(s.qcTitle,s.qcs);
     document.getElementById("app").innerHTML = `<div class="page">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel)}${twenty(s.twenty,s.twentyNote,false,key)}${quickies}${footer("QC layout locked")}</div>`;
+    setTimeout(()=>hydrateGameStates(key),0);
   };
   window.renderLJHome = () => {
     const h = D.home;
