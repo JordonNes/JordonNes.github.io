@@ -501,13 +501,82 @@
     row.classList.add("qc-final-row");
     row.style.gridTemplateColumns="minmax(210px,.85fr) minmax(360px,1.6fr)";
   }
+  function ptWeekdayHour(){
+    const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",hour:"numeric",hour12:false}).formatToParts(new Date());
+    return {
+      weekday:parts.find(x=>x.type==="weekday")?.value||"",
+      hour:Number(parts.find(x=>x.type==="hour")?.value||0)
+    };
+  }
+  function eventPtDateKey(event){
+    const d=new Date(event?.date||event?.competitions?.[0]?.date||"");
+    if(!Number.isFinite(d.getTime())) return "";
+    const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d);
+    const get=t=>parts.find(x=>x.type===t)?.value||"";
+    return `${get("year")}${get("month")}${get("day")}`;
+  }
+  function activeNcaaWeekBounds(){
+    const map={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+    const now=ptWeekdayHour();
+    let back=map[now.weekday]??0;
+    // Sunday morning is still the completed prior publication week.
+    if(now.weekday==="Sun" && now.hour<12) back=7;
+    return {start:ptDate(-back),end:ptDate(6-back)};
+  }
+  function inActiveNcaaWeek(event){
+    const k=eventPtDateKey(event),b=activeNcaaWeekBounds();
+    return !!k && k>=b.start && k<=b.end;
+  }
+  function runtimeScheduleRow(event){
+    const comp=(event?.competitions||[{}])[0],teams=comp.competitors||[];
+    const away=teams.find(x=>x.homeAway==="away")||teams[0]||{};
+    const home=teams.find(x=>x.homeAway==="home")||teams[1]||{};
+    const team=t=>t.team?.abbreviation||t.team?.shortDisplayName||t.team?.displayName||"TBD";
+    const when=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(new Date(event.date));
+    return {
+      time:when.toUpperCase(),
+      away:team(away),home:team(home),
+      market:"SCHEDULED • NCAA WEEKLY QC INTELLIGENCE BUILD ACTIVE",
+      winner:"",conf:"—",hot:[],sns1:[],sns2:[],normal:[],demon:[],
+      foot:"Auto-populated from the current NCAA Football Sunday–Saturday schedule. Prediction/POM fields populate only after L&J evaluation.",
+      _propEventId:String(event.id||"")
+    };
+  }
+  function augmentNcaaWeeklyRows(events){
+    const active=events.filter(inActiveNcaaWeek);
+    const rows=[...document.querySelectorAll(".qc-row")];
+
+    // Remove prior-week rows only after the Sunday noon PT rollover.
+    rows.forEach(row=>{
+      const event=eventForRow(row,events);
+      if(event && !inActiveNcaaWeek(event)) row.remove();
+    });
+
+    const remaining=[...document.querySelectorAll(".qc-row")];
+    const represented=new Set();
+    remaining.forEach(row=>{
+      const event=eventForRow(row,active);
+      if(event) represented.add(String(event.id));
+    });
+
+    const list=document.querySelector(".section .qc-list");
+    if(!list) return;
+    let idx=remaining.length;
+    active
+      .sort((a,b)=>Date.parse(a.date||0)-Date.parse(b.date||0))
+      .forEach(event=>{
+        if(represented.has(String(event.id))) return;
+        list.insertAdjacentHTML("beforeend",qcRow(runtimeScheduleRow(event),idx++));
+      });
+  }
   async function hydrateGameStates(key){
     if(!ESPN_SCOREBOARD[key]) return;
     try{
       const events=await fetchCurrentEvents(key);
+      if(key==="NCAA_Football") augmentNcaaWeeklyRows(events);
       document.querySelectorAll(".qc-row").forEach(row=>{
         const event=eventForRow(row,events);
-        if(event) applyRuntimeState(key,row,event);
+        if(event && (key!=="NCAA_Football" || inActiveNcaaWeek(event))) applyRuntimeState(key,row,event);
       });
     }catch(err){
       console.warn("L&J runtime game-state refresh unavailable:",err);
