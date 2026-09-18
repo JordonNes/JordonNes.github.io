@@ -54,15 +54,24 @@ If no available prediction clears the normal L&J evidence/confidence gate, L&J m
 
 A lower-confidence SNS card is a transparent ranked forecast, not an assertion that the ticket is low risk. If the entire accessible market sweep produces fewer than six participant props, publish every available ranked prop and label the card **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. This exception is based only on actual market scarcity—not lack of research, one inaccessible preferred source, or failure to look 24+ hours ahead. Never invent a player, market, line, or price.
 
-## 6. Started-event lock
+## 6. Started-event lock and runtime QC state
 
-Once an event starts, L&J must not create or backfill new pregame predictions for that event. Existing published pregame predictions may remain visible for audit/recap purposes but must be labeled **STARTED / LIVE / CLOSED — NO NEW PREGAME BET**.
+Once an event starts, L&J must not create or backfill new pregame predictions for that event.
 
-This prevents hindsight from contaminating the next-day L&J recap and calibration record.
+The website presentation changes at runtime according to official/current event state:
+
+- **LIVE / STARTED:** show only a populated **NORMAL** parlay from the locked pregame publication plus the current box score. Do not display LEGZ Player Hot Top, SNS/Goblin 1, SNS/Goblin 2, or Aggressive/Demon during live play.
+- If the locked pregame Normal construction has no supportable prediction, omit the Normal parlay area entirely; do not show an empty placeholder.
+- **FINAL / OVER:** remove every parlay area and show only the final status and ending box score.
+- **PAUSED / DELAYED / SUSPENDED:** state the interruption clearly and suppress executable parlay areas until play resumes.
+- **POSTPONED / RESCHEDULED / CANCELLED:** state the official status clearly and suppress stale executable parlay areas.
+- Current game state and score should be refreshed from an available public status feed at page-open time and display the capture timestamp/source.
+
+This preserves the original pregame record without creating hindsight-contaminated selections.
 
 ## 7. Runtime QC audit
 
-The final Daily Predictions data layer should validate every actionable pregame QC before render. A card is incomplete if any of these conditions are true:
+The final Daily Predictions data layer should validate every actionable **pregame** QC before render. The six-prop completeness checks apply before event start; runtime live/final presentation intentionally hides non-applicable parlay columns. A pregame card is incomplete if any of these conditions are true:
 
 - the sport or all-sports 20 Piece contains a moneyline, match/fight winner, spread, team total or game total;
 - LEGZ PLAYER HOT TOP is empty for an active pregame event with an available participant-prop board;
