@@ -105,7 +105,8 @@
     return {
       winner:`${best.selection||best.participant} ML • ${fmtPrice(best)}`,
       conf:pct(ljpcOf(best)),
-      market:`GAME ODDS • ${odds} • PROVISIONAL LJPC: MARKET BASELINE`
+      provisional:true,
+      market:`GAME ODDS • ${odds} • PROVISIONAL HIT ESTIMATE: MARKET BASELINE`
     };
   };
   const isRecentEventShell=e=>{
@@ -483,7 +484,7 @@
     const q={
       time:fmtEventTime(e),away:e.away||"",home:e.home||"",
       market:game?.market||`Upcoming event • ${e.source||"verified market board"}`,
-      winner:game?.winner||"",conf:game?.conf||"",hot:[],sns1:[],sns2:[],normal:[],demon:[],
+      winner:game?.winner||"",conf:game?.conf||"",_winnerProvisional:Boolean(game?.provisional),hot:[],sns1:[],sns2:[],normal:[],demon:[],
       foot:"0–7 day rolling L&J board • exact price/threshold must remain current at entry time.",
       _propEventId:e.source_event_id||null
     };
