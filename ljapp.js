@@ -106,7 +106,7 @@
     return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">LJPC: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
   }
   function winners(items,label="JINX GAME WINNERS"){
-    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">LJPC: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
+    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>{const provisional=/PROVISIONAL|MARKET BASELINE/i.test(String(r[3]||''));return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">${provisional?'Provisional hit estimate':'LJPC'}: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`;}).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
   }
   function ensureGameWinners(s){
     if(!s) return;
@@ -199,7 +199,8 @@
     const demon=cleanDecisionItems(r.demon);
     const market=isEmptyDecision(r.market)?"":String(r.market||"");
     const winner=isEmptyDecision(r.winner)?"":String(r.winner||"");
-    const conf = winner && r.conf && r.conf !== "—" ? ` • LJPC ${esc(r.conf)}` : "";
+    const provisionalWinner=/PROVISIONAL|MARKET BASELINE/i.test(String(r.market||'')+' '+String(r.foot||''));
+    const conf = winner && r.conf && r.conf !== "—" ? ` • ${provisionalWinner?'Provisional':'LJPC'} ${esc(r.conf)}` : "";
     const cells=[];
     if(hot.length) cells.push(`<div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</p>`).join("")}</div></div>`);
     const s1=qcTicketCell("SNS / GOBLIN 1","sns sns1",sns1,"qc-sns1"); if(s1) cells.push(s1);
