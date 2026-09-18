@@ -109,7 +109,7 @@ These rules apply to both **Per-Game/Event QC** and **All-Sports QC** player-pro
 1. **SNS1 / GOBLIN 1 — probability first.** Goblin POMs only. Target individual L&J confidence above **77%**. The objective is the most secure / “MISS Proof” construction LSI can support. If fewer than six Goblins clear 77%, use the strongest remaining verified Goblins before considering a shorter POM-gated ticket; never silently substitute a Normal or Demon as a Goblin.
 2. **SNS2 / GOBLIN 2 — probability first with diversity.** Goblin and/or Normal POMs only. Target individual L&J confidence above **70%**. Avoid repeating SNS1’s exact legs and prefer different players/prop families when the board supports it.
 3. **NORMAL / MARKET — standard-market strength.** Normal/Market POMs only; no Goblins and no Demons. Rank primarily by L&J hit probability. Market economics and source depth are tie-breakers, not the primary objective. JINX support is part of the L&J evaluation.
-4. **AGGRESSIVE / DEMON — economics first after a probability gate.** Normal and Demon POMs only. Eligible legs must carry **L&J modeled hit probability of at least 69.6%**. Within that qualified pool, prioritize payout/upside economics while still seeking the combination most likely to go green.
+4. **AGGRESSIVE / DEMON — economics first after a probability gate.** Normal and Demon POMs only. Eligible legs must carry **L&J modeled hit probability of at least 51.8%**. Within that qualified pool, prioritize payout/upside economics while still seeking the combination most likely to go green.
 
 ### Diversity and probability integrity
 
