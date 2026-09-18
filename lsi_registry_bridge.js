@@ -203,7 +203,19 @@
         `${price} • PROVISIONAL MARKET BASELINE`
       ]);
     }
-    s.winners=winnerRows;
+    // Preserve published game-winner calls when GAME_ML acquisition is unavailable.
+    // Fresh canonical/market rows enrich or replace the matching matchup only; they
+    // never erase the durable DP winner board.
+    const existingWinners=Array.isArray(s.winners)?s.winners:[];
+    const winnerKey=r=>norm((r||[])[0]);
+    const mergedWinners=[...existingWinners];
+    const winnerIndex=new Map(mergedWinners.map((r,i)=>[winnerKey(r),i]));
+    for(const row of winnerRows){
+      const k=winnerKey(row);
+      if(k&&winnerIndex.has(k)) mergedWinners[winnerIndex.get(k)]=row;
+      else { if(k) winnerIndex.set(k,mergedWinners.length); mergedWinners.push(row); }
+    }
+    s.winners=mergedWinners;
 
     const twenty=[],seen=new Set();
     for(const p of modeled){
