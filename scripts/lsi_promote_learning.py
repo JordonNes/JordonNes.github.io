@@ -37,18 +37,37 @@ def main():
             "gate_checks":row.get("checks"),
         })
 
+    output=Path(args.output)
+    semantic={
+        "enabled":bool(eligible),
+        "max_abs_confidence_delta":3.0,
+        "markets":eligible,
+    }
+    existing={}
+    try:
+        existing=json.loads(output.read_text(encoding="utf-8"))
+    except Exception:
+        pass
+    existing_semantic={
+        "enabled":bool(existing.get("enabled")),
+        "max_abs_confidence_delta":float(existing.get("max_abs_confidence_delta") or 3.0),
+        "markets":existing.get("markets") or [],
+    }
+    if existing.get("schema_version")=="LSI-LEARNING-OVERLAY-1" and existing_semantic==semantic:
+        print("LSI learning promotion unchanged:",{"enabled":semantic["enabled"],"markets":len(eligible)})
+        return
     payload={
         "schema_version":"LSI-LEARNING-OVERLAY-1",
         "generated_at_utc":NOW,
         "source_gate_generated_at_utc":gate.get("generated_at_utc"),
-        "enabled":bool(eligible),
+        "enabled":semantic["enabled"],
         "policy":"Only gate-approved league/market cells may adjust L&J confidence. Adjustment is capped at +/-3 points and is logged per prediction.",
         "max_abs_confidence_delta":3.0,
         "markets":eligible,
     }
-    Path(args.output).parent.mkdir(parents=True,exist_ok=True)
-    Path(args.output).write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
-    print("LSI learning promotion:",{"enabled":payload["enabled"],"markets":len(eligible)})
+    output.parent.mkdir(parents=True,exist_ok=True)
+    output.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
+    print("LSI learning promotion updated:",{"enabled":payload["enabled"],"markets":len(eligible)})
 
 if __name__=="__main__":
     main()
