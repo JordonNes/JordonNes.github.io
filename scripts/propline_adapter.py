@@ -109,6 +109,11 @@ def implied_probability(price):
     return None
 
 
+def canonical_side(value):
+    side=norm(value)
+    return {"over":"over","more":"over","under":"under","less":"under","yes":"yes","no":"no"}.get(side)
+
+
 def qc_consensus(rows):
     latest={}
     for r in rows:
@@ -117,13 +122,15 @@ def qc_consensus(rows):
         if prior is None or (r.get("collected_at_pt") or "")>=(prior.get("collected_at_pt") or ""):latest[key]=r
     groups=defaultdict(list)
     for r in latest.values():
+        if not canonical_side(r.get("side")):continue
         groups[(norm(r.get("participant")),r.get("market",""),str(r.get("threshold","")))].append(r)
     ranked=[]
     for g in groups.values():
         sample=g[0]; by_book=defaultdict(dict)
         for r in g:
             book=(r.get("source","").split(":",1)[1] if ":" in r.get("source","") else r.get("source",""))
-            by_book[book][norm(r.get("side"))]=r
+            side=canonical_side(r.get("side"))
+            if side:by_book[book][side]=r
         side_probs=defaultdict(list); side_prices=defaultdict(list); snaps=set()
         for book,sides in by_book.items():
             probs={side:implied_probability(r.get("price")) for side,r in sides.items()}
@@ -142,8 +149,9 @@ def qc_consensus(rows):
         avg={side:sum(vals)/len(vals) for side,vals in side_probs.items() if vals}
         if not avg:continue
         chosen=max(avg,key=avg.get); prob=avg[chosen]
-        if len(avg)>1 and prob<0.5:continue
+        if prob<0.35:continue
         prices=side_prices.get(chosen,[]); best=max(prices,key=lambda x:x[0]) if prices else (None,None)
+        if best[0] is not None and (best[0] < -1000 or best[0] > 1500):continue
         ranked.append({
             "participant":sample.get("participant"),"market_key":sample.get("market"),
             "market":str(sample.get("market") or "").replace("_"," ").title(),
