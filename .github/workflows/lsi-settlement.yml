@@ -1,0 +1,78 @@
+name: LSI Automatic Settlement
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_settle.py'
+      - '.github/workflows/lsi-settlement.yml'
+  workflow_run:
+    workflows: ["LSI Daily Predictions Pipeline"]
+    types: [completed]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-automatic-settlement
+  cancel-in-progress: false
+
+jobs:
+  settle:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Settle completed LSI predictions
+        run: python scripts/lsi_settle.py
+
+      - name: Validate settlement outputs
+        shell: bash
+        run: |
+          python - <<'PY'
+          import csv,json
+          from pathlib import Path
+          status=json.loads(Path('data/settlement_status.json').read_text(encoding='utf-8'))
+          aliases=json.loads(Path('data/settlement_aliases.json').read_text(encoding='utf-8'))
+          assert status['schema_version']=='LSI-SETTLEMENT-1'
+          assert status['influence_effect']=='NONE'
+          assert isinstance(aliases.get('events'),dict)
+          with open('data/results.csv',newline='',encoding='utf-8-sig') as fh:
+              rows=list(csv.DictReader(fh))
+          allowed={'WIN','LOSS','PUSH','VOID'}
+          bad=[r for r in rows if r.get('grade') not in allowed]
+          assert not bad, bad[:3]
+          print(f"Settlement validation: {len(rows)} durable result rows; {len(aliases['events'])} resolved event aliases.")
+          PY
+
+      - name: Commit settlement-only outputs
+        shell: bash
+        run: |
+          ALLOWED='data/results.csv data/settlement_status.json data/settlement_aliases.json'
+          CHANGED="$(git status --porcelain | awk '{print $2}')"
+          for f in $CHANGED; do
+            case " $ALLOWED " in
+              *" $f "*) ;;
+              *) echo "::error::Settlement changed unauthorized path: $f"; exit 1;;
+            esac
+          done
+          git config user.name 'LEGZ-JINX LSI Settlement'
+          git config user.email 'actions@users.noreply.github.com'
+          git add $ALLOWED
+          if git diff --cached --quiet; then
+            echo 'No settlement changes.'
+          else
+            git commit -m "LSI automatic settlement"
+            git pull --rebase origin master
+            git push origin master
+          fi
