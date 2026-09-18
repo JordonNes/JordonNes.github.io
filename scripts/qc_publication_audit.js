@@ -18,6 +18,11 @@ const PAGES = {
   'NHL.html': 'NHL',
   'NCAA_Football.html': 'NCAA_Football',
   'NCAA_Basketball.html': 'NCAA_Basketball',
+  'FIBA_Men.html': 'FIBA_Men',
+  'FIBA_Women.html': 'FIBA_Women',
+  'MMA.html': 'MMA',
+  'Boxing.html': 'Boxing',
+  'Tennis.html': 'Tennis',
 };
 const SAFE = new Set([
   'ljdata.js',
@@ -88,13 +93,13 @@ for (const [page, league] of Object.entries(PAGES)) {
     }
   }
 
-  if (league === 'NFL') {
+  {
     const seenEventIds=new Map();
     for (const q of sport.qcs) {
       const eid=String(q._propEventId||'').trim();
       if (!eid) continue;
       if (seenEventIds.has(eid)) {
-        errors.push(`NFL duplicate QC event detected: ${eid} appears more than once (${seenEventIds.get(eid)} and ${q.away || '?'} @ ${q.home || '?'}).`);
+        errors.push(`${league} duplicate QC event detected: ${eid} appears more than once (${seenEventIds.get(eid)} and ${q.away || '?'} @ ${q.home || '?'}).`);
       } else {
         seenEventIds.set(eid,`${q.away || '?'} @ ${q.home || '?'}`);
       }
@@ -173,4 +178,4 @@ if (errors.length) {
   for (const e of errors) console.error(`::error::QC AUDIT ${e}`);
   process.exit(1);
 }
-console.log('QC publication invariant passed: acquired player-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; NFL event IDs are unique after merge; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
+console.log('QC publication invariant passed: acquired participant-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; event IDs are unique across every audited DP sport after merge; empty pregame shells are not valid QCs; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
