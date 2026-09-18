@@ -32,10 +32,23 @@
     return Math.max(50,Math.min(85,Math.round((priceBlend+sourceAdjustment)*10)/10));
   };
 
-  const registryByLeague={};
-  R.predictions.filter(p=>p.market_class==='PLAYER_PROP').forEach(p=>(registryByLeague[p.league]??=[]).push(p));
-
   const nowMs=Date.now(), horizonMs=nowMs+7*86400000;
+  const predictionUpcoming=p=>{
+    const t=Date.parse(p?.event_start_pt||"");
+    if(!Number.isFinite(t)||t<=nowMs) return false;
+    let end=horizonMs;
+    if(p?.league==="NFL"){
+      const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",hour:"numeric",hour12:false}).formatToParts(new Date(nowMs));
+      const wd=parts.find(x=>x.type==="weekday")?.value, hr=Number(parts.find(x=>x.type==="hour")?.value||0);
+      if(wd==="Mon"&&hr>=12) end=nowMs+8*86400000;
+    }
+    return t<=end;
+  };
+  const registryByLeague={}, gameByLeague={};
+  R.predictions.filter(p=>predictionUpcoming(p)).forEach(p=>{
+    if(p.market_class==='PLAYER_PROP') (registryByLeague[p.league]??=[]).push(p);
+    if(p.market_class==='GAME_ML') (gameByLeague[p.league]??=[]).push(p);
+  });
   const eventStartMs=e=>Date.parse(e?.commence_time||e?.event_start_pt||"");
   const isUpcomingEvent=e=>{
     const t=eventStartMs(e);
@@ -92,6 +105,14 @@
       pct(p.lj_confidence),
       `Canonical Registry • ${source(p)}`
     ]);
+    s.winners=[...(gameByLeague[league]||[])]
+      .sort((a,b)=>Number(b.lj_confidence)-Number(a.lj_confidence))
+      .map(p=>[
+        p.opponent? `${p.participant||p.selection} vs ${p.opponent}` : (p.event_id||p.participant||"Upcoming event"),
+        p.pick||p.selection,
+        pct(p.lj_confidence),
+        `Canonical L&J Registry • ${p.price||"price recheck"}`
+      ]);
 
     const twenty=[],seen=new Set();
     for(const p of modeled){
