@@ -419,10 +419,14 @@ def write_intelligence(records):
 
 
 def run_game_odds_only():
-    """Fast bulk h2h acquisition for DP/QG game odds; intentionally skips player props."""
+    """Fast bulk h2h acquisition for DP/QG game odds; intentionally skips player props.
+
+    Fail-closed rule: never replace a previously valid GAME_ML artifact with an
+    empty/invalid provider response. The existing repository artifact therefore
+    acts as the last-known-good copy until a new candidate passes validation.
+    """
     if not KEY:
-        print("PROPLINE_API_KEY absent: fast game-odds pass safely skipped.")
-        return
+        raise SystemExit("PROPLINE_API_KEY absent: refusing to replace last-known-good GAME_ML artifact.")
     collected=NOW.astimezone(PT).isoformat()
     rows=[]; seen=set(); event_records=[]; calls=0; failures=0
     for league,sport_key in SPORT_KEYS.items():
@@ -453,18 +457,38 @@ def run_game_odds_only():
             })
             parsed,_=parse_odds(event,league,f"PL-{peid}",collected)
             rows.extend(r for r in parsed if r.get("market_class")=="GAME_ML" and r.get("status")=="OPEN")
+    usable_rows=[
+        r for r in rows
+        if r.get("market_class")=="GAME_ML"
+        and r.get("event_id")
+        and r.get("participant")
+        and r.get("event_start_pt")
+        and r.get("price") not in (None,"")
+        and str(r.get("status") or "").upper()=="OPEN"
+    ]
+    event_ids={str(r.get("event_id") or "") for r in usable_rows}
+    usable_events=[e for e in event_records if str(e.get("source_event_id") or "") in event_ids]
+    if not usable_rows or not usable_events:
+        raise SystemExit(
+            f"PropLine fast h2h produced no publishable GAME_ML candidate "
+            f"(calls={calls}, events={len(event_records)}, rows={len(rows)}, failures={failures}); "
+            "last-known-good artifact preserved."
+        )
     payload={
         "schema_version":"LJ-CURRENT-GAME-ML-1",
         "generated_at_utc":NOW.isoformat(),
         "source":"PROPLINE_BULK_H2H",
         "calls":calls,
         "failures":failures,
-        "event_count":len(event_records),
-        "events":event_records,
-        "rows":rows,
+        "event_count":len(usable_events),
+        "events":usable_events,
+        "rows":usable_rows,
     }
-    GAME_ML_BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"PropLine fast h2h: calls={calls} events={len(event_records)} rows={len(rows)} failures={failures}")
+    tmp=GAME_ML_BOARD.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    json.loads(tmp.read_text(encoding="utf-8"))
+    tmp.replace(GAME_ML_BOARD)
+    print(f"PropLine fast h2h: calls={calls} events={len(usable_events)} rows={len(usable_rows)} failures={failures}")
 
 
 def run():
