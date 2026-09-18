@@ -281,6 +281,46 @@ def line_clv(side: str, selected_line, closing_line):
     return None
 
 
+def legz_value_score(record: dict) -> float:
+    """LSI v1 evidence-strength score; deliberately excludes payout economics.
+
+    LEGZ Value measures how much auditable predictive structure supports a POM.
+    It is not a hit probability. The v1 score rewards source depth, independent
+    market coverage, historical hit-rate coverage/consistency, line-history
+    coverage, and explicit evidence references. As LSI matures, future weights
+    may change only through documented/backtested methodology revisions.
+    """
+    score = 40.0
+    snapshots = [x for x in (record.get("source_snapshot_ids") or []) if x]
+    evidence = [x for x in (record.get("evidence_ids") or []) if x]
+    score += min(12.0, len(set(snapshots)) * 3.0)
+    score += min(8.0, max(0, len(set(evidence)) - len(set(snapshots))) * 2.0)
+
+    source_count = f(record.get("market_source_count")) or 0.0
+    score += min(15.0, max(0.0, source_count) * 3.0)
+
+    rates = []
+    for key in ("L5_hit_rate", "L10_hit_rate", "L20_hit_rate"):
+        value = f(record.get(key))
+        if value is not None:
+            rates.append(value * 100 if 0 <= value <= 1 else value)
+            score += 4.0
+    if len(rates) >= 2:
+        spread = max(rates) - min(rates)
+        score += max(0.0, 10.0 - min(10.0, spread / 2.0))
+
+    for key in ("opening_line", "current_line", "best_line"):
+        if record.get(key) not in (None, ""):
+            score += 3.0
+
+    return round(max(0.0, min(100.0, score)), 2)
+
+
+def pom_value_score(legz_value: float, ljpc: float) -> float:
+    """Prediction-first POM desirability. Economics are intentionally excluded."""
+    return round(max(0.0, min(100.0, (max(0.0, legz_value) * max(0.0, ljpc)) ** 0.5)), 2)
+
+
 def prop_intelligence(*, row: dict, base: dict, summary: dict, contexts: list[dict], propline: list[dict], results: dict[str, dict]) -> dict:
     event_id = first(row, "event_id") or base.get("event_id", "")
     participant = summary.get("participant") or first(row, "participant", "player")
@@ -409,6 +449,7 @@ def build():
                 } for source in snapshots],
                 "legz_confidence": round(legz, 2),
                 "jinx_input": round(jinx, 2),
+                "ljpc": round(final, 2),
                 "lj_probability": round(final, 2),
                 "lj_confidence": round(final, 2),
                 "lj_conviction": round(raw, 2),
@@ -430,6 +471,8 @@ def build():
             }
             if market_class == "PLAYER_PROP":
                 record.update(prop_intelligence(row=row, base=base, summary=summary, contexts=contexts, propline=propline, results=results))
+            record["legz_value"] = legz_value_score(record)
+            record["pom_value"] = pom_value_score(record["legz_value"], record["ljpc"])
             rows.append(record)
 
     if errors:
@@ -452,7 +495,9 @@ def build():
         "player_prop_fields": PROP_FIELDS,
         "provenance_policy": "Every published prediction must resolve to one or more durable market-history snapshots.",
         "clv_definition": "Line-based threshold CLV when a sourced closing line exists; positive means L&J captured the more favorable threshold. Price/implied-probability CLV is not inferred.",
-        "learning_policy": "Historical adjustments apply only through LSI-LEARNING-OVERLAY-1 after every maturity gate passes; absolute adjustment is capped at 3 confidence points.",
+        "terminology_policy": "LJPC is the canonical final L&J hit probability. lj_probability and lj_confidence are compatibility aliases. legz_confidence is the LEGZ baseline probability input; legz_value is the separate evidence-strength score; pom_value is prediction-first desirability and excludes payout economics.",
+        "pom_value_formula": "sqrt(legz_value * ljpc)",
+        "learning_policy": "Historical adjustments apply only through LSI-LEARNING-OVERLAY-1 after every maturity gate passes; absolute adjustment is capped at 3 percentage points.",
         "learning_overlay_enabled": bool(learning.get("enabled")),
         "predictions": rows,
     }
