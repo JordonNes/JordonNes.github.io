@@ -94,9 +94,20 @@
     "id": "nws",
     "name": "National Weather Service",
     "purpose": "Forecasts, wind, marine advisories, watches, warnings and weather hazards.",
-    "mode": "Planned API adapter",
+    "mode": "Operational API adapter",
     "priority": "Primary",
-    "role": "Weather and marine-hazard intelligence"
+    "role": "Point forecasts, hourly weather and active hazard intelligence",
+    "endpoint": "https://api.weather.gov/"
+  },
+  {
+    "id": "noaa-ndbc",
+    "name": "NOAA National Data Buoy Center (NDBC)",
+    "purpose": "Offshore wave height, dominant period, wind and marine-weather observations used for coastal fishability and safety context.",
+    "mode": "Operational real-time text-feed adapter",
+    "priority": "Primary",
+    "endpoint": "https://www.ndbc.noaa.gov/data/realtime2/",
+    "role": "Outer-coast wave and marine-condition intelligence",
+    "caveat": "Station sensors can be intermittent or unavailable; RICHFISH preserves source freshness and does not impute missing measurements."
   },
   {
     "id": "usgs-waterdata-continuous",
