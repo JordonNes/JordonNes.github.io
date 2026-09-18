@@ -194,6 +194,82 @@
     return `<section class="section"><div class="section-head"><h2>TENNIS QUICKIE CARDS</h2><span class="muted">Singles and doubles maintained as separate permanent boards</span></div>${groups.map(g=>`<div class="qc-division"><div class="qc-division-head"><h3>${esc(g.title)}</h3><span>${esc(g.note || "Current verified matches only")}</span></div><div class="qc-list">${(g.rows || []).map((r,i)=>qcRow(r,i)).join("")}</div></div>`).join("")}${rules()}<div class="layout-seal">TENNIS QC STRUCTURE LOCK • MEN'S SINGLES • MEN'S DOUBLES • WOMEN'S SINGLES • WOMEN'S DOUBLES</div></section>`;
   }
 
+  function allSportsQcs(){
+    const buckets={sns1:[],sns2:[],normal:[],demon:[]};
+    const confOf=v=>{
+      const s=String(v||'');
+      const m=s.match(/L&J\s*(\d+(?:\.\d+)?)%/i)||s.match(/(\d+(?:\.\d+)?)%/);
+      return m?Number(m[1]):0;
+    };
+    const playerOf=v=>String(v||'')
+      .replace(/^\s*(?:GOBLIN|DEMON|NORMAL|MARKET)\s*[•:—-]?\s*/i,'')
+      .split(/\bOVER\b|\bUNDER\b|\bYES\b|\bNO\b/i)[0]
+      .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    const priceOf=v=>{const m=String(v||'').match(/\(([+-]?\d+(?:\.\d+)?)/);return m?Number(m[1]):-9999;};
+    const exactKey=v=>String(v||'').toLowerCase().replace(/\s*•\s*L&J\s*\d+(?:\.\d+)?%/i,'').trim();
+    Object.entries(D.sports||{}).forEach(([sport,s])=>{
+      (s.qcs||[]).forEach(q=>{
+        for(const kind of Object.keys(buckets)){
+          for(const text of cleanDecisionItems(q[kind])){
+            buckets[kind].push({sport,text:String(text),conf:confOf(text),player:playerOf(text),price:priceOf(text)});
+          }
+        }
+      });
+    });
+    const take=(items,count,avoid=new Set(),economicsFirst=false)=>{
+      const sorted=[...items].sort((a,b)=>economicsFirst
+        ? ((b.price-a.price)||(b.conf-a.conf)||a.sport.localeCompare(b.sport))
+        : ((b.conf-a.conf)||(b.price-a.price)||a.sport.localeCompare(b.sport)));
+      const out=[],used=new Set(),players=new Set(),sportCount=new Map();
+      const passes=[
+        x=>!avoid.has(exactKey(x.text))&&!players.has(x.player)&&(sportCount.get(x.sport)||0)<2,
+        x=>!avoid.has(exactKey(x.text))&&!players.has(x.player),
+        x=>!avoid.has(exactKey(x.text)),
+        x=>true
+      ];
+      for(const pass of passes){
+        for(const x of sorted){
+          if(out.length>=count) break;
+          const k=exactKey(x.text);
+          if(used.has(k)||!pass(x)) continue;
+          out.push(x); used.add(k); if(x.player) players.add(x.player);
+          sportCount.set(x.sport,(sportCount.get(x.sport)||0)+1);
+        }
+        if(out.length>=count) break;
+      }
+      return out;
+    };
+    const usedAcross=new Set();
+    const sns1=take(buckets.sns1.filter(x=>x.conf>=77),6,usedAcross);
+    if(sns1.length<6){
+      for(const x of take(buckets.sns1.filter(x=>x.conf<77),6-sns1.length,new Set([...usedAcross,...sns1.map(y=>exactKey(y.text))]))){sns1.push(x);}
+    }
+    sns1.forEach(x=>usedAcross.add(exactKey(x.text)));
+    const sns2=take(buckets.sns2.filter(x=>x.conf>=70),6,usedAcross);
+    if(sns2.length<6){
+      for(const x of take(buckets.sns2.filter(x=>x.conf<70),6-sns2.length,new Set([...usedAcross,...sns2.map(y=>exactKey(y.text))]))){sns2.push(x);}
+    }
+    sns2.forEach(x=>usedAcross.add(exactKey(x.text)));
+    const normal=take(buckets.normal,6,usedAcross);
+    normal.forEach(x=>usedAcross.add(exactKey(x.text)));
+    const demon=take(buckets.demon.filter(x=>x.conf>=69.6),6,usedAcross,true);
+    const joint=arr=>arr.length?Math.round(arr.reduce((p,x)=>p*Math.max(0,Math.min(1,x.conf/100)),1)*1000)/10:null;
+    const card=(label,kind,arr,extra='')=>{
+      if(!arr.length) return '';
+      const legs=arr.map(x=>x.sport.replace(/_/g,' ')+' • '+x.text);
+      const base=joint(arr);
+      return `<div class="qc-cell qc-ticket ${extra}"><div class="qc-ticket-h ${kind}">${esc(label)}</div>${ticketList(legs)}<div class="qc-foot">Ticket hit probability baseline: ${base===null?'—':esc(base+'%')} • independence baseline; correlation adjustment pending</div></div>`;
+    };
+    const cards=[
+      card('SNS / GOBLIN 1','sns sns1',sns1,'qc-sns1'),
+      card('SNS / GOBLIN 2','sns sns2',sns2,'qc-sns2'),
+      card('NORMAL / MARKET','normal',normal,'qc-normal'),
+      card('AGGRESSIVE / DEMON','demon',demon,'qc-demon')
+    ].filter(Boolean);
+    if(!cards.length) return '';
+    const grid=`grid-template-columns:repeat(${cards.length},minmax(200px,1fr))`;
+    return `<section class="section all-sports-qc"><div class="section-head"><h2>ALL-SPORTS QC — PLAYER PROPS ONLY</h2><span class="muted">Four distinct ticket objectives • probability-first SNS • Normal market strength • Demon upside after the 69.6% gate</span></div><div class="qc-list"><div class="qc-row" style="${grid}">${cards.join('')}</div></div><div class="layout-seal">ALL-SPORTS POM QC • exact offered market variants only • cross-ticket diversity active</div></section>`;
+  }
   function statusGrid(){
     const map = [
       ["MLB","ACTIVE TODAY","3 upcoming games • 2 early games closed/live • player props refreshed"],
@@ -383,7 +459,7 @@
   window.renderLJHome = () => {
     const h = D.home;
     document.title = "LEGZ & JINX — Daily Predictions";
-    document.getElementById("app").innerHTML = `<div class="page lj-home">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${statusGrid()}${footer("All-sports publication hub • QC layout locked")}</div>`;
+    document.getElementById("app").innerHTML = `<div class="page lj-home">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${allSportsQcs()}${statusGrid()}${footer("All-sports publication hub • QC layout locked")}</div>`;
     setTimeout(loadMaterialAlerts,0);
   };
 })();
