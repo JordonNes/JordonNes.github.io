@@ -1,0 +1,55 @@
+{
+  "schema_version": "0.3",
+  "register_name": "RICHFISH Community Evidence Register",
+  "purpose": "Preserve community catch and bait reports as auditable evidence signals without converting isolated claims into bite-status statements.",
+  "updated_at": "2026-09-18T19:00:00Z",
+  "required_fields": [
+    "date",
+    "source",
+    "claimed_location",
+    "location_confidence",
+    "species",
+    "species_id_confidence",
+    "bait",
+    "method",
+    "photograph_evidence",
+    "corroborating_reports",
+    "reliability_tier"
+  ],
+  "confidence_scales": {
+    "location_confidence": ["low", "medium", "high"],
+    "species_id_confidence": ["low", "medium", "high"],
+    "photograph_evidence": ["none", "weak", "moderate", "strong"]
+  },
+  "reliability_tiers": {
+    "unverified_signal": {
+      "label": "Unverified signal",
+      "minimum": "Single report or otherwise insufficiently corroborated claim.",
+      "public_language": "Unverified signal: one recent reported catch."
+    },
+    "corroborated_signal": {
+      "label": "Corroborated signal",
+      "minimum": "At least two plausibly independent reports with compatible time/location/species evidence, or one report with strong geolocated photographic evidence plus an independent corroborator.",
+      "public_language": "Corroborated local signal: multiple compatible recent reports."
+    },
+    "strong_recurring_evidence": {
+      "label": "Strong recurring evidence",
+      "minimum": "Multiple independent reports recurring across a short window, normally five or more within three days, plus at least one different evidence class such as tackle-shop report, RICHFISH field observation, survey/creel evidence, or strong geolocated imagery.",
+      "public_language": "Strong recurring evidence: repeated recent reports supported by independent evidence."
+    },
+    "verified_field_evidence": {
+      "label": "Verified field evidence",
+      "minimum": "Direct RICHFISH field observation or equivalent documented evidence with time/location/species verification. This verifies the observation, not that the bite is generally hot.",
+      "public_language": "Verified field observation at the stated time and place."
+    }
+  },
+  "rules": [
+    "Never convert one social-media post into a location-wide bite claim.",
+    "Corroborating reports must be evaluated for independence; reposts, copied captions, or the same catch shared across accounts count as one underlying observation.",
+    "A photograph can strengthen species and location confidence but does not by itself prove abundance or persistence.",
+    "Evidence ages; current-status language must consider recency and environmental comparability.",
+    "Official regulations, closures, access rules, and health advisories are separate controlling sources and cannot be overridden by community evidence.",
+    "Every derived public statement must retain the source report IDs and generation timestamp."
+  ],
+  "records": []
+}
