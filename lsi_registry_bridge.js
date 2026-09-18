@@ -418,8 +418,8 @@
     normal.forEach(c=>usedAcross.add(keyOf(c)));
 
     // DEMON: economics-first among only Normal/Demon POMs that L&J still evaluates at
-    // >=69.6%. A long price never rescues a probability that misses the gate.
-    const demonBase=[...pool].filter(c=>(c.pomType==='DEMON'||c.pomType==='NORMAL')&&c.confidence>=69.6).sort((a,b)=>{
+    // >=51.8%. A long price never rescues a probability that misses the gate.
+    const demonBase=[...pool].filter(c=>(c.pomType==='DEMON'||c.pomType==='NORMAL')&&c.confidence>=51.8).sort((a,b)=>{
       const ap=a.best_price??-9999, bp=b.best_price??-9999;
       return (bp-ap)||(b.confidence-a.confidence)||(b.market_source_count-a.market_source_count);
     });
@@ -435,7 +435,7 @@
       sns1:jointProbability(sns1),sns2:jointProbability(sns2),
       normal:jointProbability(normal),demon:jointProbability(demon)
     };
-    q._pomPolicy={sns1:'GOBLIN_ONLY_TARGET_77',sns2:'GOBLIN_OR_NORMAL_TARGET_70',normal:'NORMAL_ONLY_PROBABILITY_FIRST',demon:'NORMAL_OR_DEMON_MIN_69_6_ECONOMICS_FIRST'};
+    q._pomPolicy={sns1:'GOBLIN_ONLY_TARGET_77',sns2:'GOBLIN_OR_NORMAL_TARGET_70',normal:'NORMAL_ONLY_PROBABILITY_FIRST',demon:'NORMAL_OR_DEMON_MIN_51_8_ECONOMICS_FIRST'};
 
     const shortages=[];
     if(pool.length<6) shortages.push(`TOTAL POOL ${pool.length}/6`);
