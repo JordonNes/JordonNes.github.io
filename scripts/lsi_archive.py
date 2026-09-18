@@ -122,6 +122,86 @@ def append_items(path: Path, *, kind: str, dataset: str, items: list[dict],
             appended += 1
     return appended
 
+def observation_month(payload):
+    for key in (
+        "collected_at_pt", "collected_at_utc", "retrieved_at", "created_at",
+        "close_time_utc", "open_time_utc", "event_start_pt", "event_start_utc",
+        "commence_time", "start_time",
+    ):
+        value = str(payload.get(key) or "")
+        if len(value) >= 7 and value[4:5] == "-" and value[7:8] in {"-", "T", ""}:
+            return value[:7]
+    return UTC_NOW[:7]
+
+
+def append_sharded_items(base_dir: Path, *, kind: str, dataset: str, items: list[dict],
+                         src_commit: str, source_generated_at=None, identity=None,
+                         buckets: int = 32):
+    """Append high-volume observations into deterministic month/hash shards."""
+    groups = {}
+    for payload in items:
+        if not isinstance(payload, dict):
+            continue
+        payload_hash = sha256_text(canonical(payload))
+        archive_id = f"{kind}:{dataset}:{payload_hash}"
+        month = observation_month(payload)
+        bucket = int(payload_hash[:8], 16) % buckets
+        path = base_dir / month / f"{dataset}-{bucket:02d}.jsonl"
+        groups.setdefault(path, []).append((archive_id, payload_hash, payload))
+
+    appended = 0
+    for path, rows in groups.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        seen = jsonl_ids(path)
+        with path.open("a", encoding="utf-8") as fh:
+            for archive_id, payload_hash, payload in rows:
+                if archive_id in seen:
+                    continue
+                envelope = {
+                    "archive_id": archive_id,
+                    "schema_version": SCHEMA,
+                    "kind": kind,
+                    "dataset": dataset,
+                    "captured_at_utc": UTC_NOW,
+                    "source_generated_at_utc": source_generated_at,
+                    "source_commit": src_commit,
+                    "identity": identity(payload) if identity else {},
+                    "payload_hash": payload_hash,
+                    "payload": payload,
+                }
+                fh.write(canonical(envelope) + "\n")
+                seen.add(archive_id)
+                appended += 1
+    return appended
+
+
+def count_jsonl_tree(path: Path):
+    if path.is_file():
+        return count_jsonl(path)
+    if not path.exists():
+        return 0
+    return sum(count_jsonl(p) for p in path.rglob("*.jsonl"))
+
+
+def tree_summary(path: Path):
+    if path.is_file():
+        return {
+            "files": 1,
+            "bytes": path.stat().st_size,
+            "records": count_jsonl(path),
+            "max_file_bytes": path.stat().st_size,
+        }
+    if not path.exists():
+        return {"files": 0, "bytes": 0, "records": 0, "max_file_bytes": 0}
+    files = list(path.rglob("*.jsonl"))
+    sizes = [p.stat().st_size for p in files]
+    return {
+        "files": len(files),
+        "bytes": sum(sizes),
+        "records": sum(count_jsonl(p) for p in files),
+        "max_file_bytes": max(sizes) if sizes else 0,
+    }
+
 
 def count_jsonl(path: Path):
     if not path.exists():
@@ -331,24 +411,24 @@ def main():
         identity=prediction_identity,
     )
 
-    new_counts["lsi_market"] = append_items(
-        archive / "market_history.jsonl",
+    new_counts["lsi_market"] = append_sharded_items(
+        archive / "market_history",
         kind="MARKET",
         dataset="market_history_csv",
         items=market_rows,
         src_commit=commit,
         identity=market_identity,
     )
-    new_counts["oddspapi_market"] = append_items(
-        archive / "market_history.jsonl",
+    new_counts["oddspapi_market"] = append_sharded_items(
+        archive / "market_history",
         kind="MARKET_HISTORY_REFERENCE",
         dataset="oddspapi_history_features",
         items=odds_history,
         src_commit=commit,
         identity=market_identity,
     )
-    new_counts["propline_intelligence"] = append_items(
-        archive / "market_history.jsonl",
+    new_counts["propline_intelligence"] = append_sharded_items(
+        archive / "market_history",
         kind="MARKET_INTELLIGENCE",
         dataset="propline_intelligence",
         items=pl_records,
@@ -419,13 +499,13 @@ def main():
 
     archive_files = {
         "prediction_history": archive / "prediction_history.jsonl",
-        "market_history": archive / "market_history.jsonl",
+        "market_history": archive / "market_history",
         "context_history": archive / "context_history.jsonl",
         "event_history": archive / "event_history.jsonl",
         "result_history": archive / "result_history.jsonl",
         "publication_history": archive / "publication_history.jsonl",
     }
-    counts = {name: count_jsonl(path) for name, path in archive_files.items()}
+    counts = {name: count_jsonl_tree(path) for name, path in archive_files.items()}
 
     critical = {
         "prediction_registry_readable": bool(registry_records),
@@ -497,8 +577,13 @@ def main():
             "books": len(entity_map["books"]),
         },
         "archive_files": {
-            name: {"sha256": file_digest(path), "bytes": path.stat().st_size if path.exists() else 0}
+            name: tree_summary(path)
             for name, path in archive_files.items()
+        },
+        "market_sharding": {
+            "layout": "market_history/YYYY-MM/<dataset>-<00..31>.jsonl",
+            "hash_buckets": 32,
+            "reason": "Keep high-volume immutable history below repository file-size limits.",
         },
     }
     (archive / "archive_manifest.json").write_text(

@@ -1,6 +1,11 @@
 name: LSI Archive Memory Layer
 
 on:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_archive.py'
+      - '.github/workflows/lsi-archive.yml'
   workflow_run:
     workflows: ["LSI Daily Predictions Pipeline"]
     types: [completed]
@@ -80,12 +85,18 @@ jobs:
           assert boundary["can_publish"] is False
           assert health["phase"] == "MEMORY_ONLY"
           for name in (
-              "prediction_history.jsonl","market_history.jsonl","context_history.jsonl",
+              "prediction_history.jsonl","context_history.jsonl",
               "event_history.jsonl","result_history.jsonl","publication_history.jsonl",
               "entity_map.json","archive_health.json","archive_manifest.json"
           ):
               assert (root/name).exists(), name
-          print("Archive boundary validated; live publication remains independent.")
+          market_root=root/"market_history"
+          assert market_root.exists(), "market_history directory missing"
+          shards=list(market_root.rglob("*.jsonl"))
+          assert shards, "market_history has no shards"
+          oversize=[str(p) for p in shards if p.stat().st_size >= 90*1024*1024]
+          assert not oversize, f"market shard(s) approaching GitHub size limit: {oversize}"
+          print(f"Archive boundary validated; {len(shards)} market shards; live publication remains independent.")
           PY
 
       - name: Commit archive-only changes
