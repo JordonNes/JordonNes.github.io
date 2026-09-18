@@ -41,6 +41,9 @@ PREGAME_TTL_MIN = int(os.getenv("ODDS_API_PREGAME_TTL_MIN", "30"))
 PREGAME_WINDOW_MIN = int(os.getenv("ODDS_API_PREGAME_WINDOW_MIN", "75"))
 MAX_EVENTS_PER_RUN = int(os.getenv("ODDS_API_MAX_EVENTS_PER_RUN", "16"))
 POST_START_RETENTION_HOURS = int(os.getenv("QC_POST_START_RETENTION_HOURS", "8"))
+LEAGUE_FILTER = {
+    x.strip() for x in os.getenv("ODDS_API_LEAGUES", "").split(",") if x.strip()
+}
 
 STATE = DATA / "the_odds_api_state.json"
 BOARD = DATA / "qc_prop_board.json"
@@ -447,6 +450,8 @@ def run():
     discovered = []
     quota = {"remaining": None, "used": None, "last": None}
     for league, (sport_key, markets) in SPORTS.items():
+        if LEAGUE_FILTER and league not in LEAGUE_FILTER:
+            continue
         try:
             events, headers = get(f"/sports/{sport_key}/events", {"dateFormat": "iso"})
             quota.update({k: v for k, v in headers.items() if v is not None})
@@ -546,7 +551,8 @@ def run():
     for e in merged_events:
         by_league[e.get("league")] += len(e.get("props") or [])
     print(
-        f"The Odds API: discovered={len(discovered)} queried={queried} "
+        f"The Odds API: leagues={sorted(LEAGUE_FILTER) if LEAGUE_FILTER else 'ALL'} "
+        f"discovered={len(discovered)} queried={queried} "
         f"board_props={total_props} appended_observations={added} source_errors={errors}"
     )
     print("Merged QC prop inventory after The Odds API overlay:", dict(sorted(by_league.items())))
