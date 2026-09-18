@@ -67,14 +67,18 @@
     const ledgerHtml=ledger.map(r=>`<tr>${r.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('');
     const ticketHtml=tickets.map(r=>`<tr>${r.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('');
 
-    const postMortem=`September 3 finished ${grades.HIT}-${grades.MISS} on graded recoverable straight predictions (${pct(grades.HIT,straightDen)}). JINX winner calls were the strongest channel at ${winH}-${winD-winH} (${pct(winH,winD)}), while player/participant props finished ${propH}-${propD-propH} (${pct(propH,propD)}). NCAA Football carried the day at 70.0%; MLB fell to 48.5%. Fully graded tickets went ${ticketGrades.HIT}-${ticketGrades.MISS} (${pct(ticketGrades.HIT,ticketDen)}), with the Aggressive/Demon tier the weakest aggregate construction. The operational adjustment is clear: preserve the stronger game-winner process, reduce confidence inflation on top prop projections, and stop allowing sequencing-dependent RBI or longshot touchdown legs to contaminate accuracy-first tickets. Boxing remains UNGRADED until an independently reliable final-result source is recovered.`;
+    const dateLabel=R.priorDate||'Previous Publication Day';
+    const jinxNotes=entries.map(([,s])=>s.jinxAnalysis||s.jinx).filter(Boolean);
+    const postMortem=jinxNotes.length
+      ? jinxNotes.join(' ')
+      : `${dateLabel} finished ${grades.HIT}-${grades.MISS} on graded recoverable straight predictions (${pct(grades.HIT,straightDen)}). Player/participant props were ${propH}/${propD}; JINX winner calls were ${winH}/${winD}; fully graded tickets were ${ticketGrades.HIT}/${ticketDen}. No causal conclusion is made where evidence is incomplete.`;
 
     const links=entries.map(([k,s])=>`<a class="sport-link" href="${recapFile(k)}"><span class="sport-icon">${s.icon}</span><span class="sport-name">${esc(s.label)} RECAP</span></a>`).join('');
 
-    document.title='LEGZ & JINX — September 3 Prediction Recap';
+    document.title=`LEGZ & JINX — ${dateLabel} Prediction Recap`;
     document.getElementById('app').innerHTML=`<div class="page">
-      <div class="topbar"><a class="lj-mini" href="LJ_index.html">L&amp;J</a><div class="meta">SEPTEMBER 3 L&amp;J PREDICTION RECAP • VERIFIED RESULTS ONLY</div></div>
-      <section class="hero recap-hero"><div class="kicker">📊 LEGZ &amp; JINX RECAP</div><h1>SEPTEMBER 3<br>PREDICTION RECAP</h1><p>The all-sports audit is now populated from the same verified sport-by-sport grading ledger used by the individual recap pages. Only predictions L&amp;J actually published are scored. PASS, future events and results that cannot be independently verified remain UNGRADED and are excluded from accuracy.</p><div class="chips"><span class="chip green">${pct(grades.HIT,straightDen)} OVERALL</span><span class="chip purple">${pct(winH,winD)} JINX WINNERS</span><span class="chip gold">${pct(propH,propD)} PROPS</span><span class="chip red">${pct(ticketGrades.HIT,ticketDen)} TICKETS</span></div><div class="actions"><a class="action" href="LJ_index.html">← Today’s Predictions</a><a class="action" href="MLB.html">⚾ MLB Today</a><a class="action" href="NCAA_Football.html">🏈 NCAA Today</a></div></section>
+      <div class="topbar"><a class="lj-mini" href="LJ_index.html">L&amp;J</a><div class="meta">${esc(dateLabel.toUpperCase())} L&amp;J PREDICTION RECAP • VERIFIED RESULTS ONLY</div></div>
+      <section class="hero recap-hero"><div class="kicker">📊 LEGZ &amp; JINX RECAP</div><h1>${esc(dateLabel.toUpperCase())}<br>PREDICTION RECAP</h1><p>The all-sports audit is now populated from the same verified sport-by-sport grading ledger used by the individual recap pages. Only predictions L&amp;J actually published are scored. PASS, future events and results that cannot be independently verified remain UNGRADED and are excluded from accuracy.</p><div class="chips"><span class="chip green">${pct(grades.HIT,straightDen)} OVERALL</span><span class="chip purple">${pct(winH,winD)} JINX WINNERS</span><span class="chip gold">${pct(propH,propD)} PROPS</span><span class="chip red">${pct(ticketGrades.HIT,ticketDen)} TICKETS</span></div><div class="actions"><a class="action" href="LJ_index.html">← Today’s Predictions</a><a class="action" href="MLB.html">⚾ MLB Today</a><a class="action" href="NCAA_Football.html">🏈 NCAA Today</a></div></section>
 
       <section class="section"><div class="section-head"><h2>PREVIOUS-DAY ACCURACY BOARD</h2><span class="muted">${esc(R.updated)}</span></div><div class="confidence-key">
         ${metric('OVERALL PREDICTION ACCURACY',pct(grades.HIT,straightDen),`${grades.HIT} hits / ${grades.MISS} misses • ${grades.UNGRADED} ungraded`)}
@@ -109,9 +113,9 @@
 
       <section class="section"><div class="card"><div class="card-title purple"><span>WHAT LSI LEARNED / WHAT REMAINS LOCKED</span><span>ARCHIVE → SETTLEMENT → EVALUATION → GATED LEARNING</span></div><div class="card-body"><p>Results and contextual observations are retained for evaluation. Historical effects remain descriptive until the applicable LSI maturity gates are satisfied; correlation alone does not alter live L&amp;J confidence.</p></div></div></section>
 
-      <section class="section"><div class="section-head"><h2>RUN IT BACK / WATCH / AVOID / MARKET SWITCH</h2><span class="muted">Cross-sport lessons from September 3</span></div><div class="bucket">${bucket('RUN IT BACK',follow.runItBack.slice(0,8))}${bucket('WATCH',follow.watch.slice(0,8))}${bucket('AVOID / DOWNGRADE',follow.avoid.slice(0,8))}${bucket('MARKET SWITCH',follow.marketSwitch.slice(0,8))}</div></section>
+      <section class="section"><div class="section-head"><h2>RUN IT BACK / WATCH / AVOID / MARKET SWITCH</h2><span class="muted">Cross-sport lessons from ${esc(dateLabel)}</span></div><div class="bucket">${bucket('RUN IT BACK',follow.runItBack.slice(0,8))}${bucket('WATCH',follow.watch.slice(0,8))}${bucket('AVOID / DOWNGRADE',follow.avoid.slice(0,8))}${bucket('MARKET SWITCH',follow.marketSwitch.slice(0,8))}</div></section>
 
-      <div class="footer">LEGZ &amp; JINX • September 3, 2026 Previous-Day Audit • Verified final outcomes only • Ungraded where evidence remains incomplete</div>
+      <div class="footer">LEGZ &amp; JINX • ${esc(dateLabel)} Previous-Day Audit • Verified final outcomes only • Ungraded where evidence remains incomplete</div>
     </div>`;
     ensureHeader();
   };
