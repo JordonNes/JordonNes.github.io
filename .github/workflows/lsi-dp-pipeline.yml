@@ -88,8 +88,8 @@ jobs:
         with: {python-version: '3.12'}
       - name: Fast PropLine bulk moneyline acquisition
         env:
-          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY }}
-          PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY }}
+          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
+          PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
         run: |
           python scripts/propline_adapter.py --game-odds-only
           python scripts/lsi_publish_future_board.py
