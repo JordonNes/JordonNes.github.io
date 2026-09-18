@@ -134,10 +134,12 @@ function renderLocationDetail(){
     const current=o.current?.speedKnots!=null?`${cleanNumber(o.current.speedKnots,2)} kt toward ${o.current.towardCardinal||o.current.towardDegreesTrue||'grid'}`:'Unavailable';
     const currentNote=o.current?.trend?.direction?`SFBOFS · ${o.current.trend.direction}`:o.current?.validTime?`SFBOFS · valid ${new Date(o.current.validTime).toLocaleTimeString()}`:'SFBOFS unavailable';
     const strength=live?.operational?.currentStrength;
+    const shear=live?.operational?.currentShear;
     const interaction=live?.operational?.windCurrentInteraction;
     cards.push(dataCard('Tide',tide,'NOAA-derived'));
     cards.push(dataCard('Current',current,currentNote));
     cards.push(dataCard('Current strength',strength?`${strength.category} · ${strength.index}/100`:'Unavailable','Descriptive index, not catch probability'));
+    cards.push(dataCard('Current shear / seam potential',shear?`${shear.category} · ${shear.index}/100`:'Unavailable',shear?`${shear.p90VelocityGradientMpsPerKm} m/s/km P90 · ${shear.sampleCount} model cells`:'Model-scale seam proxy unavailable'));
     cards.push(dataCard('Wind-current difficulty',interaction?`${interaction.category} · ${interaction.difficultyIndex}/100`:'Unavailable',interaction?`${interaction.relationship} · ${interaction.angularDifferenceDegrees}°`:'Requires wind direction + true current direction'));
     cards.push(dataCard('Water temp',temp,'Observed when available'));
     cards.push(dataCard('Salinity',sal,'Observed when available'));
@@ -188,6 +190,26 @@ function renderLocationDetail(){
     </div>`;
 }
 
+function renderHydroDetail(row){
+  const current=(row?.factors||[]).find(f=>f.id==='current');
+  const shear=row?.operational?.currentShear;
+  const interaction=row?.operational?.windCurrentInteraction;
+  const best=row?.bestCurrentWindows?.[0];
+  const lines=[];
+  if(current?.value!=null){
+    const dir=current?.details?.towardCardinal||current?.details?.towardDegreesTrue||'grid';
+    lines.push(`Current: ${cleanNumber(current.value,2)} kt toward ${dir} · fit ${cleanNumber(current.score,0)}%`);
+  }
+  if(shear)lines.push(`Shear/seam potential: ${shear.category} · ${shear.index}/100`);
+  if(interaction)lines.push(`Wind-current difficulty: ${interaction.category} · ${interaction.difficultyIndex}/100`);
+  if(best?.validTime){
+    const when=new Date(best.validTime).toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'});
+    const dir=best.towardCardinal||best.towardDegreesTrue||'grid';
+    lines.push(`Best modeled current window: ${when} · ${cleanNumber(best.speedKnots,2)} kt toward ${dir} · current-fit ${cleanNumber(best.currentFit,0)}%${best.shearCategory?` · shear ${best.shearCategory}`:''}`);
+  }
+  return lines.length?`<br><small>${lines.map(escapeHtml).join('<br>')}</small>`:'';
+}
+
 function renderSpeciesList(filter=''){
   const f=filter.toLowerCase();
   const list=state.speciesCatalog.filter(s=>`${s.common_name} ${s.scientific_name} ${s.group} ${s.occurrence_class}`.toLowerCase().includes(f));
@@ -208,12 +230,13 @@ function renderSpeciesDetail(id){
     const spots=rows.map(row=>{
       const spot=state.liveSpots.find(s=>s.id===row.spotId);
       const loc=state.locations.find(l=>l.verification?.engine_spot_id===row.spotId);
-      return spot?{...spot,location:loc,confidence:row.recommendationScore,conditionFit:row.conditionFit,dataConfidence:row.dataConfidence,siteFit:row.siteFit,legalGate:row.legalGate}:null;
+      const engineSpot=state.conditionEngine?.spots?.[row.spotId];
+      return spot?{...spot,location:loc,confidence:row.recommendationScore,conditionFit:row.conditionFit,dataConfidence:row.dataConfidence,siteFit:row.siteFit,factors:row.factors||[],bestCurrentWindows:row.bestCurrentWindows||[],operational:engineSpot?.operational||null,legalGate:row.legalGate}:null;
     }).filter(Boolean);
     $('#finder-detail').classList.remove('loading');
     $('#finder-detail').innerHTML=`
       <div class="detail-top"><div><span class="badge">● LIVE CONDITION MODEL</span><h3>${escapeHtml(species.common_name)}</h3><p><i>${escapeHtml(species.scientific_name)}</i> · ${escapeHtml(species.occurrence_class)}</p></div><div><span class="eyebrow">CATALOG CONFIDENCE</span><p>${escapeHtml(species.verification?.confidence||'unknown')}</p></div></div>
-      <div class="rank-list">${spots.slice(0,6).map((s,i)=>`<article class="rank-card"><div class="rank">${i+1}</div><div><h4>${escapeHtml(s.location?.name||s.name)}</h4><p>${escapeHtml(s.location?.region||s.region)} · ${escapeHtml(s.location?.ideal_general_window||s.bestWindows?.join(' / ')||'')}</p><small>Condition Fit: ${escapeHtml(s.conditionFit)}% · Data Confidence: ${escapeHtml(s.dataConfidence)}% · Site Fit: ${escapeHtml(s.siteFit)}%</small>${s.legalGate?`<br><small>${escapeHtml(s.legalGate)}</small>`:''}</div><div class="confidence">${escapeHtml(s.confidence)}%</div></article>`).join('')}</div>
+      <div class="rank-list">${spots.slice(0,6).map((s,i)=>`<article class="rank-card"><div class="rank">${i+1}</div><div><h4>${escapeHtml(s.location?.name||s.name)}</h4><p>${escapeHtml(s.location?.region||s.region)} · ${escapeHtml(s.location?.ideal_general_window||s.bestWindows?.join(' / ')||'')}</p><small>Condition Fit: ${escapeHtml(s.conditionFit)}% · Data Confidence: ${escapeHtml(s.dataConfidence)}% · Site Fit: ${escapeHtml(s.siteFit)}%</small>${renderHydroDetail(s)}${s.legalGate?`<br><small>${escapeHtml(s.legalGate)}</small>`:''}</div><div class="confidence">${escapeHtml(s.confidence)}%</div></article>`).join('')}</div>
       <div class="ray-note"><b>MODEL NOTE</b><br>Recommendation Score is a RICHFISH planning index, not a catch probability or guarantee.</div>
       <div class="why-panel"><span class="eyebrow">SPECIES PROVENANCE</span><ul>${sourceLinks(sourceUrls)}</ul></div>`;
     return;
@@ -300,6 +323,12 @@ function renderMapEvaluation(lat,lng,forcedLocation=null){
   }
   const species=catalogSpeciesFor(opportunity.speciesId);
   const score=opportunity.score;
+  const engineSpot=state.conditionEngine?.spots?.[loc.verification?.engine_spot_id];
+  const shear=engineSpot?.operational?.currentShear;
+  const bestWindow=score?.bestCurrentWindows?.[0]||null;
+  const bestWindowText=bestWindow?.validTime
+    ? `${new Date(bestWindow.validTime).toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'})} · ${cleanNumber(bestWindow.speedKnots,2)} kt ${bestWindow.towardCardinal||''}`.trim()
+    : (loc.ideal_general_window||'Not resolved to clock time');
   const liveSpot=liveSpotForLocation(loc);
   const baits=species?.fishing?.suggested_baits?.length?species.fishing.suggested_baits:(liveSpot?.recommendedBaits||[]);
   const secondary=loc.targets?.secondary?.[0]||'No secondary target ranked';
@@ -312,7 +341,8 @@ function renderMapEvaluation(lat,lng,forcedLocation=null){
       ${dataCard('Target',opportunity.target)}
       ${dataCard('Secondary',secondary)}
       ${dataCard('Opportunity index',`${cleanNumber(score.recommendationScore,0)}%`,'Planning index · not catch probability')}
-      ${dataCard('Prime window',loc.ideal_general_window||'Not resolved to clock time')}
+      ${dataCard('Prime modeled current window',bestWindowText,bestWindow?`Current-fit ${cleanNumber(bestWindow.currentFit,0)}%`:'General location guidance')}
+      ${dataCard('Current shear / seam potential',shear?`${shear.category} · ${shear.index}/100`:'Unavailable','Model-scale proxy')}
       ${dataCard('Presentation',baits[0]||'Not developed')}
       ${dataCard('Backup',baits[1]||'Not developed')}
       ${dataCard('Evidence confidence',evidenceConfidence,`${cleanNumber(score.dataConfidence,0)}% live-data confidence`)}
