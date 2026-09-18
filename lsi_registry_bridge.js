@@ -7,8 +7,8 @@
   const pct=v=>`${Number(v||0).toFixed(Number(v||0)%1?1:0)}%`;
   const n=v=>String(v??'').trim();
   const norm=v=>n(v).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-  const watchRx=/WATCH|NO BET|PASS|CLOSED|STARTED|LIVE|UNSUPPORTED|VERIFY LIVE LINE|MARKET NOT|DATA-LIMITED/i;
-  const propRx=/yards|points|rebounds|assists|strikeouts|\bks\b|hits|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|games won|sets won|double.double|total bases|home runs|goals/i;
+  const watchRx=/WATCH|NO BET|\bPASS\b|CLOSED|STARTED|LIVE|UNSUPPORTED|VERIFY LIVE LINE|MARKET NOT|DATA-LIMITED/i;
+  const propRx=/yards|points|rebounds|assists|strikeouts|\bks\b|hits|singles|doubles|triples|stolen bases|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|games won|sets won|double.?double|triple.?double|total bases|home runs|goals|turnovers|steals/i;\n  const teamSideRx=/\bML\b|moneyline|game winner|match winner|spread|game total|team total/i;
   const source=p=>{
     const refs=(p.provenance||[]).filter(x=>x?.source);
     if(!refs.length) return 'SOURCE UNAVAILABLE';
@@ -60,7 +60,7 @@
 
   function manualCandidate(text){
     const s=n(text);
-    if(!s || watchRx.test(s) || !propRx.test(s)) return null;
+    if(!s || watchRx.test(s) || teamSideRx.test(s) || !propRx.test(s)) return null;
     const m=s.match(/(?:L&J\s*)?(\d+(?:\.\d+)?)%/i);
     return {
       display:s,
@@ -92,7 +92,7 @@
       market:`${market}|${side}|${p.threshold??''}`,
       best_price:Number.isFinite(Number(p.best_price))?Number(p.best_price):null,
       market_source_count:Number(p.market_source_count||0),
-      sourceMode:'THE_ODDS_API_MARKET_CONSENSUS'
+      sourceMode:'MULTI_SOURCE_MARKET_CONSENSUS'
     };
   }
 
