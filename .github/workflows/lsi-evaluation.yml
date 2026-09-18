@@ -1,0 +1,107 @@
+name: LSI Self Evaluation
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_evaluate.py'
+      - '.github/workflows/lsi-evaluation.yml'
+  workflow_run:
+    workflows: ["LSI Archive Memory Layer"]
+    types: [completed]
+  workflow_dispatch:
+  schedule:
+    - cron: '10 14 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-self-evaluation
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout evaluation code
+        uses: actions/checkout@v7
+        with:
+          ref: master
+          path: source
+          fetch-depth: 1
+
+      - name: Checkout isolated LSI archive
+        uses: actions/checkout@v7
+        with:
+          ref: lsi-archive
+          path: archive
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Sync archive branch
+        shell: bash
+        run: |
+          cd archive
+          git pull --ff-only origin lsi-archive
+
+      - name: Evaluate LSI in shadow mode
+        run: |
+          python source/scripts/lsi_evaluate.py \
+            --archive-root archive/data/archive
+
+      - name: Enforce evaluation isolation
+        shell: bash
+        run: |
+          if [ -n "$(git -C source status --porcelain)" ]; then
+            echo "::error::Evaluation modified live source checkout."
+            git -C source status --short
+            exit 1
+          fi
+          OUTSIDE="$(git -C archive status --porcelain | grep -vE '^[ MARCUD?!]{2} data/archive/evaluation/' || true)"
+          if [ -n "$OUTSIDE" ]; then
+            echo "::error::Evaluation changed files outside data/archive/evaluation."
+            echo "$OUTSIDE"
+            exit 1
+          fi
+
+      - name: Validate no-influence boundary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("archive/data/archive/evaluation")
+          health=json.loads((root/"evaluation_health.json").read_text(encoding="utf-8"))
+          latest=json.loads((root/"latest_evaluation.json").read_text(encoding="utf-8"))
+          assert health["phase"]=="EVALUATION_SHADOW"
+          assert latest["influence_enabled"] is False
+          assert latest["live_prediction_write_authority"] is False
+          for value in health["authority_boundary"].values():
+              assert value is False
+          for name in (
+              "latest_evaluation.json","maturity_by_market.json",
+              "calibration_by_band.json","performance_history.jsonl",
+              "evaluation_health.json"
+          ):
+              assert (root/name).exists(), name
+          print("Self-evaluation validated in shadow mode; influence remains disabled.")
+          PY
+
+      - name: Commit evaluation-only outputs
+        shell: bash
+        run: |
+          cd archive
+          git config user.name 'LEGZ-JINX LSI Evaluation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/archive/evaluation
+          if git diff --cached --quiet; then
+            echo 'No evaluation changes.'
+          else
+            git commit -m "LSI shadow evaluation"
+            git push origin HEAD:lsi-archive
+          fi
