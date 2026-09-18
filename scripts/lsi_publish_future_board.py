@@ -72,20 +72,32 @@ def canonical_prop(p):
 
 
 def load_game_markets():
-    """Return best current GAME_ML market evidence by event/team from market_history."""
-    path=DATA/"market_history.csv"
-    if not path.exists(): return {}
+    """Return best current GAME_ML evidence from durable history plus the fast current-game board."""
     latest={}
-    with path.open(newline="",encoding="utf-8-sig") as fh:
-        for row in csv.DictReader(fh):
-            if str(row.get("market_class") or "").upper()!="GAME_ML": continue
-            eid=str(row.get("event_id") or "").strip()
-            participant=str(row.get("participant") or row.get("selection") or "").strip()
-            if not eid or not participant: continue
-            key=(eid,participant.lower(),str(row.get("source") or ""))
-            stamp=str(row.get("collected_at_pt") or "")
-            if key not in latest or stamp>=str(latest[key].get("collected_at_pt") or ""):
-                latest[key]=row
+    def consider(row):
+        if str(row.get("market_class") or "").upper()!="GAME_ML": return
+        if str(row.get("status") or "OPEN").upper() not in {"OPEN","ACTIVE",""}: return
+        eid=str(row.get("event_id") or "").strip()
+        participant=str(row.get("participant") or row.get("selection") or "").strip()
+        if not eid or not participant: return
+        key=(eid,participant.lower(),str(row.get("source") or ""))
+        stamp=str(row.get("collected_at_pt") or "")
+        if key not in latest or stamp>=str(latest[key].get("collected_at_pt") or ""):
+            latest[key]=row
+
+    path=DATA/"market_history.csv"
+    if path.exists():
+        with path.open(newline="",encoding="utf-8-sig") as fh:
+            for row in csv.DictReader(fh): consider(row)
+
+    live=DATA/"current_game_moneylines.json"
+    if live.exists():
+        try:
+            payload=json.loads(live.read_text(encoding="utf-8"))
+            for row in payload.get("rows") or []: consider(row)
+        except (json.JSONDecodeError,OSError) as exc:
+            print(f"WARN current game moneyline board unreadable: {exc}")
+
     grouped={}
     for row in latest.values():
         eid=str(row.get("event_id") or "").strip()
