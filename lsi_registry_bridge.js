@@ -32,6 +32,29 @@
     return Math.max(50,Math.min(85,Math.round((priceBlend+sourceAdjustment)*10)/10));
   };
 
+  // POM = Props, Odds, Moneyline. For QC player-prop tickets, the market variant
+  // is a property of the offered line (Goblin / Normal / Demon), not an L&J confidence tier.
+  const explicitPomType=p=>{
+    const tags=Array.isArray(p?.tags)?p.tags.join(' '):'';
+    const raw=[p?.pom_type,p?.pomType,p?.pom,p?.variant,p?.difficulty,p?.projection_type,p?.pick_type,p?.label,tags]
+      .filter(Boolean).join(' ').toUpperCase();
+    if(/\bGOBLIN\b/.test(raw)) return 'GOBLIN';
+    if(/\bDEMON\b/.test(raw)) return 'DEMON';
+    if(/\bNORMAL\b|\bMARKET\b|\bSTANDARD\b|\bREGULAR\b/.test(raw)) return 'NORMAL';
+    return null;
+  };
+  const textPomType=s=>{
+    const raw=String(s||'').toUpperCase();
+    if(/\bGOBLIN\b/.test(raw)) return 'GOBLIN';
+    if(/\bDEMON\b/.test(raw)) return 'DEMON';
+    return 'NORMAL';
+  };
+  const jointProbability=arr=>{
+    if(!arr?.length) return null;
+    const product=arr.reduce((p,c)=>p*Math.max(0,Math.min(1,Number(c.confidence||0)/100)),1);
+    return Math.round(product*1000)/10;
+  };
+
   const nowMs=Date.now(), horizonMs=nowMs+7*86400000;
   const predictionUpcoming=p=>{
     const t=Date.parse(p?.event_start_pt||"");
@@ -262,6 +285,7 @@
       market:n(s),
       best_price:null,
       market_source_count:1,
+      pomType:textPomType(s),
       sourceMode:'PUBLISHED_QC_PROP'
     };
   }
@@ -288,14 +312,18 @@
       threshold:p.threshold,
       best_price:Number.isFinite(Number(p.best_price))?Number(p.best_price):null,
       market_source_count:Number(p.market_source_count||0),
+      pomType:explicitPomType(p)||'NORMAL',
       sourceMode:'MULTI_SOURCE_MARKET_CONSENSUS'
     };
   }
 
-  function keyOf(c){
+  function familyKey(c){
     const family=n(c.marketFamily||c.market)
       .replace(/\|(?:OVER|UNDER|YES|NO)\|.*$/i,'');
     return `${norm(c.participant)}|${norm(family)}`;
+  }
+  function keyOf(c){
+    return [familyKey(c),norm(c.side),String(c.threshold??''),String(c.pomType||'NORMAL')].join('|');
   }
 
   function candidateScore(c){
@@ -320,21 +348,24 @@
     return [...best.values()];
   }
 
-  function diverseTake(items,count,offset=0){
+  function diverseTake(items,count,offset=0,avoid=new Set()){
     if(!items.length) return [];
     const rotated=items.slice(offset).concat(items.slice(0,offset));
-    const out=[], players=new Set(), used=new Set();
-    for(const c of rotated){
-      const p=norm(c.participant);
-      if(p && players.has(p)) continue;
-      const k=keyOf(c); if(used.has(k)) continue;
-      out.push(c); used.add(k); if(p) players.add(p);
-      if(out.length===count) return out;
-    }
-    for(const c of rotated){
-      const k=keyOf(c); if(used.has(k)) continue;
-      out.push(c); used.add(k);
-      if(out.length===count) break;
+    const out=[], players=new Set(), families=new Set(), used=new Set();
+    const passes=[
+      c=>!avoid.has(keyOf(c)) && !players.has(norm(c.participant)) && !families.has(familyKey(c)),
+      c=>!avoid.has(keyOf(c)) && !families.has(familyKey(c)),
+      c=>!avoid.has(keyOf(c)),
+      c=>true
+    ];
+    for(const accept of passes){
+      for(const c of rotated){
+        const k=keyOf(c); if(used.has(k)||!accept(c)) continue;
+        out.push(c); used.add(k);
+        const p=norm(c.participant); if(p) players.add(p);
+        families.add(familyKey(c));
+        if(out.length===count) return out;
+      }
     }
     return out;
   }
@@ -362,32 +393,59 @@
 
     if(!pool.length) return;
 
-    const hot=diverseTake(pool,6,0);
-    const sns1=diverseTake([...pool].sort((a,b)=>b.confidence-a.confidence),6,0);
-    const sns2Base=[...pool].sort((a,b)=>
-      (b.market_source_count-a.market_source_count)||(b.confidence-a.confidence));
-    const sns2=diverseTake(sns2Base,6,Math.min(3,Math.max(0,sns2Base.length-1)));
-    const normalBase=[...pool].sort((a,b)=>{
-      const av=(a.best_price??-110), bv=(b.best_price??-110);
-      return ((b.confidence + Math.max(-3,Math.min(3,bv/100))) -
-              (a.confidence + Math.max(-3,Math.min(3,av/100))));
-    });
-    const normal=diverseTake(normalBase,6,0);
-    const demonBase=[...pool].sort((a,b)=>{
+    const hot=diverseTake([...pool].sort((a,b)=>b.confidence-a.confidence),6,0);
+
+    // SNS1: probability first, Goblin-only. >77% is the target; if the board does not
+    // supply six qualifying Goblins, retain the strongest remaining Goblins rather than
+    // silently substituting Normal/Demon POMs.
+    const sns1Base=[...pool].filter(c=>c.pomType==='GOBLIN').sort((a,b)=>
+      ((b.confidence>=77)-(a.confidence>=77)) || (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count));
+    const sns1=diverseTake(sns1Base,6,0);
+    const usedAcross=new Set(sns1.map(keyOf));
+
+    // SNS2: Goblin or Normal only, >70% target, and cross-ticket diversity from SNS1.
+    const sns2Base=[...pool].filter(c=>c.pomType==='GOBLIN'||c.pomType==='NORMAL').sort((a,b)=>
+      ((b.confidence>=70)-(a.confidence>=70)) || (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count));
+    const sns2=diverseTake(sns2Base,6,0,usedAcross);
+    sns2.forEach(c=>usedAcross.add(keyOf(c)));
+
+    // NORMAL: standard/unmarked POMs only. Probability dominates economics; price/source
+    // depth are tie-breakers. This maximizes the strongest standard-market construction.
+    const normalBase=[...pool].filter(c=>c.pomType==='NORMAL').sort((a,b)=>
+      (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count) ||
+      ((b.best_price??-9999)-(a.best_price??-9999)));
+    const normal=diverseTake(normalBase,6,0,usedAcross);
+    normal.forEach(c=>usedAcross.add(keyOf(c)));
+
+    // DEMON: economics-first among only Normal/Demon POMs that L&J still evaluates at
+    // >=69.6%. A long price never rescues a probability that misses the gate.
+    const demonBase=[...pool].filter(c=>(c.pomType==='DEMON'||c.pomType==='NORMAL')&&c.confidence>=69.6).sort((a,b)=>{
       const ap=a.best_price??-9999, bp=b.best_price??-9999;
-      return (bp-ap)||(b.confidence-a.confidence);
+      return (bp-ap)||(b.confidence-a.confidence)||(b.market_source_count-a.market_source_count);
     });
-    const demon=diverseTake(demonBase,6,0);
+    const demon=diverseTake(demonBase,6,0,usedAcross);
 
     q.hot=asStrings(hot);
     q.sns1=asStrings(sns1);
     q.sns2=asStrings(sns2);
     q.normal=asStrings(normal);
     q.demon=asStrings(demon);
+    q._ticketProbabilities={
+      basis:'INDEPENDENCE_BASELINE_NOT_CORRELATION_ADJUSTED',
+      sns1:jointProbability(sns1),sns2:jointProbability(sns2),
+      normal:jointProbability(normal),demon:jointProbability(demon)
+    };
+    q._pomPolicy={sns1:'GOBLIN_ONLY_TARGET_77',sns2:'GOBLIN_OR_NORMAL_TARGET_70',normal:'NORMAL_ONLY_PROBABILITY_FIRST',demon:'NORMAL_OR_DEMON_MIN_69_6_ECONOMICS_FIRST'};
 
-    if(pool.length<6){
+    const shortages=[];
+    if(pool.length<6) shortages.push(`TOTAL POOL ${pool.length}/6`);
+    if(sns1.length<6) shortages.push(`SNS1 GOBLIN ${sns1.length}/6`);
+    if(sns2.length<6) shortages.push(`SNS2 GOBLIN/NORMAL ${sns2.length}/6`);
+    if(normal.length<6) shortages.push(`NORMAL ${normal.length}/6`);
+    if(demon.length<6) shortages.push(`DEMON-QUALIFIED ${demon.length}/6`);
+    if(shortages.length){
       q._marketLimited=true;
-      const note=`MARKET-LIMITED — ${pool.length} OF 6 SUPPORTABLE PLAYER PROPS AVAILABLE AFTER SOURCE SWEEP.`;
+      const note=`POM-GATED / MARKET-LIMITED — ${shortages.join(' • ')}. Threshold integrity takes priority over filling a ticket.`;
       q.foot=q.foot?`${q.foot} • ${note}`:note;
     }else{
       q._marketLimited=false;
