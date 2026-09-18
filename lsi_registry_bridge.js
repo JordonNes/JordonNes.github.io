@@ -171,6 +171,9 @@
       confidence:conf,
       participant:n(p.participant),
       market:`${market}|${side}|${p.threshold??''}`,
+      marketFamily:market,
+      side,
+      threshold:p.threshold,
       best_price:Number.isFinite(Number(p.best_price))?Number(p.best_price):null,
       market_source_count:Number(p.market_source_count||0),
       sourceMode:'MULTI_SOURCE_MARKET_CONSENSUS'
@@ -178,18 +181,31 @@
   }
 
   function keyOf(c){
-    return `${norm(c.participant)}|${norm(c.market)}`;
+    const family=n(c.marketFamily||c.market)
+      .replace(/\|(?:OVER|UNDER|YES|NO)\|.*$/i,'');
+    return `${norm(c.participant)}|${norm(family)}`;
+  }
+
+  function candidateScore(c){
+    const confidence=Number(c.confidence||0);
+    const sources=Math.min(5,Number(c.market_source_count||0));
+    const price=Number(c.best_price);
+    const priceBonus=Number.isFinite(price)
+      ? Math.max(-2,Math.min(2,(price+110)/220))
+      : 0;
+    return confidence + (sources*.15) + priceBonus;
   }
 
   function dedupe(candidates){
-    const out=[], seen=new Set();
+    const best=new Map();
     for(const c of candidates){
       if(!c) continue;
       const k=keyOf(c);
-      if(!k || seen.has(k)) continue;
-      seen.add(k); out.push(c);
+      if(!k) continue;
+      const prior=best.get(k);
+      if(!prior || candidateScore(c)>candidateScore(prior)) best.set(k,c);
     }
-    return out;
+    return [...best.values()];
   }
 
   function diverseTake(items,count,offset=0){
