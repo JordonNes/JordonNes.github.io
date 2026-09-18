@@ -96,9 +96,9 @@ For every active game/fight QC, the publication must show the scheduled event st
 
 For every active sport/league slate, L&J must perform a dedicated player-prop search before concluding that no supportable prop prediction is available. This includes league/sportsbook boards, DFS projection boards such as PrizePicks when accessible, odds-comparison pages, current model/prop services, matchup previews, and reputable public analysis. When at least one supportable player market is found for a game, populate **LEGZ PLAYER HOT TOP** and any ticket sections that can be responsibly constructed from the available verified legs. Do not leave an entire league's player-prop board blank merely because one preferred source does not expose props.
 
-When an accessible player-prop board exists, publish the best researched props even if none clears the normal L&J qualification gate. Such selections must be italicized and labeled *CONDITIONAL LEAN — BELOW L&J STANDARD*, with confidence, maximum acceptable line or target threshold, and the principal failure risk. Both SNS/Goblin cards must contain six participant-prop legs whenever the accessible board supports six. Normal and Aggressive/Demon cards must likewise be completed from the best available participant props according to their risk tiers. Team sides, spreads and totals never count as player-prop legs.
+When an accessible player-prop board exists, publish the best researched props even if none clears the normal L&J qualification gate. Such selections must be italicized and labeled *CONDITIONAL LEAN — BELOW L&J STANDARD*, with LJPC, maximum acceptable line or target threshold, and the principal failure risk. Both SNS/Goblin cards must contain six participant-prop legs whenever the accessible board supports six. Normal and Aggressive/Demon cards must likewise be completed from the best available participant props according to their risk tiers. Team sides, spreads and totals never count as player-prop legs.
 
-Only genuine market scarcity permits fewer than six legs. In that case, publish every available ranked prop and label the construction **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. Empty placeholder text is not an acceptable substitute merely because a preferred source is unavailable or because no prop clears the usual confidence gate.
+Only genuine market scarcity permits fewer than six legs. In that case, publish every available ranked prop and label the construction **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. Empty placeholder text is not an acceptable substitute merely because a preferred source is unavailable or because no prop clears the usual LJPC gate.
 
 NCAA Football follows this rule exactly: every current slate must include kickoff times for all listed games and a multi-source CFB player-prop sweep before L&J concludes that no supportable player-prop prediction is available.
 
@@ -134,7 +134,7 @@ Every daily recap must:
 - review the exact predictions L&J published the previous day across every active sport;
 - grade each recoverable prediction as **HIT, MISS, PUSH/VOID or UNGRADED** using verified final results;
 - measure **overall prediction accuracy**, **player/participant prop accuracy**, **JINX game/match winner accuracy**, **parlay/ticket hit rate**, and **SNS/Goblin vs Normal vs Aggressive/Demon accuracy**;
-- compare actual hit rates with the published **L&J/JINX confidence percentages** to evaluate calibration;
+- compare actual hit rates with the published **LJPC percentages** to evaluate calibration;
 - provide a sport-by-sport accuracy scorecard;
 - identify the most **significant or surprising positive results** from the prior day, including unexpected ceilings, strong matchup reads, successful upsets or markets that performed materially better than expected;
 - identify the most **significant or surprising negative results**, especially high-confidence misses, role/workload failures, injuries, blowout effects, bad game scripts, market-selection errors or other model failures;
@@ -172,9 +172,9 @@ NFL Sunday receives Saturday 8:30 PM preparation plus Sunday 7:00 AM, 9:30 AM, 1
 
 Every scheduled event receives a documented QC review. No selection may be invented to fill a card.
 
-- A prediction that clears the current L&J evidence and confidence gate is presented in normal type.
+- A prediction that clears the current L&J evidence and LJPC gate is presented in normal type.
 - When no available prediction clears that gate, publish the best researched opportunity only as an explicitly labeled *BELOW L&J STANDARD — LEAN ONLY* or *CONDITIONAL LEAN*.
-- All below-standard and conditional entries must render in italics, show their confidence, identify the maximum acceptable line or target threshold when available, and explain the principal failure risk.
+- All below-standard and conditional entries must render in italics, show their LJPC, identify the maximum acceptable line or target threshold when available, and explain the principal failure risk.
 - If the market has not opened, use *MARKET NOT YET AVAILABLE — TARGET LINE* and state the line required before activation.
 - A conditional lean may be used to complete the required SNS forecast when it is among the most favorable available participant props, but its below-standard status must remain explicit. It is not represented as a standard-qualified pick.
 - If fewer than six available participant props exist after the full source sweep, use the documented **MARKET-LIMITED** exception for any tier that is actually published.
@@ -201,6 +201,11 @@ Pentagon/radar athlete-statistic graphics are intentionally excluded from the cu
 
 The NFL, WNBA, NBA, MLB, NHL, NCAA Football, and NCAA Basketball Daily Predictions pages must display exactly 20 player/participant prop entries in the 20 Piece section. Game winners, moneylines, spreads, team totals, and game totals never count toward the 20.
 
-L&J-qualified predictions retain the normal 20 Piece presentation. When fewer than 20 qualified or conditional player props are available, remaining positions must be filled with clearly labeled **UNSUPPORTED PLAYER THRESHOLD — TARGET / VERIFY LIVE LINE** entries instead of WATCH. Unsupported thresholds render in dark pink, carry no L&J confidence, and state that they are not L&J predictions or approved parlay legs. They may be promoted to normal styling only after current player identity, availability, market line, and analytical support are verified.
+L&J-qualified predictions retain the normal 20 Piece presentation. When fewer than 20 qualified or conditional player props are available, remaining positions must be filled with clearly labeled **UNSUPPORTED PLAYER THRESHOLD — TARGET / VERIFY LIVE LINE** entries instead of WATCH. Unsupported thresholds render in dark pink, carry no LJPC, and state that they are not L&J predictions or approved parlay legs. They may be promoted to normal styling only after current player identity, availability, market line, and analytical support are verified.
 
 Inactive-season and future-slate thresholds must identify that roster, matchup, and market verification is pending. An unsupported threshold is transparent planning context, not an invented sportsbook offer.
+
+
+## Canonical terminology reference — effective September 18, 2026
+
+The public terminology authority is `LJ_Methodology.html`. Current-prediction pages must use **LJPC** for the final L&J estimated hit probability. “L&J Accuracy Confidence,” “L&J modeled confidence,” and similar duplicate forward-looking labels are retired. **Accuracy** is retrospective only. **LEGZ Value** measures evidence strength/predictability; **POM Value** measures prediction-first desirability; neither is a substitute for LJPC. Provisional market-derived baselines must be labeled **PROVISIONAL** until the full L&J evaluation requirements are satisfied.
