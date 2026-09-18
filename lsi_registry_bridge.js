@@ -304,7 +304,7 @@
     return {
       display:s,
       confidence:m?Number(m[1]):60,
-      participant:n(s.split(/\bOVER\b|\bUNDER\b|\bYES\b|\bNO\b/i)[0]),
+      participant:n(s.split(/\bOVER\b|\bUNDER\b|\bMORE\b|\bLESS\b|\bYES\b|\bNO\b/i)[0]),
       market:n(s),
       best_price:null,
       market_source_count:1,
