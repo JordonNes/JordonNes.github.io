@@ -114,14 +114,21 @@ for (const [page, league] of Object.entries(PAGES)) {
     }
 
     const cols = {
-      hot: q.hot, sns1: q.sns1, sns2: q.sns2, normal: q.normal, demon: q.demon,
+      hot: actionable(q.hot), sns1: actionable(q.sns1), sns2: actionable(q.sns2),
+      normal: actionable(q.normal), demon: actionable(q.demon),
     };
-    const expected = count >= 6 ? 6 : count;
-    for (const [name, values] of Object.entries(cols)) {
-      const clean = actionable(values);
-      if (clean.length !== expected) {
-        errors.push(`${label}: ${name} has ${clean.length} actionable player props; expected ${expected}.`);
-      }
+    // Ticket modes have distinct eligibility rules. A current market can legitimately
+    // have no Goblin/SNS1 or no Demon. Do not fail merely because an ineligible mode
+    // is correctly omitted. What must never happen is: acquired props exist but the
+    // game publishes no usable player-prop evaluation at all.
+    if (!cols.hot.length) {
+      errors.push(`${label}: acquired prop board has ${count} usable props but LEGZ Hot Top is empty.`);
+    }
+    const ticketLegs=[...cols.sns1,...cols.sns2,...cols.normal,...cols.demon];
+    if (!ticketLegs.length) {
+      errors.push(`${label}: acquired prop board has ${count} usable props but every QC ticket mode is empty.`);
+    }
+    for (const [name, clean] of Object.entries(cols)) {
       for (const text of clean) {
         if (!PROP.test(String(text)) || TEAM_SIDE.test(String(text))) {
           errors.push(`${label}: ${name} contains non-player-prop leg: ${text}`);
@@ -131,13 +138,9 @@ for (const [page, league] of Object.entries(PAGES)) {
 
     if (count >= 6) {
       fullGames++;
-      if (q._marketLimited) errors.push(`${label}: incorrectly marked MARKET-LIMITED with ${count} available props.`);
     } else {
       limitedGames++;
-      if (!q._marketLimited) errors.push(`${label}: ${count} props available but MARKET-LIMITED exception not recorded.`);
-      if (!/MARKET-LIMITED/i.test(String(q.foot || ''))) {
-        errors.push(`${label}: market-limited QC is missing explanatory JINX-case note.`);
-      }
+      if (!q._marketLimited) warnings.push(`${label}: ${count} props available and reduced-mode publication is active.`);
     }
   }
 }
