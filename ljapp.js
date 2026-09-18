@@ -7,7 +7,7 @@
   const D = window.LJ_DATA;
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
-  const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|\bPASS\b|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
+  const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|^PASS\\b|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
   const isUnsupported = s => /UNSUPPORTED PLAYER THRESHOLD/i.test(String(s || ""));
   const unsupportedCatalog = {
     MLB:[["Sean Newcomb","Strikeouts 4.5"],["Gavin Williams","Strikeouts 5.5"],["Tarik Skubal","Strikeouts 6.5"],["Nick Lodolo","Strikeouts 5.5"],["Troy Melton","Strikeouts 4.5"],["José Soriano","Strikeouts 5.5"],["Brandon Young","Strikeouts 4.5"],["Jonah Tong","Strikeouts 5.5"],["Reynaldo López","Strikeouts 4.5"],["David Peterson","Strikeouts 5.5"],["Will Warren","Strikeouts 5.5"],["Dean Kremer","Strikeouts 4.5"],["Landen Roupp","Strikeouts 4.5"],["Quinn Mathews","Strikeouts 5.5"],["Casey Mize","Strikeouts 4.5"],["Tomoyuki Sugano","Strikeouts 3.5"],["Kade Anderson","Strikeouts 5.5"],["Reid Detmers","Strikeouts 5.5"],["Sandy Alcantara","Strikeouts 5.5"],["Corbin Burnes","Strikeouts 5.5"]],
