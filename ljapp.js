@@ -108,6 +108,32 @@
   function winners(items,label="JINX GAME WINNERS"){
     return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">LJPC: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
   }
+  function ensureGameWinners(s){
+    if(!s) return;
+    const existing=Array.isArray(s.winners)?s.winners:[];
+    const seen=new Set(existing.map(r=>String(r?.[0]||'').toLowerCase()));
+    const derived=[];
+    const rows=[];
+    if(Array.isArray(s.qcs)) rows.push(...s.qcs);
+    if(Array.isArray(s.qcGroups)) s.qcGroups.forEach(g=>rows.push(...(g.rows||[])));
+    for(const q of rows){
+      const winner=String(q?.winner||'').trim();
+      const conf=String(q?.conf||'').trim();
+      if(!winner || isEmptyDecision(winner) || winner==='—' || /WATCH|NO BET|PASS/i.test(winner)) continue;
+      const matchup=`${q.away||''} @ ${q.home||''}`.trim();
+      const key=matchup.toLowerCase();
+      if(seen.has(key)) continue;
+      const provisional=/PROVISIONAL|MARKET BASELINE/i.test(String(q.market||'')+' '+String(q.foot||''));
+      derived.push([
+        matchup,
+        winner,
+        conf&&conf!=='—'?conf:'—',
+        provisional?'PROVISIONAL MARKET BASELINE • QC-derived game winner':(q.market||'QC-derived current game winner')
+      ]);
+      seen.add(key);
+    }
+    s.winners=[...existing,...derived];
+  }
   function headlineSection(hot,wins,home=false,hotLabel="LEGZ HOT TOP",winnerLabel="JINX GAME WINNERS"){
     return `<section class="section headliner-section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ evidence/value + JINX contextual evaluation → LJPC</span></div><div class="headliner-grid">${hotTop(hot,hotLabel)}${winners(wins,winnerLabel)}</div></section>`;
   }
@@ -484,6 +510,7 @@
   window.renderLJSport = key => {
     const s = D.sports[key];
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
+    ensureGameWinners(s);
     document.title = `LEGZ & JINX — ${s.title}`;
     const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : qcs(s.qcTitle,s.qcs));
     document.getElementById("app").innerHTML = `<div class="page sport-page sport-${cls(key)}">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel)}${twenty(s.twenty,s.twentyNote,false,key)}${quickies}${footer("QC layout locked")}</div>`;
