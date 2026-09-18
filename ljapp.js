@@ -381,7 +381,11 @@
   async function fetchCurrentEvents(key){
     const map=ESPN_SCOREBOARD[key]; if(!map) return [];
     const [sport,slug]=map;
-    const dates=[ptDate(-1),ptDate(0),ptDate(1)];
+    // NFL QCs retain the entire Thursday–Monday game week until MNF is final,
+    // so runtime status hydration must still be able to find Thursday's completed game
+    // when the page is opened on Friday/Saturday/Sunday/Monday.
+    const offsets=key==="NFL" ? [-4,-3,-2,-1,0,1,2,3] : [-1,0,1];
+    const dates=offsets.map(ptDate);
     const payloads=await Promise.all(dates.map(async date=>{
       const url=`https://site.api.espn.com/apis/site/v2/sports/${sport}/${slug}/scoreboard?dates=${date}&limit=300&_=${Date.now()}`;
       const res=await fetch(url,{cache:"no-store"});
