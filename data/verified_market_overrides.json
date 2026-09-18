@@ -1,0 +1,144 @@
+{
+  "schema_version": "LJ-VERIFIED-MARKET-OVERRIDE-1",
+  "generated_at_pt": "2026-09-18T16:20:00-07:00",
+  "policy": "Short-lived exact-market override for independently verified markets missed by automated adapters. Expires at event start; only POMs with an L&J evaluation may publish into QC tickets.",
+  "events": [
+    {
+      "league": "NFL",
+      "sport_key": "football_nfl",
+      "source_event_id": "EXT-NFL-NYG-LAR-20260921",
+      "commence_time": "2026-09-21T17:15:00-07:00",
+      "expires_at": "2026-09-21T17:15:00-07:00",
+      "away": "NY Giants",
+      "home": "LA Rams",
+      "away_aliases": ["NYG", "New York Giants", "NY Giants"],
+      "home_aliases": ["LAR", "LA", "Los Angeles Rams", "LA Rams"],
+      "source": "VERIFIED_EXTERNAL_MARKETS",
+      "sweep_status": "VERIFIED_OVERRIDE_WITH_LJ_EVALUATIONS",
+      "available_market_sources": ["PrizePicks", "DraftKings", "Kalshi"],
+      "available_markets": [
+        {
+          "source": "PrizePicks",
+          "observed_at_pt": "2026-09-18T16:20:00-07:00",
+          "markets": [
+            "Matthew Stafford 242.5 passing yards",
+            "Jaxson Dart 214.5 passing yards",
+            "Kyren Williams 62.5 rushing yards",
+            "Cam Skattebo 52.5 rushing yards",
+            "Puka Nacua 85.5 receiving yards",
+            "Malik Nabers 63.5 receiving yards"
+          ]
+        },
+        {
+          "source": "DraftKings",
+          "observed_at_pt": "2026-09-18T16:20:00-07:00",
+          "markets": [
+            "Puka Nacua anytime TD scorer -105"
+          ]
+        },
+        {
+          "source": "Kalshi",
+          "observed_at_pt": "2026-09-18T16:20:00-07:00",
+          "markets": [
+            "NY Giants vs LA Rams game winner",
+            "Jaxson Dart 225+ passing yards",
+            "Matthew Stafford 250+ passing yards",
+            "Cam Skattebo 1+ touchdown",
+            "Davante Adams 1+ touchdown"
+          ]
+        }
+      ],
+      "props": [
+        {
+          "participant": "Jaxson Dart",
+          "market_key": "passing_yards",
+          "market": "Passing Yards",
+          "threshold": 214.5,
+          "side": "LESS",
+          "best_price": null,
+          "best_book": "PrizePicks",
+          "draftkings_available": false,
+          "market_source_count": 1,
+          "pom_type": "NORMAL",
+          "evaluation_status": "LJ_EVALUATED",
+          "ljpc": 65.0,
+          "legz_value": 72.0,
+          "pom_value": 68.4,
+          "source_snapshot_ids": [
+            "PP-NYG-LAR-DART-PASS-2145-20260918",
+            "STATSHWK-DART-PASS-20260918",
+            "DRAFTEDGE-DART-PASS-20260918",
+            "PDR-DART-PASS-20260918"
+          ],
+          "evidence_summary": "PrizePicks exact line 214.5; Week 1 was 230, while independent current projections around 178.5-182.5 support the LESS side. Moderate confidence because the 2026 sample is still one game."
+        },
+        {
+          "participant": "Kyren Williams",
+          "market_key": "rushing_yards",
+          "market": "Rushing Yards",
+          "threshold": 62.5,
+          "side": "LESS",
+          "best_price": null,
+          "best_book": "PrizePicks",
+          "draftkings_available": false,
+          "market_source_count": 1,
+          "pom_type": "NORMAL",
+          "evaluation_status": "LJ_EVALUATED",
+          "ljpc": 63.0,
+          "legz_value": 70.0,
+          "pom_value": 66.4,
+          "source_snapshot_ids": [
+            "PP-NYG-LAR-KYREN-RUSH-625-20260918",
+            "STATSHWK-KYREN-RUSH-20260918",
+            "DRAFTEDGE-KYREN-RUSH-20260918"
+          ],
+          "evidence_summary": "PrizePicks exact line 62.5; Week 1 produced 41 rushing yards and an independent current projection around 55.6 also sits below the line. Early-season sample limits certainty."
+        },
+        {
+          "participant": "Matthew Stafford",
+          "market_key": "passing_yards",
+          "market": "Passing Yards",
+          "threshold": 242.5,
+          "side": "LESS",
+          "best_price": null,
+          "best_book": "PrizePicks",
+          "draftkings_available": false,
+          "market_source_count": 1,
+          "pom_type": "NORMAL",
+          "evaluation_status": "LJ_EVALUATED",
+          "ljpc": 61.0,
+          "legz_value": 68.0,
+          "pom_value": 64.4,
+          "source_snapshot_ids": [
+            "PP-NYG-LAR-STAFFORD-PASS-2425-20260918",
+            "STATSHWK-STAFFORD-PASS-20260918",
+            "DRAFTEDGE-STAFFORD-PASS-20260918"
+          ],
+          "evidence_summary": "PrizePicks exact line 242.5; Week 1 produced 155 passing yards and an independent current projection around 232.6 remains below the offered threshold. Early-season variance keeps LJPC moderate."
+        },
+        {
+          "participant": "Cam Skattebo",
+          "market_key": "anytime_td",
+          "market": "Anytime TD",
+          "threshold": 0.5,
+          "side": "MORE",
+          "best_price": null,
+          "best_book": "PrizePicks",
+          "draftkings_available": true,
+          "market_source_count": 3,
+          "pom_type": "DEMON",
+          "evaluation_status": "LJ_EVALUATED",
+          "ljpc": 52.0,
+          "legz_value": 69.0,
+          "pom_value": 59.9,
+          "source_snapshot_ids": [
+            "PP-NYG-LAR-SKATTEBO-TD-05-20260918",
+            "DK-NYG-LAR-SKATTEBO-ATTD-20260918",
+            "KALSHI-NYG-LAR-SKATTEBO-TD1-20260918"
+          ],
+          "evidence_summary": "PrizePicks Demon 0.5 anytime-TD POM; Week 1 rushing TD and current external TD markets confirm the outcome is actively priced. Kept in Demon mode because event probability is near coin-flip territory."
+        }
+      ]
+    }
+  ]
+}
