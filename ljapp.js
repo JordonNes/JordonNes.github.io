@@ -66,7 +66,7 @@
     });
     out.filter(g=>g.props.length);
     out.sort((a,b)=>(b.score-a.score)||a.player.localeCompare(b.player));
-    return out.filter(g=>g.props.length);
+    return out.filter(g=>g.props.length).slice(0,24);
   };
 
   function topbar(meta, home=false){
