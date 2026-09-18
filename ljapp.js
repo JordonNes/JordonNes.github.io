@@ -34,7 +34,7 @@
   const ljConfidence20 = r => {
     const label=String((r||[])[4]||"");
     const quality=String((r||[])[5]||"");
-    if(!/L&J MODEL/i.test(quality)) return 0;
+    if(!/LJPC|L&J MODEL/i.test(quality)) return 0;
     const v=Number(label.replace(/[^0-9.]/g,""));
     return Number.isFinite(v)?v:0;
   };
@@ -124,17 +124,17 @@
   }
 
   function rules(){
-    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep only the populated Normal construction, locked from the pregame publication, plus a current box score.</span></div><div class="qc-rule"><b>Final</b><span>Remove all parlays and show only the final game status and ending box score.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Conditional market-consensus selections remain labeled as consensus, not L&amp;J confidence. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
+    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep only the populated Normal construction, locked from the pregame publication, plus a current box score.</span></div><div class="qc-rule"><b>Final</b><span>Remove all parlays and show only the final game status and ending box score.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Provisional market baselines remain labeled PROVISIONAL and are not presented as fully contextualized L&amp;J evaluations. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
   }
   function renderQcLeg(value){
     const raw=String(value??"").trim();
     const consensus=raw.match(/(?:CONDITIONAL LEAN\s*[—-]\s*)?MARKET CONSENSUS\s*(\d+(?:\.\d+)?)%/i);
-    const lj=raw.match(/L&J\s*(\d+(?:\.\d+)?)%/i);
+    const lj=raw.match(/(?:PROVISIONAL\s+)?(?:LJPC|L&J)\s*(\d+(?:\.\d+)?)%/i);
     let main=raw
       .replace(/\s*•\s*CONDITIONAL LEAN\s*[—-]\s*MARKET CONSENSUS\s*\d+(?:\.\d+)?%/i,"")
       .replace(/\s*•\s*MARKET CONSENSUS\s*\d+(?:\.\d+)?%/i,"")
       .replace(/\s*•\s*LEGZ\s*\d+(?:\.\d+)?%\s*\+\s*JINX\s*[+-]?\s*\d+(?:\.\d+)?%\s*=\s*L&J\s*\d+(?:\.\d+)?%/i,"")
-      .replace(/\s*•\s*L&J\s*\d+(?:\.\d+)?%/i,"")
+      .replace(/\s*•\s*(?:PROVISIONAL\s+)?(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i,"")
       .trim();
     let book="";
     const bookMatch=main.match(/\s*(\([+-]?\d+(?:\.\d+)?(?:\s+[^)]+)?\))\s*$/);
@@ -151,7 +151,7 @@
     const scoreHtml=consensus
       ? `<span class="qc-consensus" title="Conditional lean — market consensus">Consensus ${esc(consensus[1])}%</span>`
       : lj
-        ? `<span class="qc-lj-score"><span class="qc-l">L</span><span class="qc-amp">&amp;</span><span class="qc-j">J</span> <span class="qc-score">${esc(lj[1])}%</span></span>`
+        ? `<span class="qc-lj-score"><span class="qc-score">LJPC ${esc(lj[1])}%</span></span>`
         : "";
     return `<span class="qc-leg-main">${mainHtml}</span>${bookHtml}${scoreHtml}`;
   }
@@ -173,7 +173,7 @@
     const demon=cleanDecisionItems(r.demon);
     const market=isEmptyDecision(r.market)?"":String(r.market||"");
     const winner=isEmptyDecision(r.winner)?"":String(r.winner||"");
-    const conf = winner && r.conf && r.conf !== "—" ? ` • L&J ${esc(r.conf)}` : "";
+    const conf = winner && r.conf && r.conf !== "—" ? ` • LJPC ${esc(r.conf)}` : "";
     const cells=[];
     if(hot.length) cells.push(`<div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</p>`).join("")}</div></div>`);
     const s1=qcTicketCell("SNS / GOBLIN 1","sns sns1",sns1,"qc-sns1"); if(s1) cells.push(s1);
