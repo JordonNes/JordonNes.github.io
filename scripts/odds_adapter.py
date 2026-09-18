@@ -81,6 +81,7 @@ SPORTS = {
 }
 
 MARKET_LABELS = {
+    "h2h": "Moneyline",
     "player_pass_yds": "Passing Yards",
     "player_rush_yds": "Rushing Yards",
     "player_reception_yds": "Receiving Yards",
@@ -332,25 +333,27 @@ def parse_event_odds(league: str, event: dict, payload: dict, collected_at: date
             mlabel = MARKET_LABELS.get(mkey, mkey.replace("_", " ").title())
             mtime = market.get("last_update") or bookmaker.get("last_update") or collected_at.isoformat()
             for outcome in market.get("outcomes") or []:
-                participant = str(outcome.get("description") or "").strip()
+                is_game_ml = mkey == "h2h"
+                participant = str(outcome.get("name") if is_game_ml else outcome.get("description") or "").strip()
                 if not participant:
                     continue
-                side = str(outcome.get("name") or "").strip()
+                side = "Win" if is_game_ml else str(outcome.get("name") or "").strip()
                 point = outcome.get("point")
                 price = outcome.get("price")
                 threshold = "" if point is None else str(point)
                 sid = snap_id([league, source_event_id, book, mkey, participant, side, threshold, price, mtime])
                 row = dict(zip(FIELDS, [
                     sid, iso_pt(collected_at), league, league, source_event_id, event_start,
-                    f"THE_ODDS_API:{book}", "PLAYER_PROP", participant, mlabel,
+                    f"THE_ODDS_API:{book}", "GAME_ML" if is_game_ml else "PLAYER_PROP", participant, mlabel,
                     threshold, side, "" if price is None else str(price), "OPEN",
                 ]))
                 market_rows.append(row)
-                raw_quotes.append({
-                    "snapshot_id": sid, "participant": participant, "market_key": mkey,
-                    "market": mlabel, "threshold": point, "side": side, "price": price,
-                    "book": book, "last_update": mtime,
-                })
+                if not is_game_ml:
+                    raw_quotes.append({
+                        "snapshot_id": sid, "participant": participant, "market_key": mkey,
+                        "market": mlabel, "threshold": point, "side": side, "price": price,
+                        "book": book, "last_update": mtime,
+                    })
     return market_rows, raw_quotes
 
 def rank_consensus(raw_quotes: list[dict]) -> list[dict]:
@@ -469,12 +472,13 @@ def run():
         eid = str(event.get("id") or "")
         cached = old_by_id.get(eid)
         refresh = should_refresh(eid, start, state, now) and queried < MAX_EVENTS_PER_RUN
+        requested_markets = list(dict.fromkeys(["h2h"] + markets))
 
         if refresh:
             try:
                 payload, headers = get(
                     f"/sports/{sport_key}/events/{eid}/odds",
-                    {"regions": REGIONS, "markets": ",".join(markets),
+                    {"regions": REGIONS, "markets": ",".join(requested_markets),
                      "oddsFormat": "american", "dateFormat": "iso"},
                 )
                 quota.update({k: v for k, v in headers.items() if v is not None})
@@ -496,11 +500,11 @@ def run():
                     "home": event.get("home_team"), "away_aliases": aliases(event.get("away_team")),
                     "home_aliases": aliases(event.get("home_team")), "source": "THE_ODDS_API",
                     "sweep_status": sweep_status, "swept_at_utc": now.isoformat(),
-                    "market_keys_requested": markets, "props": props,
+                    "market_keys_requested": requested_markets, "props": props,
                 }
             except Exception as exc:
                 errors += 1
-                print(f"WARN The Odds API props {league} {event.get('away_team')} @ {event.get('home_team')}: {exc}")
+                print(f"WARN The Odds API markets {league} {event.get('away_team')} @ {event.get('home_team')}: {exc}")
                 if cached:
                     board_event = dict(cached)
                     board_event["sweep_status"] = "SOURCE_ERROR_USING_CACHED"
@@ -511,7 +515,7 @@ def run():
                         "home": event.get("home_team"), "away_aliases": aliases(event.get("away_team")),
                         "home_aliases": aliases(event.get("home_team")), "source": "THE_ODDS_API",
                         "sweep_status": "SOURCE_ERROR_NO_CACHE", "swept_at_utc": now.isoformat(),
-                        "market_keys_requested": markets, "props": [],
+                        "market_keys_requested": requested_markets, "props": [],
                     }
         elif cached:
             board_event = cached
@@ -522,7 +526,7 @@ def run():
                 "home": event.get("home_team"), "away_aliases": aliases(event.get("away_team")),
                 "home_aliases": aliases(event.get("home_team")), "source": "THE_ODDS_API",
                 "sweep_status": "PENDING_REFRESH_BUDGET", "swept_at_utc": None,
-                "market_keys_requested": markets, "props": [],
+                "market_keys_requested": requested_markets, "props": [],
             }
         board_events.append(board_event)
 
