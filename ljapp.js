@@ -216,8 +216,21 @@
     const grid=`grid-template-columns:minmax(210px,1.18fr) repeat(${cols},minmax(150px,1fr))`;
     return `<div class="qc-row" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||"")}" style="${grid}"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams"><span>${esc(r.away)}</span><span class="qc-vs">VS</span><span>${esc(r.home)}</span></div>${market?`<div class="qc-market">${esc(market)}</div>`:""}${winner?`<div class="qc-winner"><div class="qc-label">${r._winnerProvisional?"PROVISIONAL WINNER — MARKET BASELINE":"JINX GAME WINNER"}</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:""}<div class="qc-runtime-status" hidden></div></div>${cells.join("")}</div>`;
   }
+  function qcHasParlay(r){
+    return [r?.sns1,r?.sns2,r?.normal,r?.demon]
+      .some(items=>cleanDecisionItems(items).length>=2);
+  }
+  function qcStatusOnly(r){
+    return /FINAL|EVENT STARTED|RECENT|COMPLETED|LIVE|PAUSED|DELAYED|POSTPONED|RESCHEDULED/i
+      .test(String(r?.market||'')+' '+String(r?.foot||''));
+  }
+  function visibleQcRows(rows){
+    return (rows||[]).filter(r=>qcStatusOnly(r)||qcHasParlay(r));
+  }
   function qcs(title,rows){
-    return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Approved compact horizontal Quickie Cards</span></div><div class="qc-list">${(rows || []).map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • daily refreshes change data, never layout</div></section>`;
+    const visible=visibleQcRows(rows);
+    if(!visible.length) return "";
+    return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Only qualified 2–6 leg pregame QCs are shown • live/final events remain as status/box-score cards</span></div><div class="qc-list">${visible.map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • empty pregame shells suppressed across all DP pages</div></section>`;
   }
   function nflDayBucket(row){
     const raw=String(row?.time||'').toUpperCase();
@@ -237,11 +250,7 @@
   function nflQcs(title,rows){
     const ordered=['THURSDAY','SUNDAY','MONDAY','OTHER'];
     const groups=new Map();
-    const hasParlay=r=>[r?.sns1,r?.sns2,r?.normal,r?.demon]
-      .some(items=>cleanDecisionItems(items).length>=2);
-    const statusOnly=r=>/FINAL|EVENT STARTED|RECENT|COMPLETED|LIVE|PAUSED|DELAYED|POSTPONED|RESCHEDULED/i
-      .test(String(r?.market||'')+' '+String(r?.foot||''));
-    const visible=(rows||[]).filter(r=>statusOnly(r)||hasParlay(r));
+    const visible=visibleQcRows(rows);
     visible.forEach((r,i)=>{
       const [key,label]=nflDayBucket(r);
       if(!groups.has(key)) groups.set(key,{label,rows:[]});
@@ -255,7 +264,9 @@
   }
   function groupedQcs(groups){
     if (!groups || !groups.length) return "";
-    return `<section class="section"><div class="section-head"><h2>TENNIS QUICKIE CARDS</h2><span class="muted">Singles and doubles maintained as separate permanent boards</span></div>${groups.map(g=>`<div class="qc-division"><div class="qc-division-head"><h3>${esc(g.title)}</h3><span>${esc(g.note || "Current verified matches only")}</span></div><div class="qc-list">${(g.rows || []).map((r,i)=>qcRow(r,i)).join("")}</div></div>`).join("")}${rules()}<div class="layout-seal">TENNIS QC STRUCTURE LOCK • MEN'S SINGLES • MEN'S DOUBLES • WOMEN'S SINGLES • WOMEN'S DOUBLES</div></section>`;
+    const visibleGroups=groups.map(g=>({...g,rows:visibleQcRows(g.rows)})).filter(g=>g.rows.length);
+    if(!visibleGroups.length) return "";
+    return `<section class="section"><div class="section-head"><h2>TENNIS QUICKIE CARDS</h2><span class="muted">Singles and doubles maintained as separate permanent boards</span></div>${visibleGroups.map(g=>`<div class="qc-division"><div class="qc-division-head"><h3>${esc(g.title)}</h3><span>${esc(g.note || "Current verified matches only")}</span></div><div class="qc-list">${g.rows.map((r,i)=>qcRow(r,i)).join("")}</div></div>`).join("")}${rules()}<div class="layout-seal">TENNIS QC STRUCTURE LOCK • empty pregame shells suppressed</div></section>`;
   }
 
   function allSportsQcs(){
