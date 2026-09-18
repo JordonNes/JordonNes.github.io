@@ -77,14 +77,43 @@
   function rules(){
     return `<div class="card qc-standard"><div class="card-title purple"><span>REQUIRED PER-GAME QUICKIE FORMAT</span><span>APPLIES TO EVERY FULL GAME / FIGHT CARD</span></div><div class="qc-rules"><div class="qc-rule"><b>1. Game Side</b><span>Teams/participants, current market and JINX game-winner prediction with confidence.</span></div><div class="qc-rule"><b>2. LEGZ Player Hot Top</b><span>Best available player/participant market expressions for this matchup.</span></div><div class="qc-rule"><b>3. SNS / Goblin</b><span>Two separate accuracy-first mini-ticket constructions; no forced filler.</span></div><div class="qc-rule"><b>4. Normal</b><span>Balanced probability-to-payout construction using verified current legs.</span></div><div class="qc-rule"><b>5. Aggressive / Demon</b><span>Higher-variance ceiling construction; lower hit probability remains visible.</span></div><div class="qc-rule"><b>6. JINX Case</b><span>Why the selected statistical channel can go green and what invalidates the play.</span></div><div class="qc-rule"><b>7. Publication Gate</b><span>7:30 AM, 12:00 PM and 8:30 PM PT; add a 30–45 minute pregame check when needed.</span></div></div><p class="qc-lock-note">Qualified predictions use normal type. Below-standard or conditional leans are italicized and are not approved parlay legs. If a current market is unavailable, the page publishes a researched WATCH / target line instead of stale or fabricated props. Kalshi is tracked as a prediction market, not a sportsbook.</p></div>`;
   }
+  function renderQcLeg(value){
+    const raw=String(value??"").trim();
+    const consensus=raw.match(/(?:CONDITIONAL LEAN\s*[—-]\s*)?MARKET CONSENSUS\s*(\d+(?:\.\d+)?)%/i);
+    const lj=raw.match(/L&J\s*(\d+(?:\.\d+)?)%/i);
+    let main=raw
+      .replace(/\s*•\s*CONDITIONAL LEAN\s*[—-]\s*MARKET CONSENSUS\s*\d+(?:\.\d+)?%/i,"")
+      .replace(/\s*•\s*MARKET CONSENSUS\s*\d+(?:\.\d+)?%/i,"")
+      .replace(/\s*•\s*LEGZ\s*\d+(?:\.\d+)?%\s*\+\s*JINX\s*[+-]?\s*\d+(?:\.\d+)?%\s*=\s*L&J\s*\d+(?:\.\d+)?%/i,"")
+      .replace(/\s*•\s*L&J\s*\d+(?:\.\d+)?%/i,"")
+      .trim();
+    let book="";
+    const bookMatch=main.match(/\s*(\([+-]?\d+(?:\.\d+)?(?:\s+[^)]+)?\))\s*$/);
+    if(bookMatch){book=bookMatch[1];main=main.slice(0,bookMatch.index).trim();}
+    let player="",prop=main;
+    const sideSplit=main.match(/^(.+?)(\s+(?:OVER|UNDER)\b.*)$/i);
+    const typeSplit=!sideSplit?main.match(/^(.+?)(\s+(?:Player|Batter|Pitcher|Goalie)\b.*)$/i):null;
+    const split=sideSplit||typeSplit;
+    if(split){player=split[1].trim();prop=split[2].trim();}
+    const mainHtml=player
+      ? `<span class="qc-leg-player">${esc(player)}</span> <span class="qc-leg-prop">${esc(prop)}</span>`
+      : `<span class="qc-leg-prop">${esc(prop)}</span>`;
+    const bookHtml=book?`<span class="qc-leg-book">${esc(book)}</span>`:"";
+    const scoreHtml=consensus
+      ? `<span class="qc-consensus" title="Conditional lean — market consensus">Consensus ${esc(consensus[1])}%</span>`
+      : lj
+        ? `<span class="qc-lj-score"><span class="qc-l">L</span><span class="qc-amp">&amp;</span><span class="qc-j">J</span> <span class="qc-score">${esc(lj[1])}%</span></span>`
+        : "";
+    return `<span class="qc-leg-main">${mainHtml}</span>${bookHtml}${scoreHtml}`;
+  }
   function ticketList(items){
     const arr = items && items.length ? items : ["WATCH — no current verified leg"];
-    return `<ul>${arr.map(x=>`<li class="${isWatch(x)?"qc-watch":""}">${esc(x)}${!isWatch(x) && /%/.test(x)?'<span class="qc-meta">Current-market L&amp;J read</span>':''}</li>`).join("")}</ul>`;
+    return `<ul>${arr.map(x=>`<li class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</li>`).join("")}</ul>`;
   }
   function qcRow(r){
     const conf = r.conf && r.conf !== "—" ? ` • ${esc(r.conf)}` : "";
     const hot = r.hot && r.hot.length ? r.hot : ["WATCH"];
-    return `<div class="qc-row"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams"><span>${esc(r.away)}</span><span class="qc-vs">VS</span><span>${esc(r.home)}</span></div><div class="qc-market">${esc(r.market)}</div><div class="qc-winner"><div class="qc-label">JINX GAME WINNER</div><div class="qc-pick">${esc(r.winner)}${conf}</div></div></div><div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4>${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${esc(x)}</p>`).join("")}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h sns sns1">SNS / GOBLIN 1</div>${ticketList(r.sns1)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h sns sns2">SNS / GOBLIN 2</div>${ticketList(r.sns2)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h normal">NORMAL</div>${ticketList(r.normal)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h demon">AGGRESSIVE / DEMON</div>${ticketList(r.demon)}${r.foot?`<div class="qc-foot">JINX CASE / KILL SWITCH: ${esc(r.foot)}</div>`:""}</div></div>`;
+    return `<div class="qc-row"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams"><span>${esc(r.away)}</span><span class="qc-vs">VS</span><span>${esc(r.home)}</span></div><div class="qc-market">${esc(r.market)}</div><div class="qc-winner"><div class="qc-label">JINX GAME WINNER</div><div class="qc-pick">${esc(r.winner)}${conf}</div></div></div><div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</p>`).join("")}</div></div><div class="qc-cell qc-ticket"><div class="qc-ticket-h sns sns1">SNS / GOBLIN 1</div>${ticketList(r.sns1)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h sns sns2">SNS / GOBLIN 2</div>${ticketList(r.sns2)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h normal">NORMAL</div>${ticketList(r.normal)}</div><div class="qc-cell qc-ticket"><div class="qc-ticket-h demon">AGGRESSIVE / DEMON</div>${ticketList(r.demon)}${r.foot?`<div class="qc-foot">JINX CASE / KILL SWITCH: ${esc(r.foot)}</div>`:""}</div></div>`;
   }
   function qcs(title,rows){
     return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Approved compact horizontal Quickie Cards</span></div><div class="qc-list">${(rows || []).map(qcRow).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • daily refreshes change data, never layout</div></section>`;
@@ -160,6 +189,6 @@
     const h = D.home;
     document.title = "LEGZ & JINX — Daily Predictions";
     document.getElementById("app").innerHTML = `<div class="page lj-home">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${statusGrid()}${footer("All-sports publication hub • QC layout locked")}</div>`;
+    setTimeout(loadMaterialAlerts,0);
   };
-  loadMaterialAlerts();
 })();
