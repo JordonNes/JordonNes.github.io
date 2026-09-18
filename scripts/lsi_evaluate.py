@@ -191,7 +191,7 @@ def main():
             "model_version":p.get("model_version") or "UNKNOWN",
             "tier":p.get("tier") or "UNKNOWN",
             "publication_status":status or "unknown",
-            "confidence":num(p.get("lj_confidence") if p.get("lj_confidence") is not None else p.get("lj_probability")),
+            "confidence":num(p.get("ljpc") if p.get("ljpc") is not None else (p.get("lj_confidence") if p.get("lj_confidence") is not None else p.get("lj_probability"))),
             "confidence_band":conf_band(p.get("lj_confidence") if p.get("lj_confidence") is not None else p.get("lj_probability")),
             "grade":g,
             "actual_result":r.get("actual_result") if r.get("actual_result") not in (None,"") else p.get("actual_result"),
