@@ -82,7 +82,9 @@
     if (!page || document.querySelector('.lsi-front')) return;
     const wrap=document.createElement('div'); wrap.innerHTML=compact(d);
     const el=wrap.firstElementChild;
-    if (current) current.insertAdjacentElement('beforebegin',el); else page.appendChild(el);
+    const footer=page.querySelector('.footer');
+    if (footer) footer.insertAdjacentElement('beforebegin',el);
+    else page.appendChild(el);
     const actions=document.querySelector('.hero .actions');
     if (actions && !actions.querySelector('.lsi-intelligence-link')) {
       const a=document.createElement('a'); a.className='action lsi-intelligence-link'; a.href='LSI_Status.html'; a.textContent='🧠 LSI Intelligence'; actions.appendChild(a);
