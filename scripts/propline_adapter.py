@@ -17,6 +17,7 @@ import csv
 import hashlib
 import json
 import os
+import sys
 import time
 import urllib.error
 import urllib.parse
@@ -59,6 +60,7 @@ MAX_EVENTS = {"MLB":48,"NBA":40,"WNBA":32,"NCAA_Basketball":40,"NCAA_Football":4
 MARKET_FIELDS = ["snapshot_id","collected_at_pt","sport","league","event_id","event_start_pt","source","market_class","participant","market","threshold","side","price","status"]
 UA = {"User-Agent": "LEGZ-JINX-LSI/2.2", "Accept": "application/json"}
 QC_BOARD = DATA / "qc_prop_board.json"
+GAME_ML_BOARD = DATA / "current_game_moneylines.json"
 QC_LOOKAHEAD = timedelta(days=7)
 QC_TARGET_UNIQUE_PLAYERS = 20
 QC_MAX_SNAPSHOT_AGE = timedelta(hours=12)
@@ -416,6 +418,44 @@ def write_intelligence(records):
     (DATA/"propline_intelligence.json").write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 
 
+def run_game_odds_only():
+    """Fast bulk h2h acquisition for DP/QG game odds; intentionally skips player props."""
+    if not KEY:
+        print("PROPLINE_API_KEY absent: fast game-odds pass safely skipped.")
+        return
+    collected=NOW.astimezone(PT).isoformat()
+    rows=[]; seen=set(); calls=0; failures=0
+    for league,sport_key in sport_targets():
+        try:
+            payload,quota=get(f"/sports/{sport_key}/odds",{"markets":"h2h","oddsFormat":"american"})
+            calls+=1
+        except Exception as exc:
+            failures+=1
+            print(f"WARN PropLine bulk h2h {league} {sport_key}: {exc}")
+            continue
+        for event in payload if isinstance(payload,list) else []:
+            peid=str(event.get("id") or "")
+            start=parse_dt(event.get("commence_time"))
+            if not peid or not start or not (NOW < start <= NOW+QC_LOOKAHEAD):
+                continue
+            key=(league,peid,str(event.get("commence_time") or ""))
+            if key in seen: continue
+            seen.add(key)
+            parsed,_=parse_odds(event,league,f"PL-{peid}",collected)
+            rows.extend(r for r in parsed if r.get("market_class")=="GAME_ML" and r.get("status")=="OPEN")
+    payload={
+        "schema_version":"LJ-CURRENT-GAME-ML-1",
+        "generated_at_utc":NOW.isoformat(),
+        "source":"PROPLINE_BULK_H2H",
+        "calls":calls,
+        "failures":failures,
+        "events":len(seen),
+        "rows":rows,
+    }
+    GAME_ML_BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"PropLine fast h2h: calls={calls} events={len(seen)} rows={len(rows)} failures={failures}")
+
+
 def run():
     if not KEY:print("PROPLINE_API_KEY absent: PropLine safely skipped.");return
     state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
@@ -510,4 +550,8 @@ def run():
     if last_quota:print("PropLine quota:",{k:v for k,v in last_quota.items() if v is not None})
     if not ANALYTICS:print("PropLine Hobby+ analytics disabled; steam/closing/trends/results remain null unless sourced elsewhere.")
 
-if __name__=="__main__":run()
+if __name__=="__main__":
+    if "--game-odds-only" in sys.argv:
+        run_game_odds_only()
+    else:
+        run()
