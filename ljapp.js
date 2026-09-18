@@ -94,8 +94,8 @@
   }
   function hero(kicker,title,description,chips=[],home=false){
     const actions = home
-      ? `<a class="action" href="Recap.html">📊 Yesterday's Recap</a><a class="action" href="MLB.html">⚾ MLB</a><a class="action" href="NCAA_Football.html">🏈 NCAA</a><a class="action" href="Boxing.html">🥊 Boxing</a>`
-      : `<a class="action" href="LJ_index.html">← Daily Home</a>`;
+      ? `<a class="action" href="Recap.html">📊 Yesterday's Recap</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a><a class="action" href="MLB.html">⚾ MLB</a><a class="action" href="NCAA_Football.html">🏈 NCAA</a><a class="action" href="Boxing.html">🥊 Boxing</a>`
+      : `<a class="action" href="LJ_index.html">← Daily Home</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a>`;
     return `<section class="hero"><div class="kicker">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="chips">${chips.map(([t,c])=>`<span class="chip ${cls(c)}">${esc(t)}</span>`).join("")}</div><div class="actions">${actions}</div></section>`;
   }
   function nav(){
@@ -103,13 +103,13 @@
   }
 
   function hotTop(items,label="LEGZ HOT TOP"){
-    return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">L&amp;J Accuracy Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
+    return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">LJPC: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
   }
   function winners(items,label="JINX GAME WINNERS"){
-    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">L&amp;J Winner Confidence: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
+    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">LJPC: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
   }
   function headlineSection(hot,wins,home=false,hotLabel="LEGZ HOT TOP",winnerLabel="JINX GAME WINNERS"){
-    return `<section class="section headliner-section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ market ranking + JINX game/fight winners</span></div><div class="headliner-grid">${hotTop(hot,hotLabel)}${winners(wins,winnerLabel)}</div></section>`;
+    return `<section class="section headliner-section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ evidence/value + JINX contextual evaluation → LJPC</span></div><div class="headliner-grid">${hotTop(hot,hotLabel)}${winners(wins,winnerLabel)}</div></section>`;
   }
 
   function twenty(rows,note,home=false,sportKey=""){
@@ -120,7 +120,7 @@
       ? `<div class="twenty-shortfall" role="status"><b>ACQUISITION SHORTFALL — ${groups.length}/20 UNIQUE PLAYERS</b><span>The upstream prop sweep must expand this board. No unsupported or fabricated thresholds are inserted to fill space.</span></div>`
       : "";
     const playerHtml=groups.map((g,i)=>`<li class="twenty-player" data-rank="${i+1}"><div class="twenty-player-line"><span class="twenty-rank" aria-label="Rank ${i+1}">${i+1}</span><strong class="twenty-player-name">${esc(g.player)}</strong><span class="twenty-sport">${esc(g.sport)}</span><span class="twenty-prop-count">${g.props.length>1?`${g.props.length} props`:""}</span></div><ul class="twenty-leg-list">${g.props.map(r=>`<li class="twenty-leg"><span class="twenty-leg-pick">${esc(r[2])}</span><span class="twenty-leg-conf">${esc(r[4]||"—")}</span>${r[3]?`<span class="twenty-leg-price">${esc(r[3])}</span>`:""}${r[5]?`<span class="twenty-leg-quality">${esc(r[5])}</span>`:""}${r[6]?`<span class="twenty-leg-risk">${esc(r[6])}</span>`:""}</li>`).join("")}</ul></li>`).join("");
-    return `<section class="section twenty-section" aria-labelledby="${headingId}"><div class="section-head"><h2 id="${headingId}">${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">20+ unique players when games are active • extra props require >132 combined L&J confidence, at least one >73%, and each added prop ≥69% • max 3 per player</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20+ PIECE":"SPORT 20+ PIECE"}</span><span>RANKED BY JINX + LEGZ PREFERENCE</span></div>${groups.length?`<div class="card-body"><div class="twenty-summary" aria-live="polite"><b>${groups.length} unique player${groups.length===1?"":"s"}</b><span>${totalProps} total player-prop prediction${totalProps===1?"":"s"}</span></div><ol class="twenty-player-board">${playerHtml}</ol>${shortfall}</div>`:`<div class="status-panel"><b>PROP ACQUISITION REQUIRED</b><p>An active game slate requires a 20+ unique-player board. No unsupported placeholder thresholds will be manufactured.</p></div>`}<div class="card-body"><p class="source-note">${esc(note||"20 Piece is player-first: JINX + LEGZ rank the strongest acquired player props; each player is capped at 3 distinct prop markets, and conflicting/alternate thresholds for the same market collapse to one selection.")}</p></div></div></section>`;
+    return `<section class="section twenty-section" aria-labelledby="${headingId}"><div class="section-head"><h2 id="${headingId}">${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">20+ unique players when games are active • extra props require >132 combined LJPC, at least one >73%, and each added prop ≥69% • max 3 per player</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20+ PIECE":"SPORT 20+ PIECE"}</span><span>RANKED BY POM VALUE / LJPC</span></div>${groups.length?`<div class="card-body"><div class="twenty-summary" aria-live="polite"><b>${groups.length} unique player${groups.length===1?"":"s"}</b><span>${totalProps} total player-prop prediction${totalProps===1?"":"s"}</span></div><ol class="twenty-player-board">${playerHtml}</ol>${shortfall}</div>`:`<div class="status-panel"><b>PROP ACQUISITION REQUIRED</b><p>An active game slate requires a 20+ unique-player board. No unsupported placeholder thresholds will be manufactured.</p></div>`}<div class="card-body"><p class="source-note">${esc(note||"20 Piece is player-first: JINX + LEGZ rank the strongest acquired player props; each player is capped at 3 distinct prop markets, and conflicting/alternate thresholds for the same market collapse to one selection.")}</p></div></div></section>`;
   }
 
   function rules(){
@@ -268,7 +268,7 @@
     ].filter(Boolean);
     if(!cards.length) return '';
     const grid=`grid-template-columns:repeat(${cards.length},minmax(200px,1fr))`;
-    return `<section class="section all-sports-qc"><div class="section-head"><h2>ALL-SPORTS QC — PLAYER PROPS ONLY</h2><span class="muted">Four distinct ticket objectives • probability-first SNS • Normal market strength • Demon upside after the 51.8% gate</span></div><div class="qc-list"><div class="qc-row" style="${grid}">${cards.join('')}</div></div><div class="layout-seal">ALL-SPORTS POM QC • exact offered market variants only • cross-ticket diversity active</div></section>`;
+    return `<section class="section all-sports-qc"><div class="section-head"><h2>ALL-SPORTS QC — PLAYER PROPS ONLY</h2><span class="muted">Four distinct ticket objectives • LJPC-first SNS • POM Value-driven Normal • Demon economics after the 51.8% LJPC gate</span></div><div class="qc-list"><div class="qc-row" style="${grid}">${cards.join('')}</div></div><div class="layout-seal">ALL-SPORTS POM QC • exact offered market variants only • cross-ticket diversity active</div></section>`;
   }
   function statusGrid(){
     const map = [
@@ -289,7 +289,7 @@
     return `<section class="section"><div class="section-head"><h2>CURRENT STATUS</h2><span class="muted">${esc(D.updated)}</span></div><div class="quickie-grid">${map.map(([k,state,note])=>{const s=D.sports?.[k]; if(!s) return ""; return `<div class="ticket"><div class="ticket-h ${/ACTIVE/.test(state)?"sns":/WATCH|NEXT/.test(state)?"purple":"normal"}">${s.icon||""} ${esc(k.replace(/_/g," "))} • ${esc(state)}</div><ul><li>${esc(note)}</li><li>LEGZ HOT TOP + JINX Winners + 20 Piece retained</li><li>Approved QC layout retained</li></ul><div class="note"><a href="${file[k]}">Open page →</a></div></div>`;}).join("")}</div></section>`;
   }
   function footer(extra=""){
-    return `<div class="footer">LEGZ &amp; JINX • ${esc(D.updated)} • Current markets only • Confidence is comparative analysis, not a guarantee${extra?` • ${esc(extra)}`:""}</div>`;
+    return `<div class="footer">LEGZ &amp; JINX • ${esc(D.updated)} • Current markets only • LJPC is an estimated hit probability, not a guarantee${extra?` • ${esc(extra)}`:""}</div>`;
   }
 
   function renderMaterialAlerts(){
