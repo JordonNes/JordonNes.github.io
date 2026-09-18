@@ -1,21 +1,232 @@
 {
-  "schema_version":"LSI-SOURCES-2",
-  "policy":"free-first, provenance-required, no fabricated observations",
-  "prop_acquisition":{"level_a":"public/connected market discovery","level_b":"THE_ODDS_API normalized sportsbook markets","level_c":"checked-in/manual researched snapshots","rule":"A WATCH/NO BET caused only by missing inventory must trigger MAM recheck before publication."},
-  "adapters":[
-    {"id":"THE_ODDS_API","sports":["NFL","NCAA_Football","MLB","NBA","WNBA","NHL"],"roles":["player_props","game_odds","market_consensus","market_movement"],"mode":"api","base_url":"https://api.the-odds-api.com/v4","secret_env":"ODDS_API_KEY","optional":true,"priority":"PRIMARY_PROP_FEED"},
-    {"id":"NHL_WEB","sports":["NHL"],"roles":["schedule","roster","standings","player_game_log","box_score","play_by_play","game_summary","partner_odds"],"mode":"public_api","base_url":"https://api-web.nhle.com/v1","secret_env":null,"optional":false},
-    {"id":"NHL_API_PY","sports":["NHL"],"roles":["teams","schedule","stats","edge_stats","standings","game_center"],"mode":"python_wrapper","package":"nhl-api-py","optional":true,"note":"Unofficial wrapper; use NHL_WEB as canonical provenance where possible."},
-    {"id":"CFBD","sports":["NCAA_Football"],"roles":["schedule","results","player_season_stats","team_advanced_metrics","historical_odds","market_validation"],"mode":"authenticated_api","base_url":"https://api.collegefootballdata.com","secret_env":"CFBD_API_KEY","optional":false,"quota_policy":"freshness-gated; target <=160 of 1000 requests/month"},
-    {"id":"OPEN_METEO","sports":["NFL","NCAA_Football","MLB"],"roles":["event_hour_forecast","historical_weather","venue_geocoding","backtesting"],"mode":"public_api","base_url":"https://api.open-meteo.com","archive_url":"https://archive-api.open-meteo.com/v1/archive","geocoding_url":"https://geocoding-api.open-meteo.com/v1/search","secret_env":null,"optional":false},
-    {"id":"ESPN_PUBLIC","sports":["NFL","NCAA_Football","MLB","NBA","WNBA","NHL"],"roles":["schedule","score","status","injury_context","reporting_context"],"mode":"public_json_web","base_url":"https://site.api.espn.com/apis/site/v2/sports","secret_env":null,"optional":false},
-    {"id":"MLB_STATS","sports":["MLB"],"roles":["schedule","score","roster","stats"],"mode":"public_api","base_url":"https://statsapi.mlb.com/api","secret_env":null,"optional":true},
-    {"id":"MANUAL_MARKET","sports":["ALL"],"roles":["player_props","game_odds"],"mode":"checked_in_snapshot","base_url":null,"secret_env":null,"optional":false}
+  "schema_version": "LSI-SOURCES-2",
+  "policy": "free-first, provenance-required, no fabricated observations",
+  "prop_acquisition": {
+    "level_a": "public/connected market discovery",
+    "level_b": "PROPLINE normalized sportsbook/exchange markets",
+    "level_c": "checked-in/manual researched snapshots",
+    "rule": "A WATCH/NO BET caused only by missing inventory must trigger MAM recheck before publication."
+  },
+  "adapters": [
+    {
+      "id": "PROPLINE",
+      "sports": [
+        "NFL",
+        "NCAA_Football",
+        "MLB",
+        "NBA",
+        "WNBA",
+        "NHL",
+        "NCAA_Basketball",
+        "Tennis",
+        "MMA",
+        "Boxing"
+      ],
+      "roles": [
+        "player_props",
+        "game_odds",
+        "market_consensus",
+        "event_scoped_qc_inventory"
+      ],
+      "mode": "authenticated_api",
+      "base_url": "https://api.prop-line.com/v1",
+      "secret_env": "PROPLINE_API_KEY",
+      "optional": false,
+      "priority": "PRIMARY_PROP_FEED",
+      "note": "Current Level-B prop acquisition source; quota-aware and used before any paid overlay."
+    },
+    {
+      "id": "THE_ODDS_API",
+      "sports": [
+        "NFL",
+        "NCAA_Football",
+        "MLB",
+        "NBA",
+        "WNBA",
+        "NHL"
+      ],
+      "roles": [
+        "player_props",
+        "game_odds",
+        "market_consensus",
+        "market_movement"
+      ],
+      "mode": "api",
+      "base_url": "https://api.the-odds-api.com/v4",
+      "secret_env": "ODDS_API_KEY",
+      "optional": true,
+      "priority": "DORMANT_PAID_OVERLAY",
+      "enabled": false,
+      "activation_env": "ENABLE_THE_ODDS_API",
+      "subscription_required": true,
+      "note": "Do not call during normal LSI operation. Activate only after the user intentionally enables a paid subscription or a verified no-cost capability becomes materially useful."
+    },
+    {
+      "id": "NHL_WEB",
+      "sports": [
+        "NHL"
+      ],
+      "roles": [
+        "schedule",
+        "roster",
+        "standings",
+        "player_game_log",
+        "box_score",
+        "play_by_play",
+        "game_summary",
+        "partner_odds"
+      ],
+      "mode": "public_api",
+      "base_url": "https://api-web.nhle.com/v1",
+      "secret_env": null,
+      "optional": false
+    },
+    {
+      "id": "NHL_API_PY",
+      "sports": [
+        "NHL"
+      ],
+      "roles": [
+        "teams",
+        "schedule",
+        "stats",
+        "edge_stats",
+        "standings",
+        "game_center"
+      ],
+      "mode": "python_wrapper",
+      "package": "nhl-api-py",
+      "optional": true,
+      "note": "Unofficial wrapper; use NHL_WEB as canonical provenance where possible."
+    },
+    {
+      "id": "CFBD",
+      "sports": [
+        "NCAA_Football"
+      ],
+      "roles": [
+        "schedule",
+        "results",
+        "player_season_stats",
+        "team_advanced_metrics",
+        "historical_odds",
+        "market_validation"
+      ],
+      "mode": "authenticated_api",
+      "base_url": "https://api.collegefootballdata.com",
+      "secret_env": "CFBD_API_KEY",
+      "optional": false,
+      "quota_policy": "freshness-gated; target <=160 of 1000 requests/month"
+    },
+    {
+      "id": "OPEN_METEO",
+      "sports": [
+        "NFL",
+        "NCAA_Football",
+        "MLB"
+      ],
+      "roles": [
+        "event_hour_forecast",
+        "historical_weather",
+        "venue_geocoding",
+        "backtesting"
+      ],
+      "mode": "public_api",
+      "base_url": "https://api.open-meteo.com",
+      "archive_url": "https://archive-api.open-meteo.com/v1/archive",
+      "geocoding_url": "https://geocoding-api.open-meteo.com/v1/search",
+      "secret_env": null,
+      "optional": false
+    },
+    {
+      "id": "ESPN_PUBLIC",
+      "sports": [
+        "NFL",
+        "NCAA_Football",
+        "MLB",
+        "NBA",
+        "WNBA",
+        "NHL"
+      ],
+      "roles": [
+        "schedule",
+        "score",
+        "status",
+        "injury_context",
+        "reporting_context"
+      ],
+      "mode": "public_json_web",
+      "base_url": "https://site.api.espn.com/apis/site/v2/sports",
+      "secret_env": null,
+      "optional": false
+    },
+    {
+      "id": "MLB_STATS",
+      "sports": [
+        "MLB"
+      ],
+      "roles": [
+        "schedule",
+        "score",
+        "roster",
+        "stats"
+      ],
+      "mode": "public_api",
+      "base_url": "https://statsapi.mlb.com/api",
+      "secret_env": null,
+      "optional": true
+    },
+    {
+      "id": "MANUAL_MARKET",
+      "sports": [
+        "ALL"
+      ],
+      "roles": [
+        "player_props",
+        "game_odds"
+      ],
+      "mode": "checked_in_snapshot",
+      "base_url": null,
+      "secret_env": null,
+      "optional": false
+    }
   ],
-  "jinx_context_requirements":["transactions","coaching_press_conferences","depth_chart_changes","discipline_suspensions","public_documented_legal_matters","public_disputes","contract_situations","roster_changes","market_anomalies"],
-  "jinx_evidence_rule":"Record only attributable public information with a plausible availability, preparation, role, coaching, market, or performance mechanism. Do not infer private or sensitive characteristics.",
-  "connected_chat_feeds":[
-    {"id":"STATSHawk","roles":["box_score","player_stats","validation"],"note":"Connected ChatGPT feed; not callable by GitHub Actions directly."},
-    {"id":"DRAFTKINGS_CHAT","sports":["NFL","NBA","MLB","NHL"],"roles":["schedule","score","team_stats"],"note":"Connected tool currently does not expose sportsbook player-prop inventory to repository workflow."}
+  "jinx_context_requirements": [
+    "transactions",
+    "coaching_press_conferences",
+    "depth_chart_changes",
+    "discipline_suspensions",
+    "public_documented_legal_matters",
+    "public_disputes",
+    "contract_situations",
+    "roster_changes",
+    "market_anomalies"
+  ],
+  "jinx_evidence_rule": "Record only attributable public information with a plausible availability, preparation, role, coaching, market, or performance mechanism. Do not infer private or sensitive characteristics.",
+  "connected_chat_feeds": [
+    {
+      "id": "STATSHawk",
+      "roles": [
+        "box_score",
+        "player_stats",
+        "validation"
+      ],
+      "note": "Connected ChatGPT feed; not callable by GitHub Actions directly."
+    },
+    {
+      "id": "DRAFTKINGS_CHAT",
+      "sports": [
+        "NFL",
+        "NBA",
+        "MLB",
+        "NHL"
+      ],
+      "roles": [
+        "schedule",
+        "score",
+        "team_stats"
+      ],
+      "note": "Connected tool currently does not expose sportsbook player-prop inventory to repository workflow."
+    }
   ]
 }
