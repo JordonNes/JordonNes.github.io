@@ -38,6 +38,17 @@ MAX_REFRESH_EVENTS = max(1, int(os.getenv("PROPLINE_MAX_EVENT_REFRESHES_PER_RUN"
 MAX_REFRESH_PER_LEAGUE = max(1, int(os.getenv("PROPLINE_MAX_REFRESH_PER_LEAGUE", "4")))
 HTTP_TIMEOUT_SEC = max(5, int(os.getenv("PROPLINE_HTTP_TIMEOUT_SEC", "15")))
 HTTP_ATTEMPTS = max(1, int(os.getenv("PROPLINE_HTTP_ATTEMPTS", "2")))
+MAX_PROP_MARKETS_PER_EVENT = max(1, int(os.getenv("PROPLINE_MAX_PROP_MARKETS_PER_EVENT", "10")))
+PROP_MARKET_PRIORITY = {
+    "MLB": ["pitcher_strikeouts","batter_hits","batter_total_bases","batter_rbis","batter_home_runs","batter_runs_scored","batter_walks","batter_doubles","batter_stolen_bases"],
+    "NFL": ["player_pass_yds","player_rush_yds","player_reception_yds","player_receptions","player_anytime_td","player_pass_tds","player_rush_attempts","player_pass_attempts"],
+    "NCAA_Football": ["player_pass_yds","player_rush_yds","player_reception_yds","player_receptions","player_anytime_td","player_pass_tds"],
+    "NBA": ["player_points","player_rebounds","player_assists","player_points_rebounds_assists","player_threes","player_steals","player_blocks","player_turnovers"],
+    "WNBA": ["player_points","player_rebounds","player_assists","player_points_rebounds_assists","player_threes","player_steals","player_blocks","player_turnovers"],
+    "NCAA_Basketball": ["player_points","player_rebounds","player_assists","player_points_rebounds_assists","player_threes"],
+    "NHL": ["player_shots_on_goal","player_points","player_assists","player_goal_scorer_anytime","player_total_saves","player_blocked_shots"],
+    "Tennis": ["spreads","game_spread","player_games","player_sets"],
+}
 
 SPORT_KEYS = {
     "MLB": "baseball_mlb", "NBA": "basketball_nba", "WNBA": "basketball_wnba", "NCAA_Basketball": "basketball_ncaab",
@@ -293,6 +304,12 @@ def is_prop_market(key,league=None):
     value=str(key or "").lower()
     return value.startswith(("player_","batter_","pitcher_","goalie_")) or (league=="Tennis" and value in TENNIS_PROP_MARKETS)
 
+def prioritize_prop_keys(keys,league):
+    unique=list(dict.fromkeys(str(x) for x in keys if x))
+    order={key:i for i,key in enumerate(PROP_MARKET_PRIORITY.get(league,[]))}
+    unique.sort(key=lambda key:(order.get(key,999),key))
+    return unique[:MAX_PROP_MARKETS_PER_EVENT]
+
 def sport_targets():
     """Return configured sports plus active tournament-specific tennis keys."""
     targets=[(league,key) for league,key in SPORT_KEYS.items() if league!="Tennis"]
@@ -429,9 +446,9 @@ def run():
             refresh_attempts_by_league[league]+=1
             try:available,quota=get(f"/sports/{sport_key}/events/{eid}/markets");last_quota=quota
             except Exception as exc:print(f"WARN PropLine markets {league} {eid}: {exc}");continue
-            prop_keys=[x.get("key") for x in (available or []) if isinstance(x,dict) and is_prop_market(x.get("key",""),league)]
+            prop_keys=prioritize_prop_keys([x.get("key") for x in (available or []) if isinstance(x,dict) and is_prop_market(x.get("key",""),league)],league)
             game_keys=[x.get("key") for x in (available or []) if isinstance(x,dict) and is_game_winner_market(x.get("key",""))]
-            requested_keys=list(dict.fromkeys([x for x in prop_keys+game_keys if x]))
+            requested_keys=list(dict.fromkeys([x for x in game_keys+prop_keys if x]))
             if not requested_keys:state.setdefault("events",{})[f"{sport_key}:{eid}"]=NOW.isoformat();continue
             lineup=None
             if league in {"MLB","NFL","NCAA_Football"}:
@@ -470,6 +487,7 @@ def run():
         "max_per_league":MAX_REFRESH_PER_LEAGUE,
         "http_timeout_sec":HTTP_TIMEOUT_SEC,
         "http_attempts":HTTP_ATTEMPTS,
+        "max_prop_markets_per_event":MAX_PROP_MARKETS_PER_EVENT,
     })
     if last_quota:print("PropLine quota:",{k:v for k,v in last_quota.items() if v is not None})
     if not ANALYTICS:print("PropLine Hobby+ analytics disabled; steam/closing/trends/results remain null unless sourced elsewhere.")
