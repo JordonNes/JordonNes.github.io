@@ -62,6 +62,21 @@
     }
     return t<=end;
   };
+  const gameSummary=e=>{
+    const sides=[...(e?.game_markets||[])].sort((a,b)=>Number(b.lj_confidence||0)-Number(a.lj_confidence||0));
+    const best=sides[0]; if(!best) return null;
+    const fmtPrice=s=>{
+      if(s?.price===null||s?.price===undefined||s?.price==='') return 'price recheck';
+      const num=Number(s.price), raw=Number.isFinite(num)?`${num>0?'+':''}${num}`:String(s.price);
+      return `${raw}${s.book?` ${s.book}`:''}`;
+    };
+    const odds=sides.slice(0,3).map(s=>`${s.participant||s.selection||'Side'} ${fmtPrice(s)}`).join(' • ');
+    return {
+      winner:`${best.selection||best.participant} ML • ${fmtPrice(best)}`,
+      conf:pct(best.lj_confidence),
+      market:`GAME ODDS • ${odds} • L&J MODEL: MARKET BASELINE`
+    };
+  };
   const isRecentEventShell=e=>{
     const t=eventStartMs(e);
     return Number.isFinite(t) && t<=nowMs && t>=nowMs-7*3600000;
@@ -385,10 +400,11 @@
     return new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(new Date(t));
   };
   const qcFromBoardEvent=e=>{
+    const game=gameSummary(e);
     const q={
       time:fmtEventTime(e),away:e.away||"",home:e.home||"",
-      market:`Upcoming event • ${e.source||"verified market board"}`,
-      winner:"",conf:"",hot:[],sns1:[],sns2:[],normal:[],demon:[],
+      market:game?.market||`Upcoming event • ${e.source||"verified market board"}`,
+      winner:game?.winner||"",conf:game?.conf||"",hot:[],sns1:[],sns2:[],normal:[],demon:[],
       foot:"0–7 day rolling L&J board • exact price/threshold must remain current at entry time.",
       _propEventId:e.source_event_id||null
     };
