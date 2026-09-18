@@ -17,6 +17,20 @@
   };
   const quality=p=>String(p.status||'').toLowerCase()==='watch'?'WATCH':Number(p.lj_confidence)>=67?'★★★★☆':'★★★☆☆';
   const risk=p=>String(p.status||'').toLowerCase()==='watch'?'':String(p.tier||'').toUpperCase()==='AGGRESSIVE'?'⚠️':'🔥';
+  const impliedProb=price=>{
+    const x=Number(price);
+    if(!Number.isFinite(x)||x===0) return null;
+    return x<0 ? (-x)/((-x)+100)*100 : 100/(x+100)*100;
+  };
+  const marketBaselineLj=p=>{
+    const consensus=Number(p.consensus_confidence_pct);
+    const implied=impliedProb(p.best_price);
+    const sources=Math.max(1,Math.min(5,Number(p.market_source_count||1)));
+    const base=Number.isFinite(consensus)&&consensus>0 ? consensus : (Number.isFinite(implied)?implied:55);
+    const priceBlend=Number.isFinite(implied) ? (base*0.72 + implied*0.28) : base;
+    const sourceAdjustment=(sources-1)*0.35;
+    return Math.max(50,Math.min(85,Math.round((priceBlend+sourceAdjustment)*10)/10));
+  };
 
   const registryByLeague={};
   R.predictions.filter(p=>p.market_class==='PLAYER_PROP').forEach(p=>(registryByLeague[p.league]??=[]).push(p));
@@ -89,15 +103,16 @@
       const price=p.best_price!==null&&p.best_price!==undefined
         ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
         : 'price recheck';
+      const baseline=marketBaselineLj(p);
       twenty.push([
         String(league).replace(/_/g,' '),
         p.participant,
         scoutPick(p),
         price,
-        'JINX SCOUT',
-        `MARKET-SUPPORTED • ${Number(p.market_source_count||1)} SRC`,
+        pct(baseline),
+        `L&J MODEL • MARKET BASELINE • ${Number(p.market_source_count||1)} SRC`,
         '👀',
-        Number(p.consensus_confidence_pct||0)
+        baseline
       ]);
     }
 
@@ -105,7 +120,7 @@
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
     const modeledCount=modeled.length;
     const scoutCount=Math.max(0,twenty.length-modeledCount);
-    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${modeledCount} canonical L&J modeled props + ${scoutCount} JINX market-supported scouting props. Market-consensus percentages are ranking evidence only and are never relabeled as L&J confidence.`;
+    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${modeledCount} canonical L&J modeled props + ${scoutCount} market-baseline L&J modeled props. Market-baseline confidence blends consensus, available price-implied probability, and source depth; raw consensus is not displayed as L&J confidence.`;
   }
 
   const canonical=R.predictions.map(p=>({
