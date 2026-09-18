@@ -459,27 +459,81 @@
     });
     const demon=diverseTake(demonBase,6,0,usedAcross);
 
+    // A parlay requires at least two legs. Single qualifying POMs may remain in
+    // LEGZ Hot Top, but a one-leg ticket is never presented as a QC parlay.
+    const MIN_QC_LEGS=2;
+    const capTicket=arr=>arr.length>=MIN_QC_LEGS?arr.slice(0,6):[];
+    let finalSns1=capTicket(sns1);
+    let finalSns2=capTicket(sns2);
+    let finalNormal=capTicket(normal);
+    let finalDemon=capTicket(demon);
+
+    // Ticket construction de-duplicates across modes by preference. That can
+    // occasionally split a small pool so no individual mode retains two legs.
+    // If any one ticket mode has at least two qualified POM candidates, rebuild
+    // one 2–6 leg construction from that mode without the cross-ticket avoid set.
+    const modeBases={
+      sns1:[...pool].filter(c=>c.pomType==='GOBLIN').sort((a,b)=>
+        (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count)),
+      sns2:[...pool].filter(c=>sns2Eligible(c)).sort((a,b)=>
+        (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count)),
+      normal:normalBase,
+      demon:demonBase
+    };
+    const parlayRequired=Object.values(modeBases).some(arr=>arr.length>=MIN_QC_LEGS);
+    const parlayPublished=()=>[finalSns1,finalSns2,finalNormal,finalDemon].some(arr=>arr.length>=MIN_QC_LEGS);
+    let minimumParlayMode='';
+    if(parlayRequired&&!parlayPublished()){
+      const fallbackOrder=[
+        ['sns1','SNS1 / GOBLIN',modeBases.sns1],
+        ['sns2','SNS2 / GOBLIN-NORMAL',modeBases.sns2],
+        ['normal','NORMAL',modeBases.normal],
+        ['demon','AGGRESSIVE / DEMON',modeBases.demon]
+      ];
+      const fallback=fallbackOrder.find(([, ,arr])=>arr.length>=MIN_QC_LEGS);
+      if(fallback){
+        const [mode,label,base]=fallback;
+        const rebuilt=diverseTake(base,6,0);
+        if(mode==='sns1') finalSns1=rebuilt;
+        if(mode==='sns2') finalSns2=rebuilt;
+        if(mode==='normal') finalNormal=rebuilt;
+        if(mode==='demon') finalDemon=rebuilt;
+        minimumParlayMode=label;
+      }
+    }
+
     q.hot=asStrings(hot);
-    q.sns1=asStrings(sns1);
-    q.sns2=asStrings(sns2);
-    q.normal=asStrings(normal);
-    q.demon=asStrings(demon);
+    q.sns1=asStrings(finalSns1);
+    q.sns2=asStrings(finalSns2);
+    q.normal=asStrings(finalNormal);
+    q.demon=asStrings(finalDemon);
+    q._qcMinimumLegs=MIN_QC_LEGS;
+    q._qcEligibleModeCounts={
+      sns1:modeBases.sns1.length,sns2:modeBases.sns2.length,
+      normal:modeBases.normal.length,demon:modeBases.demon.length
+    };
+    q._qcParlayRequired=parlayRequired;
+    q._qcParlayPublished=parlayPublished();
+    q._qcMinimumParlayMode=minimumParlayMode||null;
     q._ticketProbabilities={
       basis:'INDEPENDENCE_BASELINE_NOT_CORRELATION_ADJUSTED',
-      sns1:jointProbability(sns1),sns2:jointProbability(sns2),
-      normal:jointProbability(normal),demon:jointProbability(demon)
+      sns1:jointProbability(finalSns1),sns2:jointProbability(finalSns2),
+      normal:jointProbability(finalNormal),demon:jointProbability(finalDemon)
     };
-    q._pomPolicy={sns1:'GOBLIN_PRIORITY_MIN_77_THEN_STRONGEST_GOBLIN_FALLBACK',sns2:'GOBLIN_OR_NORMAL_PRIORITY_MIN_70_NO_SNS1_DUP_THEN_ELIGIBLE_FALLBACK',normal:'NORMAL_ONLY_PROBABILITY_FIRST',demon:'NORMAL_OR_DEMON_MIN_51_8_ECONOMICS_FIRST'};
+    q._pomPolicy={sns1:'GOBLIN_PRIORITY_MIN_77_THEN_STRONGEST_GOBLIN_FALLBACK',sns2:'GOBLIN_OR_NORMAL_PRIORITY_MIN_70_NO_SNS1_DUP_THEN_ELIGIBLE_FALLBACK',normal:'NORMAL_ONLY_PROBABILITY_FIRST',demon:'NORMAL_OR_DEMON_MIN_51_8_ECONOMICS_FIRST',minimumParlay:'WHEN_ANY_MODE_HAS_2_PLUS_QUALIFIED_POMS_PUBLISH_AT_LEAST_ONE_2_TO_6_LEG_QC'};
 
     const shortages=[];
     if(pool.length<6) shortages.push(`TOTAL POOL ${pool.length}/6`);
-    if(sns1.length<6) shortages.push(`SNS1 GOBLIN ${sns1.length}/6`);
-    if(sns2.length<6) shortages.push(`SNS2 GOBLIN/NORMAL ${sns2.length}/6`);
-    if(normal.length<6) shortages.push(`NORMAL ${normal.length}/6`);
-    if(demon.length<6) shortages.push(`DEMON-QUALIFIED ${demon.length}/6`);
+    if(finalSns1.length<6) shortages.push(`SNS1 GOBLIN ${finalSns1.length}/6`);
+    if(finalSns2.length<6) shortages.push(`SNS2 GOBLIN/NORMAL ${finalSns2.length}/6`);
+    if(finalNormal.length<6) shortages.push(`NORMAL ${finalNormal.length}/6`);
+    if(finalDemon.length<6) shortages.push(`DEMON-QUALIFIED ${finalDemon.length}/6`);
     if(shortages.length){
       q._marketLimited=true;
-      const note=`POM-GATED / MARKET-LIMITED — ${shortages.join(' • ')}. Threshold integrity takes priority over filling a ticket.`;
+      const minimumNote=q._qcParlayPublished
+        ? ` Minimum QC rule satisfied: at least one ${Math.max(finalSns1.length,finalSns2.length,finalNormal.length,finalDemon.length)}-leg parlay is published when 2+ qualified POMs share an eligible ticket mode.`
+        : '';
+      const note=`POM-GATED / MARKET-LIMITED — ${shortages.join(' • ')}. Threshold integrity takes priority over filling a ticket.${minimumNote}`;
       q.foot=q.foot?`${q.foot} • ${note}`:note;
     }else{
       q._marketLimited=false;
