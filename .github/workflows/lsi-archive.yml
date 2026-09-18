@@ -1,0 +1,104 @@
+name: LSI Archive Memory Layer
+
+on:
+  workflow_run:
+    workflows: ["LSI Daily Predictions Pipeline"]
+    types: [completed]
+  workflow_dispatch:
+  schedule:
+    - cron: '35 13 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-archive-memory
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout live LSI source
+        uses: actions/checkout@v7
+        with:
+          ref: master
+          path: source
+          fetch-depth: 1
+
+      - name: Checkout isolated archive branch
+        uses: actions/checkout@v7
+        with:
+          ref: lsi-archive
+          path: archive
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Sync archive branch
+        shell: bash
+        run: |
+          cd archive
+          git pull --ff-only origin lsi-archive
+
+      - name: Capture immutable LSI memory
+        run: |
+          python source/scripts/lsi_archive.py \
+            --source-root source \
+            --archive-root archive/data/archive
+
+      - name: Enforce live-site write isolation
+        shell: bash
+        run: |
+          if [ -n "$(git -C source status --porcelain)" ]; then
+            echo "::error::Archive process modified live source checkout."
+            git -C source status --short
+            exit 1
+          fi
+          OUTSIDE="$(git -C archive status --porcelain | grep -vE '^[ MARCUD?!]{2} data/archive/' || true)"
+          if [ -n "$OUTSIDE" ]; then
+            echo "::error::Archive process changed files outside data/archive."
+            echo "$OUTSIDE"
+            exit 1
+          fi
+
+      - name: Validate archive authority boundary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("archive/data/archive")
+          health=json.loads((root/"archive_health.json").read_text(encoding="utf-8"))
+          boundary=health["authority_boundary"]
+          assert boundary["can_modify_live_predictions"] is False
+          assert boundary["can_modify_live_pages"] is False
+          assert boundary["can_change_confidence"] is False
+          assert boundary["can_publish"] is False
+          assert health["phase"] == "MEMORY_ONLY"
+          for name in (
+              "prediction_history.jsonl","market_history.jsonl","context_history.jsonl",
+              "event_history.jsonl","result_history.jsonl","publication_history.jsonl",
+              "entity_map.json","archive_health.json","archive_manifest.json"
+          ):
+              assert (root/name).exists(), name
+          print("Archive boundary validated; live publication remains independent.")
+          PY
+
+      - name: Commit archive-only changes
+        shell: bash
+        run: |
+          cd archive
+          git config user.name 'LEGZ-JINX LSI Archive'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/archive
+          if git diff --cached --quiet; then
+            echo 'No new archive observations.'
+          else
+            SOURCE_SHA="$(git -C ../source rev-parse --short HEAD)"
+            git commit -m "LSI archive capture $SOURCE_SHA"
+            git push origin HEAD:lsi-archive
+          fi
