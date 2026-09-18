@@ -1,9 +1,169 @@
 [
-  {"name":"NOAA Tides & Currents","purpose":"Water levels, predictions, currents and station observations","mode":"Live API adapter","priority":"Primary"},
-  {"name":"National Weather Service","purpose":"Forecasts, wind, advisories and marine weather","mode":"Planned API adapter","priority":"Primary"},
-  {"name":"USGS Water Services","purpose":"River flow, stage, temperature and selected water-quality observations","mode":"Planned API adapter","priority":"Primary"},
-  {"name":"California Department of Fish and Wildlife","purpose":"Regulations, seasons, report cards, species and access information","mode":"Official links and scheduled review","priority":"Primary"},
-  {"name":"California OEHHA","purpose":"Fish-consumption advisories","mode":"Official links and scheduled review","priority":"Primary"},
-  {"name":"RICHFISH Master Database","purpose":"Spot profiles, species, condition logic, publications and editorial controls","mode":"JSON prototype; database migration planned","priority":"Primary"},
-  {"name":"Community and social reports","purpose":"Recent observations, bait presence and catch rumors","mode":"Unverified signal requiring moderation and corroboration","priority":"Secondary"}
+  {
+    "id": "noaa-coops-data-api",
+    "name": "NOAA CO-OPS Data API",
+    "purpose": "Primary station-level observations and tide/current predictions for water level, currents, water temperature, air temperature, wind, pressure, visibility and related coastal conditions.",
+    "mode": "Primary live JSON/CSV API adapter",
+    "priority": "Primary",
+    "endpoint": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+    "role": "Live observations and predictions"
+  },
+  {
+    "id": "noaa-coops-mdapi",
+    "name": "NOAA CO-OPS Metadata API",
+    "purpose": "Station discovery and metadata including coordinates, sensors, datums, harmonic constituents, flood thresholds and station capabilities.",
+    "mode": "Primary metadata API adapter",
+    "priority": "Primary",
+    "endpoint": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/",
+    "role": "Station registry and capability discovery"
+  },
+  {
+    "id": "noaa-sfbofs",
+    "name": "San Francisco Bay Operational Forecast System (SFBOFS)",
+    "purpose": "High-resolution Bay model guidance for water levels, currents, water temperature and salinity, including spatial nowcast and forecast guidance out to 48 hours.",
+    "mode": "Primary model guidance via NOAA OFS / NetCDF adapters",
+    "priority": "Primary",
+    "endpoint": "https://tidesandcurrents.noaa.gov/ofs/sfbofs/sfbofs.html",
+    "role": "Bay circulation and short-range forecast model",
+    "caveat": "NOAA currently advises caution with North Bay salinity output for periods after June 2025 because of a boundary-forcing error tied to an upstream Sacramento River USGS station."
+  },
+  {
+    "id": "noaa-ofs-aws",
+    "name": "NOAA Operational Forecast Systems on AWS",
+    "purpose": "Machine-scale access to current and historical NOAA OFS model files, including NetCDF products used for model extraction, archiving and spatial analysis.",
+    "mode": "Primary bulk model feed via public S3",
+    "priority": "Primary",
+    "endpoint": "https://registry.opendata.aws/noaa-ofs/",
+    "role": "Bulk OFS model ingestion and archive"
+  },
+  {
+    "id": "noaa-coops-thredds",
+    "name": "NOAA CO-OPS THREDDS",
+    "purpose": "Access and subset Operational Forecast System NetCDF datasets through OPeNDAP-compatible services.",
+    "mode": "Primary/secondary model subsetting adapter",
+    "priority": "Primary",
+    "endpoint": "https://opendap.co-ops.nos.noaa.gov/thredds/catalog.html",
+    "role": "NetCDF model subsetting and archive access"
+  },
+  {
+    "id": "noaa-coops-erddap",
+    "name": "NOAA CO-OPS ERDDAP",
+    "purpose": "Standardized subsetting of observational water-level, meteorological and ancillary datasets in JSON, CSV, NetCDF and other formats.",
+    "mode": "Primary historical/bulk observation adapter",
+    "priority": "Primary",
+    "endpoint": "https://opendap.co-ops.nos.noaa.gov/erddap/index.html",
+    "role": "Historical and bulk observational data"
+  },
+  {
+    "id": "noaa-nowcoast",
+    "name": "NOAA nowCOAST",
+    "purpose": "GIS visualization and map-service overlays for real-time coastal observations, forecasts, advisories, radar, sea-surface temperature, bathymetry and ocean-model guidance.",
+    "mode": "Map/overlay service; reference visualization",
+    "priority": "Primary",
+    "endpoint": "https://nowcoast.noaa.gov/",
+    "role": "FRmap visualization and situational-awareness layer"
+  },
+  {
+    "id": "noaa-coops-sos",
+    "name": "NOAA CO-OPS IOOS Sensor Observation Service (SOS)",
+    "purpose": "Standards-based retrieval of recent and historical observations by station, station collection or geographic bounds.",
+    "mode": "Compatibility and fallback observation adapter",
+    "priority": "Secondary",
+    "endpoint": "https://opendap.co-ops.nos.noaa.gov/ioos-dif-sos/",
+    "role": "OGC/IOOS compatibility and collection queries"
+  },
+  {
+    "id": "noaa-coops-soap",
+    "name": "NOAA CO-OPS SOAP / Axis Services",
+    "purpose": "Legacy SOAP web-service access to CO-OPS observations and products.",
+    "mode": "Legacy fallback only",
+    "priority": "Secondary",
+    "endpoint": "https://opendap.co-ops.nos.noaa.gov/axis/",
+    "role": "Legacy compatibility; do not build new core ingestion around this service"
+  },
+  {
+    "id": "noaa-coops-stations",
+    "name": "NOAA CO-OPS Station Listings and Map",
+    "purpose": "Human-facing station discovery, sensor-status review and validation of available coastal observations.",
+    "mode": "Reference and QA; metadata should come from MDAPI",
+    "priority": "Secondary",
+    "endpoint": "https://tidesandcurrents.noaa.gov/map/",
+    "role": "Human validation and station discovery"
+  },
+  {
+    "id": "nws",
+    "name": "National Weather Service",
+    "purpose": "Forecasts, wind, marine advisories, watches, warnings and weather hazards.",
+    "mode": "Planned API adapter",
+    "priority": "Primary",
+    "role": "Weather and marine-hazard intelligence"
+  },
+  {
+    "id": "usgs-waterdata-continuous",
+    "name": "USGS Water Data OGC API — Continuous / Instantaneous Values (IV)",
+    "purpose": "High-frequency observed river and water-quality measurements used for current freshwater forcing, flow, stage, temperature, conductivity, salinity and other available parameters.",
+    "mode": "Primary live OGC API adapter",
+    "priority": "Primary",
+    "endpoint": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/continuous/items?f=json",
+    "role": "Observed freshwater and Delta-condition intelligence"
+  },
+  {
+    "id": "usgs-waterdata-latest-continuous",
+    "name": "USGS Water Data OGC API — Latest Continuous",
+    "purpose": "Most recent observation from each continuous time series; preferred for efficient current-condition refreshes rather than downloading a full recent time window.",
+    "mode": "Primary low-latency OGC API adapter",
+    "priority": "Primary",
+    "endpoint": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/latest-continuous/items?f=json",
+    "role": "Current IV snapshot"
+  },
+  {
+    "id": "usgs-waterdata-daily",
+    "name": "USGS Water Data OGC API — Daily Values (DV)",
+    "purpose": "Daily mean, minimum, maximum and other statistic-coded values derived from continuous measurements; used for trend baselines, anomalies, recent history and seasonal context.",
+    "mode": "Primary historical/statistical OGC API adapter",
+    "priority": "Primary",
+    "endpoint": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/daily/items?f=json",
+    "role": "Daily hydrologic history and baseline comparison"
+  },
+  {
+    "id": "usgs-waterdata-metadata",
+    "name": "USGS Water Data OGC Metadata",
+    "purpose": "Monitoring-location, time-series, parameter-code and statistic-code metadata used to interpret USGS observations, units, period of record and provenance.",
+    "mode": "Primary metadata adapter",
+    "priority": "Primary",
+    "endpoint": "https://api.waterdata.usgs.gov/ogcapi/v1/collections",
+    "role": "USGS station and time-series registry"
+  },
+  {
+    "id": "cdfw",
+    "name": "California Department of Fish and Wildlife",
+    "purpose": "Regulations, seasons, report cards, species and access information.",
+    "mode": "Official links and scheduled review",
+    "priority": "Primary",
+    "role": "Controlling fishing regulations"
+  },
+  {
+    "id": "oehha",
+    "name": "California OEHHA",
+    "purpose": "Fish-consumption advisories.",
+    "mode": "Official links and scheduled review",
+    "priority": "Primary",
+    "role": "Consumption-safety guidance"
+  },
+  {
+    "id": "richfish-master",
+    "name": "RICHFISH Master Database",
+    "purpose": "Spot profiles, species, condition logic, publications, source provenance and editorial controls.",
+    "mode": "JSON prototype; database migration planned",
+    "priority": "Primary",
+    "role": "Normalized local intelligence layer"
+  },
+  {
+    "id": "community",
+    "name": "Community and social reports",
+    "purpose": "Recent observations, bait presence and catch reports used only as a corroborated local signal.",
+    "mode": "Unverified signal requiring moderation and corroboration",
+    "priority": "Secondary",
+    "role": "Local signal; never overrides controlling sources"
+  }
 ]
