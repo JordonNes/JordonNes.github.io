@@ -44,3 +44,53 @@ body{background:radial-gradient(circle at 68% 0,#18363a 0,transparent 30%),linea
 
 /* RICHFISH catalog activation */
 .selector-panel .select-list{max-height:650px;overflow:auto;padding-right:4px}.why-panel{margin-top:16px;border:1px solid var(--line);background:#0b2a30;border-radius:10px;padding:15px}.why-panel ul{padding-left:18px;margin-bottom:0}.why-panel a{color:var(--gold2);text-decoration:underline}
+
+/* FRmap LIVE WATER */
+.frmap-live{display:block}
+.map-workspace{display:grid;grid-template-columns:260px minmax(0,1.6fr) minmax(330px,.8fr);gap:14px;align-items:stretch}
+.map-controls,.map-report{border:1px solid var(--line);background:rgba(8,37,43,.94);border-radius:12px;padding:16px}
+.map-controls{display:grid;gap:11px;align-content:start}
+.map-controls>strong{color:var(--gold2);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.map-controls label{display:flex;gap:8px;align-items:flex-start;font-size:13px;cursor:pointer}
+.map-controls input{margin-top:3px}
+.future-layer{border-top:1px solid var(--line);padding-top:10px;color:var(--muted);font-size:12px}
+.future-layer small{display:block;color:var(--gold2);margin-top:2px}
+.frmap-canvas{min-height:560px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#08262c;z-index:1}
+.map-report{min-height:560px;overflow:auto}
+.map-report h3{font-size:28px;margin:8px 0}
+.ray-call-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+.leaflet-container{font-family:inherit;background:#08262c}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0b2a30;color:var(--text)}
+.leaflet-tooltip{background:#0b2a30;color:var(--text);border-color:var(--line);box-shadow:var(--shadow)}
+.leaflet-control-attribution{background:rgba(4,20,23,.82)!important;color:var(--muted)!important}
+.leaflet-control-attribution a{color:var(--gold2)!important}
+@media(max-width:1200px){.map-workspace{grid-template-columns:240px 1fr}.map-report{grid-column:1/-1;min-height:unset}}
+@media(max-width:760px){.map-workspace{grid-template-columns:1fr}.frmap-canvas{min-height:460px}.map-report{min-height:unset}.ray-call-grid{grid-template-columns:1fr}}
+
+
+/* Ask Richmond Ray — live RICHFISH AI */
+.ask-ray-section{padding-top:90px}
+.ask-ray-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.ray-chat-panel,.ray-answer-panel{border:1px solid #604927;background:linear-gradient(145deg,rgba(12,48,54,.97),rgba(6,28,33,.97));border-radius:16px;box-shadow:var(--shadow);padding:24px}
+.ray-chat-context{padding-bottom:20px;border-bottom:1px solid var(--line)}
+.ray-chat-context p{margin:12px 0 0;color:var(--muted);font-size:13px}
+.ray-context-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.ray-context-chips span{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#08262c;color:#dfeae6;font-size:12px}
+.ray-form{display:grid;gap:12px;margin-top:20px}
+.ray-form label{font-weight:800;color:var(--gold2)}
+.ray-form textarea{width:100%;resize:vertical;min-height:132px;padding:14px;border-radius:10px;border:1px solid var(--line);background:#041b20;color:var(--text);font:inherit;line-height:1.5}
+.ray-form textarea:focus{outline:2px solid rgba(217,154,61,.42);border-color:var(--gold)}
+.ray-quick-prompts{display:flex;flex-wrap:wrap;gap:8px}
+.ray-quick-prompts button{border:1px solid var(--line);border-radius:999px;background:#0b2b31;color:#dce8e4;padding:8px 11px;cursor:pointer;font-size:12px}
+.ray-quick-prompts button:hover{border-color:var(--gold);color:var(--gold2)}
+.ray-form-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#ray-form-status{color:var(--muted);font-size:12px}
+#ray-api-status.online{color:var(--green)}
+.ray-answer-heading{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}
+#ray-answer-meta{font-size:11px;color:var(--muted)}
+.ray-answer{min-height:300px;border:1px solid var(--line);border-radius:12px;background:#071f24;padding:22px}
+.ray-answer.empty{color:var(--muted)}
+.ray-answer h3{margin:0 0 8px;font-family:Georgia,serif;font-size:28px;color:var(--gold2)}
+.ray-answer p{margin:0 0 14px}
+.ray-answer p:last-child{margin-bottom:0}
+@media(max-width:900px){.ask-ray-layout{grid-template-columns:1fr}}
