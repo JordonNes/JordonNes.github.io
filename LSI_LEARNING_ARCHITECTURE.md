@@ -6,7 +6,7 @@
 2. **EVALUATION** — measure results, CLV, calibration, coverage, source reliability, and model-version performance.
 3. **INFLUENCE** — only after explicit maturity gates are satisfied may learned historical evidence affect a future prediction.
 
-Phase 1 is the only active phase.
+Phase 1 (Memory) and Phase 2 (Evaluation) are active. Phase 3 infrastructure is installed but can influence a prediction only for a league/market cell that passes every maturity gate.
 
 ## Phase 1: Memory
 
@@ -50,6 +50,20 @@ Current outputs include settlement performance history, confidence-band calibrat
 
 Phase 2 cannot modify live predictions, pages, confidence, publication state, or model parameters.
 
-## Phase 3: Influence — disabled
+## Phase 3: Controlled Influence — gate-locked
 
-Historical learning may influence future LEGZ/JINX decisions only after explicit maturity gates are defined, measured, and passed. Influence must be versioned, auditable, reversible, and distinguish learned evidence from current-event evidence.
+The promotion bridge is installed, but no league/market is allowed to influence a prediction until every maturity check passes. Required checks include healthy archive state, ≥95% provenance coverage, ≥98% settlement coverage, ≥200 settled predictions in the same league/market cell, ≥90% closing-line coverage, ≥90% CLV completion among settled predictions, ≥50% multi-source prediction coverage, ≥500 historical market observations, at least two independent books, and calibration error within 7.5 percentage points.
+
+When all checks pass, the evaluator may propose a calibration correction. The correction is shrunk toward zero, capped at ±3 confidence points, exported through `data/learning_overlay.json`, and recorded on every affected prediction with its sample size, calibration error, CLV basis, and overlay timestamp.
+
+The only live bridge is `LSI-LEARNING-OVERLAY-1`. An ineligible market cannot be promoted. A missing, malformed, disabled, or out-of-range overlay contributes exactly 0.00 confidence points.
+
+## Automatic settlement
+
+`scripts/lsi_settle.py` closes the prediction→outcome loop. It uses final verified public event data for supported leagues, preserves event-ID aliases, derives exact player/game results only when the required statistic is available, and leaves ambiguous cases pending/UNGRADED. Unsupported exact markets can be closed through the verified `data/inbox/results_*.csv` intake with an attributable source.
+
+Settlement never infers a result from sportsbook payout behavior or reconstructs an unpublished line.
+
+## Front-end transparency
+
+`LSI_Status.html` and the Daily Predictions LSI Intelligence card expose read-only Memory, Settlement, Evaluation, and Learning status. They do not write to LSI and cannot activate an overlay.
