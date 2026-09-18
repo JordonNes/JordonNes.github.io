@@ -44,7 +44,8 @@ MAX_EVENTS = {"MLB":16,"NBA":16,"WNBA":16,"NCAA_Basketball":16,"NCAA_Football":1
 MARKET_FIELDS = ["snapshot_id","collected_at_pt","sport","league","event_id","event_start_pt","source","market_class","participant","market","threshold","side","price","status"]
 UA = {"User-Agent": "LEGZ-JINX-LSI/2.2", "Accept": "application/json"}
 QC_BOARD = DATA / "qc_prop_board.json"
-QC_LOOKAHEAD = timedelta(hours=36)
+QC_LOOKAHEAD = timedelta(hours=48)
+QC_TARGET_UNIQUE_PLAYERS = 20
 QC_MAX_SNAPSHOT_AGE = timedelta(hours=12)
 QC_POST_START_RETENTION = timedelta(hours=8)
 
@@ -201,13 +202,18 @@ def build_qc_board(event_catalog):
     events=list(retained.values())
     for eid,e in wanted.items():
         props=qc_consensus(rows.get(eid,[]))
+        unique_players=len({norm(p.get("participant")) for p in props if norm(p.get("participant"))})
         current={
             "league":e["league"],"sport_key":e["sport_key"],"source_event_id":eid,
             "propline_event_id":e["propline_event_id"],"commence_time":e["commence_time"],
             "away":e["away"],"home":e["home"],"away_aliases":team_aliases(e["away"]),
             "home_aliases":team_aliases(e["home"]),"source":"MULTI_SOURCE_MARKET_HISTORY",
             "sweep_status":"COMPLETE_WITH_PROPS" if props else "COMPLETE_NO_PROPS_RETURNED",
-            "swept_at_utc":NOW.isoformat(),"pregame_locked":False,"props":props,
+            "swept_at_utc":NOW.isoformat(),"pregame_locked":False,
+            "target_unique_players":QC_TARGET_UNIQUE_PLAYERS,
+            "unique_players":unique_players,
+            "target_met":unique_players>=QC_TARGET_UNIQUE_PLAYERS,
+            "props":props,
         }
         key=(current["league"],norm(current["away"]),norm(current["home"]))
         events=[x for x in events if (x.get("league"),norm(x.get("away")),norm(x.get("home")))!=key]
@@ -217,8 +223,21 @@ def build_qc_board(event_catalog):
     payload={"schema_version":"LJ-QC-PROP-BOARD-3","generated_at_utc":NOW.isoformat(),
              "source":"MULTI_SOURCE_MARKET_HISTORY","events":events}
     QC_BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print("QC prop board from durable market history:",
-          {k:sum(len(e["props"]) for e in events if e["league"]==k) for k in sorted({e["league"] for e in events})})
+    summary={}
+    for league in sorted({e["league"] for e in events}):
+        league_events=[e for e in events if e["league"]==league]
+        unique={norm(p.get("participant")) for e in league_events for p in (e.get("props") or []) if norm(p.get("participant"))}
+        summary[league]={
+            "events":len(league_events),
+            "props":sum(len(e.get("props") or []) for e in league_events),
+            "unique_players":len(unique),
+            "target":QC_TARGET_UNIQUE_PLAYERS,
+            "target_met":len(unique)>=QC_TARGET_UNIQUE_PLAYERS,
+        }
+    print("QC prop board from durable market history:",summary)
+    for league,stat in summary.items():
+        if stat["events"] and stat["unique_players"]<QC_TARGET_UNIQUE_PLAYERS:
+            print(f"WARN 20 Piece acquisition shortfall: {league} has {stat['unique_players']}/{QC_TARGET_UNIQUE_PLAYERS} unique players.")
 
 
 def get(path, params=None):
