@@ -234,7 +234,12 @@
   function nflQcs(title,rows){
     const ordered=['THURSDAY','SUNDAY','MONDAY','OTHER'];
     const groups=new Map();
-    (rows||[]).forEach((r,i)=>{
+    const hasParlay=r=>[r?.sns1,r?.sns2,r?.normal,r?.demon]
+      .some(items=>cleanDecisionItems(items).length>=2);
+    const statusOnly=r=>/FINAL|EVENT STARTED|RECENT|COMPLETED|LIVE|PAUSED|DELAYED|POSTPONED|RESCHEDULED/i
+      .test(String(r?.market||'')+' '+String(r?.foot||''));
+    const visible=(rows||[]).filter(r=>statusOnly(r)||hasParlay(r));
+    visible.forEach((r,i)=>{
       const [key,label]=nflDayBucket(r);
       if(!groups.has(key)) groups.set(key,{label,rows:[]});
       groups.get(key).rows.push([r,i]);
@@ -243,7 +248,7 @@
       const g=groups.get(k);
       return `<div class="nfl-qc-day nfl-qc-${k.toLowerCase()}"><div class="nfl-qc-daybar">${esc(g.label)}</div><div class="qc-list nfl-qc-list">${g.rows.map(([r,i])=>qcRow(r,i)).join("")}</div></div>`;
     }).join("");
-    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL PREDICTIONS — ROLLING 0–7 DAY PRE-GAME QCs")}</h2><span class="muted">Per-game player-prop QCs • Game / Hot Top / SNS1 / SNS2 / Normal / Aggressive-Demon</span></div>${body}${rules()}<div class="layout-seal">NFL QC LAYOUT • day-grouped horizontal game cards • current L&J palette</div></section>`;
+    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL PREDICTIONS — ROLLING 0–7 DAY PRE-GAME QCs")}</h2><span class="muted">Only qualified 2–6 leg pregame QCs are shown • live/final games remain as status/box-score cards</span></div>${body}${rules()}<div class="layout-seal">NFL QC LAYOUT • one card per event • empty pregame shells suppressed</div></section>`;
   }
   function groupedQcs(groups){
     if (!groups || !groups.length) return "";
