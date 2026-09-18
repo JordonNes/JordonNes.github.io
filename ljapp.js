@@ -31,6 +31,16 @@
     const visible=Number(String((r||[])[4]||"").replace(/[^0-9.]/g,""));
     return Number.isFinite(visible)?visible:0;
   };
+  const marketFamily20 = r => {
+    const pick=String((r||[])[2]||"").toLowerCase()
+      .replace(/\b(?:over|under|yes|no)\b/g," ")
+      .replace(/[+-]?\d+(?:\.\d+)?/g," ")
+      .replace(/\bplayer\b/g," ")
+      .replace(/\b(?:alt|alternate)\b/g," ")
+      .replace(/[^a-z0-9]+/g," ")
+      .trim();
+    return pick || String((r||[])[2]||"").toLowerCase().trim();
+  };
   const groupTwenty = rows => {
     const groups=new Map();
     (rows||[]).filter(isPlayerProp20).filter(r=>!isUnsupported((r||[]).join(" • "))).forEach(r=>{
@@ -38,18 +48,25 @@
       if(!player) return;
       const key=player.toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
       if(!key) return;
-      if(!groups.has(key)) groups.set(key,{player,sport:String(r[0]||""),props:[],score:0});
+      if(!groups.has(key)) groups.set(key,{player,sport:String(r[0]||""),propMap:new Map(),props:[],score:0});
       const g=groups.get(key);
-      const propKey=[r[2],r[3],r[4],r[5],r[6]].map(x=>String(x||"").toLowerCase()).join("|");
-      if(!g.props.some(x=>x._key===propKey)){
-        const copy=[...r]; copy._key=propKey; g.props.push(copy);
+      const family=marketFamily20(r);
+      const existing=g.propMap.get(family);
+      if(!existing || score20(r)>score20(existing)){
+        const copy=[...r]; copy._key=family;
+        g.propMap.set(family,copy);
       }
       g.score=Math.max(g.score,score20(r));
     });
     const out=[...groups.values()];
-    out.forEach(g=>g.props.sort((a,b)=>score20(b)-score20(a)));
+    out.forEach(g=>{
+      g.props=[...g.propMap.values()].sort((a,b)=>score20(b)-score20(a)).slice(0,3);
+      delete g.propMap;
+      g.score=g.props.length?Math.max(...g.props.map(score20)):0;
+    });
+    out.filter(g=>g.props.length);
     out.sort((a,b)=>(b.score-a.score)||a.player.localeCompare(b.player));
-    return out;
+    return out.filter(g=>g.props.length);
   };
 
   function topbar(meta, home=false){
@@ -83,7 +100,7 @@
       ? `<div class="twenty-shortfall" role="status"><b>ACQUISITION SHORTFALL — ${groups.length}/20 UNIQUE PLAYERS</b><span>The upstream prop sweep must expand this board. No unsupported or fabricated thresholds are inserted to fill space.</span></div>`
       : "";
     const playerHtml=groups.map((g,i)=>`<li class="twenty-player" data-rank="${i+1}"><div class="twenty-player-head"><span class="twenty-rank" aria-label="Rank ${i+1}">${i+1}</span><span class="twenty-sport">${esc(g.sport)}</span><strong class="twenty-player-name">${esc(g.player)}</strong><span class="twenty-prop-count">${g.props.length} prop${g.props.length===1?"":"s"}</span></div><div class="twenty-player-props">${g.props.map(r=>`<div class="twenty-prop"><div class="twenty-prop-pick"><span class="twenty-mobile-label">Prediction</span><b>${esc(r[2])}</b></div><div class="twenty-prop-meta"><span><span class="twenty-mobile-label">Price</span>${esc(r[3]||"—")}</span><span class="conf"><span class="twenty-mobile-label">L&J / JINX</span>${esc(r[4]||"—")}</span><span><span class="twenty-mobile-label">Quality</span>${esc(r[5]||"—")}</span><span><span class="twenty-mobile-label">Risk</span>${esc(r[6]||"—")}</span></div></div>`).join("")}</div></li>`).join("");
-    return `<section class="section twenty-section" aria-labelledby="${headingId}"><div class="section-head"><h2 id="${headingId}">${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">20+ unique players when games are active • multiple liked props stay grouped under the same player</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20+ PIECE":"SPORT 20+ PIECE"}</span><span>RANKED BY JINX + LEGZ PREFERENCE</span></div>${groups.length?`<div class="card-body"><div class="twenty-summary" aria-live="polite"><b>${groups.length} unique player${groups.length===1?"":"s"}</b><span>${totalProps} total player-prop prediction${totalProps===1?"":"s"}</span></div><ol class="twenty-player-board">${playerHtml}</ol>${shortfall}</div>`:`<div class="status-panel"><b>PROP ACQUISITION REQUIRED</b><p>An active game slate requires a 20+ unique-player board. No unsupported placeholder thresholds will be manufactured.</p></div>`}<div class="card-body"><p class="source-note">${esc(note||"20 Piece is player-first: JINX + LEGZ rank the strongest acquired player props; multiple props for one player count as one player slot.")}</p></div></div></section>`;
+    return `<section class="section twenty-section" aria-labelledby="${headingId}"><div class="section-head"><h2 id="${headingId}">${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">20+ unique players when games are active • maximum 3 distinct prop markets per player • one threshold per market</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20+ PIECE":"SPORT 20+ PIECE"}</span><span>RANKED BY JINX + LEGZ PREFERENCE</span></div>${groups.length?`<div class="card-body"><div class="twenty-summary" aria-live="polite"><b>${groups.length} unique player${groups.length===1?"":"s"}</b><span>${totalProps} total player-prop prediction${totalProps===1?"":"s"}</span></div><ol class="twenty-player-board">${playerHtml}</ol>${shortfall}</div>`:`<div class="status-panel"><b>PROP ACQUISITION REQUIRED</b><p>An active game slate requires a 20+ unique-player board. No unsupported placeholder thresholds will be manufactured.</p></div>`}<div class="card-body"><p class="source-note">${esc(note||"20 Piece is player-first: JINX + LEGZ rank the strongest acquired player props; each player is capped at 3 distinct prop markets, and conflicting/alternate thresholds for the same market collapse to one selection.")}</p></div></div></section>`;
   }
 
   function rules(){
