@@ -46,6 +46,7 @@ UA = {"User-Agent": "LEGZ-JINX-LSI/2.2", "Accept": "application/json"}
 QC_BOARD = DATA / "qc_prop_board.json"
 QC_LOOKAHEAD = timedelta(hours=36)
 QC_MAX_SNAPSHOT_AGE = timedelta(hours=12)
+QC_POST_START_RETENTION = timedelta(hours=8)
 
 TEAM_ALIASES = {
     "Connecticut Sun":["CON"],"Atlanta Dream":["ATL"],"Washington Mystics":["WSH","WAS"],
@@ -166,7 +167,6 @@ def qc_consensus(rows):
 
 
 def build_qc_board(event_catalog):
-    if not event_catalog:return
     wanted={e["event_id"]:e for e in event_catalog}
     rows=defaultdict(list); cutoff=NOW-QC_MAX_SNAPSHOT_AGE
     path=DATA/"market_history.csv"
@@ -179,18 +179,42 @@ def build_qc_board(event_catalog):
                 stamp=parse_dt(r.get("collected_at_pt"))
                 if stamp and stamp<cutoff:continue
                 rows[eid].append(r)
-    events=[]
+
+    # Preserve the last legitimate pregame board after scheduled start.  This
+    # keeps the published QC visible without acquiring or changing a wager
+    # after the event begins.
+    retained={}
+    try:
+        previous=json.loads(QC_BOARD.read_text(encoding="utf-8")) if QC_BOARD.exists() else {"events":[]}
+    except (json.JSONDecodeError,OSError):
+        previous={"events":[]}
+    for old in previous.get("events",[]):
+        start=parse_dt(old.get("commence_time"))
+        if not start or not old.get("props"):continue
+        if NOW-QC_POST_START_RETENTION <= start <= NOW:
+            frozen=dict(old)
+            frozen["sweep_status"]="PREGAME_LOCKED_STARTED"
+            frozen["pregame_locked"]=True
+            frozen["locked_at_utc"]=start.isoformat()
+            retained[(old.get("league"),norm(old.get("away")),norm(old.get("home")))]=frozen
+
+    events=list(retained.values())
     for eid,e in wanted.items():
         props=qc_consensus(rows.get(eid,[]))
-        events.append({
+        current={
             "league":e["league"],"sport_key":e["sport_key"],"source_event_id":eid,
             "propline_event_id":e["propline_event_id"],"commence_time":e["commence_time"],
             "away":e["away"],"home":e["home"],"away_aliases":team_aliases(e["away"]),
             "home_aliases":team_aliases(e["home"]),"source":"MULTI_SOURCE_MARKET_HISTORY",
             "sweep_status":"COMPLETE_WITH_PROPS" if props else "COMPLETE_NO_PROPS_RETURNED",
-            "swept_at_utc":NOW.isoformat(),"props":props,
-        })
-    payload={"schema_version":"LJ-QC-PROP-BOARD-2","generated_at_utc":NOW.isoformat(),
+            "swept_at_utc":NOW.isoformat(),"pregame_locked":False,"props":props,
+        }
+        key=(current["league"],norm(current["away"]),norm(current["home"]))
+        events=[x for x in events if (x.get("league"),norm(x.get("away")),norm(x.get("home")))!=key]
+        events.append(current)
+
+    events.sort(key=lambda e:e.get("commence_time") or "")
+    payload={"schema_version":"LJ-QC-PROP-BOARD-3","generated_at_utc":NOW.isoformat(),
              "source":"MULTI_SOURCE_MARKET_HISTORY","events":events}
     QC_BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print("QC prop board from durable market history:",
