@@ -114,5 +114,6 @@ jobs:
           else
             SOURCE_SHA="$(git -C ../source rev-parse --short HEAD)"
             git commit -m "LSI archive capture $SOURCE_SHA"
+            git pull --rebase origin lsi-archive
             git push origin HEAD:lsi-archive
           fi

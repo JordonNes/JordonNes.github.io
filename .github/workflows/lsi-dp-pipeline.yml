@@ -135,4 +135,4 @@ jobs:
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
           git add data/prediction_registry.json data/prediction_registry.js data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json data/oddspapi_market_lookup.json data/qc_prop_board.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
-          if git diff --cached --quiet; then echo 'No LSI changes to publish.'; else git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT" && git push origin master; fi
+          if git diff --cached --quiet; then echo 'No LSI changes to publish.'; else git commit -m "LSI ${{ steps.clock.outputs.stage }} ${{ steps.clock.outputs.date }} PT" && git pull --rebase origin master && git push origin master; fi

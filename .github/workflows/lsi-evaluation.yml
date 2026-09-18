@@ -107,5 +107,6 @@ jobs:
             echo 'No evaluation changes.'
           else
             git commit -m "LSI shadow evaluation"
+            git pull --rebase origin lsi-archive
             git push origin HEAD:lsi-archive
           fi
