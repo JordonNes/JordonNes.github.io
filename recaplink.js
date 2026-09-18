@@ -1,13 +1,15 @@
-/* LEGZ & JINX SPORT RECAP HEADER LINK + CHARACTER HEADER ART
-   Header-only presentation update authorized by the user.
-   Sport artwork stays unobstructed; report identity, status chips and links sit below it.
+/* LEGZ & JINX CANONICAL DP HEADER LAYOUT
+   The MLB header is the visual standard for all Daily Prediction surfaces.
+   Assigned artwork stays unobstructed as a 3:1 top panel; identity, status chips and links sit below it.
    Quickie Card architecture remains untouched. */
 (() => {
   const labels = {
     MLB:"MLB", NFL:"NFL", NBA:"NBA", WNBA:"WNBA", NHL:"NHL",
     FIBA_Men:"FIBA Men", FIBA_Women:"FIBA Women",
     NCAA_Football:"NCAA Football", NCAA_Basketball:"NCAA Basketball",
-    UFC:"UFC", Boxing:"Boxing", Tennis:"Tennis"
+    UFC:"UFC", Boxing:"Boxing", Tennis:"Tennis",
+    LJ_index:"All-Sports Daily Predictions",
+    Quickie_Generator:"LEGZ & JINX Quickie Generator"
   };
 
   /* Approved 2172×724 (3:1) full-resolution artwork. The version token forces
@@ -25,7 +27,9 @@
     NCAA_Basketball:`assets/headers/dp-ncaa-basketball.png?v=${v}`,
     UFC:`assets/headers/dp-ufc.png?v=${v}`,
     Boxing:`assets/headers/dp-boxing.png?v=${v}`,
-    Tennis:`assets/headers/dp-tennis-v2.png?v=${v}`
+    Tennis:`assets/headers/dp-tennis-v2.png?v=${v}`,
+    LJ_index:`assets/headers/lj-live-shared.png?v=20260917-headerstandard1`,
+    Quickie_Generator:`assets/headers/game-winners-divider.jpg?v=20260917-headerstandard1`
   };
 
   function installHeaderStyle(){
@@ -122,6 +126,8 @@
       }
     }
 
+    const sportPages = new Set(["MLB","NFL","NBA","WNBA","NHL","FIBA_Men","FIBA_Women","NCAA_Football","NCAA_Basketball","UFC","Boxing","Tennis"]);
+    if (!sportPages.has(file)) return;
     const actions = document.querySelector('.hero .actions');
     if (!actions || actions.querySelector('.sport-recap-link')) return;
     const a = document.createElement('a');
