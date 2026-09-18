@@ -430,7 +430,7 @@ def run():
                     if exc.code!=404:print(f"WARN PropLine context {league} {eid}: {exc}")
                 except Exception as exc:print(f"WARN PropLine context {league} {eid}: {exc}")
             collected=NOW.astimezone(PT).isoformat()
-            try:odds,quota=get(f"/sports/{sport_key}/events/{eid}/odds",{"markets":",".join(prop_keys),"oddsFormat":"american"});last_quota=quota
+            try:odds,quota=get(f"/sports/{sport_key}/events/{eid}/odds",{"markets":",".join(requested_keys),"oddsFormat":"american"});last_quota=quota
             except Exception as exc:print(f"WARN PropLine odds {league} {eid}: {exc}");continue
             if isinstance(odds,dict):
                 mrows,irows=parse_odds(odds,league,ljid,collected,lineup); markets_out.extend(mrows); new.extend(irows)
