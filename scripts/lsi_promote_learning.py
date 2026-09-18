@@ -61,7 +61,7 @@ def main():
         "generated_at_utc":NOW,
         "source_gate_generated_at_utc":gate.get("generated_at_utc"),
         "enabled":semantic["enabled"],
-        "policy":"Only gate-approved league/market cells may adjust L&J confidence. Adjustment is capped at +/-3 points and is logged per prediction.",
+        "policy":"Only gate-approved league/market cells may adjust LJPC. Adjustment is capped at +/-3 points and is logged per prediction.",
         "max_abs_confidence_delta":3.0,
         "markets":eligible,
     }
