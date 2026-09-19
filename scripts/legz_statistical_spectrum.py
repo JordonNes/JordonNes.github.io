@@ -6,12 +6,14 @@ Market price is evidence/prior only; it is never published as LJPC by itself.
 Insufficiently supported POMs remain AWAITING_LJ_EVALUATION.
 """
 from __future__ import annotations
-import json, math, statistics
+import csv, json, math, statistics
+from collections import defaultdict
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
 BOARD=DATA/"qc_prop_board.json"
+HISTORY=DATA/"results.csv"
 
 def num(v):
     try: return float(v)
@@ -29,8 +31,34 @@ def implied(price):
 
 def clamp(x,lo=0,hi=100): return max(lo,min(hi,x))
 
-def spectrum(prop):
+def historical_results():
+    out=defaultdict(list)
+    if not HISTORY.exists(): return out
+    with HISTORY.open(newline="",encoding="utf-8-sig") as fh:
+        for row in csv.DictReader(fh):
+            player=str(row.get("participant") or row.get("player") or "").strip().lower()
+            market=str(row.get("market") or "").strip().lower()
+            actual=num(row.get("actual_result"))
+            if player and market and actual is not None: out[(player,market)].append(actual)
+    return out
+
+def distribution_features(prop, history):
+    key=(str(prop.get("participant") or "").strip().lower(),str(prop.get("market") or "").strip().lower())
+    vals=history.get(key) or []
+    threshold=num(prop.get("threshold")); side=str(prop.get("side") or "").lower()
+    if not vals: return {"n":0}
+    mean=statistics.fmean(vals); median=statistics.median(vals); sd=statistics.pstdev(vals) if len(vals)>1 else 0.0
+    hits=None
+    if threshold is not None:
+        if side in {"over","more","yes"}: hits=sum(v>threshold for v in vals)/len(vals)*100
+        elif side in {"under","less","no"}: hits=sum(v<threshold for v in vals)/len(vals)*100
+    return {"n":len(vals),"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
+            "coefficient_of_variation":round(sd/abs(mean),3) if mean else None,
+            "exact_threshold_hit_rate":round(hits,2) if hits is not None else None}
+
+def spectrum(prop, history):
     rates=[]
+    dist=distribution_features(prop,history)
     rate_map={}
     for key in ("L5_hit_rate","L10_hit_rate","L20_hit_rate","l5_hit_rate","l10_hit_rate","l20_hit_rate"):
         v=pct(prop.get(key))
@@ -45,14 +73,18 @@ def spectrum(prop):
 
     # A real statistical evaluation requires player-performance evidence.
     # Price/consensus/source count alone can never mint LJPC.
-    if not rates:
+    if not rates and dist.get("exact_threshold_hit_rate") is None:
         return {
           "evaluation_status":"AWAITING_LJ_EVALUATION","ljpc":None,"lj_confidence":None,
           "legz_baseline":None,"jinx_input":None,"legz_value":None,"pom_value":None,
           "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
-          "spectrum":{"performance":[],"market_prior":market_prior,"source_depth":source_count},
+          "spectrum":{"performance":[],"distribution":dist,"market_prior":market_prior,"source_depth":source_count},
           "evaluation_reason":"No acquired player-performance hit-rate evidence; market probability retained as evidence only."
         }
+
+    if dist.get("exact_threshold_hit_rate") is not None:
+        rates.append(dist["exact_threshold_hit_rate"])
+        rate_map.setdefault("EXACT_THRESHOLD_HISTORY",dist["exact_threshold_hit_rate"])
 
     # Weight larger samples more heavily while retaining recency.
     weights=[0.50,0.30,0.20][:len(rates)] if len(rates)==3 else ([0.60,0.40] if len(rates)==2 else [1.0])
@@ -81,17 +113,18 @@ def spectrum(prop):
       "evaluation_status":"LJ_EVALUATED","ljpc":ljpc,"lj_confidence":ljpc,
       "legz_baseline":round(L,2),"jinx_input":round(j,2),"legz_value":legz_value,"pom_value":pom_value,
       "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
-      "spectrum":{"performance":ordered,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count},
+      "spectrum":{"performance":ordered,"distribution":dist,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count},
       "evaluation_reason":"LEGZ statistical spectrum: player hit-rate evidence weighted by sample horizon; market prior secondary; JINX adjustment only when explicit context exists."
     }
 
 def main():
     if not BOARD.exists(): raise SystemExit("Missing data/qc_prop_board.json")
     payload=json.loads(BOARD.read_text(encoding="utf-8"))
+    history=historical_results()
     evaluated=waiting=0
     for event in payload.get("events") or []:
         for prop in event.get("props") or []:
-            result=spectrum(prop)
+            result=spectrum(prop,history)
             prop.update(result)
             if result["evaluation_status"]=="LJ_EVALUATED": evaluated+=1
             else: waiting+=1
