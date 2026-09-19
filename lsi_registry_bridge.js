@@ -94,7 +94,10 @@
     return t<=end;
   };
   const gameSummary=e=>{
-    const sides=[...(e?.game_markets||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a));
+    const sides=[...(e?.game_markets||[])].filter(x=>{
+      const v=Number(x?.ljpc ?? x?.lj_confidence);
+      return Number.isFinite(v) && v>0 && String(x?.evaluation_status||'').toUpperCase()!=='MARKET_EVIDENCE_ONLY';
+    }).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
     const best=sides[0]; if(!best) return null;
     const fmtPrice=s=>{
       if(s?.price===null||s?.price===undefined||s?.price==='') return 'price recheck';
@@ -162,29 +165,22 @@
     }
     for(const p of scouts){
       if(hotRows.length>=8) break;
+      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
+      if(!evaluated) continue;
       const key=canonicalKey(p);
       if(!key||hotSeen.has(key)) continue;
       hotSeen.add(key);
-      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
-      const baseline=marketBaselineLj(p);
       const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
         ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
         : p.price!==null&&p.price!==undefined&&p.price!==''
           ? `${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''}`
           : 'price recheck';
-      hotRows.push(evaluated
-        ? [
-            p.participant,
-            scoutPick(p),
-            pct(Number(p.ljpc)),
-            `${price} • POM Value ${Number(p.pom_value||p.legz_value||p.ljpc).toFixed(1)} • LSI Statistical Spectrum • ${Number(p.market_source_count||1)} SRC`
-          ]
-        : [
-            p.participant,
-            scoutPick(p),
-            '—',
-            `${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${pct(baseline)} (NOT LJPC)`
-          ]);
+      hotRows.push([
+        p.participant,
+        scoutPick(p),
+        pct(Number(p.ljpc)),
+        `${price} • POM Value ${Number(p.pom_value||p.legz_value||p.ljpc).toFixed(1)} • LSI Statistical Spectrum • ${Number(p.market_source_count||1)} SRC`
+      ]);
     }
     s.hotTop=hotRows;
 
@@ -203,14 +199,17 @@
     for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x)).sort((a,b)=>eventStartMs(a)-eventStartMs(b))){
       const eventKey=String(e.source_event_id||'').toLowerCase();
       if(eventKey&&winnerEvents.has(eventKey)) continue;
-      const sides=[...(e.game_markets||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a));
+      const sides=[...(e.game_markets||[])].filter(x=>{
+        const v=Number(x?.ljpc ?? x?.lj_confidence);
+        return Number.isFinite(v) && v>0 && String(x?.evaluation_status||'').toUpperCase()!=='MARKET_EVIDENCE_ONLY';
+      }).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
       const best=sides[0]; if(!best) continue;
       const price=best.price!==null&&best.price!==undefined&&best.price!==''?`${Number(best.price)>0?'+':''}${best.price}${best.book?` ${best.book}`:''}`:'price recheck';
       winnerRows.push([
         `${e.away||''} @ ${e.home||''}`,
         best.selection||best.participant,
-        pct(best.lj_confidence),
-        `${price} • PROVISIONAL MARKET BASELINE`
+        pct(ljpcOf(best)),
+        `${price} • CANONICAL L&J GAME WINNER`
       ]);
     }
     // Preserve published game-winner calls when GAME_ML acquisition is unavailable.
@@ -244,6 +243,8 @@
       ]);
     }
     for(const p of scouts){
+      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
+      if(!evaluated) continue;
       const key=canonicalKey(p);
       if(!key || seen.has(key)) continue;
       seen.add(key);
@@ -252,38 +253,24 @@
         : p.price!==null&&p.price!==undefined&&p.price!==''
           ? `${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''}`
           : 'price recheck';
-      const baseline=marketBaselineLj(p);
-      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
-      const lj=evaluated?Number(p.ljpc):null;
-      const pv=evaluated?Number(p.pom_value||p.legz_value||lj):null;
-      twenty.push(evaluated
-        ? [
-            String(league).replace(/_/g,' '),
-            p.participant,
-            scoutPick(p),
-            price,
-            pct(lj),
-            `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
-            risk({ljpc:lj}),
-            lj
-          ]
-        : [
-            String(league).replace(/_/g,' '),
-            p.participant,
-            scoutPick(p),
-            price,
-            '—',
-            `AWAITING L&J EVALUATION • MARKET BASELINE ${pct(baseline)} (NOT LJPC) • ${Number(p.market_source_count||1)} SRC`,
-            '👀',
-            null
-          ]);
+      const lj=Number(p.ljpc);
+      const pv=Number(p.pom_value||p.legz_value||lj);
+      twenty.push([
+        String(league).replace(/_/g,' '),
+        p.participant,
+        scoutPick(p),
+        price,
+        pct(lj),
+        `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
+        risk({ljpc:lj}),
+        lj
+      ]);
     }
 
     s.twenty=twenty;
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
     const evaluatedCount=twenty.filter(r=>Number.isFinite(Number(r[7]))&&Number(r[7])>0).length;
-    const awaitingCount=Math.max(0,twenty.length-evaluatedCount);
-    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${evaluatedCount} individualized LJPC predictions + ${awaitingCount} awaiting-evidence candidates. Upcoming 0–7 day events only; market baselines are never relabeled as LJPC.`;
+    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} evaluated props • every displayed row carries individualized LJPC. Upcoming 0–7 day events only; awaiting-evidence POMs are excluded from prediction lists.`;
   }
 
   const canonical=R.predictions.map(p=>({
@@ -695,6 +682,30 @@
       deduped[i]=enrich(keep,other);
     }
     s.qcs=deduped;
+
+    // Game Winners must be current-event L&J predictions with an explicit confidence.
+    // Market-only/provisional baselines never enter the Game Winners list.
+    const qcWinners=[];
+    const qcWinnerSeen=new Set();
+    for(const q of deduped){
+      const event=findBoardEvent(league,q);
+      const confNum=Number(String(q?.conf||'').replace(/[^0-9.]/g,''));
+      if(!event || !q?.winner || !Number.isFinite(confNum) || confNum<=0 || q?._winnerProvisional) continue;
+      const key=String(event.source_event_id||exactKey(q));
+      if(qcWinnerSeen.has(key)) continue;
+      qcWinnerSeen.add(key);
+      qcWinners.push([
+        `${event.away||q.away||''} @ ${event.home||q.home||''}`,
+        q.winner,
+        pct(confNum),
+        `${q.market||'Current L&J game evaluation'} • L&J EVALUATED`
+      ]);
+    }
+    if(qcWinners.length) s.winners=qcWinners;
+    else s.winners=(s.winners||[]).filter(r=>{
+      const confNum=Number(String((r||[])[2]||'').replace(/[^0-9.]/g,''));
+      return Number.isFinite(confNum)&&confNum>0&&!/PROVISIONAL|MARKET BASELINE/i.test((r||[]).join(' '));
+    });
   });
 
   window.LJ_QC_PROP_STATUS={
