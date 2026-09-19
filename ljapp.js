@@ -378,6 +378,39 @@
     const grid=`grid-template-columns:repeat(${cards.length},minmax(200px,1fr))`;
     return `<section class="section all-sports-qc"><div class="section-head"><h2>ALL-SPORTS QC — PLAYER PROPS ONLY</h2><span class="muted">Four distinct ticket objectives • LJPC-first SNS • POM Value-driven Normal • Demon economics after the 51.8% LJPC gate</span></div><div class="qc-list"><div class="qc-row" style="${grid}">${cards.join('')}</div></div><div class="layout-seal">ALL-SPORTS POM QC • exact offered market variants only • cross-ticket diversity active</div></section>`;
   }
+  function lsiPipelinePanel(key=""){
+    const title=key?`${String(key).replace(/_/g," ")} PREDICTION READINESS`:"LSI PREDICTION READINESS";
+    return `<section class="section lsi-readiness-section" data-lsi-readiness="${esc(key)}"><div class="section-head"><h2>${esc(title)}</h2><span class="muted">Schedule → roster/player identity → POM acquisition → LEGZ → JINX → LJPC → publication</span></div><div class="lsi-pipeline-card"><div class="lsi-pipeline-flow"><span>1. SCHEDULE</span><b>→</b><span>2. ROSTER / PLAYER ID</span><b>→</b><span>3. POM FEEDS</span><b>→</b><span>4. LEGZ SPECTRUM</span><b>→</b><span>5. JINX CONTEXT</span><b>→</b><span>6. LJPC</span></div><div class="lsi-readiness-grid"><div><b>SEASON PRELOAD</b><span class="lsi-schedule-status">Checking schedule registry…</span></div><div><b>PLAYER IDENTITY</b><span class="lsi-roster-status">Checking roster registry…</span></div><div><b>POM → LJPC</b><span class="lsi-coverage-status">Checking individualized coverage…</span></div><div><b>PUBLICATION RULE</b><span>Only evaluated exact POMs receive LJPC. Unsupported evidence stays explicitly pending.</span></div></div></div></section>`;
+  }
+
+  async function loadLsiPipelineStatus(key=""){
+    const root=document.querySelector(`[data-lsi-readiness="${CSS.escape(key)}"]`);
+    if(!root) return;
+    const get=async path=>{try{const r=await fetch(path+`?v=${Date.now()}`,{cache:"no-store"});return r.ok?await r.json():null;}catch(_){return null;}};
+    const [schedule,roster,coverage]=await Promise.all([get("data/season_schedule_registry.json"),get("data/team_roster_registry.json"),get("data/ljpc_coverage.json")]);
+    const league=key||"";
+    const s=root.querySelector(".lsi-schedule-status"), r=root.querySelector(".lsi-roster-status"), v=root.querySelector(".lsi-coverage-status");
+    if(s){
+      if(schedule){
+        if(league==="NFL") s.textContent=`NFL season schedule preloaded • ${schedule.NFL?.event_count??"—"} events • ${schedule.NFL?.team_count??"—"} teams`;
+        else if(league==="NCAA_Football") s.textContent=`CFB season schedule preloaded from CFBD • ${schedule.NCAA_Football?.event_count??"—"} events`;
+        else s.textContent="Season/upcoming-event inventory active; sport-specific preload expands as league adapters mature.";
+      } else s.textContent="Season preload artifact refresh pending; rolling event inventory remains active.";
+    }
+    if(r){
+      if(roster){
+        if(league==="NFL") r.textContent=`NFL roster registry preloaded • ${roster.NFL?.player_count??"—"} players across ${roster.NFL?.team_count??"—"} teams`;
+        else if(league==="NCAA_Football") r.textContent="CFB player identity uses LSI player registry + RotoWire depth/role context; full authoritative season roster is not yet guaranteed.";
+        else r.textContent="Persistent player registry active; roster/depth context refreshed by available league adapters.";
+      } else r.textContent="Roster preload artifact refresh pending; persistent player registry remains active.";
+    }
+    if(v){
+      const row=coverage?.by_league?.[league];
+      if(row) v.textContent=`${row.evaluated_props??0}/${row.acquired_props??0} acquired POMs have individualized LJPC • ${Number(row.coverage_pct||0).toFixed(2)}% • ${row.status||"UNKNOWN"}`;
+      else if(coverage) v.textContent=`${coverage.evaluated_props??0}/${coverage.acquired_props??0} acquired POMs evaluated • ${Number(coverage.coverage_pct||0).toFixed(2)}% overall • ${coverage.status||"UNKNOWN"}`;
+      else v.textContent="Coverage artifact refresh pending.";
+    }
+  }
   function statusGrid(){
     const map = [
       ["MLB","ACTIVE TODAY","3 upcoming games • 2 early games closed/live • player props refreshed"],
@@ -394,7 +427,7 @@
       ["FIBA_Men","CALENDAR WATCH","No Sep 5 game verified • next announced event gate"]
     ];
     const file = {MLB:"MLB.html",NCAA_Football:"NCAA_Football.html",Tennis:"Tennis.html",FIBA_Women:"FIBA_Women.html",MMA:"MMA.html",Boxing:"Boxing.html",WNBA:"WNBA.html",NFL:"NFL.html",NBA:"NBA.html",NHL:"NHL.html",NCAA_Basketball:"NCAA_Basketball.html",FIBA_Men:"FIBA_Men.html"};
-    return `<section class="section"><div class="section-head"><h2>CURRENT STATUS</h2><span class="muted">${esc(D.updated)}</span></div><div class="quickie-grid">${map.map(([k,state,note])=>{const s=D.sports?.[k]; if(!s) return ""; return `<div class="ticket"><div class="ticket-h ${/ACTIVE/.test(state)?"sns":/WATCH|NEXT/.test(state)?"purple":"normal"}">${s.icon||""} ${esc(k.replace(/_/g," "))} • ${esc(state)}</div><ul><li>${esc(note)}</li><li>LEGZ HOT TOP + JINX Winners + 20 Piece retained</li><li>Approved QC layout retained</li></ul><div class="note"><a href="${file[k]}">Open page →</a></div></div>`;}).join("")}</div></section>`;
+    return `<section class="section current-status-section"><div class="section-head"><h2>CURRENT STATUS</h2><span class="muted">${esc(D.updated)}</span></div>${lsiPipelinePanel("")}<div class="quickie-grid">${map.map(([k,state,note])=>{const s=D.sports?.[k]; if(!s) return ""; return `<div class="ticket"><div class="ticket-h ${/ACTIVE/.test(state)?"sns":/WATCH|NEXT/.test(state)?"purple":"normal"}">${s.icon||""} ${esc(k.replace(/_/g," "))} • ${esc(state)}</div><ul><li>${esc(note)}</li><li>LEGZ HOT TOP + JINX Winners + 20 Piece retained</li><li>Approved QC layout retained</li></ul><div class="note"><a href="${file[k]}">Open page →</a></div></div>`;}).join("")}</div></section>`;
   }
   function footer(extra=""){
     return `<div class="footer">LEGZ &amp; JINX • ${esc(D.updated)} • Current markets only • LJPC is an estimated hit probability, not a guarantee${extra?` • ${esc(extra)}`:""}</div>`;
@@ -740,13 +773,13 @@
     // Sport page order is locked: L&J Headliners → 20 Piece → Per-Game QCs.
     // NFL follows the same publication architecture as every other DP page.
     const content=`${headliners}${twentyPiece}${quickies}`;
-    document.getElementById("app").innerHTML = `<div class="page sport-page sport-${cls(key)}">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${content}${footer("QC layout locked")}</div>`;
-    setTimeout(()=>hydrateGameStates(key),0);
+    document.getElementById("app").innerHTML = `<div class="page sport-page sport-${cls(key)}">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${lsiPipelinePanel(key)}${content}${footer("QC layout locked")}</div>`;
+    setTimeout(()=>{hydrateGameStates(key);loadLsiPipelineStatus(key);},0);
   };
   window.renderLJHome = () => {
     const h = D.home;
     document.title = "LEGZ & JINX — Daily Predictions";
     document.getElementById("app").innerHTML = `<div class="page lj-home">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${allSportsQcs()}${statusGrid()}${footer("All-sports publication hub • QC layout locked")}</div>`;
-    setTimeout(loadMaterialAlerts,0);
+    setTimeout(()=>{loadMaterialAlerts();loadLsiPipelineStatus("");},0);
   };
 })();
