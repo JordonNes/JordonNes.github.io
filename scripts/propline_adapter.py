@@ -35,6 +35,7 @@ NOW = datetime.now(timezone.utc)
 KEY = (os.getenv("PROPLINE_API_KEY") or os.getenv("PROP_LINE_API_KEY") or "").strip()
 BASE = "https://api.prop-line.com/v1"
 ANALYTICS = os.getenv("PROPLINE_ANALYTICS_ENABLED", "").strip().lower() in {"1", "true", "yes", "on"}
+LEAGUE_FILTER={x.strip() for x in os.getenv("PROPLINE_LEAGUES","").split(",") if x.strip()}
 MAX_REFRESH_EVENTS = max(1, int(os.getenv("PROPLINE_MAX_EVENT_REFRESHES_PER_RUN", "36")))
 MAX_REFRESH_PER_LEAGUE = max(1, int(os.getenv("PROPLINE_MAX_REFRESH_PER_LEAGUE", "4")))
 HTTP_TIMEOUT_SEC = max(5, int(os.getenv("PROPLINE_HTTP_TIMEOUT_SEC", "15")))
@@ -370,7 +371,7 @@ def prioritize_prop_keys(keys,league):
 
 def sport_targets():
     """Return configured sports plus active tournament-specific tennis keys."""
-    targets=[(league,key) for league,key in SPORT_KEYS.items() if league!="Tennis"]
+    targets=[(league,key) for league,key in SPORT_KEYS.items() if league!="Tennis" and (not LEAGUE_FILTER or league in LEAGUE_FILTER)]
     tennis={SPORT_KEYS["Tennis"]}
     try:
         sports,_=get("/sports")
@@ -381,7 +382,8 @@ def sport_targets():
                 if not any(x in key.lower() for x in ("winner","outright","futures")):tennis.add(key)
     except Exception as exc:
         print(f"WARN PropLine sport discovery: {exc}")
-    targets.extend(("Tennis",key) for key in sorted(tennis))
+    if not LEAGUE_FILTER or "Tennis" in LEAGUE_FILTER:
+        targets.extend(("Tennis",key) for key in sorted(tennis))
     return targets
 
 def load_state():
@@ -486,6 +488,7 @@ def run_game_odds_only():
     collected=NOW.astimezone(PT).isoformat()
     rows=[]; seen=set(); event_records=[]; calls=0; failures=0
     for league,sport_key in SPORT_KEYS.items():
+        if LEAGUE_FILTER and league not in LEAGUE_FILTER: continue
         try:
             payload,quota=get(f"/sports/{sport_key}/odds",{"markets":"h2h","oddsFormat":"american"})
             calls+=1
@@ -548,8 +551,11 @@ def run_game_odds_only():
 
 
 def run():
-    if not KEY:print("PROPLINE_API_KEY absent: PropLine safely skipped.");return
+    if not KEY:
+        state=load_state(); state["health"]={"status":"KEY_ABSENT","checked_at_utc":NOW.isoformat(),"last_error":"PROPLINE_API_KEY absent"}; save_state(state)
+        print("PROPLINE_API_KEY absent: PropLine safely skipped.");return
     state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
+    source_errors=0; rate_limits=0; auth_errors=0; last_error=None
     seen_provider_events=set()
     seen_bulk_moneyline_events=set()
     processed_by_league=defaultdict(int)
@@ -558,7 +564,15 @@ def run():
     refresh_attempts_total=0
     for league,sport_key in sport_targets():
         try:events,quota=get(f"/sports/{sport_key}/events");last_quota=quota
-        except Exception as exc:print(f"WARN PropLine events {league}: {exc}");continue
+        except Exception as exc:
+            source_errors+=1; last_error=str(exc)
+            if isinstance(exc,urllib.error.HTTPError):
+                if exc.code==429: rate_limits+=1
+                if exc.code in {401,403}: auth_errors+=1
+            print(f"WARN PropLine events {league}: {exc}")
+            if isinstance(exc,urllib.error.HTTPError) and exc.code==429:
+                break
+            continue
         candidates=candidate_events(events if isinstance(events,list) else [],league,MAX_EVENTS[league])
         event_ljids={str(event.get("id","")):best_lj_event_id(event,league) for event in candidates if event.get("id")}
         collected_bulk=NOW.astimezone(PT).isoformat()
@@ -574,6 +588,10 @@ def run():
                 mrows,_=parse_odds(payload,league,ljid,collected_bulk)
                 markets_out.extend(r for r in mrows if r.get("market_class")=="GAME_ML")
         except Exception as exc:
+            source_errors+=1; last_error=str(exc)
+            if isinstance(exc,urllib.error.HTTPError):
+                if exc.code==429: rate_limits+=1
+                if exc.code in {401,403}: auth_errors+=1
             print(f"WARN PropLine bulk h2h {league} {sport_key}: {exc}")
         for event in candidates:
             eid=str(event.get("id","")); ljid=event_ljids.get(eid) or best_lj_event_id(event,league); start=parse_dt(event.get("commence_time"))
@@ -625,7 +643,18 @@ def run():
                             if r.get("propline_event_id")==eid and norm(r.get("player")) in signals:r["steam_score"],r["books_moved"]=signals[norm(r.get("player"))]
                 except Exception as exc:print(f"WARN PropLine movement {league} {eid}: {exc}")
             state.setdefault("events",{})[f"{sport_key}:{eid}"]=NOW.isoformat()
-    added=append_market_rows(markets_out);write_intelligence(existing+new);save_state(state);build_qc_board(event_catalog)
+    added=append_market_rows(markets_out);write_intelligence(existing+new)
+    if auth_errors: health_status="AUTH_ERROR"
+    elif rate_limits: health_status="RATE_LIMITED"
+    elif source_errors: health_status="DEGRADED"
+    else: health_status="HEALTHY"
+    state["health"]={
+      "status":health_status,"checked_at_utc":NOW.isoformat(),"source_errors":source_errors,
+      "rate_limits":rate_limits,"auth_errors":auth_errors,"last_error":last_error,
+      "league_filter":sorted(LEAGUE_FILTER) if LEAGUE_FILTER else "ALL",
+      "refresh_attempts":refresh_attempts_total,"market_rows":len(markets_out)
+    }
+    save_state(state);build_qc_board(event_catalog)
     print(f"PropLine observations parsed: {len(markets_out)}; newly appended: {added}; intelligence rows: {len(new)}")
     print("PropLine bounded refresh:",{
         "attempted_total":refresh_attempts_total,
