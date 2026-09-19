@@ -49,7 +49,7 @@ ALIASES={
  ("receiving","rec"): "receptions",("receiving","yds"): "receiving_yards",("receiving","td"): "receiving_tds",("receiving","tgts"): "targets",("receiving","tgt"): "targets",
  # basketball
  ("","pts"): "points",("","reb"): "rebounds",("","ast"): "assists",("","stl"): "steals",("","blk"): "blocks",("","to"): "turnovers",
- ("","3ptm"): "threes_made",("","3pm"): "threes_made",("","min"): "minutes",
+ ("","3pt"): "threes_made",("","3ptm"): "threes_made",("","3pm"): "threes_made",("","fg3m"): "threes_made",("","min"): "minutes",
  # baseball
  ("batting","h"): "hits",("batting","tb"): "total_bases",("batting","hr"): "home_runs",("batting","rbi"): "rbi",
  ("batting","r"): "runs",("batting","sb"): "stolen_bases",("pitching","so"): "pitcher_strikeouts",("pitching","k"): "pitcher_strikeouts",
