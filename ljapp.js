@@ -224,13 +224,16 @@
     return /FINAL|EVENT STARTED|RECENT|COMPLETED|LIVE|PAUSED|DELAYED|POSTPONED|RESCHEDULED/i
       .test(String(r?.market||'')+' '+String(r?.foot||''));
   }
+  function qcHasPublishedPregame(r){
+    return cleanDecisionItems(r?.hot).length>0 || qcHasParlay(r);
+  }
   function visibleQcRows(rows){
-    return (rows||[]).filter(r=>qcStatusOnly(r)||qcHasParlay(r));
+    return (rows||[]).filter(r=>qcStatusOnly(r)||qcHasPublishedPregame(r));
   }
   function qcs(title,rows){
     const visible=visibleQcRows(rows);
     if(!visible.length) return "";
-    return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Only qualified 2–6 leg pregame QCs are shown • live/final events remain as status/box-score cards</span></div><div class="qc-list">${visible.map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • empty pregame shells suppressed across all DP pages</div></section>`;
+    return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Published pregame QCs remain visible through actual kickoff • once live, only locked HOT TOP + box score remain</span></div><div class="qc-list">${visible.map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • published pregame intelligence persists until the event actually starts</div></section>`;
   }
   function nflDayBucket(row){
     const raw=String(row?.time||'').toUpperCase();
