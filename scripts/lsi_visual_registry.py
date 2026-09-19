@@ -81,6 +81,15 @@ def rolling_teams():
         out[lg].update(x for x in (r.get("away"),r.get("home")) if x)
     return out
 
+def roster_due(players,league,team_id,hours=18):
+    stamps=[]
+    for p in players.values():
+        if p.get("league")==league and str(p.get("team_id") or "")==str(team_id):
+            t=parse_dt(p.get("last_verified_utc"))
+            if t:stamps.append(t)
+    if not stamps:return True
+    return (NOW-max(stamps))>=timedelta(hours=hours)
+
 def athlete_rows(payload):
     rows=[]
     for group in payload.get("athletes") or []:
@@ -124,7 +133,7 @@ def main():
         wanted=active.get(league,set())
         for t,trec in known:
             aliases={norm(x) for x in trec.get("aliases") or []}
-            refresh=(league=="NFL") or any(norm(x) in aliases for x in wanted)
+            refresh=((league=="NFL" and roster_due(players,league,trec["espn_team_id"])) or any(norm(x) in aliases for x in wanted))
             if not refresh:continue
             tid=trec["espn_team_id"]
             try:
@@ -149,7 +158,7 @@ def main():
     payload={
       "schema_version":"LSI-VISUAL-ASSET-1","generated_at_utc":NOW.isoformat(),
       "policy":"Registry stores ESPN-hosted image references/provenance; it does not bulk-copy or rehost third-party image binaries. Refresh before season/event use and verify redistribution rights for external publications.",
-      "refresh_policy":"Team logos: each scheduled pipeline cycle when due. NFL roster/headshots: full refresh. Other player headshots: rolling near-event teams; persistent entries retained.",
+      "refresh_policy":"Team logos: refreshed from current team metadata. NFL roster/headshots: persistent 18-hour refresh. Other player headshots: rolling near-event teams; persistent entries retained.",
       "teams":dict(sorted(teams.items())),"players":dict(sorted(players.items())),"errors":errors
     }
     OUT.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
