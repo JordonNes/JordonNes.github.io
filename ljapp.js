@@ -201,7 +201,7 @@
   }
 
   function rules(){
-    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep the frozen JINX predicted game odds/winner at far left, the pregame-locked LEGZ Hot Top beside it, and the current live box score at right. SNS1, SNS2, Normal and Aggressive/Demon are removed.</span></div><div class="qc-rule"><b>Final</b><span>Keep the pregame Hot Top as the prediction record and show FINAL status plus the ending box score. Remove JINX Game Winner, game odds and every ticket/parlay section.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Live and final views preserve only the locked pregame information permitted by the event-state rule; nothing is backfilled after the event starts. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
+    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show the matchup/JINX panel with its preset box-score shell in the lower-left, plus only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep the frozen JINX predicted game odds/winner and team visuals at far left, the pregame-locked LEGZ Hot Top beside it, and move the activated live box score to the right. SNS1, SNS2, Normal and Aggressive/Demon are removed.</span></div><div class="qc-rule"><b>Final</b><span>Keep the pregame Hot Top as the prediction record and show FINAL status plus the ending box score. Remove JINX Game Winner, game odds and every ticket/parlay section.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Live and final views preserve only the locked pregame information permitted by the event-state rule; nothing is backfilled after the event starts. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
   }
   function renderQcLeg(value){
     const raw=String(value??"").trim();
@@ -640,12 +640,13 @@
       }
       if(pregameGame){
         pregameGame.classList.add("qc-live-pregame-game");
-        const label=pregameGame.querySelector(".qc-winner .qc-label");
+        pregameGame.querySelector(".qc-pregame-boxshell")?.remove();
+        const label=pregameGame.querySelector(".qc-center-jinx .qc-label")||pregameGame.querySelector(".qc-winner .qc-label");
         if(label) label.textContent="JINX PREDICTED GAME ODDS — PREGAME LOCKED";
         const status=pregameGame.querySelector(".qc-runtime-status");
         if(status){ status.hidden=false; status.textContent="LIVE — PRE-GAME ODDS / WINNER FROZEN"; }
       }
-      // Live shell: frozen JINX odds/winner at far left, locked Hot Top in the center, live box score at right.
+      // Live shell: frozen JINX odds/winner + team visuals at far left, locked Hot Top in the center, live box score at right.
       const parts=[pregameGame?.outerHTML||"",pregameHot?.outerHTML||"",box].filter(Boolean);
       row.innerHTML=parts.join("");
       row.classList.add("qc-live-row");
