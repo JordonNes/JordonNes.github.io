@@ -23,6 +23,9 @@ on:
       - 'scripts/lsi_publish_future_board.py'
       - 'scripts/lsi_promote_learning.py'
       - 'data/learning_overlay.json'
+      - 'data/performance_history.csv'
+      - 'data/history/**'
+      - 'data/history_coverage.json'
       - 'scripts/qc_publication_audit.js'
       - 'scripts/lsi_snapshot_tickets.js'
       - 'lsi_registry_bridge.js'
@@ -37,7 +40,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: lsi-core-data-writer
+  group: lsi-market-writer
   cancel-in-progress: false
 
 jobs:
