@@ -36,7 +36,7 @@ Both basketball pages must use the same section order and behavior:
 2. **JINX GAME WINNERS**
 3. **20 PIECE** — player props only
 4. **Per-Game QCs**
-5. Runtime event-state behavior: pregame populated tickets only; live games retain only the locked Normal construction plus current box score; final games show only final status/box score.
+5. Runtime event-state behavior: pregame populated tickets only; live games retain only the locked LEGZ Hot Top + JINX Game Winner + game odds beside the current box score; final games retain only the locked Hot Top prediction record plus final status/box score.
 
 The same QC invariant applies to both leagues: when **2 or more qualified POMs** can coexist in an eligible ticket mode, at least one **2–6 leg QC parlay** must be published. Empty upcoming QC shells are not valid on either page.
 
