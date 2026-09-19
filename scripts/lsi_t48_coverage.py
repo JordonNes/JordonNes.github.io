@@ -37,7 +37,7 @@ def main():
                 key=(row.get("league") or row.get("sport") or "UNKNOWN",row.get("event_id") or "")
                 latest[key]=row
         for row in latest.values(): add_known(row,"event_inventory")
-    rows=[]; total=evaluated=0; leagues={}; blockers={}
+    rows=[]; total=evaluated=stale_total=0; leagues={}; blockers={}
     for e in d.get("events") or []:
         start=dt(e.get("commence_time") or e.get("event_start_pt"))
         if not start: continue
@@ -45,10 +45,11 @@ def main():
         if hours < 0 or hours > 48: continue
         props=e.get("props") or []
         good=[p for p in props if p.get("evaluation_status")=="LJ_EVALUATED" and p.get("ljpc") is not None]
-        ev=len(good); total+=len(props); evaluated+=ev
+        stale=[p for p in props if str(p.get("market_freshness") or "").upper()=="STALE_RECHECK_REQUIRED"]
+        ev=len(good); stale_n=len(stale); total+=len(props); evaluated+=ev; stale_total+=stale_n
         league=str(e.get("league") or "UNKNOWN")
-        agg=leagues.setdefault(league,{"acquired_props":0,"evaluated_props":0,"awaiting_props":0})
-        agg["acquired_props"]+=len(props); agg["evaluated_props"]+=ev; agg["awaiting_props"]+=len(props)-ev
+        agg=leagues.setdefault(league,{"acquired_props":0,"evaluated_props":0,"awaiting_props":0,"stale_props":0})
+        agg["acquired_props"]+=len(props); agg["evaluated_props"]+=ev; agg["awaiting_props"]+=len(props)-ev; agg["stale_props"]+=stale_n
         event_blockers={}
         for p in props:
             if p in good: continue
@@ -56,34 +57,34 @@ def main():
             blockers[reason]=blockers.get(reason,0)+1
             event_blockers[reason]=event_blockers.get(reason,0)+1
         rows.append({"league":league,"event_id":e.get("source_event_id") or e.get("event_id"),"hours_to_start":round(hours,2),
-                     "acquired_props":len(props),"evaluated_props":ev,"awaiting_props":len(props)-ev,
+                     "acquired_props":len(props),"evaluated_props":ev,"awaiting_props":len(props)-ev,"stale_props":stale_n,
                      "blockers":dict(sorted(event_blockers.items(),key=lambda x:(-x[1],x[0])))})
     pct=round(evaluated/total*100,2) if total else 0.0
     acquisition_gap=bool(known_events) and total==0
-    status="SLA_BREACH" if acquisition_gap or evaluated!=total else "PASS"
+    status="SLA_BREACH" if acquisition_gap or evaluated!=total else ("DEGRADED_MARKET_STALE" if stale_total else "PASS")
     if acquisition_gap:
         blockers["NO_ACQUIRED_POMS_INSIDE_T48"]=len(known_events)
     known_by_league={}
     for ev in known_events:
         lg=str(ev.get("league") or "UNKNOWN"); known_by_league[lg]=known_by_league.get(lg,0)+1
     for lg,count in known_by_league.items():
-        leagues.setdefault(lg,{"acquired_props":0,"evaluated_props":0,"awaiting_props":0})
+        leagues.setdefault(lg,{"acquired_props":0,"evaluated_props":0,"awaiting_props":0,"stale_props":0})
         leagues[lg]["known_events_inside_t48"]=count
     for league,agg in leagues.items():
         a=agg["acquired_props"]; e=agg["evaluated_props"]
         known=agg.get("known_events_inside_t48",0)
         agg["coverage_pct"]=round(e/a*100,2) if a else 0.0
-        agg["status"]="SLA_BREACH" if (known and a==0) or e!=a else "PASS"
+        agg["status"]="SLA_BREACH" if (known and a==0) or e!=a else ("DEGRADED_MARKET_STALE" if agg.get("stale_props") else "PASS")
     payload={"schema_version":"LSI-LJPC-COVERAGE-2","generated_at_utc":now.isoformat(),"window_hours":48,
              "status":status,"known_events_inside_t48":len(known_events),
              "known_event_sources":dict(sorted({src:sum(1 for e in known_events if e.get("_coverage_source")==src) for src in {e.get("_coverage_source") for e in known_events}}.items())),
-             "acquired_props":total,"evaluated_props":evaluated,"awaiting_props":total-evaluated,
+             "acquired_props":total,"evaluated_props":evaluated,"awaiting_props":total-evaluated,"stale_props":stale_total,
              "coverage_pct":pct,"by_league":dict(sorted(leagues.items())),
              "blockers":dict(sorted(blockers.items(),key=lambda x:(-x[1],x[0]))),"events":rows}
     OUT.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
-    print(f"T-48 LJPC coverage: {evaluated}/{total} acquired POMs = {pct}% [{status}] across {len(known_events)} known event(s)")
+    print(f"T-48 LJPC coverage: {evaluated}/{total} acquired POMs = {pct}% [{status}] • stale={stale_total} • across {len(known_events)} known event(s)")
     for league,agg in sorted(leagues.items()):
-        print(f"  {league}: {agg['evaluated_props']}/{agg['acquired_props']} acquired POMs = {agg['coverage_pct']}% [{agg['status']}] • known events={agg.get('known_events_inside_t48',0)}")
+        print(f"  {league}: {agg['evaluated_props']}/{agg['acquired_props']} acquired POMs = {agg['coverage_pct']}% [{agg['status']}] • stale={agg.get('stale_props',0)} • known events={agg.get('known_events_inside_t48',0)}")
     if blockers: print("  blockers:",dict(sorted(blockers.items(),key=lambda x:(-x[1],x[0]))))
     if acquisition_gap: print(f"::error::T-48 acquisition gap: {len(known_events)} known event(s) inside 48h but zero player POMs were acquired.")
     for r in rows:
