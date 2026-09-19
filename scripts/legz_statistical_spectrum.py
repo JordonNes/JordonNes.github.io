@@ -15,6 +15,7 @@ DATA=ROOT/"data"
 BOARD=DATA/"qc_prop_board.json"
 HISTORY=DATA/"results.csv"
 CONTEXT=DATA/"context_registry.json"
+CACHE=DATA/"lsi_spectrum_cache.json"
 
 def num(v):
     try: return float(v)
@@ -57,6 +58,16 @@ def distribution_features(prop, history):
             "coefficient_of_variation":round(sd/abs(mean),3) if mean else None,
             "exact_threshold_hit_rate":round(hits,2) if hits is not None else None}
 
+def spectrum_cache_index():
+    if not CACHE.exists(): return {}
+    try: rows=json.loads(CACHE.read_text(encoding="utf-8")).get("profiles") or []
+    except (json.JSONDecodeError,AttributeError): return {}
+    out={}
+    for r in rows:
+        key=(str(r.get("league") or ""),str(r.get("player") or "").strip().lower(),str(r.get("market") or "").strip().lower(),str(r.get("threshold") or ""),str(r.get("side") or "").strip().lower())
+        out[key]=r
+    return out
+
 def context_index():
     if not CONTEXT.exists(): return {}
     try: records=json.loads(CONTEXT.read_text(encoding="utf-8")).get("records") or []
@@ -90,7 +101,7 @@ def jinx_context(prop, contexts):
             "context_id":row.get("context_id"),"context_type":ctype or None,
             "status":status or None,"headline":row.get("headline"),"source":row.get("source")}
 
-def spectrum(prop, history, contexts):
+def spectrum(prop, history, contexts, cache):
     rates=[]
     dist=distribution_features(prop,history)
     rate_map={}
@@ -99,6 +110,13 @@ def spectrum(prop, history, contexts):
         if v is not None and 0<=v<=100:
             canonical=key.upper()
             if canonical not in rate_map: rate_map[canonical]=v
+    # Reuse locally cached exact-threshold features before considering any external research.
+    cache_key=(str(prop.get("_league") or ""),str(prop.get("participant") or "").strip().lower(),str(prop.get("market") or "").strip().lower(),str(prop.get("threshold") or ""),str(prop.get("side") or "").strip().lower())
+    cached=cache.get(cache_key) or {}
+    for key in ("L5_hit_rate","L10_hit_rate","L20_hit_rate"):
+        v=pct(cached.get(key))
+        if v is not None and 0<=v<=100:
+            rate_map.setdefault(key.upper(),v)
     rates=list(rate_map.values())
     market_prior=implied(prop.get("best_price") if prop.get("best_price") not in (None,"") else prop.get("price"))
     source_count=max(1,int(num(prop.get("market_source_count")) or 1))
@@ -157,10 +175,13 @@ def main():
     payload=json.loads(BOARD.read_text(encoding="utf-8"))
     history=historical_results()
     contexts=context_index()
+    cache=spectrum_cache_index()
     evaluated=waiting=0
     for event in payload.get("events") or []:
         for prop in event.get("props") or []:
-            result=spectrum(prop,history,contexts)
+            prop["_league"]=event.get("league") or ""
+            result=spectrum(prop,history,contexts,cache)
+            prop.pop("_league",None)
             prop.update(result)
             if result["evaluation_status"]=="LJ_EVALUATED": evaluated+=1
             else: waiting+=1
