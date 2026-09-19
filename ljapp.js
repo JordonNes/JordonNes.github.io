@@ -94,7 +94,7 @@
   }
   function hero(kicker,title,description,chips=[],home=false){
     const actions = home
-      ? `<a class="action" href="Recap.html">📊 Yesterday's Recap</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a><a class="action" href="MLB.html">⚾ MLB</a><a class="action" href="NCAA_Football.html">🏈 NCAA</a><a class="action" href="Boxing.html">🥊 Boxing</a>`
+      ? `<a class="action" href="Recap.html">📊 Yesterday's Recap</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a><a class="action" href="MLB.html">⚾ MLB</a><a class="action" href="NCAA_Football.html">🏈 CFB</a><a class="action" href="Boxing.html">🥊 Boxing</a>`
       : `<a class="action" href="LJ_index.html">← Daily Home</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a>`;
     return `<section class="hero"><div class="kicker">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="chips">${chips.map(([t,c])=>`<span class="chip ${cls(c)}">${esc(t)}</span>`).join("")}</div><div class="actions">${actions}</div></section>`;
   }
@@ -592,7 +592,7 @@
       away:team(away),home:team(home),
       market:"SCHEDULED • NCAA WEEKLY QC INTELLIGENCE BUILD ACTIVE",
       winner:"",conf:"—",hot:[],sns1:[],sns2:[],normal:[],demon:[],
-      foot:"Auto-populated from the current NCAA Football Sunday–Saturday schedule. Prediction/POM fields populate only after L&J evaluation.",
+      foot:"Auto-populated from the current CFB Sunday–Saturday schedule. Prediction/POM fields populate only after L&J evaluation.",
       _propEventId:String(event.id||"")
     };
   }
