@@ -35,12 +35,13 @@ def convert(year,rows):
         pid=r.get("player_id") or r.get("gsis_id") or ""
         if not name:continue
         week=str(r.get("week") or ""); season=str(r.get("season") or year)
+        season_type=str(r.get("season_type") or "REG").upper()
         team=r.get("recent_team") or r.get("team") or ""
-        game_id=r.get("game_id") or f"NFLVERSE-{season}-W{week}-{pid or name}"
+        game_id=r.get("game_id") or f"NFLVERSE-{season}-{season_type}-W{week}-{pid or name}"
         for raw,metric in STAT_MAP.items():
             value=num(r.get(raw))
             if value is None:continue
-            rid="NFLVHIST-"+digest(season,week,pid or name,metric)
+            rid="NFLVHIST-"+digest(season,season_type,week,pid or name,metric)
             out.append({"record_id":rid,"collected_at_utc":stamp,"league":"NFL","event_id":game_id,
               "provider_event_id":game_id,"event_start_utc":"","participant":name,"provider_player_id":pid,
               "team":team,"metric":metric,"value":value,"source":"NFLVERSE_STATS_PLAYER_WEEKLY"})
