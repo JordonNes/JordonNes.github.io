@@ -143,9 +143,12 @@ def load_game_markets():
           "price":int(best[0]) if float(best[0]).is_integer() else best[0],
           "book":best[1],
           "market_source_count":len(rows),
-          "ljpc":confidence,
-          "lj_confidence":confidence,
-          "model":"L&J MARKET BASELINE",
+          "market_probability":confidence,
+          "market_consensus":confidence,
+          "ljpc":None,
+          "lj_confidence":None,
+          "evaluation_status":"MARKET_EVIDENCE_ONLY",
+          "model":"MARKET CONSENSUS EVIDENCE",
         })
     for eid in out:
         out[eid].sort(key=lambda x:(-x["lj_confidence"],str(x["participant"])))
@@ -289,7 +292,7 @@ def main():
       "generated_at_utc":NOW.isoformat(),
       "default_horizon_days":7,
       "nfl_rollover_policy":"Tuesday-Monday slate stages beginning Monday 12:00 PT; current Monday game remains a runtime status shell after start.",
-      "actionable_policy":"Only not-yet-started events may expose props or odds. Every exposed player prop and game moneyline carries LJPC (final L&J estimated hit probability).",
+      "actionable_policy":"Only not-yet-started events may expose props or odds. Player-prop LJPC requires completed L&J evaluation; GAME_ML market probability remains market evidence until independently evaluated.",
       "events":events,
     }
     live_rows=[]
