@@ -35,11 +35,13 @@ jobs:
           html=pathlib.Path('Quickie_Generator.html').read_text(encoding='utf-8')
           blocks=re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>',html,re.S|re.I)
           assert blocks, 'No inline Quickie JavaScript found'
-          pathlib.Path('/tmp/quickie-inline.js').write_text('\n'.join(blocks),encoding='utf-8')
+          pathlib.Path('/tmp/quickie-inline.js').write_text('
+'.join(blocks),encoding='utf-8')
           print(f'Quickie inline JS blocks: {len(blocks)}')
           PY
           node --check /tmp/quickie-inline.js
-      - name: Merge verified override evidence\n        run: python scripts/lsi_apply_verified_overrides.py
+      - name: Merge verified override evidence
+        run: python scripts/lsi_apply_verified_overrides.py
       - name: Execute Spectrum v3 from durable cache
         env:
           LSI_FAST_RUNTIME: 'true'
