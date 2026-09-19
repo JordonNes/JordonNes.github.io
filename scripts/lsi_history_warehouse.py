@@ -8,7 +8,7 @@ This first production layer is intentionally source-agnostic:
 - emits lightweight JSON artifacts suitable for GitHub today and PostgreSQL migration later.
 """
 from __future__ import annotations
-import csv, hashlib, json, re
+import csv, gzip, hashlib, json, re
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,6 +22,9 @@ REG=DATA/"lsi_player_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
 PERF=DATA/"performance_history.csv"
 HISTORY_ROOT=DATA/"history"
+
+def csv_open(path):
+    return gzip.open(path,"rt",encoding="utf-8-sig",newline="") if str(path).endswith(".gz") else path.open(newline="",encoding="utf-8-sig")
 
 def norm(v): return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
 def player_norm(v):
@@ -116,7 +119,7 @@ def main():
     # from today's market board. This is what lets LSI recognize a returning veteran
     # without rebuilding the player's career from scratch.
     if PERF.exists() and PERF.stat().st_size:
-        with PERF.open(newline="",encoding="utf-8-sig") as fh:
+        with csv_open(PERF) as fh:
             for r in csv.DictReader(fh):
                 league=r.get("league") or ""; name=r.get("participant") or ""
                 if not league or not name: continue
@@ -138,8 +141,8 @@ def main():
 
     # Register players that live only in durable league/season shards too.
     if HISTORY_ROOT.exists():
-        for hist_path in sorted(HISTORY_ROOT.glob("*/*.csv")):
-            with hist_path.open(newline="",encoding="utf-8-sig") as fh:
+        for hist_path in sorted(HISTORY_ROOT.glob("*/*.csv*")):
+            with csv_open(hist_path) as fh:
                 for r in csv.DictReader(fh):
                     league=r.get("league") or ""; name=r.get("participant") or ""
                     if not league or not name: continue
@@ -165,7 +168,7 @@ def main():
     # Generic settled predictions remain useful, but the append-only performance warehouse is the primary reusable fact store.
     hist=defaultdict(list)
     if RESULTS.exists():
-        with RESULTS.open(newline="",encoding="utf-8-sig") as fh:
+        with csv_open(RESULTS) as fh:
             for r in csv.DictReader(fh):
                 league=r.get("league") or r.get("sport") or ""
                 name=r.get("participant") or r.get("player") or ""
@@ -180,10 +183,10 @@ def main():
     perf_files=[]
     if PERF.exists() and PERF.stat().st_size: perf_files.append(PERF)
     if HISTORY_ROOT.exists():
-        perf_files.extend(sorted(HISTORY_ROOT.glob("*/*.csv")))
+        perf_files.extend(sorted(HISTORY_ROOT.glob("*/*.csv*")))
     seen_facts=set()
     for perf_path in perf_files:
-        with perf_path.open(newline="",encoding="utf-8-sig") as fh:
+        with csv_open(perf_path) as fh:
             for r in csv.DictReader(fh):
                 league=r.get("league") or ""; name=r.get("participant") or ""; metric=r.get("metric") or ""
                 value=num(r.get("value")); event=r.get("provider_event_id") or r.get("event_id") or ""
