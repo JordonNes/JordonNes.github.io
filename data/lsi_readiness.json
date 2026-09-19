@@ -1,7 +1,225 @@
 {
   "schema_version": "LSI-READINESS-1",
-  "generated_at_utc": null,
+  "generated_at_utc": "2026-09-19T18:23:08.210611+00:00",
+  "ready_for_deterministic_operation": false,
+  "full_history_program_complete": false,
+  "current_ljpc": {
+    "status": "SLA_BREACH",
+    "known_events_inside_t48": 430,
+    "acquired_props": 8546,
+    "evaluated_props": 4361,
+    "coverage_pct": 51.03,
+    "blockers": {
+      "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 4185
+    }
+  },
+  "qc_board": {
+    "generated_at_utc": "2026-09-19T18:22:55.158372+00:00",
+    "age_hours": 0.0,
+    "events": 310,
+    "by_league": {
+      "NCAA_Football": {
+        "events": 91,
+        "props": 166,
+        "evaluated": 112,
+        "awaiting": 54,
+        "coverage_pct": 67.47
+      },
+      "Boxing": {
+        "events": 14,
+        "props": 0,
+        "evaluated": 0,
+        "awaiting": 0,
+        "coverage_pct": 0.0
+      },
+      "Tennis": {
+        "events": 109,
+        "props": 0,
+        "evaluated": 0,
+        "awaiting": 0,
+        "coverage_pct": 0.0
+      },
+      "MMA": {
+        "events": 15,
+        "props": 87,
+        "evaluated": 0,
+        "awaiting": 87,
+        "coverage_pct": 0.0
+      },
+      "NHL": {
+        "events": 36,
+        "props": 0,
+        "evaluated": 0,
+        "awaiting": 0,
+        "coverage_pct": 0.0
+      },
+      "WNBA": {
+        "events": 14,
+        "props": 0,
+        "evaluated": 0,
+        "awaiting": 0,
+        "coverage_pct": 0.0
+      },
+      "NFL": {
+        "events": 15,
+        "props": 8459,
+        "evaluated": 4361,
+        "awaiting": 4098,
+        "coverage_pct": 51.55
+      },
+      "MLB": {
+        "events": 16,
+        "props": 0,
+        "evaluated": 0,
+        "awaiting": 0,
+        "coverage_pct": 0.0
+      }
+    }
+  },
+  "future_board": {
+    "generated_at_utc": "2026-09-19T18:19:57.523627+00:00",
+    "age_hours": 0.05,
+    "events": 465
+  },
+  "history_coverage": {
+    "NCAA_Football": {
+      "facts": 18820,
+      "players": 3353,
+      "events": 189,
+      "earliest": "2026-08-29",
+      "latest": "2026-09-19",
+      "metrics": 10
+    },
+    "NFL": {
+      "facts": 205954,
+      "players": 2174,
+      "events": 303,
+      "earliest": "2026-09-18",
+      "latest": "2026-09-18",
+      "metrics": 12
+    },
+    "WNBA": {
+      "facts": 1148,
+      "players": 157,
+      "events": 8,
+      "earliest": "2026-09-17",
+      "latest": "2026-09-19",
+      "metrics": 7
+    }
+  },
+  "history_backfill": {
+    "remaining": 6,
+    "leagues": [
+      {
+        "league": "NCAA_Football",
+        "season": "2026",
+        "status": "ACTIVE",
+        "cursor": "2026-09-19",
+        "floor": "2026-08-01",
+        "priority": 0,
+        "chunk_days": 14
+      },
+      {
+        "league": "WNBA",
+        "season": "2026",
+        "status": "ACTIVE",
+        "cursor": "2026-09-18",
+        "floor": "2026-05-01",
+        "priority": 1,
+        "chunk_days": 14
+      },
+      {
+        "league": "MLB",
+        "season": "2026",
+        "status": "ACTIVE",
+        "cursor": "2026-09-18",
+        "floor": "2026-03-15",
+        "priority": 2,
+        "chunk_days": 5
+      },
+      {
+        "league": "NBA",
+        "season": "2025-26",
+        "status": "ACTIVE",
+        "cursor": "2026-06-30",
+        "floor": "2025-10-01",
+        "priority": 1,
+        "chunk_days": 10
+      },
+      {
+        "league": "NHL",
+        "season": "2025-26",
+        "status": "ACTIVE",
+        "cursor": "2026-06-30",
+        "floor": "2025-10-01",
+        "priority": 3,
+        "chunk_days": 10
+      },
+      {
+        "league": "NCAA_Basketball",
+        "season": "2025-26",
+        "status": "ACTIVE",
+        "cursor": "2026-04-15",
+        "floor": "2025-11-01",
+        "priority": 3,
+        "chunk_days": 3
+      }
+    ]
+  },
+  "nfl_deep_history": {
+    "schema_version": "LSI-NFL-HISTORY-BACKFILL-1",
+    "next_year": 2024,
+    "floor_year": 1999,
+    "status": "ACTIVE"
+  },
+  "market_source_health": {
+    "propline": {
+      "tracked_events": 167,
+      "last_success_utc": "2026-09-19T01:07:42.997167+00:00",
+      "age_hours": 17.26
+    },
+    "the_odds_api": {
+      "tracked_events": 0,
+      "last_success_utc": null,
+      "age_hours": null
+    }
+  },
+  "openai": {
+    "paid_api_decision_ready": true,
+    "api_calls_actually_made": 0,
+    "average_estimated_cost_per_pipeline_run_usd": 0.001517,
+    "estimated_total_cost_if_observed_packets_sent_usd": 0.054606,
+    "telemetry_days": 3
+  },
   "blockers": [
-    "AWAITING_FIRST_REFRESH"
+    {
+      "type": "T48_LJPC_SLA",
+      "detail": {
+        "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 4185
+      }
+    },
+    {
+      "type": "PROPLINE_STALE",
+      "age_hours": 17.26
+    },
+    {
+      "type": "THE_ODDS_API_NO_SUCCESS_STATE",
+      "note": "Check ODDS_API_KEY/authorization before relying on this fallback."
+    },
+    {
+      "type": "HISTORY_BACKFILL_IN_PROGRESS",
+      "remaining_leagues": [
+        "NCAA_Football",
+        "WNBA",
+        "MLB",
+        "NBA",
+        "NHL",
+        "NCAA_Basketball"
+      ]
+    },
+    {
+      "type": "NFL_DEEP_HISTORY_IN_PROGRESS",
+      "next_year": 2024
+    }
   ]
 }
