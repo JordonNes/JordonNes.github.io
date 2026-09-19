@@ -423,3 +423,28 @@ td{font-size:12px!important;line-height:1.45}
 /* 2026-09-19 QC live identity + NFL team-logo enhancement */
 .qc-team-name{display:flex;align-items:center;gap:5px;min-width:0}.qc-team-name:last-child{justify-content:flex-end;text-align:right}.qc-team-logo{width:25px;height:25px;object-fit:contain;flex:0 0 25px}.qc-live-pregame-game{background:#0d1016}.qc-live-pregame-game .qc-runtime-status{display:block!important;margin-top:7px;font-size:6.5px;color:#8ce0ef;font-weight:800;letter-spacing:.2px}.qc-live-row .qc-winner{border-color:#7c6523}.qc-live-row .qc-winner .qc-label{color:#e1c973}
 @media(max-width:690px){.qc-team-logo{width:22px;height:22px;flex-basis:22px}}
+
+/* 2026-09-19 integrated pregame matchup + preset box-score shell */
+.qc-game-pregame-integrated{display:flex;flex-direction:column;gap:8px;min-width:0}
+.qc-matchup-visual{display:grid;grid-template-columns:minmax(78px,1fr) minmax(120px,1.25fr) minmax(78px,1fr);gap:8px;align-items:center;margin-top:4px}
+.qc-team-side{display:flex;align-items:center;min-width:0}
+.qc-team-away{justify-content:flex-start}
+.qc-team-home{justify-content:flex-end}
+.qc-center-jinx{padding:7px 8px;border:1px solid rgba(198,163,90,.28);border-radius:8px;background:linear-gradient(135deg,rgba(83,51,106,.28),rgba(138,104,39,.12));text-align:center;min-width:0}
+.qc-center-jinx .qc-label{font-size:6.5px;letter-spacing:.35px;color:#cbb1d9;font-weight:900}
+.qc-center-jinx .qc-pick{font-size:10px;line-height:1.25;color:#e4c875;font-weight:850;margin-top:3px}
+.qc-center-jinx-pending .qc-pick{font-size:8px;color:#8f97a3}
+.qc-pregame-boxshell{margin-top:auto;border:1px solid #273140;border-radius:8px;background:#0d1117;overflow:hidden}
+.qc-pregame-boxhead{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;background:linear-gradient(135deg,#18202a,#2b2433);font-size:7px;font-weight:900;letter-spacing:.35px}
+.qc-pregame-boxhead span:last-child{color:#d9bd6d}
+.qc-pregame-scoreline{display:flex;justify-content:space-between;gap:10px;padding:7px 8px 4px;font-size:9px;color:#d7dde6}
+.qc-pregame-scoreline b{color:#7f8795;margin-left:3px}
+.qc-pregame-boxnote{padding:0 8px 7px;color:#707987;font-size:6.5px}
+.qc-live-pregame-game .qc-center-jinx{border-color:#7c6523;background:linear-gradient(135deg,rgba(83,51,106,.3),rgba(138,104,39,.16))}
+@media(max-width:1080px){
+  .qc-matchup-visual{grid-template-columns:1fr minmax(110px,1.15fr) 1fr}
+}
+@media(max-width:690px){
+  .qc-matchup-visual{grid-template-columns:minmax(70px,1fr) minmax(112px,1.25fr) minmax(70px,1fr);gap:5px}
+  .qc-center-jinx{padding:6px}.qc-center-jinx .qc-pick{font-size:8.5px}
+}
