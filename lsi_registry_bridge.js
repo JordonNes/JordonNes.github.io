@@ -329,10 +329,12 @@
     const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
     const baseline=marketBaselineLj(p);
     const conf=evaluated?Number(p.ljpc):null;
+    const stale=String(p.market_freshness||'').toUpperCase()==='STALE_RECHECK_REQUIRED';
+    const freshness=stale?` • LINE RECHECK REQUIRED${Number.isFinite(Number(p.stale_market_age_hours))?` (${Number(p.stale_market_age_hours).toFixed(1)}h old)`:''}`:'';
     return {
       display:evaluated
-        ? `${core}${price} • LJPC ${conf.toFixed(conf%1?1:0)}%`
-        : `${core}${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)`,
+        ? `${core}${price} • LJPC ${conf.toFixed(conf%1?1:0)}%${freshness}`
+        : `${core}${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)${freshness}`,
       confidence:conf,
       participant:n(p.participant),
       market:`${market}|${side}|${p.threshold??''}`,
