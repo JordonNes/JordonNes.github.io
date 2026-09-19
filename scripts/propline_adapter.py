@@ -64,6 +64,7 @@ GAME_ML_BOARD = DATA / "current_game_moneylines.json"
 QC_LOOKAHEAD = timedelta(days=7)
 QC_TARGET_UNIQUE_PLAYERS = 20
 QC_MAX_SNAPSHOT_AGE = timedelta(hours=12)
+QC_FALLBACK_SNAPSHOT_AGE = timedelta(hours=48)
 QC_POST_START_RETENTION = timedelta(hours=7)
 
 TEAM_ALIASES = {
@@ -190,8 +191,31 @@ def qc_consensus(rows):
 
 
 def build_qc_board(event_catalog):
-    wanted={e["event_id"]:e for e in event_catalog}
-    rows=defaultdict(list); cutoff=NOW-QC_MAX_SNAPSHOT_AGE
+    # If live event discovery is rate-limited/down, the already-published future board
+    # is a durable event catalog. Reuse its event IDs so known POMs are not erased.
+    catalog=list(event_catalog or [])
+    known_ids={str(e.get("event_id") or "") for e in catalog}
+    future_path=DATA/"future_market_board.json"
+    if future_path.exists():
+        try:
+            future=json.loads(future_path.read_text(encoding="utf-8"))
+            for e in future.get("events") or []:
+                eid=str(e.get("source_event_id") or "")
+                start=parse_dt(e.get("commence_time"))
+                if not eid.startswith("PL-") or eid in known_ids or not start or not (NOW < start <= NOW+QC_LOOKAHEAD):continue
+                catalog.append({
+                    "league":e.get("league"),"sport_key":e.get("sport_key") or "",
+                    "event_id":eid,"propline_event_id":str(e.get("propline_event_id") or eid.removeprefix("PL-")),
+                    "commence_time":e.get("commence_time"),"away":e.get("away"),"home":e.get("home")
+                })
+                known_ids.add(eid)
+        except (json.JSONDecodeError,OSError) as exc:
+            print(f"WARN future-board fallback catalog unreadable: {exc}")
+
+    wanted={e["event_id"]:e for e in catalog if e.get("event_id")}
+    rows=defaultdict(list); fallback_rows=defaultdict(list)
+    cutoff=NOW-QC_MAX_SNAPSHOT_AGE
+    fallback_cutoff=NOW-QC_FALLBACK_SNAPSHOT_AGE
     path=DATA/"market_history.csv"
     if path.exists():
         with path.open(newline="",encoding="utf-8-sig") as fh:
@@ -200,8 +224,10 @@ def build_qc_board(event_catalog):
                 if eid not in wanted or r.get("market_class")!="PLAYER_PROP":continue
                 if str(r.get("status","")).upper() not in {"OPEN","ACTIVE","VERIFIED","LIVE"}:continue
                 stamp=parse_dt(r.get("collected_at_pt"))
-                if stamp and stamp<cutoff:continue
-                rows[eid].append(r)
+                if stamp and stamp>=cutoff:
+                    rows[eid].append(r)
+                elif stamp and stamp>=fallback_cutoff:
+                    fallback_rows[eid].append(r)
 
     # Preserve the last legitimate pregame board after scheduled start.  This
     # keeps the published QC visible without acquiring or changing a wager
@@ -234,14 +260,33 @@ def build_qc_board(event_catalog):
 
     events=list(retained.values())
     for eid,e in wanted.items():
-        props=qc_consensus(rows.get(eid,[]))
+        fresh=rows.get(eid,[])
+        stale=fallback_rows.get(eid,[]) if not fresh else []
+        selected=fresh or stale
+        props=qc_consensus(selected)
+        using_stale=bool(stale and not fresh)
+        if using_stale:
+            stamps=[parse_dt(r.get("collected_at_pt")) for r in stale]
+            stamps=[x for x in stamps if x]
+            age=round((NOW-max(stamps)).total_seconds()/3600,2) if stamps else None
+            for p in props:
+                # Keep the exact historical threshold for LEGZ evaluation but do not
+                # publish an old price/book as current market evidence.
+                p["best_price"]=None; p["best_book"]=None
+                p["market_freshness"]="STALE_RECHECK_REQUIRED"
+                p["stale_market_age_hours"]=age
+                p["classification"]="STALE_POM_FOR_MODEL_ONLY"
         unique_players=len({norm(p.get("participant")) for p in props if norm(p.get("participant"))})
+        status=("COMPLETE_WITH_PROPS" if fresh and props else
+                "CACHED_MARKET_HISTORY_STALE" if using_stale and props else
+                "COMPLETE_NO_PROPS_RETURNED")
         current={
-            "league":e["league"],"sport_key":e["sport_key"],"source_event_id":eid,
-            "propline_event_id":e["propline_event_id"],"commence_time":e["commence_time"],
+            "league":e["league"],"sport_key":e.get("sport_key") or "","source_event_id":eid,
+            "propline_event_id":e.get("propline_event_id"),"commence_time":e["commence_time"],
             "away":e["away"],"home":e["home"],"away_aliases":team_aliases(e["away"]),
-            "home_aliases":team_aliases(e["home"]),"source":"MULTI_SOURCE_MARKET_HISTORY",
-            "sweep_status":"COMPLETE_WITH_PROPS" if props else "COMPLETE_NO_PROPS_RETURNED",
+            "home_aliases":team_aliases(e["home"]),
+            "source":"CACHED_DURABLE_MARKET_HISTORY" if using_stale else "MULTI_SOURCE_MARKET_HISTORY",
+            "sweep_status":status,
             "swept_at_utc":NOW.isoformat(),"pregame_locked":False,
             "target_unique_players":QC_TARGET_UNIQUE_PLAYERS,
             "unique_players":unique_players,
