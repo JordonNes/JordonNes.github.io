@@ -1,0 +1,87 @@
+name: LSI Spectrum v3 Release
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/lsi-spectrum-v3-release.yml'
+      - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/lsi_pipeline.py'
+      - 'scripts/lsi_publish_future_board.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-spectrum-v3-release
+  cancel-in-progress: true
+
+jobs:
+  validate-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: master, fetch-depth: 0}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+      - name: Execute Spectrum v3 from durable cache
+        env:
+          LSI_FAST_RUNTIME: 'true'
+        run: python scripts/legz_statistical_spectrum.py
+      - name: Validate durable evaluation ledger
+        run: |
+          python - <<'PY'
+          import json
+          board=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
+          state=json.load(open('data/lsi_evaluation_state.json',encoding='utf-8'))
+          assert board.get('evaluation_engine')=='LEGZ_STATISTICAL_SPECTRUM_3'
+          assert state.get('schema_version')=='LSI-EVALUATION-STATE-1'
+          props=[p for e in board.get('events',[]) for p in (e.get('props') or [])]
+          ids={r.get('evaluation_id') for r in state.get('records',[]) if r.get('evaluation_id')}
+          assert props, 'QC prop board has no props to evaluate'
+          assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in props)
+          assert all(p.get('evaluation_id') in ids for p in props)
+          evaluated=[p for p in props if p.get('evaluation_status')=='LJ_EVALUATED']
+          waiting=[p for p in props if p.get('evaluation_status')=='AWAITING_LJ_EVALUATION']
+          assert all(p.get('ljpc') is not None for p in evaluated)
+          assert all(p.get('ljpc') is None for p in waiting)
+          print(f'Spectrum v3 ledger valid: props={len(props)} evaluated={len(evaluated)} awaiting={len(waiting)} states={len(ids)}')
+          PY
+      - name: Build canonical Prediction Registry
+        run: python scripts/lsi_pipeline.py
+      - name: Publish future board
+        run: python scripts/lsi_publish_future_board.py
+      - name: Validate downstream parity
+        run: |
+          python - <<'PY'
+          import json
+          board=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
+          reg=json.load(open('data/prediction_registry.json',encoding='utf-8'))
+          future=json.load(open('data/future_market_board.json',encoding='utf-8'))
+          required={'evaluation_key','evaluation_id','evaluation_material_hash','evaluation_version','evaluated_at_utc','feature_state','spectrum','evaluation_reason'}
+          fields=set(reg.get('player_prop_fields') or [])
+          assert required <= fields, sorted(required-fields)
+          assert reg.get('evaluation_state_policy')
+          qids={p.get('evaluation_id') for e in board.get('events',[]) for p in (e.get('props') or []) if p.get('evaluation_id')}
+          rprops=[p for p in reg.get('predictions',[]) if p.get('market_class')=='PLAYER_PROP']
+          matched=[p for p in rprops if p.get('evaluation_id')]
+          assert all(p.get('evaluation_id') in qids for p in matched)
+          future_props=[p for e in future.get('events',[]) for p in (e.get('props') or e.get('player_props') or [])]
+          with_ids=[p for p in future_props if p.get('evaluation_id')]
+          assert all(p.get('evaluation_material_hash') and p.get('feature_state') for p in with_ids)
+          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(with_ids)}')
+          PY
+      - name: Commit Spectrum v3 release artifacts
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX LSI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/qc_prop_board.json data/lsi_evaluation_state.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js
+          if git diff --cached --quiet; then
+            echo 'Spectrum v3 artifacts already current.'
+          else
+            git commit -m 'LSI Spectrum v3 runtime release'
+            git pull --rebase --autostash origin master
+            git push origin master
+          fi
