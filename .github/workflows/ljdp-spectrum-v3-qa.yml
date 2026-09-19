@@ -115,7 +115,16 @@ jobs:
           assert all(p.get("ljpc") is not None for p in evaluated)
           assert all(p.get("ljpc") is None for p in awaiting)
           future_props=[p for e in future.get("events",[]) for p in (e.get("props") or [])]
-          assert future_props and all(p.get("evaluation_id") for p in future_props)
+          missing_future=[
+              {
+                  "participant":p.get("participant"),"market":p.get("market"),"threshold":p.get("threshold"),
+                  "side":p.get("side"),"ljpc":p.get("ljpc"),"model":p.get("model")
+              }
+              for p in future_props if not p.get("evaluation_id")
+          ]
+          if missing_future:
+              print("Future props missing canonical evaluation_id:", missing_future[:20])
+          assert future_props and not missing_future
           fields=set(reg.get("player_prop_fields") or [])
           for f in ("evaluation_id","evaluation_material_hash","feature_state","spectrum"):
               assert f in fields
