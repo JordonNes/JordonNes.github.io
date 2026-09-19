@@ -17,6 +17,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 BOARD=ROOT/"data"/"qc_prop_board.json"
+DIAG=ROOT/"data"/"nfl_history_diagnostics.json"
 UA={"User-Agent":"LEGZ-JINX-LSI/2.3"}
 
 def norm(v):
@@ -147,6 +148,14 @@ def main():
       "unsupported_markets":dict(sorted(unsupported_markets.items(),key=lambda x:(-x[1],x[0])))
     }
     BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    diagnostics={
+      "generated_at_utc":datetime.now(timezone.utc).isoformat(),
+      "hydrated":hydrated,"missing_player_prop_rows":missing,"unsupported_market_prop_rows":unsupported,
+      "top_missing_players":sorted(missing_names.items(),key=lambda x:(-x[1],x[0]))[:100],
+      "unsupported_markets":dict(sorted(unsupported_markets.items(),key=lambda x:(-x[1],x[0]))),
+      "history_rows_loaded":len(rows)
+    }
+    DIAG.write_text(json.dumps(diagnostics,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(f"NFL history hydration: hydrated={hydrated}; missing_player={missing}; unsupported_market={unsupported}; rows={len(rows)}")
     if unsupported_markets: print("NFL unsupported market counts:",dict(sorted(unsupported_markets.items(),key=lambda x:-x[1])))
     if missing_names: print("NFL top unresolved player names:",sorted(missing_names.items(),key=lambda x:(-x[1],x[0]))[:20])
