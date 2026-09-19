@@ -100,6 +100,16 @@ def event_rows(league,event,payload,stamp):
 def existing_ids():
     if not OUT.exists() or OUT.stat().st_size==0:return set()
     with OUT.open(newline="",encoding="utf-8-sig") as fh:return {r.get("record_id","") for r in csv.DictReader(fh)}
+
+def existing_events():
+    out=set()
+    if not OUT.exists() or OUT.stat().st_size==0:return out
+    with OUT.open(newline="",encoding="utf-8-sig") as fh:
+        for r in csv.DictReader(fh):
+            eid=str(r.get("provider_event_id") or "").strip()
+            if eid: out.add((r.get("league") or "",eid))
+    return out
+
 def append(rows):
     ids=existing_ids(); fresh=[r for r in rows if r["record_id"] not in ids]
     if not fresh:return 0
@@ -115,6 +125,7 @@ def main():
     ap.add_argument("--max-events",type=int,default=120)
     args=ap.parse_args(); leagues=args.league or list(ESPN); today=datetime.now(timezone.utc).date()
     stamp=datetime.now(timezone.utc).isoformat(); total=events=0
+    known_events=existing_events()
     for league in leagues:
         checked=0
         for d in range(max(0,args.days_back)+1):
@@ -126,11 +137,15 @@ def main():
                 if not final(event):continue
                 if checked>=args.max_events:break
                 checked+=1; events+=1
-                eid=event.get("id")
+                eid=str(event.get("id") or "")
+                if (league,eid) in known_events:
+                    continue
                 try:s=summary(league,eid)
                 except Exception as exc:
                     print(f"WARN history summary {league} {eid}: {exc}"); continue
-                total+=append(event_rows(league,event,s,stamp)); time.sleep(0.03)
+                added=append(event_rows(league,event,s,stamp)); total+=added
+                if added: known_events.add((league,eid))
+                time.sleep(0.03)
             if checked>=args.max_events:break
         print(f"{league}: checked {checked} completed events")
     print(f"LSI performance warehouse: appended {total} normalized player-stat facts from {events} completed events.")
