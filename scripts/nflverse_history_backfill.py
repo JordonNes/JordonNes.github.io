@@ -46,6 +46,31 @@ def convert(year,rows):
               "provider_event_id":game_id,"event_start_utc":"","participant":name,"provider_player_id":pid,
               "team":team,"metric":metric,"value":value,"source":"NFLVERSE_STATS_PLAYER_WEEKLY"})
     return out
+def existing_ids(path):
+    if not path.exists() or path.stat().st_size==0:return set()
+    with gzip.open(path,"rt",newline="",encoding="utf-8-sig") as fh:
+        return {r.get("record_id","") for r in csv.DictReader(fh)}
+
+def migrate_legacy(path,legacy):
+    if path.exists() or not legacy.exists():return
+    with legacy.open(newline="",encoding="utf-8-sig") as src, gzip.open(path,"wt",newline="",encoding="utf-8",compresslevel=6) as dst:
+        reader=csv.DictReader(src); writer=csv.DictWriter(dst,fieldnames=FIELDS)
+        writer.writeheader()
+        for row in reader: writer.writerow({k:row.get(k,"") for k in FIELDS})
+    legacy.unlink()
+    print(f"NFL migrated legacy shard -> {path}")
+
+def append_facts(path,facts):
+    ids=existing_ids(path)
+    fresh=[r for r in facts if r.get("record_id") not in ids]
+    if not fresh:return 0
+    new=not path.exists() or path.stat().st_size==0
+    with gzip.open(path,"at",newline="",encoding="utf-8",compresslevel=6) as fh:
+        w=csv.DictWriter(fh,fieldnames=FIELDS)
+        if new:w.writeheader()
+        w.writerows(fresh)
+    return len(fresh)
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--year",type=int,action="append")
@@ -60,10 +85,9 @@ def main():
         facts=convert(year,rows)
         path=OUTROOT/f"{year}.csv.gz"
         legacy=OUTROOT/f"{year}.csv"
-        with gzip.open(path,"wt",newline="",encoding="utf-8",compresslevel=6) as fh:
-            w=csv.DictWriter(fh,fieldnames=FIELDS);w.writeheader();w.writerows(facts)
-        if legacy.exists(): legacy.unlink()
-        print(f"NFL {year}: {len(rows)} player-week rows -> {len(facts)} canonical facts -> {path}")
-        total+=len(facts)
-    print(f"NFL durable shard backfill complete: {total} canonical facts across {len(set(years))} season(s).")
+        migrate_legacy(path,legacy)
+        added=append_facts(path,facts)
+        print(f"NFL {year}: source_rows={len(rows)} candidate_facts={len(facts)} appended={added} -> {path}")
+        total+=added
+    print(f"NFL durable shard refresh complete: appended {total} new canonical facts across {len(set(years))} season(s).")
 if __name__=="__main__":main()
