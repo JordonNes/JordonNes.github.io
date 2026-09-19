@@ -25,6 +25,25 @@ Daily refreshes must not remove, rename, reorder or restyle the core publication
 
 If a sport is inactive or no participant-prop market exists after a documented multi-source sweep, the sport page may retain a concise status panel, but it must not render empty parlay columns. An active sport with an available prop board must populate the applicable prediction sections.
 
+
+## NBA / WNBA basketball parity rule — effective September 18, 2026
+
+The **NBA Daily Predictions page is structurally modeled on the WNBA Daily Predictions page** and must use the same basketball publication architecture, shared renderer, QC lifecycle, and data-quality rules.
+
+Both basketball pages must use the same section order and behavior:
+
+1. **LEGZ HOT TOP**
+2. **JINX GAME WINNERS**
+3. **20 PIECE** — player props only
+4. **Per-Game QCs**
+5. Runtime event-state behavior: pregame populated tickets only; live games retain only the locked Normal construction plus current box score; final games show only final status/box score.
+
+The same QC invariant applies to both leagues: when **2 or more qualified POMs** can coexist in an eligible ticket mode, at least one **2–6 leg QC parlay** must be published. Empty upcoming QC shells are not valid on either page.
+
+NBA and WNBA may differ only in league-specific schedules, rosters, injuries, markets, statistics and predictions. Their page architecture, terminology, source-sweep requirements, 20 Piece logic, duplicate-event suppression, QC construction rules and lifecycle behavior must remain synchronized.
+
+Because the NBA and NHL seasons overlap substantially, their daily publication cadence may run in parallel, but NHL remains a hockey-specific model using hockey-appropriate markets such as shots, points, goals, assists and saves rather than basketball metrics.
+
 ## Required home-page sections
 
 The Daily Home page must retain:
