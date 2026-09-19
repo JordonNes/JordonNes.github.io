@@ -6,8 +6,7 @@ on:
     branches: [master]
     paths:
       - 'scripts/lsi_performance_ingest.py'
-      - 'scripts/nfl_player_history_adapter.py'
-      - 'scripts/nflverse_history_ingest.py'
+      - 'scripts/nflverse_history_backfill.py'
       - 'scripts/lsi_history_warehouse.py'
       - 'scripts/legz_statistical_spectrum.py'
       - '.github/workflows/lsi-performance-history.yml'
@@ -41,7 +40,7 @@ jobs:
 
       - name: Persist NFL history from nflverse
         continue-on-error: true
-        run: python scripts/nflverse_history_ingest.py
+        run: python scripts/nflverse_history_backfill.py
 
       - name: Refresh player registry and reusable spectrum cache
         run: python scripts/lsi_history_warehouse.py
