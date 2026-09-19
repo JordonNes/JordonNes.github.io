@@ -1,7 +1,7 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-09-19T17:08:25.767436+00:00",
-  "source_registry_generated_at_utc": "2026-09-19T01:09:07.785593+00:00",
+  "generated_at_utc": "2026-09-19T19:36:20.279291+00:00",
+  "source_registry_generated_at_utc": "2026-09-19T19:33:32.694010+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
     "ESPN_PUBLIC": {
@@ -29,22 +29,34 @@
     ]
   },
   "predictions_in_registry": 9,
-  "settled_predictions": 6,
-  "settlement_rate_pct": 66.67,
+  "settled_predictions": 7,
+  "settlement_rate_pct": 77.78,
   "run_counts": {
     "already_settled": 6,
-    "PENDING_EVENT": 3
+    "PENDING_EVENT": 2,
+    "settled": 1
   },
   "by_league": {
     "NCAA_Football": {
-      "PENDING_EVENT": 3,
-      "already_settled": 2
+      "PENDING_EVENT": 2,
+      "already_settled": 2,
+      "settled": 1
     },
     "NFL": {
       "already_settled": 4
     }
   },
-  "recent_settlements": [],
+  "recent_settlements": [
+    {
+      "prediction_id": "NCAA-UGA-ARK-FRAZIER-TD",
+      "league": "NCAA_Football",
+      "selection": "Nate Frazier Anytime TD",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856686",
+      "source": "ESPN_PUBLIC:401856686:BOX_SCORE"
+    }
+  ],
   "unresolved": [
     {
       "prediction_id": "NCAA-FSU-BAMA-KROMAH-60",
@@ -52,7 +64,7 @@
       "event_id": "FSU-BAMA-20260919",
       "provider_event_id": "401856685",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "state": "STATUS_DELAYED"
     },
     {
       "prediction_id": "NCAA-USC-RUT-MILLER-TD",
@@ -61,14 +73,6 @@
       "provider_event_id": "401858457",
       "reason": "PENDING_EVENT",
       "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "NCAA-UGA-ARK-FRAZIER-TD",
-      "league": "NCAA_Football",
-      "event_id": "UGA-ARK-20260919",
-      "provider_event_id": "401856686",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     }
   ],
   "influence_effect": "NONE"
