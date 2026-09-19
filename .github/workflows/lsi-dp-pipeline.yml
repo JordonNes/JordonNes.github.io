@@ -210,7 +210,9 @@ jobs:
       - name: Refresh persistent player registry and spectrum cache
         if: needs.clock.outputs.stage == 'MARKET_HISTORY' || needs.clock.outputs.stage == 'MASTER_PUBLICATION'
         run: python scripts/lsi_history_warehouse.py
-      - name: Merge verified override evidence before Spectrum\n        run: python scripts/lsi_apply_verified_overrides.py\n      - name: LEGZ Statistical Spectrum - evaluate collected POMs
+      - name: Merge verified override evidence before Spectrum
+        run: python scripts/lsi_apply_verified_overrides.py
+      - name: LEGZ Statistical Spectrum - evaluate collected POMs
         env:
           LSI_FAST_RUNTIME: ${{ needs.clock.outputs.stage == 'DISCOVERY' && 'true' || 'false' }}
         run: |
