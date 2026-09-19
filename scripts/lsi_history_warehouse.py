@@ -64,6 +64,20 @@ def load_json(path,default):
     try:return json.loads(path.read_text(encoding="utf-8"))
     except (FileNotFoundError,json.JSONDecodeError):return default
 
+def observation_order(row,source_path=None):
+    """Return a stable chronological sort key for recency windows."""
+    raw=str(row.get("event_start_utc") or "")
+    if raw:
+        return raw
+    eid=str(row.get("provider_event_id") or row.get("event_id") or "")
+    m=re.search(r"(?:NFLVERSE[-_])?(20\d{2}).*?(?:W|REG-|POST-)?(\d{1,2})(?:\D|$)",eid,re.I)
+    if m:
+        return f"{m.group(1)}-W{int(m.group(2)):02d}"
+    if source_path is not None:
+        sm=re.search(r"(20\d{2})",str(source_path))
+        if sm:return f"{sm.group(1)}-W00"
+    return "0000"
+
 def main():
     stamp=datetime.now(timezone.utc).isoformat()
     existing=load_json(REG,{"players":[]})
@@ -158,6 +172,7 @@ def main():
                     hist[(player_id(league,name),metric)].append(actual)
 
     perf=defaultdict(lambda:defaultdict(dict))
+    perf_order={}
     perf_files=[]
     if PERF.exists() and PERF.stat().st_size: perf_files.append(PERF)
     if HISTORY_ROOT.exists():
@@ -172,16 +187,27 @@ def main():
                 if fact_id in seen_facts: continue
                 if league and name and event and metric and value is not None:
                     seen_facts.add(fact_id)
-                    perf[(player_id(league,name),event)][metric]=value
+                    pid=player_id(league,name)
+                    perf[(pid,event)][metric]=value
+                    perf_order[(pid,event)]=max(perf_order.get((pid,event),"0000"),observation_order(r,perf_path))
+
+    # Build chronologically sorted series so L5/L10/L20 always mean the latest
+    # performances, regardless of which shard/file supplied the fact.
+    series=defaultdict(list)
     for (pid,event),stats in perf.items():
-        for metric,value in stats.items(): hist[(pid,metric)].append(value)
+        order=perf_order.get((pid,event),"0000")
+        for metric,value in stats.items():
+            series[(pid,metric)].append((order,event,value))
         if "rush_tds" in stats or "receiving_tds" in stats:
-            hist[(pid,"anytime_td")].append((stats.get("rush_tds") or 0)+(stats.get("receiving_tds") or 0))
+            series[(pid,"anytime_td")].append((order,event,(stats.get("rush_tds") or 0)+(stats.get("receiving_tds") or 0)))
         if all(k in stats for k in ("points","rebounds","assists")):
-            hist[(pid,"pra")].append(stats["points"]+stats["rebounds"]+stats["assists"])
-            hist[(pid,"points_rebounds")].append(stats["points"]+stats["rebounds"])
-            hist[(pid,"points_assists")].append(stats["points"]+stats["assists"])
-            hist[(pid,"rebounds_assists")].append(stats["rebounds"]+stats["assists"])
+            series[(pid,"pra")].append((order,event,stats["points"]+stats["rebounds"]+stats["assists"]))
+            series[(pid,"points_rebounds")].append((order,event,stats["points"]+stats["rebounds"]))
+            series[(pid,"points_assists")].append((order,event,stats["points"]+stats["assists"]))
+            series[(pid,"rebounds_assists")].append((order,event,stats["rebounds"]+stats["assists"]))
+    for key,items in series.items():
+        items.sort(key=lambda x:(x[0],x[1]))
+        hist[key]=[v for _,_,v in items]
 
     profiles=[]
     # Build exact-current-threshold features so market evaluation is a local lookup.
