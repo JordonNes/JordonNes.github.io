@@ -34,6 +34,8 @@ PROP_FIELDS = [
     "market_live", "market_suspended", "steam_score", "books_moved", "lineup_confirmed",
     "player_status", "rotowire_context_timestamp", "sharp_market_signal", "L5_hit_rate",
     "L10_hit_rate", "L20_hit_rate", "actual_result", "win_loss_push", "CLV",
+    "evaluation_key", "evaluation_id", "evaluation_material_hash", "evaluation_version",
+    "evaluated_at_utc", "feature_state", "spectrum", "evaluation_reason",
 ]
 
 
@@ -231,6 +233,23 @@ def propline_match(records: list[dict], event_id: str, participant: str, market:
     return candidates[-1]
 
 
+def qc_evaluation_index() -> dict:
+    if not QC_BOARD.exists():
+        return {}
+    try:
+        payload=json.loads(QC_BOARD.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    out={}
+    for event in payload.get("events") or []:
+        league=event.get("league") or ""
+        event_id=event.get("event_id") or event.get("source_event_id") or ""
+        for p in event.get("props") or []:
+            key=(str(league),str(event_id),norm(p.get("participant")),norm(p.get("market")),
+                 numeric_line(p.get("threshold")),norm(p.get("side")))
+            out[key]=p
+    return out
+
 def load_learning_overlay() -> dict:
     if not LEARNING.exists():
         return {"enabled": False, "markets": []}
@@ -375,6 +394,7 @@ def build():
     propline = load_propline()
     results = load_results()
     learning = load_learning_overlay()
+    qc_eval = qc_evaluation_index()
     rows = []
     errors = []
 
@@ -471,7 +491,23 @@ def build():
             }
             if market_class == "PLAYER_PROP":
                 record.update(prop_intelligence(row=row, base=base, summary=summary, contexts=contexts, propline=propline, results=results))
-            record["legz_value"] = legz_value_score(record)
+                qkey=(str(league_name),str(event_id),norm(participant),norm(market_name),numeric_line(threshold),norm(side))
+                q=qc_eval.get(qkey) or {}
+                for field in ("evaluation_key","evaluation_id","evaluation_material_hash","evaluation_version",
+                              "evaluated_at_utc","feature_state","spectrum","evaluation_reason"):
+                    record[field]=q.get(field)
+                if q.get("evaluation_status")=="LJ_EVALUATED" and f(q.get("ljpc")) is not None:
+                    canonical=f(q.get("ljpc"))
+                    record["legz_confidence"]=f(q.get("legz_baseline")) if f(q.get("legz_baseline")) is not None else record["legz_confidence"]
+                    record["jinx_input"]=f(q.get("jinx_input")) if f(q.get("jinx_input")) is not None else record["jinx_input"]
+                    record["lj_conviction"]=canonical
+                    final=max(0.0,min(100.0,canonical+learning_delta))
+                    record["ljpc"]=round(final,2)
+                    record["lj_probability"]=round(final,2)
+                    record["lj_confidence"]=round(final,2)
+            record["legz_value"] = f((qc_eval.get((str(league_name),str(event_id),norm(participant),norm(market_name),numeric_line(threshold),norm(side))) or {}).get("legz_value")) if market_class=="PLAYER_PROP" else None
+            if record["legz_value"] is None:
+                record["legz_value"] = legz_value_score(record)
             record["pom_value"] = pom_value_score(record["legz_value"], record["ljpc"])
             rows.append(record)
 
@@ -497,6 +533,7 @@ def build():
         "clv_definition": "Line-based threshold CLV when a sourced closing line exists; positive means L&J captured the more favorable threshold. Price/implied-probability CLV is not inferred.",
         "terminology_policy": "LJPC is the canonical final L&J hit probability. lj_probability and lj_confidence are compatibility aliases. legz_confidence is the LEGZ baseline probability input; legz_value is the separate evidence-strength score; pom_value is prediction-first desirability and excludes payout economics.",
         "pom_value_formula": "sqrt(legz_value * ljpc)",
+        "evaluation_state_policy": "Current PLAYER_PROP predictions inherit the exact matched LEGZ Statistical Spectrum evaluation state from qc_prop_board when available; evaluation_id and material hash make the feature-level decision auditable and reusable.",
         "learning_policy": "Historical adjustments apply only through LSI-LEARNING-OVERLAY-1 after every maturity gate passes; absolute adjustment is capped at 3 percentage points.",
         "learning_overlay_enabled": bool(learning.get("enabled")),
         "predictions": rows,
