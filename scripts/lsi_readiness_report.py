@@ -71,11 +71,15 @@ def main():
         else:t=dt(v)
         if t:odds_times.append(t)
 
+    odds_health=odds.get("health") or {}
     market_health={
       "propline":{"tracked_events":len(pl.get("events") or {}),"last_success_utc":max(pl_times).isoformat() if pl_times else None,
                   "age_hours":round((now-max(pl_times)).total_seconds()/3600,2) if pl_times else None},
       "the_odds_api":{"tracked_events":len(odds.get("events") or {}),"last_success_utc":max(odds_times).isoformat() if odds_times else None,
-                      "age_hours":round((now-max(odds_times)).total_seconds()/3600,2) if odds_times else None}
+                      "age_hours":round((now-max(odds_times)).total_seconds()/3600,2) if odds_times else None,
+                      "status":odds_health.get("status"),"checked_at_utc":odds_health.get("checked_at_utc"),
+                      "last_error":odds_health.get("last_error"),"auth_errors":odds_health.get("auth_errors"),
+                      "rate_limits":odds_health.get("rate_limits")}
     }
 
     blockers=[]
@@ -83,7 +87,13 @@ def main():
     if lj_status!="PASS": blockers.append({"type":"T48_LJPC_SLA","detail":lj.get("blockers") or {}})
     if market_health["propline"]["tracked_events"]==0: blockers.append({"type":"PROPLINE_NO_SUCCESS_STATE"})
     elif (market_health["propline"]["age_hours"] or 0)>12: blockers.append({"type":"PROPLINE_STALE","age_hours":market_health["propline"]["age_hours"]})
-    if market_health["the_odds_api"]["tracked_events"]==0: blockers.append({"type":"THE_ODDS_API_NO_SUCCESS_STATE","note":"Check ODDS_API_KEY/authorization before relying on this fallback."})
+    odds_status=str(market_health["the_odds_api"].get("status") or "")
+    if odds_status=="AUTH_ERROR":
+        blockers.append({"type":"THE_ODDS_API_AUTH_ERROR","note":"ODDS_API_KEY is being rejected; replace/re-authorize it before relying on this fallback.","last_error":market_health["the_odds_api"].get("last_error")})
+    elif odds_status=="RATE_LIMITED":
+        blockers.append({"type":"THE_ODDS_API_RATE_LIMITED","last_error":market_health["the_odds_api"].get("last_error")})
+    elif market_health["the_odds_api"]["tracked_events"]==0:
+        blockers.append({"type":"THE_ODDS_API_NO_SUCCESS_STATE","note":"No successful event state has been recorded yet."})
     if incomplete: blockers.append({"type":"HISTORY_BACKFILL_IN_PROGRESS","remaining_leagues":[x["league"] for x in incomplete]})
     nfl_status=str(nfl.get("status") or "UNKNOWN")
     if nfl_status!="COMPLETE": blockers.append({"type":"NFL_DEEP_HISTORY_IN_PROGRESS","next_year":nfl.get("next_year")})
