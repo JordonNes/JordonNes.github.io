@@ -176,13 +176,30 @@ def distribution_features(prop, history):
     threshold=effective_threshold(prop,metric); side=norm(prop.get("side"))
     if not vals: return {"n":0}
     mean=statistics.fmean(vals); median=statistics.median(vals); sd=statistics.pstdev(vals) if len(vals)>1 else 0.0
-    hits=None
+    hit_count=None; raw_hit=None; smoothed=None; normal_prob=None; model_prob=None
     if threshold is not None:
-        if side in {"over","more","yes"}: hits=sum(v>threshold for v in vals)/len(vals)*100
-        elif side in {"under","less","no"}: hits=sum(v<threshold for v in vals)/len(vals)*100
+        if side in {"over","more","yes"}: hit_count=sum(v>threshold for v in vals)
+        elif side in {"under","less","no"}: hit_count=sum(v<threshold for v in vals)
+    if hit_count is not None:
+        raw_hit=hit_count/len(vals)*100
+        # Laplace smoothing prevents tiny samples from becoming artificial 0%/100% certainties.
+        smoothed=(hit_count+1)/(len(vals)+2)*100
+        # Continuous yardage/volume markets benefit from threshold distance, which
+        # distinguishes players that happen to share the same empirical hit count.
+        binary_like=metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and threshold is not None and threshold<=0.5
+        if not binary_like and len(vals)>=8 and sd>0:
+            nd=statistics.NormalDist(mu=mean,sigma=sd)
+            if side in {"over","more","yes"}: normal_prob=(1-nd.cdf(threshold))*100
+            elif side in {"under","less","no"}: normal_prob=nd.cdf(threshold)*100
+            if normal_prob is not None: normal_prob=clamp(normal_prob,1,99)
+        model_prob=smoothed if normal_prob is None else smoothed*.70+normal_prob*.30
     return {"n":len(vals),"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
             "coefficient_of_variation":round(sd/abs(mean),3) if mean else None,
-            "exact_threshold_hit_rate":round(hits,2) if hits is not None else None}
+            "hit_count":hit_count,
+            "exact_threshold_hit_rate":round(raw_hit,2) if raw_hit is not None else None,
+            "smoothed_hit_probability":round(smoothed,2) if smoothed is not None else None,
+            "distribution_model_probability":round(model_prob,2) if model_prob is not None else None,
+            "normal_threshold_probability":round(normal_prob,2) if normal_prob is not None else None}
 
 def spectrum_cache_index():
     if not CACHE.exists(): return {}
@@ -251,7 +268,7 @@ def spectrum(prop, history, contexts, cache):
 
     # A real statistical evaluation requires player-performance evidence.
     # Price/consensus/source count alone can never mint LJPC.
-    if not rates and dist.get("exact_threshold_hit_rate") is None:
+    if not rates and dist.get("distribution_model_probability") is None:
         return {
           "evaluation_status":"AWAITING_LJ_EVALUATION","ljpc":None,"lj_confidence":None,
           "legz_baseline":None,"jinx_input":None,"legz_value":None,"pom_value":None,
@@ -260,19 +277,29 @@ def spectrum(prop, history, contexts, cache):
           "evaluation_reason":"No acquired player-performance hit-rate evidence; market probability retained as evidence only."
         }
 
-    if dist.get("exact_threshold_hit_rate") is not None:
-        rates.append(dist["exact_threshold_hit_rate"])
-        rate_map.setdefault("EXACT_THRESHOLD_HISTORY",dist["exact_threshold_hit_rate"])
+    dist_prob=dist.get("distribution_model_probability")
+    if dist_prob is not None:
+        rates.append(dist_prob)
+        rate_map.setdefault("DISTRIBUTION_MODEL",dist_prob)
 
-    # Weight larger samples more heavily while retaining recency.
-    weights=[0.50,0.30,0.20][:len(rates)] if len(rates)==3 else ([0.60,0.40] if len(rates)==2 else [1.0])
+    # Recency remains primary; the full stored distribution contributes threshold
+    # distance and sample-size smoothing so identical L5/L10 hit counts do not force
+    # unrelated players to identical LJPC values.
     ordered=[]
     for k in ("L5_HIT_RATE","L10_HIT_RATE","L20_HIT_RATE"):
         if k in rate_map: ordered.append(rate_map[k])
-    if not ordered: ordered=rates
-    weights=[0.50,0.30,0.20][:len(ordered)] if len(ordered)==3 else ([0.60,0.40] if len(ordered)==2 else [1.0])
-    stat=sum(v*w for v,w in zip(ordered,weights))/sum(weights)
-    dispersion=statistics.pstdev(ordered) if len(ordered)>1 else 0.0
+    if ordered:
+        weights=[0.50,0.30,0.20][:len(ordered)] if len(ordered)==3 else ([0.60,0.40] if len(ordered)==2 else [1.0])
+        recent=sum(v*w for v,w in zip(ordered,weights))/sum(weights)
+        stat=recent*.70+dist_prob*.30 if dist_prob is not None else recent
+    elif dist_prob is not None:
+        ordered=[dist_prob]; stat=dist_prob
+    else:
+        ordered=rates
+        weights=[0.60,0.40] if len(ordered)==2 else [1.0]*max(1,len(ordered))
+        stat=sum(v*w for v,w in zip(ordered,weights))/sum(weights)
+    consistency_values=ordered+([dist_prob] if dist_prob is not None and dist_prob not in ordered else [])
+    dispersion=statistics.pstdev(consistency_values) if len(consistency_values)>1 else 0.0
     consistency=max(0.0,100.0-dispersion*3.0)
     # Market prior is a bounded secondary signal, never the prediction itself.
     L=stat if market_prior is None else stat*0.82+market_prior*0.18
@@ -293,7 +320,7 @@ def spectrum(prop, history, contexts, cache):
       "legz_baseline":round(L,2),"jinx_input":round(j,2),"legz_value":legz_value,"pom_value":pom_value,
       "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
       "spectrum":{"performance":ordered,"distribution":dist,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
-      "evaluation_reason":"LEGZ statistical spectrum combines player-performance distribution and bounded market prior; JINX applies attributable availability/role context only."
+      "evaluation_reason":"LEGZ statistical spectrum combines recency hit rates with a sample-size-smoothed threshold distribution, then applies a bounded market prior; JINX applies attributable availability/role context only."
     }
 
 def main():
