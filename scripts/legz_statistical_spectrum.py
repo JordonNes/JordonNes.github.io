@@ -6,7 +6,7 @@ Market price is evidence/prior only; it is never published as LJPC by itself.
 Insufficiently supported POMs remain AWAITING_LJ_EVALUATION.
 """
 from __future__ import annotations
-import csv, json, math, statistics
+import csv, gzip, json, math, statistics
 from collections import defaultdict
 from pathlib import Path
 
@@ -18,6 +18,9 @@ PERF=DATA/"performance_history.csv"
 CONTEXT=DATA/"context_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
 HISTORY_ROOT=DATA/"history"
+
+def csv_open(path):
+    return gzip.open(path,"rt",encoding="utf-8-sig",newline="") if str(path).endswith(".gz") else path.open(newline="",encoding="utf-8-sig")
 
 def num(v):
     if v in (None,""): return None
@@ -116,7 +119,7 @@ def historical_results():
     out=defaultdict(list)
     # Settled L&J predictions remain useful exact-market evidence.
     if HISTORY.exists():
-        with HISTORY.open(newline="",encoding="utf-8-sig") as fh:
+        with csv_open(HISTORY) as fh:
             for row in csv.DictReader(fh):
                 league=str(row.get("league") or row.get("sport") or "")
                 player=player_norm(row.get("participant") or row.get("player"))
@@ -131,10 +134,10 @@ def historical_results():
     meta={}
     files=[]
     if PERF.exists() and PERF.stat().st_size: files.append(PERF)
-    if HISTORY_ROOT.exists(): files.extend(sorted(HISTORY_ROOT.glob("*/*.csv")))
+    if HISTORY_ROOT.exists(): files.extend(sorted(HISTORY_ROOT.glob("*/*.csv*")))
     seen=set()
     for path in files:
-        with path.open(newline="",encoding="utf-8-sig") as fh:
+        with csv_open(path) as fh:
             for row in csv.DictReader(fh):
                 league=str(row.get("league") or "")
                 player=player_norm(row.get("participant"))
