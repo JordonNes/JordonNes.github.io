@@ -17,6 +17,7 @@ HISTORY=DATA/"results.csv"
 PERF=DATA/"performance_history.csv"
 CONTEXT=DATA/"context_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
+HISTORY_ROOT=DATA/"history"
 
 def num(v):
     if v in (None,""): return None
@@ -30,6 +31,14 @@ def norm(v):
     import re
     return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
 
+def player_norm(v):
+    import re
+    s=str(v or "").strip()
+    # Sportsbook feeds sometimes append team abbreviations, e.g. "Gunner Stockton (UGA)".
+    # Historical identity must resolve to the athlete, not a presentation suffix.
+    s=re.sub(r"\s*\([A-Za-z0-9 .&'\-]{2,24}\)\s*$","",s)
+    return norm(s)
+
 def market_metric(market):
     m=norm(market)
     rules=[
@@ -39,7 +48,7 @@ def market_metric(market):
       (("passing touchdowns","passing tds","pass tds"),"pass_tds"),
       (("rushing yards","rush yards"),"rush_yards"),
       (("rushing attempts","rush attempts","carries"),"rush_attempts"),
-      (("receiving yards","reception yards"),"receiving_yards"),
+      (("receiving yards","reception yards","reception yds","receiving yds"),"receiving_yards"),
       (("receptions","player receptions"),"receptions"),
       (("targets",),"targets"),
       (("anytime td","anytime touchdown","touchdowns","to score a touchdown"),"anytime_td"),
@@ -53,6 +62,7 @@ def market_metric(market):
       (("rebounds",),"rebounds"),
       (("assists",),"assists"),
       (("three pointers made","3 pointers made","threes made","3pm"),"threes_made"),
+      (("extra points made","xp made","xpm"),"extra_points_made"),
       (("steals",),"steals"),
       (("blocks",),"blocks"),
       (("hits",),"hits"),
@@ -96,24 +106,32 @@ def historical_results():
         with HISTORY.open(newline="",encoding="utf-8-sig") as fh:
             for row in csv.DictReader(fh):
                 league=str(row.get("league") or row.get("sport") or "")
-                player=norm(row.get("participant") or row.get("player"))
+                player=player_norm(row.get("participant") or row.get("player"))
                 market=norm(row.get("market"))
                 actual=num(row.get("actual_result"))
                 if player and market and actual is not None:
                     out[(league,player,market)].append(actual)
 
-    # Permanent player-game warehouse is the primary reusable statistical source.
+    # Permanent player-game warehouse + league/season shards are the primary
+    # reusable statistical source. De-duplicate immutable facts across stores.
     by_event=defaultdict(dict)
     meta={}
-    if PERF.exists():
-        with PERF.open(newline="",encoding="utf-8-sig") as fh:
+    files=[]
+    if PERF.exists() and PERF.stat().st_size: files.append(PERF)
+    if HISTORY_ROOT.exists(): files.extend(sorted(HISTORY_ROOT.glob("*/*.csv")))
+    seen=set()
+    for path in files:
+        with path.open(newline="",encoding="utf-8-sig") as fh:
             for row in csv.DictReader(fh):
                 league=str(row.get("league") or "")
-                player=norm(row.get("participant"))
+                player=player_norm(row.get("participant"))
                 event=str(row.get("provider_event_id") or row.get("event_id") or "")
                 metric=str(row.get("metric") or "")
                 value=num(row.get("value"))
+                rid=row.get("record_id") or f"{league}|{event}|{row.get('provider_player_id') or player}|{metric}"
+                if rid in seen: continue
                 if not league or not player or not event or not metric or value is None: continue
+                seen.add(rid)
                 key=(league,player,event)
                 by_event[key][metric]=value
                 meta[key]=row.get("event_start_utc") or ""
@@ -135,7 +153,7 @@ def historical_results():
 
 def distribution_features(prop, history):
     league=str(prop.get("_league") or "")
-    player=norm(prop.get("participant"))
+    player=player_norm(prop.get("participant"))
     market=norm(prop.get("market"))
     metric=market_metric(market)
     vals=(history.get((league,player,metric)) if metric else None) or history.get((league,player,market)) or []
@@ -156,7 +174,7 @@ def spectrum_cache_index():
     except (json.JSONDecodeError,AttributeError): return {}
     out={}
     for r in rows:
-        key=(str(r.get("league") or ""),str(r.get("player") or "").strip().lower(),str(r.get("market") or "").strip().lower(),str(r.get("threshold") or ""),str(r.get("side") or "").strip().lower())
+        key=(str(r.get("league") or ""),player_norm(r.get("player")),str(r.get("market") or "").strip().lower(),str(r.get("threshold") or ""),str(r.get("side") or "").strip().lower())
         out[key]=r
     return out
 
@@ -166,13 +184,13 @@ def context_index():
     except (json.JSONDecodeError,AttributeError): return {}
     out={}
     for row in records:
-        player=str(row.get("player") or "").strip().lower()
+        player=player_norm(row.get("player"))
         if player and player not in out: out[player]=row
     return out
 
 def jinx_context(prop, contexts):
     """Conservative, attributable context layer. No private inference."""
-    row=contexts.get(str(prop.get("participant") or "").strip().lower()) or {}
+    row=contexts.get(player_norm(prop.get("participant"))) or {}
     status=str(row.get("player_status") or "").upper()
     severity=str(row.get("context_severity") or "").upper()
     ctype=str(row.get("context_type") or "").upper()
