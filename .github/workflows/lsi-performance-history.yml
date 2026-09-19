@@ -19,7 +19,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: lsi-core-data-writer
+  group: lsi-history-writer
   cancel-in-progress: false
 
 jobs:
@@ -43,27 +43,15 @@ jobs:
         continue-on-error: true
         run: python scripts/nflverse_history_backfill.py
 
-      - name: Refresh player registry and reusable spectrum cache
-        run: python scripts/lsi_history_warehouse.py
-
       - name: Measure historical warehouse coverage
         run: python scripts/lsi_history_coverage.py
-
-      - name: Re-evaluate current POMs from local history
-        run: python scripts/legz_statistical_spectrum.py
-
-      - name: Publish future board, T-48 coverage and readiness
-        run: |
-          python scripts/lsi_publish_future_board.py
-          python scripts/lsi_t48_coverage.py
-          python scripts/lsi_readiness_report.py
 
       - name: Commit durable history and derived cache
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/performance_history.csv data/history/NFL data/lsi_player_registry.json data/lsi_spectrum_cache.json data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json
+          git add data/performance_history.csv data/history/NFL data/history_coverage.json
           if git diff --cached --quiet; then
             echo 'No new completed performance facts.'
             exit 0
