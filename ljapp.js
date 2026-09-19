@@ -30,7 +30,10 @@
     const slug=NFL_LOGOS[key];
     return slug?("https://a.espncdn.com/i/teamlogos/nfl/500/"+slug+".png"):"";
   }
-  function teamNameHTML(name){
+  function teamNameHTML(value){
+    const name=typeof value==="object"
+      ? (value?.team?.abbreviation||value?.team?.shortDisplayName||value?.team?.displayName||"TEAM")
+      : value;
     const logo=nflLogoUrl(name);
     return `<span class="qc-team-name">${logo?`<img class="qc-team-logo" src="${esc(logo)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:""}<span>${esc(name)}</span></span>`;
   }
@@ -664,10 +667,58 @@
         list.insertAdjacentHTML("beforeend",qcRow(runtimeScheduleRow(event),idx++));
       });
   }
+  function runtimeNflScheduleRow(event){
+    const comp=(event?.competitions||[{}])[0],teams=comp.competitors||[];
+    const away=teams.find(x=>x.homeAway==="away")||teams[0]||{};
+    const home=teams.find(x=>x.homeAway==="home")||teams[1]||{};
+    const team=t=>t.team?.abbreviation||t.team?.shortDisplayName||t.team?.displayName||"TBD";
+    const when=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(new Date(event.date));
+    return {
+      time:when.toUpperCase(),away:team(away),home:team(home),
+      market:"SCHEDULED • NFL WEEKLY QC INTELLIGENCE",
+      winner:"",conf:"—",hot:[],sns1:[],sns2:[],normal:[],demon:[],
+      foot:"Official NFL schedule fallback. Player props and JINX odds populate from the LSI market/evaluation board when available.",
+      _propEventId:String(event.id||"")
+    };
+  }
+  function nflRuntimeBucket(event){
+    const wd=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"long"}).format(new Date(event.date)).toUpperCase();
+    if(wd==="THURSDAY") return ["thursday","Thursday Night Football"];
+    if(wd==="SUNDAY") return ["sunday","Sunday Football"];
+    if(wd==="MONDAY") return ["monday","Monday Night Football"];
+    return ["other","NFL Games"];
+  }
+  function augmentNflWeeklyRows(events){
+    const section=document.querySelector(".nfl-qc-section"); if(!section) return;
+    const represented=new Set();
+    document.querySelectorAll(".nfl-qc-section .qc-row").forEach(row=>{
+      const ev=eventForRow(row,events); if(ev) represented.add(String(ev.id));
+    });
+    const ensureList=(bucket,label)=>{
+      let group=section.querySelector(".nfl-qc-"+bucket);
+      if(!group){
+        const anchor=section.querySelector(".qc-standard")||section.querySelector(".layout-seal");
+        const html=`<div class="nfl-qc-day nfl-qc-${bucket}"><div class="nfl-qc-daybar">${esc(label)}</div><div class="qc-list nfl-qc-list"></div></div>`;
+        if(anchor) anchor.insertAdjacentHTML("beforebegin",html); else section.insertAdjacentHTML("beforeend",html);
+        group=section.querySelector(".nfl-qc-"+bucket);
+      }
+      return group?.querySelector(".qc-list");
+    };
+    let idx=document.querySelectorAll(".nfl-qc-section .qc-row").length;
+    events.sort((a,b)=>Date.parse(a.date||0)-Date.parse(b.date||0)).forEach(event=>{
+      if(represented.has(String(event.id))) return;
+      const [bucket,label]=nflRuntimeBucket(event);
+      const list=ensureList(bucket,label); if(!list) return;
+      list.insertAdjacentHTML("beforeend",qcRow(runtimeNflScheduleRow(event),idx++));
+      represented.add(String(event.id));
+    });
+  }
+
   async function hydrateGameStates(key){
     if(!ESPN_SCOREBOARD[key]) return;
     try{
       const events=await fetchCurrentEvents(key);
+      if(key==="NFL") augmentNflWeeklyRows(events);
       if(key==="NCAA_Football") augmentNcaaWeeklyRows(events);
       document.querySelectorAll(".qc-row").forEach(row=>{
         const event=eventForRow(row,events);
