@@ -416,7 +416,9 @@
     // acquisition cycle must not erase it before the event actually starts.
     const durablePublished=items=>(items||[]).filter(x=>{
       const s=n(x);
-      return s && !watchRx.test(s) && !/AWAITING L&J EVALUATION|MARKET BASELINE|PROVISIONAL HIT ESTIMATE/i.test(s);
+      return s && !watchRx.test(s)
+        && !/AWAITING L&J EVALUATION|MARKET BASELINE|PROVISIONAL HIT ESTIMATE/i.test(s)
+        && /(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i.test(s);
     });
     const lockedHot=durablePublished(q.hot);
     const lockedSns1=durablePublished(q.sns1);
