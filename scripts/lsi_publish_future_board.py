@@ -281,7 +281,9 @@ def main():
             p=canonical_prop(raw)
             key=(str(p["participant"]).strip().lower(),str(p["market_key"]).strip().lower())
             prior=best.get(key)
-            if p["ljpc"] is None: continue
+            # Publication is canonical-only: an LJPC without a Spectrum v3
+            # evaluation identity is not eligible for future-board/QC/Quickie use.
+            if p["ljpc"] is None or not p.get("evaluation_id"): continue
             if prior is None or p["ljpc"]>prior["ljpc"]:
                 best[key]=p
         props=sorted(best.values(),key=lambda x:(-x["ljpc"],str(x["participant"]),str(x["market"])))
