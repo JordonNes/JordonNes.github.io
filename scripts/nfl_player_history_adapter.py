@@ -25,7 +25,10 @@ def norm(v):
 
 def name_aliases(v):
     """Generate conservative identity aliases for provider formatting differences."""
-    base=norm(v)
+    raw=str(v or "").strip()
+    # Market feeds often decorate a player as "Name (TEAM)". Team is context, not identity.
+    raw=re.sub(r"\s*\([A-Za-z0-9]{2,4}\)\s*$","",raw).strip()
+    base=norm(raw)
     if not base:return set()
     toks=base.split()
     suffixes={"jr","sr","ii","iii","iv","v"}
@@ -73,7 +76,11 @@ def stat_value(row,market):
     if "rush yard" in m or "rush yds" in m:return g("rushing_yards")
     if "reception" in m and "yard" not in m and "yds" not in m:return g("receptions")
     if ("receiv" in m or "reception" in m) and ("yard" in m or "yds" in m):return g("receiving_yards")
-    if "anytime td" in m or ("touchdown" in m and "pass" not in m):
+    if "2plus td" in m or "2 plus td" in m or "2+ td" in m:
+        a=g("rushing_tds") or 0
+        b=g("receiving_tds") or 0
+        return a+b
+    if "anytime td" in m or ("touchdown" in m and "pass" not in m and "1st td" not in m and "first td" not in m):
         a=g("rushing_tds") or 0
         b=g("receiving_tds") or 0
         return a+b
@@ -82,7 +89,9 @@ def stat_value(row,market):
 def hit(v,side,threshold,market):
     s=norm(side)
     t=num(threshold)
-    if t is None and ("td" in norm(market) or "touchdown" in norm(market)): t=0.5
+    mm=norm(market)
+    if t is None and ("2plus td" in mm or "2 plus td" in mm): t=1.5
+    elif t is None and ("td" in mm or "touchdown" in mm): t=0.5
     if t is None:return None
     if s in {"over","more","yes"}:return 1 if v>t else 0
     if s in {"under","less","no"}:return 1 if v<t else 0
@@ -112,12 +121,21 @@ def main():
     for name in by_player: by_player[name].sort(key=lambda x:(x[0],x[1]))
 
     def resolve_player(value):
-        direct=norm(value)
-        if direct in by_player:return direct
+        aliases=name_aliases(value)
+        for alias in aliases:
+            if alias in by_player:return alias
         candidates=set()
-        for alias in name_aliases(value):
+        for alias in aliases:
             candidates.update(alias_to_names.get(alias) or set())
-        return next(iter(candidates)) if len(candidates)==1 else None
+        if len(candidates)==1:return next(iter(candidates))
+        if candidates:
+            # Provider history may change suffix formatting across seasons. Prefer the
+            # candidate with the deepest weekly history rather than treating that as a
+            # different athlete.
+            ranked=sorted(candidates,key=lambda n:len(by_player.get(n) or []),reverse=True)
+            if len(ranked)==1 or len(by_player.get(ranked[0]) or [])>len(by_player.get(ranked[1]) or []):
+                return ranked[0]
+        return None
 
     hydrated=unsupported=missing=0
     missing_names=defaultdict(int); unsupported_markets=defaultdict(int)
