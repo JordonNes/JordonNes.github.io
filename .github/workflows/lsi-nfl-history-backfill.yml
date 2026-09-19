@@ -1,0 +1,67 @@
+name: LSI NFL History Backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'Optional single NFL season year; blank refreshes current + previous'
+        required: false
+        type: string
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/nflverse_history_backfill.py'
+      - '.github/workflows/lsi-nfl-history-backfill.yml'
+  schedule:
+    - cron: '15 11 * * 2'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-nfl-history-backfill
+  cancel-in-progress: true
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: master, fetch-depth: 0}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+
+      - name: Refresh durable NFL season shards
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.year }}" ]; then
+            python scripts/nflverse_history_backfill.py --year "${{ inputs.year }}"
+          else
+            python scripts/nflverse_history_backfill.py
+          fi
+
+      - name: Rebuild LSI registry, spectrum cache and current LJPC
+        run: |
+          python scripts/lsi_history_warehouse.py
+          python scripts/legz_statistical_spectrum.py
+          python scripts/lsi_publish_future_board.py
+          python scripts/lsi_t48_coverage.py
+
+      - name: Commit durable NFL history
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX LSI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/history/NFL data/lsi_player_registry.json data/lsi_spectrum_cache.json data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/ljpc_coverage.json
+          if git diff --cached --quiet; then
+            echo 'NFL history shards already current.'
+            exit 0
+          fi
+          git commit -m "LSI durable NFL history shard refresh"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin master
+            if git push origin master; then exit 0; fi
+            sleep 3
+          done
+          exit 1
