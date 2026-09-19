@@ -248,7 +248,7 @@ def spectrum(prop, history, contexts, cache):
     rates=[]
     dist=distribution_features(prop,history)
     rate_map={}
-    for key in ("L5_hit_rate","L10_hit_rate","L20_hit_rate","l5_hit_rate","l10_hit_rate","l20_hit_rate"):
+    for key in ("L3_hit_rate","L5_hit_rate","L10_hit_rate","L20_hit_rate","l3_hit_rate","l5_hit_rate","l10_hit_rate","l20_hit_rate"):
         v=pct(prop.get(key))
         if v is not None and 0<=v<=100:
             canonical=key.upper()
@@ -256,7 +256,7 @@ def spectrum(prop, history, contexts, cache):
     # Reuse locally cached exact-threshold features before considering any external research.
     cache_key=(str(prop.get("_league") or ""),player_norm(prop.get("participant")),norm(prop.get("market")),str(prop.get("threshold") or ""),norm(prop.get("side")))
     cached=cache.get(cache_key) or {}
-    for key in ("L5_hit_rate","L10_hit_rate","L20_hit_rate"):
+    for key in ("L3_hit_rate","L5_hit_rate","L10_hit_rate","L20_hit_rate"):
         v=pct(cached.get(key))
         if v is not None and 0<=v<=100:
             rate_map.setdefault(key.upper(),v)
@@ -286,7 +286,9 @@ def spectrum(prop, history, contexts, cache):
     # distance and sample-size smoothing so identical L5/L10 hit counts do not force
     # unrelated players to identical LJPC values.
     ordered=[]
-    for k in ("L5_HIT_RATE","L10_HIT_RATE","L20_HIT_RATE"):
+    league=str(prop.get("_league") or "")
+    preferred=("L3_HIT_RATE","L5_HIT_RATE","L10_HIT_RATE") if league in {"NFL","NCAA_Football"} else ("L5_HIT_RATE","L10_HIT_RATE","L20_HIT_RATE")
+    for k in preferred:
         if k in rate_map: ordered.append(rate_map[k])
     if ordered:
         weights=[0.50,0.30,0.20][:len(ordered)] if len(ordered)==3 else ([0.60,0.40] if len(ordered)==2 else [1.0])
