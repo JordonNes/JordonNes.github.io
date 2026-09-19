@@ -172,8 +172,8 @@
       hotRows.push([
         p.participant,
         scoutPick(p),
-        pct(baseline),
-        `${price} • PROVISIONAL MARKET BASELINE`
+        '—',
+        `${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${pct(baseline)} (NOT LJPC)`
       ]);
     }
     s.hotTop=hotRows;
@@ -251,10 +251,10 @@
         p.participant,
         scoutPick(p),
         price,
-        pct(baseline),
-        `PROVISIONAL LJPC • MARKET BASELINE • ${Number(p.market_source_count||1)} SRC`,
+        '—',
+        `AWAITING L&J EVALUATION • MARKET BASELINE ${pct(baseline)} (NOT LJPC) • ${Number(p.market_source_count||1)} SRC`,
         '👀',
-        baseline
+        null
       ]);
     }
 
@@ -305,13 +305,13 @@
     const m=s.match(/(?:LJPC|L&J)\s*(\d+(?:\.\d+)?)%/i);
     return {
       display:s,
-      confidence:m?Number(m[1]):60,
+      confidence:m?Number(m[1]):null,
       participant:n(s.split(/\bOVER\b|\bUNDER\b|\bMORE\b|\bLESS\b|\bYES\b|\bNO\b/i)[0]),
       market:n(s),
       best_price:null,
       market_source_count:1,
       pomType:textPomType(s),
-      sourceMode:'PUBLISHED_QC_PROP'
+      sourceMode:m?'PUBLISHED_QC_PROP':'PUBLISHED_QC_PROP_UNEVALUATED'
     };
   }
 
@@ -327,9 +327,12 @@
       ? ` (${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''})`
       : '';
     const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
-    const conf=evaluated?Number(p.ljpc):marketBaselineLj(p);
+    const baseline=marketBaselineLj(p);
+    const conf=evaluated?Number(p.ljpc):null;
     return {
-      display:`${core}${price} • ${evaluated?'LJPC':'PROVISIONAL HIT ESTIMATE'} ${conf.toFixed(conf%1?1:0)}%`,
+      display:evaluated
+        ? `${core}${price} • LJPC ${conf.toFixed(conf%1?1:0)}%`
+        : `${core}${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)`,
       confidence:conf,
       participant:n(p.participant),
       market:`${market}|${side}|${p.threshold??''}`,
@@ -339,7 +342,7 @@
       best_price:Number.isFinite(Number(p.price))?Number(p.price):null,
       market_source_count:Number(p.market_source_count||0),
       pomType:explicitPomType(p)||'NORMAL',
-      sourceMode:evaluated?'LJ_EVALUATED_OVERRIDE':'PROVISIONAL_MARKET_BASELINE'
+      sourceMode:evaluated?'LJ_EVALUATED_OVERRIDE':'AWAITING_LJ_EVALUATION'
     };
   }
 
@@ -353,7 +356,7 @@
   }
 
   function candidateScore(c){
-    const confidence=Number(c.confidence||0);
+    const confidence=Number.isFinite(Number(c.confidence))?Number(c.confidence):-1e9;
     const sources=Math.min(5,Number(c.market_source_count||0));
     // Normal L&J ranking is prediction-first. Price economics are reserved
     // for the Demon sorter after the LJPC gate.
@@ -401,6 +404,7 @@
     const manual=(q.hot||[]).map(manualCandidate).filter(Boolean);
     const board=(event?.props||[]).map(boardCandidate).filter(Boolean);
     let pool=dedupe([...manual,...board]);
+    const evaluatedPool=pool.filter(c=>Number.isFinite(Number(c.confidence)) && c.confidence>0);
 
     pool.sort((a,b)=>{
       if(a.sourceMode!==b.sourceMode){
@@ -413,20 +417,22 @@
     q._propSweepStatus=event?.sweep_status||'NO_BOARD_MATCH';
     q._propSweepSource=event?.source||'PUBLISHED_QC_ONLY';
     q._propSweepCount=pool.length;
+    q._propEvaluatedCount=evaluatedPool.length;
+    q._propAwaitingCount=pool.length-evaluatedPool.length;
     q._propEventId=event?.source_event_id||null;
 
     if(!pool.length) return;
 
-    const hot=diverseTake([...pool].sort((a,b)=>b.confidence-a.confidence),6,0);
+    const hot=diverseTake([...evaluatedPool].sort((a,b)=>b.confidence-a.confidence),6,0);
 
     // SNS1: prioritize Goblin POMs carrying >=77% LJPC.
     // If fewer than six qualify, backfill only with the strongest remaining Goblins.
-    const sns1Qualified=[...pool].filter(c=>c.pomType==='GOBLIN'&&c.confidence>=77).sort((a,b)=>
+    const sns1Qualified=[...evaluatedPool].filter(c=>c.pomType==='GOBLIN'&&c.confidence>=77).sort((a,b)=>
       (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
     const sns1=diverseTake(sns1Qualified,6,0);
     if(sns1.length<6){
       const avoid=new Set(sns1.map(keyOf));
-      const sns1Fallback=[...pool].filter(c=>c.pomType==='GOBLIN'&&c.confidence<77).sort((a,b)=>
+      const sns1Fallback=[...evaluatedPool].filter(c=>c.pomType==='GOBLIN'&&c.confidence<77).sort((a,b)=>
         (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
       sns1.push(...diverseTake(sns1Fallback,6-sns1.length,0,avoid));
     }
@@ -436,12 +442,12 @@
     // confidence, avoid exact SNS1 duplication, then use the strongest remaining eligible
     // SNS2 legs only if needed.
     const sns2Eligible=c=>c.pomType==='GOBLIN'||c.pomType==='NORMAL';
-    const sns2Qualified=[...pool].filter(c=>sns2Eligible(c)&&c.confidence>=70).sort((a,b)=>
+    const sns2Qualified=[...evaluatedPool].filter(c=>sns2Eligible(c)&&c.confidence>=70).sort((a,b)=>
       (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
     const sns2=diverseTake(sns2Qualified,6,0,usedAcross);
     if(sns2.length<6){
       const avoid=new Set([...usedAcross,...sns2.map(keyOf)]);
-      const sns2Fallback=[...pool].filter(c=>sns2Eligible(c)&&c.confidence<70).sort((a,b)=>
+      const sns2Fallback=[...evaluatedPool].filter(c=>sns2Eligible(c)&&c.confidence<70).sort((a,b)=>
         (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count));
       sns2.push(...diverseTake(sns2Fallback,6-sns2.length,0,avoid));
     }
@@ -449,14 +455,14 @@
 
     // NORMAL: standard/unmarked POMs only. POM Value/LJPC dominate; payout
     // economics do not rescue a weaker prediction. Source depth is a tie-breaker.
-    const normalBase=[...pool].filter(c=>c.pomType==='NORMAL').sort((a,b)=>
+    const normalBase=[...evaluatedPool].filter(c=>c.pomType==='NORMAL').sort((a,b)=>
       (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count));
     const normal=diverseTake(normalBase,6,0,usedAcross);
     normal.forEach(c=>usedAcross.add(keyOf(c)));
 
     // DEMON: economics-first among only Normal/Demon POMs that LJPC is at
     // >=51.8%. A long price never rescues a probability that misses the gate.
-    const demonBase=[...pool].filter(c=>(c.pomType==='DEMON'||c.pomType==='NORMAL')&&c.confidence>=51.8).sort((a,b)=>{
+    const demonBase=[...evaluatedPool].filter(c=>(c.pomType==='DEMON'||c.pomType==='NORMAL')&&c.confidence>=51.8).sort((a,b)=>{
       const ap=a.best_price??-9999, bp=b.best_price??-9999;
       return (bp-ap)||(b.confidence-a.confidence)||(b.market_source_count-a.market_source_count);
     });
@@ -476,9 +482,9 @@
     // If any one ticket mode has at least two qualified POM candidates, rebuild
     // one 2–6 leg construction from that mode without the cross-ticket avoid set.
     const modeBases={
-      sns1:[...pool].filter(c=>c.pomType==='GOBLIN').sort((a,b)=>
+      sns1:[...evaluatedPool].filter(c=>c.pomType==='GOBLIN').sort((a,b)=>
         (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count)),
-      sns2:[...pool].filter(c=>sns2Eligible(c)).sort((a,b)=>
+      sns2:[...evaluatedPool].filter(c=>sns2Eligible(c)).sort((a,b)=>
         (b.confidence-a.confidence)||(b.market_source_count-a.market_source_count)),
       normal:normalBase,
       demon:demonBase
