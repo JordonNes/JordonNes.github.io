@@ -80,6 +80,8 @@ def canonical_prop(p):
       "legz_value":p.get("legz_value"),
       "pom_value":p.get("pom_value"),
       "market_baseline_probability":p.get("market_baseline_probability"),
+      "market_freshness":p.get("market_freshness"),
+      "stale_market_age_hours":p.get("stale_market_age_hours"),
       "spectrum":p.get("spectrum"),
       "model":"LEGZ STATISTICAL SPECTRUM" if explicit is not None else "AWAITING L&J EVALUATION",
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
