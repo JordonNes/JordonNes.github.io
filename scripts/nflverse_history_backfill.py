@@ -6,7 +6,7 @@ facts needed by LEGZ, keyed by season/week/player/metric, so future POM evaluati
 reuse local history instead of redownloading the same statistical record.
 """
 from __future__ import annotations
-import argparse,csv,hashlib,io,urllib.request
+import argparse,csv,gzip,hashlib,io,urllib.request
 from datetime import datetime,timezone
 from pathlib import Path
 
@@ -57,9 +57,11 @@ def main():
         except Exception as exc:
             print(f"WARN nflverse backfill {year}: {exc}");continue
         facts=convert(year,rows)
-        path=OUTROOT/f"{year}.csv"
-        with path.open("w",newline="",encoding="utf-8") as fh:
+        path=OUTROOT/f"{year}.csv.gz"
+        legacy=OUTROOT/f"{year}.csv"
+        with gzip.open(path,"wt",newline="",encoding="utf-8",compresslevel=6) as fh:
             w=csv.DictWriter(fh,fieldnames=FIELDS);w.writeheader();w.writerows(facts)
+        if legacy.exists(): legacy.unlink()
         print(f"NFL {year}: {len(rows)} player-week rows -> {len(facts)} canonical facts -> {path}")
         total+=len(facts)
     print(f"NFL durable shard backfill complete: {total} canonical facts across {len(set(years))} season(s).")
