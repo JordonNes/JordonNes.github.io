@@ -1,39 +1,40 @@
 {
   "schema_version": "LSI-READINESS-1",
-  "generated_at_utc": "2026-09-19T18:27:13.799653+00:00",
+  "generated_at_utc": "2026-09-19T19:33:27.871259+00:00",
   "ready_for_deterministic_operation": false,
   "full_history_program_complete": false,
   "current_ljpc": {
     "status": "SLA_BREACH",
-    "known_events_inside_t48": 430,
+    "known_events_inside_t48": 391,
     "acquired_props": 8546,
-    "evaluated_props": 6576,
-    "coverage_pct": 76.95,
+    "evaluated_props": 6638,
+    "stale_props": 8546,
+    "coverage_pct": 77.67,
     "blockers": {
-      "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 1970
+      "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 1908
     }
   },
   "qc_board": {
-    "generated_at_utc": "2026-09-19T18:22:55.158372+00:00",
-    "age_hours": 0.07,
-    "events": 310,
+    "generated_at_utc": "2026-09-19T19:30:09.671313+00:00",
+    "age_hours": 0.06,
+    "events": 296,
     "by_league": {
       "NCAA_Football": {
-        "events": 91,
+        "events": 83,
         "props": 166,
         "evaluated": 166,
         "awaiting": 0,
         "coverage_pct": 100.0
       },
-      "Boxing": {
-        "events": 14,
+      "Tennis": {
+        "events": 104,
         "props": 0,
         "evaluated": 0,
         "awaiting": 0,
         "coverage_pct": 0.0
       },
-      "Tennis": {
-        "events": 109,
+      "Boxing": {
+        "events": 13,
         "props": 0,
         "evaluated": 0,
         "awaiting": 0,
@@ -63,9 +64,9 @@
       "NFL": {
         "events": 15,
         "props": 8459,
-        "evaluated": 6576,
-        "awaiting": 1883,
-        "coverage_pct": 77.74
+        "evaluated": 6638,
+        "awaiting": 1821,
+        "coverage_pct": 78.47
       },
       "MLB": {
         "events": 16,
@@ -77,44 +78,52 @@
     }
   },
   "future_board": {
-    "generated_at_utc": "2026-09-19T18:27:10.758508+00:00",
-    "age_hours": 0.0,
-    "events": 464
+    "generated_at_utc": "2026-09-19T19:23:45.238613+00:00",
+    "age_hours": 0.16,
+    "events": 450
   },
   "history_coverage": {
+    "NBA": {
+      "facts": 44935,
+      "players": 491,
+      "events": 256,
+      "earliest": "2026-03-23",
+      "latest": "2026-06-14",
+      "metrics": 8
+    },
     "NCAA_Football": {
-      "facts": 18820,
+      "facts": 19226,
       "players": 3353,
       "events": 189,
       "earliest": "2026-08-29",
       "latest": "2026-09-19",
-      "metrics": 10
+      "metrics": 11
     },
     "NFL": {
-      "facts": 205954,
-      "players": 2174,
-      "events": 303,
+      "facts": 1862964,
+      "players": 5214,
+      "events": 2512,
       "earliest": "2026-09-18",
       "latest": "2026-09-18",
       "metrics": 12
     },
     "WNBA": {
-      "facts": 1148,
-      "players": 157,
-      "events": 8,
-      "earliest": "2026-09-17",
+      "facts": 50495,
+      "players": 265,
+      "events": 315,
+      "earliest": "2026-05-02",
       "latest": "2026-09-19",
-      "metrics": 7
+      "metrics": 8
     }
   },
   "history_backfill": {
-    "remaining": 6,
+    "remaining": 5,
     "leagues": [
       {
         "league": "NCAA_Football",
         "season": "2026",
-        "status": "ACTIVE",
-        "cursor": "2026-09-19",
+        "status": "COMPLETE",
+        "cursor": "2026-08-01",
         "floor": "2026-08-01",
         "priority": 0,
         "chunk_days": 14
@@ -123,7 +132,7 @@
         "league": "WNBA",
         "season": "2026",
         "status": "ACTIVE",
-        "cursor": "2026-09-18",
+        "cursor": "2026-05-01",
         "floor": "2026-05-01",
         "priority": 1,
         "chunk_days": 14
@@ -141,7 +150,7 @@
         "league": "NBA",
         "season": "2025-26",
         "status": "ACTIVE",
-        "cursor": "2026-06-30",
+        "cursor": "2026-03-22",
         "floor": "2025-10-01",
         "priority": 1,
         "chunk_days": 10
@@ -168,30 +177,32 @@
   },
   "nfl_deep_history": {
     "schema_version": "LSI-NFL-HISTORY-BACKFILL-1",
-    "next_year": 2024,
+    "next_year": 2016,
     "floor_year": 1999,
-    "status": "ACTIVE"
+    "status": "ACTIVE",
+    "last_completed_year": 2017,
+    "last_run_utc": "2026-09-19T18:33:59.116047+00:00"
   },
   "market_source_health": {
     "propline": {
       "tracked_events": 167,
       "last_success_utc": "2026-09-19T01:07:42.997167+00:00",
-      "age_hours": 17.33,
-      "status": null,
-      "checked_at_utc": null,
-      "last_error": null,
-      "rate_limits": null,
-      "auth_errors": null
+      "age_hours": 18.43,
+      "status": "RATE_LIMITED",
+      "checked_at_utc": "2026-09-19T19:28:53.469570+00:00",
+      "last_error": "HTTP Error 429: Too Many Requests",
+      "rate_limits": 1,
+      "auth_errors": 0
     },
     "the_odds_api": {
       "tracked_events": 0,
       "last_success_utc": null,
       "age_hours": null,
-      "status": null,
-      "checked_at_utc": null,
-      "last_error": null,
-      "auth_errors": null,
-      "rate_limits": null
+      "status": "AUTH_ERROR",
+      "checked_at_utc": "2026-09-19T19:30:09.671313+00:00",
+      "last_error": "HTTP Error 401: Unauthorized",
+      "auth_errors": 1,
+      "rate_limits": 0
     }
   },
   "openai": {
@@ -205,21 +216,22 @@
     {
       "type": "T48_LJPC_SLA",
       "detail": {
-        "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 1970
+        "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 1908
       }
     },
     {
-      "type": "PROPLINE_STALE",
-      "age_hours": 17.33
+      "type": "PROPLINE_RATE_LIMITED",
+      "note": "Durable last-known-good POMs remain available; reduce live calls or raise provider quota.",
+      "last_error": "HTTP Error 429: Too Many Requests"
     },
     {
-      "type": "THE_ODDS_API_NO_SUCCESS_STATE",
-      "note": "No successful event state has been recorded yet."
+      "type": "THE_ODDS_API_AUTH_ERROR",
+      "note": "ODDS_API_KEY is being rejected; replace/re-authorize it before relying on this fallback.",
+      "last_error": "HTTP Error 401: Unauthorized"
     },
     {
       "type": "HISTORY_BACKFILL_IN_PROGRESS",
       "remaining_leagues": [
-        "NCAA_Football",
         "WNBA",
         "MLB",
         "NBA",
@@ -229,7 +241,7 @@
     },
     {
       "type": "NFL_DEEP_HISTORY_IN_PROGRESS",
-      "next_year": 2024
+      "next_year": 2016
     }
   ]
 }
