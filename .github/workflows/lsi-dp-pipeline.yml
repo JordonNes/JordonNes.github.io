@@ -213,14 +213,19 @@ jobs:
           python - <<'PY'
           import json
           d=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
-          assert d.get('evaluation_engine')=='LEGZ_STATISTICAL_SPECTRUM_2'
+          assert d.get('evaluation_engine')=='LEGZ_STATISTICAL_SPECTRUM_3'
           props=[p for e in d.get('events',[]) for p in (e.get('props') or [])]
           evaluated=[p for p in props if p.get('evaluation_status')=='LJ_EVALUATED']
           waiting=[p for p in props if p.get('evaluation_status')=='AWAITING_LJ_EVALUATION']
           assert all(p.get('ljpc') is not None for p in evaluated)
           assert all(p.get('ljpc') is None for p in waiting)
           assert all((p.get('spectrum') or {}).get('distribution') is not None for p in props)
-          print(f'Spectrum v2 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence.')
+          assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in props)
+          state=json.load(open('data/lsi_evaluation_state.json',encoding='utf-8'))
+          assert state.get('schema_version')=='LSI-EVALUATION-STATE-1'
+          ids={r.get('evaluation_id') for r in state.get('records',[]) if r.get('evaluation_id')}
+          assert all(p.get('evaluation_id') in ids for p in props)
+          print(f'Spectrum v3 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence; durable_states={len(ids)}.')
           PY
       - name: T-48 individualized LJPC coverage and readiness report
         run: |
@@ -277,6 +282,7 @@ jobs:
           test -f data/qc_ticket_registry.json
           test -f data/future_market_board.json && test -f data/future_market_board.js
           test -f data/openai_dry_run_router.json && test -f data/openai_usage_estimates.csv && test -f data/openai_usage_summary.json
+          test -f data/lsi_evaluation_state.json
           grep -q 'PLAYER_PROP' data/prediction_registry.json && grep -q 'GAME_ML' data/prediction_registry.json
           grep -q 'DRY_RUN_NO_NETWORK' data/openai_dry_run_router.json
           grep -q 'LSI-QC-TICKETS-1' data/qc_ticket_registry.json
@@ -311,7 +317,7 @@ jobs:
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
-          git add data/prediction_registry.json data/prediction_registry.js data/current_game_moneylines.json data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json data/oddspapi_market_lookup.json data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/qc_ticket_registry.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/season_schedule_registry.json data/team_roster_registry.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json 2>/dev/null || true
+          git add data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json data/current_game_moneylines.json data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json data/oddspapi_market_lookup.json data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/qc_ticket_registry.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/season_schedule_registry.json data/team_roster_registry.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No LSI changes to publish.'
           else
