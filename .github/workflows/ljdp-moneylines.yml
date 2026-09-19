@@ -58,6 +58,7 @@ jobs:
           set -e
           python scripts/odds_adapter.py
           python scripts/lsi_pipeline.py
+          python -m py_compile scripts/lsi_publish_future_board.py
           python scripts/lsi_publish_future_board.py
 
       - name: Validate NFL QC market publication
@@ -72,6 +73,16 @@ jobs:
           assert future.exists() and future.stat().st_size>100, 'future_market_board.json missing/empty'
           assert futurejs.exists() and futurejs.stat().st_size>100, 'future_market_board.js missing/empty'
           assert registry.exists() and registry.stat().st_size>100, 'prediction_registry.json missing/empty'
+          from datetime import datetime, timezone
+          ml=pathlib.Path('data/current_game_moneylines.json')
+          assert ml.exists() and ml.stat().st_size>100, 'current_game_moneylines.json missing/empty'
+          m=json.load(ml.open(encoding='utf-8'))
+          assert m.get('schema_version')=='LJ-CURRENT-GAME-ML-1'
+          stamp=datetime.fromisoformat(m['generated_at_utc'].replace('Z','+00:00'))
+          age=(datetime.now(timezone.utc)-stamp).total_seconds()/3600
+          assert age<=2, f'GAME_ML canonical artifact stale before future-board publication: {age:.2f}h'
+          usable=[x for x in m.get('rows',[]) if x.get('market_class')=='GAME_ML' and x.get('event_id') and x.get('participant') and x.get('price') not in (None,'')]
+          assert usable, 'No usable GAME_ML rows in canonical artifact'
           q=json.load(qc.open(encoding='utf-8'))
           f=json.load(future.open(encoding='utf-8'))
           nfl_q=[e for e in q.get('events',[]) if e.get('league')=='NFL']
