@@ -11,22 +11,15 @@ on:
       - 'scripts/odds_adapter.py'
       - 'scripts/lsi_pipeline.py'
       - 'scripts/lsi_publish_future_board.py'
-      - 'scripts/qc_publication_audit.js'
       - 'data/verified_market_overrides.json'
-      - 'lsi_registry_bridge.js'
-      - 'ljapp.js'
-      - 'ljdata.js'
-      - 'dailyrefresh.js'
-      - 'morningrefresh.js'
-      - 'middayrefresh.js'
-      - '*.html'
       - '.github/workflows/ljdp-moneylines.yml'
+
 
 permissions:
   contents: write
 
 concurrency:
-  group: lsi-core-data-writer
+  group: lsi-market-writer
   cancel-in-progress: false
 
 jobs:
