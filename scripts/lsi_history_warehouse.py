@@ -24,6 +24,10 @@ PERF=DATA/"performance_history.csv"
 HISTORY_ROOT=DATA/"history"
 
 def norm(v): return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
+def player_norm(v):
+    s=str(v or "").strip()
+    s=re.sub(r"\s*\([A-Za-z0-9 .&'\-]{2,24}\)\s*$","",s)
+    return norm(s)
 def num(v):
     if v in (None,""): return None
     try:return float(v)
@@ -31,16 +35,16 @@ def num(v):
         m=re.search(r"[-+]?\d+(?:\.\d+)?",str(v).replace(",",""))
         return float(m.group()) if m else None
 def player_id(league,name):
-    return "LSIP-"+hashlib.sha1(f"{league}|{norm(name)}".encode()).hexdigest()[:16].upper()
+    return "LSIP-"+hashlib.sha1(f"{league}|{player_norm(name)}".encode()).hexdigest()[:16].upper()
 def market_metric(market):
     m=norm(market)
     pairs=[
       ("passing yards","pass_yards"),("pass yards","pass_yards"),("passing attempts","pass_attempts"),("pass attempts","pass_attempts"),
       ("passing touchdowns","pass_tds"),("passing tds","pass_tds"),("rushing attempts","rush_attempts"),("rush attempts","rush_attempts"),
-      ("carries","rush_attempts"),("rushing yards","rush_yards"),("rush yards","rush_yards"),("receiving yards","receiving_yards"),
+      ("carries","rush_attempts"),("rushing yards","rush_yards"),("rush yards","rush_yards"),("receiving yards","receiving_yards"),("reception yds","receiving_yards"),("receiving yds","receiving_yards"),
       ("receptions","receptions"),("targets","targets"),("points rebounds assists","pra"),("pra","pra"),
       ("points rebounds","points_rebounds"),("points assists","points_assists"),("rebounds assists","rebounds_assists"),
-      ("points","points"),("rebounds","rebounds"),("assists","assists"),("three pointers","threes_made"),("3 pointers","threes_made"),("3pt","threes_made"),
+      ("points","points"),("rebounds","rebounds"),("assists","assists"),("three pointers","threes_made"),("3 pointers","threes_made"),("3pt","threes_made"),("extra points made","extra_points_made"),("xpm","extra_points_made"),
       ("steals","steals"),("blocks","blocks"),("hits","hits"),("total bases","total_bases"),("home runs","home_runs"),
       ("rbi","rbi"),("runs","runs"),("stolen bases","stolen_bases"),("strikeouts","pitcher_strikeouts"),
       ("shots on goal","shots_on_goal"),("sog","shots_on_goal"),("saves","saves"),("goals","goals")
