@@ -20,6 +20,7 @@ RESULTS=DATA/"results.csv"
 PRED=DATA/"prediction_registry.json"
 REG=DATA/"lsi_player_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
+PERF=DATA/"performance_history.csv"
 
 def norm(v): return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
 def num(v):
@@ -27,6 +28,25 @@ def num(v):
     except (TypeError,ValueError):return None
 def player_id(league,name):
     return "LSIP-"+hashlib.sha1(f"{league}|{norm(name)}".encode()).hexdigest()[:16].upper()
+def market_metric(market):
+    m=norm(market)
+    pairs=[
+      ("passing yards","pass_yards"),("pass yards","pass_yards"),("passing attempts","pass_attempts"),("pass attempts","pass_attempts"),
+      ("passing touchdowns","pass_tds"),("passing tds","pass_tds"),("rushing attempts","rush_attempts"),("rush attempts","rush_attempts"),
+      ("carries","rush_attempts"),("rushing yards","rush_yards"),("rush yards","rush_yards"),("receiving yards","receiving_yards"),
+      ("receptions","receptions"),("targets","targets"),("points rebounds assists","pra"),("pra","pra"),
+      ("points rebounds","points_rebounds"),("points assists","points_assists"),("rebounds assists","rebounds_assists"),
+      ("points","points"),("rebounds","rebounds"),("assists","assists"),("three pointers","threes_made"),("3 pointers","threes_made"),("3pt","threes_made"),
+      ("steals","steals"),("blocks","blocks"),("hits","hits"),("total bases","total_bases"),("home runs","home_runs"),
+      ("rbi","rbi"),("runs","runs"),("stolen bases","stolen_bases"),("strikeouts","pitcher_strikeouts"),
+      ("shots on goal","shots_on_goal"),("sog","shots_on_goal"),("saves","saves"),("goals","goals")
+    ]
+    if "anytime td" in m or ("touchdown" in m and "passing" not in m and "pass " not in m):
+        return "anytime_td"
+    for needle,metric in pairs:
+        if needle in m:return metric
+    return None
+
 def hit(v,side,t):
     s=norm(side)
     if s in {"over","more","yes"}: return 1 if v>t else 0
@@ -72,6 +92,7 @@ def main():
 
     # Settled results are immutable evidence currently available to the generic layer.
     # Sport-specific history adapters may add much richer warehouse data without changing this contract.
+    # Generic settled predictions remain useful, but the append-only performance warehouse is the primary reusable fact store.
     hist=defaultdict(list)
     if RESULTS.exists():
         with RESULTS.open(newline="",encoding="utf-8-sig") as fh:
@@ -81,7 +102,26 @@ def main():
                 market=r.get("market") or ""
                 actual=num(r.get("actual_result"))
                 if league and name and market and actual is not None:
-                    hist[(player_id(league,name),norm(market))].append(actual)
+                    metric=market_metric(market) or norm(market)
+                    hist[(player_id(league,name),metric)].append(actual)
+
+    perf=defaultdict(lambda:defaultdict(dict))
+    if PERF.exists() and PERF.stat().st_size:
+        with PERF.open(newline="",encoding="utf-8-sig") as fh:
+            for r in csv.DictReader(fh):
+                league=r.get("league") or ""; name=r.get("participant") or ""; metric=r.get("metric") or ""
+                value=num(r.get("value")); event=r.get("provider_event_id") or r.get("event_id") or ""
+                if league and name and metric and value is not None:
+                    perf[(player_id(league,name),event)][metric]=value
+        for (pid,event),stats in perf.items():
+            for metric,value in stats.items(): hist[(pid,metric)].append(value)
+            if "rush_tds" in stats or "receiving_tds" in stats:
+                hist[(pid,"anytime_td")].append((stats.get("rush_tds") or 0)+(stats.get("receiving_tds") or 0))
+            if all(k in stats for k in ("points","rebounds","assists")):
+                hist[(pid,"pra")].append(stats["points"]+stats["rebounds"]+stats["assists"])
+                hist[(pid,"points_rebounds")].append(stats["points"]+stats["rebounds"])
+                hist[(pid,"points_assists")].append(stats["points"]+stats["assists"])
+                hist[(pid,"rebounds_assists")].append(stats["rebounds"]+stats["assists"])
 
     profiles=[]
     # Build exact-current-threshold features so market evaluation is a local lookup.
@@ -95,7 +135,9 @@ def main():
             pid=player_id(league,name); key=(pid,norm(market),threshold,norm(side))
             if key in seen: continue
             seen.add(key)
-            vals=hist.get((pid,norm(market))) or []
+            metric=market_metric(market)
+            vals=hist.get((pid,metric)) if metric else hist.get((pid,norm(market)))
+            vals=vals or []
             outcomes=[h for v in vals if (h:=hit(v,side,threshold)) is not None]
             profiles.append({
                 "lsi_player_id":pid,"league":league,"player":name,"market":market,
