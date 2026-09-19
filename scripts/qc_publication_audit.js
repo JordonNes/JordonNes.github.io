@@ -95,6 +95,15 @@ for (const page of ['NBA.html','WNBA.html']) {
 
 for (const [page, league] of Object.entries(PAGES)) {
   if (!fs.existsSync(path.join(ROOT, page))) continue;
+  const html=fs.readFileSync(path.join(ROOT,page),'utf8');
+  const requiredScripts=['data/future_market_board.js','data/prediction_registry.js','lsi_registry_bridge.js','data/visual_asset_registry.js','ljapp.js'];
+  const loadedScripts=new Set([...html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)].map(m=>m[1].split('?')[0].replace(/^\.\//,'')));
+  for(const src of requiredScripts){
+    if(!loadedScripts.has(src)) errors.push(`${page}: display wiring missing required script ${src}.`);
+  }
+  const bridgePos=html.indexOf('lsi_registry_bridge.js');
+  const appPos=html.indexOf('ljapp.js');
+  if(bridgePos<0||appPos<0||bridgePos>appPos) errors.push(`${page}: publication order invalid — registry bridge must load before ljapp.js.`);
   const ctx = evaluatePage(page);
   const sport = ctx.window.LJ_DATA?.sports?.[league];
   if (!sport) {
