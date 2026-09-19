@@ -1,0 +1,127 @@
+name: LJDP Spectrum v3 Release QA
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/ljdp-spectrum-v3-qa.yml'
+      - 'LJ_index.html'
+      - 'Quickie_Generator.html'
+      - 'MLB.html'
+      - 'NFL.html'
+      - 'NBA.html'
+      - 'WNBA.html'
+      - 'NHL.html'
+      - 'NCAA_Football.html'
+      - 'NCAA_Basketball.html'
+      - 'FIBA_Men.html'
+      - 'FIBA_Women.html'
+      - 'MMA.html'
+      - 'Boxing.html'
+      - 'Tennis.html'
+      - 'data/qc_prop_board.json'
+      - 'data/lsi_evaluation_state.json'
+      - 'data/future_market_board.json'
+      - 'data/prediction_registry.json'
+
+concurrency:
+  group: ljdp-spectrum-v3-qa
+  cancel-in-progress: true
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Verify Spectrum v3 cache wiring on all DP surfaces
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          pages = [
+            "LJ_index.html","Quickie_Generator.html","MLB.html","NFL.html","NBA.html","WNBA.html",
+            "NHL.html","NCAA_Football.html","NCAA_Basketball.html","FIBA_Men.html","FIBA_Women.html",
+            "MMA.html","Boxing.html","Tennis.html"
+          ]
+          required = [
+            "data/future_market_board.js?v=20260919-spectrum3",
+            "data/prediction_registry.js?v=20260919-spectrum3",
+            "lsi_registry_bridge.js?v=20260919-spectrum3",
+          ]
+          bad=[]
+          for page in pages:
+            text=Path(page).read_text(encoding="utf-8")
+            missing=[x for x in required if x not in text]
+            if missing: bad.append((page,missing))
+          assert not bad, f"Spectrum v3 cache wiring missing: {bad}"
+          print(f"Cache wiring valid on {len(pages)} surfaces.")
+          PY
+
+      - name: Syntax-check Quickie inline JavaScript
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html=Path("Quickie_Generator.html").read_text(encoding="utf-8")
+          blocks=re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", html, flags=re.S|re.I)
+          assert blocks, "No inline Quickie JavaScript found"
+          out=Path("/tmp/quickie-inline")
+          out.mkdir(exist_ok=True)
+          for i,block in enumerate(blocks):
+              (out/f"block_{i}.js").write_text(block,encoding="utf-8")
+          print(f"Extracted {len(blocks)} inline script block(s).")
+          PY
+          for f in /tmp/quickie-inline/*.js; do node --check "$f"; done
+
+      - name: Verify Quickie consumes full Spectrum v3 player-prop board
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text=Path("Quickie_Generator.html").read_text(encoding="utf-8")
+          checks=[
+            "(e.props||[]).forEach",
+            "evaluation_status||'').toUpperCase()!=='LJ_EVALUATED'",
+            "Spectrum v3 Future Board",
+            "evaluationId:p.evaluation_id",
+          ]
+          missing=[x for x in checks if x not in text]
+          assert not missing, f"Quickie Spectrum v3 player-prop integration missing: {missing}"
+          print("Quickie full future-board player-prop integration present.")
+          PY
+
+      - name: Validate Spectrum v3 artifacts and invariants
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          board=json.loads(Path("data/qc_prop_board.json").read_text(encoding="utf-8"))
+          state=json.loads(Path("data/lsi_evaluation_state.json").read_text(encoding="utf-8"))
+          future=json.loads(Path("data/future_market_board.json").read_text(encoding="utf-8"))
+          reg=json.loads(Path("data/prediction_registry.json").read_text(encoding="utf-8"))
+          assert board.get("evaluation_engine")=="LEGZ_STATISTICAL_SPECTRUM_3"
+          assert state.get("schema_version")=="LSI-EVALUATION-STATE-1"
+          props=[p for e in board.get("events",[]) for p in (e.get("props") or [])]
+          assert props and len(state.get("records") or [])>=len(props)
+          evaluated=[p for p in props if p.get("evaluation_status")=="LJ_EVALUATED"]
+          awaiting=[p for p in props if p.get("evaluation_status")=="AWAITING_LJ_EVALUATION"]
+          assert all(p.get("evaluation_id") and p.get("evaluation_material_hash") and p.get("feature_state") for p in props)
+          assert all(p.get("ljpc") is not None for p in evaluated)
+          assert all(p.get("ljpc") is None for p in awaiting)
+          future_props=[p for e in future.get("events",[]) for p in (e.get("props") or [])]
+          assert future_props and all(p.get("evaluation_id") for p in future_props)
+          fields=set(reg.get("player_prop_fields") or [])
+          for f in ("evaluation_id","evaluation_material_hash","feature_state","spectrum"):
+              assert f in fields
+          print(
+            f"Artifacts valid: states={len(state.get('records') or [])}, "
+            f"evaluated={len(evaluated)}, awaiting={len(awaiting)}, "
+            f"future_events={len(future.get('events') or [])}, future_props={len(future_props)}"
+          )
+          PY
