@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-HISTORY-COVERAGE-1",
-  "generated_at_utc": "2026-09-19T18:04:35.498203+00:00",
+  "generated_at_utc": "2026-09-19T18:17:39.676047+00:00",
   "policy": "Incremental warehouse coverage only. Complete-history status is achieved only after league-specific backfill validation.",
   "leagues": {
     "NCAA_Football": {
@@ -19,14 +19,18 @@
         "rush_tds",
         "rush_yards"
       ],
+      "source_files": [
+        "data/performance_history.csv"
+      ],
       "earliest_event_date": "2026-08-29",
       "latest_event_date": "2026-09-19"
     },
     "NFL": {
-      "facts": 74,
-      "unique_players": 17,
-      "unique_events": 1,
+      "facts": 205954,
+      "unique_players": 2174,
+      "unique_events": 303,
       "metrics": [
+        "pass_attempts",
         "pass_interceptions",
         "pass_tds",
         "pass_yards",
@@ -38,6 +42,11 @@
         "rush_tds",
         "rush_yards",
         "targets"
+      ],
+      "source_files": [
+        "data/history/NFL/2025.csv",
+        "data/history/NFL/2026.csv",
+        "data/performance_history.csv"
       ],
       "earliest_event_date": "2026-09-18",
       "latest_event_date": "2026-09-18"
@@ -54,6 +63,9 @@
         "rebounds",
         "steals",
         "turnovers"
+      ],
+      "source_files": [
+        "data/performance_history.csv"
       ],
       "earliest_event_date": "2026-09-17",
       "latest_event_date": "2026-09-19"
