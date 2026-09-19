@@ -237,8 +237,11 @@ def main():
             profiles.append({
                 "lsi_player_id":pid,"league":league,"player":name,"market":market,
                 "threshold":threshold,"side":side,"sample_n":len(outcomes),
-                "L5_hit_rate":rate(outcomes,5),"L10_hit_rate":rate(outcomes,10),"L20_hit_rate":rate(outcomes,20),
-                "career_observations":len(vals),"source":"LSI permanent performance warehouse"
+                "L3_hit_rate":rate(outcomes,3),"L5_hit_rate":rate(outcomes,5),"L10_hit_rate":rate(outcomes,10),"L20_hit_rate":rate(outcomes,20),
+                "career_hit_rate":round(sum(outcomes)/len(outcomes)*100,2) if outcomes else None,
+                "career_observations":len(vals),
+                "recommended_recency_windows":[3,5,10] if league in {"NFL","NCAA_Football"} else [5,10,20],
+                "source":"LSI permanent performance warehouse"
             })
 
     REG.write_text(json.dumps({"schema_version":"LSI-PLAYER-REGISTRY-1","generated_at_utc":stamp,"players":sorted(players.values(),key=lambda x:(x.get("league",""),x.get("canonical_name","")))},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
