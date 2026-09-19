@@ -18,6 +18,8 @@ on:
       - 'scripts/lsi_pipeline.py'
       - 'scripts/legz_statistical_spectrum.py'
       - 'scripts/nfl_player_history_adapter.py'
+      - 'scripts/lsi_history_warehouse.py'
+      - 'scripts/lsi_t48_coverage.py'
       - 'scripts/lsi_publish_future_board.py'
       - 'scripts/lsi_promote_learning.py'
       - 'data/learning_overlay.json'
@@ -192,6 +194,8 @@ jobs:
       - name: NFL player-performance hydration — nflverse weekly history
         continue-on-error: true
         run: python scripts/nfl_player_history_adapter.py
+      - name: Refresh persistent player registry and spectrum cache
+        run: python scripts/lsi_history_warehouse.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
         run: |
           python scripts/legz_statistical_spectrum.py
@@ -207,6 +211,8 @@ jobs:
           assert all((p.get('spectrum') or {}).get('distribution') is not None for p in props)
           print(f'Spectrum v2 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence.')
           PY
+      - name: T-48 individualized LJPC coverage report
+        run: python scripts/lsi_t48_coverage.py
       - name: Build and validate Prediction Registry
         run: python scripts/lsi_pipeline.py
       - name: Publish rolling 0-7 day L&J future market board
@@ -292,7 +298,7 @@ jobs:
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
-          git add data/prediction_registry.json data/prediction_registry.js data/current_game_moneylines.json data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json data/oddspapi_market_lookup.json data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/qc_ticket_registry.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json 2>/dev/null || true
+          git add data/prediction_registry.json data/prediction_registry.js data/current_game_moneylines.json data/market_history.csv data/event_inventory.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json data/oddspapi_market_lookup.json data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/qc_ticket_registry.json data/the_odds_api_state.json data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/ljpc_coverage.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No LSI changes to publish.'
           else
