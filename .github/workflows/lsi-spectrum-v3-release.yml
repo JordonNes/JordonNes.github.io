@@ -26,8 +26,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with: {ref: master, fetch-depth: 0}
+      - uses: actions/setup-node@v6
+        with: {node-version: '22'}
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
+
       - name: Validate Quickie inline JavaScript
         run: |
           python - <<'PY'
@@ -35,17 +38,19 @@ jobs:
           html=pathlib.Path('Quickie_Generator.html').read_text(encoding='utf-8')
           blocks=re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>',html,re.S|re.I)
           assert blocks, 'No inline Quickie JavaScript found'
-          pathlib.Path('/tmp/quickie-inline.js').write_text('
-'.join(blocks),encoding='utf-8')
+          pathlib.Path('/tmp/quickie-inline.js').write_text(chr(10).join(blocks),encoding='utf-8')
           print(f'Quickie inline JS blocks: {len(blocks)}')
           PY
           node --check /tmp/quickie-inline.js
+
       - name: Merge verified override evidence
         run: python scripts/lsi_apply_verified_overrides.py
+
       - name: Execute Spectrum v3 from durable cache
         env:
           LSI_FAST_RUNTIME: 'true'
         run: python scripts/legz_statistical_spectrum.py
+
       - name: Validate durable evaluation ledger
         run: |
           python - <<'PY'
@@ -65,10 +70,13 @@ jobs:
           assert all(p.get('ljpc') is None for p in waiting)
           print(f'Spectrum v3 ledger valid: props={len(props)} evaluated={len(evaluated)} awaiting={len(waiting)} states={len(ids)}')
           PY
+
       - name: Build canonical Prediction Registry
         run: python scripts/lsi_pipeline.py
+
       - name: Publish future board
         run: python scripts/lsi_publish_future_board.py
+
       - name: Validate downstream parity
         run: |
           python - <<'PY'
@@ -85,10 +93,11 @@ jobs:
           matched=[p for p in rprops if p.get('evaluation_id')]
           assert all(p.get('evaluation_id') in qids for p in matched)
           future_props=[p for e in future.get('events',[]) for p in (e.get('props') or e.get('player_props') or [])]
-          with_ids=[p for p in future_props if p.get('evaluation_id')]
-          assert all(p.get('evaluation_material_hash') and p.get('feature_state') for p in with_ids)
-          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(with_ids)}')
+          assert future_props
+          assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in future_props)
+          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)}')
           PY
+
       - name: Commit Spectrum v3 release artifacts
         shell: bash
         run: |
