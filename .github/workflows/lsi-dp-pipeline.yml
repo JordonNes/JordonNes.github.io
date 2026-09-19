@@ -194,6 +194,8 @@ jobs:
           ODDS_API_MAX_EVENTS_PER_RUN: '16'
           ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
+      - name: Refresh durable history coverage
+        run: python scripts/lsi_history_coverage.py
       - name: Refresh persistent player registry and spectrum cache
         run: python scripts/lsi_history_warehouse.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
