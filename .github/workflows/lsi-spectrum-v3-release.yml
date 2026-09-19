@@ -8,6 +8,7 @@ on:
       - 'scripts/legz_statistical_spectrum.py'
       - 'scripts/lsi_pipeline.py'
       - 'scripts/lsi_publish_future_board.py'
+      - 'Quickie_Generator.html'
 
 permissions:
   contents: write
@@ -25,6 +26,17 @@ jobs:
         with: {ref: master, fetch-depth: 0}
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
+      - name: Validate Quickie inline JavaScript
+        run: |
+          python - <<'PY'
+          import re, pathlib
+          html=pathlib.Path('Quickie_Generator.html').read_text(encoding='utf-8')
+          blocks=re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>',html,re.S|re.I)
+          assert blocks, 'No inline Quickie JavaScript found'
+          pathlib.Path('/tmp/quickie-inline.js').write_text('\n'.join(blocks),encoding='utf-8')
+          print(f'Quickie inline JS blocks: {len(blocks)}')
+          PY
+          node --check /tmp/quickie-inline.js
       - name: Execute Spectrum v3 from durable cache
         env:
           LSI_FAST_RUNTIME: 'true'
