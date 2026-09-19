@@ -286,9 +286,12 @@ function renderSpeciesDetail(id){
 }
 
 function renderDocuments(){
-  const groups=state.documents.reduce((a,d)=>((a[d.category]??=[]).push(d),a),{});
-  $('#doc-count').textContent=`${state.documents.length} cataloged resources`;
-  $('#document-grid').innerHTML=Object.entries(groups).map(([category,docs])=>`<section class="doc-card"><span class="eyebrow">${escapeHtml(category)}</span><h3>${docs.length} resource${docs.length===1?'':'s'}</h3>${docs.map(d=>`<p><strong>${escapeHtml(d.title)}</strong><br><span class="doc-meta">${escapeHtml(d.type)} · ${escapeHtml(d.status)}</span></p>`).join('')}<button class="btn" disabled>Asset import pending</button></section>`).join('');
+  const generalDocs=state.documents.filter(d=>!String(d.category||'').startsWith('101 Bootcamp'));
+  const groups=generalDocs.reduce((a,d)=>((a[d.category]??=[]).push(d),a),{});
+  $('#doc-count').textContent=`${generalDocs.length} general resources · Bootcamps in dedicated library`;
+  $('#document-grid').innerHTML=
+    `<section class="doc-card bootcamp-callout"><span class="eyebrow">RICHFISH 101 BOOTCAMP</span><h3>Dedicated Download Library</h3><p class="doc-meta">Species, baitfish, live bait, methods, crabbing and visual field instruction now have their own library.</p><a class="btn primary" href="bootcamp/">Open 101 Bootcamp Library →</a></section>`+
+    Object.entries(groups).map(([category,docs])=>`<section class="doc-card"><span class="eyebrow">${escapeHtml(category)}</span><h3>${docs.length} resource${docs.length===1?'':'s'}</h3>${docs.map(d=>`<p><strong>${escapeHtml(d.title)}</strong><br><span class="doc-meta">${escapeHtml(d.type)} · ${escapeHtml(d.status)}</span></p>`).join('')}<button class="btn" disabled>Asset import pending</button></section>`).join('');
 }
 function renderSources(){
   $('#source-grid').innerHTML=state.sources.map(s=>`<article class="source-card"><span class="badge">${escapeHtml(s.priority)}</span><h3>${escapeHtml(s.name)}</h3><p>${escapeHtml(s.purpose)}</p>${s.role?`<small><strong>RICHFISH role:</strong> ${escapeHtml(s.role)}</small>`:''}${s.caveat?`<p class="notice"><strong>Data caution:</strong> ${escapeHtml(s.caveat)}</p>`:''}${s.endpoint?`<p><a class="eyebrow" href="${escapeHtml(s.endpoint)}" target="_blank" rel="noopener">Official source →</a></p>`:''}<small>${escapeHtml(s.mode)}</small></article>`).join('');
