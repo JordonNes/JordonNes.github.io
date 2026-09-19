@@ -88,12 +88,16 @@ jobs:
               "latest_evaluation.json","maturity_by_market.json",
               "calibration_by_band.json","performance_history.jsonl",
               "performance_summary.json","source_quality.json","learning_gate.json",
-              "evaluation_health.json"
+              "evaluation_health.json","feature_calibration.json"
           ):
               assert (root/name).exists(), name
           gate=json.loads((root/"learning_gate.json").read_text(encoding="utf-8"))
+          feature=json.loads((root/"feature_calibration.json").read_text(encoding="utf-8"))
           assert gate["production_influence_enabled"] == (gate["eligible_market_count"] > 0)
-          print(f"Self-evaluation validated; {gate['eligible_market_count']} market(s) eligible for controlled promotion.")
+          assert feature["schema_version"]=="LSI-FEATURE-CALIBRATION-1"
+          assert feature["live_weight_influence_enabled"] is False
+          assert feature["gate"]["weight_change_authorized"] is False
+          print(f"Self-evaluation validated; {gate['eligible_market_count']} market(s) eligible for controlled promotion; feature rows={feature['gate']['decisive_settled_with_feature_state']}.")
           PY
 
       - name: Commit evaluation-only outputs
