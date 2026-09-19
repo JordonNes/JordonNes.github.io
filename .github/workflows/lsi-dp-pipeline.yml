@@ -172,6 +172,8 @@ jobs:
           PROPLINE_ANALYTICS_ENABLED: ${{ vars.PROPLINE_ANALYTICS_ENABLED }}
           PROPLINE_HTTP_TIMEOUT_SEC: '8'
           PROPLINE_HTTP_ATTEMPTS: '1'
+          PROPLINE_LEAGUES: 'NFL,NCAA_Football,MLB,NBA,WNBA,NHL,NCAA_Basketball'
+          PROPLINE_MAX_EVENT_REFRESHES_PER_RUN: '24'
         run: python scripts/propline_adapter.py
       - name: OddsPapi historical calibration — free-first
         env:
