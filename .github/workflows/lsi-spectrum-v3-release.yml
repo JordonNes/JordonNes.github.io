@@ -5,7 +5,7 @@ on:
     branches: [master]
     paths:
       - '.github/workflows/lsi-spectrum-v3-release.yml'
-      - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/legz_statistical_spectrum.py'\n      - 'scripts/lsi_apply_verified_overrides.py'\n      - 'data/verified_market_overrides.json'
       - 'scripts/lsi_pipeline.py'
       - 'scripts/lsi_publish_future_board.py'
       - 'Quickie_Generator.html'
@@ -37,7 +37,7 @@ jobs:
           print(f'Quickie inline JS blocks: {len(blocks)}')
           PY
           node --check /tmp/quickie-inline.js
-      - name: Execute Spectrum v3 from durable cache
+      - name: Merge verified override evidence\n        run: python scripts/lsi_apply_verified_overrides.py\n      - name: Execute Spectrum v3 from durable cache
         env:
           LSI_FAST_RUNTIME: 'true'
         run: python scripts/legz_statistical_spectrum.py
