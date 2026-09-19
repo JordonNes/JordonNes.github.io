@@ -257,7 +257,7 @@ def main():
                     if ealiases & oaliases:
                         match=e
                         break
-                evaluated_props=[p for p in (oe.get("props") or []) if str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"]
+                evaluated_props=[p for p in (oe.get("props") or []) if str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED" and p.get("evaluation_id") and p.get("evaluation_material_hash") and p.get("feature_state")]
                 if match is not None:
                     match.setdefault("props",[]).extend(evaluated_props)
                     match["source"]="MULTI_SOURCE_WITH_VERIFIED_OVERRIDE"
