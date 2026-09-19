@@ -37,8 +37,9 @@ jobs:
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/settlement_status.json -o /tmp/settlement.json
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/future_market_board.json -o /tmp/future.json
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/current_game_moneylines.json -o /tmp/moneylines.json
+          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/future_market_board.js -o /tmp/future.js
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/LJ_Methodology.html -o /tmp/methodology.html
-          test -s /tmp/future.json && test -s /tmp/moneylines.json
+          test -s /tmp/future.json && test -s /tmp/future.js && test -s /tmp/moneylines.json
           grep -q 'LEGZ &amp; JINX — Daily Predictions' /tmp/ljdp.html
           grep -q 'provenance_policy' /tmp/registry.json
           grep -q 'LJPC = HIT PROBABILITY' /tmp/methodology.html
@@ -47,6 +48,7 @@ jobs:
           cmp --silent data/prediction_registry.json /tmp/registry.json || { echo '::error::Pages registry does not match master'; exit 1; }
           cmp --silent data/settlement_status.json /tmp/settlement.json || { echo '::error::Pages settlement status does not match master'; exit 1; }
           cmp --silent data/future_market_board.json /tmp/future.json || { echo '::error::Pages future market board does not match master'; exit 1; }
+          cmp --silent data/future_market_board.js /tmp/future.js || { echo '::error::Pages future market board JS does not match master'; exit 1; }
           cmp --silent data/current_game_moneylines.json /tmp/moneylines.json || { echo '::error::Pages GAME_ML artifact does not match master'; exit 1; }
       - name: Validate deployed data semantics
         run: |
@@ -70,7 +72,12 @@ jobs:
           usable_ml=[r for r in moneylines.get('rows',[]) if r.get('market_class')=='GAME_ML' and r.get('event_id') and r.get('participant') and r.get('price') not in (None,'')]
           assert usable_ml, 'No usable GAME_ML rows in deployed artifact'
           future_ids={str(e.get('source_event_id')) for e in future.get('events',[]) if e.get('game_markets')}
-          current_ids={str(e.get('source_event_id')) for e in moneylines.get('events',[]) if e.get('source_event_id')}
+          current_ids={
+              str(e.get('source_event_id')) for e in moneylines.get('events',[])
+              if e.get('source_event_id')
+              and e.get('commence_time')
+              and datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>now
+          }
           missing=sorted(current_ids-future_ids)
           assert not missing, f'Deployed future board lost current GAME_ML event(s): {missing[:12]}'
           for event in future.get('events',[]):
