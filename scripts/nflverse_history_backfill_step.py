@@ -16,7 +16,7 @@ def main():
         s["status"]="COMPLETE"; STATE.write_text(json.dumps(s,indent=2)+"\n",encoding="utf-8"); return
     print(f"NFL deep history backfill: {year}")
     subprocess.run([sys.executable,str(ROOT/"scripts"/"nflverse_history_backfill.py"),"--year",str(year)],check=True,cwd=ROOT)
-    shard=ROOT/"data"/"history"/"NFL"/f"{year}.csv"
+    shard=ROOT/"data"/"history"/"NFL"/f"{year}.csv.gz"
     if not shard.exists() or shard.stat().st_size<100:
         raise SystemExit(f"NFL {year} shard was not created; cursor preserved.")
     s["last_completed_year"]=year
