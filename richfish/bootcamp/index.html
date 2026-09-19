@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="RICHFISH 101 Bootcamp Download Library — visual fishing guides for Bay Area anglers." />
+  <title>RICHFISH 101 Bootcamp Download Library</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .bootcamp-hero{padding:86px 5vw 54px;background:linear-gradient(120deg,rgba(3,18,20,.98),rgba(14,52,59,.9)),radial-gradient(circle at 80% 20%,rgba(217,154,61,.26),transparent 30%);border-bottom:1px solid var(--line)}
+    .bootcamp-hero .shell{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,.7fr);gap:34px;align-items:end}
+    .bootcamp-hero h1{font-size:clamp(46px,7vw,92px);line-height:.92;margin:12px 0;color:var(--text);letter-spacing:-.04em}
+    .bootcamp-hero h1 span{color:var(--gold2)}
+    .bootcamp-hero p{max-width:760px;color:#d5e1dd;font-size:17px}
+    .bootcamp-stat{border:1px solid #604927;border-radius:14px;padding:22px;background:linear-gradient(145deg,rgba(43,31,20,.84),rgba(8,36,40,.96))}
+    .bootcamp-stat strong{display:block;font-size:42px;color:var(--gold2)}
+    .bootcamp-stat span{color:var(--muted)}
+    .library-tools{display:grid;grid-template-columns:minmax(240px,1fr) auto;gap:14px;margin:0 0 22px}
+    .library-tools input{width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:9px;background:#061d22;color:white;font:inherit}
+    .category-chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 28px}
+    .category-chips button{border:1px solid var(--line);background:#0b2a30;color:#dce8e4;border-radius:999px;padding:8px 11px;cursor:pointer}
+    .category-chips button.active,.category-chips button:hover{border-color:var(--gold);color:var(--gold2)}
+    .bootcamp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+    .bootcamp-card{border:1px solid var(--line);border-radius:13px;background:rgba(8,37,43,.92);padding:19px;display:flex;flex-direction:column;min-height:270px;box-shadow:var(--shadow)}
+    .bootcamp-card h3{margin:7px 0 8px;font-size:22px;line-height:1.08}
+    .bootcamp-card p{color:var(--muted);font-size:13px}
+    .bootcamp-card .tags{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+    .bootcamp-card .tags span{font-size:10px;border:1px solid var(--line);border-radius:999px;padding:4px 7px;color:#c7d8d4}
+    .bootcamp-card .card-actions{margin-top:auto;display:grid;gap:8px}
+    .bootcamp-card .status{font-size:11px;color:var(--warn)}
+    .bootcamp-card .btn.pending{opacity:.55;cursor:not-allowed}
+    .library-note{border-left:3px solid var(--gold);padding:15px 18px;background:#102f34;margin:22px 0;color:#dce8e4}
+    .empty-state{grid-column:1/-1;padding:38px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}
+    @media(max-width:1000px){.bootcamp-hero .shell{grid-template-columns:1fr}.bootcamp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:680px){.bootcamp-grid{grid-template-columns:1fr}.library-tools{grid-template-columns:1fr}.bootcamp-hero{padding-top:56px}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../#home" aria-label="Richmond Ray's Fishin' Tavern home">
+      <span class="brand-mark">⚓</span>
+      <span><strong>RICHMOND RAY'S</strong><small>FISHIN' TAVERN · POWERED BY RICHFISH</small></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open navigation">☰</button>
+    <nav>
+      <a href="../#home">Tavern</a>
+      <a href="../#spots">Fishing Spots</a>
+      <a href="../#finder">Fish Now</a>
+      <a href="../#documents">Field Library</a>
+      <a class="bootcamp-link" href="./" aria-current="page">101 Bootcamp</a>
+      <a href="../#guide">Fishing Bible</a>
+      <a href="../#sources">Data Lab</a>
+      <a href="../#ask-ray">Ask Ray</a>
+      <a class="phase" href="../#frmap">FRmap <small>LIVE WATER</small></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="bootcamp-hero">
+      <div class="shell">
+        <div>
+          <span class="eyebrow">RICHFISH FIELD SCHOOL</span>
+          <h1>101 BOOTCAMP <span>DOWNLOAD LIBRARY</span></h1>
+          <p>Fast, visual fishing education for emerging anglers and experienced fishermen who are tired of guessing. Browse species, bait, rig, method and crabbing guides in one dedicated RICHFISH library.</p>
+          <div class="actions">
+            <a class="btn primary" href="#library">Browse the Library</a>
+            <a class="btn" href="../#ask-ray">Ask Richmond Ray</a>
+          </div>
+        </div>
+        <aside class="bootcamp-stat">
+          <span class="eyebrow">CURRENT COLLECTION</span>
+          <strong id="bootcamp-count">32</strong>
+          <span>visual guides cataloged · downloads publish as each file clears technical and regulatory review</span>
+        </aside>
+      </div>
+    </section>
+
+    <section id="library" class="section shell">
+      <div class="section-heading">
+        <div><span class="eyebrow">THE BOOTCAMP SHELF</span><h2>Find the lesson you need before you hit the water.</h2></div>
+        <span class="sync" id="visible-count">Loading…</span>
+      </div>
+
+      <div class="library-note">
+        These guides are educational field references. Regulations, seasons, access rules, bait-collection methods and consumption advisories can change. RICHFISH keeps regulatory-review flags visible instead of presenting an outdated guide as current law.
+      </div>
+
+      <div class="library-tools">
+        <input id="bootcamp-search" type="search" placeholder="Search striped bass, halibut, pile worms, crabbing, lures…" aria-label="Search 101 Bootcamp library" />
+        <a class="btn" href="../#finder">Open Species Explorer</a>
+      </div>
+
+      <div id="category-chips" class="category-chips" aria-label="Bootcamp categories"></div>
+      <div id="bootcamp-grid" class="bootcamp-grid"><div class="empty-state">Loading the RICHFISH Bootcamp catalog…</div></div>
+    </section>
+  </main>
+
+  <footer><strong>RICHFISH 101 BOOTCAMP DOWNLOAD LIBRARY</strong><span>Know the water. Respect the fish. Verify current rules before fishing.</span></footer>
+
+  <script>
+  const state={docs:[],category:'All'};
+  const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const shortCategory=c=>String(c||'').replace(/^101 Bootcamp\s*[—-]\s*/,'');
+  const statusText=s=>({
+    'uploaded-awaiting-transfer':'Guide cataloged · download publishing',
+    'packaged-awaiting-transfer':'Collection packaged · download publishing',
+    'regulatory-review-required':'Regulatory review required before final download',
+    'health-advisory-review-required':'Consumption/advisory review required',
+    'collection-rules-review-required':'Bait-collection rules review required',
+    'legal-method-review-required':'Legal-method review required'
+  }[s]||String(s||'Review pending').replaceAll('-',' '));
+
+  function render(){
+    const q=document.querySelector('#bootcamp-search').value.trim().toLowerCase();
+    const filtered=state.docs.filter(d=>{
+      const cat=shortCategory(d.category);
+      const hay=[d.title,cat,...(d.tags||[])].join(' ').toLowerCase();
+      return (state.category==='All'||cat===state.category)&&(!q||hay.includes(q));
+    });
+    document.querySelector('#visible-count').textContent=filtered.length+' guide'+(filtered.length===1?'':'s')+' shown';
+    document.querySelector('#bootcamp-grid').innerHTML=filtered.length?filtered.map(d=>{
+      const tags=(d.tags||[]).slice(0,4).map(t=>'<span>'+esc(t)+'</span>').join('');
+      const download=d.downloadUrl
+        ? '<a class="btn primary" href="'+esc(d.downloadUrl)+'" download>Download '+esc(d.type||'Guide')+'</a>'
+        : '<span class="btn pending" aria-disabled="true">Download publishing</span>';
+      return '<article class="bootcamp-card"><span class="eyebrow">'+esc(shortCategory(d.category))+'</span><h3>'+esc(d.title)+'</h3><p>RICHFISH visual field guide · '+esc(d.type||'Guide')+'</p><div class="tags">'+tags+'</div><div class="card-actions"><span class="status">'+esc(statusText(d.status))+'</span>'+download+'</div></article>';
+    }).join(''):'<div class="empty-state">No Bootcamp guides match that search.</div>';
+  }
+
+  async function boot(){
+    try{
+      const r=await fetch('../data/documents.json');
+      if(!r.ok)throw new Error('catalog '+r.status);
+      const all=await r.json();
+      state.docs=all.filter(d=>String(d.category||'').startsWith('101 Bootcamp')&&!String(d.category).includes('Download Collections'));
+      document.querySelector('#bootcamp-count').textContent=state.docs.length;
+      const cats=['All',...new Set(state.docs.map(d=>shortCategory(d.category)))];
+      const chips=document.querySelector('#category-chips');
+      chips.innerHTML=cats.map(c=>'<button type="button" data-category="'+esc(c)+'" class="'+(c==='All'?'active':'')+'">'+esc(c)+'</button>').join('');
+      chips.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+        state.category=b.dataset.category;
+        chips.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
+        render();
+      }));
+      document.querySelector('#bootcamp-search').addEventListener('input',render);
+      render();
+    }catch(e){
+      document.querySelector('#bootcamp-grid').innerHTML='<div class="empty-state">Unable to load the Bootcamp catalog: '+esc(e.message)+'</div>';
+    }
+    const toggle=document.querySelector('.nav-toggle'),nav=document.querySelector('.topbar nav');
+    if(toggle&&nav)toggle.addEventListener('click',()=>nav.classList.toggle('open'));
+  }
+  boot();
+  </script>
+</body>
+</html>
