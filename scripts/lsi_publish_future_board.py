@@ -6,7 +6,7 @@ Rules:
 - Default actionable horizon is now through +7 days.
 - NFL receives a Monday-noon PT rollover extension so the next Tuesday-Monday week
   may be staged while the current Monday night QC is still retained as a status shell.
-- Every published prop carries an L&J market-baseline confidence percentage.
+- Only fully evaluated props carry LJPC. Market baselines remain evidence and never masquerade as LJPC.
 - Alternate thresholds for the same participant/market collapse to one preferred line.
 """
 from __future__ import annotations
@@ -61,7 +61,6 @@ def canonical_prop(p):
         explicit=float(p.get("ljpc")) if evaluated and p.get("ljpc") not in (None,"") else None
     except (TypeError,ValueError):
         explicit=None
-    confidence=round(max(0.0,min(100.0,explicit)),1) if explicit is not None else lj_baseline(p)
     return {
       "participant":p.get("participant"),
       "market_key":p.get("market_key") or p.get("market"),
@@ -73,14 +72,19 @@ def canonical_prop(p):
       "draftkings_available":bool(p.get("draftkings_available")),
       "market_source_count":int(p.get("market_source_count") or 1),
       "pom_type":p.get("pom_type") or p.get("pomType"),
-      "evaluation_status":"LJ_EVALUATED" if explicit is not None else "PROVISIONAL_MARKET_BASELINE",
-      "ljpc":confidence,
-      "lj_confidence":confidence,
+      "evaluation_status":"LJ_EVALUATED" if explicit is not None else "AWAITING_LJ_EVALUATION",
+      "ljpc":round(max(0.0,min(100.0,explicit)),1) if explicit is not None else None,
+      "lj_confidence":round(max(0.0,min(100.0,explicit)),1) if explicit is not None else None,
+      "legz_baseline":p.get("legz_baseline"),
+      "jinx_input":p.get("jinx_input"),
       "legz_value":p.get("legz_value"),
       "pom_value":p.get("pom_value"),
-      "model":"L&J EVALUATED OVERRIDE" if explicit is not None else "L&J MARKET BASELINE",
+      "market_baseline_probability":p.get("market_baseline_probability"),
+      "spectrum":p.get("spectrum"),
+      "model":"LEGZ STATISTICAL SPECTRUM" if explicit is not None else "AWAITING L&J EVALUATION",
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
       "evidence_summary":p.get("evidence_summary"),
+      "evaluation_reason":p.get("evaluation_reason"),
     }
 
 
@@ -263,7 +267,7 @@ def main():
             p=canonical_prop(raw)
             key=(str(p["participant"]).strip().lower(),str(p["market_key"]).strip().lower())
             prior=best.get(key)
-            if prior is None or p["ljpc"]>prior["ljpc"]:
+            if p["ljpc"] is None: continue\n            if prior is None or p["ljpc"]>prior["ljpc"]:
                 best[key]=p
         props=sorted(best.values(),key=lambda x:(-x["ljpc"],str(x["participant"]),str(x["market"])))
         events.append({
