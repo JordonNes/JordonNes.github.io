@@ -121,8 +121,7 @@ def main():
                 current[key]=p
                 added+=1
     board["verified_override_policy"]="Verified external markets enter the QC board as evidence only and must receive Spectrum v3 canonical evaluation state before publication."
-    BOARD.write_text(json.dumps(board,indent=2,ensure_ascii=False)+"
-",encoding="utf-8")
+    BOARD.write_text(json.dumps(board,indent=2,ensure_ascii=False)+chr(10),encoding="utf-8")
     print(f"Verified override adapter: added={added} updated={updated}; all override model fields reset for Spectrum v3.")
 
 if __name__=="__main__":
