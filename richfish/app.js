@@ -14,7 +14,10 @@ const state={
   conditionEngine:null,
   map:null,
   mapLayers:{},
-  mapMarkers:[]
+  mapMarkers:[],
+  mapSpeciesId:null,
+  mapClickMarker:null,
+  mapUserMarker:null
 };
 const $=(q)=>document.querySelector(q);
 const escapeHtml=(value)=>String(value??'').replace(/[&<>'"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -286,12 +289,9 @@ function renderSpeciesDetail(id){
 }
 
 function renderDocuments(){
-  const generalDocs=state.documents.filter(d=>!String(d.category||'').startsWith('101 Bootcamp'));
-  const groups=generalDocs.reduce((a,d)=>((a[d.category]??=[]).push(d),a),{});
-  $('#doc-count').textContent=`${generalDocs.length} general resources · Bootcamps in dedicated library`;
-  $('#document-grid').innerHTML=
-    `<section class="doc-card bootcamp-callout"><span class="eyebrow">RICHFISH 101 BOOTCAMP</span><h3>Dedicated Download Library</h3><p class="doc-meta">Species, baitfish, live bait, methods, crabbing and visual field instruction now have their own library.</p><a class="btn primary" href="bootcamp/">Open 101 Bootcamp Library →</a></section>`+
-    Object.entries(groups).map(([category,docs])=>`<section class="doc-card"><span class="eyebrow">${escapeHtml(category)}</span><h3>${docs.length} resource${docs.length===1?'':'s'}</h3>${docs.map(d=>`<p><strong>${escapeHtml(d.title)}</strong><br><span class="doc-meta">${escapeHtml(d.type)} · ${escapeHtml(d.status)}</span></p>`).join('')}<button class="btn" disabled>Asset import pending</button></section>`).join('');
+  const groups=state.documents.reduce((a,d)=>((a[d.category]??=[]).push(d),a),{});
+  $('#doc-count').textContent=`${state.documents.length} cataloged resources`;
+  $('#document-grid').innerHTML=Object.entries(groups).map(([category,docs])=>`<section class="doc-card"><span class="eyebrow">${escapeHtml(category)}</span><h3>${docs.length} resource${docs.length===1?'':'s'}</h3>${docs.map(d=>`<p><strong>${escapeHtml(d.title)}</strong><br><span class="doc-meta">${escapeHtml(d.type)} · ${escapeHtml(d.status)}</span></p>`).join('')}<button class="btn" disabled>Asset import pending</button></section>`).join('');
 }
 function renderSources(){
   $('#source-grid').innerHTML=state.sources.map(s=>`<article class="source-card"><span class="badge">${escapeHtml(s.priority)}</span><h3>${escapeHtml(s.name)}</h3><p>${escapeHtml(s.purpose)}</p>${s.role?`<small><strong>RICHFISH role:</strong> ${escapeHtml(s.role)}</small>`:''}${s.caveat?`<p class="notice"><strong>Data caution:</strong> ${escapeHtml(s.caveat)}</p>`:''}${s.endpoint?`<p><a class="eyebrow" href="${escapeHtml(s.endpoint)}" target="_blank" rel="noopener">Official source →</a></p>`:''}<small>${escapeHtml(s.mode)}</small></article>`).join('');
@@ -309,56 +309,220 @@ function haversineKm(a,b){
   const h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
   return 2*R*Math.asin(Math.sqrt(h));
 }
-function nearestMappedLocation(lat,lng){
-  const candidates=state.locations.filter(l=>l.coordinates);
-  if(!candidates.length)return null;
-  return candidates.map(l=>({location:l,distanceKm:haversineKm({lat,lng},l.coordinates)})).sort((a,b)=>a.distanceKm-b.distanceKm)[0];
+function distanceRankedLocations(lat,lng,limit=6){
+  return state.locations
+    .filter(l=>l?.coordinates&&Number.isFinite(Number(l.coordinates.lat))&&Number.isFinite(Number(l.coordinates.lng)))
+    .map(location=>({location,distanceKm:haversineKm({lat,lng},{lat:Number(location.coordinates.lat),lng:Number(location.coordinates.lng)})}))
+    .sort((a,b)=>a.distanceKm-b.distanceKm)
+    .slice(0,limit);
 }
-function mapOpportunity(location){
+function nearestMappedLocation(lat,lng){return distanceRankedLocations(lat,lng,1)[0]||null;}
+function nearestStation(lat,lng,collection){
+  const rows=Object.values(collection||{})
+    .filter(s=>Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng)))
+    .map(station=>({station,distanceKm:haversineKm({lat,lng},{lat:Number(station.lat),lng:Number(station.lng)})}))
+    .sort((a,b)=>a.distanceKm-b.distanceKm);
+  return rows[0]||null;
+}
+function spatialZone(lat,lng){
+  if(lng<-122.46&&lat>37.55&&lat<38.55)return {label:'Pacific coast / Golden Gate outer-water zone',basis:'RICHFISH coordinate-zone heuristic'};
+  if(lng>-122.08&&lat>37.82&&lat<38.36)return {label:'Sacramento–San Joaquin Delta zone',basis:'RICHFISH coordinate-zone heuristic'};
+  if(lng>-122.34&&lng<=-122.08&&lat>37.97&&lat<38.20)return {label:'Carquinez / Suisun transition zone',basis:'RICHFISH coordinate-zone heuristic'};
+  if(lng>-122.62&&lng<=-122.25&&lat>37.93&&lat<38.20)return {label:'San Pablo Bay zone',basis:'RICHFISH coordinate-zone heuristic'};
+  if(lng>-122.62&&lng<=-122.25&&lat>37.62&&lat<=37.93)return {label:'Central San Francisco Bay zone',basis:'RICHFISH coordinate-zone heuristic'};
+  if(lng>-122.55&&lat<=37.62&&lat>37.25)return {label:'South San Francisco Bay zone',basis:'RICHFISH coordinate-zone heuristic'};
+  return {label:'RICHFISH extended map zone',basis:'Coordinate only; waterbody not yet resolved from a controlling polygon layer'};
+}
+function getMapScore(location,speciesId){
+  const engineId=location?.verification?.engine_spot_id;
+  if(!engineId||!speciesId)return null;
+  return state.conditionEngine?.spots?.[engineId]?.species?.[speciesId]||null;
+}
+function locationTargetsSpecies(location,speciesId){
+  if(!location||!speciesId)return false;
+  const all=[...(location.targets?.primary||[]),...(location.targets?.secondary||[])];
+  return all.some(name=>resolveSpeciesId(name)===speciesId);
+}
+function modeledSpeciesIds(){
+  const keys=Object.keys(state.conditionEngine?.rankings||{});
+  if(keys.length)return keys;
+  return state.liveSpecies.map(s=>s.id).filter(Boolean);
+}
+function mapOpportunity(location,preferredSpeciesId=state.mapSpeciesId){
   const engineId=location?.verification?.engine_spot_id;
   if(!engineId)return null;
+  if(preferredSpeciesId){
+    const score=getMapScore(location,preferredSpeciesId);
+    if(score){
+      const species=catalogSpeciesFor(preferredSpeciesId)||liveSpeciesFor(preferredSpeciesId);
+      return {target:species?.common_name||species?.name||preferredSpeciesId,speciesId:preferredSpeciesId,score};
+    }
+    return null;
+  }
+  let best=null;
   for(const target of location.targets?.primary||[]){
     const speciesId=resolveSpeciesId(target);
-    const score=state.conditionEngine?.spots?.[engineId]?.species?.[speciesId];
-    if(score)return {target,speciesId,score};
+    const score=getMapScore(location,speciesId);
+    if(score&&(!best||Number(score.recommendationScore||0)>Number(best.score.recommendationScore||0)))best={target,speciesId,score};
   }
-  return null;
+  return best;
 }
 function factorSummary(score){
   const factors=(score?.factors||[]).filter(f=>f.score!=null).sort((a,b)=>(b.weight||0)-(a.weight||0)).slice(0,3);
   return factors.map(f=>`${f.id}: ${cleanNumber(f.score,0)}%`).join(' · ')||'Live factor detail unavailable';
 }
+function selectedMapSpeciesName(){
+  if(!state.mapSpeciesId)return 'All modeled targets';
+  const s=catalogSpeciesFor(state.mapSpeciesId)||liveSpeciesFor(state.mapSpeciesId);
+  return s?.common_name||s?.name||state.mapSpeciesId;
+}
+function mapLocationCandidates(lat,lng,speciesId=state.mapSpeciesId,limit=5){
+  const candidates=distanceRankedLocations(lat,lng,Math.max(12,limit*3)).map(row=>{
+    const score=speciesId?getMapScore(row.location,speciesId):mapOpportunity(row.location,null)?.score||null;
+    const match=speciesId?locationTargetsSpecies(row.location,speciesId):Boolean(mapOpportunity(row.location,null));
+    return {...row,score,match};
+  }).filter(row=>row.score||row.match);
+  return candidates
+    .sort((a,b)=>{
+      const sa=Number(a.score?.recommendationScore||0),sb=Number(b.score?.recommendationScore||0);
+      if(sb!==sa)return sb-sa;
+      return a.distanceKm-b.distanceKm;
+    })
+    .slice(0,limit);
+}
+function updateMapSelectionSummary(){
+  const el=$('#frmap-selection-summary');
+  if(!el)return;
+  const ids=modeledSpeciesIds();
+  const scored=state.locations.filter(l=>state.mapSpeciesId?Boolean(getMapScore(l,state.mapSpeciesId)):Boolean(mapOpportunity(l,null))).length;
+  el.innerHTML=`<strong>${escapeHtml(selectedMapSpeciesName())}</strong><small>${scored} live-scored location${scored===1?'':'s'} · ${ids.length} modeled species</small>`;
+}
+function markerStyleForLocation(location){
+  const closed=location?.access_gate?.status==='closed';
+  if(closed)return {radius:8,weight:2,opacity:1,fillOpacity:.8,color:'#e26a6a',fillColor:'#7f2727'};
+  if(!state.mapSpeciesId){
+    const op=mapOpportunity(location,null);
+    if(op)return {radius:8,weight:2,opacity:1,fillOpacity:.78,color:'#f0c06a',fillColor:'#d99a3d'};
+    return {radius:5,weight:1,opacity:.7,fillOpacity:.32,color:'#9fb5b2',fillColor:'#28505a'};
+  }
+  const score=getMapScore(location,state.mapSpeciesId);
+  if(score){
+    const n=Number(score.recommendationScore||0);
+    return {radius:Math.max(7,Math.min(12,6+n/18)),weight:2,opacity:1,fillOpacity:.82,color:'#f0c06a',fillColor:'#42c98b'};
+  }
+  if(locationTargetsSpecies(location,state.mapSpeciesId))return {radius:6,weight:1.5,opacity:.85,fillOpacity:.48,color:'#f0c06a',fillColor:'#28505a'};
+  return {radius:4,weight:1,opacity:.28,fillOpacity:.12,color:'#9fb5b2',fillColor:'#28505a'};
+}
+function refreshMapLocationMarkers(){
+  for(const row of state.mapMarkers){
+    if(!row?.marker||!row?.location)continue;
+    row.marker.setStyle(markerStyleForLocation(row.location));
+    const score=state.mapSpeciesId?getMapScore(row.location,state.mapSpeciesId):mapOpportunity(row.location,null)?.score;
+    const scoreText=score?.recommendationScore!=null?` · ${cleanNumber(score.recommendationScore,0)}% planning index`:'';
+    row.marker.setTooltipContent(`${escapeHtml(row.location.name)}${scoreText}`);
+  }
+  updateMapSelectionSummary();
+}
+function currentVectorIcon(speed,deg,cardinal){
+  const safeDeg=Number.isFinite(Number(deg))?Number(deg):0;
+  return L.divIcon({
+    className:'fr-current-vector',
+    html:`<div class="fr-current-arrow" style="transform:rotate(${safeDeg}deg)">➤</div><span>${escapeHtml(cleanNumber(speed,2))} kt ${escapeHtml(cardinal||'')}</span>`,
+    iconSize:[72,42],
+    iconAnchor:[36,21]
+  });
+}
+function renderNearbyCoordinateIntelligence(lat,lng){
+  const panel=$('#frmap-report');
+  const zone=spatialZone(lat,lng);
+  const nearest=nearestMappedLocation(lat,lng);
+  const coops=nearestStation(lat,lng,state.publicWater?.coopsStations);
+  const ndbc=nearestStation(lat,lng,state.publicWater?.ndbcStations);
+  const bound=distanceRankedLocations(lat,lng,20).find(row=>row.location?.verification?.engine_spot_id&&state.conditionEngine?.spots?.[row.location.verification.engine_spot_id])||null;
+  const candidates=mapLocationCandidates(lat,lng,state.mapSpeciesId,4);
+  const target=selectedMapSpeciesName();
+  const boundEngine=bound?state.conditionEngine?.spots?.[bound.location.verification.engine_spot_id]:null;
+  const obs=boundEngine?.observations||{};
+  const current=obs.current;
+  const tide=obs.tide?.trend||null;
+  const stationCards=[
+    dataCard('Spatial zone',zone.label,zone.basis),
+    dataCard('Nearest RICHFISH file',nearest?`${nearest.location.name} · ${cleanNumber(nearest.distanceKm,1)} km`:'Unavailable','Distance from clicked coordinate'),
+    dataCard('Nearest NOAA CO-OPS',coops?`${coops.station.name||coops.station.id} · ${cleanNumber(coops.distanceKm,1)} km`:'Unavailable','Station proximity only'),
+    dataCard('Nearest NDBC buoy',ndbc?`${ndbc.station.id} · ${cleanNumber(ndbc.distanceKm,1)} km`:'Unavailable','Offshore context where available')
+  ];
+  if(bound){
+    const pieces=[];
+    if(tide)pieces.push(String(tide));
+    if(current?.speedKnots!=null)pieces.push(`${cleanNumber(current.speedKnots,2)} kt toward ${current.towardCardinal||current.towardDegreesTrue||'model grid'}`);
+    stationCards.push(dataCard('Nearest bound water model',pieces.join(' · ')||'Bound, observations incomplete',`${bound.location.name} · ${cleanNumber(bound.distanceKm,1)} km away; not measured at pin`));
+  }
+  const candidateHtml=candidates.length?candidates.map((row,i)=>{
+    const score=row.score?.recommendationScore;
+    const label=score!=null?`${cleanNumber(score,0)}% planning index`:'catalog target match';
+    return `<button class="map-candidate" data-map-location="${escapeHtml(row.location.id)}"><b>${i+1}. ${escapeHtml(row.location.name)}</b><span>${escapeHtml(label)} · ${cleanNumber(row.distanceKm,1)} km from pin</span></button>`;
+  }).join(''):'<p>No nearby location currently has a model score or catalog target match for this filter.</p>';
+  panel.innerHTML=`
+    <span class="eyebrow">COORDINATE INTELLIGENCE · ${escapeHtml(target)}</span>
+    <h3>${lat.toFixed(5)}, ${lng.toFixed(5)}</h3>
+    <div class="ray-call-grid">${stationCards.join('')}</div>
+    <div class="ray-note"><b>RAY'S SPATIAL RULE</b><br>This pin is not directly condition-scored. Nearby station and model data are shown with distance labels and are not represented as measurements at the clicked coordinate.</div>
+    <div class="map-nearby-list"><span class="eyebrow">NEARBY EVIDENCE-BACKED OPTIONS</span>${candidateHtml}</div>
+    <p class="notice">Bathymetry, access and regulatory overlays can change the practical answer. NOAA ENC contours are reference context only; verify controlling regulations and legal access before fishing.</p>`;
+  panel.querySelectorAll('[data-map-location]').forEach(button=>button.addEventListener('click',()=>{
+    const loc=state.locations.find(l=>l.id===button.dataset.mapLocation);
+    if(loc?.coordinates){
+      state.map?.setView([loc.coordinates.lat,loc.coordinates.lng],13);
+      renderMapEvaluation(loc.coordinates.lat,loc.coordinates.lng,loc);
+    }
+  }));
+}
 function renderMapEvaluation(lat,lng,forcedLocation=null){
   const panel=$('#frmap-report');
   if(!panel)return;
+  if(state.map){
+    if(state.mapClickMarker)state.map.removeLayer(state.mapClickMarker);
+    if(!forcedLocation){
+      state.mapClickMarker=L.circleMarker([lat,lng],{radius:6,weight:2,fillOpacity:.25,dashArray:'4 3'}).addTo(state.map);
+    }else state.mapClickMarker=null;
+  }
   const nearest=forcedLocation?{location:forcedLocation,distanceKm:0}:nearestMappedLocation(lat,lng);
   const loc=nearest?.location;
+  if(!forcedLocation&&(!loc||nearest.distanceKm>2)){
+    renderNearbyCoordinateIntelligence(lat,lng);
+    return;
+  }
   if(loc?.access_gate?.status==='closed'){
     panel.innerHTML=`<span class="eyebrow">ACCESS HARD GATE</span><h3>${escapeHtml(loc.name)}</h3><p>${escapeHtml(loc.access_status_note||'This access point is closed.')}</p><div class="ray-note"><b>RAY'S CALL BLOCKED</b><br>RICHFISH will not recommend fishing from a closed access structure.</div>`;
     return;
   }
-  if(!loc||nearest.distanceKm>2){
-    panel.innerHTML=`<span class="eyebrow">COORDINATE CAPTURED</span><h3>${lat.toFixed(5)}, ${lng.toFixed(5)}</h3><p>No map-ready RICHFISH location record is within 2 km. The v0.3 spatial resolver must identify waterbody, jurisdiction, habitat, bathymetry and legal/advisory layers before Richmond Ray can issue an evidence-backed call here.</p><div class="ray-note"><b>RAY'S CALL BLOCKED</b><br>No invented location or fishing recommendation will be substituted.</div>`;
-    return;
-  }
-  const opportunity=mapOpportunity(loc);
+  const opportunity=mapOpportunity(loc,state.mapSpeciesId);
   const evidence=evidenceForLocation(loc);
   const tier=strongestEvidenceTier(evidence);
   if(!opportunity){
-    panel.innerHTML=`<span class="eyebrow">NEAREST CATALOG RECORD · ${nearest.distanceKm.toFixed(2)} km</span><h3>${escapeHtml(loc.name)}</h3><p>${escapeHtml(loc.region)} · ${escapeHtml(loc.habitat)}</p><div class="ray-note"><b>RAY'S CALL BLOCKED</b><br>This location is catalogued, but its live environmental/species binding is not complete. Current conditions will not be fabricated.</div><p><button class="btn" data-open-location="${loc.id}">Open location file</button></p>`;
+    const targetNote=state.mapSpeciesId&&locationTargetsSpecies(loc,state.mapSpeciesId)
+      ? `${selectedMapSpeciesName()} is listed for this location, but there is no live Condition Engine score for it here.`
+      : state.mapSpeciesId
+        ? `${selectedMapSpeciesName()} is not currently a verified modeled target at this location.`
+        : 'This location is catalogued, but its live environmental/species binding is not complete.';
+    panel.innerHTML=`<span class="eyebrow">LOCATION FILE · ${nearest.distanceKm.toFixed(2)} km</span><h3>${escapeHtml(loc.name)}</h3><p>${escapeHtml(loc.region)} · ${escapeHtml(loc.habitat)}</p><div class="ray-note"><b>NO DIRECT LIVE CALL</b><br>${escapeHtml(targetNote)}</div><div class="ray-call-grid">${dataCard('Primary targets',(loc.targets?.primary||[]).join(', ')||'None recorded')}${dataCard('General window',loc.ideal_general_window||'Not recorded')}${dataCard('Access',loc.access_status_note||'Verify access')}${dataCard('Evidence',tierLabel(tier),`${evidence.length} registered report${evidence.length===1?'':'s'}`)}</div><p><button class="btn" data-open-location="${loc.id}">Open location file</button></p>`;
     panel.querySelector('[data-open-location]')?.addEventListener('click',()=>selectLocation(loc.id));
     return;
   }
   const species=catalogSpeciesFor(opportunity.speciesId);
+  const liveSpecies=liveSpeciesFor(opportunity.speciesId);
   const score=opportunity.score;
   const engineSpot=state.conditionEngine?.spots?.[loc.verification?.engine_spot_id];
   const shear=engineSpot?.operational?.currentShear;
+  const current=engineSpot?.observations?.current;
+  const interaction=engineSpot?.operational?.windCurrentInteraction;
   const bestWindow=score?.bestCurrentWindows?.[0]||null;
   const bestWindowText=bestWindow?.validTime
     ? `${new Date(bestWindow.validTime).toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'})} · ${cleanNumber(bestWindow.speedKnots,2)} kt ${bestWindow.towardCardinal||''}`.trim()
     : (loc.ideal_general_window||'Not resolved to clock time');
   const liveSpot=liveSpotForLocation(loc);
-  const baits=species?.fishing?.suggested_baits?.length?species.fishing.suggested_baits:(liveSpot?.recommendedBaits||[]);
+  const baits=species?.fishing?.suggested_baits?.length?species.fishing.suggested_baits:(liveSpecies?.bestBaits||liveSpot?.recommendedBaits||[]);
+  const rigs=liveSpecies?.bestRigs||liveSpot?.recommendedRigs||[];
   const secondary=loc.targets?.secondary?.[0]||'No secondary target ranked';
   const evidenceConfidence=confidenceLabel(score.dataConfidence);
   const provenanceUrls=loc.provenance?.source_urls||[];
@@ -370,15 +534,19 @@ function renderMapEvaluation(lat,lng,forcedLocation=null){
       ${dataCard('Secondary',secondary)}
       ${dataCard('Opportunity index',`${cleanNumber(score.recommendationScore,0)}%`,'Planning index · not catch probability')}
       ${dataCard('Prime modeled current window',bestWindowText,bestWindow?`Current-fit ${cleanNumber(bestWindow.currentFit,0)}%`:'General location guidance')}
+      ${dataCard('Current',current?.speedKnots!=null?`${cleanNumber(current.speedKnots,2)} kt toward ${current.towardCardinal||current.towardDegreesTrue||'grid'}`:'Unavailable','Model-bound observation')}
       ${dataCard('Current shear / seam potential',shear?`${shear.category} · ${shear.index}/100`:'Unavailable','Model-scale proxy')}
+      ${dataCard('Wind-current difficulty',interaction?`${interaction.category} · ${interaction.difficultyIndex}/100`:'Unavailable','Presentation-control index')}
       ${dataCard('Presentation',baits[0]||'Not developed')}
-      ${dataCard('Backup',baits[1]||'Not developed')}
+      ${dataCard('Rig',rigs[0]||'Not developed')}
+      ${dataCard('Backup',baits[1]||rigs[1]||'Not developed')}
       ${dataCard('Evidence confidence',evidenceConfidence,`${cleanNumber(score.dataConfidence,0)}% live-data confidence`)}
       ${dataCard('Community signal',tierLabel(tier),`${evidence.length} registered report${evidence.length===1?'':'s'}`)}
     </div>
-    <p><strong>Why:</strong> ${escapeHtml(factorSummary(score))}; location inventory identifies ${escapeHtml(opportunity.target)} as a primary target.</p>
+    <p><strong>Why:</strong> ${escapeHtml(factorSummary(score))}; location inventory identifies ${escapeHtml(opportunity.target)} as a supported target.</p>
     <p><strong>Risk:</strong> ${escapeHtml(loc.non_ideal_conditions||'No site risk note recorded.')}</p>
-    <p><strong>Regulations:</strong> <span class="notice">Hard-gate resolver not yet wired to this coordinate click. Verify current CDFW rules before fishing.</span></p>
+    <p><strong>Access:</strong> ${escapeHtml(loc.access_status_note||'Verify legal access before travel.')}</p>
+    <p><strong>Regulations:</strong> <span class="notice">Regulatory polygon hard-gates are not complete yet. Verify current CDFW rules before fishing.</span></p>
     <div class="why-panel"><span class="eyebrow">WHY RAY THINKS THIS</span><ul>
       <li>Location master row ${escapeHtml(loc.provenance?.source_row||'unknown')} · ${escapeHtml(loc.verification?.label||'Unverified')}</li>
       ${sourceLinks(provenanceUrls)}
@@ -390,31 +558,120 @@ function renderMapEvaluation(lat,lng,forcedLocation=null){
     <p><button class="btn" data-open-location="${loc.id}">Open full location file</button></p>`;
   panel.querySelector('[data-open-location]')?.addEventListener('click',()=>selectLocation(loc.id));
 }
+function populateMapSpeciesFilter(){
+  const select=$('#frmap-species');
+  if(!select)return;
+  const ids=modeledSpeciesIds();
+  const rows=ids.map(id=>{
+    const species=catalogSpeciesFor(id)||liveSpeciesFor(id);
+    return {id,name:species?.common_name||species?.name||id};
+  }).sort((a,b)=>a.name.localeCompare(b.name));
+  select.innerHTML='<option value="">All modeled targets</option>'+rows.map(row=>`<option value="${escapeHtml(row.id)}">${escapeHtml(row.name)}</option>`).join('');
+  if(ids.includes('striped-bass'))state.mapSpeciesId='striped-bass';
+  else state.mapSpeciesId=ids[0]||null;
+  select.value=state.mapSpeciesId||'';
+  select.addEventListener('change',()=>{
+    state.mapSpeciesId=select.value||null;
+    refreshMapLocationMarkers();
+    const center=state.map?.getCenter();
+    if(center)renderNearbyCoordinateIntelligence(center.lat,center.lng);
+  });
+  updateMapSelectionSummary();
+}
+function addNoaaBathymetryLayer(){
+  if(!window.L)return L.layerGroup();
+  const group=L.layerGroup();
+  const services=[
+    ['https://encdirect.noaa.gov/arcgis/services/encdirect/enc_coastal/MapServer/WMSServer','82'],
+    ['https://encdirect.noaa.gov/arcgis/services/encdirect/enc_approach/MapServer/WMSServer','108'],
+    ['https://encdirect.noaa.gov/arcgis/services/encdirect/enc_harbour/MapServer/WMSServer','104'],
+    ['https://encdirect.noaa.gov/arcgis/services/encdirect/enc_berthing/MapServer/WMSServer','49']
+  ];
+  for(const [url,layers] of services){
+    L.tileLayer.wms(url,{
+      layers,
+      format:'image/png',
+      transparent:true,
+      opacity:.52,
+      version:'1.1.1',
+      attribution:'NOAA ENC Direct to GIS · not for navigation'
+    }).addTo(group);
+  }
+  return group;
+}
+function useMapGeolocation(){
+  const panel=$('#frmap-report');
+  if(!navigator.geolocation){
+    if(panel)panel.innerHTML='<span class="eyebrow">FIELD MODE</span><h3>Location is not available in this browser.</h3>';
+    return;
+  }
+  const button=$('#frmap-near-me');
+  if(button){button.disabled=true;button.textContent='Locating…';}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat=pos.coords.latitude,lng=pos.coords.longitude;
+    if(state.mapUserMarker)state.map?.removeLayer(state.mapUserMarker);
+    state.mapUserMarker=L.marker([lat,lng]).addTo(state.map).bindTooltip('Your browser location').openTooltip();
+    state.map.setView([lat,lng],13);
+    renderNearbyCoordinateIntelligence(lat,lng);
+    if(button){button.disabled=false;button.textContent='Use my location';}
+  },error=>{
+    if(panel)panel.innerHTML=`<span class="eyebrow">FIELD MODE</span><h3>Location was not shared.</h3><p>${escapeHtml(error.message||'Use the map manually instead.')}</p>`;
+    if(button){button.disabled=false;button.textContent='Use my location';}
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+}
 function initMap(){
   if(!window.L||!$('#frmap-canvas'))return;
-  const map=L.map('frmap-canvas',{preferCanvas:true}).setView([38.03,-122.25],9);
+  const map=L.map('frmap-canvas',{preferCanvas:true,zoomControl:true}).setView([38.03,-122.25],9);
   state.map=map;
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:18,
     attribution:'&copy; OpenStreetMap contributors'
   }).addTo(map);
+
   const access=L.layerGroup().addTo(map);
   const stations=L.layerGroup().addTo(map);
   const buoys=L.layerGroup().addTo(map);
-  state.mapLayers={access,stations,buoys};
+  const currents=L.layerGroup().addTo(map);
+  const gates=L.layerGroup().addTo(map);
+  const bathymetry=addNoaaBathymetryLayer();
+  state.mapLayers={access,stations,buoys,currents,gates,bathymetry};
+  state.mapMarkers=[];
 
   for(const loc of state.locations.filter(l=>l.coordinates)){
-    const marker=L.circleMarker([loc.coordinates.lat,loc.coordinates.lng],{radius:7,weight:2,fillOpacity:.8});
+    const marker=L.circleMarker([loc.coordinates.lat,loc.coordinates.lng],markerStyleForLocation(loc));
     marker.bindTooltip(loc.name);
     marker.on('click',()=>renderMapEvaluation(loc.coordinates.lat,loc.coordinates.lng,loc));
     marker.addTo(access);
+    state.mapMarkers.push({location:loc,marker});
+    if(loc?.access_gate?.status==='closed'){
+      const gate=L.circleMarker([loc.coordinates.lat,loc.coordinates.lng],{radius:13,weight:3,fillOpacity:.08,color:'#e26a6a'});
+      gate.bindTooltip(`ACCESS CLOSED · ${loc.name}`);
+      gate.addTo(gates);
+    }
   }
+
+  for(const [engineId,engineSpot] of Object.entries(state.conditionEngine?.spots||{})){
+    const sourceSpot=state.liveSpots.find(s=>s.id===engineId);
+    const boundLoc=state.locations.find(l=>l.verification?.engine_spot_id===engineId);
+    const coords=boundLoc?.coordinates||sourceSpot?.coordinates;
+    const current=engineSpot?.observations?.current;
+    if(!coords||current?.speedKnots==null)continue;
+    const marker=L.marker([coords.lat,coords.lng],{
+      interactive:false,
+      icon:currentVectorIcon(current.speedKnots,current.towardDegreesTrue,current.towardCardinal)
+    });
+    marker.addTo(currents);
+  }
+
   for(const station of Object.values(state.publicWater?.coopsStations||{})){
     const lat=Number(station?.lat),lng=Number(station?.lng);
     if(!Number.isFinite(lat)||!Number.isFinite(lng))continue;
     const marker=L.circleMarker([lat,lng],{radius:5,weight:1,fillOpacity:.45});
     marker.bindTooltip(`NOAA ${station.name||station.id}`);
-    marker.on('click',()=>{$('#frmap-report').innerHTML=`<span class="eyebrow">NOAA CO-OPS STATION</span><h3>${escapeHtml(station.name||station.id)}</h3><p>${escapeHtml(station.role||'Environmental observation station')}</p><p>Snapshot: ${escapeHtml(state.publicWater?.sourceStatus?.noaaGeneratedAt||'unavailable')}</p>`;});
+    marker.on('click',()=>{
+      const products=station.products||{};
+      $('#frmap-report').innerHTML=`<span class="eyebrow">NOAA CO-OPS STATION</span><h3>${escapeHtml(station.name||station.id)}</h3><div class="ray-call-grid">${dataCard('Water level',products.waterLevel?.value?.v!=null?products.waterLevel.value.v+' ft':'Unavailable')}${dataCard('Water temp',products.waterTemperature?.value?.v!=null?products.waterTemperature.value.v+'°F':'Unavailable')}${dataCard('Wind',products.wind?.value?.s!=null?products.wind.value.s+' mph':'Unavailable')}${dataCard('Salinity',products.salinity?.value?.v!=null?products.salinity.value.v+' PSU':'Unavailable')}</div><p>Snapshot: ${escapeHtml(state.publicWater?.sourceStatus?.noaaGeneratedAt||'unavailable')}</p>`;
+    });
     marker.addTo(stations);
   }
   for(const station of Object.values(state.publicWater?.ndbcStations||{})){
@@ -428,16 +685,27 @@ function initMap(){
     });
     marker.addTo(buoys);
   }
+
   document.querySelectorAll('[data-map-layer]').forEach(input=>{
+    const layer=state.mapLayers[input.dataset.mapLayer];
+    if(!layer)return;
+    if(input.checked&&!map.hasLayer(layer))layer.addTo(map);
     input.addEventListener('change',()=>{
-      const layer=state.mapLayers[input.dataset.mapLayer];
-      if(!layer)return;
       if(input.checked)layer.addTo(map);else map.removeLayer(layer);
     });
+  });
+  populateMapSpeciesFilter();
+  refreshMapLocationMarkers();
+
+  $('#frmap-near-me')?.addEventListener('click',useMapGeolocation);
+  $('#frmap-reset')?.addEventListener('click',()=>{
+    map.setView([38.03,-122.25],9);
+    renderNearbyCoordinateIntelligence(38.03,-122.25);
   });
   map.on('click',e=>renderMapEvaluation(e.latlng.lat,e.latlng.lng));
   const eckley=state.locations.find(l=>l.id==='eckley-pier');
   if(eckley?.coordinates)renderMapEvaluation(eckley.coordinates.lat,eckley.coordinates.lng,eckley);
+  else renderNearbyCoordinateIntelligence(38.03,-122.25);
   setTimeout(()=>map.invalidateSize(),100);
 }
 
@@ -564,6 +832,8 @@ async function boot(){
       getJsonOptional('live/public-water.json'),
       getJsonOptional('live/condition-engine.json')
     ]);
+    state.locations=Array.isArray(state.locations)?state.locations:(state.locations?.locations||[]);
+    state.speciesCatalog=Array.isArray(state.speciesCatalog)?state.speciesCatalog:(state.speciesCatalog?.species||[]);
     state.selectedLocation=state.locations.find(l=>l.id==='eckley-pier')||state.locations[0];
     state.selectedSpecies=state.speciesCatalog.find(s=>s.id==='striped-bass')||state.speciesCatalog[0];
     renderConditionStrip();
