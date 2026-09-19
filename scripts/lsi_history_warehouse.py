@@ -118,6 +118,30 @@ def main():
                     "historical_record_available":True
                 }
 
+    # Register players that live only in durable league/season shards too.
+    if HISTORY_ROOT.exists():
+        for hist_path in sorted(HISTORY_ROOT.glob("*/*.csv")):
+            with hist_path.open(newline="",encoding="utf-8-sig") as fh:
+                for r in csv.DictReader(fh):
+                    league=r.get("league") or ""; name=r.get("participant") or ""
+                    if not league or not name: continue
+                    pid=player_id(league,name); prior=players.get(pid,{})
+                    aliases=set(prior.get("aliases") or []); aliases.add(str(name))
+                    provider_ids=dict(prior.get("provider_ids") or {})
+                    if r.get("provider_player_id"):
+                        provider_ids[str(r.get("source") or "HISTORY")]=str(r.get("provider_player_id"))
+                    event_time=r.get("event_start_utc") or stamp
+                    first=prior.get("first_seen_utc") or event_time
+                    last=prior.get("last_seen_utc") or event_time
+                    if event_time and first and event_time < first: first=event_time
+                    if event_time and last and event_time > last: last=event_time
+                    players[pid]={
+                        "lsi_player_id":pid,"league":league,"canonical_name":prior.get("canonical_name") or str(name),
+                        "aliases":sorted(aliases),"provider_ids":provider_ids,
+                        "first_seen_utc":first,"last_seen_utc":last,
+                        "historical_record_available":True
+                    }
+
     # Settled results are immutable evidence currently available to the generic layer.
     # Sport-specific history adapters may add much richer warehouse data without changing this contract.
     # Generic settled predictions remain useful, but the append-only performance warehouse is the primary reusable fact store.
@@ -138,22 +162,26 @@ def main():
     if PERF.exists() and PERF.stat().st_size: perf_files.append(PERF)
     if HISTORY_ROOT.exists():
         perf_files.extend(sorted(HISTORY_ROOT.glob("*/*.csv")))
+    seen_facts=set()
     for perf_path in perf_files:
         with perf_path.open(newline="",encoding="utf-8-sig") as fh:
             for r in csv.DictReader(fh):
                 league=r.get("league") or ""; name=r.get("participant") or ""; metric=r.get("metric") or ""
                 value=num(r.get("value")); event=r.get("provider_event_id") or r.get("event_id") or ""
-                if league and name and metric and value is not None:
+                fact_id=r.get("record_id") or f"{league}|{event}|{r.get('provider_player_id') or norm(name)}|{metric}"
+                if fact_id in seen_facts: continue
+                if league and name and event and metric and value is not None:
+                    seen_facts.add(fact_id)
                     perf[(player_id(league,name),event)][metric]=value
-        for (pid,event),stats in perf.items():
-            for metric,value in stats.items(): hist[(pid,metric)].append(value)
-            if "rush_tds" in stats or "receiving_tds" in stats:
-                hist[(pid,"anytime_td")].append((stats.get("rush_tds") or 0)+(stats.get("receiving_tds") or 0))
-            if all(k in stats for k in ("points","rebounds","assists")):
-                hist[(pid,"pra")].append(stats["points"]+stats["rebounds"]+stats["assists"])
-                hist[(pid,"points_rebounds")].append(stats["points"]+stats["rebounds"])
-                hist[(pid,"points_assists")].append(stats["points"]+stats["assists"])
-                hist[(pid,"rebounds_assists")].append(stats["rebounds"]+stats["assists"])
+    for (pid,event),stats in perf.items():
+        for metric,value in stats.items(): hist[(pid,metric)].append(value)
+        if "rush_tds" in stats or "receiving_tds" in stats:
+            hist[(pid,"anytime_td")].append((stats.get("rush_tds") or 0)+(stats.get("receiving_tds") or 0))
+        if all(k in stats for k in ("points","rebounds","assists")):
+            hist[(pid,"pra")].append(stats["points"]+stats["rebounds"]+stats["assists"])
+            hist[(pid,"points_rebounds")].append(stats["points"]+stats["rebounds"])
+            hist[(pid,"points_assists")].append(stats["points"]+stats["assists"])
+            hist[(pid,"rebounds_assists")].append(stats["rebounds"]+stats["assists"])
 
     profiles=[]
     # Build exact-current-threshold features so market evaluation is a local lookup.
