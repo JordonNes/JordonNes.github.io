@@ -72,9 +72,13 @@ def main():
         if t:odds_times.append(t)
 
     odds_health=odds.get("health") or {}
+    pl_health=pl.get("health") or {}
     market_health={
       "propline":{"tracked_events":len(pl.get("events") or {}),"last_success_utc":max(pl_times).isoformat() if pl_times else None,
-                  "age_hours":round((now-max(pl_times)).total_seconds()/3600,2) if pl_times else None},
+                  "age_hours":round((now-max(pl_times)).total_seconds()/3600,2) if pl_times else None,
+                  "status":pl_health.get("status"),"checked_at_utc":pl_health.get("checked_at_utc"),
+                  "last_error":pl_health.get("last_error"),"rate_limits":pl_health.get("rate_limits"),
+                  "auth_errors":pl_health.get("auth_errors")},
       "the_odds_api":{"tracked_events":len(odds.get("events") or {}),"last_success_utc":max(odds_times).isoformat() if odds_times else None,
                       "age_hours":round((now-max(odds_times)).total_seconds()/3600,2) if odds_times else None,
                       "status":odds_health.get("status"),"checked_at_utc":odds_health.get("checked_at_utc"),
@@ -85,8 +89,15 @@ def main():
     blockers=[]
     lj_status=str(lj.get("status") or "UNKNOWN")
     if lj_status!="PASS": blockers.append({"type":"T48_LJPC_SLA","detail":lj.get("blockers") or {}})
-    if market_health["propline"]["tracked_events"]==0: blockers.append({"type":"PROPLINE_NO_SUCCESS_STATE"})
-    elif (market_health["propline"]["age_hours"] or 0)>12: blockers.append({"type":"PROPLINE_STALE","age_hours":market_health["propline"]["age_hours"]})
+    pl_status=str(market_health["propline"].get("status") or "")
+    if pl_status=="AUTH_ERROR":
+        blockers.append({"type":"PROPLINE_AUTH_ERROR","last_error":market_health["propline"].get("last_error")})
+    elif pl_status=="RATE_LIMITED":
+        blockers.append({"type":"PROPLINE_RATE_LIMITED","note":"Durable last-known-good POMs remain available; reduce live calls or raise provider quota.","last_error":market_health["propline"].get("last_error")})
+    elif market_health["propline"]["tracked_events"]==0:
+        blockers.append({"type":"PROPLINE_NO_SUCCESS_STATE"})
+    elif (market_health["propline"]["age_hours"] or 0)>12:
+        blockers.append({"type":"PROPLINE_STALE","age_hours":market_health["propline"]["age_hours"]})
     odds_status=str(market_health["the_odds_api"].get("status") or "")
     if odds_status=="AUTH_ERROR":
         blockers.append({"type":"THE_ODDS_API_AUTH_ERROR","note":"ODDS_API_KEY is being rejected; replace/re-authorize it before relying on this fallback.","last_error":market_health["the_odds_api"].get("last_error")})
