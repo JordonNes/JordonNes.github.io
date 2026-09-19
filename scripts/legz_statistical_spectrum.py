@@ -6,7 +6,7 @@ Market price is evidence/prior only; it is never published as LJPC by itself.
 Insufficiently supported POMs remain AWAITING_LJ_EVALUATION.
 """
 from __future__ import annotations
-import csv, gzip, hashlib, json, math, re, statistics
+import csv, gzip, hashlib, json, math, os, re, statistics
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -166,7 +166,12 @@ def historical_results():
     meta={}
     files=[]
     if PERF.exists() and PERF.stat().st_size: files.append(PERF)
-    if HISTORY_ROOT.exists(): files.extend(sorted(HISTORY_ROOT.glob("*/*.csv*")))
+    # Fast publication/validation runs reuse the durable spectrum cache rather than
+    # repeatedly decompressing the full immutable archive. Full history stages still
+    # rescan shards to refresh the cache/calibration layer.
+    fast_runtime=str(os.getenv("LSI_FAST_RUNTIME","")).lower() in {"1","true","yes"}
+    if HISTORY_ROOT.exists() and not fast_runtime:
+        files.extend(sorted(HISTORY_ROOT.glob("*/*.csv*")))
     seen=set()
     for path in files:
         with csv_open(path) as fh:
