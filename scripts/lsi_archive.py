@@ -371,6 +371,7 @@ def main():
         "settlement_status": src / "data/settlement_status.json",
         "settlement_aliases": src / "data/settlement_aliases.json",
         "qc_prop_board": src / "data/qc_prop_board.json",
+        "evaluation_state": src / "data/lsi_evaluation_state.json",
     }
 
     registry = load_json(files["prediction_registry"]) or {}
@@ -395,6 +396,8 @@ def main():
 
     qc = load_json(files["qc_prop_board"]) or {}
     qc_events = qc.get("events", []) if isinstance(qc, dict) else []
+    eval_state = load_json(files["evaluation_state"]) or {}
+    eval_records = eval_state.get("records", []) if isinstance(eval_state, dict) else []
 
     new_counts = {}
     new_counts["prediction_registry"] = append_items(
@@ -509,6 +512,19 @@ def main():
         source_generated_at=qc.get("generated_at_utc") if isinstance(qc, dict) else None,
         identity=publication_identity,
     )
+    new_counts["evaluation_state"] = append_items(
+        archive / "evaluation_state_history.jsonl",
+        kind="EVALUATION_STATE",
+        dataset="lsi_evaluation_state",
+        items=eval_records,
+        src_commit=commit,
+        source_generated_at=eval_state.get("generated_at_utc") if isinstance(eval_state, dict) else None,
+        identity=lambda row: {
+            "evaluation_id": row.get("evaluation_id"),
+            "evaluation_key": row.get("evaluation_key"),
+            "material_hash": row.get("material_hash"),
+        },
+    )
 
     combined_markets = market_rows + odds_history + pl_records
     entity_map = build_entity_map(registry_records, event_rows, combined_markets)
@@ -526,6 +542,7 @@ def main():
         "result_history": archive / "result_history.jsonl",
         "settlement_history": archive / "settlement_history.jsonl",
         "publication_history": archive / "publication_history.jsonl",
+        "evaluation_state_history": archive / "evaluation_state_history.jsonl",
     }
     counts = {name: count_jsonl_tree(path) for name, path in archive_files.items()}
 
@@ -562,6 +579,7 @@ def main():
     source_summaries["settlement_status"]["items"] = 1 if settlement_status else 0
     source_summaries["settlement_aliases"]["items"] = len((settlement_aliases.get("events") or {})) if isinstance(settlement_aliases, dict) else 0
     source_summaries["qc_prop_board"]["items"] = len(qc_events)
+    source_summaries["evaluation_state"]["items"] = len(eval_records)
 
     health = {
         "schema_version": "LSI-ARCHIVE-HEALTH-1",
