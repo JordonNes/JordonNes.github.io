@@ -7,6 +7,33 @@
   const D = window.LJ_DATA;
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
+  const NFL_LOGOS={
+    ari:"ari",arizona:"ari","arizona cardinals":"ari",atl:"atl",atlanta:"atl","atlanta falcons":"atl",
+    bal:"bal",baltimore:"bal","baltimore ravens":"bal",buf:"buf",buffalo:"buf","buffalo bills":"buf",
+    car:"car",carolina:"car","carolina panthers":"car",chi:"chi",chicago:"chi","chicago bears":"chi",
+    cin:"cin",cincinnati:"cin","cincinnati bengals":"cin",cle:"cle",cleveland:"cle","cleveland browns":"cle",
+    dal:"dal",dallas:"dal","dallas cowboys":"dal",den:"den",denver:"den","denver broncos":"den",
+    det:"det",detroit:"det","detroit lions":"det",gb:"gb","green bay":"gb","green bay packers":"gb",
+    hou:"hou",houston:"hou","houston texans":"hou",ind:"ind",indianapolis:"ind","indianapolis colts":"ind",
+    jax:"jax",jacksonville:"jax","jacksonville jaguars":"jax",kc:"kc","kansas city":"kc","kansas city chiefs":"kc",
+    lv:"lv","las vegas":"lv","las vegas raiders":"lv",lac:"lac","los angeles chargers":"lac",
+    lar:"lar","los angeles rams":"lar",mia:"mia",miami:"mia","miami dolphins":"mia",
+    min:"min",minnesota:"min","minnesota vikings":"min",ne:"ne","new england":"ne","new england patriots":"ne",
+    no:"no","new orleans":"no","new orleans saints":"no",nyg:"nyg","new york giants":"nyg",
+    nyj:"nyj","new york jets":"nyj",phi:"phi",philadelphia:"phi","philadelphia eagles":"phi",
+    pit:"pit",pittsburgh:"pit","pittsburgh steelers":"pit",sf:"sf","san francisco":"sf","san francisco 49ers":"sf",
+    sea:"sea",seattle:"sea","seattle seahawks":"sea",tb:"tb","tampa bay":"tb","tampa bay buccaneers":"tb",
+    ten:"ten",tennessee:"ten","tennessee titans":"ten",was:"wsh",wsh:"wsh",washington:"wsh","washington commanders":"wsh"
+  };
+  function nflLogoUrl(name){
+    const key=String(name||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+    const slug=NFL_LOGOS[key];
+    return slug?("https://a.espncdn.com/i/teamlogos/nfl/500/"+slug+".png"):"";
+  }
+  function teamNameHTML(name){
+    const logo=nflLogoUrl(name);
+    return `<span class="qc-team-name">${logo?`<img class="qc-team-logo" src="${esc(logo)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:""}<span>${esc(name)}</span></span>`;
+  }
   const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|^PASS\b|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
   const isUnsupported = s => /UNSUPPORTED PLAYER THRESHOLD/i.test(String(s || ""));
   const asItems = value => Array.isArray(value) ? value : (value ? [value] : []);
@@ -150,7 +177,7 @@
   }
 
   function rules(){
-    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep only the pregame-locked LEGZ Hot Top beside the current live box score. JINX Game Winner, game odds, SNS1, SNS2, Normal and Aggressive/Demon are removed.</span></div><div class="qc-rule"><b>Final</b><span>Keep the pregame Hot Top as the prediction record and show FINAL status plus the ending box score. Remove JINX Game Winner, game odds and every ticket/parlay section.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Live and final views preserve only the locked pregame information permitted by the event-state rule; nothing is backfilled after the event starts. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
+    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep the frozen JINX predicted game odds/winner at far left, the pregame-locked LEGZ Hot Top beside it, and the current live box score at right. SNS1, SNS2, Normal and Aggressive/Demon are removed.</span></div><div class="qc-rule"><b>Final</b><span>Keep the pregame Hot Top as the prediction record and show FINAL status plus the ending box score. Remove JINX Game Winner, game odds and every ticket/parlay section.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Live and final views preserve only the locked pregame information permitted by the event-state rule; nothing is backfilled after the event starts. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
   }
   function renderQcLeg(value){
     const raw=String(value??"").trim();
@@ -214,7 +241,7 @@
     }
     const cols=Math.max(1,cells.length);
     const grid=`grid-template-columns:minmax(210px,1.18fr) repeat(${cols},minmax(150px,1fr))`;
-    return `<div class="qc-row" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||"")}" style="${grid}"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams"><span>${esc(r.away)}</span><span class="qc-vs">VS</span><span>${esc(r.home)}</span></div>${market?`<div class="qc-market">${esc(market)}</div>`:""}${winner?`<div class="qc-winner"><div class="qc-label">${r._winnerProvisional?"PROVISIONAL WINNER — MARKET BASELINE":"JINX GAME WINNER"}</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:""}<div class="qc-runtime-status" hidden></div></div>${cells.join("")}</div>`;
+    return `<div class="qc-row" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||"")}" style="${grid}"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams">${teamNameHTML(r.away)}<span class="qc-vs">VS</span>${teamNameHTML(r.home)}</div>${market?`<div class="qc-market">${esc(market)}</div>`:""}${winner?`<div class="qc-winner"><div class="qc-label">${r._winnerProvisional?"PROVISIONAL WINNER — MARKET BASELINE":"JINX GAME WINNER"}</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:""}<div class="qc-runtime-status" hidden></div></div>${cells.join("")}</div>`;
   }
   function qcHasParlay(r){
     return [r?.sns1,r?.sns2,r?.normal,r?.demon]
@@ -233,7 +260,7 @@
   function qcs(title,rows){
     const visible=visibleQcRows(rows);
     if(!visible.length) return "";
-    return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Published pregame QCs remain visible through actual kickoff • once live, only locked HOT TOP + box score remain</span></div><div class="qc-list">${visible.map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • published pregame intelligence persists until the event actually starts</div></section>`;
+    return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Published pregame QCs remain visible through actual kickoff • once live, frozen JINX game odds + locked HOT TOP + box score remain</span></div><div class="qc-list">${visible.map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • published pregame intelligence persists until the event actually starts</div></section>`;
   }
   function nflDayBucket(row){
     const raw=String(row?.time||'').toUpperCase();
@@ -500,7 +527,7 @@
     const s=t=>esc(t.score??"");
     const cell=row.querySelector(".qc-game");
     if(!cell) return null;
-    cell.innerHTML=`<div class="qc-state-pill qc-state-${esc(state.kind)}">${esc(state.label)}</div><div class="qc-teams"><span>${n(away)}</span><span class="qc-vs">VS</span><span>${n(home)}</span></div><div class="qc-live-score"><span>${n(away)} <b>${s(away)}</b></span><span>${n(home)} <b>${s(home)}</b></span></div><div class="qc-runtime-detail">${esc(state.detail||state.label)}</div><div class="qc-runtime-captured">Current state captured ${esc(capturedPT())}</div>`;
+    cell.innerHTML=`<div class="qc-state-pill qc-state-${esc(state.kind)}">${esc(state.label)}</div><div class="qc-teams">${teamNameHTML(away)}<span class="qc-vs">VS</span>${teamNameHTML(home)}</div><div class="qc-live-score"><span>${n(away)} <b>${s(away)}</b></span><span>${n(home)} <b>${s(home)}</b></span></div><div class="qc-runtime-detail">${esc(state.detail||state.label)}</div><div class="qc-runtime-captured">Current state captured ${esc(capturedPT())}</div>`;
     return cell;
   }
   function applyRuntimeState(key,row,event){
@@ -522,15 +549,23 @@
         const h=pregameHot.querySelector("h4");
         if(h) h.textContent="LEGZ PLAYER HOT TOP — PREGAME LOCKED";
       }
-      // Once play actually begins, executable pregame tickets are removed.
-      // Keep only the locked HOT TOP record with the live box score to its right.
-      const parts=[pregameHot?.outerHTML||"",box].filter(Boolean);
+      if(pregameGame){
+        pregameGame.classList.add("qc-live-pregame-game");
+        const label=pregameGame.querySelector(".qc-winner .qc-label");
+        if(label) label.textContent="JINX PREDICTED GAME ODDS — PREGAME LOCKED";
+        const status=pregameGame.querySelector(".qc-runtime-status");
+        if(status){ status.hidden=false; status.textContent="LIVE — PRE-GAME ODDS / WINNER FROZEN"; }
+      }
+      // Live shell: frozen JINX odds/winner at far left, locked Hot Top in the center, live box score at right.
+      const parts=[pregameGame?.outerHTML||"",pregameHot?.outerHTML||"",box].filter(Boolean);
       row.innerHTML=parts.join("");
       row.classList.add("qc-live-row");
       row.classList.remove("qc-final-row");
-      row.style.gridTemplateColumns=pregameHot
-        ?"minmax(280px,1fr) minmax(360px,1.35fr)"
-        :"minmax(360px,1fr)";
+      row.style.gridTemplateColumns=pregameGame&&pregameHot
+        ?"minmax(225px,.9fr) minmax(280px,1fr) minmax(360px,1.35fr)"
+        :pregameHot
+          ?"minmax(280px,1fr) minmax(360px,1.35fr)"
+          :"minmax(360px,1fr)";
       return;
     }
 
