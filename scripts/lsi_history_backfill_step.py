@@ -36,7 +36,7 @@ def main():
     end=cursor
     begin=max(floor,end-timedelta(days=chunk-1))
     safe_league=item["league"].replace("/","_")
-    out=f"data/history/{safe_league}/{item['season']}.csv"
+    out=f"data/history/{safe_league}/{item['season']}.csv.gz"
     cmd=[sys.executable,str(ROOT/"scripts"/"lsi_performance_ingest.py"),
          "--league",item["league"],"--date-from",begin.isoformat(),"--date-to",end.isoformat(),
          "--max-events",str(max(1,int(item.get("max_events") or 100))),"--output",out]
