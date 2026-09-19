@@ -35,3 +35,7 @@ POM -> local Spectrum lookup -> current JINX context -> LJPC.
 The permanent warehouse keeps complete recoverable history. A smaller hot cache stores the recency windows LEGZ finds predictive for each sport/market. L5/L10/L20 are defaults, not universal hard-coded truth.
 
 GitHub remains suitable for code, schemas, lightweight published artifacts and early-stage append-only datasets. When historical volume/concurrency warrants it, the warehouse should move to PostgreSQL while preserving these schemas and immutable raw facts.
+
+
+## Naming compatibility
+Public product labels use **CFB** and **CBB**. The internal canonical identifiers remain `NCAA_Football` and `NCAA_Basketball` for backward compatibility with historical data, adapters, settlement, registries, and existing URLs. Public aliases `CFB.html` and `CBB.html` route to the canonical pages. A future schema migration may rename internal identifiers only when all persisted records and consumers can be migrated atomically.
