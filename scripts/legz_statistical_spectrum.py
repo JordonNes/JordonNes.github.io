@@ -39,6 +39,19 @@ def player_norm(v):
     s=re.sub(r"\s*\([A-Za-z0-9 .&'\-]{2,24}\)\s*$","",s)
     return norm(s)
 
+def observation_order(row,source_path=None):
+    """Stable chronological key for shard-backed history, including nflverse week IDs."""
+    import re
+    raw=str(row.get("event_start_utc") or "")
+    if raw:return raw
+    eid=str(row.get("provider_event_id") or row.get("event_id") or "")
+    m=re.search(r"(?:NFLVERSE[-_])?(20\d{2}).*?(?:W|REG-|POST-)?(\d{1,2})(?:\D|$)",eid,re.I)
+    if m:return f"{m.group(1)}-W{int(m.group(2)):02d}"
+    if source_path is not None:
+        sm=re.search(r"(20\d{2})",str(source_path))
+        if sm:return f"{sm.group(1)}-W00"
+    return "0000"
+
 def market_metric(market):
     m=norm(market)
     rules=[
@@ -134,8 +147,8 @@ def historical_results():
                 seen.add(rid)
                 key=(league,player,event)
                 by_event[key][metric]=value
-                meta[key]=row.get("event_start_utc") or ""
-    ordered=sorted(by_event.items(),key=lambda kv:meta.get(kv[0],""))
+                meta[key]=max(meta.get(key,"0000"),observation_order(row,path))
+    ordered=sorted(by_event.items(),key=lambda kv:(meta.get(kv[0],"0000"),kv[0][2]))
     for (league,player,event),m in ordered:
         derived=dict(m)
         if any(k in m for k in ("rush_tds","receiving_tds")):
@@ -174,7 +187,7 @@ def spectrum_cache_index():
     except (json.JSONDecodeError,AttributeError): return {}
     out={}
     for r in rows:
-        key=(str(r.get("league") or ""),player_norm(r.get("player")),str(r.get("market") or "").strip().lower(),str(r.get("threshold") or ""),str(r.get("side") or "").strip().lower())
+        key=(str(r.get("league") or ""),player_norm(r.get("player")),norm(r.get("market")),str(r.get("threshold") or ""),norm(r.get("side")))
         out[key]=r
     return out
 
@@ -221,7 +234,7 @@ def spectrum(prop, history, contexts, cache):
             canonical=key.upper()
             if canonical not in rate_map: rate_map[canonical]=v
     # Reuse locally cached exact-threshold features before considering any external research.
-    cache_key=(str(prop.get("_league") or ""),str(prop.get("participant") or "").strip().lower(),str(prop.get("market") or "").strip().lower(),str(prop.get("threshold") or ""),str(prop.get("side") or "").strip().lower())
+    cache_key=(str(prop.get("_league") or ""),player_norm(prop.get("participant")),norm(prop.get("market")),str(prop.get("threshold") or ""),norm(prop.get("side")))
     cached=cache.get(cache_key) or {}
     for key in ("L5_hit_rate","L10_hit_rate","L20_hit_rate"):
         v=pct(cached.get(key))
