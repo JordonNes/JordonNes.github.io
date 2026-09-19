@@ -150,7 +150,7 @@ jobs:
           else
             git commit -m "LSI fast GAME_ML ${{ needs.clock.outputs.date }} PT"
             for attempt in 1 2 3; do
-              git pull --rebase origin master
+              git pull --rebase --autostash origin master
               if git push origin master; then break; fi
               if [ "$attempt" = "3" ]; then exit 1; fi
               sleep 2
@@ -310,7 +310,7 @@ jobs:
           else
             git commit -m "LSI ${{ needs.clock.outputs.stage }} ${{ needs.clock.outputs.date }} PT"
             for attempt in 1 2 3 4 5; do
-              git pull --rebase origin master
+              git pull --rebase --autostash origin master
               if git push origin master; then exit 0; fi
               echo "Push race detected; retrying attempt ${attempt}/5 after refresh."
               sleep 3
