@@ -21,8 +21,11 @@ def main():
         print("All configured history backfills are complete.")
         return
     # Finish the highest-priority phase before spending API capacity on later phases.
-    best_priority=min(int(leagues[i].get("priority") or 999) for i in active)
-    active=[i for i in active if int(leagues[i].get("priority") or 999)==best_priority]
+    def priority_of(item):
+        value=item.get("priority")
+        return int(value if value is not None else 999)
+    best_priority=min(priority_of(leagues[i]) for i in active)
+    active=[i for i in active if priority_of(leagues[i])==best_priority]
     start_idx=int(state.get("next_index") or 0)%len(leagues)
     idx=None
     for offset in range(len(leagues)):
