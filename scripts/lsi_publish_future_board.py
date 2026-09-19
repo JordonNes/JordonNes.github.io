@@ -309,11 +309,20 @@ def main():
         except (json.JSONDecodeError,OSError):
             live_rows=[]
     ml_count=sum(len(e.get("game_markets") or []) for e in events)
-    if live_rows and ml_count==0:
-        raise SystemExit(
-            f"Future-board candidate lost GAME_ML coverage despite {len(live_rows)} usable current moneyline row(s); "
-            "last-known-good future board preserved."
-        )
+    if live_rows:
+        eligible_ids={str(r.get("event_id")) for r in live_rows if r.get("event_id")}
+        published_ids={str(e.get("source_event_id")) for e in events if e.get("game_markets")}
+        missing=sorted(eligible_ids-published_ids)
+        if missing:
+            raise SystemExit(
+                f"Future-board candidate lost {len(missing)} eligible upcoming GAME_ML event(s): {missing[:12]}; "
+                "last-known-good future board preserved."
+            )
+        if ml_count==0:
+            raise SystemExit(
+                f"Future-board candidate lost GAME_ML coverage despite {len(live_rows)} usable current moneyline row(s); "
+                "last-known-good future board preserved."
+            )
     if source_events and not events:
         raise SystemExit("Future-board candidate unexpectedly contains zero upcoming events; last-known-good future board preserved.")
 
