@@ -21,7 +21,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: lsi-history-writer
+  group: lsi-nfl-history-writer
   cancel-in-progress: false
 
 jobs:
@@ -49,15 +49,12 @@ jobs:
           python scripts/nflverse_history_backfill_step.py
           python scripts/nflverse_history_backfill_step.py
 
-      - name: Measure durable history coverage
-        run: python scripts/lsi_history_coverage.py
-
       - name: Commit durable NFL history
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/history/NFL data/nfl_history_backfill_state.json data/history_coverage.json
+          git add data/history/NFL data/nfl_history_backfill_state.json
           if git diff --cached --quiet; then
             echo 'NFL history shards already current.'
             exit 0
