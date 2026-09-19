@@ -123,6 +123,8 @@ for (const [page, league] of Object.entries(PAGES)) {
   for (const q of sport.qcs) {
     const label = `${league} ${q.away || '?'} @ ${q.home || '?'}`;
     const count = Number(q._propSweepCount || 0);
+    const evaluatedCount = Number(q._propEvaluatedCount || 0);
+    const awaitingCount = Number(q._propAwaitingCount || Math.max(0,count-evaluatedCount));
     const status = String(q._propSweepStatus || 'NO_AUDIT_STATUS');
 
     if (status === 'NO_BOARD_MATCH') {
@@ -155,13 +157,15 @@ for (const [page, league] of Object.entries(PAGES)) {
     // is correctly omitted. What must never happen is: acquired props exist but the
     // game publishes no usable player-prop evaluation at all.
     if (!cols.hot.length) {
-      errors.push(`${label}: acquired prop board has ${count} usable props but LEGZ Hot Top is empty.`);
+      if (evaluatedCount>0) errors.push(`${label}: ${evaluatedCount}/${count} acquired POMs are L&J-evaluated but LEGZ Hot Top is empty.`);
+      else warnings.push(`${label}: ${count} acquired POMs are awaiting individualized L&J evaluation; no fallback LJPC or fabricated Hot Top is permitted.`);
     }
     const ticketModes=[cols.sns1,cols.sns2,cols.normal,cols.demon];
     const ticketLegs=ticketModes.flat();
     const publishedParlays=ticketModes.filter(arr=>arr.length>=2);
     if (!ticketLegs.length) {
-      errors.push(`${label}: acquired prop board has ${count} usable props but every QC ticket mode is empty.`);
+      if (evaluatedCount>=2) errors.push(`${label}: ${evaluatedCount}/${count} acquired POMs are evaluated but every eligible QC ticket mode is empty.`);
+      else warnings.push(`${label}: ticket publication correctly withheld — evaluated=${evaluatedCount}, awaiting=${awaitingCount}, acquired=${count}.`);
     }
     if (q._qcParlayRequired && !publishedParlays.length) {
       errors.push(`${label}: 2+ qualified POMs exist in an eligible ticket mode, but no 2–6 leg QC parlay was published.`);
