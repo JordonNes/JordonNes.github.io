@@ -147,10 +147,12 @@ def main():
     pred_env=[x for x in read_jsonl(root/"prediction_history.jsonl") if x.get("kind")=="PREDICTION"]
     result_env=read_jsonl(root/"result_history.jsonl")
     settlement_env=[x for x in read_jsonl(root/"settlement_history.jsonl") if x.get("kind")=="SETTLEMENT_STATUS"]
+    evaluation_env=[x for x in read_jsonl(root/"evaluation_state_history.jsonl") if x.get("kind")=="EVALUATION_STATE"]
 
     latest_preds=latest_by(pred_env,lambda x:(x.get("payload") or {}).get("prediction_id"))
     latest_results=latest_by(result_env,lambda x:(x.get("payload") or {}).get("prediction_id"))
     latest_settlement=max(settlement_env,key=lambda x:x.get("captured_at_utc") or "",default={}).get("payload") or {}
+    latest_evaluation_states=latest_by(evaluation_env,lambda x:(x.get("payload") or {}).get("evaluation_id"))
 
     source_counts=defaultdict(int)
     market_group_obs=defaultdict(int)
@@ -180,8 +182,13 @@ def main():
             clv=line_clv(p.get("side"),selected,closing)
         mcount=num(p.get("market_source_count"))
         status=norm(p.get("status"))
+        evaluation_id=p.get("evaluation_id")
+        evaluation_state=(latest_evaluation_states.get(evaluation_id) or {}).get("payload") or {}
+        feature_state=p.get("feature_state") or evaluation_state.get("feature_state") or {}
         rows.append({
             "prediction_id":pid,
+            "evaluation_id":evaluation_id,
+            "feature_state":feature_state,
             "league":p.get("league") or "UNKNOWN",
             "sport":p.get("sport"),
             "market":p.get("market") or "UNKNOWN",
@@ -233,6 +240,96 @@ def main():
     (out/"performance_summary.json").write_text(json.dumps({
         "schema_version":"LSI-EVAL-SUMMARY-1","generated_at_utc":NOW,
         "dimensions":dimensions,
+    },indent=2)+"\n",encoding="utf-8")
+
+    # Spectrum feature-family calibration. This is descriptive shadow analysis only;
+    # it cannot change model weights or live confidence.
+    decisive_feature_rows=[r for r in rows if r.get("grade") in {"WIN","LOSS"} and isinstance(r.get("feature_state"),dict) and r.get("feature_state")]
+    def feature_values(row):
+        fs=row.get("feature_state") or {}
+        perf=fs.get("performance") or {}
+        dist=perf.get("distribution") or {}
+        market=fs.get("market") or {}
+        context=fs.get("context") or {}
+        prov=fs.get("provenance") or {}
+        return {
+            "performance_sample_size":num(perf.get("sample_size") if perf.get("sample_size") is not None else dist.get("n")),
+            "performance_consistency":num(perf.get("consistency")),
+            "distribution_probability":num(dist.get("distribution_model_probability")),
+            "market_implied_probability":num(market.get("implied_probability")),
+            "market_source_count":num(market.get("source_count")),
+            "context_delta":num(context.get("delta")),
+            "provenance_snapshot_count":float(len(prov.get("snapshot_ids") or [])),
+            "provenance_evidence_count":float(len(prov.get("evidence_ids") or [])),
+        }
+    def pearson(xs,ys):
+        if len(xs)<2 or len(xs)!=len(ys): return None
+        mx=sum(xs)/len(xs); my=sum(ys)/len(ys)
+        dx=[x-mx for x in xs]; dy=[y-my for y in ys]
+        den=(sum(x*x for x in dx)*sum(y*y for y in dy))**0.5
+        return round(sum(a*b for a,b in zip(dx,dy))/den,4) if den else None
+
+    feature_names=(
+        "performance_sample_size","performance_consistency","distribution_probability",
+        "market_implied_probability","market_source_count","context_delta",
+        "provenance_snapshot_count","provenance_evidence_count",
+    )
+    feature_metrics={}
+    for name in feature_names:
+        pairs=[]
+        for r in decisive_feature_rows:
+            v=feature_values(r).get(name)
+            if v is not None:
+                pairs.append((float(v),1.0 if r["grade"]=="WIN" else 0.0))
+        wins=[x for x,y in pairs if y==1.0]; losses=[x for x,y in pairs if y==0.0]
+        feature_metrics[name]={
+            "sample_size":len(pairs),
+            "win_mean":round(sum(wins)/len(wins),4) if wins else None,
+            "loss_mean":round(sum(losses)/len(losses),4) if losses else None,
+            "win_loss_mean_difference":round((sum(wins)/len(wins))-(sum(losses)/len(losses)),4) if wins and losses else None,
+            "outcome_correlation":pearson([x for x,_ in pairs],[y for _,y in pairs]),
+        }
+
+    family_map={
+        "PERFORMANCE_HISTORY":["performance_sample_size","performance_consistency","distribution_probability"],
+        "MARKET_PRIOR":["market_implied_probability","market_source_count"],
+        "CURRENT_CONTEXT":["context_delta"],
+        "PROVENANCE_DEPTH":["provenance_snapshot_count","provenance_evidence_count"],
+    }
+    family_metrics={}
+    for family,names in family_map.items():
+        vals=[feature_metrics[n]["outcome_correlation"] for n in names if feature_metrics[n]["outcome_correlation"] is not None]
+        ns=[feature_metrics[n]["sample_size"] for n in names]
+        family_metrics[family]={
+            "minimum_feature_sample":min(ns) if ns else 0,
+            "mean_abs_outcome_correlation":round(sum(abs(v) for v in vals)/len(vals),4) if vals else None,
+            "feature_count_with_signal":len(vals),
+        }
+
+    feature_weight_gate={
+        "minimum_decisive_settled_with_feature_state":500,
+        "minimum_per_feature_samples":400,
+        "minimum_distinct_feature_families":3,
+        "decisive_settled_with_feature_state":len(decisive_feature_rows),
+    }
+    feature_weight_gate["checks"]={
+        "settled_feature_sample_ge_500":len(decisive_feature_rows)>=500,
+        "each_core_feature_ge_400":all(feature_metrics[n]["sample_size"]>=400 for n in (
+            "performance_consistency","distribution_probability","market_implied_probability","market_source_count"
+        )),
+        "at_least_3_feature_families_measured":sum(1 for x in family_metrics.values() if x["feature_count_with_signal"]>0)>=3,
+    }
+    feature_weight_gate["eligible_for_weight_review"]=all(feature_weight_gate["checks"].values())
+    feature_weight_gate["weight_change_authorized"]=False
+    (out/"feature_calibration.json").write_text(json.dumps({
+        "schema_version":"LSI-FEATURE-CALIBRATION-1",
+        "generated_at_utc":NOW,
+        "status":"SHADOW_READY_FOR_REVIEW" if feature_weight_gate["eligible_for_weight_review"] else "SHADOW_INSUFFICIENT_SAMPLE",
+        "policy":"Feature statistics are descriptive associations, not causal claims. No live weight may change from this file.",
+        "features":feature_metrics,
+        "families":family_metrics,
+        "gate":feature_weight_gate,
+        "live_weight_influence_enabled":False,
     },indent=2)+"\n",encoding="utf-8")
 
     # Conservative market maturity gates.
@@ -343,6 +440,8 @@ def main():
         "performance_records_added":added_perf,
         "market_observations_available":manifest.get("counts",{}).get("market_history",0),
         "eligible_learning_markets":len(eligible),
+        "feature_calibration_rows":len(decisive_feature_rows),
+        "feature_weight_review_eligible":feature_weight_gate["eligible_for_weight_review"],
         "production_influence_enabled":bool(eligible),
         "live_prediction_write_authority":False,
     }
@@ -358,6 +457,8 @@ def main():
             "market_history_present":manifest.get("counts",{}).get("market_history",0)>0,
             "settlement_data_present":bool(settled_rows),
             "learning_gate_generated":True,
+            "feature_calibration_generated":True,
+            "feature_weight_change_authorized":False,
         },
         "authority_boundary":{
             "can_modify_live_predictions":False,
@@ -374,6 +475,8 @@ def main():
         "predictions":len(rows),"settled":len(settled_rows),
         "market_observations":manifest.get("counts",{}).get("market_history",0),
         "eligible_learning_markets":len(eligible),
+        "feature_calibration_rows":len(decisive_feature_rows),
+        "feature_weight_review_eligible":feature_weight_gate["eligible_for_weight_review"],
         "production_influence_enabled":bool(eligible),
     },sort_keys=True))
 
