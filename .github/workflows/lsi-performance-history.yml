@@ -2,6 +2,13 @@ name: LSI Performance History Refresh
 
 on:
   workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_performance_ingest.py'
+      - 'scripts/lsi_history_warehouse.py'
+      - 'scripts/legz_statistical_spectrum.py'
+      - '.github/workflows/lsi-performance-history.yml'
   schedule:
     - cron: '45 12 * * *'
     - cron: '45 6 * * *'
