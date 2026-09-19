@@ -6,6 +6,20 @@ on:
     branches: [master]
     paths:
       - 'LJ_index.html'
+      - 'NFL.html'
+      - 'MLB.html'
+      - 'NBA.html'
+      - 'WNBA.html'
+      - 'NHL.html'
+      - 'NCAA_Football.html'
+      - 'NCAA_Basketball.html'
+      - 'FIBA_Men.html'
+      - 'FIBA_Women.html'
+      - 'MMA.html'
+      - 'Boxing.html'
+      - 'Tennis.html'
+      - 'data/future_market_board.js'
+      - 'scripts/qc_publication_audit.js'
       - 'ljapp.js'
       - 'ljqc.css'
       - 'lsi_registry_bridge.js'
@@ -26,5 +40,8 @@ jobs:
           node --check ljapp.js
           node --check lsi_registry_bridge.js
           node --check scripts/frontend_home_audit.js
+          node --check scripts/qc_publication_audit.js
       - name: LJ_index + QC presentation audit
-        run: node scripts/frontend_home_audit.js
+        run: |
+          node scripts/frontend_home_audit.js
+          node scripts/qc_publication_audit.js
