@@ -30,7 +30,7 @@ else{
   if(!(twenty>=0&&status>twenty&&footer>status)) fail('CURRENT STATUS is not the last home content section before footer');
   if(!body.includes('setTimeout(loadMaterialAlerts,0)')) fail('material alerts are not loaded after home render');
 }
-for(const token of ['function renderQcLeg','qc-leg-player','qc-consensus','qc-lj-score','function hydrateGameStates','function boxScoreHTML','NORMAL — PREGAME LOCKED']) if(!app.includes(token)) fail('ljapp missing '+token);
+for(const token of ['function renderQcLeg','qc-leg-player','qc-consensus','qc-lj-score','function hydrateGameStates','function boxScoreHTML','LEGZ PLAYER HOT TOP — PREGAME LOCKED','LEGZ PLAYER HOT TOP — FINAL RECORD','PREGAME LOCKED']) if(!app.includes(token)) fail('ljapp missing '+token);
 for(const token of ['.qc-leg-player','.qc-leg-prop','.qc-consensus','.qc-ticket-h.normal','.qc-hot h4','.qc-boxscore','.qc-live-row','.qc-final-row']) if(!css.includes(token)) fail('ljqc missing '+token);
 if(app.includes('WATCH — no current verified leg')) fail('QC renderer still contains the prohibited empty-parlay placeholder');
 if(!/href=["']ljqc\.css\?v=20260917-liveqc1["']/.test(home)) fail('LJ_index does not reference the current QC stylesheet version');
