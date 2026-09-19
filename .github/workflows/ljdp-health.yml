@@ -42,6 +42,8 @@ jobs:
           grep -q 'LEGZ &amp; JINX — Daily Predictions' /tmp/ljdp.html
           grep -q 'provenance_policy' /tmp/registry.json
           grep -q 'LJPC = HIT PROBABILITY' /tmp/methodology.html
+          ! grep -q 'confidence:m?Number(m\[1\]):60' lsi_registry_bridge.js || { echo '::error::Shared 60% LJPC fallback reintroduced'; exit 1; }
+          ! grep -q 'PROVISIONAL LJPC' lsi_registry_bridge.js || { echo '::error::Market baseline mislabeled as LJPC'; exit 1; }
           cmp --silent data/prediction_registry.json /tmp/registry.json || { echo '::error::Pages registry does not match master'; exit 1; }
           cmp --silent data/settlement_status.json /tmp/settlement.json || { echo '::error::Pages settlement status does not match master'; exit 1; }
           cmp --silent data/future_market_board.json /tmp/future.json || { echo '::error::Pages future market board does not match master'; exit 1; }
