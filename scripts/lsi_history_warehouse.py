@@ -93,6 +93,30 @@ def main():
             "first_seen_utc":prior.get("first_seen_utc") or stamp,"last_seen_utc":stamp
         }
 
+    # Historical players belong in the registry even when they are retired or absent
+    # from today's market board. This is what lets LSI recognize a returning veteran
+    # without rebuilding the player's career from scratch.
+    if PERF.exists() and PERF.stat().st_size:
+        with PERF.open(newline="",encoding="utf-8-sig") as fh:
+            for r in csv.DictReader(fh):
+                league=r.get("league") or ""; name=r.get("participant") or ""
+                if not league or not name: continue
+                pid=player_id(league,name); prior=players.get(pid,{})
+                aliases=set(prior.get("aliases") or []); aliases.add(str(name))
+                provider_ids=dict(prior.get("provider_ids") or {})
+                if r.get("provider_player_id"): provider_ids["ESPN"]=str(r.get("provider_player_id"))
+                event_time=r.get("event_start_utc") or stamp
+                first=prior.get("first_seen_utc") or event_time
+                last=prior.get("last_seen_utc") or event_time
+                if event_time and first and event_time < first: first=event_time
+                if event_time and last and event_time > last: last=event_time
+                players[pid]={
+                    "lsi_player_id":pid,"league":league,"canonical_name":prior.get("canonical_name") or str(name),
+                    "aliases":sorted(aliases),"provider_ids":provider_ids,
+                    "first_seen_utc":first,"last_seen_utc":last,
+                    "historical_record_available":True
+                }
+
     # Settled results are immutable evidence currently available to the generic layer.
     # Sport-specific history adapters may add much richer warehouse data without changing this contract.
     # Generic settled predictions remain useful, but the append-only performance warehouse is the primary reusable fact store.
