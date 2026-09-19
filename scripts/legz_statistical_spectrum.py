@@ -35,12 +35,15 @@ def norm(v):
     return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
 
 def player_norm(v):
-    import re
     s=str(v or "").strip()
-    # Sportsbook feeds sometimes append team abbreviations, e.g. "Gunner Stockton (UGA)".
-    # Historical identity must resolve to the athlete, not a presentation suffix.
+    # Strip sportsbook team suffixes and non-identifying generational suffixes.
     s=re.sub(r"\s*\([A-Za-z0-9 .&'\-]{2,24}\)\s*$","",s)
-    return norm(s)
+    tokens=norm(s).split()
+    if tokens and tokens[-1] in {"jr","sr","ii","iii","iv","v"}: tokens=tokens[:-1]
+    # A.J. Brown / AJ Brown, J.K. Dobbins / JK Dobbins, etc.
+    if len(tokens)>=3 and all(len(x)==1 for x in tokens[:-1]):
+        tokens=["".join(tokens[:-1]),tokens[-1]]
+    return " ".join(tokens)
 
 def observation_order(row,source_path=None):
     """Stable chronological key for shard-backed history, including nflverse week IDs."""
