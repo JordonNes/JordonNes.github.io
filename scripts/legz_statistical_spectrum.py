@@ -6,7 +6,7 @@ Market price is evidence/prior only; it is never published as LJPC by itself.
 Insufficiently supported POMs remain AWAITING_LJ_EVALUATION.
 """
 from __future__ import annotations
-import csv, gzip, json, math, statistics
+import csv, gzip, json, math, re, statistics
 from collections import defaultdict
 from pathlib import Path
 
