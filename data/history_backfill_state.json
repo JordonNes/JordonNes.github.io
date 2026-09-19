@@ -15,36 +15,52 @@
       "season": "2026",
       "cursor": "2026-09-18",
       "floor": "2026-05-01",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "priority": 1,
+      "chunk_days": 14,
+      "max_events": 100
     },
     {
       "league": "MLB",
       "season": "2026",
       "cursor": "2026-09-18",
       "floor": "2026-03-15",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "priority": 2,
+      "chunk_days": 5,
+      "max_events": 100
     },
     {
       "league": "NBA",
       "season": "2025-26",
       "cursor": "2026-06-30",
       "floor": "2025-10-01",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "priority": 1,
+      "chunk_days": 10,
+      "max_events": 100
     },
     {
       "league": "NHL",
       "season": "2025-26",
       "cursor": "2026-06-30",
       "floor": "2025-10-01",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "priority": 3,
+      "chunk_days": 10,
+      "max_events": 100
     },
     {
       "league": "NCAA_Basketball",
       "season": "2025-26",
       "cursor": "2026-04-15",
       "floor": "2025-11-01",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "priority": 3,
+      "chunk_days": 3,
+      "max_events": 100
     }
   ],
-  "updated_at_utc": "2026-09-19T18:10:00Z"
+  "updated_at_utc": "2026-09-19T18:10:00Z",
+  "policy": "Capacity-aware: finish NBA/WNBA first, then MLB, then NHL/CBB; per-league chunk sizes stay below bounded event caps."
 }
