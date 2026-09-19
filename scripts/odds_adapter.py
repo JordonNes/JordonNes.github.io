@@ -434,21 +434,26 @@ def should_refresh(event_id: str, start: datetime, state: dict, now: datetime) -
 
 def run():
     DATA.mkdir(parents=True, exist_ok=True)
+    now = now_utc()
+    state = load_json(STATE, {"schema_version": "THE-ODDS-STATE-1", "events": {}})
     if not ENABLED:
+        state["health"]={"status":"DISABLED","checked_at_utc":now.isoformat(),"last_error":None}
+        save_json(STATE,state)
         print("The Odds API disabled: paid/subscription source is dormant; existing QC board retained.")
         return
     if not KEY:
+        state["health"]={"status":"KEY_ABSENT","checked_at_utc":now.isoformat(),"last_error":"ODDS_API_KEY absent"}
+        save_json(STATE,state)
         print("ODDS_API_KEY absent: The Odds API safely skipped; existing QC board retained.")
         return
 
-    now = now_utc()
     cutoff = now + timedelta(hours=LOOKAHEAD_HOURS)
-    state = load_json(STATE, {"schema_version": "THE-ODDS-STATE-1", "events": {}})
     old_board = load_json(BOARD, {"events": []})
     old_by_id = {str(e.get("source_event_id")): e for e in old_board.get("events", []) if e.get("source_event_id")}
 
     discovered = []
     quota = {"remaining": None, "used": None, "last": None}
+    discovery_errors=0; auth_errors=0; rate_limits=0; last_error=None
     for league, (sport_key, markets) in SPORTS.items():
         if LEAGUE_FILTER and league not in LEAGUE_FILTER:
             continue
@@ -456,6 +461,10 @@ def run():
             events, headers = get(f"/sports/{sport_key}/events", {"dateFormat": "iso"})
             quota.update({k: v for k, v in headers.items() if v is not None})
         except Exception as exc:
+            discovery_errors+=1; last_error=str(exc)
+            if isinstance(exc,urllib.error.HTTPError):
+                if exc.code in {401,403}: auth_errors+=1
+                if exc.code==429: rate_limits+=1
             print(f"WARN The Odds API events {league}: {exc}")
             continue
         for event in events if isinstance(events, list) else []:
@@ -508,7 +517,10 @@ def run():
                     "market_keys_requested": requested_markets, "props": props,
                 }
             except Exception as exc:
-                errors += 1
+                errors += 1; last_error=str(exc)
+                if isinstance(exc,urllib.error.HTTPError):
+                    if exc.code in {401,403}: auth_errors+=1
+                    if exc.code==429: rate_limits+=1
                 print(f"WARN The Odds API markets {league} {event.get('away_team')} @ {event.get('home_team')}: {exc}")
                 if cached:
                     board_event = dict(cached)
@@ -544,6 +556,22 @@ def run():
         "events_queried_this_run": queried, "source_errors": errors, "events": merged_events,
     }
     save_json(BOARD, payload)
+    if auth_errors:
+        health_status="AUTH_ERROR"
+    elif rate_limits:
+        health_status="RATE_LIMITED"
+    elif discovery_errors or errors:
+        health_status="DEGRADED"
+    elif discovered:
+        health_status="HEALTHY"
+    else:
+        health_status="NO_EVENTS"
+    state["health"]={
+      "status":health_status,"checked_at_utc":now.isoformat(),
+      "discovery_errors":discovery_errors,"market_errors":errors,
+      "auth_errors":auth_errors,"rate_limits":rate_limits,"last_error":last_error,
+      "events_discovered":len(discovered),"events_queried":queried,"quota":quota
+    }
     save_json(STATE, state)
 
     total_props = sum(len(e.get("props") or []) for e in merged_events)
