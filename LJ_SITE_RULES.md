@@ -72,7 +72,7 @@ For the NFL Daily Predictions page, the active game week is a single **Thursday-
 - The full current NFL week must remain listed from TNF through MNF.
 - A completed Thursday, Sunday afternoon, or Sunday night QC is **retained in place** until the Monday Night Football game for that same NFL week is final.
 - Completed QCs are not replaced early by the next NFL week's pregame board.
-- When a retained game is complete, the QC converts to **FINAL status + ending box score** and suppresses executable parlay areas under the normal final-game rule.
+- When a retained game is complete, the QC converts to **FINAL status + ending box score**, retains the locked pregame **LEGZ PLAYER HOT TOP** as the prediction record, and suppresses JINX Game Winner, odds, and every executable parlay area under the final-game rule.
 - Upcoming Sunday and Monday games in the same week remain visible as pregame QCs.
 - The transition to the next NFL week may occur only after the current week's MNF game has completed and its final state has been captured.
 
@@ -104,8 +104,8 @@ Empty prediction/parlay areas are omitted rather than displayed as placeholders.
 
 **Runtime event-state override:**
 - **Pregame:** show only populated prediction/parlay areas.
-- **Started / live:** hide LEGZ Hot Top, both SNS/Goblin areas and Aggressive/Demon. Retain only the populated **NORMAL** construction, identified as the locked pregame Normal ticket, and display a current box score to the right.
-- **Final / over:** remove every parlay/prediction area and show only FINAL status plus the ending box score.
+- **Started / live:** retain only the pregame-locked **LEGZ PLAYER HOT TOP**, **JINX GAME WINNER**, and **game odds**, and display the current live box score. Hide SNS/Goblin 1, SNS/Goblin 2, Normal, and Aggressive/Demon. The retained Hot Top, winner, and odds are historical pregame records and are not recomputed after start.
+- **Final / over:** retain only the pregame **LEGZ PLAYER HOT TOP** as the prediction record and display FINAL status plus the ending box score. Remove JINX Game Winner, game odds, SNS/Goblin 1, SNS/Goblin 2, Normal, Aggressive/Demon, and every other executable parlay/prediction area.
 - **Paused / delayed / suspended:** state the interruption clearly and suppress executable parlay areas until live play resumes.
 - **Postponed / rescheduled / cancelled:** state the official status clearly and suppress stale executable parlay areas.
 - The runtime game-state/box-score snapshot should be refreshed from an available public status feed when the page is opened; the capture time and source must be visible.
