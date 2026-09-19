@@ -21,6 +21,7 @@ PRED=DATA/"prediction_registry.json"
 REG=DATA/"lsi_player_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
 PERF=DATA/"performance_history.csv"
+HISTORY_ROOT=DATA/"history"
 
 def norm(v): return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
 def num(v):
@@ -133,8 +134,12 @@ def main():
                     hist[(player_id(league,name),metric)].append(actual)
 
     perf=defaultdict(lambda:defaultdict(dict))
-    if PERF.exists() and PERF.stat().st_size:
-        with PERF.open(newline="",encoding="utf-8-sig") as fh:
+    perf_files=[]
+    if PERF.exists() and PERF.stat().st_size: perf_files.append(PERF)
+    if HISTORY_ROOT.exists():
+        perf_files.extend(sorted(HISTORY_ROOT.glob("*/*.csv")))
+    for perf_path in perf_files:
+        with perf_path.open(newline="",encoding="utf-8-sig") as fh:
             for r in csv.DictReader(fh):
                 league=r.get("league") or ""; name=r.get("participant") or ""; metric=r.get("metric") or ""
                 value=num(r.get("value")); event=r.get("provider_event_id") or r.get("event_id") or ""
