@@ -73,6 +73,13 @@ function actionable(items) {
   return Array.isArray(items) ? items.filter(x => x && !WATCH.test(String(x))) : [];
 }
 
+const errors = [];
+const warnings = [];
+let auditedGames = 0;
+let fullGames = 0;
+let limitedGames = 0;
+let twentyShortfalls = 0;
+
 const basketballSharedScripts = [
   'dailyrefresh.js','morningrefresh.js','middayrefresh.js','ljintelligence.js',
   'data/future_market_board.js','data/prediction_registry.js','lsi_registry_bridge.js'
@@ -86,18 +93,33 @@ for (const page of ['NBA.html','WNBA.html']) {
   }
 }
 
-const errors = [];
-const warnings = [];
-let auditedGames = 0;
-let fullGames = 0;
-let limitedGames = 0;
-let twentyShortfalls = 0;
-
 for (const [page, league] of Object.entries(PAGES)) {
   if (!fs.existsSync(path.join(ROOT, page))) continue;
   const ctx = evaluatePage(page);
   const sport = ctx.window.LJ_DATA?.sports?.[league];
-  if (!sport || !Array.isArray(sport.qcs)) continue;
+  if (!sport) {
+    errors.push(`${page}: sport data missing after loading publication stack.`);
+    continue;
+  }
+  const boardEvents=(ctx.window.LJ_FUTURE_MARKET_BOARD?.events||[]).filter(e=>e?.league===league);
+  const evaluatedBoardProps=boardEvents.flatMap(e=>(e.props||[])).filter(p=>
+    String(p?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc))
+  );
+  const renderedTwenty=(sport.twenty||[]).filter(r=>Number.isFinite(Number((r||[])[7]))&&Number((r||[])[7])>0);
+  const renderedHot=(sport.hotTop||[]).filter(r=>{
+    const score=String((r||[])[2]||'');
+    return /%/.test(score) && !/AWAITING|MARKET BASELINE/i.test((r||[]).join(' '));
+  });
+  if(evaluatedBoardProps.length && !renderedTwenty.length){
+    errors.push(`${league}: ${evaluatedBoardProps.length} evaluated future-board POMs exist but the 20 Piece renders zero LJPC props.`);
+  }
+  if(evaluatedBoardProps.length && !renderedHot.length){
+    errors.push(`${league}: ${evaluatedBoardProps.length} evaluated future-board POMs exist but LEGZ Hot Top renders zero LJPC props.`);
+  }
+  if(!Array.isArray(sport.qcs)) {
+    errors.push(`${league}: QC collection is missing from sport publication data.`);
+    continue;
+  }
 
   if (sport.qcs.length) {
     const players = new Set((sport.twenty || []).map(r => String((r || [])[1] || '').trim().toLowerCase()).filter(Boolean));
@@ -199,4 +221,4 @@ if (errors.length) {
   if (errors.length>80) console.error(`::error::QC AUDIT ${errors.length-80} additional error(s) suppressed.`);
   process.exit(1);
 }
-console.log('QC publication invariant passed: acquired participant-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; event IDs are unique across every audited DP sport after merge; NBA/WNBA shared basketball scripts remain in parity; empty pregame shells are not valid QCs; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
+console.log('QC publication invariant passed: evaluated future-board POMs render into both LEGZ Hot Top and the 20 Piece; acquired participant-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; event IDs are unique across every audited DP sport after merge; NBA/WNBA shared basketball scripts remain in parity; empty pregame shells are not valid QCs; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
