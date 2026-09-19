@@ -29,8 +29,14 @@ def csv_open(path):
 def norm(v): return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
 def player_norm(v):
     s=str(v or "").strip()
+    # Strip sportsbook team suffixes and non-identifying generational suffixes.
     s=re.sub(r"\s*\([A-Za-z0-9 .&'\-]{2,24}\)\s*$","",s)
-    return norm(s)
+    tokens=norm(s).split()
+    if tokens and tokens[-1] in {"jr","sr","ii","iii","iv","v"}: tokens=tokens[:-1]
+    # A.J. Brown / AJ Brown, J.K. Dobbins / JK Dobbins, etc.
+    if len(tokens)>=3 and all(len(x)==1 for x in tokens[:-1]):
+        tokens=["".join(tokens[:-1]),tokens[-1]]
+    return " ".join(tokens)
 def num(v):
     if v in (None,""): return None
     try:return float(v)
