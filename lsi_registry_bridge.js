@@ -162,19 +162,29 @@
     }
     for(const p of scouts){
       if(hotRows.length>=8) break;
-      const key=[norm(p.participant),norm(p.market),norm(p.side)].join('|');
+      const key=canonicalKey(p);
       if(!key||hotSeen.has(key)) continue;
       hotSeen.add(key);
+      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
       const baseline=marketBaselineLj(p);
       const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
         ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
-        : 'price recheck';
-      hotRows.push([
-        p.participant,
-        scoutPick(p),
-        '—',
-        `${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${pct(baseline)} (NOT LJPC)`
-      ]);
+        : p.price!==null&&p.price!==undefined&&p.price!==''
+          ? `${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''}`
+          : 'price recheck';
+      hotRows.push(evaluated
+        ? [
+            p.participant,
+            scoutPick(p),
+            pct(Number(p.ljpc)),
+            `${price} • POM Value ${Number(p.pom_value||p.legz_value||p.ljpc).toFixed(1)} • LSI Statistical Spectrum • ${Number(p.market_source_count||1)} SRC`
+          ]
+        : [
+            p.participant,
+            scoutPick(p),
+            '—',
+            `${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${pct(baseline)} (NOT LJPC)`
+          ]);
     }
     s.hotTop=hotRows;
 
@@ -234,35 +244,46 @@
       ]);
     }
     for(const p of scouts){
-      const key=[
-        norm(p.participant),
-        norm(p.market),
-        String(p.threshold??''),
-        norm(p.side)
-      ].join('|');
+      const key=canonicalKey(p);
       if(!key || seen.has(key)) continue;
       seen.add(key);
-      const price=p.best_price!==null&&p.best_price!==undefined
+      const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
         ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
-        : 'price recheck';
+        : p.price!==null&&p.price!==undefined&&p.price!==''
+          ? `${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''}`
+          : 'price recheck';
       const baseline=marketBaselineLj(p);
-      twenty.push([
-        String(league).replace(/_/g,' '),
-        p.participant,
-        scoutPick(p),
-        price,
-        '—',
-        `AWAITING L&J EVALUATION • MARKET BASELINE ${pct(baseline)} (NOT LJPC) • ${Number(p.market_source_count||1)} SRC`,
-        '👀',
-        null
-      ]);
+      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
+      const lj=evaluated?Number(p.ljpc):null;
+      const pv=evaluated?Number(p.pom_value||p.legz_value||lj):null;
+      twenty.push(evaluated
+        ? [
+            String(league).replace(/_/g,' '),
+            p.participant,
+            scoutPick(p),
+            price,
+            pct(lj),
+            `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
+            risk({ljpc:lj}),
+            lj
+          ]
+        : [
+            String(league).replace(/_/g,' '),
+            p.participant,
+            scoutPick(p),
+            price,
+            '—',
+            `AWAITING L&J EVALUATION • MARKET BASELINE ${pct(baseline)} (NOT LJPC) • ${Number(p.market_source_count||1)} SRC`,
+            '👀',
+            null
+          ]);
     }
 
     s.twenty=twenty;
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
-    const modeledCount=modeled.length;
-    const scoutCount=Math.max(0,twenty.length-modeledCount);
-    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${modeledCount} canonical LJPC predictions + ${scoutCount} provisional market-baseline candidates. Only upcoming 0–7 day events are eligible. A market baseline is not treated as a fully contextualized L&J evaluation until JINX review/provenance requirements are satisfied.`;
+    const evaluatedCount=twenty.filter(r=>Number.isFinite(Number(r[7]))&&Number(r[7])>0).length;
+    const awaitingCount=Math.max(0,twenty.length-evaluatedCount);
+    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} total props • ${evaluatedCount} individualized LJPC predictions + ${awaitingCount} awaiting-evidence candidates. Upcoming 0–7 day events only; market baselines are never relabeled as LJPC.`;
   }
 
   const canonical=R.predictions.map(p=>({
