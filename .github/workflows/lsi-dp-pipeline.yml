@@ -189,7 +189,20 @@ jobs:
           ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
-        run: python scripts/legz_statistical_spectrum.py
+        run: |
+          python scripts/legz_statistical_spectrum.py
+          python - <<'PY'
+          import json
+          d=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
+          assert d.get('evaluation_engine')=='LEGZ_STATISTICAL_SPECTRUM_2'
+          props=[p for e in d.get('events',[]) for p in (e.get('props') or [])]
+          evaluated=[p for p in props if p.get('evaluation_status')=='LJ_EVALUATED']
+          waiting=[p for p in props if p.get('evaluation_status')=='AWAITING_LJ_EVALUATION']
+          assert all(p.get('ljpc') is not None for p in evaluated)
+          assert all(p.get('ljpc') is None for p in waiting)
+          assert all((p.get('spectrum') or {}).get('distribution') is not None for p in props)
+          print(f'Spectrum v2 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence.')
+          PY
       - name: Build and validate Prediction Registry
         run: python scripts/lsi_pipeline.py
       - name: Publish rolling 0-7 day L&J future market board
