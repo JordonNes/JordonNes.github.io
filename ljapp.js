@@ -150,7 +150,7 @@
   }
 
   function rules(){
-    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep only the populated Normal construction, locked from the pregame publication, plus a current box score.</span></div><div class="qc-rule"><b>Final</b><span>Remove all parlays and show only the final game status and ending box score.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Provisional market baselines remain labeled PROVISIONAL and are not presented as fully contextualized L&amp;J evaluations. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
+    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep the pregame-locked LEGZ Hot Top, JINX Game Winner and game odds beside the current live box score. SNS1, SNS2, Normal and Aggressive/Demon are removed.</span></div><div class="qc-rule"><b>Final</b><span>Keep the pregame Hot Top as the prediction record and show FINAL status plus the ending box score. Remove JINX Game Winner, game odds and every ticket/parlay section.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Live and final views preserve only the locked pregame information permitted by the event-state rule; nothing is backfilled after the event starts. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
   }
   function renderQcLeg(value){
     const raw=String(value??"").trim();
@@ -503,21 +503,56 @@
   function applyRuntimeState(key,row,event){
     const state=eventState(event);
     if(state.kind==="pre") return;
+
+    // Capture the locked pregame record before the runtime score cell replaces it.
+    // This prevents live/final presentation from inventing or backfilling predictions.
+    const pregameGame=row.querySelector(".qc-game")?.cloneNode(true)||null;
+    const pregameHot=row.querySelector(".qc-hot")?.cloneNode(true)||null;
+    const lockedMarket=pregameGame?.querySelector(".qc-market")?.outerHTML||"";
+    const lockedWinner=pregameGame?.querySelector(".qc-winner")?.outerHTML||"";
+
     const game=currentGameCell(row,state,event);
-    const normal=row.querySelector(".qc-normal");
     const box=boxScoreHTML(key,event,state);
+
     if(state.kind==="live"){
-      const parts=[game?.outerHTML||"",normal?.outerHTML||"",box].filter(Boolean);
+      if(game && (lockedMarket||lockedWinner)){
+        game.insertAdjacentHTML("beforeend",
+          `<div class="qc-pregame-lock"><div class="qc-label">PREGAME LOCKED</div>${lockedMarket}${lockedWinner}</div>`);
+      }
+      if(pregameHot){
+        const h=pregameHot.querySelector("h4");
+        if(h) h.textContent="LEGZ PLAYER HOT TOP — PREGAME LOCKED";
+      }
+      const parts=[game?.outerHTML||"",pregameHot?.outerHTML||"",box].filter(Boolean);
       row.innerHTML=parts.join("");
       row.classList.add("qc-live-row");
-      row.style.gridTemplateColumns=normal?"minmax(210px,.85fr) minmax(260px,1fr) minmax(330px,1.45fr)":"minmax(210px,.85fr) minmax(330px,1.45fr)";
-      const h=row.querySelector(".qc-normal .qc-ticket-h");
-      if(h) h.textContent="NORMAL — PREGAME LOCKED";
+      row.classList.remove("qc-final-row");
+      row.style.gridTemplateColumns=pregameHot
+        ?"minmax(210px,.85fr) minmax(260px,1fr) minmax(330px,1.45fr)"
+        :"minmax(210px,.85fr) minmax(330px,1.45fr)";
       return;
     }
+
+    if(state.kind==="final"){
+      if(pregameHot){
+        const h=pregameHot.querySelector("h4");
+        if(h) h.textContent="LEGZ PLAYER HOT TOP — FINAL RECORD";
+      }
+      const parts=[game?.outerHTML||"",pregameHot?.outerHTML||"",box].filter(Boolean);
+      row.innerHTML=parts.join("");
+      row.classList.add("qc-final-row");
+      row.classList.remove("qc-live-row");
+      row.style.gridTemplateColumns=pregameHot
+        ?"minmax(210px,.85fr) minmax(260px,1fr) minmax(360px,1.6fr)"
+        :"minmax(210px,.85fr) minmax(360px,1.6fr)";
+      return;
+    }
+
+    // Paused/delayed/postponed/cancelled: status + scoreboard only.
     const parts=[game?.outerHTML||"",box].filter(Boolean);
     row.innerHTML=parts.join("");
     row.classList.add("qc-final-row");
+    row.classList.remove("qc-live-row");
     row.style.gridTemplateColumns="minmax(210px,.85fr) minmax(360px,1.6fr)";
   }
   function ptWeekdayHour(){
