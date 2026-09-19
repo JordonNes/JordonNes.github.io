@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
 """Summarize durable LSI historical performance coverage by league."""
 from __future__ import annotations
-import csv,json
+import csv,gzip,json
 from collections import defaultdict
 from datetime import datetime,timezone
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; DATA=ROOT/"data"
 SRC=DATA/"performance_history.csv"; HISTORY=DATA/"history"; OUT=DATA/"history_coverage.json"
 
+def csv_open(path):
+    return gzip.open(path,"rt",encoding="utf-8-sig",newline="") if str(path).endswith(".gz") else path.open(newline="",encoding="utf-8-sig")
+
 def main():
     by=defaultdict(lambda:{"facts":0,"players":set(),"events":set(),"dates":[],"metrics":set(),"files":set()})
     files=[]
     if SRC.exists() and SRC.stat().st_size: files.append(SRC)
-    if HISTORY.exists(): files.extend(sorted(HISTORY.glob("*/*.csv")))
+    if HISTORY.exists(): files.extend(sorted(HISTORY.glob("*/*.csv*")))
     seen_records=set()
     for path in files:
-        with path.open(newline="",encoding="utf-8-sig") as fh:
+        with csv_open(path) as fh:
             for r in csv.DictReader(fh):
                 rid=r.get("record_id") or ""
                 if rid and rid in seen_records: continue
