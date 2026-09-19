@@ -55,7 +55,10 @@ ALIASES={
  ("batting","r"): "runs",("batting","sb"): "stolen_bases",("pitching","so"): "pitcher_strikeouts",("pitching","k"): "pitcher_strikeouts",
  # hockey
  ("","sog"): "shots_on_goal",("","shots"): "shots_on_goal",("","g"): "goals",("","a"): "hockey_assists",
- ("","sv"): "saves",("","saves"): "saves"
+ ("","sv"): "saves",("","saves"): "saves",
+ # football kicking
+ ("kicking","xpm"): "extra_points_made",("kicking","xp"): "extra_points_made",
+ ("kicking","fgm"): "field_goals_made"
 }
 
 def canonical(category,label):
@@ -67,7 +70,7 @@ def canonical(category,label):
       "points":"points","rebounds":"rebounds","assists":"assists","steals":"steals","blocks":"blocks",
       "receptions":"receptions","targets":"targets","passingyards":"pass_yards","rushingyards":"rush_yards",
       "receivingyards":"receiving_yards","totalbases":"total_bases","strikeouts":"pitcher_strikeouts",
-      "shotsongoal":"shots_on_goal"
+      "shotsongoal":"shots_on_goal","extrapointsmade":"extra_points_made","fieldgoalsmade":"field_goals_made"
     }
     if compact in long:return long[compact]
     for (cat,lab),metric in ALIASES.items():
