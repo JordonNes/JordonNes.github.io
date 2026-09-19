@@ -21,7 +21,6 @@
       <a href="#spots">Fishing Spots</a>
       <a href="#finder">Fish Now</a>
       <a href="#documents">Field Library</a>
-      <a class="bootcamp-link" href="bootcamp/">101 Bootcamp</a>
       <a href="#guide">Fishing Bible</a>
       <a href="#sources">Data Lab</a>
       <a href="#ask-ray">Ask Ray</a>
@@ -57,7 +56,7 @@
         <a class="room-card" href="#spots"><span>02</span><h3>Where Should I Fish?</h3><p>Richmond Ray's spot profiles: access, target fish, bait, rigs, windows, cautions and current dataset conditions.</p><b>Explore Spots →</b></a>
         <a class="room-card" href="#finder"><span>03</span><h3>Species Explorer</h3><p>The growing species intelligence layer connects fish behavior, bait, rigs and condition logic to fishing locations.</p><b>Browse Species →</b></a>
         <a class="room-card" href="#guide"><span>04</span><h3>The Fishing Bible</h3><p>A web-native field manual covering water reading, Bay shoreline, Delta, piers, surf, species, bait, rigs and seasons.</p><b>Enter the Guide →</b></a>
-        <a class="room-card featured" href="bootcamp/"><span>05</span><h3>101 Bootcamp Library</h3><p>Dedicated visual guides for species, bait, rigs, methods, crabbing and frustrated anglers who need practical answers fast.</p><b>Open Bootcamp Library →</b></a>
+        <a class="room-card" href="#documents"><span>05</span><h3>Bait & Rig Room</h3><p>Bootcamps and field resources for soaking bait, lures, bobbers, crabbing, live bait and priority species.</p><b>Open Field Library →</b></a>
         <a class="room-card" href="#frmap"><span>06</span><h3>FRmap · Live Water</h3><p>Interactive fishing access, NOAA stations, coastal buoys and evidence-gated Richmond Ray location evaluation.</p><b>Open FRmap →</b></a>
         <a class="room-card" href="#sources"><span>07</span><h3>Rules, Safety & Sources</h3><p>Official-source hierarchy for regulations, consumption advisories, tides, weather, water data and access notices.</p><b>Inspect Data Lab →</b></a>
         <a class="room-card featured" href="#ask-ray"><span>08</span><h3>Ask Richmond Ray</h3><p>Ask a fishing question and Ray will reason from the RICHFISH knowledge system, selected location, selected species and live Condition Engine context.</p><b>Ask Ray now →</b></a>
@@ -81,7 +80,7 @@
     </section>
 
     <section id="documents" class="section shell">
-      <div class="section-heading"><div><span class="eyebrow">THE FIELD LIBRARY</span><h2>Master guides, working datasets and operational references.</h2></div><span class="sync" id="doc-count"></span></div>
+      <div class="section-heading"><div><span class="eyebrow">THE FIELD LIBRARY</span><h2>Bootcamps, master guides and working datasets.</h2></div><span class="sync" id="doc-count"></span></div>
       <div id="document-grid" class="document-grid"></div>
       <p class="notice">The catalog identifies previously developed RICHFISH assets. Download controls activate as original files are imported into the repository or connected storage.</p>
     </section>
@@ -147,14 +146,28 @@
       </div>
       <div class="map-workspace">
         <aside class="map-controls">
+          <strong>Target species</strong>
+          <label class="map-field" for="frmap-species">Highlight the best supported water</label>
+          <select id="frmap-species" class="map-select" aria-label="FRmap target species">
+            <option value="">All modeled targets</option>
+          </select>
+          <div class="map-action-row">
+            <button class="btn map-btn" id="frmap-near-me" type="button">Use my location</button>
+            <button class="btn map-btn" id="frmap-reset" type="button">Reset Bay view</button>
+          </div>
+          <div id="frmap-selection-summary" class="map-selection-summary">Select a species or click the map.</div>
+
           <strong>Visible layers</strong>
           <label><input type="checkbox" data-map-layer="access" checked /> RICHFISH fishing locations</label>
+          <label><input type="checkbox" data-map-layer="currents" checked /> Bound current vectors</label>
+          <label><input type="checkbox" data-map-layer="gates" checked /> Access hard gates</label>
           <label><input type="checkbox" data-map-layer="stations" checked /> NOAA CO-OPS stations</label>
           <label><input type="checkbox" data-map-layer="buoys" checked /> NOAA NDBC coastal buoys</label>
+          <label><input type="checkbox" data-map-layer="bathymetry" /> NOAA ENC depth contours</label>
           <div class="future-layer">NWS weather / hazards <small>Live context on bound fishing locations</small></div>
-          <div class="future-layer">Bathymetry / channels <small>NOAA ENC Direct to GIS next spatial layer</small></div>
-          <div class="future-layer">MPAs / advisories / closures <small>Hard-gate resolver still required</small></div>
-          <p class="notice">FRmap blocks Richmond Ray from issuing a live fishing call when a coordinate lacks a validated RICHFISH location and environmental binding.</p>
+          <div class="future-layer">MPAs / advisories / closures <small>Regulatory polygon hard-gates remain a separate data-ingestion task</small></div>
+          <p class="notice">Click anywhere for coordinate intelligence. When the exact point is not model-bound, FRmap reports the nearest evidence, stations and scored fishing options without pretending the nearby data were measured at your pin.</p>
+          <p class="map-source-note">NOAA ENC depth contours are chart-derived GIS context and are not certified for navigation.</p>
         </aside>
         <div id="frmap-canvas" class="frmap-canvas" aria-label="Interactive RICHFISH fishing map"></div>
         <article id="frmap-report" class="map-report">
