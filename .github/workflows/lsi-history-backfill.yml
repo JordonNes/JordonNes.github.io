@@ -2,6 +2,11 @@ name: LSI Capacity-Aware History Backfill
 
 on:
   workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_history_backfill_step.py'
+      - '.github/workflows/lsi-history-backfill.yml'
   schedule:
     - cron: '30 11 * * *'
 
