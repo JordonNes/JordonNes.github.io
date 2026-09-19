@@ -88,7 +88,10 @@ def main():
 
     blockers=[]
     lj_status=str(lj.get("status") or "UNKNOWN")
-    if lj_status!="PASS": blockers.append({"type":"T48_LJPC_SLA","detail":lj.get("blockers") or {}})
+    if lj_status=="SLA_BREACH":
+        blockers.append({"type":"T48_LJPC_SLA","detail":lj.get("blockers") or {}})
+    elif lj_status=="DEGRADED_MARKET_STALE":
+        blockers.append({"type":"T48_MARKET_FRESHNESS","stale_props":lj.get("stale_props",0),"note":"Individual LJPC exists for cached thresholds, but current line/price must be reacquired."})
     pl_status=str(market_health["propline"].get("status") or "")
     if pl_status=="AUTH_ERROR":
         blockers.append({"type":"PROPLINE_AUTH_ERROR","last_error":market_health["propline"].get("last_error")})
@@ -116,7 +119,7 @@ def main():
       "current_ljpc": {
         "status":lj_status,"known_events_inside_t48":lj.get("known_events_inside_t48"),
         "acquired_props":lj.get("acquired_props"),"evaluated_props":lj.get("evaluated_props"),
-        "coverage_pct":lj.get("coverage_pct"),"blockers":lj.get("blockers") or {}
+        "stale_props":lj.get("stale_props",0),"coverage_pct":lj.get("coverage_pct"),"blockers":lj.get("blockers") or {}
       },
       "qc_board":{"generated_at_utc":qc.get("generated_at_utc"),"age_hours":age_hours(qc.get("generated_at_utc"),now),
                   "events":len(qevents),"by_league":current},
