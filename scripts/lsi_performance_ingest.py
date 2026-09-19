@@ -8,7 +8,7 @@ sources may later backfill/augment the same canonical metrics.
 No market prices are used here. This file records historical truth only.
 """
 from __future__ import annotations
-import argparse,csv,hashlib,json,re,time,urllib.parse,urllib.request
+import argparse,csv,gzip,hashlib,json,re,shutil,time,urllib.parse,urllib.request
 from datetime import date,datetime,timedelta,timezone
 from pathlib import Path
 
@@ -21,6 +21,23 @@ ESPN={
  "NHL":("hockey","nhl"),"NCAA_Basketball":("basketball","mens-college-basketball")
 }
 FIELDS=["record_id","collected_at_utc","league","event_id","provider_event_id","event_start_utc","participant","provider_player_id","team","metric","value","source"]
+
+def csv_open(path,mode="rt"):
+    """Transparent text CSV I/O for plain or gzip-compressed history shards."""
+    if str(path).endswith(".gz"):
+        return gzip.open(path,mode,encoding="utf-8",newline="")
+    return path.open(mode.replace("t",""),encoding="utf-8",newline="")
+
+def migrate_legacy_csv(path):
+    """One-time conversion of a legacy .csv shard to .csv.gz before appending."""
+    if not str(path).endswith(".csv.gz") or path.exists():return
+    legacy=Path(str(path)[:-3])
+    if not legacy.exists() or legacy.stat().st_size==0:return
+    path.parent.mkdir(parents=True,exist_ok=True)
+    with legacy.open("rb") as src, gzip.open(path,"wb",compresslevel=6) as dst:
+        shutil.copyfileobj(src,dst)
+    legacy.unlink()
+    print(f"Compressed legacy history shard: {legacy.relative_to(ROOT)} -> {path.relative_to(ROOT)}")
 
 def norm(v):return " ".join(re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).split())
 def num(v):
@@ -102,23 +119,25 @@ def event_rows(league,event,payload,stamp):
 
 def existing_ids(path=OUT):
     if not path.exists() or path.stat().st_size==0:return set()
-    with path.open(newline="",encoding="utf-8-sig") as fh:return {r.get("record_id","") for r in csv.DictReader(fh)}
+    with csv_open(path,"rt") as fh:return {r.get("record_id","") for r in csv.DictReader(fh)}
 
 def existing_events(path=OUT):
     out=set()
     if not path.exists() or path.stat().st_size==0:return out
-    with path.open(newline="",encoding="utf-8-sig") as fh:
+    with csv_open(path,"rt") as fh:
         for r in csv.DictReader(fh):
             eid=str(r.get("provider_event_id") or "").strip()
             if eid: out.add((r.get("league") or "",eid))
     return out
 
 def append(rows,path=OUT):
+    migrate_legacy_csv(path)
     ids=existing_ids(path); fresh=[r for r in rows if r["record_id"] not in ids]
     if not fresh:return 0
     path.parent.mkdir(parents=True,exist_ok=True)
     new=not path.exists() or path.stat().st_size==0
-    with path.open("a",newline="",encoding="utf-8") as fh:
+    mode="at" if str(path).endswith(".gz") else "a"
+    with csv_open(path,mode) as fh:
         w=csv.DictWriter(fh,fieldnames=FIELDS,extrasaction="ignore")
         if new:w.writeheader()
         w.writerows(fresh)
