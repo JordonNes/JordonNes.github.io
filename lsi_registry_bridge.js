@@ -401,7 +401,19 @@
 
   function populateGameQc(league,q){
     const event=findBoardEvent(league,q);
-    const manual=(q.hot||[]).map(manualCandidate).filter(Boolean);
+    // Pregame QC publication is a lock, not a disposable view of the latest scrape.
+    // Once a qualified player prop/ticket has been published, a later thin/empty
+    // acquisition cycle must not erase it before the event actually starts.
+    const durablePublished=items=>(items||[]).filter(x=>{
+      const s=n(x);
+      return s && !watchRx.test(s) && !/AWAITING L&J EVALUATION|MARKET BASELINE|PROVISIONAL HIT ESTIMATE/i.test(s);
+    });
+    const lockedHot=durablePublished(q.hot);
+    const lockedSns1=durablePublished(q.sns1);
+    const lockedSns2=durablePublished(q.sns2);
+    const lockedNormal=durablePublished(q.normal);
+    const lockedDemon=durablePublished(q.demon);
+    const manual=lockedHot.map(manualCandidate).filter(Boolean);
     const board=(event?.props||[]).map(boardCandidate).filter(Boolean);
     let pool=dedupe([...manual,...board]);
     const evaluatedPool=pool.filter(c=>Number.isFinite(Number(c.confidence)) && c.confidence>0);
@@ -511,11 +523,17 @@
       }
     }
 
-    q.hot=asStrings(hot);
-    q.sns1=asStrings(finalSns1);
-    q.sns2=asStrings(finalSns2);
-    q.normal=asStrings(finalNormal);
-    q.demon=asStrings(finalDemon);
+    const nextHot=asStrings(hot);
+    const nextSns1=asStrings(finalSns1);
+    const nextSns2=asStrings(finalSns2);
+    const nextNormal=asStrings(finalNormal);
+    const nextDemon=asStrings(finalDemon);
+    q.hot=nextHot.length?nextHot:lockedHot;
+    q.sns1=nextSns1.length?nextSns1:lockedSns1;
+    q.sns2=nextSns2.length?nextSns2:lockedSns2;
+    q.normal=nextNormal.length?nextNormal:lockedNormal;
+    q.demon=nextDemon.length?nextDemon:lockedDemon;
+    q._pregamePublicationLocked=Boolean(q.hot.length||q.sns1.length||q.sns2.length||q.normal.length||q.demon.length);
     q._qcMinimumLegs=MIN_QC_LEGS;
     q._qcEligibleModeCounts={
       sns1:modeBases.sns1.length,sns2:modeBases.sns2.length,
