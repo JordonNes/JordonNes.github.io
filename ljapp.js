@@ -7,6 +7,27 @@
   const D = window.LJ_DATA;
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
+  let ACTIVE_SPORT_KEY="";
+  const teamAssetNorm=v=>String(v||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+  function registryTeamLogo(name,league=ACTIVE_SPORT_KEY){
+    const reg=window.LJ_VISUAL_ASSETS?.teams||{};
+    const q=teamAssetNorm(name); if(!q) return "";
+    for(const rec of Object.values(reg)){
+      if(league && rec.league && rec.league!==league) continue;
+      const aliases=[rec.display_name,rec.abbreviation,...(rec.aliases||[])].map(teamAssetNorm).filter(Boolean);
+      if(aliases.includes(q)) return rec.logo?.url||"";
+    }
+    return "";
+  }
+  function registryPlayerHeadshot(name,league=ACTIVE_SPORT_KEY){
+    const reg=window.LJ_VISUAL_ASSETS?.players||{};
+    const q=teamAssetNorm(name); if(!q) return "";
+    for(const rec of Object.values(reg)){
+      if(league && rec.league && rec.league!==league) continue;
+      if(teamAssetNorm(rec.display_name)===q) return rec.headshot?.url||"";
+    }
+    return "";
+  }
   const NFL_LOGOS={
     ari:"ari",arizona:"ari","arizona cardinals":"ari",atl:"atl",atlanta:"atl","atlanta falcons":"atl",
     bal:"bal",baltimore:"bal","baltimore ravens":"bal",buf:"buf",buffalo:"buf","buffalo bills":"buf",
@@ -34,7 +55,7 @@
     const name=typeof value==="object"
       ? (value?.team?.abbreviation||value?.team?.shortDisplayName||value?.team?.displayName||"TEAM")
       : value;
-    const logo=nflLogoUrl(name);
+    const logo=registryTeamLogo(name)||nflLogoUrl(name);
     return `<span class="qc-team-name">${logo?`<img class="qc-team-logo" src="${esc(logo)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:""}<span>${esc(name)}</span></span>`;
   }
   const isWatch = s => /WATCH|CLOSED|LIVE|DATA-LIMITED|^PASS\b|BELOW L&J STANDARD|LEAN ONLY|CONDITIONAL|MARKET NOT YET AVAILABLE|RESEARCHED WATCHLIST/i.test(String(s || ""));
@@ -763,6 +784,7 @@
   }
 
   window.renderLJSport = key => {
+    ACTIVE_SPORT_KEY=key;
     const s = D.sports[key];
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
     ensureGameWinners(s);
@@ -777,6 +799,7 @@
     setTimeout(()=>{hydrateGameStates(key);loadLsiPipelineStatus(key);},0);
   };
   window.renderLJHome = () => {
+    ACTIVE_SPORT_KEY="";
     const h = D.home;
     document.title = "LEGZ & JINX — Daily Predictions";
     document.getElementById("app").innerHTML = `<div class="page lj-home">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${allSportsQcs()}${statusGrid()}${footer("All-sports publication hub • QC layout locked")}</div>`;
