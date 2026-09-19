@@ -20,6 +20,9 @@ def main():
     if not active:
         print("All configured history backfills are complete.")
         return
+    # Finish the highest-priority phase before spending API capacity on later phases.
+    best_priority=min(int(leagues[i].get("priority") or 999) for i in active)
+    active=[i for i in active if int(leagues[i].get("priority") or 999)==best_priority]
     start_idx=int(state.get("next_index") or 0)%len(leagues)
     idx=None
     for offset in range(len(leagues)):
@@ -29,14 +32,14 @@ def main():
     if idx is None:return
     item=leagues[idx]
     cursor=date.fromisoformat(item["cursor"]); floor=date.fromisoformat(item["floor"])
-    chunk=max(1,int(state.get("chunk_days") or 4))
+    chunk=max(1,int(item.get("chunk_days") or state.get("chunk_days") or 4))
     end=cursor
     begin=max(floor,end-timedelta(days=chunk-1))
     safe_league=item["league"].replace("/","_")
     out=f"data/history/{safe_league}/{item['season']}.csv"
     cmd=[sys.executable,str(ROOT/"scripts"/"lsi_performance_ingest.py"),
          "--league",item["league"],"--date-from",begin.isoformat(),"--date-to",end.isoformat(),
-         "--max-events","100","--output",out]
+         "--max-events",str(max(1,int(item.get("max_events") or 100))),"--output",out]
     print("Backfill chunk:",item["league"],begin,"through",end,"->",out)
     subprocess.run(cmd,check=True,cwd=ROOT)
     if begin<=floor:
