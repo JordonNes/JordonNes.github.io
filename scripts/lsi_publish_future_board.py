@@ -158,7 +158,9 @@ def load_game_markets():
           "model":"MARKET CONSENSUS EVIDENCE",
         })
     for eid in out:
-        out[eid].sort(key=lambda x:(-x["lj_confidence"],str(x["participant"])))
+        # GAME_ML rows may be market evidence only, so LJPC is legitimately null.
+        # Sort on LJPC when present, otherwise use market probability.
+        out[eid].sort(key=lambda x:(-float(x.get("lj_confidence") if x.get("lj_confidence") is not None else x.get("market_probability") or 0),str(x.get("participant") or "")))
     return out
 
 def norm_team(value):
