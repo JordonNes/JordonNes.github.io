@@ -6,8 +6,9 @@ Market price is evidence/prior only; it is never published as LJPC by itself.
 Insufficiently supported POMs remain AWAITING_LJ_EVALUATION.
 """
 from __future__ import annotations
-import csv, gzip, json, math, re, statistics
+import csv, gzip, hashlib, json, math, re, statistics
 from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -17,6 +18,7 @@ HISTORY=DATA/"results.csv"
 PERF=DATA/"performance_history.csv"
 CONTEXT=DATA/"context_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
+EVAL_STATE=DATA/"lsi_evaluation_state.json"
 HISTORY_ROOT=DATA/"history"
 
 def csv_open(path):
@@ -117,6 +119,33 @@ def implied(price):
     return (-x)/((-x)+100)*100 if x<0 else 100/(x+100)*100
 
 def clamp(x,lo=0,hi=100): return max(lo,min(hi,x))
+
+def stable_hash(value):
+    raw=json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,default=str)
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+def evaluation_identity(prop):
+    return {
+      "league":str(prop.get("_league") or ""),
+      "event_id":str(prop.get("_event_id") or prop.get("event_id") or ""),
+      "participant":player_norm(prop.get("participant")),
+      "market":norm(prop.get("market")),
+      "threshold":effective_threshold(prop,market_metric(prop.get("market"))),
+      "side":norm(prop.get("side")),
+    }
+
+def load_evaluation_state():
+    if not EVAL_STATE.exists():
+        return {"schema_version":"LSI-EVALUATION-STATE-1","records":[],"latest_by_key":{}}
+    try:
+        payload=json.loads(EVAL_STATE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError,AttributeError):
+        return {"schema_version":"LSI-EVALUATION-STATE-1","records":[],"latest_by_key":{}}
+    if payload.get("schema_version")!="LSI-EVALUATION-STATE-1":
+        return {"schema_version":"LSI-EVALUATION-STATE-1","records":[],"latest_by_key":{}}
+    payload.setdefault("records",[])
+    payload.setdefault("latest_by_key",{})
+    return payload
 
 def historical_results():
     out=defaultdict(list)
@@ -269,14 +298,30 @@ def spectrum(prop, history, contexts, cache):
     snapshots=[x for x in (prop.get("source_snapshot_ids") or []) if x]
     evidence=[x for x in (prop.get("evidence_ids") or []) if x]
 
+    ctx=jinx_context(prop,contexts)
+    provenance={"snapshot_ids":sorted(set(snapshots)),"evidence_ids":sorted(set(evidence))}
+    # Hit-rate windows are correlated views of the same performance history. They are
+    # one signal family, not independent confirmations. Market/context remain separate.
+    signal_families=["PERFORMANCE_HISTORY"] if (rates or dist.get("distribution_model_probability") is not None) else []
+    if market_prior is not None: signal_families.append("MARKET_PRIOR")
+    if ctx.get("signals"): signal_families.append("CURRENT_CONTEXT")
+
     # A real statistical evaluation requires player-performance evidence.
     # Price/consensus/source count alone can never mint LJPC.
     if not rates and dist.get("distribution_model_probability") is None:
+        feature_state={
+          "performance":{"recent_hit_rates":rate_map,"distribution":dist},
+          "market":{"implied_probability":round(market_prior,2) if market_prior is not None else None,"source_count":source_count},
+          "context":ctx,"provenance":provenance,
+          "safeguards":{"market_only_prohibited":True,"correlated_windows_count_as_one_family":True,
+                        "independent_signal_families":signal_families}
+        }
         return {
           "evaluation_status":"AWAITING_LJ_EVALUATION","ljpc":None,"lj_confidence":None,
           "legz_baseline":None,"jinx_input":None,"legz_value":None,"pom_value":None,
           "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
-          "spectrum":{"performance":[],"distribution":dist,"market_prior":market_prior,"source_depth":source_count},
+          "spectrum":{"performance":[],"distribution":dist,"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
+          "feature_state":feature_state,
           "evaluation_reason":"No acquired player-performance hit-rate evidence; market probability retained as evidence only."
         }
 
@@ -312,7 +357,6 @@ def spectrum(prop, history, contexts, cache):
     L=clamp(L+depth_bonus,1,99)
 
     # JINX interrogates attributable availability/role context; explicit human/model adjustment wins when present.
-    ctx=jinx_context(prop,contexts)
     explicit_j=num(prop.get("jinx_input") if prop.get("jinx_input") not in (None,"") else prop.get("jinx_delta"))
     j=clamp(explicit_j if explicit_j is not None else ctx["delta"],-12,12)
     ljpc=round(clamp(L+j,1,99),1)
@@ -320,11 +364,22 @@ def spectrum(prop, history, contexts, cache):
     evidence_depth=min(100.0,35+len(ordered)*14+min(source_count,5)*5+min(len(set(snapshots)),4)*4+min(len(set(evidence)),4)*3)
     legz_value=round(clamp(evidence_depth*0.65+consistency*0.35),2)
     pom_value=round(math.sqrt(legz_value*ljpc),2)
+    feature_state={
+      "performance":{"recent_hit_rates":rate_map,"distribution":dist,"consistency":round(consistency,2),
+                     "sample_size":dist.get("n")},
+      "market":{"implied_probability":round(market_prior,2) if market_prior is not None else None,
+                "source_count":source_count},
+      "context":ctx,"provenance":provenance,
+      "safeguards":{"market_only_prohibited":True,"correlated_windows_count_as_one_family":True,
+                    "independent_signal_families":signal_families,
+                    "jinx_adjustment_cap_pp":12}
+    }
     return {
       "evaluation_status":"LJ_EVALUATED","ljpc":ljpc,"lj_confidence":ljpc,
       "legz_baseline":round(L,2),"jinx_input":round(j,2),"legz_value":legz_value,"pom_value":pom_value,
       "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
       "spectrum":{"performance":ordered,"distribution":dist,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
+      "feature_state":feature_state,
       "evaluation_reason":"LEGZ statistical spectrum combines recency hit rates with a sample-size-smoothed threshold distribution, then applies a bounded market prior; JINX applies attributable availability/role context only."
     }
 
@@ -334,18 +389,68 @@ def main():
     history=historical_results()
     contexts=context_index()
     cache=spectrum_cache_index()
+    state=load_evaluation_state()
+    records_by_id={r.get("evaluation_id"):r for r in state.get("records") or [] if r.get("evaluation_id")}
+    latest=dict(state.get("latest_by_key") or {})
     evaluated=waiting=0
     for event in payload.get("events") or []:
         for prop in event.get("props") or []:
             prop["_league"]=event.get("league") or ""
+            prop["_event_id"]=event.get("event_id") or event.get("source_event_id") or ""
             result=spectrum(prop,history,contexts,cache)
-            prop.pop("_league",None)
+            identity=evaluation_identity(prop)
+            evaluation_key=stable_hash(identity)[:24]
+            material={
+              "identity":identity,
+              "feature_state":result.get("feature_state"),
+              "legz_baseline":result.get("legz_baseline"),
+              "jinx_input":result.get("jinx_input"),
+              "ljpc":result.get("ljpc"),
+              "status":result.get("evaluation_status"),
+            }
+            material_hash=stable_hash(material)
+            previous=latest.get(evaluation_key) or {}
+            if previous.get("material_hash")==material_hash:
+                evaluation_id=previous.get("evaluation_id")
+                evaluated_at=previous.get("evaluated_at_utc")
+            else:
+                evaluation_id=f"lse-{stable_hash({'key':evaluation_key,'material_hash':material_hash})[:24]}"
+                evaluated_at=datetime.now(timezone.utc).isoformat()
+            result.update({
+              "evaluation_key":evaluation_key,
+              "evaluation_id":evaluation_id,
+              "evaluation_material_hash":material_hash,
+              "evaluation_version":"LEGZ_STATISTICAL_SPECTRUM_3",
+              "evaluated_at_utc":evaluated_at,
+            })
+            state_record={
+              "evaluation_id":evaluation_id,"evaluation_key":evaluation_key,
+              "material_hash":material_hash,"evaluated_at_utc":evaluated_at,
+              "evaluation_version":"LEGZ_STATISTICAL_SPECTRUM_3",
+              **identity,
+              "evaluation_status":result.get("evaluation_status"),
+              "legz_baseline":result.get("legz_baseline"),"jinx_input":result.get("jinx_input"),
+              "ljpc":result.get("ljpc"),"legz_value":result.get("legz_value"),"pom_value":result.get("pom_value"),
+              "feature_state":result.get("feature_state"),"spectrum":result.get("spectrum"),
+              "evaluation_reason":result.get("evaluation_reason"),
+            }
+            records_by_id[evaluation_id]=state_record
+            latest[evaluation_key]={"evaluation_id":evaluation_id,"material_hash":material_hash,"evaluated_at_utc":evaluated_at}
+            prop.pop("_league",None); prop.pop("_event_id",None)
             prop.update(result)
             if result["evaluation_status"]=="LJ_EVALUATED": evaluated+=1
             else: waiting+=1
-    payload["evaluation_engine"]="LEGZ_STATISTICAL_SPECTRUM_2"
+    payload["evaluation_engine"]="LEGZ_STATISTICAL_SPECTRUM_3"
     payload["evaluation_summary"]={"evaluated":evaluated,"awaiting_evidence":waiting}
     BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"LEGZ Statistical Spectrum: evaluated={evaluated}; awaiting_evidence={waiting}")
+    state_payload={
+      "schema_version":"LSI-EVALUATION-STATE-1",
+      "evaluation_engine":"LEGZ_STATISTICAL_SPECTRUM_3",
+      "generated_at_utc":datetime.now(timezone.utc).isoformat(),
+      "records":list(records_by_id.values()),
+      "latest_by_key":latest,
+    }
+    EVAL_STATE.write_text(json.dumps(state_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"LEGZ Statistical Spectrum v3: evaluated={evaluated}; awaiting_evidence={waiting}; durable_states={len(records_by_id)}")
 
 if __name__=="__main__": main()
