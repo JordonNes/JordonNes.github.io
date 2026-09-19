@@ -43,7 +43,7 @@ permissions:
 
 concurrency:
   group: lsi-market-writer
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   clock:
@@ -205,10 +205,14 @@ jobs:
           ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
       - name: Refresh durable history coverage
+        if: needs.clock.outputs.stage == 'MARKET_HISTORY' || needs.clock.outputs.stage == 'MASTER_PUBLICATION'
         run: python scripts/lsi_history_coverage.py
       - name: Refresh persistent player registry and spectrum cache
+        if: needs.clock.outputs.stage == 'MARKET_HISTORY' || needs.clock.outputs.stage == 'MASTER_PUBLICATION'
         run: python scripts/lsi_history_warehouse.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
+        env:
+          LSI_FAST_RUNTIME: ${{ needs.clock.outputs.stage == 'DISCOVERY' && 'true' || 'false' }}
         run: |
           python scripts/legz_statistical_spectrum.py
           python - <<'PY'
