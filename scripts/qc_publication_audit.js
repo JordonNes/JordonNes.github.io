@@ -32,6 +32,7 @@ const SAFE = new Set([
   'dailyrefresh.js',
   'morningrefresh.js',
   'middayrefresh.js',
+  'ljintelligence.js',
   'data/future_market_board.js',
   'data/prediction_registry.js',
   'lsi_registry_bridge.js',
@@ -70,6 +71,19 @@ function evaluatePage(page) {
 
 function actionable(items) {
   return Array.isArray(items) ? items.filter(x => x && !WATCH.test(String(x))) : [];
+}
+
+const basketballSharedScripts = [
+  'dailyrefresh.js','morningrefresh.js','middayrefresh.js','ljintelligence.js',
+  'data/future_market_board.js','data/prediction_registry.js','lsi_registry_bridge.js'
+];
+for (const page of ['NBA.html','WNBA.html']) {
+  if (!fs.existsSync(path.join(ROOT,page))) continue;
+  const html=fs.readFileSync(path.join(ROOT,page),'utf8');
+  const loaded=new Set([...html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)].map(m=>m[1].split('?')[0].replace(/^\.\//,'')));
+  for (const src of basketballSharedScripts) {
+    if (!loaded.has(src)) errors.push(`${page}: basketball parity violation — missing shared script ${src}.`);
+  }
 }
 
 const errors = [];
@@ -178,4 +192,4 @@ if (errors.length) {
   for (const e of errors) console.error(`::error::QC AUDIT ${e}`);
   process.exit(1);
 }
-console.log('QC publication invariant passed: acquired participant-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; event IDs are unique across every audited DP sport after merge; empty pregame shells are not valid QCs; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
+console.log('QC publication invariant passed: acquired participant-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; event IDs are unique across every audited DP sport after merge; NBA/WNBA shared basketball scripts remain in parity; empty pregame shells are not valid QCs; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
