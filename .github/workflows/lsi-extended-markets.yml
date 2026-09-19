@@ -1,0 +1,63 @@
+name: LSI Extended Markets Refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 8,20 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-extended-market-writer
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: master, fetch-depth: 0}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+
+      - name: Refresh Tennis MMA and Boxing markets at bounded cadence
+        continue-on-error: true
+        env:
+          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
+          PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
+          PROPLINE_LEAGUES: 'Tennis,MMA,Boxing'
+          PROPLINE_MAX_EVENT_REFRESHES_PER_RUN: '18'
+          PROPLINE_MAX_REFRESH_PER_LEAGUE: '6'
+          PROPLINE_MAX_PROP_MARKETS_PER_EVENT: '8'
+          PROPLINE_HTTP_TIMEOUT_SEC: '8'
+          PROPLINE_HTTP_ATTEMPTS: '1'
+        run: python scripts/propline_adapter.py
+
+      - name: Recalculate local L&J intelligence
+        run: |
+          python scripts/lsi_history_coverage.py
+          python scripts/lsi_history_warehouse.py
+          python scripts/legz_statistical_spectrum.py
+          python scripts/lsi_t48_coverage.py
+          python scripts/lsi_publish_future_board.py
+          python scripts/lsi_readiness_report.py
+
+      - name: Commit bounded extended-market outputs
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX LSI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/qc_prop_board.json data/market_history.csv data/propline_intelligence.json data/propline_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/ljpc_coverage.json data/future_market_board.json data/future_market_board.js data/history_coverage.json data/lsi_readiness.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo 'No extended market changes.'
+            exit 0
+          fi
+          git commit -m "LSI bounded extended market refresh"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase --autostash origin master
+            if git push origin master; then exit 0; fi
+            sleep 3
+          done
+          exit 1
