@@ -7,6 +7,7 @@ on:
     paths:
       - 'scripts/lsi_performance_ingest.py'
       - 'scripts/nfl_player_history_adapter.py'
+      - 'scripts/nflverse_history_ingest.py'
       - 'scripts/lsi_history_warehouse.py'
       - 'scripts/legz_statistical_spectrum.py'
       - '.github/workflows/lsi-performance-history.yml'
@@ -38,9 +39,9 @@ jobs:
         continue-on-error: true
         run: python scripts/lsi_performance_ingest.py --days-back 35 --league NCAA_Football --max-events 700
 
-      - name: Hydrate full NFL player history before current-POM evaluation
+      - name: Persist NFL history from nflverse
         continue-on-error: true
-        run: python scripts/nfl_player_history_adapter.py
+        run: python scripts/nflverse_history_ingest.py
 
       - name: Refresh player registry and reusable spectrum cache
         run: python scripts/lsi_history_warehouse.py
