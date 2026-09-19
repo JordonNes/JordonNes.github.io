@@ -780,6 +780,7 @@
     const h = D.home;
     document.title = "LEGZ & JINX — Daily Predictions";
     document.getElementById("app").innerHTML = `<div class="page lj-home">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${allSportsQcs()}${statusGrid()}${footer("All-sports publication hub • QC layout locked")}</div>`;
-    setTimeout(()=>{loadMaterialAlerts();loadLsiPipelineStatus("");},0);
+    setTimeout(loadMaterialAlerts,0);
+    setTimeout(()=>loadLsiPipelineStatus(""),0);
   };
 })();
