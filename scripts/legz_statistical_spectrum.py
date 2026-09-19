@@ -14,12 +14,68 @@ ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
 BOARD=DATA/"qc_prop_board.json"
 HISTORY=DATA/"results.csv"
+PERF=DATA/"performance_history.csv"
 CONTEXT=DATA/"context_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
 
 def num(v):
+    if v in (None,""): return None
     try: return float(v)
-    except (TypeError,ValueError): return None
+    except (TypeError,ValueError):
+        import re
+        m=re.search(r"[-+]?\d+(?:\.\d+)?",str(v).replace(",",""))
+        return float(m.group()) if m else None
+
+def norm(v):
+    import re
+    return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
+
+def market_metric(market):
+    m=norm(market)
+    rules=[
+      (("passing yards","pass yards"),"pass_yards"),
+      (("passing attempts","pass attempts"),"pass_attempts"),
+      (("passing completions","completions"),"pass_completions"),
+      (("passing touchdowns","passing tds","pass tds"),"pass_tds"),
+      (("rushing yards","rush yards"),"rush_yards"),
+      (("rushing attempts","rush attempts","carries"),"rush_attempts"),
+      (("receiving yards","reception yards"),"receiving_yards"),
+      (("receptions","player receptions"),"receptions"),
+      (("targets",),"targets"),
+      (("anytime td","anytime touchdown","touchdowns","to score a touchdown"),"anytime_td"),
+      (("rushing touchdowns","rush tds"),"rush_tds"),
+      (("receiving touchdowns","receiving tds"),"receiving_tds"),
+      (("points rebounds assists","pra"),"pra"),
+      (("points rebounds",),"points_rebounds"),
+      (("points assists",),"points_assists"),
+      (("rebounds assists",),"rebounds_assists"),
+      (("points",),"points"),
+      (("rebounds",),"rebounds"),
+      (("assists",),"assists"),
+      (("three pointers made","3 pointers made","threes made","3pm"),"threes_made"),
+      (("steals",),"steals"),
+      (("blocks",),"blocks"),
+      (("hits",),"hits"),
+      (("total bases",),"total_bases"),
+      (("home runs","home run"),"home_runs"),
+      (("rbi",),"rbi"),
+      (("stolen bases",),"stolen_bases"),
+      (("pitcher strikeouts","strikeouts"),"pitcher_strikeouts"),
+      (("shots on goal","shots"),"shots_on_goal"),
+      (("saves",),"saves"),
+      (("goals",),"goals"),
+    ]
+    for names,metric in rules:
+        if any(x in m for x in names): return metric
+    return None
+
+def effective_threshold(prop,metric=None):
+    t=num(prop.get("threshold"))
+    if t is not None:return t
+    side=norm(prop.get("side"))
+    if metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and side in {"yes","over","more"}:
+        return 0.5
+    return None
 
 def pct(v):
     x=num(v)
@@ -35,19 +91,55 @@ def clamp(x,lo=0,hi=100): return max(lo,min(hi,x))
 
 def historical_results():
     out=defaultdict(list)
-    if not HISTORY.exists(): return out
-    with HISTORY.open(newline="",encoding="utf-8-sig") as fh:
-        for row in csv.DictReader(fh):
-            player=str(row.get("participant") or row.get("player") or "").strip().lower()
-            market=str(row.get("market") or "").strip().lower()
-            actual=num(row.get("actual_result"))
-            if player and market and actual is not None: out[(player,market)].append(actual)
+    # Settled L&J predictions remain useful exact-market evidence.
+    if HISTORY.exists():
+        with HISTORY.open(newline="",encoding="utf-8-sig") as fh:
+            for row in csv.DictReader(fh):
+                league=str(row.get("league") or row.get("sport") or "")
+                player=norm(row.get("participant") or row.get("player"))
+                market=norm(row.get("market"))
+                actual=num(row.get("actual_result"))
+                if player and market and actual is not None:
+                    out[(league,player,market)].append(actual)
+
+    # Permanent player-game warehouse is the primary reusable statistical source.
+    by_event=defaultdict(dict)
+    meta={}
+    if PERF.exists():
+        with PERF.open(newline="",encoding="utf-8-sig") as fh:
+            for row in csv.DictReader(fh):
+                league=str(row.get("league") or "")
+                player=norm(row.get("participant"))
+                event=str(row.get("provider_event_id") or row.get("event_id") or "")
+                metric=str(row.get("metric") or "")
+                value=num(row.get("value"))
+                if not league or not player or not event or not metric or value is None: continue
+                key=(league,player,event)
+                by_event[key][metric]=value
+                meta[key]=row.get("event_start_utc") or ""
+    ordered=sorted(by_event.items(),key=lambda kv:meta.get(kv[0],""))
+    for (league,player,event),m in ordered:
+        derived=dict(m)
+        if any(k in m for k in ("rush_tds","receiving_tds")):
+            derived["anytime_td"]=m.get("rush_tds",0)+m.get("receiving_tds",0)
+        if any(k in m for k in ("rush_yards","receiving_yards")):
+            derived["rush_receiving_yards"]=m.get("rush_yards",0)+m.get("receiving_yards",0)
+        if all(k in m for k in ("points","rebounds","assists")):
+            derived["pra"]=m["points"]+m["rebounds"]+m["assists"]
+        if all(k in m for k in ("points","rebounds")): derived["points_rebounds"]=m["points"]+m["rebounds"]
+        if all(k in m for k in ("points","assists")): derived["points_assists"]=m["points"]+m["assists"]
+        if all(k in m for k in ("rebounds","assists")): derived["rebounds_assists"]=m["rebounds"]+m["assists"]
+        for metric,value in derived.items():
+            out[(league,player,metric)].append(value)
     return out
 
 def distribution_features(prop, history):
-    key=(str(prop.get("participant") or "").strip().lower(),str(prop.get("market") or "").strip().lower())
-    vals=history.get(key) or []
-    threshold=num(prop.get("threshold")); side=str(prop.get("side") or "").lower()
+    league=str(prop.get("_league") or "")
+    player=norm(prop.get("participant"))
+    market=norm(prop.get("market"))
+    metric=market_metric(market)
+    vals=(history.get((league,player,metric)) if metric else None) or history.get((league,player,market)) or []
+    threshold=effective_threshold(prop,metric); side=norm(prop.get("side"))
     if not vals: return {"n":0}
     mean=statistics.fmean(vals); median=statistics.median(vals); sd=statistics.pstdev(vals) if len(vals)>1 else 0.0
     hits=None
