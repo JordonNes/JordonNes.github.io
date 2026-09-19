@@ -211,15 +211,26 @@ def build_qc_board(event_catalog):
         previous=json.loads(QC_BOARD.read_text(encoding="utf-8")) if QC_BOARD.exists() else {"events":[]}
     except (json.JSONDecodeError,OSError):
         previous={"events":[]}
+    wanted_keys={(e.get("league"),norm(e.get("away")),norm(e.get("home"))) for e in event_catalog}
     for old in previous.get("events",[]):
         start=parse_dt(old.get("commence_time"))
         if not start or not old.get("props"):continue
+        key=(old.get("league"),norm(old.get("away")),norm(old.get("home")))
         if NOW-QC_POST_START_RETENTION <= start <= NOW:
             frozen=dict(old)
             frozen["sweep_status"]="PREGAME_LOCKED_STARTED"
             frozen["pregame_locked"]=True
             frozen["locked_at_utc"]=start.isoformat()
-            retained[(old.get("league"),norm(old.get("away")),norm(old.get("home")))]=frozen
+            retained[key]=frozen
+        elif NOW < start <= NOW+QC_LOOKAHEAD and key not in wanted_keys:
+            # Source discovery can fail transiently (rate limit, auth outage, provider downtime).
+            # Preserve the prior event-scoped board instead of replacing known intelligence
+            # with an empty league. The status makes freshness explicit.
+            cached=dict(old)
+            cached["sweep_status"]="CACHED_LAST_KNOWN_GOOD_SOURCE_UNAVAILABLE"
+            cached["pregame_locked"]=False
+            cached["cache_retained_at_utc"]=NOW.isoformat()
+            retained[key]=cached
 
     events=list(retained.values())
     for eid,e in wanted.items():
