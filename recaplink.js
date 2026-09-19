@@ -6,7 +6,7 @@
   const labels = {
     MLB:"MLB", NFL:"NFL", NBA:"NBA", WNBA:"WNBA", NHL:"NHL",
     FIBA_Men:"FIBA Men", FIBA_Women:"FIBA Women",
-    NCAA_Football:"NCAA Football", NCAA_Basketball:"NCAA Basketball",
+    NCAA_Football:"CFB", NCAA_Basketball:"NCAA Basketball",
     MMA:"MMA", Boxing:"Boxing", Tennis:"Tennis",
     LJ_index:"All-Sports Daily Predictions",
     Quickie_Generator:"LEGZ & JINX Quickie Generator"
