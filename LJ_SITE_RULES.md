@@ -76,18 +76,18 @@ For the NFL Daily Predictions page, the active game week is a single **Thursday-
 - Upcoming Sunday and Monday games in the same week remain visible as pregame QCs.
 - The transition to the next NFL week may occur only after the current week's MNF game has completed and its final state has been captured.
 
-## NCAA Football Sunday–Saturday retention rule
+## CFB Sunday–Saturday retention rule
 
-For the NCAA Football Daily Predictions page, the active college-football publication week is **Sunday through Saturday**.
+For the CFB Daily Predictions page, the active college-football publication week is **Sunday through Saturday**.
 
 - The current Sunday–Saturday slate remains one publication unit through the end of Saturday.
-- A completed Thursday, Friday, Saturday, or other in-week NCAA Football QC is **retained in place** and converted to **FINAL status + ending box score** rather than being removed after the game ends.
+- A completed Thursday, Friday, Saturday, or other in-week CFB QC is **retained in place** and converted to **FINAL status + ending box score** rather than being removed after the game ends.
 - Completed in-week QCs remain visible through **Sunday morning** after the Saturday slate.
-- The page rolls to the next NCAA Football Sunday–Saturday week on **Sunday afternoon (12:00 PM PT publication boundary)**.
+- The page rolls to the next CFB Sunday–Saturday week on **Sunday afternoon (12:00 PM PT publication boundary)**.
 - At that Sunday-afternoon rollover, the old week's completed QCs may be removed from the active DP page and the next week's announced games must populate immediately.
 - Mid-week Thursday/Friday games, Saturday games, and occasional Sunday/Monday opening-week games all belong to whichever Sunday–Saturday publication week contains their scheduled date.
 - Upcoming games in the active week remain pregame QCs; started games follow the live-game rule; completed games show FINAL + box score only.
-- A daily refresh must not erase earlier completed games from the same active NCAA Football week before the Sunday-afternoon rollover.
+- A daily refresh must not erase earlier completed games from the same active CFB week before the Sunday-afternoon rollover.
 
 ## Per-Game QC structure and event-state behavior
 
@@ -143,7 +143,7 @@ When an accessible player-prop board exists, publish the best researched props e
 
 Only genuine market scarcity permits fewer than six legs. In that case, publish every available ranked prop and label the construction **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. Empty placeholder text is not an acceptable substitute merely because a preferred source is unavailable or because no prop clears the usual LJPC gate.
 
-NCAA Football follows this rule exactly: every current slate must include kickoff times for all listed games and a multi-source CFB player-prop sweep before L&J concludes that no supportable player-prop prediction is available.
+CFB follows this rule exactly: every current slate must include kickoff times for all listed games and a multi-source CFB player-prop sweep before L&J concludes that no supportable player-prop prediction is available.
 
 ## Permanent Tennis coverage
 
@@ -242,7 +242,7 @@ Pentagon/radar athlete-statistic graphics are intentionally excluded from the cu
 
 ## Mandatory 20 Piece completeness and unsupported-threshold fallback — effective September 14, 2026
 
-The NFL, WNBA, NBA, MLB, NHL, NCAA Football, and NCAA Basketball Daily Predictions pages must display exactly 20 player/participant prop entries in the 20 Piece section. Game winners, moneylines, spreads, team totals, and game totals never count toward the 20.
+The NFL, WNBA, NBA, MLB, NHL, CFB, and NCAA Basketball Daily Predictions pages must display exactly 20 player/participant prop entries in the 20 Piece section. Game winners, moneylines, spreads, team totals, and game totals never count toward the 20.
 
 L&J-qualified predictions retain the normal 20 Piece presentation. When fewer than 20 qualified or conditional player props are available, remaining positions must be filled with clearly labeled **UNSUPPORTED PLAYER THRESHOLD — TARGET / VERIFY LIVE LINE** entries instead of WATCH. Unsupported thresholds render in dark pink, carry no LJPC, and state that they are not L&J predictions or approved parlay legs. They may be promoted to normal styling only after current player identity, availability, market line, and analytical support are verified.
 
