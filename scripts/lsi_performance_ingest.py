@@ -123,13 +123,23 @@ def append(rows):
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--days-back",type=int,default=3); ap.add_argument("--league",action="append",choices=sorted(ESPN))
     ap.add_argument("--max-events",type=int,default=120)
+    ap.add_argument("--date-from",help="Explicit inclusive YYYY-MM-DD start date")
+    ap.add_argument("--date-to",help="Explicit inclusive YYYY-MM-DD end date")
     args=ap.parse_args(); leagues=args.league or list(ESPN); today=datetime.now(timezone.utc).date()
+    if bool(args.date_from) != bool(args.date_to):
+        raise SystemExit("--date-from and --date-to must be supplied together")
+    if args.date_from:
+        start_day=date.fromisoformat(args.date_from); end_day=date.fromisoformat(args.date_to)
+        if end_day < start_day: raise SystemExit("--date-to must be on or after --date-from")
+        days=[start_day+timedelta(days=i) for i in range((end_day-start_day).days+1)]
+        days.sort(reverse=True)
+    else:
+        days=[today-timedelta(days=d) for d in range(max(0,args.days_back)+1)]
     stamp=datetime.now(timezone.utc).isoformat(); total=events=0
     known_events=existing_events()
     for league in leagues:
         checked=0
-        for d in range(max(0,args.days_back)+1):
-            day=today-timedelta(days=d)
+        for day in days:
             try: payload=scoreboard(league,day)
             except Exception as exc:
                 print(f"WARN history scoreboard {league} {day}: {exc}"); continue
