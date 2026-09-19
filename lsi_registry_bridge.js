@@ -612,6 +612,8 @@
       if(boardQc._propSweepStatus) prior._propSweepStatus=boardQc._propSweepStatus;
       if(boardQc._propSweepSource) prior._propSweepSource=boardQc._propSweepSource;
       if(boardQc._propSweepCount!==undefined) prior._propSweepCount=boardQc._propSweepCount;
+      if(boardQc._propEvaluatedCount!==undefined) prior._propEvaluatedCount=boardQc._propEvaluatedCount;
+      if(boardQc._propAwaitingCount!==undefined) prior._propAwaitingCount=boardQc._propAwaitingCount;
       if(!prior.winner && boardQc.winner){ prior.winner=boardQc.winner; prior.conf=boardQc.conf; prior._winnerProvisional=boardQc._winnerProvisional; }
       if((!prior.market || /WATCH|MARKET NOT/i.test(String(prior.market))) && boardQc.market) prior.market=boardQc.market;
       if(boardQc.foot && (!prior.foot || /baseline|continues/i.test(String(prior.foot)))) prior.foot=boardQc.foot;
