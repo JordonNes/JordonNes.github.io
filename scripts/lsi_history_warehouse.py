@@ -24,8 +24,11 @@ PERF=DATA/"performance_history.csv"
 
 def norm(v): return re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
 def num(v):
+    if v in (None,""): return None
     try:return float(v)
-    except (TypeError,ValueError):return None
+    except (TypeError,ValueError):
+        m=re.search(r"[-+]?\d+(?:\.\d+)?",str(v).replace(",",""))
+        return float(m.group()) if m else None
 def player_id(league,name):
     return "LSIP-"+hashlib.sha1(f"{league}|{norm(name)}".encode()).hexdigest()[:16].upper()
 def market_metric(market):
@@ -130,12 +133,14 @@ def main():
         league=e.get("league") or ""
         for p in e.get("props") or []:
             name=p.get("participant") or ""; market=p.get("market") or ""
+            metric=market_metric(market)
             threshold=num(p.get("threshold")); side=p.get("side") or ""
+            if threshold is None and metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and norm(side) in {"yes","over","more"}:
+                threshold=0.5
             if not name or not market or threshold is None: continue
             pid=player_id(league,name); key=(pid,norm(market),threshold,norm(side))
             if key in seen: continue
             seen.add(key)
-            metric=market_metric(market)
             vals=hist.get((pid,metric)) if metric else hist.get((pid,norm(market)))
             vals=vals or []
             outcomes=[h for v in vals if (h:=hit(v,side,threshold)) is not None]
@@ -143,7 +148,7 @@ def main():
                 "lsi_player_id":pid,"league":league,"player":name,"market":market,
                 "threshold":threshold,"side":side,"sample_n":len(outcomes),
                 "L5_hit_rate":rate(outcomes,5),"L10_hit_rate":rate(outcomes,10),"L20_hit_rate":rate(outcomes,20),
-                "career_observations":len(vals),"source":"LSI settled-result warehouse"
+                "career_observations":len(vals),"source":"LSI permanent performance warehouse"
             })
 
     REG.write_text(json.dumps({"schema_version":"LSI-PLAYER-REGISTRY-1","generated_at_utc":stamp,"players":sorted(players.values(),key=lambda x:(x.get("league",""),x.get("canonical_name","")))},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
