@@ -17,6 +17,7 @@ on:
       - 'scripts/oddspapi_history_adapter.py'
       - 'scripts/lsi_pipeline.py'
       - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/nfl_player_history_adapter.py'
       - 'scripts/lsi_publish_future_board.py'
       - 'scripts/lsi_promote_learning.py'
       - 'data/learning_overlay.json'
@@ -188,6 +189,9 @@ jobs:
           ODDS_API_MAX_EVENTS_PER_RUN: '16'
           ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
+      - name: NFL player-performance hydration — nflverse weekly history
+        continue-on-error: true
+        run: python scripts/nfl_player_history_adapter.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
         run: |
           python scripts/legz_statistical_spectrum.py
