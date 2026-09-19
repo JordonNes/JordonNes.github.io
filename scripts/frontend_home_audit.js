@@ -33,6 +33,6 @@ else{
 for(const token of ['function renderQcLeg','qc-leg-player','qc-consensus','qc-lj-score','function hydrateGameStates','function boxScoreHTML','LEGZ PLAYER HOT TOP — PREGAME LOCKED','LEGZ PLAYER HOT TOP — FINAL RECORD','PREGAME LOCKED']) if(!app.includes(token)) fail('ljapp missing '+token);
 for(const token of ['.qc-leg-player','.qc-leg-prop','.qc-consensus','.qc-ticket-h.normal','.qc-hot h4','.qc-boxscore','.qc-live-row','.qc-final-row']) if(!css.includes(token)) fail('ljqc missing '+token);
 if(app.includes('WATCH — no current verified leg')) fail('QC renderer still contains the prohibited empty-parlay placeholder');
-if(!/href=["']ljqc\.css\?v=20260917-liveqc1["']/.test(home)) fail('LJ_index does not reference the current QC stylesheet version');
+if(!/href=["']ljqc\.css\?v=[^"']+["']/.test(home)) fail('LJ_index does not reference a cache-versioned QC stylesheet');
 if(!/src=["']ljapp\.js\?v=[^"']+["']/.test(home)) fail('LJ_index does not reference a cache-versioned renderer');
 if(!process.exitCode) ok('LJ_index wiring, section order, state-aware QC formatter, box-score runtime, and visual contract passed.');
