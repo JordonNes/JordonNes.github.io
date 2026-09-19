@@ -42,15 +42,15 @@ def player_id(league,name):
 def market_metric(market):
     m=norm(market)
     pairs=[
-      ("passing yards","pass_yards"),("pass yards","pass_yards"),("passing attempts","pass_attempts"),("pass attempts","pass_attempts"),
+      ("passing yards","pass_yards"),("pass yards","pass_yards"),("pass yds","pass_yards"),("passing attempts","pass_attempts"),("pass attempts","pass_attempts"),
       ("passing touchdowns","pass_tds"),("passing tds","pass_tds"),("rushing attempts","rush_attempts"),("rush attempts","rush_attempts"),
-      ("carries","rush_attempts"),("rushing yards","rush_yards"),("rush yards","rush_yards"),("receiving yards","receiving_yards"),("reception yds","receiving_yards"),("receiving yds","receiving_yards"),
+      ("carries","rush_attempts"),("rushing yards","rush_yards"),("rush yards","rush_yards"),("rush yds","rush_yards"),("receiving yards","receiving_yards"),("reception yds","receiving_yards"),("receiving yds","receiving_yards"),
       ("receptions","receptions"),("targets","targets"),("points rebounds assists","pra"),("pra","pra"),
       ("points rebounds","points_rebounds"),("points assists","points_assists"),("rebounds assists","rebounds_assists"),
-      ("points","points"),("rebounds","rebounds"),("assists","assists"),("three pointers","threes_made"),("3 pointers","threes_made"),("3pt","threes_made"),("extra points made","extra_points_made"),("xpm","extra_points_made"),
+      ("points","points"),("rebounds","rebounds"),("assists","assists"),("three pointers","threes_made"),("3 pointers","threes_made"),("threes","threes_made"),("3pt","threes_made"),("extra points made","extra_points_made"),("xpm","extra_points_made"),
       ("steals","steals"),("blocks","blocks"),("hits","hits"),("total bases","total_bases"),("home runs","home_runs"),
       ("rbi","rbi"),("runs","runs"),("stolen bases","stolen_bases"),("strikeouts","pitcher_strikeouts"),
-      ("shots on goal","shots_on_goal"),("sog","shots_on_goal"),("saves","saves"),("goals","goals")
+      ("shots on goal","shots_on_goal"),("sog","shots_on_goal"),("saves","saves"),("goal scorer","goals"),("goals","goals")
     ]
     if "anytime td" in m or ("touchdown" in m and "passing" not in m and "pass " not in m):
         return "anytime_td"
