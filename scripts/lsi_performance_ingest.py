@@ -97,24 +97,25 @@ def event_rows(league,event,payload,stamp):
                       "team":team_name,"metric":metric,"value":value,"source":"ESPN_PUBLIC_BOX_SCORE"})
     return rows
 
-def existing_ids():
-    if not OUT.exists() or OUT.stat().st_size==0:return set()
-    with OUT.open(newline="",encoding="utf-8-sig") as fh:return {r.get("record_id","") for r in csv.DictReader(fh)}
+def existing_ids(path=OUT):
+    if not path.exists() or path.stat().st_size==0:return set()
+    with path.open(newline="",encoding="utf-8-sig") as fh:return {r.get("record_id","") for r in csv.DictReader(fh)}
 
-def existing_events():
+def existing_events(path=OUT):
     out=set()
-    if not OUT.exists() or OUT.stat().st_size==0:return out
-    with OUT.open(newline="",encoding="utf-8-sig") as fh:
+    if not path.exists() or path.stat().st_size==0:return out
+    with path.open(newline="",encoding="utf-8-sig") as fh:
         for r in csv.DictReader(fh):
             eid=str(r.get("provider_event_id") or "").strip()
             if eid: out.add((r.get("league") or "",eid))
     return out
 
-def append(rows):
-    ids=existing_ids(); fresh=[r for r in rows if r["record_id"] not in ids]
+def append(rows,path=OUT):
+    ids=existing_ids(path); fresh=[r for r in rows if r["record_id"] not in ids]
     if not fresh:return 0
-    new=not OUT.exists() or OUT.stat().st_size==0
-    with OUT.open("a",newline="",encoding="utf-8") as fh:
+    path.parent.mkdir(parents=True,exist_ok=True)
+    new=not path.exists() or path.stat().st_size==0
+    with path.open("a",newline="",encoding="utf-8") as fh:
         w=csv.DictWriter(fh,fieldnames=FIELDS,extrasaction="ignore")
         if new:w.writeheader()
         w.writerows(fresh)
@@ -123,6 +124,7 @@ def append(rows):
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--days-back",type=int,default=3); ap.add_argument("--league",action="append",choices=sorted(ESPN))
     ap.add_argument("--max-events",type=int,default=120)
+    ap.add_argument("--output",help="Optional output CSV path relative to repo; defaults to data/performance_history.csv")
     ap.add_argument("--date-from",help="Explicit inclusive YYYY-MM-DD start date")
     ap.add_argument("--date-to",help="Explicit inclusive YYYY-MM-DD end date")
     args=ap.parse_args(); leagues=args.league or list(ESPN); today=datetime.now(timezone.utc).date()
@@ -136,7 +138,10 @@ def main():
     else:
         days=[today-timedelta(days=d) for d in range(max(0,args.days_back)+1)]
     stamp=datetime.now(timezone.utc).isoformat(); total=events=0
-    known_events=existing_events()
+    out_path=(ROOT/args.output).resolve() if args.output else OUT
+    if ROOT.resolve() not in out_path.parents and out_path!=ROOT.resolve():
+        raise SystemExit("--output must stay inside the repository")
+    known_events=existing_events(out_path)
     for league in leagues:
         checked=0
         for day in days:
@@ -153,11 +158,11 @@ def main():
                 try:s=summary(league,eid)
                 except Exception as exc:
                     print(f"WARN history summary {league} {eid}: {exc}"); continue
-                added=append(event_rows(league,event,s,stamp)); total+=added
+                added=append(event_rows(league,event,s,stamp),out_path); total+=added
                 if added: known_events.add((league,eid))
                 time.sleep(0.03)
             if checked>=args.max_events:break
         print(f"{league}: checked {checked} completed events")
-    print(f"LSI performance warehouse: appended {total} normalized player-stat facts from {events} completed events.")
+    print(f"LSI performance warehouse: appended {total} normalized player-stat facts from {events} completed events -> {out_path.relative_to(ROOT)}.")
 
 if __name__=="__main__":main()
