@@ -44,6 +44,10 @@ jobs:
           ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
 
+      - name: Refresh near-event visual assets
+        continue-on-error: true
+        run: python scripts/lsi_visual_registry.py
+
       - name: Refresh persistent registry and local spectrum cache
         run: python scripts/lsi_history_warehouse.py
 
@@ -63,7 +67,7 @@ jobs:
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/market_history.csv data/propline_intelligence.json data/propline_state.json data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/ljpc_coverage.json data/lsi_readiness.json 2>/dev/null || true
+          git add data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/market_history.csv data/propline_intelligence.json data/propline_state.json data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/lsi_readiness.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No near-event intelligence changes.'
             exit 0
