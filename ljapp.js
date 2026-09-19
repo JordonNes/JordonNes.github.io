@@ -500,7 +500,14 @@
   function teamMatches(label,comp){
     const q=teamNorm(label); if(!q) return false;
     const aliases=teamAliases(comp);
-    return aliases.some(a=>a===q || (q.length>=3&&a.startsWith(q)) || (a.length>=3&&q.startsWith(a)));
+    const words=new Set(q.split(" ").filter(Boolean));
+    return aliases.some(a=>{
+      if(a===q || (q.length>=3&&a.startsWith(q)) || (a.length>=3&&q.startsWith(a))) return true;
+      const aw=a.split(" ").filter(Boolean);
+      if(a.length>=2 && aw.length===1 && words.has(a)) return true;
+      if(q.length>=2 && q.split(" ").length===1 && aw.includes(q)) return true;
+      return false;
+    });
   }
   function ptDate(offset=0){
     const d=new Date(Date.now()+offset*86400000);
@@ -565,6 +572,28 @@
     if(key==="NFL"||key==="NCAA_Football"||key==="NBA"||key==="WNBA"||key==="NCAA_Basketball") return i<4?`Q${i+1}`:`OT${i-3}`;
     return String(i+1);
   }
+  function pregameBoxShellHTML(key,event,state){
+    const comp=(event.competitions||[{}])[0],teams=comp.competitors||[];
+    const away=teams.find(x=>x.homeAway==="away")||teams[0]||{};
+    const home=teams.find(x=>x.homeAway==="home")||teams[1]||{};
+    const n=t=>esc(t.team?.abbreviation||t.team?.shortDisplayName||t.team?.displayName||"TEAM");
+    return `<div class="qc-pregame-boxshell"><div class="qc-pregame-boxhead"><span>BOX SCORE</span><span>${esc(state.label||"SCHEDULED")}</span></div><div class="qc-pregame-scoreline"><span>${n(away)} <b>—</b></span><span>${n(home)} <b>—</b></span></div><div class="qc-pregame-boxnote">Preset shell • activates at kickoff</div></div>`;
+  }
+  function pregameGameCell(row,event,state){
+    const cell=row.querySelector(".qc-game"); if(!cell) return;
+    const comp=(event.competitions||[{}])[0],teams=comp.competitors||[];
+    const away=teams.find(x=>x.homeAway==="away")||teams[0]||{};
+    const home=teams.find(x=>x.homeAway==="home")||teams[1]||{};
+    const time=cell.querySelector(".qc-time")?.outerHTML||"";
+    const market=cell.querySelector(".qc-market")?.outerHTML||"";
+    const winner=cell.querySelector(".qc-winner");
+    const winnerHtml=winner
+      ? `<div class="qc-center-jinx">${winner.innerHTML}</div>`
+      : `<div class="qc-center-jinx qc-center-jinx-pending"><div class="qc-label">JINX PREDICTED GAME ODDS</div><div class="qc-pick">PENDING VERIFIED GAME LINE</div></div>`;
+    cell.innerHTML=`${time}<div class="qc-matchup-visual"><div class="qc-team-side qc-team-away">${teamNameHTML(away)}</div>${winnerHtml}<div class="qc-team-side qc-team-home">${teamNameHTML(home)}</div></div>${market}${pregameBoxShellHTML(ACTIVE_SPORT_KEY,event,state)}<div class="qc-runtime-status" hidden></div>`;
+    cell.classList.add("qc-game-pregame-integrated");
+  }
+
   function boxScoreHTML(key,event,state){
     const comp=(event.competitions||[{}])[0],teams=comp.competitors||[];
     const away=teams.find(x=>x.homeAway==="away")||teams[0]||{};
@@ -589,7 +618,10 @@
   }
   function applyRuntimeState(key,row,event){
     const state=eventState(event);
-    if(state.kind==="pre") return;
+    if(state.kind==="pre"){
+      pregameGameCell(row,event,state);
+      return;
+    }
 
     // Capture the locked pregame record before the runtime score cell replaces it.
     // This prevents live/final presentation from inventing or backfilling predictions.
@@ -745,8 +777,20 @@
   function augmentNflWeeklyRows(events){
     const section=document.querySelector(".nfl-qc-section"); if(!section) return;
     const represented=new Set();
+    const matchedRows=new Map();
     document.querySelectorAll(".nfl-qc-section .qc-row").forEach(row=>{
-      const ev=eventForRow(row,events); if(ev) represented.add(String(ev.id));
+      const ev=eventForRow(row,events);
+      if(!ev) return;
+      const id=String(ev.id);
+      if(matchedRows.has(id)){
+        const prior=matchedRows.get(id);
+        const priorHasIntel=!!(prior.querySelector(".qc-hot,.qc-ticket,.qc-winner"));
+        const thisHasIntel=!!(row.querySelector(".qc-hot,.qc-ticket,.qc-winner"));
+        if(priorHasIntel && !thisHasIntel){ row.remove(); return; }
+        if(thisHasIntel && !priorHasIntel){ prior.remove(); matchedRows.set(id,row); represented.add(id); return; }
+        row.remove(); return;
+      }
+      matchedRows.set(id,row); represented.add(id);
     });
     const ensureList=(bucket,label)=>{
       let group=section.querySelector(".nfl-qc-"+bucket);
