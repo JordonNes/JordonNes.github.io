@@ -58,11 +58,11 @@ def observation_order(row,source_path=None):
 def market_metric(market):
     m=norm(market)
     rules=[
-      (("passing yards","pass yards"),"pass_yards"),
+      (("passing yards","pass yards","pass yds"),"pass_yards"),
       (("passing attempts","pass attempts"),"pass_attempts"),
       (("passing completions","completions"),"pass_completions"),
       (("passing touchdowns","passing tds","pass tds"),"pass_tds"),
-      (("rushing yards","rush yards"),"rush_yards"),
+      (("rushing yards","rush yards","rush yds"),"rush_yards"),
       (("rushing attempts","rush attempts","carries"),"rush_attempts"),
       (("receiving yards","reception yards","reception yds","receiving yds"),"receiving_yards"),
       (("receptions","player receptions"),"receptions"),
@@ -77,7 +77,7 @@ def market_metric(market):
       (("points",),"points"),
       (("rebounds",),"rebounds"),
       (("assists",),"assists"),
-      (("three pointers made","3 pointers made","threes made","3pm"),"threes_made"),
+      (("three pointers made","3 pointers made","threes made","threes","3pm"),"threes_made"),
       (("extra points made","xp made","xpm"),"extra_points_made"),
       (("steals",),"steals"),
       (("blocks",),"blocks"),
@@ -89,7 +89,7 @@ def market_metric(market):
       (("pitcher strikeouts","strikeouts"),"pitcher_strikeouts"),
       (("shots on goal","shots"),"shots_on_goal"),
       (("saves",),"saves"),
-      (("goals",),"goals"),
+      (("goal scorer","goals"),"goals"),
     ]
     for names,metric in rules:
         if any(x in m for x in names): return metric
