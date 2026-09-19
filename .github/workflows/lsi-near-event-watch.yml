@@ -70,7 +70,7 @@ jobs:
           fi
           git commit -m "LSI hourly near-event market watch"
           for attempt in 1 2 3 4 5; do
-            git pull --rebase origin master
+            git pull --rebase --autostash origin master
             if git push origin master; then exit 0; fi
             sleep 3
           done
