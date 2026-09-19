@@ -14,6 +14,7 @@ ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
 BOARD=DATA/"qc_prop_board.json"
 HISTORY=DATA/"results.csv"
+CONTEXT=DATA/"context_registry.json"
 
 def num(v):
     try: return float(v)
@@ -56,7 +57,40 @@ def distribution_features(prop, history):
             "coefficient_of_variation":round(sd/abs(mean),3) if mean else None,
             "exact_threshold_hit_rate":round(hits,2) if hits is not None else None}
 
-def spectrum(prop, history):
+def context_index():
+    if not CONTEXT.exists(): return {}
+    try: records=json.loads(CONTEXT.read_text(encoding="utf-8")).get("records") or []
+    except (json.JSONDecodeError,AttributeError): return {}
+    out={}
+    for row in records:
+        player=str(row.get("player") or "").strip().lower()
+        if player and player not in out: out[player]=row
+    return out
+
+def jinx_context(prop, contexts):
+    """Conservative, attributable context layer. No private inference."""
+    row=contexts.get(str(prop.get("participant") or "").strip().lower()) or {}
+    status=str(row.get("player_status") or "").upper()
+    severity=str(row.get("context_severity") or "").upper()
+    ctype=str(row.get("context_type") or "").upper()
+    confirmed=str(row.get("lineup_confirmed") or "").lower() in {"1","true","yes","confirmed"}
+    delta=0.0; signals=[]
+    if status in {"OUT","SUSPENDED","IR/IL"}:
+        delta=-12.0; signals.append("critical_availability")
+    elif status in {"DOUBTFUL"}:
+        delta=-8.0; signals.append("doubtful")
+    elif status in {"QUESTIONABLE","DNP"}:
+        delta=-4.0; signals.append("availability_risk")
+    elif status in {"LIMITED"}:
+        delta=-2.0; signals.append("limited")
+    elif status in {"ACTIVE","STARTER"} or confirmed:
+        delta=1.0; signals.append("availability_confirmed")
+    if severity=="CRITICAL" and delta>-8: delta-=3
+    return {"delta":round(clamp(delta,-12,12),2),"signals":signals,
+            "context_id":row.get("context_id"),"context_type":ctype or None,
+            "status":status or None,"headline":row.get("headline"),"source":row.get("source")}
+
+def spectrum(prop, history, contexts):
     rates=[]
     dist=distribution_features(prop,history)
     rate_map={}
@@ -101,9 +135,10 @@ def spectrum(prop, history):
     depth_bonus=min(2.0,max(0,source_count-1)*0.35)
     L=clamp(L+depth_bonus,1,99)
 
-    # JINX is zero unless explicit contextual evidence/adjustment is acquired.
-    j=num(prop.get("jinx_input") if prop.get("jinx_input") not in (None,"") else prop.get("jinx_delta"))
-    j=clamp(j if j is not None else 0.0,-12,12)
+    # JINX interrogates attributable availability/role context; explicit human/model adjustment wins when present.
+    ctx=jinx_context(prop,contexts)
+    explicit_j=num(prop.get("jinx_input") if prop.get("jinx_input") not in (None,"") else prop.get("jinx_delta"))
+    j=clamp(explicit_j if explicit_j is not None else ctx["delta"],-12,12)
     ljpc=round(clamp(L+j,1,99),1)
 
     evidence_depth=min(100.0,35+len(ordered)*14+min(source_count,5)*5+min(len(set(snapshots)),4)*4+min(len(set(evidence)),4)*3)
@@ -113,22 +148,23 @@ def spectrum(prop, history):
       "evaluation_status":"LJ_EVALUATED","ljpc":ljpc,"lj_confidence":ljpc,
       "legz_baseline":round(L,2),"jinx_input":round(j,2),"legz_value":legz_value,"pom_value":pom_value,
       "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
-      "spectrum":{"performance":ordered,"distribution":dist,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count},
-      "evaluation_reason":"LEGZ statistical spectrum: player hit-rate evidence weighted by sample horizon; market prior secondary; JINX adjustment only when explicit context exists."
+      "spectrum":{"performance":ordered,"distribution":dist,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
+      "evaluation_reason":"LEGZ statistical spectrum combines player-performance distribution and bounded market prior; JINX applies attributable availability/role context only."
     }
 
 def main():
     if not BOARD.exists(): raise SystemExit("Missing data/qc_prop_board.json")
     payload=json.loads(BOARD.read_text(encoding="utf-8"))
     history=historical_results()
+    contexts=context_index()
     evaluated=waiting=0
     for event in payload.get("events") or []:
         for prop in event.get("props") or []:
-            result=spectrum(prop,history)
+            result=spectrum(prop,history,contexts)
             prop.update(result)
             if result["evaluation_status"]=="LJ_EVALUATED": evaluated+=1
             else: waiting+=1
-    payload["evaluation_engine"]="LEGZ_STATISTICAL_SPECTRUM_1"
+    payload["evaluation_engine"]="LEGZ_STATISTICAL_SPECTRUM_2"
     payload["evaluation_summary"]={"evaluated":evaluated,"awaiting_evidence":waiting}
     BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(f"LEGZ Statistical Spectrum: evaluated={evaluated}; awaiting_evidence={waiting}")
