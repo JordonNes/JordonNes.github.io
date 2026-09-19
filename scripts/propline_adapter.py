@@ -40,6 +40,7 @@ MAX_REFRESH_EVENTS = max(1, int(os.getenv("PROPLINE_MAX_EVENT_REFRESHES_PER_RUN"
 MAX_REFRESH_PER_LEAGUE = max(1, int(os.getenv("PROPLINE_MAX_REFRESH_PER_LEAGUE", "4")))
 HTTP_TIMEOUT_SEC = max(5, int(os.getenv("PROPLINE_HTTP_TIMEOUT_SEC", "15")))
 HTTP_ATTEMPTS = max(1, int(os.getenv("PROPLINE_HTTP_ATTEMPTS", "2")))
+RATE_LIMIT_COOLDOWN_MIN = max(5, int(os.getenv("PROPLINE_RATE_LIMIT_COOLDOWN_MIN", "45")))
 MAX_PROP_MARKETS_PER_EVENT = max(1, int(os.getenv("PROPLINE_MAX_PROP_MARKETS_PER_EVENT", "10")))
 PROP_MARKET_PRIORITY = {
     "MLB": ["pitcher_strikeouts","batter_hits","batter_total_bases","batter_rbis","batter_home_runs","batter_runs_scored","batter_walks","batter_doubles","batter_stolen_bases"],
@@ -392,6 +393,13 @@ def load_state():
 
 def save_state(state): (DATA/"propline_state.json").write_text(json.dumps(state,indent=2,sort_keys=True)+"\n",encoding="utf-8")
 
+def rate_limit_cooldown(state):
+    health=state.get("health") or {}
+    if str(health.get("status") or "").upper()!="RATE_LIMITED": return False
+    checked=parse_dt(health.get("checked_at_utc"))
+    return bool(checked and NOW-checked<timedelta(minutes=RATE_LIMIT_COOLDOWN_MIN))
+
+
 def due(state,sport_key,event):
     event_id=str(event.get("id","")); start=parse_dt(event.get("commence_time"))
     if not event_id or not start:return False
@@ -485,8 +493,12 @@ def run_game_odds_only():
     """
     if not KEY:
         raise SystemExit("PROPLINE_API_KEY absent: refusing to replace last-known-good GAME_ML artifact.")
+    state=load_state()
+    if rate_limit_cooldown(state):
+        print(f"PropLine fast pass skipped during {RATE_LIMIT_COOLDOWN_MIN}m rate-limit cooldown; last-known-good GAME_ML preserved.")
+        return
     collected=NOW.astimezone(PT).isoformat()
-    rows=[]; seen=set(); event_records=[]; calls=0; failures=0
+    rows=[]; seen=set(); event_records=[]; calls=0; failures=0; rate_limits=0
     for league,sport_key in SPORT_KEYS.items():
         if LEAGUE_FILTER and league not in LEAGUE_FILTER: continue
         try:
@@ -494,7 +506,9 @@ def run_game_odds_only():
             calls+=1
         except Exception as exc:
             failures+=1
+            if isinstance(exc,urllib.error.HTTPError) and exc.code==429: rate_limits+=1
             print(f"WARN PropLine bulk h2h {league} {sport_key}: {exc}")
+            if rate_limits: break
             continue
         for event in payload if isinstance(payload,list) else []:
             peid=str(event.get("id") or "")
@@ -528,6 +542,9 @@ def run_game_odds_only():
     event_ids={str(r.get("event_id") or "") for r in usable_rows}
     usable_events=[e for e in event_records if str(e.get("source_event_id") or "") in event_ids]
     if not usable_rows or not usable_events:
+        if rate_limits:
+            state["health"]={"status":"RATE_LIMITED","checked_at_utc":NOW.isoformat(),"rate_limits":rate_limits,"last_error":"HTTP 429 during fast GAME_ML acquisition"}
+            save_state(state)
         raise SystemExit(
             f"PropLine fast h2h produced no publishable GAME_ML candidate "
             f"(calls={calls}, events={len(event_records)}, rows={len(rows)}, failures={failures}); "
@@ -554,7 +571,11 @@ def run():
     if not KEY:
         state=load_state(); state["health"]={"status":"KEY_ABSENT","checked_at_utc":NOW.isoformat(),"last_error":"PROPLINE_API_KEY absent"}; save_state(state)
         print("PROPLINE_API_KEY absent: PropLine safely skipped.");return
-    state=load_state(); existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
+    state=load_state()
+    if rate_limit_cooldown(state):
+        print(f"PropLine rate-limit cooldown active ({RATE_LIMIT_COOLDOWN_MIN}m); preserving last-known-good market/QC artifacts.")
+        return
+    existing=load_existing_intelligence(); new=[]; markets_out=[]; last_quota=None; event_catalog=[]
     source_errors=0; rate_limits=0; auth_errors=0; last_error=None
     seen_provider_events=set()
     seen_bulk_moneyline_events=set()
