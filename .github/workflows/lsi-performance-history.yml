@@ -33,6 +33,10 @@ jobs:
       - name: Ingest completed player-game facts once
         run: python scripts/lsi_performance_ingest.py --days-back 2 --max-events 80
 
+      - name: Hydrate full NFL player history before current-POM evaluation
+        continue-on-error: true
+        run: python scripts/nfl_player_history_adapter.py
+
       - name: Refresh player registry and reusable spectrum cache
         run: python scripts/lsi_history_warehouse.py
 
