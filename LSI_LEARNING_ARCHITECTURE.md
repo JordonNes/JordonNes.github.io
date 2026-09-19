@@ -50,6 +50,16 @@ Current outputs include settlement performance history, confidence-band calibrat
 
 Phase 2 cannot modify live predictions, pages, confidence, publication state, or model parameters.
 
+
+
+## Phase 2B: Spectrum feature calibration — active in shadow mode
+
+The evaluator now preserves and analyzes Spectrum v3 feature-state snapshots alongside settled outcomes. It measures descriptive associations for the current feature families — performance history, threshold distribution, market prior/source depth, attributable context, and provenance depth — without changing live weights.
+
+The feature-calibration gate is intentionally stricter than ordinary confidence calibration. A weight review requires at least 500 decisive settled predictions with feature state, at least 400 observations for each core feature, and measurable signal across at least three feature families. Even when those thresholds pass, `feature_calibration.json` has no live write path and `weight_change_authorized` remains false.
+
+Any future model-weight revision must therefore be a separate, explicit methodology revision with backtesting, holdout validation, bounded changes, versioning, and rollback. Correlation alone is never treated as causation or sufficient justification for a production weight change.
+
 ## Phase 3: Controlled Influence — gate-locked
 
 The promotion bridge is installed, but no league/market is allowed to influence a prediction until every maturity check passes. Required checks include healthy archive state, ≥95% provenance coverage, ≥98% settlement coverage, ≥200 settled predictions in the same league/market cell, ≥90% closing-line coverage, ≥90% CLV completion among settled predictions, ≥50% multi-source prediction coverage, ≥500 historical market observations, at least two independent books, and calibration error within 7.5 percentage points.
