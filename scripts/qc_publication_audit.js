@@ -191,9 +191,12 @@ for (const [page, league] of Object.entries(PAGES)) {
 }
 
 console.log(`QC prop audit: audited=${auditedGames} full-six=${fullGames} market-limited=${limitedGames} twenty-piece-shortfalls=${twentyShortfalls}`);
-for (const w of warnings) console.log(`::warning::QC AUDIT ${w}`);
+const WARNING_LOG_CAP=40;
+for (const w of warnings.slice(0,WARNING_LOG_CAP)) console.log(`::warning::QC AUDIT ${w}`);
+if (warnings.length>WARNING_LOG_CAP) console.log(`::warning::QC AUDIT ${warnings.length-WARNING_LOG_CAP} additional warning(s) suppressed; inspect acquisition/coverage artifacts for full detail.`);
 if (errors.length) {
-  for (const e of errors) console.error(`::error::QC AUDIT ${e}`);
+  for (const e of errors.slice(0,80)) console.error(`::error::QC AUDIT ${e}`);
+  if (errors.length>80) console.error(`::error::QC AUDIT ${errors.length-80} additional error(s) suppressed.`);
   process.exit(1);
 }
 console.log('QC publication invariant passed: acquired participant-prop boards populate QC ticket columns; when 2+ qualified POMs share an eligible mode, at least one 2–6 leg QC parlay is published; event IDs are unique across every audited DP sport after merge; NBA/WNBA shared basketball scripts remain in parity; empty pregame shells are not valid QCs; 20 Piece shortfalls are surfaced as acquisition warnings, never filler predictions.');
