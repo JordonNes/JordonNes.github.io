@@ -1,16 +1,17 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-09-20T18:50:16.321071+00:00",
+  "checked_at_utc": "2026-09-20T20:56:05.444145+00:00",
   "status": "OK",
-  "raw_market_count": 8195,
-  "normalized_props": 1109,
-  "history_rows_added": 883,
+  "raw_market_count": 6633,
+  "normalized_props": 92,
+  "history_rows_added": 92,
   "skip_reasons": {
-    "ambiguous_matchup": 287,
-    "ambiguous_participant_threshold": 122,
-    "ok": 1493,
+    "ambiguous_matchup": 121,
+    "ambiguous_participant_threshold": 37,
+    "not_upcoming": 38,
+    "ok": 149,
     "unknown_sport": 5937,
-    "unsupported_market": 356
+    "unsupported_market": 351
   },
   "skip_samples": {
     "unknown_sport": {
@@ -52,24 +53,35 @@
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
     },
-    "ambiguous_matchup": {
-      "ticker": "KXNFL60YARDFGS-27-6",
-      "event_ticker": "KXNFL60YARDFGS-27",
-      "series_ticker": "KXNFL60YARDFGS",
-      "event_title": "Number of 60+ Yard Field Goals this Season",
-      "title": "Number of 60+ yard made field goals in 2026-27 regular season: 6+",
+    "not_upcoming": {
+      "ticker": "KXNFLPASSYDS-26SEP20CLETB-TBBMAYFIELD6-125",
+      "event_ticker": "KXNFLPASSYDS-26SEP20CLETB",
+      "series_ticker": "KXNFLPASSYDS",
+      "event_title": "Cleveland vs Tampa Bay: Passing Yards",
+      "title": "Baker Mayfield: 125+ passing yards",
       "subtitle": null,
-      "yes_sub_title": "6+ field goals",
-      "primary_participant_key": null,
-      "floor_strike": 6,
+      "yes_sub_title": "Baker Mayfield: 125+",
+      "primary_participant_key": "football_player",
+      "floor_strike": 124.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-09-20T20:00:00Z"
+    },
+    "ambiguous_matchup": {
+      "ticker": "KXNFLSEASONPASSTDS-27C20-JBURROW9",
+      "event_ticker": "KXNFLSEASONPASSTDS-27C20",
+      "series_ticker": "KXNFLSEASONPASSTDS",
+      "event_title": "Pro Football: 20+ Passing Touchdowns Season",
+      "title": "Will Joe Burrow record 20+ passing touchdowns during the 2026-27 Pro Football regular season?",
+      "subtitle": null,
+      "yes_sub_title": "Joe Burrow",
+      "primary_participant_key": "football_player",
+      "floor_strike": 19.5,
       "functional_strike": null,
       "occurrence_datetime": "2027-01-31T15:00:00Z"
     }
   },
   "leagues": {
-    "MLB": 220,
-    "NFL": 874,
-    "WNBA": 15
+    "NFL": 92
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
