@@ -388,7 +388,21 @@ def spectrum(prop, history, contexts, cache):
 
     evidence_depth=min(100.0,35+len(ordered)*14+min(source_count,5)*5+min(len(set(snapshots)),4)*4+min(len(set(evidence)),4)*3)
     legz_value=round(clamp(evidence_depth*0.65+consistency*0.35),2)
-    pom_value=round(math.sqrt(legz_value*ljpc),2)
+    # Economics are separate from hit probability. A market can be easy but
+    # unattractive, or difficult but economically interesting. Never change LJPC
+    # merely because payout/price is attractive.
+    core_value=math.sqrt(legz_value*ljpc)
+    pom_type=str(prop.get("pom_type") or prop.get("pomType") or "").upper()
+    if market_prior is not None:
+        edge_pp=ljpc-market_prior
+        economic_value=round(clamp(50.0+edge_pp*2.0,0,100),2)
+    elif "DEMON" in pom_type:
+        economic_value=65.0
+    elif "GOBLIN" in pom_type:
+        economic_value=35.0
+    else:
+        economic_value=50.0
+    pom_value=round(clamp(core_value*0.80+economic_value*0.20,0,100),2)
     feature_state={
       "performance":{"recent_hit_rates":rate_map,"distribution":dist,"consistency":round(consistency,2),
                      "sample_size":dist.get("n")},
@@ -401,7 +415,7 @@ def spectrum(prop, history, contexts, cache):
     }
     return {
       "evaluation_status":"LJ_EVALUATED","ljpc":ljpc,"lj_confidence":ljpc,
-      "legz_baseline":round(L,2),"jinx_input":round(j,2),"legz_value":legz_value,"pom_value":pom_value,
+      "legz_baseline":round(L,2),"jinx_input":round(j,2),"legz_value":legz_value,"economic_value":economic_value,"pom_value":pom_value,
       "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
       "spectrum":{"performance":ordered,"distribution":dist,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
       "feature_state":feature_state,
@@ -455,7 +469,7 @@ def main():
               **identity,
               "evaluation_status":result.get("evaluation_status"),
               "legz_baseline":result.get("legz_baseline"),"jinx_input":result.get("jinx_input"),
-              "ljpc":result.get("ljpc"),"legz_value":result.get("legz_value"),"pom_value":result.get("pom_value"),
+              "ljpc":result.get("ljpc"),"legz_value":result.get("legz_value"),"economic_value":result.get("economic_value"),"pom_value":result.get("pom_value"),
               "feature_state":result.get("feature_state"),"spectrum":result.get("spectrum"),
               "evaluation_reason":result.get("evaluation_reason"),
             }
