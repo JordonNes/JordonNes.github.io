@@ -127,8 +127,9 @@ jobs:
           PROPLINE_HTTP_TIMEOUT_SEC: '8'
           PROPLINE_HTTP_ATTEMPTS: '1'
           PROPLINE_LEAGUES: 'NFL,NCAA_Football,MLB,NBA,WNBA,NHL,NCAA_Basketball,Tennis'
-          PROPLINE_MAX_EVENT_REFRESHES_PER_RUN: '32'
-          PROPLINE_MAX_REFRESH_PER_LEAGUE: '4'
+          PROPLINE_MAX_EVENT_REFRESHES_PER_RUN: '16'
+          PROPLINE_MAX_REFRESH_PER_LEAGUE: '3'
+          PROPLINE_RATE_LIMIT_COOLDOWN_MIN: '90'
           PROPLINE_MAX_PROP_MARKETS_PER_EVENT: '10'
         run: python scripts/propline_adapter.py
       - name: OddsPapi historical calibration — free-first
@@ -144,8 +145,10 @@ jobs:
       - name: NHL authoritative enrichment
         run: python scripts/nhl_adapter.py
       - name: Coverage-gap player-prop fallback — The Odds API
+        continue-on-error: true
         env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY || vars.ODDS_API_KEY || secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY }}
+          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY || secrets.ODDS_API_KEY || vars.ODDS_API_KEY }}
           ENABLE_THE_ODDS_API: 'true'
           ODDS_API_LEAGUES: 'NFL,NCAA_Football,MLB,NBA,WNBA,NHL,NCAA_Basketball'
           ODDS_API_LOOKAHEAD_HOURS: '96'
