@@ -118,14 +118,20 @@
     return Number.isFinite(t) && t<=nowMs && t>=nowMs-7*3600000;
   };
   const boardByLeague={};
-  (B?.events||[]).filter(isUpcomingEvent).forEach(event=>{
-    const league=event?.league;
-    if(!league) return;
-    for(const p of (event.props||[])){
-      if(!p?.participant || !p?.market) continue;
-      (boardByLeague[league]??=[]).push({...p,_event:event});
-    }
-  });
+  const collectBoard=(payload,sourceMode)=>{
+    (payload?.events||[]).filter(isUpcomingEvent).forEach(event=>{
+      const league=event?.league;
+      if(!league) return;
+      for(const p of (event.props||[])){
+        if(!p?.participant || !p?.market) continue;
+        (boardByLeague[league]??=[]).push({...p,_event:event,_boardSource:sourceMode});
+      }
+    });
+  };
+  // Fresh future-board inventory is preferred, but the durable QC board remains
+  // visible during free-tier outages/rate limits. Stale durable rows are display-only.
+  collectBoard(B,'FUTURE_BOARD');
+  collectBoard(RAW,'DURABLE_QC_BOARD');
 
   const canonicalKey=p=>[
     norm(p.participant||p.pick),
@@ -139,6 +145,14 @@
     const threshold=p.threshold!==null&&p.threshold!==undefined&&p.threshold!==''?` ${p.threshold}`:'';
     const market=n(p.market);
     return `${side}${threshold} ${market}`.trim();
+  };
+
+  const isStaleProp=p=>String(p?.market_freshness||'').toUpperCase()==='STALE_RECHECK_REQUIRED';
+  const isDisplayEvaluatedProp=p=>{
+    const evaluated=String(p?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
+    const freshVerified=p?.market_verified===true && String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH';
+    const durableStale=isStaleProp(p) && (p?.source_snapshot_ids||[]).length>0;
+    return evaluated && (freshVerified || durableStale);
   };
 
   const futureBoardLeagues=(B?.events||[]).filter(isUpcomingEvent).map(e=>e?.league).filter(Boolean);
@@ -166,8 +180,7 @@
     }
     for(const p of scouts){
       if(hotRows.length>=8) break;
-      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
-      if(!evaluated) continue;
+      if(!isDisplayEvaluatedProp(p)) continue;
       const key=canonicalKey(p);
       if(!key||hotSeen.has(key)) continue;
       hotSeen.add(key);
@@ -175,7 +188,7 @@
         ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
         : p.price!==null&&p.price!==undefined&&p.price!==''
           ? `${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''}`
-          : 'price recheck';
+          : 'LINE RECHECK REQUIRED';
       hotRows.push([
         p.participant,
         scoutPick(p),
@@ -249,8 +262,7 @@
       ],key);
     }
     for(const p of scouts){
-      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
-      if(!evaluated) continue;
+      if(!isDisplayEvaluatedProp(p)) continue;
       const key=canonicalKey(p);
       const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
         ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
@@ -280,7 +292,8 @@
     }
     s.twenty=twenty;
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
-    s.twentyNote=`L&J 20 Piece • top 20% of ${inventoryCount} complete current exact-market-verified L&J-evaluated POMs • ${twenty.length} selected props • ${uniquePlayers} unique players • minimum 4 when available • 20 unique-player floor above 40 inventory POMs • maximum 60 props.`;
+    const staleSelected=twenty.filter(r=>/LINE RECHECK REQUIRED/i.test(String(r?.[3]||''))).length;
+    s.twentyNote=`L&J 20 Piece • top 20% of ${inventoryCount} L&J-evaluated POMs • ${twenty.length} selected props • ${uniquePlayers} unique players • ${staleSelected?staleSelected+' retained evaluated line(s) require live line recheck • ':''}minimum 4 when available • 20 unique-player floor above 40 inventory POMs • maximum 60 props.`;
   }
 
   const canonical=R.predictions.map(p=>({
@@ -346,10 +359,12 @@
     const core=yesNo
       ? `${n(p.participant)} ${market} — ${side}`
       : `${n(p.participant)} ${side}${line} ${market}`;
-    const price=p.price!==null&&p.price!==undefined&&p.price!==''
-      ? ` (${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''})`
+    const quotedPrice=p.price!==null&&p.price!==undefined&&p.price!==''?p.price:p.best_price;
+    const quotedBook=p.book||p.best_book;
+    const price=quotedPrice!==null&&quotedPrice!==undefined&&quotedPrice!==''
+      ? ` (${Number(quotedPrice)>0?'+':''}${quotedPrice}${quotedBook?` ${quotedBook}`:''})`
       : '';
-    const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(Number(p.ljpc));
+    const evaluated=isDisplayEvaluatedProp(p);
     const baseline=Number.isFinite(Number(p.market_baseline_probability))
       ? Number(p.market_baseline_probability)
       : marketBaselineLj(p);
