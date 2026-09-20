@@ -108,10 +108,10 @@ jobs:
           assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in future_props)
           if synthetic_props:
               assert synthetic.get('stage')=='POST_SPECTRUM_EVALUATED', synthetic.get('stage')
-              assert evaluated_synthetic, 'Synthetic book exists but contains zero post-Spectrum LJPC rows'
-              published_synthetic=[p for p in future_props if p.get('synthetic') and p.get('evaluation_status')=='LJ_SYNTHETIC_EVALUATED' and p.get('ljpc') is not None]  # internal model targets; website renderer excludes these from real POM sections
-              assert published_synthetic, 'Evaluated synthetic fallback did not reach future market board'
-          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)} durable_eval_props={len(durable_eval)} synthetic_eval={len(evaluated_synthetic)}')
+              assert evaluated_synthetic, 'Synthetic research book exists but contains zero post-Spectrum internal evaluations'
+          published_synthetic=[p for p in future_props if p.get('synthetic') or p.get('model_generated') or p.get('market_verification')=='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER']
+          assert not published_synthetic, f'Synthetic/model-target POM escaped into public future board: {len(published_synthetic)}'
+          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)} durable_eval_props={len(durable_eval)} internal_synthetic_eval={len(evaluated_synthetic)} public_synthetic=0')
           PY
 
       - name: Commit Spectrum v3 release artifacts
