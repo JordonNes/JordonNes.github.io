@@ -340,6 +340,8 @@ def implied_probability_from_price(price):
     x=f(price)
     if x is None or x==0:
         return None
+    if 0 < x <= 1:
+        return x*100.0
     if x <= -100:
         return (-x)/((-x)+100.0)*100.0
     if x >= 100:
