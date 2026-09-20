@@ -50,8 +50,12 @@ function scriptsFor(html) {
   return srcs;
 }
 
+const PAGE_CONTEXT_CACHE = new Map();
 function evaluatePage(page) {
   const html = fs.readFileSync(path.join(ROOT, page), 'utf8');
+  const srcList = scriptsFor(html);
+  const cacheKey = srcList.join('|');
+  if (PAGE_CONTEXT_CACHE.has(cacheKey)) return PAGE_CONTEXT_CACHE.get(cacheKey);
   const context = {
     console,
     setTimeout: () => 0,
@@ -61,11 +65,12 @@ function evaluatePage(page) {
   context.document = { querySelector: () => null };
   context.addEventListener = () => {};
   vm.createContext(context);
-  for (const src of scriptsFor(html)) {
+  for (const src of srcList) {
     const file = path.join(ROOT, src);
     if (!fs.existsSync(file)) continue;
     vm.runInContext(fs.readFileSync(file, 'utf8'), context, { filename: src });
   }
+  PAGE_CONTEXT_CACHE.set(cacheKey, context);
   return context;
 }
 
