@@ -166,7 +166,7 @@
     }
     for(const p of scouts){
       if(hotRows.length>=8) break;
-      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
+      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
       if(!evaluated) continue;
       const key=canonicalKey(p);
       if(!key||hotSeen.has(key)) continue;
@@ -246,7 +246,7 @@
       ]);
     }
     for(const p of scouts){
-      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
+      const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
       if(!evaluated) continue;
       const key=canonicalKey(p);
       if(!key || seen.has(key)) continue;
@@ -338,7 +338,7 @@
     const price=p.price!==null&&p.price!==undefined&&p.price!==''
       ? ` (${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''})`
       : '';
-    const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
+    const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(Number(p.ljpc));
     const baseline=Number.isFinite(Number(p.market_baseline_probability))
       ? Number(p.market_baseline_probability)
       : marketBaselineLj(p);
