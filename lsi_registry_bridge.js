@@ -108,7 +108,7 @@
     return {
       winner:`${best.selection||best.participant} ML • ${fmtPrice(best)}`,
       conf:pct(ljpcOf(best)),
-      marketBaseline:Number.isFinite(Number(best.market_probability))?pct(Number(best.market_probability)):'',
+      marketBaseline:Number.isFinite(Number(best.provisional_probability ?? best.market_probability))?pct(Number(best.provisional_probability ?? best.market_probability)):'',
       provisional:false,
       market:`GAME ODDS • ${odds} • L&J EVALUATED GAME WINNER`
     };
