@@ -770,7 +770,15 @@
     // The refresh layer is the durable weekly/day schedule; the registry bridge only
     // enriches it with newly acquired events/props/odds.
     const existing=Array.isArray(s.qcs)?s.qcs:[];
-    const merged=[...existing];
+    // PRE-GAME LIST INVARIANT: never retain a completed/started shell in the
+    // upcoming QC collection. Historical/final presentation belongs elsewhere.
+    const existingPregame=existing.filter(q=>{
+      const ev=findBoardEvent(league,q);
+      if(ev) return isUpcomingEvent(ev);
+      const t=Date.parse(q?._propEventStartPt||q?.commence_time||q?.event_start_pt||"");
+      return Number.isFinite(t) && t>Date.now();
+    });
+    const merged=[...existingPregame];
     const exactKey=q=>`${norm(q?.away)}|${norm(q?.home)}`;
     const boardKeyForQc=q=>{
       const ev=findBoardEvent(league,q);
@@ -805,10 +813,8 @@
       return prior;
     };
 
-    for(const shell of recent){
-      const i=findExistingIndex(shell);
-      if(i<0) merged.push(shell);
-    }
+    // Recent/final shells are intentionally NOT inserted into the pregame QC list.
+    // They may be rendered by a dedicated live/final section, but never below upcoming QCs.
     for(const e of future){
       const boardQc=qcFromBoardEvent(e);
       const i=findExistingIndex(boardQc);
