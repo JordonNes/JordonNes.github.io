@@ -117,7 +117,10 @@ for (const [page, league] of Object.entries(PAGES)) {
   }
   const boardEvents=(ctx.window.LJ_FUTURE_MARKET_BOARD?.events||[]).filter(e=>e?.league===league);
   const evaluatedBoardProps=boardEvents.flatMap(e=>(e.props||[])).filter(p=>
-    ['LJ_EVALUATED','LJ_SYNTHETIC_EVALUATED'].includes(String(p?.evaluation_status||'').toUpperCase()) && Number.isFinite(Number(p?.ljpc))
+    String(p?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' &&
+    p?.synthetic!==true && p?.model_generated!==true &&
+    String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' &&
+    Number.isFinite(Number(p?.ljpc))
   );
   const renderedTwenty=(sport.twenty||[]).filter(r=>Number.isFinite(Number((r||[])[7]))&&Number((r||[])[7])>0);
   const renderedHot=(sport.hotTop||[]).filter(r=>{
