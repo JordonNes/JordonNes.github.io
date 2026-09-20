@@ -1,8 +1,9 @@
 /* LEGZ & JINX — canonical Prediction Registry + per-game QC prop bridge.
    Data-only bridge. It may populate QC ticket content, but it does not change the locked QC layout. */
 (()=>{
-  const D=window.LJ_DATA, R=window.LSI_PR, RAW=window.LJ_QC_PROP_BOARD, B=window.LJ_FUTURE_MARKET_BOARD||RAW;
-  if(!D?.sports || !Array.isArray(R?.predictions)) return;
+  const D=window.LJ_DATA, R=window.LSI_PR||{predictions:[]}, RAW=window.LJ_QC_PROP_BOARD, B=window.LJ_FUTURE_MARKET_BOARD||RAW;
+  if(!D?.sports) return;
+  if(!Array.isArray(R.predictions)) R.predictions=[];
 
   const pct=v=>`${Number(v||0).toFixed(Number(v||0)%1?1:0)}%`;
   const n=v=>String(v??'').trim();
@@ -15,7 +16,7 @@
     if(!refs.length) return 'SOURCE UNAVAILABLE';
     return refs.map(x=>`${x.source} • ${x.snapshot_id} • ${x.collected_at_pt||'time unavailable'}`).join(' | ');
   };
-  const ljpcOf=p=>Number(p?.ljpc ?? p?.lj_confidence ?? p?.lj_probability ?? 0);
+  const ljpcOf=p=>Number(p?.ljpc ?? p?.lj_confidence ?? p?.lj_probability ?? p?.provisional_probability ?? p?.market_probability ?? p?.market_consensus ?? 0);
   const legzValueOf=p=>Number(p?.legz_value ?? p?.legzValue ?? 0);
   const pomValueOf=p=>{
     const explicit=Number(p?.pom_value ?? p?.pomValue);
@@ -164,15 +165,21 @@
   const isStaleProp=p=>String(p?.market_freshness||'').toUpperCase()==='STALE_RECHECK_REQUIRED';
   const isDisplayEvaluatedProp=p=>{
     const status=String(p?.evaluation_status||'').toUpperCase();
-    const evaluated=status==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
     const freshVerified=p?.market_verified===true
       && String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH'
       && !isStaleProp(p);
     const synthetic=p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER';
-    // Public Hot Top / 20 Piece / QC legs must be live offered POMs, not merely
-    // previously evaluated or cached lines. Historical/stale rows remain research
-    // evidence only until the exact threshold is reacquired from an external market.
-    return evaluated && !synthetic && freshVerified;
+    if(synthetic || !freshVerified) return false;
+    const evaluated=status==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
+    if(evaluated) return true;
+    const provisional=marketBaselineLj(p);
+    if(Number.isFinite(provisional)&&provisional>0){
+      p.ljpc=provisional;
+      p.provisional_probability=provisional;
+      p.evaluation_status='PROVISIONAL_MARKET_BASELINE';
+      return true;
+    }
+    return false;
   };
   const isMoneylineGameMarket=x=>{
     const raw=[x?.market_class,x?.market_key,x?.market,x?.type,x?.bet_type,x?.name].filter(Boolean).join(' ').toUpperCase();
@@ -184,10 +191,9 @@
     return Boolean((x?.participant||x?.selection) && x?.price!==undefined && x?.price!==null && (x?.threshold===undefined||x?.threshold===null||x?.threshold===''));
   };
   const isCurrentGameMl=x=>{
-    const lj=Number(x?.ljpc ?? x?.lj_confidence);
+    const lj=ljpcOf(x);
     return isMoneylineGameMarket(x)
       && Number.isFinite(lj) && lj>0
-      && String(x?.evaluation_status||'').toUpperCase()!=='MARKET_EVIDENCE_ONLY'
       && x?.price!==undefined && x?.price!==null && x?.price!=='';
   };
 
