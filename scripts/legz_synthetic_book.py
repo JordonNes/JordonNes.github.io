@@ -9,8 +9,9 @@ Purpose:
 - keep every synthetic row explicitly labeled so it can never be mistaken for a
   DraftKings, PrizePicks, Underdog, sportsbook, or other external offer.
 
-The Statistical Spectrum evaluates these synthetic thresholds in the next pipeline
-stage. Publication may use them only as LEGZ PROVISIONAL / SYNTHETIC QCs.
+The Statistical Spectrum may evaluate these synthetic thresholds for internal research,
+calibration and gap analysis only. They must never populate public Hot Top, 20 Piece,
+QCs or Quickie and must never be presented as an externally offered POM.
 """
 from __future__ import annotations
 
