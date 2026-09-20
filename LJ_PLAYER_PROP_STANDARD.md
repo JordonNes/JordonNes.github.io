@@ -87,10 +87,11 @@ A refresh that fails this audit is not a completed Daily Predictions publication
 
 Night-preview, late/current player-prop overlays must execute **after** master and morning market layers so an older refresh cannot overwrite a complete six-prop card with a moneyline-only or shortened ticket. Daily data refreshes may change lines, projections, confidence and status, but they may not relax this standard.
 
-## 9. Exactly-20 display fallback
+## 9. Offered-market integrity
 
-NFL, WNBA, NBA, MLB, NHL, NCAA Football, and NCAA Basketball must always render 20 player-prop rows in the 20 Piece. Missing supported selections are replaced by dark-pink **UNSUPPORTED PLAYER THRESHOLD — TARGET / VERIFY LIVE LINE** rows, never WATCH and never a team/game-side market. Unsupported rows have no LJPC and are not approved picks or parlay legs. They remain visually and semantically separate from supported and conditional L&J predictions.
+Hot Top, 20 Piece, SNS, Normal, Aggressive/Demon and Quickie may use only externally offered POMs whose participant, market, threshold/side, source and observation time are preserved. Synthetic Book thresholds, model targets and unsupported planning thresholds remain internal research only and carry no public LJPC.
 
+When fewer real POMs exist than a normal publication target, publish fewer and state the current market limitation. Never create an easier threshold merely to raise hit probability or complete a card.
 
 ## 10. POM market-variant and QC ticket-construction standard
 
@@ -124,9 +125,10 @@ Under normal L&J operation, **prediction quality has priority over payout econom
 - **LEGZ Value (0–100):** evidence-strength / predictability score. It measures the depth, repeatability and usefulness of the statistical structure supporting the POM. It is not primarily a payout score and is not a hit probability.
 - **JINX Evaluation:** contextual/adversarial review that may add or subtract percentage points from the LEGZ baseline probability.
 - **LJPC:** final bounded L&J estimated hit probability for the exact POM.
-- **POM Value:** prediction-first desirability, calculated as `sqrt(LEGZ Value × LJPC)` under the current standard.
+- **Economic Value:** market/payout attractiveness of the exact offered POM. It is derived from current market price/market-implied probability when available, or a conservative market-variant proxy when exact payout economics are unavailable. It never changes LJPC.
+- **POM Value:** overall desirability combining prediction quality and economics. Current standard: `0.80 × sqrt(LEGZ Value × LJPC) + 0.20 × Economic Value`.
 
-Payout economics do not increase LJPC and do not rescue weak evidence. **Aggressive/Demon mode is the exception in ranking priority:** after the required LJPC gate is satisfied, qualified Normal/Demon POMs are ranked primarily for payout/upside economics.
+Payout economics do not increase LJPC and do not rescue weak evidence. They do, however, materially affect POM Value because an extremely easy but unavailable/low-paying threshold is not the same opportunity as a real executable market. **Aggressive/Demon mode is the exception in ranking priority:** after the required LJPC gate is satisfied, qualified Normal/Demon POMs are ranked primarily for payout/upside economics.
 
 ### POM provenance requirement
 
