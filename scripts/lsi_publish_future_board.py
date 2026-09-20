@@ -55,8 +55,21 @@ def horizon_for(league):
             if special>end:end=special
     return end
 
+def exact_market_verified(p):
+    """Only exact, currently acquired POM thresholds may become actionable."""
+    snaps=[str(x).strip() for x in (p.get("source_snapshot_ids") or []) if str(x).strip()]
+    source=str(p.get("best_book") or p.get("book") or p.get("source") or "").strip()
+    threshold=p.get("threshold")
+    side=str(p.get("side") or "").strip()
+    participant=str(p.get("participant") or "").strip()
+    market=str(p.get("market_key") or p.get("market") or "").strip()
+    freshness=str(p.get("market_freshness") or "").upper()
+    synthetic=bool(p.get("synthetic") or p.get("model_generated") or p.get("model_target"))
+    return bool(participant and market and side and threshold not in (None,"") and snaps and source and not synthetic and freshness!="STALE_RECHECK_REQUIRED")
+
 def canonical_prop(p):
     evaluated=str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"
+    verified=exact_market_verified(p)
     try:
         explicit=float(p.get("ljpc")) if evaluated and p.get("ljpc") not in (None,"") else None
     except (TypeError,ValueError):
@@ -70,11 +83,13 @@ def canonical_prop(p):
       "price":p.get("best_price"),
       "book":p.get("best_book"),
       "draftkings_available":bool(p.get("draftkings_available")),
+      "market_verified":verified,
+      "market_verification":"EXACT_MARKET_MATCH" if verified else "NOT_ACTIONABLE",
       "market_source_count":int(p.get("market_source_count") or 1),
       "pom_type":p.get("pom_type") or p.get("pomType"),
-      "evaluation_status":"LJ_EVALUATED" if explicit is not None else "AWAITING_LJ_EVALUATION",
-      "ljpc":round(max(0.0,min(100.0,explicit)),1) if explicit is not None else None,
-      "lj_confidence":round(max(0.0,min(100.0,explicit)),1) if explicit is not None else None,
+      "evaluation_status":"LJ_EVALUATED" if explicit is not None and verified else ("UNVERIFIED_MARKET" if explicit is not None else "AWAITING_LJ_EVALUATION"),
+      "ljpc":round(max(0.0,min(100.0,explicit)),1) if explicit is not None and verified else None,
+      "lj_confidence":round(max(0.0,min(100.0,explicit)),1) if explicit is not None and verified else None,
       "legz_baseline":p.get("legz_baseline"),
       "jinx_input":p.get("jinx_input"),
       "legz_value":p.get("legz_value"),
@@ -90,7 +105,7 @@ def canonical_prop(p):
       "feature_state":p.get("feature_state"),
       "spectrum":p.get("spectrum"),
       "evaluation_reason":p.get("evaluation_reason"),
-      "model":"LEGZ STATISTICAL SPECTRUM" if explicit is not None else "AWAITING L&J EVALUATION",
+      "model":"LEGZ STATISTICAL SPECTRUM" if explicit is not None and verified else ("UNVERIFIED MARKET — NONACTIONABLE" if explicit is not None else "AWAITING L&J EVALUATION"),
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
       "evidence_summary":p.get("evidence_summary"),
       "evaluation_reason":p.get("evaluation_reason"),
