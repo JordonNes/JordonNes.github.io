@@ -125,6 +125,27 @@ for (const [page, league] of Object.entries(PAGES)) {
   if(evaluatedBoardProps.length && !renderedHot.length){
     errors.push(`${league}: ${evaluatedBoardProps.length} evaluated future-board POMs exist but LEGZ Hot Top renders zero LJPC props.`);
   }
+  for (const r of (sport.hotTop||[])) {
+    const text=(r||[]).join(' ');
+    const score=String((r||[])[2]||'');
+    if (!/%/.test(score) || /AWAITING|MARKET BASELINE|PROVISIONAL/i.test(text)) {
+      errors.push(`${league}: Hot Top contains a non-LJPC prediction row: ${text}`);
+    }
+  }
+  for (const r of (sport.twenty||[])) {
+    const text=(r||[]).join(' ');
+    const score=String((r||[])[4]||'');
+    if (!/%/.test(score) || !Number.isFinite(Number((r||[])[7])) || /AWAITING|MARKET BASELINE|PROVISIONAL/i.test(text)) {
+      errors.push(`${league}: 20 Piece contains a non-LJPC POM row: ${text}`);
+    }
+  }
+  for (const r of (sport.winners||[])) {
+    const text=(r||[]).join(' ');
+    const score=String((r||[])[2]||'');
+    if (!/%/.test(score) || /PROVISIONAL|MARKET BASELINE/i.test(text)) {
+      errors.push(`${league}: Game Winners contains a non-LJPC or provisional row: ${text}`);
+    }
+  }
   if(!Array.isArray(sport.qcs)) {
     errors.push(`${league}: QC collection is missing from sport publication data.`);
     continue;
@@ -208,6 +229,12 @@ for (const [page, league] of Object.entries(PAGES)) {
       for (const text of clean) {
         if (!PROP.test(String(text)) || TEAM_SIDE.test(String(text))) {
           errors.push(`${label}: ${name} contains non-player-prop leg: ${text}`);
+        }
+        if (!/(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i.test(String(text))) {
+          errors.push(`${label}: ${name} contains a leg without explicit LJPC: ${text}`);
+        }
+        if (/AWAITING|MARKET BASELINE|PROVISIONAL HIT ESTIMATE/i.test(String(text))) {
+          errors.push(`${label}: ${name} contains non-evaluated market evidence: ${text}`);
         }
       }
     }
