@@ -28,7 +28,16 @@
   const impliedProb=price=>{
     const x=Number(price);
     if(!Number.isFinite(x)||x===0) return null;
-    return x<0 ? (-x)/((-x)+100)*100 : 100/(x+100)*100;
+    if(x>0&&x<=1) return x*100;
+    if(x<=-100) return (-x)/((-x)+100)*100;
+    if(x>=100) return 100/(x+100)*100;
+    return null;
+  };
+  const priceLabel=(price,book='')=>{
+    const x=Number(price);
+    if(price===null||price===undefined||price===''||!Number.isFinite(x)) return 'price recheck';
+    const raw=x>0&&x<=1?`${(x*100).toFixed((x*100)%1?1:0)}¢`:`${x>0?'+':''}${price}`;
+    return `${raw}${book?` ${book}`:''}`;
   };
   const marketBaselineLj=p=>{
     const consensus=Number(p.consensus_confidence_pct);
@@ -143,7 +152,8 @@
 
   const scoutPick=p=>{
     const side=n(p.side);
-    const threshold=p.threshold!==null&&p.threshold!==undefined&&p.threshold!==''?` ${p.threshold}`:'';
+    const shown=p.display_threshold??p.threshold;
+    const threshold=shown!==null&&shown!==undefined&&shown!==''?` ${shown}`:'';
     const market=n(p.market);
     return `${side}${threshold} ${market}`.trim();
   };
@@ -173,7 +183,7 @@
       if(p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER') continue;
       const key=canonicalKey(p); if(!key||hotSeen.has(key)) continue;
       hotSeen.add(key);
-      const price=p.price!==null&&p.price!==undefined&&p.price!==''?`${Number(p.price)>0?'+':''}${p.price}`:'price recheck';
+      const price=priceLabel(p.price,p.book||'');
       hotRows.push([
         p.participant||p.pick,
         p.pick,
@@ -189,9 +199,9 @@
       if(!key||hotSeen.has(key)) continue;
       hotSeen.add(key);
       const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
-        ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
+        ? priceLabel(p.best_price,p.best_book||'')
         : p.price!==null&&p.price!==undefined&&p.price!==''
-          ? `${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''}`
+          ? priceLabel(p.price,p.book||'')
           : 'LINE RECHECK REQUIRED';
       hotRows.push([
         p.participant,
@@ -379,16 +389,17 @@
 
   function boardCandidate(p){
     const side=n(p.side).toUpperCase();
-    const line=p.threshold!==null&&p.threshold!==undefined&&p.threshold!==''?` ${p.threshold}`:'';
+    const shownThreshold=p.display_threshold??p.threshold;
+    const line=shownThreshold!==null&&shownThreshold!==undefined&&shownThreshold!==''?` ${shownThreshold}`:'';
     const yesNo=/^(YES|NO)$/.test(side);
     const market=n(p.market);
     const core=yesNo
-      ? `${n(p.participant)} ${market} — ${side}`
+      ? `${n(p.participant)}${line} ${market} — ${side}`
       : `${n(p.participant)} ${side}${line} ${market}`;
     const quotedPrice=p.price!==null&&p.price!==undefined&&p.price!==''?p.price:p.best_price;
     const quotedBook=p.book||p.best_book;
     const price=quotedPrice!==null&&quotedPrice!==undefined&&quotedPrice!==''
-      ? ` (${Number(quotedPrice)>0?'+':''}${quotedPrice}${quotedBook?` ${quotedBook}`:''})`
+      ? ` (${priceLabel(quotedPrice,quotedBook||'')})`
       : '';
     const evaluated=isDisplayEvaluatedProp(p);
     const baseline=Number.isFinite(Number(p.market_baseline_probability))
