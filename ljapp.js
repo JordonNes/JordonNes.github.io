@@ -345,10 +345,18 @@
       .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
     const priceOf=v=>{const m=String(v||'').match(/\(([+-]?\d+(?:\.\d+)?)/);return m?Number(m[1]):-9999;};
     const exactKey=v=>String(v||'').toLowerCase().replace(/\s*•\s*L&J\s*\d+(?:\.\d+)?%/i,'').trim();
+    const isAllSportsPlayerProp=v=>{
+      const s=String(v||'').trim();
+      if(!s) return false;
+      if(/\b(?:moneyline|\bml\b|game winner|match winner|fight winner|to win(?:\b|\s)|wins?\s*(?:fight|match)?\b)\b/i.test(s)) return false;
+      if(/\b(?:spread|team total|game total|over\/under)\b/i.test(s)) return false;
+      return /\b(?:pass(?:ing)? yards?|rush(?:ing)? yards?|receiv(?:ing|ing)? yards?|receptions?|targets?|pass(?:ing)? tds?|rush(?:ing)? tds?|receiv(?:ing)? tds?|anytime td|touchdowns?|points?|rebounds?|assists?|pra|threes?|3 pointers?|steals?|blocks?|turnovers?|hits?|total bases?|home runs?|\bhr\b|rbi|stolen bases?|strikeouts?|\bks\b|shots on goal|\bsog\b|saves?|goals?|games won|sets won|aces?)\b/i.test(s);
+    };
     Object.entries(D.sports||{}).forEach(([sport,s])=>{
       (s.qcs||[]).forEach(q=>{
         for(const kind of Object.keys(buckets)){
           for(const text of cleanDecisionItems(q[kind])){
+            if(!isAllSportsPlayerProp(text)) continue;
             buckets[kind].push({sport,text:String(text),conf:confOf(text),player:playerOf(text),price:priceOf(text)});
           }
         }
