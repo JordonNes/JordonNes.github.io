@@ -308,15 +308,15 @@ def main():
                     continue
                 recent = vals[-20:]
                 if metric in BINARY_METRICS:
-                    thresholds = [("NORMAL", 0.5), ("GOBLIN", 0.5), ("DEMON", 0.5)]
+                    thresholds = [("NORMAL", 0.5)]
                 else:
                     q25 = quantile(recent, 0.25)
                     q75 = quantile(recent, 0.75)
                     med = statistics.median(recent)
                     thresholds = [
-                        ("GOBLIN", half_line(q25, "below")),
-                        ("NORMAL", half_line(med, "nearest")),
-                        ("DEMON", half_line(q75, "above")),
+                        ("GOBLIN", max(0.5, half_line(q25, "below"))),
+                        ("NORMAL", max(0.5, half_line(med, "nearest"))),
+                        ("DEMON", max(0.5, half_line(q75, "above"))),
                     ]
                 stability = 1.0 / (1.0 + (statistics.pstdev(recent) / max(abs(statistics.fmean(recent)), 1.0)))
                 for pom_type, threshold in thresholds:
