@@ -71,12 +71,14 @@ def exact_market_verified(p):
 def canonical_prop(p):
     evaluated=str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"
     verified=exact_market_verified(p)
-    synthetic=bool(p.get("synthetic") or p.get("model_generated"))
+    synthetic=bool(p.get("synthetic") or p.get("model_generated") or p.get("model_target"))
     try:
         explicit=float(p.get("ljpc")) if evaluated and p.get("ljpc") not in (None,"") else None
     except (TypeError,ValueError):
         explicit=None
-    publishable=bool(verified or (synthetic and explicit is not None))
+    # Synthetic/model-target thresholds are internal research only. Public LJDP
+    # POMs must correspond to an externally observed exact market expression.
+    publishable=bool(verified and explicit is not None)
     return {
       "participant":p.get("participant"),
       "market_key":p.get("market_key") or p.get("market"),
@@ -92,9 +94,9 @@ def canonical_prop(p):
       "market_verification":"EXACT_MARKET_MATCH" if verified else ("LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER" if synthetic else "NOT_ACTIONABLE"),
       "market_source_count":int(p.get("market_source_count") or 1),
       "pom_type":p.get("pom_type") or p.get("pomType"),
-      "evaluation_status":("LJ_EVALUATED" if verified else "LJ_SYNTHETIC_EVALUATED") if explicit is not None and publishable else ("UNVERIFIED_MARKET" if explicit is not None else "AWAITING_LJ_EVALUATION"),
-      "ljpc":round(max(0.0,min(100.0,explicit)),1) if explicit is not None and publishable else None,
-      "lj_confidence":round(max(0.0,min(100.0,explicit)),1) if explicit is not None and publishable else None,
+      "evaluation_status":"LJ_EVALUATED" if publishable else ("INTERNAL_SYNTHETIC_ONLY" if synthetic else ("UNVERIFIED_MARKET" if explicit is not None else "AWAITING_LJ_EVALUATION")),
+      "ljpc":round(max(0.0,min(100.0,explicit)),1) if publishable else None,
+      "lj_confidence":round(max(0.0,min(100.0,explicit)),1) if publishable else None,
       "legz_baseline":p.get("legz_baseline"),
       "jinx_input":p.get("jinx_input"),
       "legz_value":p.get("legz_value"),
@@ -110,7 +112,7 @@ def canonical_prop(p):
       "feature_state":p.get("feature_state"),
       "spectrum":p.get("spectrum"),
       "evaluation_reason":p.get("evaluation_reason"),
-      "model":("LEGZ STATISTICAL SPECTRUM" if verified else "LEGZ SYNTHETIC BOOK + STATISTICAL SPECTRUM") if explicit is not None and publishable else ("UNVERIFIED MARKET — NONACTIONABLE" if explicit is not None else "AWAITING L&J EVALUATION"),
+      "model":"LEGZ STATISTICAL SPECTRUM" if publishable else ("INTERNAL SYNTHETIC TARGET — NOT A POM" if synthetic else ("UNVERIFIED MARKET — NONACTIONABLE" if explicit is not None else "AWAITING L&J EVALUATION")),
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
       "evidence_summary":p.get("evidence_summary"),
       "evaluation_reason":p.get("evaluation_reason"),
@@ -293,60 +295,9 @@ def main():
     # Durable evaluated LEGZ shadow-book fallback. External exact-market POMs
     # always win; synthetic rows are merged only when an event has no publishable
     # verified external PLAYER_PROP evaluation.
-    if SYNTHETIC.exists():
-        try:
-            synthetic_payload=json.loads(SYNTHETIC.read_text(encoding="utf-8"))
-            for se in synthetic_payload.get("events") or []:
-                sstart=parse(se.get("commence_time"))
-                if not sstart or sstart<=NOW or sstart>horizon_for(se.get("league")):
-                    continue
-                synth_props=[
-                    p for p in (se.get("props") or [])
-                    if (p.get("synthetic") or p.get("model_generated"))
-                    and str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"
-                    and p.get("evaluation_id") and p.get("ljpc") not in (None,"")
-                ]
-                if not synth_props:
-                    continue
-                match=None
-                sid=str(se.get("source_event_id") or "")
-                for e in source_events:
-                    if sid and str(e.get("source_event_id") or e.get("event_id") or "")==sid:
-                        match=e; break
-                if match is None:
-                    for e in source_events:
-                        if str(e.get("league") or "")!=str(se.get("league") or ""):
-                            continue
-                        estart=parse(e.get("commence_time"))
-                        if estart and abs((estart-sstart).total_seconds())>45*60:
-                            continue
-                        ealiases={norm_team(x) for x in [e.get("away"),e.get("home"),*(e.get("away_aliases") or []),*(e.get("home_aliases") or [])] if x}
-                        saliases={norm_team(x) for x in [se.get("away"),se.get("home"),*(se.get("away_aliases") or []),*(se.get("home_aliases") or [])] if x}
-                        if ealiases & saliases:
-                            match=e; break
-                def publishable_external(event):
-                    for raw in event.get("props") or []:
-                        if raw.get("synthetic") or raw.get("model_generated"):
-                            continue
-                        p=canonical_prop(raw)
-                        if p.get("market_verified") is True and p.get("ljpc") is not None and p.get("evaluation_id"):
-                            return True
-                    return False
-                if match is not None:
-                    if publishable_external(match):
-                        continue
-                    retained=[p for p in (match.get("props") or []) if not (p.get("synthetic") or p.get("model_generated"))]
-                    match["props"]=retained+synth_props
-                    match["source"]="LEGZ_SYNTHETIC_FALLBACK"
-                    match["sweep_status"]="LEGZ_SYNTHETIC_EVALUATED_FALLBACK"
-                else:
-                    shell=dict(se)
-                    shell["props"]=synth_props
-                    shell["source"]="LEGZ_SYNTHETIC_FALLBACK"
-                    shell["sweep_status"]="LEGZ_SYNTHETIC_EVALUATED_FALLBACK"
-                    source_events.append(shell)
-        except (json.JSONDecodeError,OSError) as exc:
-            print(f"WARN durable LEGZ synthetic book unreadable: {exc}")
+    # LEGZ Synthetic Book is intentionally NOT merged into the public future
+    # market board. It remains an internal research/shadow layer only. Public
+    # Hot Top, 20 Piece, QCs and Quickie must originate from externally offered POMs.
 
     game_markets=load_game_markets()
     events=[]
