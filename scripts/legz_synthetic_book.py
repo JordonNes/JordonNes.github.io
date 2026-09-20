@@ -43,6 +43,13 @@ POSITION_METRICS = {
         "TE": ["receiving_yards", "receptions", "targets", "anytime_td"],
         "K": ["extra_points_made"],
     },
+    "NCAA_Football": {
+        "QB": ["pass_yards", "pass_tds", "rush_yards"],
+        "RB": ["rush_yards", "rush_attempts", "receptions", "receiving_yards", "anytime_td"],
+        "WR": ["receiving_yards", "receptions", "anytime_td"],
+        "TE": ["receiving_yards", "receptions", "anytime_td"],
+        "K": ["extra_points_made"],
+    },
     "NBA": {
         "*": ["points", "rebounds", "assists", "pra", "threes_made"],
     },
