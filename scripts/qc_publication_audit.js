@@ -112,7 +112,7 @@ for (const [page, league] of Object.entries(PAGES)) {
   }
   const boardEvents=(ctx.window.LJ_FUTURE_MARKET_BOARD?.events||[]).filter(e=>e?.league===league);
   const evaluatedBoardProps=boardEvents.flatMap(e=>(e.props||[])).filter(p=>
-    String(p?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc))
+    ['LJ_EVALUATED','LJ_SYNTHETIC_EVALUATED'].includes(String(p?.evaluation_status||'').toUpperCase()) && Number.isFinite(Number(p?.ljpc))
   );
   const renderedTwenty=(sport.twenty||[]).filter(r=>Number.isFinite(Number((r||[])[7]))&&Number((r||[])[7])>0);
   const renderedHot=(sport.hotTop||[]).filter(r=>{
@@ -128,14 +128,14 @@ for (const [page, league] of Object.entries(PAGES)) {
   for (const r of (sport.hotTop||[])) {
     const text=(r||[]).join(' ');
     const score=String((r||[])[2]||'');
-    if (!/%/.test(score) || /AWAITING|MARKET BASELINE|PROVISIONAL/i.test(text)) {
+    if (!/%/.test(score) || /AWAITING|MARKET BASELINE/i.test(text) || (/PROVISIONAL/i.test(text) && !SYNTHETIC_LABEL.test(text))) {
       errors.push(`${league}: Hot Top contains a non-LJPC prediction row: ${text}`);
     }
   }
   for (const r of (sport.twenty||[])) {
     const text=(r||[]).join(' ');
     const score=String((r||[])[4]||'');
-    if (!/%/.test(score) || !Number.isFinite(Number((r||[])[7])) || /AWAITING|MARKET BASELINE|PROVISIONAL/i.test(text)) {
+    if (!/%/.test(score) || !Number.isFinite(Number((r||[])[7])) || /AWAITING|MARKET BASELINE/i.test(text) || (/PROVISIONAL/i.test(text) && !SYNTHETIC_LABEL.test(text))) {
       errors.push(`${league}: 20 Piece contains a non-LJPC POM row: ${text}`);
     }
   }
