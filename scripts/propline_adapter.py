@@ -124,10 +124,10 @@ def team_aliases(team):
 def implied_probability(price):
     try:p=float(price)
     except (TypeError,ValueError):return None
+    if 0<p<=1:return p
     if p<=0 and p>-100:return None
     if p<=-100:return (-p)/((-p)+100.0)
     if p>=100:return 100.0/(p+100.0)
-    if 1.0<p<100.0:return 1.0/p
     return None
 
 
