@@ -108,8 +108,9 @@
     return {
       winner:`${best.selection||best.participant} ML • ${fmtPrice(best)}`,
       conf:pct(ljpcOf(best)),
-      provisional:true,
-      market:`GAME ODDS • ${odds} • PROVISIONAL HIT ESTIMATE: MARKET BASELINE`
+      marketBaseline:Number.isFinite(Number(best.market_probability))?pct(Number(best.market_probability)):'',
+      provisional:false,
+      market:`GAME ODDS • ${odds} • L&J EVALUATED GAME WINNER`
     };
   };
   const isRecentEventShell=e=>{
@@ -594,7 +595,7 @@
     const q={
       time:fmtEventTime(e),away:e.away||"",home:e.home||"",
       market:game?.market||`Upcoming event • ${e.source||"verified market board"}`,
-      winner:game?.winner||"",conf:game?.conf||"",_winnerProvisional:Boolean(game?.provisional),hot:[],sns1:[],sns2:[],normal:[],demon:[],
+      winner:game?.winner||"",conf:game?.conf||"",_winnerMarketBaseline:game?.marketBaseline||"",_winnerProvisional:Boolean(game?.provisional),hot:[],sns1:[],sns2:[],normal:[],demon:[],
       foot:"0–7 day rolling L&J board • exact price/threshold must remain current at entry time.",
       _propEventId:e.source_event_id||null
     };
@@ -649,7 +650,8 @@
       if(boardQc._propSweepCount!==undefined) prior._propSweepCount=boardQc._propSweepCount;
       if(boardQc._propEvaluatedCount!==undefined) prior._propEvaluatedCount=boardQc._propEvaluatedCount;
       if(boardQc._propAwaitingCount!==undefined) prior._propAwaitingCount=boardQc._propAwaitingCount;
-      if(!prior.winner && boardQc.winner){ prior.winner=boardQc.winner; prior.conf=boardQc.conf; prior._winnerProvisional=boardQc._winnerProvisional; }
+      if(boardQc._winnerMarketBaseline) prior._winnerMarketBaseline=boardQc._winnerMarketBaseline;
+      if(!prior.winner && boardQc.winner){ prior.winner=boardQc.winner; prior.conf=boardQc.conf; prior._winnerMarketBaseline=boardQc._winnerMarketBaseline||""; prior._winnerProvisional=boardQc._winnerProvisional; }
       if((!prior.market || /WATCH|MARKET NOT/i.test(String(prior.market))) && boardQc.market) prior.market=boardQc.market;
       if(boardQc.foot && (!prior.foot || /baseline|continues/i.test(String(prior.foot)))) prior.foot=boardQc.foot;
       return prior;
