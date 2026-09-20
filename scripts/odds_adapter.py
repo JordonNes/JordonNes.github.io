@@ -31,7 +31,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 PT = ZoneInfo("America/Los_Angeles")
-KEY = os.getenv("ODDS_API_KEY", "").strip()
+KEY = (os.getenv("ODDS_API_KEY") or os.getenv("THE_ODDS_API_KEY") or "").strip()
 ENABLED = os.getenv("ENABLE_THE_ODDS_API", "").strip().lower() in {"1","true","yes","on"}
 BASE = "https://api.the-odds-api.com/v4"
 REGIONS = os.getenv("ODDS_API_REGIONS", "us").strip() or "us"
@@ -442,9 +442,9 @@ def run():
         print("The Odds API disabled: paid/subscription source is dormant; existing QC board retained.")
         return
     if not KEY:
-        state["health"]={"status":"KEY_ABSENT","checked_at_utc":now.isoformat(),"last_error":"ODDS_API_KEY absent"}
+        state["health"]={"status":"KEY_ABSENT","checked_at_utc":now.isoformat(),"last_error":"ODDS_API_KEY/THE_ODDS_API_KEY absent"}
         save_json(STATE,state)
-        print("ODDS_API_KEY absent: The Odds API safely skipped; existing QC board retained.")
+        print("ODDS_API_KEY/THE_ODDS_API_KEY absent: The Odds API safely skipped; existing QC board retained.")
         return
 
     cutoff = now + timedelta(hours=LOOKAHEAD_HOURS)
@@ -466,6 +466,10 @@ def run():
                 if exc.code in {401,403}: auth_errors+=1
                 if exc.code==429: rate_limits+=1
             print(f"WARN The Odds API events {league}: {exc}")
+            # Authentication failures are account-wide, not league-specific. Stop
+            # after the first 401/403 so one bad credential does not create a burst.
+            if isinstance(exc,urllib.error.HTTPError) and exc.code in {401,403}:
+                break
             continue
         for event in events if isinstance(events, list) else []:
             start = parse_dt(event.get("commence_time"))
