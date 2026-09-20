@@ -229,52 +229,58 @@
     }
     s.winners=mergedWinners;
 
-    const twenty=[],seen=new Set();
+    // L&J 20 Piece: rank the complete exact-market-verified, L&J-evaluated
+    // inventory; publish the highest-ranked 20%, with a four-POM floor when
+    // available, a 20-unique-player floor when inventory exceeds 40 POMs, and
+    // an absolute 60-POM ceiling. Multiple selected POMs for one player remain
+    // separate rows so the renderer can group them beneath that player.
+    const twentyCandidates=[],seen=new Set();
+    const pushTwenty=(row,key)=>{ if(key&&!seen.has(key)){ seen.add(key); twentyCandidates.push(row); } };
     for(const p of modeled){
+      // Registry rows are actionable only when they carry the same exact-market
+      // verification contract as the Future Market Board.
+      const verified=p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0;
+      if(!verified) continue;
       const key=canonicalKey(p);
-      if(!key || seen.has(key)) continue;
-      seen.add(key);
-      twenty.push([
+      pushTwenty([
         String(p.league||p.sport||'').replace(/_/g,' '),
-        p.participant||p.pick,
-        p.pick,
-        p.price||'price recheck',
-        pct(ljpcOf(p)),
-        `LJPC • POM VALUE ${pomValueOf(p).toFixed(1)} • ${quality(p)}`,
-        risk(p),
-        ljpcOf(p)
-      ]);
+        p.participant||p.pick,p.pick,p.price||'price recheck',pct(ljpcOf(p)),
+        `LJPC • POM VALUE ${pomValueOf(p).toFixed(1)} • ${quality(p)}`,risk(p),ljpcOf(p)
+      ],key);
     }
     for(const p of scouts){
       const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(Number(p.ljpc)) && Number(p.ljpc)>0;
       if(!evaluated) continue;
       const key=canonicalKey(p);
-      if(!key || seen.has(key)) continue;
-      seen.add(key);
       const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
         ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
         : p.price!==null&&p.price!==undefined&&p.price!==''
           ? `${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''}`
           : 'price recheck';
-      const lj=Number(p.ljpc);
-      const pv=Number(p.pom_value||p.legz_value||lj);
-      twenty.push([
-        String(league).replace(/_/g,' '),
-        p.participant,
-        scoutPick(p),
-        price,
-        pct(lj),
+      const lj=Number(p.ljpc), pv=Number(p.pom_value||p.legz_value||lj);
+      pushTwenty([
+        String(league).replace(/_/g,' '),p.participant,scoutPick(p),price,pct(lj),
         `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
-        risk({ljpc:lj}),
-        lj,
+        risk({ljpc:lj}),lj,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
-      ]);
+      ],key);
     }
-
+    twentyCandidates.sort((a,b)=>Number(b[7]||0)-Number(a[7]||0));
+    const inventoryCount=twentyCandidates.length;
+    let target=inventoryCount ? Math.max(Math.min(4,inventoryCount),Math.ceil(inventoryCount*.20)) : 0;
+    target=Math.min(60,target);
+    let twenty=twentyCandidates.slice(0,target);
+    if(inventoryCount>40){
+      const selected=new Set(twenty.map(r=>norm(r[1])).filter(Boolean));
+      for(const row of twentyCandidates.slice(target)){
+        if(twenty.length>=60 || selected.size>=20) break;
+        const player=norm(row[1]); if(!player||selected.has(player)) continue;
+        twenty.push(row); selected.add(player);
+      }
+    }
     s.twenty=twenty;
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
-    const evaluatedCount=twenty.filter(r=>Number.isFinite(Number(r[7]))&&Number(r[7])>0).length;
-    s.twentyNote=`Player-first 20+ Piece • ${uniquePlayers} unique players • ${twenty.length} evaluated props • every displayed row carries individualized LJPC. Upcoming 0–7 day events only; awaiting-evidence POMs are excluded from prediction lists.`;
+    s.twentyNote=`L&J 20 Piece • top 20% of ${inventoryCount} complete current exact-market-verified L&J-evaluated POMs • ${twenty.length} selected props • ${uniquePlayers} unique players • minimum 4 when available • 20 unique-player floor above 40 inventory POMs • maximum 60 props.`;
   }
 
   const canonical=R.predictions.map(p=>({
