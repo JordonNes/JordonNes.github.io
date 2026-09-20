@@ -11,6 +11,7 @@ on:
       - 'scripts/lsi_pipeline.py'
       - 'scripts/lsi_publish_future_board.py'
       - 'Quickie_Generator.html'
+      - 'lsi_registry_bridge.js'
 
 permissions:
   contents: write
@@ -93,9 +94,13 @@ jobs:
           matched=[p for p in rprops if p.get('evaluation_id')]
           assert all(p.get('evaluation_id') in qids for p in matched)
           future_props=[p for e in future.get('events',[]) for p in (e.get('props') or e.get('player_props') or [])]
-          assert future_props
+          durable_eval=[p for e in board.get('events',[]) for p in (e.get('props') or []) if p.get('evaluation_status')=='LJ_EVALUATED' and p.get('ljpc') is not None]
+          # Free-first operation may intentionally publish zero actionable future-board
+          # props when no live market feed is available. In that case the browser bridge
+          # must render durable evaluated QC inventory as LINE RECHECK REQUIRED.
+          assert future_props or durable_eval, 'No current or durable evaluated player-prop inventory exists'
           assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in future_props)
-          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)}')
+          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)} durable_eval_props={len(durable_eval)}')
           PY
 
       - name: Commit Spectrum v3 release artifacts
