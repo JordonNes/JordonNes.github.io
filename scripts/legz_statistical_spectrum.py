@@ -139,6 +139,7 @@ def evaluation_identity(prop):
       "participant":player_norm(prop.get("participant")),
       "market":norm(prop.get("market")),
       "threshold":effective_threshold(prop,market_metric(prop.get("market"))),
+      "threshold_operator":norm(prop.get("threshold_operator")),
       "side":norm(prop.get("side")),
     }
 
@@ -219,12 +220,15 @@ def distribution_features(prop, history):
     metric=market_metric(market)
     vals=(history.get((league,player,metric)) if metric else None) or history.get((league,player,market)) or []
     threshold=effective_threshold(prop,metric); side=norm(prop.get("side"))
+    operator=norm(prop.get("threshold_operator"))
     if not vals: return {"n":0}
     mean=statistics.fmean(vals); median=statistics.median(vals); sd=statistics.pstdev(vals) if len(vals)>1 else 0.0
     hit_count=None; raw_hit=None; smoothed=None; normal_prob=None; model_prob=None
     if threshold is not None:
-        if side in {"over","more","yes"}: hit_count=sum(v>threshold for v in vals)
-        elif side in {"under","less","no"}: hit_count=sum(v<threshold for v in vals)
+        if side in {"over","more","yes"}:
+            hit_count=sum(v>=threshold for v in vals) if operator in {"gte","at least","inclusive"} else sum(v>threshold for v in vals)
+        elif side in {"under","less","no"}:
+            hit_count=sum(v<=threshold for v in vals) if operator in {"lte","at most","inclusive under"} else sum(v<threshold for v in vals)
     if hit_count is not None:
         raw_hit=hit_count/len(vals)*100
         # Laplace smoothing prevents tiny samples from becoming artificial 0%/100% certainties.
@@ -234,8 +238,11 @@ def distribution_features(prop, history):
         binary_like=metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and threshold is not None and threshold<=0.5
         if not binary_like and len(vals)>=8 and sd>0:
             nd=statistics.NormalDist(mu=mean,sigma=sd)
-            if side in {"over","more","yes"}: normal_prob=(1-nd.cdf(threshold))*100
-            elif side in {"under","less","no"}: normal_prob=nd.cdf(threshold)*100
+            # For discrete inclusive contracts (e.g. Kalshi 200+), use a half-unit
+            # continuity correction so the distribution approximation matches >=200.
+            dist_threshold=threshold-0.5 if operator in {"gte","at least","inclusive"} else (threshold+0.5 if operator in {"lte","at most","inclusive under"} else threshold)
+            if side in {"over","more","yes"}: normal_prob=(1-nd.cdf(dist_threshold))*100
+            elif side in {"under","less","no"}: normal_prob=nd.cdf(dist_threshold)*100
             if normal_prob is not None: normal_prob=clamp(normal_prob,1,99)
         model_prob=smoothed if normal_prob is None else smoothed*.70+normal_prob*.30
     return {"n":len(vals),"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
