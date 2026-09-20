@@ -251,3 +251,24 @@ If the accessible current market has fewer qualifying POMs, publish the real inv
 ## Canonical terminology reference — effective September 18, 2026
 
 The public terminology authority is `LJ_Methodology.html`. Current-prediction pages must use **LJPC** for the final L&J estimated hit probability. “L&J Accuracy Confidence,” “L&J modeled confidence,” and similar duplicate forward-looking labels are retired. **Accuracy** is retrospective only. **LEGZ Value** measures evidence strength/predictability; **POM Value** measures prediction-first desirability; neither is a substitute for LJPC. Provisional market-derived baselines must be labeled **PROVISIONAL** until the full L&J evaluation requirements are satisfied.
+
+
+## Executable POM integrity rule — effective September 20, 2026
+
+For every Daily Predictions page, a displayed executable POM must satisfy all of the following before publication:
+
+- the exact participant, market, side and threshold were observed on a current external betting/pick'em market;
+- the market is not stale and does not require a line recheck;
+- the source/book is identified in acquisition provenance;
+- the POM has completed the L&J evaluation process and carries an explicit LJPC;
+- synthetic/model-target/internal-shadow thresholds may inform research but may never appear as executable Hot Top, 20 Piece or QC legs.
+
+Previously published props are historical evidence only. They may not remain executable merely because they once had an LJPC; the same exact market expression must be reacquired from the current market board.
+
+Section roles are permanently separated:
+- **LEGZ HOT TOP:** mixed POM board — externally offered player/participant props plus evaluated odds/moneyline opportunities may compete by POM Value/LJPC.
+- **20 PIECE:** player/participant props only; no moneylines, spreads, team totals, game totals or outright winners.
+- **JINX GAME WINNERS:** moneyline only.
+- **Per-Game QC:** player-prop ticket legs must be current exact-market matches with LJPC; game-side winner is moneyline only; current per-game odds appear centered between the two team/participant visuals.
+
+High LJPC never substitutes for market availability. A statistically attractive threshold that is not currently offered is research evidence, not an executable POM.
