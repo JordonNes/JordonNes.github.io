@@ -22,7 +22,16 @@ jobs:
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
 
-      - name: Refresh near-event POM inventory
+      - name: Refresh Kalshi current offered POM inventory
+        continue-on-error: true
+        env:
+          KALSHI_MAX_PAGES: '4'
+          KALSHI_PAGE_LIMIT: '1000'
+          KALSHI_LOOKAHEAD_DAYS: '7'
+          KALSHI_HTTP_TIMEOUT_SEC: '15'
+        run: python scripts/kalshi_public_adapter.py
+
+      - name: Refresh optional PropLine near-event overlay
         continue-on-error: true
         env:
           PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
@@ -70,7 +79,7 @@ jobs:
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/market_history.csv data/propline_intelligence.json data/propline_state.json data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/lsi_readiness.json 2>/dev/null || true
+          git add data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/market_history.csv data/kalshi_state.json data/propline_intelligence.json data/propline_state.json data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/lsi_readiness.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No near-event intelligence changes.'
             exit 0
