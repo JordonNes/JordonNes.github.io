@@ -40,19 +40,19 @@ The outright match/fight winner remains a GAME SIDE selection and does not count
 
 Before an active QC is published, L&J must make a good-faith player-prop sweep using the relevant available sources, including connected tools and current public markets. DraftKings, PrizePicks, Underdog, other licensed books, current market-comparison sources, official league/team information, StatsHawk and reputable matchup/statistical sources should be used as available and appropriate.
 
-Exact thresholds and prices are line-sensitive. If a model likes a market but the exact executable line cannot be independently synchronized, the prediction may be shown as a **TARGET / VERIFY LIVE LINE** participant prop, but it must not be misrepresented as a verified sportsbook line.
+Exact thresholds and prices are line-sensitive. If a model likes a market but the exact executable line cannot be independently synchronized to an externally offered POM, keep that model target internal. It may be used to guide acquisition, but it does not belong in public Hot Top, 20 Piece, QC or Quickie inventory and receives no public LJPC.
 
 ## 5. Mandatory favorable-prop fallback
 
 If no available prediction clears the normal L&J evidence/confidence gate, L&J must still rank the available participant props and publish the most favorable researched options in LEGZ PLAYER HOT TOP and both SNS constructions. These fallback selections must:
 
 - remain player/participant props; never substitute moneylines, spreads, team totals or game totals;
-- use a currently visible line, or state **TARGET / VERIFY LIVE LINE** when the analysis is threshold-based;
+- use a currently visible externally offered line; if no exact offered POM can be synchronized, omit that candidate from the public ticket;
 - be marked *CONDITIONAL LEAN — BELOW L&J STANDARD* when they do not clear the normal gate;
 - show confidence and the principal failure risk; and
 - be assembled into six-leg SNS cards when six distinct supportable props exist on the available board.
 
-A lower-confidence SNS card is a transparent ranked forecast, not an assertion that the ticket is low risk. If the entire accessible market sweep produces fewer than six participant props, publish every available ranked prop and label the card **MARKET-LIMITED — FEWER THAN SIX PROPS AVAILABLE AFTER SOURCE SWEEP**. This exception is based only on actual market scarcity—not lack of research, one inaccessible preferred source, or failure to look 24+ hours ahead. Never invent a player, market, line, or price.
+A lower-confidence SNS card is a transparent ranked forecast, not an assertion that the ticket is low risk. If the entire accessible market sweep produces fewer than six participant props, publish every available ranked externally offered POM and label the card **MARKET-LIMITED — FEWER THAN SIX OFFERED PROPS AVAILABLE AFTER SOURCE SWEEP**. This exception is based only on actual market scarcity—not lack of research, one inaccessible preferred source, or failure to look 24+ hours ahead. Never invent a player, market, line, price, Goblin, Normal or Demon variant.
 
 ## 6. Started-event lock and runtime QC state
 
