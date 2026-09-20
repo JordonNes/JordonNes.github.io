@@ -264,6 +264,8 @@ jobs:
           print(f"LSI-PR-2 invariant: {len(props)} PLAYER_PROP records; learning_enabled={payload.get('learning_overlay_enabled')}")
           board=json.load(open('data/future_market_board.json',encoding='utf-8'))
           active=list(board.get('events') or [])
+          actionable=[p for e in active for p in (e.get('props') or []) if p.get('evaluation_status')=='LJ_EVALUATED']
+          assert all(p.get('market_verified') is True and p.get('market_verification')=='EXACT_MARKET_MATCH' for p in actionable), 'Actionable POM escaped exact-market verification gate'
           ml_events=[e for e in active if e.get('game_markets')]
           print(f"Future-board invariant: {len(ml_events)}/{len(active)} upcoming event(s) carry GAME_ML odds.")
           if active and not ml_events:
