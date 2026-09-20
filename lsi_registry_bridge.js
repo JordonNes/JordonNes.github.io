@@ -124,6 +124,7 @@
       if(!league) return;
       for(const p of (event.props||[])){
         if(!p?.participant || !p?.market) continue;
+        if(p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER') continue;
         (boardByLeague[league]??=[]).push({...p,_event:event,_boardSource:sourceMode});
       }
     });
@@ -150,11 +151,11 @@
   const isStaleProp=p=>String(p?.market_freshness||'').toUpperCase()==='STALE_RECHECK_REQUIRED';
   const isDisplayEvaluatedProp=p=>{
     const status=String(p?.evaluation_status||'').toUpperCase();
-    const evaluated=['LJ_EVALUATED','LJ_SYNTHETIC_EVALUATED'].includes(status) && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
+    const evaluated=status==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
     const freshVerified=p?.market_verified===true && String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH';
     const durableStale=isStaleProp(p) && (p?.source_snapshot_ids||[]).length>0;
-    const synthetic=p?.synthetic===true && String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER';
-    return evaluated && (freshVerified || durableStale || synthetic);
+    const synthetic=p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER';
+    return evaluated && !synthetic && (freshVerified || durableStale);
   };
 
   const futureBoardLeagues=(B?.events||[]).filter(isUpcomingEvent).map(e=>e?.league).filter(Boolean);
@@ -169,6 +170,7 @@
 
     const hotRows=[],hotSeen=new Set();
     for(const p of modeled){
+      if(p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER') continue;
       const key=canonicalKey(p); if(!key||hotSeen.has(key)) continue;
       hotSeen.add(key);
       const price=p.price!==null&&p.price!==undefined&&p.price!==''?`${Number(p.price)>0?'+':''}${p.price}`:'price recheck';
@@ -176,7 +178,7 @@
         p.participant||p.pick,
         p.pick,
         pct(ljpcOf(p)),
-        `${price} • POM Value ${pomValueOf(p).toFixed(1)} • ${p.synthetic===true?'LEGZ SYNTHETIC / PROVISIONAL':'Canonical Registry'} • ${source(p)}`
+        `${price} • POM Value ${pomValueOf(p).toFixed(1)} • Canonical Registry • ${source(p)}`
       ]);
       if(hotRows.length>=8) break;
     }
@@ -255,8 +257,7 @@
       // Registry rows are actionable only when they carry the same exact-market
       // verification contract as the Future Market Board.
       const verified=p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0;
-      const synthetic=p.synthetic===true && String(p.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER' && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0;
-      if(!verified&&!synthetic) continue;
+      if(!verified) continue;
       const key=canonicalKey(p);
       pushTwenty([
         String(p.league||p.sport||'').replace(/_/g,' '),
@@ -323,21 +324,43 @@
   }
 
   function findBoardEvent(league,q){
-    const future=(B?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e));
-    const durable=(RAW?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e));
-    const events=[...future];
-    const eventKey=e=>String(e?.source_event_id||e?.event_id||[norm(e?.away),norm(e?.home),e?.commence_time||e?.event_start_pt||''].join('|'));
-    const seen=new Set(events.map(eventKey));
-    for(const e of durable){ const k=eventKey(e); if(!seen.has(k)){ seen.add(k); events.push(e); } }
-    if(!events.length) return null;
+    const candidates=[
+      ...(B?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e)).map(e=>({...e,_priority:0})),
+      ...(RAW?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e)).map(e=>({...e,_priority:1}))
+    ];
+    if(!candidates.length) return null;
     const awayAliases=e=>[e?.away,...(e?.away_aliases||[])].filter(Boolean);
     const homeAliases=e=>[e?.home,...(e?.home_aliases||[])].filter(Boolean);
-    const exact=events.find(e=>aliasHit(q.away,awayAliases(e))&&aliasHit(q.home,homeAliases(e)));
-    if(exact) return exact;
-    const one=events.filter(e=>aliasHit(q.away,awayAliases(e))||aliasHit(q.home,homeAliases(e)));
-    return one.length===1?one[0]:null;
+    let matches=candidates.filter(e=>aliasHit(q.away,awayAliases(e))&&aliasHit(q.home,homeAliases(e)));
+    if(!matches.length){
+      const one=candidates.filter(e=>aliasHit(q.away,awayAliases(e))||aliasHit(q.home,homeAliases(e)));
+      const ids=new Set(one.map(e=>[norm(e.away),norm(e.home),e.commence_time||e.event_start_pt||''].join('|')));
+      if(ids.size!==1) return null;
+      matches=one;
+    }
+    matches.sort((a,b)=>(a._priority||0)-(b._priority||0));
+    const base={...matches[0]};
+    const props=new Map();
+    const propKey=p=>[norm(p?.participant),norm(p?.market_key||p?.market),String(p?.threshold??''),norm(p?.side)].join('|');
+    for(const e of matches){
+      for(const p of (e.props||[])){
+        if(p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER') continue;
+        const k=propKey(p); if(!k) continue;
+        const prior=props.get(k);
+        const score=x=>{
+          const fresh=String(x?.market_freshness||'').toUpperCase()!=='STALE_RECHECK_REQUIRED'?10:0;
+          const verified=x?.market_verified===true?5:0;
+          const evald=String(x?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED'?3:0;
+          return fresh+verified+evald+Number(x?.market_source_count||0)/100;
+        };
+        if(!prior || score(p)>score(prior)) props.set(k,p);
+      }
+    }
+    base.props=[...props.values()];
+    base.source=[...new Set(matches.map(e=>e.source).filter(Boolean))].join('+')||base.source;
+    base.sweep_status=base.props.length ? (base.props.some(p=>!isStaleProp(p))?'COMPLETE_WITH_PROPS':'CACHED_MARKET_HISTORY_STALE') : (base.sweep_status||'NO_PROPS');
+    return base;
   }
-
   function manualCandidate(text){
     const s=n(text);
     if(!s || watchRx.test(s) || teamSideRx.test(s) || !propRx.test(s)) return null;
