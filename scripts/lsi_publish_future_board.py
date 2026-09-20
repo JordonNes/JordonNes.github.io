@@ -70,10 +70,12 @@ def exact_market_verified(p):
 def canonical_prop(p):
     evaluated=str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"
     verified=exact_market_verified(p)
+    synthetic=bool(p.get("synthetic") or p.get("model_generated"))
     try:
         explicit=float(p.get("ljpc")) if evaluated and p.get("ljpc") not in (None,"") else None
     except (TypeError,ValueError):
         explicit=None
+    publishable=bool(verified or (synthetic and explicit is not None))
     return {
       "participant":p.get("participant"),
       "market_key":p.get("market_key") or p.get("market"),
@@ -84,12 +86,14 @@ def canonical_prop(p):
       "book":p.get("best_book"),
       "draftkings_available":bool(p.get("draftkings_available")),
       "market_verified":verified,
-      "market_verification":"EXACT_MARKET_MATCH" if verified else "NOT_ACTIONABLE",
+      "synthetic":synthetic,
+      "model_generated":synthetic,
+      "market_verification":"EXACT_MARKET_MATCH" if verified else ("LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER" if synthetic else "NOT_ACTIONABLE"),
       "market_source_count":int(p.get("market_source_count") or 1),
       "pom_type":p.get("pom_type") or p.get("pomType"),
-      "evaluation_status":"LJ_EVALUATED" if explicit is not None and verified else ("UNVERIFIED_MARKET" if explicit is not None else "AWAITING_LJ_EVALUATION"),
-      "ljpc":round(max(0.0,min(100.0,explicit)),1) if explicit is not None and verified else None,
-      "lj_confidence":round(max(0.0,min(100.0,explicit)),1) if explicit is not None and verified else None,
+      "evaluation_status":("LJ_EVALUATED" if verified else "LJ_SYNTHETIC_EVALUATED") if explicit is not None and publishable else ("UNVERIFIED_MARKET" if explicit is not None else "AWAITING_LJ_EVALUATION"),
+      "ljpc":round(max(0.0,min(100.0,explicit)),1) if explicit is not None and publishable else None,
+      "lj_confidence":round(max(0.0,min(100.0,explicit)),1) if explicit is not None and publishable else None,
       "legz_baseline":p.get("legz_baseline"),
       "jinx_input":p.get("jinx_input"),
       "legz_value":p.get("legz_value"),
@@ -105,7 +109,7 @@ def canonical_prop(p):
       "feature_state":p.get("feature_state"),
       "spectrum":p.get("spectrum"),
       "evaluation_reason":p.get("evaluation_reason"),
-      "model":"LEGZ STATISTICAL SPECTRUM" if explicit is not None and verified else ("UNVERIFIED MARKET — NONACTIONABLE" if explicit is not None else "AWAITING L&J EVALUATION"),
+      "model":("LEGZ STATISTICAL SPECTRUM" if verified else "LEGZ SYNTHETIC BOOK + STATISTICAL SPECTRUM") if explicit is not None and publishable else ("UNVERIFIED MARKET — NONACTIONABLE" if explicit is not None else "AWAITING L&J EVALUATION"),
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
       "evidence_summary":p.get("evidence_summary"),
       "evaluation_reason":p.get("evaluation_reason"),
