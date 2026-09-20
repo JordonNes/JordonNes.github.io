@@ -299,7 +299,8 @@ def spectrum(prop, history, contexts, cache):
             rate_map.setdefault(key.upper(),v)
     rates=list(rate_map.values())
     market_prior=implied(prop.get("best_price") if prop.get("best_price") not in (None,"") else prop.get("price"))
-    source_count=max(1,int(num(prop.get("market_source_count")) or 1))
+    synthetic=bool(prop.get("synthetic") or prop.get("model_generated"))
+    source_count=0 if synthetic else max(1,int(num(prop.get("market_source_count")) or 1))
     snapshots=[x for x in (prop.get("source_snapshot_ids") or []) if x]
     evidence=[x for x in (prop.get("evidence_ids") or []) if x]
 
