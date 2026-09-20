@@ -476,7 +476,17 @@ def run():
                 continue
             discovered.append((start, league, sport_key, markets, event))
 
+    # Fair-share the bounded query budget across leagues. A large near-term slate
+    # (notably CFB) must not consume every player-prop refresh before MLB/WNBA/NHL
+    # and the other configured leagues receive a current POM sweep.
     discovered.sort(key=lambda x: x[0])
+    league_rank=defaultdict(int)
+    fair=[]
+    for item in discovered:
+        league=item[1]
+        fair.append((league_rank[league],item[0],item))
+        league_rank[league]+=1
+    discovered=[item for _,_,item in sorted(fair,key=lambda x:(x[0],x[1]))]
     rows = []
     board_events = []
     queried = 0
