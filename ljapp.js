@@ -266,14 +266,16 @@
     const provisionalWinner=/PROVISIONAL|MARKET BASELINE/i.test(String(r.market||'')+' '+String(r.foot||''));
     const conf = winner && r.conf && r.conf !== "—" ? ` • ${ljpcBadge(r.conf,r._winnerMarketBaseline||"")}` : "";
     const cells=[];
+    const pregame=!qcStatusOnly(r);
+    const placeholder=(label,kind,extraClass)=>`<div class="qc-cell qc-ticket ${extraClass} qc-pending"><div class="qc-ticket-h ${kind}">${esc(label)}</div><div class="qc-foot">No qualified executable POM parlay currently meets this mode's publication gate.</div></div>`;
     if(hot.length) cells.push(`<div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</p>`).join("")}</div></div>`);
-    const s1=qcTicketCell("SNS / GOBLIN 1","sns sns1",sns1,"qc-sns1"); if(s1) cells.push(s1);
-    const s2=qcTicketCell("SNS / GOBLIN 2","sns sns2",sns2,"qc-sns2"); if(s2) cells.push(s2);
-    const n=qcTicketCell("NORMAL","normal",normal,"qc-normal"); if(n) cells.push(n);
-    if(demon.length){
-      cells.push(`<div class="qc-cell qc-ticket qc-demon"><div class="qc-ticket-h demon">AGGRESSIVE / DEMON</div>${ticketList(demon)}${r.foot?`<div class="qc-foot">JINX CASE / KILL SWITCH: ${esc(r.foot)}</div>`:""}</div>`);
-    }
-    const cols=Math.max(1,cells.length);
+    else if(pregame) cells.push(`<div class="qc-cell qc-hot qc-pending"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list"><p>Awaiting qualified evaluated POMs.</p></div></div>`);
+    const s1=qcTicketCell("SNS / GOBLIN 1","sns sns1",sns1,"qc-sns1"); cells.push(s1||placeholder("SNS / GOBLIN 1","sns sns1","qc-sns1"));
+    const s2=qcTicketCell("SNS / GOBLIN 2","sns sns2",sns2,"qc-sns2"); cells.push(s2||placeholder("SNS / GOBLIN 2","sns sns2","qc-sns2"));
+    const n=qcTicketCell("NORMAL / MARKET","normal",normal,"qc-normal"); cells.push(n||placeholder("NORMAL / MARKET","normal","qc-normal"));
+    if(demon.length) cells.push(`<div class="qc-cell qc-ticket qc-demon"><div class="qc-ticket-h demon">AGGRESSIVE / DEMON</div>${ticketList(demon)}${r.foot?`<div class="qc-foot">JINX CASE / KILL SWITCH: ${esc(r.foot)}</div>`:""}</div>`);
+    else cells.push(placeholder("AGGRESSIVE / DEMON","demon","qc-demon"));
+    const cols=cells.length;
     const grid=`grid-template-columns:minmax(210px,1.18fr) repeat(${cols},minmax(150px,1fr))`;
     return `<div class="qc-row" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||"")}" style="${grid}"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams">${teamNameHTML(r.away)}<span class="qc-vs">VS</span>${teamNameHTML(r.home)}</div>${market?`<div class="qc-market">${esc(market)}</div>`:""}${winner?`<div class="qc-winner"><div class="qc-label">${r._winnerProvisional?"PROVISIONAL WINNER — MARKET BASELINE":"JINX GAME WINNER"}</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:""}<div class="qc-runtime-status" hidden></div></div>${cells.join("")}</div>`;
   }
