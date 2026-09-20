@@ -285,6 +285,25 @@ def jinx_context(prop, contexts):
 def spectrum(prop, history, contexts, cache):
     rates=[]
     dist=distribution_features(prop,history)
+    synthetic=bool(prop.get("synthetic") or prop.get("model_generated"))
+    # Synthetic Book already derived these statistics from LSI's permanent history.
+    # Reuse that audited evidence during fast-runtime publication instead of forcing
+    # a second full-history scan merely to evaluate the threshold we just created.
+    if synthetic and int(num(prop.get("synthetic_sample_n")) or 0)>=8 and num(prop.get("synthetic_empirical_probability")) is not None:
+        if int(dist.get("n") or 0)<8:
+            dist={
+              "n":int(num(prop.get("synthetic_sample_n")) or 0),
+              "mean":num(prop.get("synthetic_mean")),
+              "median":num(prop.get("synthetic_median")),
+              "stddev":num(prop.get("synthetic_stddev")),
+              "coefficient_of_variation":None,
+              "hit_count":None,
+              "exact_threshold_hit_rate":num(prop.get("synthetic_empirical_probability")),
+              "smoothed_hit_probability":num(prop.get("synthetic_empirical_probability")),
+              "distribution_model_probability":num(prop.get("synthetic_empirical_probability")),
+              "normal_threshold_probability":None,
+              "synthetic_embedded_history":True,
+            }
     rate_map={}
     for key in ("L3_hit_rate","L5_hit_rate","L10_hit_rate","L20_hit_rate","l3_hit_rate","l5_hit_rate","l10_hit_rate","l20_hit_rate"):
         v=pct(prop.get(key))
@@ -300,7 +319,6 @@ def spectrum(prop, history, contexts, cache):
             rate_map.setdefault(key.upper(),v)
     rates=list(rate_map.values())
     market_prior=implied(prop.get("best_price") if prop.get("best_price") not in (None,"") else prop.get("price"))
-    synthetic=bool(prop.get("synthetic") or prop.get("model_generated"))
     source_count=0 if synthetic else max(1,int(num(prop.get("market_source_count")) or 1))
     snapshots=[x for x in (prop.get("source_snapshot_ids") or []) if x]
     evidence=[x for x in (prop.get("evidence_ids") or []) if x]
