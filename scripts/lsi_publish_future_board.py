@@ -348,6 +348,6 @@ def main():
         raise SystemExit("Future-board candidate validation failed; last-known-good artifacts preserved.")
     tmp_json.replace(OUT)
     tmp_js.replace(OUTJS)
-    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {ml_count} L&J-evaluated moneylines.")
+    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {ml_count} moneyline market-evidence side(s) awaiting/eligible for Game Winner Spectrum.")
 
 if __name__=="__main__":main()
