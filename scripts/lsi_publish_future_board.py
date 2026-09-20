@@ -331,16 +331,20 @@ def main():
                 except (TypeError,ValueError):
                     baseline=None
                 if p.get("market_verified") and baseline is not None:
-                    p["ljpc"]=round(max(0.0,min(100.0,baseline)),1)
-                    p["lj_confidence"]=p["ljpc"]
-                    p["provisional_probability"]=p["ljpc"]
+                    p["provisional_probability"]=round(max(0.0,min(100.0,baseline)),1)
                     p["evaluation_status"]="PROVISIONAL_MARKET_BASELINE"
                     p["model"]="MARKET BASELINE — PROVISIONAL L&J PENDING"
                 else:
                     continue
-            if prior is None or p["ljpc"]>prior["ljpc"]:
+            # Canonical identity is independent of confidence. Prefer a formal
+            # LJ_EVALUATED row over a provisional market baseline for the same POM.
+            rank=(1 if p.get("evaluation_status")=="LJ_EVALUATED" else 0,
+                  float(p.get("ljpc") or p.get("provisional_probability") or 0))
+            prior_rank=(1 if prior and prior.get("evaluation_status")=="LJ_EVALUATED" else 0,
+                        float((prior or {}).get("ljpc") or (prior or {}).get("provisional_probability") or 0))
+            if prior is None or rank>prior_rank:
                 best[key]=p
-        props=sorted(best.values(),key=lambda x:(-x["ljpc"],str(x["participant"]),str(x["market"])))
+        props=sorted(best.values(),key=lambda x:(-float(x.get("ljpc") or x.get("provisional_probability") or 0),str(x["participant"]),str(x["market"])))
         events.append({
           "league":e.get("league"),"sport_key":e.get("sport_key"),
           "source_event_id":e.get("source_event_id"),"propline_event_id":e.get("propline_event_id"),
