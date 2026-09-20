@@ -89,7 +89,7 @@ jobs:
           text=Path("Quickie_Generator.html").read_text(encoding="utf-8")
           checks=[
             "(e.props||[]).forEach",
-            "evaluation_status||'').toUpperCase()!=='LJ_EVALUATED'",
+            "st!=='LJ_EVALUATED'||!verified",
             "Spectrum v3 Future Board",
             "evaluationId:p.evaluation_id",
           ]
