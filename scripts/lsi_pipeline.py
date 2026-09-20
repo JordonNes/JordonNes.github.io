@@ -35,7 +35,7 @@ PROP_FIELDS = [
     "player_status", "rotowire_context_timestamp", "sharp_market_signal", "L5_hit_rate",
     "L10_hit_rate", "L20_hit_rate", "actual_result", "win_loss_push", "CLV",
     "evaluation_key", "evaluation_id", "evaluation_material_hash", "evaluation_version",
-    "evaluated_at_utc", "feature_state", "spectrum", "evaluation_reason",
+    "evaluated_at_utc", "feature_state", "spectrum", "evaluation_reason", "economic_value",
 ]
 
 
@@ -335,9 +335,35 @@ def legz_value_score(record: dict) -> float:
     return round(max(0.0, min(100.0, score)), 2)
 
 
-def pom_value_score(legz_value: float, ljpc: float) -> float:
-    """Prediction-first POM desirability. Economics are intentionally excluded."""
-    return round(max(0.0, min(100.0, (max(0.0, legz_value) * max(0.0, ljpc)) ** 0.5)), 2)
+def implied_probability_from_price(price):
+    """Best-effort market-implied probability for sportsbook-style American odds."""
+    x=f(price)
+    if x is None or x==0:
+        return None
+    if x <= -100:
+        return (-x)/((-x)+100.0)*100.0
+    if x >= 100:
+        return 100.0/(x+100.0)*100.0
+    return None
+
+
+def economic_value_score(record: dict, ljpc: float) -> float:
+    """0-100 economic attractiveness proxy; never changes LJPC."""
+    market_prob=implied_probability_from_price(record.get("price"))
+    if market_prob is not None:
+        return round(max(0.0,min(100.0,50.0+(ljpc-market_prob)*2.0)),2)
+    pom_type=str(record.get("pom_type") or record.get("pomType") or "").upper()
+    if "DEMON" in pom_type:
+        return 65.0
+    if "GOBLIN" in pom_type:
+        return 35.0
+    return 50.0
+
+
+def pom_value_score(legz_value: float, ljpc: float, economic_value: float) -> float:
+    """Overall desirability: prediction quality first, economics materially included."""
+    core=(max(0.0,legz_value)*max(0.0,ljpc))**0.5
+    return round(max(0.0,min(100.0,core*0.80+max(0.0,min(100.0,economic_value))*0.20)),2)
 
 
 def prop_intelligence(*, row: dict, base: dict, summary: dict, contexts: list[dict], propline: list[dict], results: dict[str, dict]) -> dict:
@@ -508,7 +534,8 @@ def build():
             record["legz_value"] = f((qc_eval.get((str(league_name),str(event_id),norm(participant),norm(market_name),numeric_line(threshold),norm(side))) or {}).get("legz_value")) if market_class=="PLAYER_PROP" else None
             if record["legz_value"] is None:
                 record["legz_value"] = legz_value_score(record)
-            record["pom_value"] = pom_value_score(record["legz_value"], record["ljpc"])
+            record["economic_value"] = economic_value_score(record, record["ljpc"])
+            record["pom_value"] = pom_value_score(record["legz_value"], record["ljpc"], record["economic_value"])
             rows.append(record)
 
     if errors:
@@ -531,8 +558,8 @@ def build():
         "player_prop_fields": PROP_FIELDS,
         "provenance_policy": "Every published prediction must resolve to one or more durable market-history snapshots.",
         "clv_definition": "Line-based threshold CLV when a sourced closing line exists; positive means L&J captured the more favorable threshold. Price/implied-probability CLV is not inferred.",
-        "terminology_policy": "LJPC is the canonical final L&J hit probability. lj_probability and lj_confidence are compatibility aliases. legz_confidence is the LEGZ baseline probability input; legz_value is the separate evidence-strength score; pom_value is prediction-first desirability and excludes payout economics.",
-        "pom_value_formula": "sqrt(legz_value * ljpc)",
+        "terminology_policy": "LJPC is the canonical final L&J hit probability. Economics never inflate LJPC. legz_value measures evidence strength; economic_value measures market/payout attractiveness when observable; pom_value combines prediction quality and economics.",
+        "pom_value_formula": "0.80 * sqrt(legz_value * ljpc) + 0.20 * economic_value",
         "evaluation_state_policy": "Current PLAYER_PROP predictions inherit the exact matched LEGZ Statistical Spectrum evaluation state from qc_prop_board when available; evaluation_id and material hash make the feature-level decision auditable and reusable.",
         "learning_policy": "Historical adjustments apply only through LSI-LEARNING-OVERLAY-1 after every maturity gate passes; absolute adjustment is capped at 3 percentage points.",
         "learning_overlay_enabled": bool(learning.get("enabled")),
