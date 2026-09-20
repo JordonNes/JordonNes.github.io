@@ -263,7 +263,7 @@
     const market=isEmptyDecision(r.market)?"":String(r.market||"");
     const winner=isEmptyDecision(r.winner)?"":String(r.winner||"");
     const provisionalWinner=/PROVISIONAL|MARKET BASELINE/i.test(String(r.market||'')+' '+String(r.foot||''));
-    const conf = winner && r.conf && r.conf !== "—" ? ` • ${provisionalWinner?'Provisional':'LJPC'} ${esc(r.conf)}` : "";
+    const conf = winner && r.conf && r.conf !== "—" ? ` • ${ljpcBadge(r.conf,r._winnerMarketBaseline||"")}` : "";
     const cells=[];
     if(hot.length) cells.push(`<div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</p>`).join("")}</div></div>`);
     const s1=qcTicketCell("SNS / GOBLIN 1","sns sns1",sns1,"qc-sns1"); if(s1) cells.push(s1);
