@@ -149,7 +149,7 @@ jobs:
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY || vars.ODDS_API_KEY || secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY }}
           THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY || secrets.ODDS_API_KEY || vars.ODDS_API_KEY }}
-          ENABLE_THE_ODDS_API: 'true'
+          ENABLE_THE_ODDS_API: ${{ vars.ENABLE_THE_ODDS_API || 'false' }}
           ODDS_API_LEAGUES: 'NFL,NCAA_Football,MLB,NBA,WNBA,NHL,NCAA_Basketball'
           ODDS_API_LOOKAHEAD_HOURS: '96'
           ODDS_API_MAX_EVENTS_PER_RUN: '24'
