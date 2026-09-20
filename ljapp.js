@@ -153,11 +153,17 @@
     return `<section class="section"><div class="section-head"><h2>SPORTS / LEAGUES</h2><span class="muted">Same approved QC standard across every publication</span></div><nav class="sports-nav">${D.nav.map(([name,icon,url])=>`<a class="sport-link" href="${esc(url)}"><span class="sport-icon">${icon}</span><span class="sport-name">${esc(name)}</span></a>`).join("")}</nav></section>`;
   }
 
+  function ljpcBadge(value, provisional=""){
+    const prov=String(provisional||"").trim();
+    const lj=String(value||"").trim();
+    return `${prov?`<span class="lj-provisional">${esc(prov)}</span>`:""}<span class="ljpc-badge"><span class="lj-l">L</span><span class="lj-j">J</span><span class="lj-pc">PC</span> <span class="ljpc-value">${esc(lj)}</span></span>`;
+  }
+
   function hotTop(items,label="LEGZ HOT TOP"){
-    return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">LJPC: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
+    return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
   }
   function winners(items,label="JINX GAME WINNERS"){
-    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>{const provisional=/PROVISIONAL|MARKET BASELINE/i.test(String(r[3]||''));return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">${provisional?'Provisional hit estimate':'LJPC'}: ${esc(r[2])}${r[3]?` • ${esc(r[3])}`:""}</span></li>`;}).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
+    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>{const provisional=/PROVISIONAL|MARKET BASELINE/i.test(String(r[3]||''));return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`;}).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
   }
   function ensureGameWinners(s){
     if(!s) return;
@@ -196,7 +202,7 @@
     const shortfall=!home && groups.length>0 && groups.length<20
       ? `<div class="twenty-shortfall" role="status"><b>ACQUISITION SHORTFALL — ${groups.length}/20 UNIQUE PLAYERS</b><span>The upstream prop sweep must expand this board. No unsupported or fabricated thresholds are inserted to fill space.</span></div>`
       : "";
-    const playerHtml=groups.map((g,i)=>`<li class="twenty-player" data-rank="${i+1}"><div class="twenty-player-line"><span class="twenty-rank" aria-label="Rank ${i+1}">${i+1}</span><strong class="twenty-player-name">${esc(g.player)}</strong><span class="twenty-sport">${esc(g.sport)}</span><span class="twenty-prop-count">${g.props.length>1?`${g.props.length} props`:""}</span></div><ul class="twenty-leg-list">${g.props.map(r=>`<li class="twenty-leg"><span class="twenty-leg-pick">${esc(r[2])}</span><span class="twenty-leg-conf">${esc(r[4]||"—")}</span>${r[3]?`<span class="twenty-leg-price">${esc(r[3])}</span>`:""}${r[5]?`<span class="twenty-leg-quality">${esc(r[5])}</span>`:""}${r[6]?`<span class="twenty-leg-risk">${esc(r[6])}</span>`:""}</li>`).join("")}</ul></li>`).join("");
+    const playerHtml=groups.map((g,i)=>`<li class="twenty-player" data-rank="${i+1}"><div class="twenty-player-line"><span class="twenty-rank" aria-label="Rank ${i+1}">${i+1}</span><strong class="twenty-player-name">${esc(g.player)}</strong><span class="twenty-sport">${esc(g.sport)}</span><span class="twenty-prop-count">${g.props.length>1?`${g.props.length} props`:""}</span></div><ul class="twenty-leg-list">${g.props.map(r=>`<li class="twenty-leg"><span class="twenty-leg-pick">${esc(r[2])}</span><span class="twenty-leg-conf">${ljpcBadge(r[4]||"—",r[8])}</span>${r[3]?`<span class="twenty-leg-price">${esc(r[3])}</span>`:""}${r[5]?`<span class="twenty-leg-quality">${esc(r[5])}</span>`:""}${r[6]?`<span class="twenty-leg-risk">${esc(r[6])}</span>`:""}</li>`).join("")}</ul></li>`).join("");
     return `<section class="section twenty-section" aria-labelledby="${headingId}"><div class="section-head"><h2 id="${headingId}">${home?"ALL-SPORTS 20 PIECE":"20 PIECE"}</h2><span class="muted">20+ unique players when games are active • extra props require >132 combined LJPC, at least one >73%, and each added prop ≥69% • max 3 per player</span></div><div class="card"><div class="card-title purple"><span>${home?"GLOBAL 20+ PIECE":"SPORT 20+ PIECE"}</span><span>RANKED BY POM VALUE / LJPC</span></div>${groups.length?`<div class="card-body"><div class="twenty-summary" aria-live="polite"><b>${groups.length} unique player${groups.length===1?"":"s"}</b><span>${totalProps} total player-prop prediction${totalProps===1?"":"s"}</span></div><ol class="twenty-player-board">${playerHtml}</ol>${shortfall}</div>`:`<div class="status-panel"><b>PROP ACQUISITION REQUIRED</b><p>An active game slate requires a 20+ unique-player board. No unsupported placeholder thresholds will be manufactured.</p></div>`}<div class="card-body"><p class="source-note">${esc(note||"20 Piece is player-first: JINX + LEGZ rank the strongest acquired player props; each player is capped at 3 distinct prop markets, and conflicting/alternate thresholds for the same market collapse to one selection.")}</p></div></div></section>`;
   }
 
@@ -206,11 +212,13 @@
   function renderQcLeg(value){
     const raw=String(value??"").trim();
     const consensus=raw.match(/(?:CONDITIONAL LEAN\s*[—-]\s*)?MARKET CONSENSUS\s*(\d+(?:\.\d+)?)%/i);
+    const prov=raw.match(/\bPROV\s*(\d+(?:\.\d+)?)%/i);
     const lj=raw.match(/(?:PROVISIONAL\s+)?(?:LJPC|L&J)\s*(\d+(?:\.\d+)?)%/i);
     let main=raw
       .replace(/\s*•\s*CONDITIONAL LEAN\s*[—-]\s*MARKET CONSENSUS\s*\d+(?:\.\d+)?%/i,"")
       .replace(/\s*•\s*MARKET CONSENSUS\s*\d+(?:\.\d+)?%/i,"")
       .replace(/\s*•\s*LEGZ\s*\d+(?:\.\d+)?%\s*\+\s*JINX\s*[+-]?\s*\d+(?:\.\d+)?%\s*=\s*L&J\s*\d+(?:\.\d+)?%/i,"")
+      .replace(/\s*•\s*PROV\s*\d+(?:\.\d+)?%/i,"")
       .replace(/\s*•\s*(?:PROVISIONAL\s+)?(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i,"")
       .trim();
     let book="";
@@ -229,9 +237,7 @@
     const scoreHtml=consensus
       ? ` <span class="qc-score-sep">•</span> <span class="qc-consensus" title="Conditional lean — market consensus">MARKET CONSENSUS ${esc(consensus[1])}%</span>`
       : lj
-        ? provisional
-          ? ` <span class="qc-score-sep">•</span> <span class="qc-provisional-score">PROVISIONAL HIT ESTIMATE ${esc(lj[1])}%</span>`
-          : ` <span class="qc-score-sep">•</span> <span class="qc-lj-score"><span class="qc-score">LJPC ${esc(lj[1])}%</span></span>`
+        ? ` <span class="qc-score-sep">•</span> ${prov?`<span class="lj-provisional">${esc(prov[1])}%</span> `:""}<span class="qc-lj-score"><span class="ljpc-badge"><span class="lj-l">L</span><span class="lj-j">J</span><span class="lj-pc">PC</span> <span class="ljpc-value">${esc(lj[1])}%</span></span></span>`
         : "";
     return `<span class="qc-leg-main">${mainHtml}${bookHtml}${scoreHtml}</span>`;
   }
