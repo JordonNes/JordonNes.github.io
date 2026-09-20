@@ -490,3 +490,21 @@ td{font-size:12px!important;line-height:1.45}
 .nfl-qc-daybar{font-size:10px;font-weight:900;letter-spacing:.35px;text-transform:uppercase}
 .nfl-qc-subbar{margin-top:6px;padding:5px 8px;border-left:3px solid rgba(198,163,90,.55);background:#10131a;font-size:7.5px;font-weight:900;letter-spacing:.25px;text-transform:uppercase;color:#c8ced8}
 .nfl-qc-sunday-band+.nfl-qc-sunday-band{margin-top:7px}
+
+
+/* 2026-09-20 NFL QC RESPONSIVE FIX — never render desktop QC as a 980px strip on phones. */
+@media(max-width:690px){
+  .sport-nfl .nfl-qc-section>.nfl-qc-day{overflow-x:visible!important}
+  .sport-nfl .nfl-qc-list{min-width:0!important;width:100%!important;gap:12px!important}
+  .sport-nfl .nfl-qc-list .qc-row{
+    min-width:0!important;width:100%!important;
+    grid-template-columns:1fr!important;
+    overflow:hidden!important;
+  }
+  .sport-nfl .nfl-qc-list .qc-cell{width:100%!important;min-width:0!important;border-right:0!important}
+  .sport-nfl .nfl-qc-list .qc-game,
+  .sport-nfl .nfl-qc-list .qc-hot,
+  .sport-nfl .nfl-qc-list .qc-ticket{padding-top:0!important;padding-bottom:0!important}
+  .sport-nfl .nfl-qc-list .qc-game{padding:13px 14px!important}
+  .sport-nfl .nfl-qc-daybar{position:static!important;min-width:0!important;width:100%!important}
+}
