@@ -149,10 +149,12 @@
 
   const isStaleProp=p=>String(p?.market_freshness||'').toUpperCase()==='STALE_RECHECK_REQUIRED';
   const isDisplayEvaluatedProp=p=>{
-    const evaluated=String(p?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
+    const status=String(p?.evaluation_status||'').toUpperCase();
+    const evaluated=['LJ_EVALUATED','LJ_SYNTHETIC_EVALUATED'].includes(status) && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
     const freshVerified=p?.market_verified===true && String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH';
     const durableStale=isStaleProp(p) && (p?.source_snapshot_ids||[]).length>0;
-    return evaluated && (freshVerified || durableStale);
+    const synthetic=p?.synthetic===true && String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER';
+    return evaluated && (freshVerified || durableStale || synthetic);
   };
 
   const futureBoardLeagues=(B?.events||[]).filter(isUpcomingEvent).map(e=>e?.league).filter(Boolean);
@@ -174,7 +176,7 @@
         p.participant||p.pick,
         p.pick,
         pct(ljpcOf(p)),
-        `${price} • POM Value ${pomValueOf(p).toFixed(1)} • Canonical Registry • ${source(p)}`
+        `${price} • POM Value ${pomValueOf(p).toFixed(1)} • ${p.synthetic===true?'LEGZ SYNTHETIC / PROVISIONAL':'Canonical Registry'} • ${source(p)}`
       ]);
       if(hotRows.length>=8) break;
     }
@@ -253,7 +255,8 @@
       // Registry rows are actionable only when they carry the same exact-market
       // verification contract as the Future Market Board.
       const verified=p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0;
-      if(!verified) continue;
+      const synthetic=p.synthetic===true && String(p.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER' && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0;
+      if(!verified&&!synthetic) continue;
       const key=canonicalKey(p);
       pushTwenty([
         String(p.league||p.sport||'').replace(/_/g,' '),
