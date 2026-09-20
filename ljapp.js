@@ -71,7 +71,7 @@
     const subject = String((r || [])[1] || "");
     const market = String((r || [])[2] || "");
     const context = String((r || [])[3] || "");
-    const explicitGameSide = /\b(?:moneyline|game winner|match winner|fight winner|team total|game total)\b|(?:^|\s)ML(?:\s|$)/i.test(market);
+    const explicitGameSide = /\b(?:moneyline|game winner|match winner|fight winner|team total|game total|spread|handicap)\b|(?:^|\s)ML(?:\s|$)/i.test(market+" "+subject+" "+context);
     const matchupTotal = /(?:@|\bvs\.?\b|\bv\b|\s-\s|^[A-Z]{2,4}-[A-Z]{2,4}$)/i.test(subject) &&
       /\b(?:over|under|o\/u|total)\b/i.test(market + " " + context);
     return !explicitGameSide && !matchupTotal;
@@ -163,7 +163,8 @@
     return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
   }
   function winners(items,label="JINX GAME WINNERS"){
-    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>SIDE / WINNER BOARD</span></div>${items && items.length ? `<ul class="headliner-list">${items.map(r=>{const provisional=/PROVISIONAL|MARKET BASELINE/i.test(String(r[3]||''));return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`;}).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX WINNER</b><p>No current game/fight winner prediction is published for this section.</p></div>`}</div>`;
+    const mlOnly=(items||[]).filter(r=>/\bML\b|MONEYLINE/i.test(String((r||[])[1]||"")+" "+String((r||[])[3]||"")));
+    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>MONEYLINE ONLY</span></div>${mlOnly.length ? `<ul class="headliner-list">${mlOnly.map(r=>{const provisional=/PROVISIONAL|MARKET BASELINE/i.test(String(r[3]||''));return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`;}).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX MONEYLINE</b><p>No current L&J-evaluated moneyline prediction is published for this section.</p></div>`}</div>`;
   }
   function ensureGameWinners(s){
     if(!s) return;
@@ -210,7 +211,7 @@
   }
 
   function rules(){
-    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show the matchup/JINX panel with its preset box-score shell in the lower-left, plus only populated LEGZ Hot Top and parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep the frozen JINX predicted game odds/winner and team visuals at far left, the pregame-locked LEGZ Hot Top beside it, and move the activated live box score to the right. SNS1, SNS2, Normal and Aggressive/Demon are removed.</span></div><div class="qc-rule"><b>Final</b><span>Keep the pregame Hot Top as the prediction record and show FINAL status plus the ending box score. Remove JINX Game Winner, game odds and every ticket/parlay section.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Live and final views preserve only the locked pregame information permitted by the event-state rule; nothing is backfilled after the event starts. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
+    return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show team logos with the JINX moneyline winner and current per-game odds centered between them, plus the preset box-score shell, LEGZ Player Hot Top, and only populated parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep the frozen JINX predicted game odds/winner and team visuals at far left, the pregame-locked LEGZ Hot Top beside it, and move the activated live box score to the right. SNS1, SNS2, Normal and Aggressive/Demon are removed.</span></div><div class="qc-rule"><b>Final</b><span>Keep the pregame Hot Top as the prediction record and show FINAL status plus the ending box score. Remove JINX Game Winner, game odds and every ticket/parlay section.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Live and final views preserve only the locked pregame information permitted by the event-state rule; nothing is backfilled after the event starts. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
   }
   function renderQcLeg(value){
     const raw=String(value??"").trim();
@@ -653,12 +654,20 @@
     const away=teams.find(x=>x.homeAway==="away")||teams[0]||{};
     const home=teams.find(x=>x.homeAway==="home")||teams[1]||{};
     const time=cell.querySelector(".qc-time")?.outerHTML||"";
-    const market=cell.querySelector(".qc-market")?.outerHTML||"";
+    const marketNode=cell.querySelector(".qc-market");
+    const marketText=marketNode?.textContent?.trim()||"";
     const winner=cell.querySelector(".qc-winner");
+    const winnerInner=winner?.innerHTML||"";
+    const oddsHtml=marketText
+      ? `<div class="qc-center-odds"><div class="qc-center-odds-label">PER-GAME ODDS</div><div class="qc-center-odds-value">${esc(marketText)}</div></div>`
+      : `<div class="qc-center-odds qc-center-odds-pending"><div class="qc-center-odds-label">PER-GAME ODDS</div><div class="qc-center-odds-value">PENDING VERIFIED MONEYLINE</div></div>`;
     const winnerHtml=winner
-      ? `<div class="qc-center-jinx">${winner.innerHTML}</div>`
-      : `<div class="qc-center-jinx qc-center-jinx-pending"><div class="qc-label">JINX PREDICTED GAME ODDS</div><div class="qc-pick">PENDING VERIFIED GAME LINE</div></div>`;
-    cell.innerHTML=`${time}<div class="qc-matchup-visual"><div class="qc-team-side qc-team-away">${teamNameHTML(away)}</div>${winnerHtml}<div class="qc-team-side qc-team-home">${teamNameHTML(home)}</div></div>${market}${pregameBoxShellHTML(ACTIVE_SPORT_KEY,event,state)}<div class="qc-runtime-status" hidden></div>`;
+      ? `<div class="qc-center-jinx">${winnerInner}${oddsHtml}</div>`
+      : `<div class="qc-center-jinx qc-center-jinx-pending"><div class="qc-label">JINX GAME WINNER</div><div class="qc-pick">PENDING L&J MONEYLINE EVALUATION</div>${oddsHtml}</div>`;
+    // Team logos frame the game-side intelligence. The evaluated winner and
+    // current per-game moneyline odds sit in the center, exactly where the user
+    // makes the side comparison; odds are no longer stranded below the matchup.
+    cell.innerHTML=`${time}<div class="qc-matchup-visual"><div class="qc-team-side qc-team-away">${teamNameHTML(away)}</div>${winnerHtml}<div class="qc-team-side qc-team-home">${teamNameHTML(home)}</div></div>${pregameBoxShellHTML(ACTIVE_SPORT_KEY,event,state)}<div class="qc-runtime-status" hidden></div>`;
     cell.classList.add("qc-game-pregame-integrated");
   }
 
