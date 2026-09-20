@@ -179,7 +179,8 @@
         p.participant,
         scoutPick(p),
         pct(Number(p.ljpc)),
-        `${price} • POM Value ${Number(p.pom_value||p.legz_value||p.ljpc).toFixed(1)} • LSI Statistical Spectrum • ${Number(p.market_source_count||1)} SRC`
+        `${price} • POM Value ${Number(p.pom_value||p.legz_value||p.ljpc).toFixed(1)} • LSI Statistical Spectrum • ${Number(p.market_source_count||1)} SRC`,
+        Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
       ]);
     }
     s.hotTop=hotRows;
@@ -209,7 +210,8 @@
         `${e.away||''} @ ${e.home||''}`,
         best.selection||best.participant,
         pct(ljpcOf(best)),
-        `${price} • CANONICAL L&J GAME WINNER`
+        `${price} • CANONICAL L&J GAME WINNER`,
+        Number.isFinite(Number(best.market_probability)) ? pct(Number(best.market_probability)) : ''
       ]);
     }
     // Preserve published game-winner calls when GAME_ML acquisition is unavailable.
@@ -263,7 +265,8 @@
         pct(lj),
         `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
         risk({ljpc:lj}),
-        lj
+        lj,
+        Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
       ]);
     }
 
@@ -335,13 +338,15 @@
       ? ` (${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''})`
       : '';
     const evaluated=String(p.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(Number(p.ljpc));
-    const baseline=marketBaselineLj(p);
+    const baseline=Number.isFinite(Number(p.market_baseline_probability))
+      ? Number(p.market_baseline_probability)
+      : marketBaselineLj(p);
     const conf=evaluated?Number(p.ljpc):null;
     const stale=String(p.market_freshness||'').toUpperCase()==='STALE_RECHECK_REQUIRED';
     const freshness=stale?` • LINE RECHECK REQUIRED${Number.isFinite(Number(p.stale_market_age_hours))?` (${Number(p.stale_market_age_hours).toFixed(1)}h old)`:''}`:'';
     return {
       display:evaluated
-        ? `${core}${price} • LJPC ${conf.toFixed(conf%1?1:0)}%${freshness}`
+        ? `${core}${price} • PROV ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${freshness}`
         : `${core}${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)${freshness}`,
       confidence:conf,
       participant:n(p.participant),
