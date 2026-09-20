@@ -240,14 +240,13 @@ Kalshi is a regulated prediction market, not a sportsbook, and must be labeled a
 
 Pentagon/radar athlete-statistic graphics are intentionally excluded from the current site update. They require a separate metric, normalization and presentation review before integration.
 
-## Mandatory 20 Piece completeness and unsupported-threshold fallback — effective September 14, 2026
+## Offered-POM 20 Piece standard — effective September 20, 2026
 
-The NFL, WNBA, NBA, MLB, NHL, CFB, and CBB Daily Predictions pages must display exactly 20 player/participant prop entries in the 20 Piece section. Game winners, moneylines, spreads, team totals, and game totals never count toward the 20.
+The 20 Piece contains only externally offered, market-verified player/participant POMs that L&J has evaluated. Game winners, moneylines, spreads, team totals, game totals, synthetic thresholds, model targets, unsupported thresholds and invented filler never count toward the 20.
 
-L&J-qualified predictions retain the normal 20 Piece presentation. When fewer than 20 qualified or conditional player props are available, remaining positions must be filled with clearly labeled **UNSUPPORTED PLAYER THRESHOLD — TARGET / VERIFY LIVE LINE** entries instead of WATCH. Unsupported thresholds render in dark pink, carry no LJPC, and state that they are not L&J predictions or approved parlay legs. They may be promoted to normal styling only after current player identity, availability, market line, and analytical support are verified.
+The 20 Piece is the highest-ranked 20% of the complete current market-verified and L&J-evaluated player-prop inventory for the applicable publication window. It contains at least four qualified player props when available. When the qualified inventory exceeds 40 POMs, publication should represent at least 20 unique players when the market actually supplies them. Multiple qualifying POMs for one selected player may be grouped beneath that player. The section never exceeds 60 player props.
 
-Inactive-season and future-slate thresholds must identify that roster, matchup, and market verification is pending. An unsupported threshold is transparent planning context, not an invented sportsbook offer.
-
+If the accessible current market has fewer qualifying POMs, publish the real inventory and identify the market shortfall. Never manufacture an easier threshold simply to fill the section.
 
 ## Canonical terminology reference — effective September 18, 2026
 
