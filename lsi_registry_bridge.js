@@ -136,7 +136,7 @@
       const league=event?.league;
       if(!league) return;
       for(const p of (event.props||[])){
-        if(!p?.participant || !p?.market) continue;
+        if(!p?.participant || !p?.market || !validPlayerName(p)) continue;
         if(p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER') continue;
         (boardByLeague[league]??=[]).push({...p,_event:event,_boardSource:sourceMode});
       }
@@ -147,6 +147,13 @@
   collectBoard(B,'FUTURE_BOARD');
   collectBoard(RAW,'DURABLE_QC_BOARD');
 
+  const validPlayerName=p=>{
+    const v=n(p?.participant||p?.pick);
+    if(!v) return false;
+    if(/^(?:over|under|more|less|at least|fewer than)?\s*\d*(?:\.\d+)?\s*(?:points?|yards?|receptions?|attempts?|completions?|rebounds?|assists?|strikeouts?|hits?|bases?|runs?|saves?|goals?|aces?)(?:\s+scored)?/i.test(v)) return false;
+    if(/\b(?:team|game)\s+total\b|\bpoints?\s+scored\b/i.test(v)) return false;
+    return v.trim().split(/\s+/).length>=2;
+  };
   const canonicalKey=p=>[
     norm(p.participant||p.pick),
     norm(p.market),
@@ -221,7 +228,7 @@
         && !isStaleProp(p)
         && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0
         && p?.synthetic!==true && p?.model_generated!==true;
-      if(!verified) continue;
+      if(!verified || !validPlayerName(p)) continue;
       const key=canonicalKey(p);
       const price=priceLabel(p.price,p.book||'');
       pushHot([
