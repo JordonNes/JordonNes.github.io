@@ -23,6 +23,7 @@ on:
       - 'scripts/legz_statistical_spectrum.py'
       - 'scripts/legz_synthetic_book.py'
       - 'scripts/lsi_history_warehouse.py'
+      - 'scripts/lsi_market_history_delta.py'
       - 'scripts/lsi_t48_coverage.py'
       - 'scripts/lsi_readiness_report.py'
       - 'scripts/lsi_visual_registry.py'
@@ -99,6 +100,8 @@ jobs:
         with: {ref: master, fetch-depth: 0}
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
+      - name: Merge incremental market-history delta into runtime base
+        run: python scripts/lsi_market_history_delta.py merge
       - name: Reuse durable game lines before detailed prop acquisition
         run: |
           # GAME_ML has its own high-frequency workflow. Do not spend PropLine quota
@@ -286,7 +289,7 @@ jobs:
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
           outputs=(
             data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json
-            data/current_game_moneylines.json data/market_history.csv data/event_inventory.csv
+            data/current_game_moneylines.json data/market_history_delta.csv data/event_inventory.csv
             data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json
             data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json
             data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json
@@ -310,6 +313,13 @@ jobs:
           for attempt in 1 2 3 4 5; do
             git fetch origin master
             git reset --hard origin/master
+            # Keep the oversized legacy market_history.csv as an immutable base.
+            # Persist only observations not already present in base/prior delta.
+            if [ -e "$snapshot/data/market_history.csv" ]; then
+              python scripts/lsi_market_history_delta.py split "$snapshot/data/market_history.csv"
+              mkdir -p "$snapshot/data"
+              cp -a data/market_history_delta.csv "$snapshot/data/market_history_delta.csv"
+            fi
             for p in "${outputs[@]}"; do
               if [ -e "$snapshot/$p" ]; then
                 rm -rf "$p"
