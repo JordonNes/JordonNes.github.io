@@ -109,7 +109,7 @@ jobs:
           if synthetic_props:
               assert synthetic.get('stage')=='POST_SPECTRUM_EVALUATED', synthetic.get('stage')
               assert evaluated_synthetic, 'Synthetic book exists but contains zero post-Spectrum LJPC rows'
-              published_synthetic=[p for p in future_props if p.get('synthetic') and p.get('evaluation_status')=='LJ_SYNTHETIC_EVALUATED' and p.get('ljpc') is not None]
+              published_synthetic=[p for p in future_props if p.get('synthetic') and p.get('evaluation_status')=='LJ_SYNTHETIC_EVALUATED' and p.get('ljpc') is not None]  # internal model targets; website renderer excludes these from real POM sections
               assert published_synthetic, 'Evaluated synthetic fallback did not reach future market board'
           print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)} durable_eval_props={len(durable_eval)} synthetic_eval={len(evaluated_synthetic)}')
           PY
