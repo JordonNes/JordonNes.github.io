@@ -307,6 +307,10 @@ jobs:
               cp -a "$p" "$snapshot/$p"
             fi
           done
+          if [ -e data/market_history.csv ]; then
+            mkdir -p "$snapshot/data"
+            cp -a data/market_history.csv "$snapshot/data/market_history.csv"
+          fi
           # Generated artifacts are authoritative for this run, while current master
           # is authoritative for code/UI. Overlay the generated snapshot on top of the
           # newest master instead of rebasing million-line generated JSON commits.
