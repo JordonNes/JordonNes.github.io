@@ -100,6 +100,7 @@ def canonical_prop(p):
       "legz_baseline":p.get("legz_baseline"),
       "jinx_input":p.get("jinx_input"),
       "legz_value":p.get("legz_value"),
+      "economic_value":p.get("economic_value"),
       "pom_value":p.get("pom_value"),
       "market_baseline_probability":p.get("market_baseline_probability"),
       "market_freshness":p.get("market_freshness"),
