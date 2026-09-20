@@ -47,6 +47,9 @@ jobs:
       - name: Merge verified override evidence
         run: python scripts/lsi_apply_verified_overrides.py
 
+      - name: Generate LEGZ Synthetic Book fallback
+        run: python scripts/legz_synthetic_book.py
+
       - name: Execute Spectrum v3 from durable cache
         env:
           LSI_FAST_RUNTIME: 'true'
