@@ -6,6 +6,9 @@ on:
     branches: [master]
     paths:
       - 'LJ_index.html'
+      - 'Quickie_Generator.html'
+      - 'LSI_Status.html'
+      - 'lsi_status.js'
       - 'NFL.html'
       - 'MLB.html'
       - 'NBA.html'
@@ -29,6 +32,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: lj-frontend-qa
+  cancel-in-progress: true
 
 jobs:
   frontend:
