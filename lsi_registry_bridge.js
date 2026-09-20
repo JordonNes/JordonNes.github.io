@@ -20,8 +20,12 @@
   const pomValueOf=p=>{
     const explicit=Number(p?.pom_value ?? p?.pomValue);
     if(Number.isFinite(explicit)&&explicit>0) return explicit;
-    const lv=legzValueOf(p), lj=ljpcOf(p);
-    return lv>0&&lj>0 ? Math.sqrt(lv*lj) : lj;
+    const lv=legzValueOf(p), lj=ljpcOf(p), ev=Number(p?.economic_value ?? p?.economicValue ?? 50);
+    if(lv>0&&lj>0){
+      const core=Math.sqrt(lv*lj);
+      return core*.80 + (Number.isFinite(ev)?Math.max(0,Math.min(100,ev)):50)*.20;
+    }
+    return lj;
   };
   const quality=p=>String(p.status||'').toLowerCase()==='watch'?'WATCH':ljpcOf(p)>=67?'★★★★☆':'★★★☆☆';
   const risk=p=>String(p.status||'').toLowerCase()==='watch'?'':String(p.tier||'').toUpperCase()==='AGGRESSIVE'?'⚠️':'🔥';
@@ -207,7 +211,7 @@
         p.participant,
         scoutPick(p),
         pct(Number(p.ljpc)),
-        `${price} • POM Value ${Number(p.pom_value||p.legz_value||p.ljpc).toFixed(1)} • LSI Statistical Spectrum • ${Number(p.market_source_count||1)} SRC`,
+        `${price} • POM Value ${Number(p.pom_value||p.legz_value||p.ljpc).toFixed(1)} • Econ ${Number(p.economic_value??50).toFixed(1)} • LSI Statistical Spectrum • ${Number(p.market_source_count||1)} SRC`,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
       ]);
     }
@@ -286,12 +290,18 @@
       const lj=Number(p.ljpc), pv=Number(p.pom_value||p.legz_value||lj);
       pushTwenty([
         String(league).replace(/_/g,' '),p.participant,scoutPick(p),price,pct(lj),
-        `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
+        `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • ECON ${Number(p.economic_value??50).toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
         risk({ljpc:lj}),lj,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
       ],key);
     }
-    twentyCandidates.sort((a,b)=>Number(b[7]||0)-Number(a[7]||0));
+    // 20 Piece ranks overall POM opportunity (prediction quality + economics),
+    // with LJPC as the final tie-breaker.
+    twentyCandidates.sort((a,b)=>{
+      const ap=Number(String(a?.[5]||'').match(/POM VALUE\s+(\d+(?:\.\d+)?)/i)?.[1]||0);
+      const bp=Number(String(b?.[5]||'').match(/POM VALUE\s+(\d+(?:\.\d+)?)/i)?.[1]||0);
+      return (bp-ap)||(Number(b[7]||0)-Number(a[7]||0));
+    });
     const inventoryCount=twentyCandidates.length;
     let target=inventoryCount ? Math.max(Math.min(4,inventoryCount),Math.ceil(inventoryCount*.20)) : 0;
     target=Math.min(60,target);
@@ -314,7 +324,7 @@
     predictionId:p.prediction_id,sport:p.league,marketClass:p.market_class,selection:p.pick,
     participant:p.participant,market:p.market,threshold:p.threshold,side:p.side,price:p.price,
     legzConfidence:p.legz_confidence,legzValue:p.legz_value,jinxInput:p.jinx_input,
-    ljpc:ljpcOf(p),ljProbability:ljpcOf(p),pomValue:pomValueOf(p),
+    ljpc:ljpcOf(p),ljProbability:ljpcOf(p),economicValue:Number(p.economic_value??50),pomValue:pomValueOf(p),
     sourceSnapshotIds:p.source_snapshot_ids,provenance:p.provenance,status:p.status,
     sourceMode:'CANONICAL_PREDICTION_REGISTRY',modelVersion:p.model_version
   }));
