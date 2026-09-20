@@ -47,9 +47,9 @@ Registry fields `lj_probability` and `lj_confidence` are compatibility aliases o
 LEGZ Value is a 0–100 score describing the quality, depth, repeatability and predictive usefulness of the statistical evidence supporting a POM. It is distinct from LEGZ baseline probability and distinct from payout economics. Inputs may include durable source depth, relevant historical hit-rate coverage, consistency across samples, line-history coverage, feature quality and other auditable statistical structure.
 
 ### POM Value — prediction desirability
-POM Value is the prediction-first desirability of an exact Prop, Odd or Moneyline. Under the current standard:
+POM Value is the overall desirability of an exact externally offered Prop, Odd or Moneyline. It keeps prediction quality primary while materially valuing market economics. Under the current standard:
 
-`POM Value = sqrt(LEGZ Value × LJPC)`
+`POM Value = 0.80 × sqrt(LEGZ Value × LJPC) + 0.20 × Economic Value`
 
 The geometric mean penalizes a serious weakness in either evidence strength or hit probability. Payout economics do not raise LJPC. Aggressive/Demon selection changes the ranking objective only after the LJPC gate is satisfied.
 
