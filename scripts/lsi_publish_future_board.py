@@ -31,10 +31,17 @@ def parse(v):
     except ValueError:return None
 
 def implied(price):
+    """Normalize Kalshi probability-dollars and sportsbook American odds."""
     try:x=float(price)
     except (TypeError,ValueError):return None
     if x==0:return None
-    return (-x)/((-x)+100)*100 if x<0 else 100/(x+100)*100
+    if 0 < x <= 1:
+        return x*100.0
+    if x <= -100:
+        return (-x)/((-x)+100)*100
+    if x >= 100:
+        return 100/(x+100)*100
+    return None
 
 def lj_baseline(p):
     try:cons=float(p.get("consensus_confidence_pct"))
