@@ -40,8 +40,8 @@ HISTORY=DATA/"market_history.csv"
 PT=ZoneInfo("America/Los_Angeles")
 NOW=datetime.now(timezone.utc)
 NOW_PT=NOW.astimezone(PT)
-MAX_PAGES=max(1,min(10,int(os.getenv("KALSHI_MAX_PAGES","4"))))
-PAGE_LIMIT=max(50,min(1000,int(os.getenv("KALSHI_PAGE_LIMIT","1000"))))
+MAX_PAGES=max(1,min(20,int(os.getenv("KALSHI_MAX_PAGES","8"))))
+PAGE_LIMIT=max(50,min(200,int(os.getenv("KALSHI_PAGE_LIMIT","200"))))
 TIMEOUT=max(5,min(45,int(os.getenv("KALSHI_HTTP_TIMEOUT_SEC","15"))))
 HORIZON_DAYS=max(1,min(14,int(os.getenv("KALSHI_LOOKAHEAD_DAYS","7"))))
 UA={"User-Agent":"LEGZ-JINX-LSI/2.5","Accept":"application/json"}
@@ -115,13 +115,33 @@ def get_json(path,params):
         return json.load(resp)
 
 def fetch_open_markets():
-    out=[]; cursor=None
+    """Fetch ordinary open events with nested markets so every contract carries
+    authoritative event title + series context. This avoids guessing matchups
+    from isolated market records.
+    """
+    out=[]; cursor=None; event_count=0
     for _ in range(MAX_PAGES):
-        params={"status":"open","limit":PAGE_LIMIT,"mve_filter":"exclude"}
+        params={
+          "status":"open","limit":PAGE_LIMIT,"with_nested_markets":"true",
+          "min_close_ts":int(NOW.timestamp())
+        }
         if cursor:params["cursor"]=cursor
-        payload=get_json("/markets",params)
-        batch=payload.get("markets") or []
-        out.extend(batch)
+        payload=get_json("/events",params)
+        batch=payload.get("events") or []
+        event_count+=len(batch)
+        for event in batch:
+            context={
+              "_event_title":event.get("title"),
+              "_event_sub_title":event.get("sub_title"),
+              "_event_category":event.get("category"),
+              "_series_ticker":event.get("series_ticker"),
+              "_event_strike_date":event.get("strike_date"),
+              "_product_metadata":event.get("product_metadata") or {},
+            }
+            for market in (event.get("markets") or []):
+                if str(market.get("status") or "").lower() not in {"open","active"}:continue
+                row=dict(market); row.update(context)
+                out.append(row)
         cursor=payload.get("cursor")
         if not cursor or not batch:break
     return out
@@ -129,7 +149,8 @@ def fetch_open_markets():
 def league_of(m):
     ticker=str(m.get("ticker") or "")
     event=str(m.get("event_ticker") or "")
-    probe=ticker or event
+    series=str(m.get("_series_ticker") or "")
+    probe=series or ticker or event
     for rx,league,sport in LEAGUE_PREFIXES:
         if rx.search(probe):return league,sport
     # Fail closed. Category inference without a sport-specific ticker can map
@@ -137,14 +158,14 @@ def league_of(m):
     return None,None
 
 def market_name(m):
-    text=" | ".join(str(m.get(k) or "") for k in ("title","subtitle","yes_sub_title","rules_primary"))
+    text=" | ".join(str(m.get(k) or "") for k in ("_event_title","_event_sub_title","title","subtitle","yes_sub_title","rules_primary"))
     for rx,name in MARKET_PATTERNS:
         if rx.search(text):return name
     return None
 
 def matchup(m):
-    title=str(m.get("title") or "").strip()
-    # Typical public sports title: "NO Saints vs BAL Ravens: Receiving Yards".
+    title=str(m.get("_event_title") or m.get("title") or "").strip()
+    # Typical public sports event title: "NO Saints vs BAL Ravens: Receiving Yards".
     base=title.rsplit(":",1)[0] if ":" in title else title
     mt=re.match(r"^\s*(.{1,70}?)\s+(?:vs\.?|at|@)\s+(.{1,70}?)\s*$",base,re.I)
     if not mt:return None,None
@@ -161,31 +182,51 @@ def aliases(team):
     return sorted(out)
 
 def participant_threshold(m,market):
-    candidates=[
-      str(m.get("yes_sub_title") or "").strip(),
-      str(m.get("subtitle") or "").strip(),
-    ]
-    for text in candidates:
-        # Kalshi sports surfaces commonly expose "Player Name: 200+".
-        mt=re.match(r"^\s*([^:]{2,80}?)\s*:\s*(\d+(?:\.\d+)?)\+\s*$",text)
-        if mt:
-            return mt.group(1).strip(),float(mt.group(2)),f"{mt.group(2)}+","gte"
-        mt=re.match(r"^\s*([^:]{2,80}?)\s*:\s*(\d+(?:\.\d+)?)\s*$",text)
-        if mt and market in {"Anytime TD","Passing TDs","Home Runs","Goals"}:
-            return mt.group(1).strip(),float(mt.group(2)),mt.group(2),"gte"
+    yes=str(m.get("yes_sub_title") or "").strip()
+    subtitle=str(m.get("subtitle") or "").strip()
+    title=str(m.get("title") or "").strip()
     primary=str(m.get("primary_participant_key") or "").strip()
-    strike=m.get("floor_strike")
-    if primary and strike not in (None,"") and market:
-        try:
-            x=float(strike)
-            return primary,x,(f"{x:g}+"),"gte"
-        except (TypeError,ValueError):
-            pass
-    # Binary anytime-TD contracts sometimes name only the athlete.
-    if primary and market=="Anytime TD":
-        return primary,1.0,"1+","gte"
-    return None,None,None,None
 
+    def human_name(value):
+        value=str(value or "").strip()
+        if not value or value.lower() in {"yes","no","higher","lower","more","less"}:return None
+        if re.fullmatch(r"[A-Z0-9_-]{8,}",value):return None
+        if not re.search(r"[A-Za-z]",value):return None
+        # Strip a trailing offered threshold if present.
+        value=re.sub(r"\s*:?\s*\d+(?:\.\d+)?\+\s*$","",value).strip()
+        return value if len(value)>=2 else None
+
+    def threshold_from_text(value):
+        mt=re.search(r"(\d+(?:\.\d+)?)\s*\+",str(value or ""))
+        if mt:return float(mt.group(1)),f"{mt.group(1)}+","gte"
+        return None,None,None
+
+    # Best case: the same string contains both athlete and exact offered threshold.
+    for text in (yes,subtitle,title):
+        mt=re.match(r"^\s*([^:]{2,80}?)\s*:\s*(\d+(?:\.\d+)?)\+\s*$",text)
+        if mt:return mt.group(1).strip(),float(mt.group(2)),f"{mt.group(2)}+","gte"
+        mt=re.match(r"^\s*(.{2,80}?)\s+(\d+(?:\.\d+)?)\+\s*$",text)
+        if mt and re.search(r"[A-Za-z]",mt.group(1)):
+            return mt.group(1).strip(),float(mt.group(2)),f"{mt.group(2)}+","gte"
+
+    # Kalshi can separate participant and strike across fields.
+    player=human_name(primary) or human_name(yes) or human_name(subtitle)
+    threshold=display=operator=None
+    for value in (yes,subtitle,title,m.get("functional_strike")):
+        threshold,display,operator=threshold_from_text(value)
+        if threshold is not None:break
+    if threshold is None:
+        strike=m.get("floor_strike")
+        try:
+            if strike not in (None,""):
+                threshold=float(strike); display=f"{threshold:g}+"; operator="gte"
+        except (TypeError,ValueError):pass
+
+    if player and threshold is not None:
+        return player,threshold,display,operator
+    if player and market=="Anytime TD":
+        return player,1.0,"1+","gte"
+    return None,None,None,None
 def yes_price(m):
     vals=[]
     for key in ("yes_ask_dollars","last_price_dollars","yes_bid_dollars"):
@@ -222,7 +263,7 @@ def normalize_market(m):
     if not player or threshold is None:return None,"ambiguous_participant_threshold"
     away,home=matchup(m)
     if not away or not home:return None,"ambiguous_matchup"
-    start=parse_dt(m.get("occurrence_datetime") or m.get("expected_expiration_time") or m.get("close_time"))
+    start=parse_dt(m.get("occurrence_datetime") or m.get("_event_strike_date") or m.get("expected_expiration_time") or m.get("close_time"))
     if not start or start<=NOW:return None,"not_upcoming"
     if (start-NOW).total_seconds()>HORIZON_DAYS*86400:return None,"outside_horizon"
     price,price_field=yes_price(m)
@@ -363,11 +404,21 @@ def main():
       "source":"Kalshi public unauthenticated market API","markets":markets
     },indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 
-    rows=[]; reasons=defaultdict(int)
+    rows=[]; reasons=defaultdict(int); samples={}
     for m in markets:
         row,reason=normalize_market(m)
         reasons[reason]+=1
         if row:rows.append(row)
+        elif reason not in samples:
+            samples[reason]={
+              "ticker":m.get("ticker"),"event_ticker":m.get("event_ticker"),
+              "series_ticker":m.get("_series_ticker"),"event_title":m.get("_event_title"),
+              "title":m.get("title"),"subtitle":m.get("subtitle"),
+              "yes_sub_title":m.get("yes_sub_title"),
+              "primary_participant_key":m.get("primary_participant_key"),
+              "floor_strike":m.get("floor_strike"),"functional_strike":m.get("functional_strike"),
+              "occurrence_datetime":m.get("occurrence_datetime"),
+            }
 
     # Deduplicate exact same current expression, keeping the newest/tightest ask snapshot.
     best={}
@@ -381,7 +432,7 @@ def main():
 
     state.update({
       "status":"OK","raw_market_count":len(markets),"normalized_props":len(rows),
-      "history_rows_added":added,"skip_reasons":dict(sorted(reasons.items())),
+      "history_rows_added":added,"skip_reasons":dict(sorted(reasons.items())),"skip_samples":samples,
       "leagues":{lg:sum(1 for r in rows if r["league"]==lg) for lg in sorted({r["league"] for r in rows})},
       "policy":"Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
     })
