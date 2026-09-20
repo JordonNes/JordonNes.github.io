@@ -297,21 +297,36 @@
   }
   function nflDayBucket(row){
     const raw=String(row?.time||'').toUpperCase();
+    const bucketForWeekday=wd=>{
+      if(wd==='THURSDAY') return ['THURSDAY','Thursday Night Football'];
+      if(wd==='SATURDAY') return ['SATURDAY','Saturday Football'];
+      if(wd==='MONDAY') return ['MONDAY','Monday Night Football'];
+      if(wd==='SUNDAY') return ['SUNDAY','Sunday Football'];
+      return null;
+    };
+    // Prefer the canonical event timestamp supplied by the LSI registry bridge.
+    // Display text is only a fallback and must never create a generic "NFL Games" bucket.
+    const canonical=Date.parse(row?._propEventStartPt||'');
+    if(Number.isFinite(canonical)){
+      const wd=new Intl.DateTimeFormat('en-US',{weekday:'long',timeZone:'America/Los_Angeles'}).format(new Date(canonical)).toUpperCase();
+      const b=bucketForWeekday(wd); if(b) return b;
+    }
     if(/THU|THURSDAY/.test(raw)) return ['THURSDAY','Thursday Night Football'];
+    if(/SAT|SATURDAY/.test(raw)) return ['SATURDAY','Saturday Football'];
     if(/MON|MONDAY/.test(raw)) return ['MONDAY','Monday Night Football'];
     if(/SUN|SUNDAY/.test(raw)) return ['SUNDAY','Sunday Football'];
     const m=raw.match(/SEP(?:TEMBER)?\s+(\d{1,2})/);
     if(m){
       const d=Number(m[1]);
       const wd=new Intl.DateTimeFormat('en-US',{weekday:'long',timeZone:'America/Los_Angeles'}).format(new Date(`2026-09-${String(d).padStart(2,'0')}T12:00:00-07:00`)).toUpperCase();
-      if(wd==='THURSDAY') return ['THURSDAY','Thursday Night Football'];
-      if(wd==='MONDAY') return ['MONDAY','Monday Night Football'];
-      if(wd==='SUNDAY') return ['SUNDAY','Sunday Football'];
+      const b=bucketForWeekday(wd); if(b) return b;
     }
-    return ['OTHER','NFL Games'];
+    // Regular NFL schedule shells without a parseable timestamp belong with the Sunday slate,
+    // not in a separate generic section. Thursday/Monday/Saturday are explicitly detected above.
+    return ['SUNDAY','Sunday Football'];
   }
   function nflQcs(title,rows){
-    const ordered=['THURSDAY','SUNDAY','MONDAY','OTHER'];
+    const ordered=['THURSDAY','SATURDAY','SUNDAY','MONDAY'];
     const groups=new Map();
     const visible=visibleQcRows(rows);
     visible.forEach((r,i)=>{
