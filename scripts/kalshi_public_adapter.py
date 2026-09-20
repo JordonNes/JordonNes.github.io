@@ -229,29 +229,39 @@ def participant_threshold(m,market):
     title=str(m.get("title") or "").strip()
     primary=str(m.get("primary_participant_key") or "").strip()
 
+    stat_words=r"(?:points?|yards?|receptions?|attempts?|completions?|rebounds?|assists?|strikeouts?|hits?|bases?|runs?|saves?|goals?|aces?|takedowns?|knockdowns?)"
+    bad_participant=re.compile(r"^(?:over|under|more|less|at least|fewer than)?\\s*\\d*(?:\\.\\d+)?\\s*"+stat_words+r"(?:\\s+scored)?",re.I)
+
     def human_name(value):
         value=str(value or "").strip()
         if not value or value.lower() in {"yes","no","higher","lower","more","less"}:return None
         if re.fullmatch(r"[A-Z0-9_-]{8,}",value):return None
         if not re.search(r"[A-Za-z]",value):return None
-        # Strip a trailing offered threshold if present.
-        value=re.sub(r"\s*:?\s*\d+(?:\.\d+)?\+\s*$","",value).strip()
-        return value if len(value)>=2 else None
+        value=re.sub(r"\\s*:?\\s*\\d+(?:\\.\\d+)?\\+\\s*$","",value).strip()
+        # A PLAYER_PROP participant must look like a person, never a threshold/stat label.
+        if bad_participant.search(value):return None
+        if re.search(r"\\b(?:team|game)\\s+total\\b|\\bpoints?\\s+scored\\b",value,re.I):return None
+        words=re.findall(r"[A-Za-z][A-Za-z'.-]*",value)
+        if len(words)<2 or len(words)>5:return None
+        return value
 
     def threshold_from_text(value):
-        mt=re.search(r"(\d+(?:\.\d+)?)\s*\+",str(value or ""))
+        mt=re.search(r"(\\d+(?:\\.\\d+)?)\\s*\\+",str(value or ""))
         if mt:return float(mt.group(1)),f"{mt.group(1)}+","gte"
         return None,None,None
 
-    # Best case: the same string contains both athlete and exact offered threshold.
+    # Best case: athlete and exact offered threshold are in the same label.
     for text in (yes,subtitle,title):
-        mt=re.match(r"^\s*([^:]{2,80}?)\s*:\s*(\d+(?:\.\d+)?)\+\s*$",text)
-        if mt:return mt.group(1).strip(),float(mt.group(2)),f"{mt.group(2)}+","gte"
-        mt=re.match(r"^\s*(.{2,80}?)\s+(\d+(?:\.\d+)?)\+\s*$",text)
-        if mt and re.search(r"[A-Za-z]",mt.group(1)):
-            return mt.group(1).strip(),float(mt.group(2)),f"{mt.group(2)}+","gte"
+        mt=re.match(r"^\\s*([^:]{2,80}?)\\s*:\\s*(\\d+(?:\\.\\d+)?)\\+\\s*$",text)
+        if mt:
+            player=human_name(mt.group(1))
+            if player:return player,float(mt.group(2)),f"{mt.group(2)}+","gte"
+        mt=re.match(r"^\\s*(.{2,80}?)\\s+(\\d+(?:\\.\\d+)?)\\+\\s*$",text)
+        if mt:
+            player=human_name(mt.group(1))
+            if player:return player,float(mt.group(2)),f"{mt.group(2)}+","gte"
 
-    # Kalshi can separate participant and strike across fields.
+    # Kalshi may separate athlete identity and strike across fields.
     player=human_name(primary) or human_name(yes) or human_name(subtitle)
     threshold=display=operator=None
     for value in (yes,subtitle,title,m.get("functional_strike")):
@@ -264,11 +274,10 @@ def participant_threshold(m,market):
                 threshold=float(strike); display=f"{threshold:g}+"; operator="gte"
         except (TypeError,ValueError):pass
 
-    if player and threshold is not None:
-        return player,threshold,display,operator
-    if player and market=="Anytime TD":
-        return player,1.0,"1+","gte"
+    if player and threshold is not None:return player,threshold,display,operator
+    if player and market=="Anytime TD":return player,1.0,"1+","gte"
     return None,None,None,None
+
 def yes_price(m):
     vals=[]
     for key in ("yes_ask_dollars","last_price_dollars","yes_bid_dollars"):
