@@ -21,6 +21,7 @@ SRC=DATA/"qc_prop_board.json"
 OUT=DATA/"future_market_board.json"
 OUTJS=DATA/"future_market_board.js"
 OVERRIDES=DATA/"verified_market_overrides.json"
+SYNTHETIC=DATA/"legz_synthetic_book.json"
 PT=ZoneInfo("America/Los_Angeles")
 NOW=datetime.now(timezone.utc)
 
@@ -288,6 +289,64 @@ def main():
                     source_events.append(shell)
         except (json.JSONDecodeError,OSError) as exc:
             print(f"WARN verified market override unreadable: {exc}")
+
+    # Durable evaluated LEGZ shadow-book fallback. External exact-market POMs
+    # always win; synthetic rows are merged only when an event has no publishable
+    # verified external PLAYER_PROP evaluation.
+    if SYNTHETIC.exists():
+        try:
+            synthetic_payload=json.loads(SYNTHETIC.read_text(encoding="utf-8"))
+            for se in synthetic_payload.get("events") or []:
+                sstart=parse(se.get("commence_time"))
+                if not sstart or sstart<=NOW or sstart>horizon_for(se.get("league")):
+                    continue
+                synth_props=[
+                    p for p in (se.get("props") or [])
+                    if (p.get("synthetic") or p.get("model_generated"))
+                    and str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"
+                    and p.get("evaluation_id") and p.get("ljpc") not in (None,"")
+                ]
+                if not synth_props:
+                    continue
+                match=None
+                sid=str(se.get("source_event_id") or "")
+                for e in source_events:
+                    if sid and str(e.get("source_event_id") or e.get("event_id") or "")==sid:
+                        match=e; break
+                if match is None:
+                    for e in source_events:
+                        if str(e.get("league") or "")!=str(se.get("league") or ""):
+                            continue
+                        estart=parse(e.get("commence_time"))
+                        if estart and abs((estart-sstart).total_seconds())>45*60:
+                            continue
+                        ealiases={norm_team(x) for x in [e.get("away"),e.get("home"),*(e.get("away_aliases") or []),*(e.get("home_aliases") or [])] if x}
+                        saliases={norm_team(x) for x in [se.get("away"),se.get("home"),*(se.get("away_aliases") or []),*(se.get("home_aliases") or [])] if x}
+                        if ealiases & saliases:
+                            match=e; break
+                def publishable_external(event):
+                    for raw in event.get("props") or []:
+                        if raw.get("synthetic") or raw.get("model_generated"):
+                            continue
+                        p=canonical_prop(raw)
+                        if p.get("market_verified") is True and p.get("ljpc") is not None and p.get("evaluation_id"):
+                            return True
+                    return False
+                if match is not None:
+                    if publishable_external(match):
+                        continue
+                    retained=[p for p in (match.get("props") or []) if not (p.get("synthetic") or p.get("model_generated"))]
+                    match["props"]=retained+synth_props
+                    match["source"]="LEGZ_SYNTHETIC_FALLBACK"
+                    match["sweep_status"]="LEGZ_SYNTHETIC_EVALUATED_FALLBACK"
+                else:
+                    shell=dict(se)
+                    shell["props"]=synth_props
+                    shell["source"]="LEGZ_SYNTHETIC_FALLBACK"
+                    shell["sweep_status"]="LEGZ_SYNTHETIC_EVALUATED_FALLBACK"
+                    source_events.append(shell)
+        except (json.JSONDecodeError,OSError) as exc:
+            print(f"WARN durable LEGZ synthetic book unreadable: {exc}")
 
     game_markets=load_game_markets()
     events=[]
