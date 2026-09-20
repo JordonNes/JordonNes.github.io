@@ -130,6 +130,13 @@
     const t=eventStartMs(e);
     return Number.isFinite(t) && t<=nowMs && t>=nowMs-7*3600000;
   };
+  const validPlayerName=p=>{
+    const v=n(p?.participant||p?.pick);
+    if(!v) return false;
+    if(/^(?:over|under|more|less|at least|fewer than)?\s*\d*(?:\.\d+)?\s*(?:points?|yards?|receptions?|attempts?|completions?|rebounds?|assists?|strikeouts?|hits?|bases?|runs?|saves?|goals?|aces?)(?:\s+scored)?/i.test(v)) return false;
+    if(/\b(?:team|game)\s+total\b|\bpoints?\s+scored\b/i.test(v)) return false;
+    return v.trim().split(/\s+/).length>=2;
+  };
   const boardByLeague={};
   const collectBoard=(payload,sourceMode)=>{
     (payload?.events||[]).filter(isUpcomingEvent).forEach(event=>{
@@ -147,13 +154,6 @@
   collectBoard(B,'FUTURE_BOARD');
   collectBoard(RAW,'DURABLE_QC_BOARD');
 
-  const validPlayerName=p=>{
-    const v=n(p?.participant||p?.pick);
-    if(!v) return false;
-    if(/^(?:over|under|more|less|at least|fewer than)?\s*\d*(?:\.\d+)?\s*(?:points?|yards?|receptions?|attempts?|completions?|rebounds?|assists?|strikeouts?|hits?|bases?|runs?|saves?|goals?|aces?)(?:\s+scored)?/i.test(v)) return false;
-    if(/\b(?:team|game)\s+total\b|\bpoints?\s+scored\b/i.test(v)) return false;
-    return v.trim().split(/\s+/).length>=2;
-  };
   const canonicalKey=p=>[
     norm(p.participant||p.pick),
     norm(p.market),
