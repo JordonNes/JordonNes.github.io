@@ -2,12 +2,40 @@
   "schema_version": "LSI-SOURCES-3",
   "policy": "free-first, provenance-required, no fabricated observations",
   "prop_acquisition": {
-    "level_a": "public/connected market discovery",
+    "level_a": "KALSHI public API + other public/connected market discovery",
     "level_b": "PROPLINE normalized sportsbook/exchange markets",
     "level_c": "checked-in/manual researched snapshots",
-    "rule": "A WATCH/NO BET caused only by missing inventory must trigger MAM recheck before publication."
+    "rule": "Acquire externally offered POMs first, preserve exact participant/market/threshold/side/source/time, then evaluate. Synthetic/model-target thresholds remain internal and never fill public Hot Top, 20 Piece, QCs, or Quickie."
   },
   "adapters": [
+    {
+      "id": "KALSHI_PUBLIC",
+      "sports": [
+        "NFL",
+        "NCAA_Football",
+        "MLB",
+        "NBA",
+        "WNBA",
+        "NHL",
+        "Tennis",
+        "MMA",
+        "Boxing"
+      ],
+      "roles": [
+        "player_props",
+        "game_odds",
+        "prediction_market_prices",
+        "market_availability",
+        "alternate_thresholds"
+      ],
+      "mode": "public_api",
+      "base_url": "https://external-api.kalshi.com/trade-api/v2",
+      "secret_env": null,
+      "optional": false,
+      "priority": "PRIMARY_FREE_CURRENT_POM",
+      "auth_required_for_market_data": false,
+      "note": "Use public market-data endpoints for currently offered contracts. Normalize only exact externally listed participant/threshold expressions; Kalshi prices are market evidence/economics and never become LJPC by themselves."
+    },
     {
       "id": "PROPLINE",
       "sports": [
