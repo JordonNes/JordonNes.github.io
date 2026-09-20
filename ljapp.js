@@ -326,19 +326,55 @@
     return ['SUNDAY','Sunday Football'];
   }
   function nflQcs(title,rows){
-    const ordered=['THURSDAY','SATURDAY','SUNDAY','MONDAY'];
+    const hasLjpc = value => /(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i.test(String(value||""));
+    const vettedRow = r => {
+      const copy={...r};
+      // NFL publication gate: a player-prop leg is executable only after the
+      // L&J confidence process has produced an explicit LJPC. A Goblin/Demon
+      // label by itself is never treated as analysis.
+      for(const key of ['hot','sns1','sns2','normal','demon']){
+        copy[key]=asItems(r?.[key]).filter(x=>isEmptyDecision(x)||hasLjpc(x));
+      }
+      return copy;
+    };
+    const kickoffPt = r => {
+      const canonical=Date.parse(r?._propEventStartPt||'');
+      if(Number.isFinite(canonical)) return canonical;
+      const raw=String(r?.time||'');
+      const m=raw.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i);
+      if(!m) return Number.MAX_SAFE_INTEGER;
+      let h=Number(m[1])%12; if(m[3].toUpperCase()==='PM') h+=12;
+      return h*60+Number(m[2]||0);
+    };
+    const sundayBand = r => {
+      const canonical=Date.parse(r?._propEventStartPt||'');
+      let hour=null;
+      if(Number.isFinite(canonical)){
+        hour=Number(new Intl.DateTimeFormat('en-US',{hour:'2-digit',hour12:false,timeZone:'America/Los_Angeles'}).format(new Date(canonical)));
+      } else {
+        const raw=String(r?.time||'');
+        const m=raw.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i);
+        if(m){hour=Number(m[1])%12+(m[3].toUpperCase()==='PM'?12:0);}
+      }
+      if(hour!==null && hour>=17) return ['SUNDAY_NIGHT','Sunday Night Football'];
+      if(hour!==null && hour>=13) return ['SUNDAY_AFTERNOON','Sunday Football — Afternoon'];
+      return ['SUNDAY_MORNING','Sunday Football — Morning'];
+    };
+    const ordered=['THURSDAY','SATURDAY','SUNDAY_MORNING','SUNDAY_AFTERNOON','SUNDAY_NIGHT','MONDAY'];
     const groups=new Map();
-    const visible=visibleQcRows(rows);
+    const visible=visibleQcRows(rows).map(vettedRow).filter(r=>qcStatusOnly(r)||qcHasPublishedPregame(r));
     visible.forEach((r,i)=>{
-      const [key,label]=nflDayBucket(r);
+      let [key,label]=nflDayBucket(r);
+      if(key==='SUNDAY') [key,label]=sundayBand(r);
       if(!groups.has(key)) groups.set(key,{label,rows:[]});
       groups.get(key).rows.push([r,i]);
     });
+    groups.forEach(g=>g.rows.sort((a,b)=>kickoffPt(a[0])-kickoffPt(b[0])));
     const body=ordered.filter(k=>groups.has(k)).map(k=>{
       const g=groups.get(k);
       return `<div class="nfl-qc-day nfl-qc-${k.toLowerCase()}"><div class="nfl-qc-daybar">${esc(g.label)}</div><div class="qc-list nfl-qc-list">${g.rows.map(([r,i])=>qcRow(r,i)).join("")}</div></div>`;
     }).join("");
-    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL PREDICTIONS — ROLLING 0–7 DAY PRE-GAME QCs")}</h2><span class="muted">Only qualified 2–6 leg pregame QCs are shown • live/final games remain as status/box-score cards</span></div>${body}${rules()}<div class="layout-seal">NFL QC LAYOUT • one card per event • empty pregame shells suppressed</div></section>`;
+    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL PREDICTIONS — ROLLING 0–7 DAY PRE-GAME QCs")}</h2><span class="muted">Only market-acquired player props with an explicit L&J evaluation/LJPC are eligible for NFL QCs • Goblin/Demon status never substitutes for LJPC</span></div>${body}${rules()}<div class="layout-seal">NFL QC ORDER • Thursday Night Football → Sunday morning → Sunday afternoon → Sunday Night Football → Monday Night Football • unscored POMs suppressed</div></section>`;
   }
   function groupedQcs(groups){
     if (!groups || !groups.length) return "";
