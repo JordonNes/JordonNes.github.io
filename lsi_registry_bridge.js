@@ -407,8 +407,10 @@
       marketFamily:market,
       side,
       threshold:p.threshold,
-      best_price:Number.isFinite(Number(p.price))?Number(p.price):null,
+      best_price:Number.isFinite(Number(quotedPrice))?Number(quotedPrice):null,
       market_source_count:Number(p.market_source_count||0),
+      economicValue:Number.isFinite(Number(p.economic_value))?Number(p.economic_value):50,
+      pomValue:Number.isFinite(Number(p.pom_value))?Number(p.pom_value):conf,
       pomType:explicitPomType(p)||'NORMAL',
       stale,
       sourceMode:evaluated?'LJ_EVALUATED_OVERRIDE':'AWAITING_LJ_EVALUATION'
@@ -427,9 +429,10 @@
   function candidateScore(c){
     const confidence=Number.isFinite(Number(c.confidence))?Number(c.confidence):-1e9;
     const sources=Math.min(5,Number(c.market_source_count||0));
-    // Normal L&J ranking is prediction-first. Price economics are reserved
-    // for the Demon sorter after the LJPC gate.
-    return confidence + (sources*.15);
+    const pom=Number.isFinite(Number(c.pomValue))?Number(c.pomValue):confidence;
+    // POM Value now includes a bounded economics component while LJPC remains
+    // pure hit probability. Source depth is only a small tie-breaker.
+    return pom + (sources*.15);
   }
 
   function dedupe(candidates){
@@ -476,6 +479,7 @@
     const durablePublished=items=>(items||[]).filter(x=>{
       const s=n(x);
       return s && !watchRx.test(s)
+        && !/SYNTHETIC|MODEL TARGET|INTERNAL SHADOW/i.test(s)
         && !/AWAITING L&J EVALUATION|MARKET BASELINE|PROVISIONAL HIT ESTIMATE/i.test(s)
         && /(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i.test(s);
     });
@@ -539,9 +543,10 @@
     }
     sns2.forEach(c=>usedAcross.add(keyOf(c)));
 
-    // NORMAL: standard/unmarked POMs only. POM Value/LJPC dominate; payout
-    // economics do not rescue a weaker prediction. Source depth is a tie-breaker.
+    // NORMAL: standard/unmarked offered POMs only. Rank by POM Value, which keeps
+    // prediction quality primary but now materially includes market economics.
     const normalBase=[...actionablePool].filter(c=>c.pomType==='NORMAL').sort((a,b)=>
+      (Number(b.pomValue||0)-Number(a.pomValue||0)) ||
       (b.confidence-a.confidence) || (b.market_source_count-a.market_source_count));
     const normal=diverseTake(normalBase,6,0,usedAcross);
     normal.forEach(c=>usedAcross.add(keyOf(c)));
@@ -549,8 +554,9 @@
     // DEMON: economics-first among only Normal/Demon POMs that LJPC is at
     // >=51.8%. A long price never rescues a probability that misses the gate.
     const demonBase=[...actionablePool].filter(c=>(c.pomType==='DEMON'||c.pomType==='NORMAL')&&c.confidence>=51.8).sort((a,b)=>{
+      const ae=Number(a.economicValue||0), be=Number(b.economicValue||0);
       const ap=a.best_price??-9999, bp=b.best_price??-9999;
-      return (bp-ap)||(b.confidence-a.confidence)||(b.market_source_count-a.market_source_count);
+      return (be-ae)||(bp-ap)||(Number(b.pomValue||0)-Number(a.pomValue||0))||(b.confidence-a.confidence)||(b.market_source_count-a.market_source_count);
     });
     const demon=diverseTake(demonBase,6,0,usedAcross);
 
@@ -621,7 +627,7 @@
       sns1:jointProbability(finalSns1),sns2:jointProbability(finalSns2),
       normal:jointProbability(finalNormal),demon:jointProbability(finalDemon)
     };
-    q._pomPolicy={sns1:'GOBLIN_PRIORITY_MIN_77_THEN_STRONGEST_GOBLIN_FALLBACK',sns2:'GOBLIN_OR_NORMAL_PRIORITY_MIN_70_NO_SNS1_DUP_THEN_ELIGIBLE_FALLBACK',normal:'NORMAL_ONLY_PROBABILITY_FIRST',demon:'NORMAL_OR_DEMON_MIN_51_8_ECONOMICS_FIRST',minimumParlay:'WHEN_ANY_MODE_HAS_2_PLUS_QUALIFIED_POMS_PUBLISH_AT_LEAST_ONE_2_TO_6_LEG_QC'};
+    q._pomPolicy={sns1:'GOBLIN_PRIORITY_MIN_77_THEN_STRONGEST_GOBLIN_FALLBACK',sns2:'GOBLIN_OR_NORMAL_PRIORITY_MIN_70_NO_SNS1_DUP_THEN_ELIGIBLE_FALLBACK',normal:'NORMAL_ONLY_POM_VALUE_WITH_ECONOMICS',demon:'NORMAL_OR_DEMON_MIN_51_8_ECONOMICS_FIRST',minimumParlay:'WHEN_ANY_MODE_HAS_2_PLUS_QUALIFIED_POMS_PUBLISH_AT_LEAST_ONE_2_TO_6_LEG_QC'};
 
     const shortages=[];
     if(pool.length<6) shortages.push(`TOTAL POOL ${pool.length}/6`);
