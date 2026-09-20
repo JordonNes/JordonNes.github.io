@@ -1,33 +1,33 @@
 {
   "schema_version": "LSI-READINESS-1",
-  "generated_at_utc": "2026-09-20T06:15:58.010593+00:00",
+  "generated_at_utc": "2026-09-20T06:32:55.618221+00:00",
   "ready_for_deterministic_operation": false,
   "full_history_program_complete": false,
   "current_ljpc": {
     "status": "SLA_BREACH",
-    "known_events_inside_t48": 305,
-    "acquired_props": 9115,
-    "evaluated_props": 6505,
+    "known_events_inside_t48": 295,
+    "acquired_props": 9251,
+    "evaluated_props": 6611,
     "stale_props": 6450,
-    "coverage_pct": 71.37,
+    "coverage_pct": 71.46,
     "blockers": {
-      "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 2610
+      "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 2640
     }
   },
   "qc_board": {
-    "generated_at_utc": "2026-09-20T06:14:03.110597+00:00",
-    "age_hours": 0.03,
-    "events": 624,
+    "generated_at_utc": "2026-09-20T06:32:05.081572+00:00",
+    "age_hours": 0.01,
+    "events": 620,
     "by_league": {
       "MMA": {
-        "events": 16,
-        "props": 73,
+        "events": 14,
+        "props": 66,
         "evaluated": 0,
-        "awaiting": 73,
+        "awaiting": 66,
         "coverage_pct": 0.0
       },
       "Tennis": {
-        "events": 173,
+        "events": 171,
         "props": 0,
         "evaluated": 0,
         "awaiting": 0,
@@ -35,10 +35,10 @@
       },
       "WNBA": {
         "events": 32,
-        "props": 791,
-        "evaluated": 689,
-        "awaiting": 102,
-        "coverage_pct": 87.1
+        "props": 927,
+        "evaluated": 795,
+        "awaiting": 132,
+        "coverage_pct": 85.76
       },
       "NFL": {
         "events": 32,
@@ -78,9 +78,9 @@
     }
   },
   "future_board": {
-    "generated_at_utc": "2026-09-20T06:13:17.326704+00:00",
-    "age_hours": 0.04,
-    "events": 474
+    "generated_at_utc": "2026-09-20T06:31:30.154607+00:00",
+    "age_hours": 0.02,
+    "events": 614
   },
   "history_coverage": {
     "NBA": {
@@ -185,13 +185,13 @@
   },
   "market_source_health": {
     "propline": {
-      "tracked_events": 174,
-      "last_success_utc": "2026-09-20T06:14:03.110597+00:00",
-      "age_hours": 0.03,
-      "status": "HEALTHY",
-      "checked_at_utc": "2026-09-20T06:14:03.110597+00:00",
-      "last_error": null,
-      "rate_limits": 0,
+      "tracked_events": 177,
+      "last_success_utc": "2026-09-20T06:32:05.081572+00:00",
+      "age_hours": 0.01,
+      "status": "RATE_LIMITED",
+      "checked_at_utc": "2026-09-20T06:32:05.081572+00:00",
+      "last_error": "HTTP Error 429: Too Many Requests",
+      "rate_limits": 1,
       "auth_errors": 0
     },
     "the_odds_api": {
@@ -199,7 +199,7 @@
       "last_success_utc": null,
       "age_hours": null,
       "status": "DISABLED",
-      "checked_at_utc": "2026-09-20T06:15:23.317333+00:00",
+      "checked_at_utc": "2026-09-20T06:32:20.686090+00:00",
       "last_error": null,
       "auth_errors": null,
       "rate_limits": null
@@ -208,7 +208,7 @@
   "openai": {
     "paid_api_decision_ready": true,
     "api_calls_actually_made": 0,
-    "average_estimated_cost_per_pipeline_run_usd": 0.001437,
+    "average_estimated_cost_per_pipeline_run_usd": 0.0014,
     "estimated_total_cost_if_observed_packets_sent_usd": 0.054606,
     "telemetry_days": 3
   },
@@ -216,8 +216,13 @@
     {
       "type": "T48_LJPC_SLA",
       "detail": {
-        "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 2610
+        "No acquired player-performance hit-rate evidence; market probability retained as evidence only.": 2640
       }
+    },
+    {
+      "type": "PROPLINE_RATE_LIMITED",
+      "note": "Durable last-known-good POMs remain available; reduce live calls or raise provider quota.",
+      "last_error": "HTTP Error 429: Too Many Requests"
     },
     {
       "type": "THE_ODDS_API_NO_SUCCESS_STATE",
