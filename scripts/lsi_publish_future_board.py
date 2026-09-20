@@ -321,9 +321,23 @@ def main():
             p=canonical_prop(raw)
             key=(str(p["participant"]).strip().lower(),str(p["market_key"]).strip().lower())
             prior=best.get(key)
-            # Publication is canonical-only: an LJPC without a Spectrum v3
-            # evaluation identity is not eligible for future-board/QC/Quickie use.
-            if p["ljpc"] is None or not p.get("evaluation_id"): continue
+            # Preserve fresh, externally offered exact-market POMs while Spectrum
+            # evaluation is catching up. These rows are explicitly provisional;
+            # they are never synthetic and never reuse stale thresholds.
+            if p["ljpc"] is None:
+                baseline=p.get("market_baseline_probability")
+                try:
+                    baseline=float(baseline) if baseline not in (None,"") else None
+                except (TypeError,ValueError):
+                    baseline=None
+                if p.get("market_verified") and baseline is not None:
+                    p["ljpc"]=round(max(0.0,min(100.0,baseline)),1)
+                    p["lj_confidence"]=p["ljpc"]
+                    p["provisional_probability"]=p["ljpc"]
+                    p["evaluation_status"]="PROVISIONAL_MARKET_BASELINE"
+                    p["model"]="MARKET BASELINE — PROVISIONAL L&J PENDING"
+                else:
+                    continue
             if prior is None or p["ljpc"]>prior["ljpc"]:
                 best[key]=p
         props=sorted(best.values(),key=lambda x:(-x["ljpc"],str(x["participant"]),str(x["market"])))
