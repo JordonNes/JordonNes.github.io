@@ -85,6 +85,7 @@ jobs:
           board=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
           reg=json.load(open('data/prediction_registry.json',encoding='utf-8'))
           future=json.load(open('data/future_market_board.json',encoding='utf-8'))
+          synthetic=json.load(open('data/legz_synthetic_book.json',encoding='utf-8'))
           required={'evaluation_key','evaluation_id','evaluation_material_hash','evaluation_version','evaluated_at_utc','feature_state','spectrum','evaluation_reason'}
           fields=set(reg.get('player_prop_fields') or [])
           assert required <= fields, sorted(required-fields)
@@ -94,13 +95,20 @@ jobs:
           matched=[p for p in rprops if p.get('evaluation_id')]
           assert all(p.get('evaluation_id') in qids for p in matched)
           future_props=[p for e in future.get('events',[]) for p in (e.get('props') or e.get('player_props') or [])]
+          synthetic_props=[p for e in synthetic.get('events',[]) for p in (e.get('props') or [])]
+          evaluated_synthetic=[p for p in synthetic_props if p.get('synthetic') and p.get('evaluation_status')=='LJ_EVALUATED' and p.get('ljpc') is not None]
           durable_eval=[p for e in board.get('events',[]) for p in (e.get('props') or []) if p.get('evaluation_status')=='LJ_EVALUATED' and p.get('ljpc') is not None]
           # Free-first operation may intentionally publish zero actionable future-board
           # props when no live market feed is available. In that case the browser bridge
           # must render durable evaluated QC inventory as LINE RECHECK REQUIRED.
           assert future_props or durable_eval, 'No current or durable evaluated player-prop inventory exists'
           assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in future_props)
-          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)} durable_eval_props={len(durable_eval)}')
+          if synthetic_props:
+              assert synthetic.get('stage')=='POST_SPECTRUM_EVALUATED', synthetic.get('stage')
+              assert evaluated_synthetic, 'Synthetic book exists but contains zero post-Spectrum LJPC rows'
+              published_synthetic=[p for p in future_props if p.get('synthetic') and p.get('evaluation_status')=='LJ_SYNTHETIC_EVALUATED' and p.get('ljpc') is not None]
+              assert published_synthetic, 'Evaluated synthetic fallback did not reach future market board'
+          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)} durable_eval_props={len(durable_eval)} synthetic_eval={len(evaluated_synthetic)}')
           PY
 
       - name: Commit Spectrum v3 release artifacts
@@ -108,7 +116,7 @@ jobs:
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/qc_prop_board.json data/lsi_evaluation_state.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js
+          git add data/qc_prop_board.json data/lsi_evaluation_state.json data/legz_synthetic_book.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js
           if git diff --cached --quiet; then
             echo 'Spectrum v3 artifacts already current.'
           else
