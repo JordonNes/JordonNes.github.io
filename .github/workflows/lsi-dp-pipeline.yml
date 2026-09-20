@@ -141,13 +141,13 @@ jobs:
         run: python scripts/oddspapi_history_adapter.py
       - name: NHL authoritative enrichment
         run: python scripts/nhl_adapter.py
-      - name: NFL player-prop fallback — The Odds API
+      - name: Coverage-gap player-prop fallback — The Odds API
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           ENABLE_THE_ODDS_API: 'true'
-          ODDS_API_LEAGUES: 'NFL'
+          ODDS_API_LEAGUES: 'NCAA_Football,MLB,NBA,WNBA,NHL,NCAA_Basketball'
           ODDS_API_LOOKAHEAD_HOURS: '96'
-          ODDS_API_MAX_EVENTS_PER_RUN: '16'
+          ODDS_API_MAX_EVENTS_PER_RUN: '24'
           ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
       - name: Refresh durable history coverage
