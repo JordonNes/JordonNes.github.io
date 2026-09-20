@@ -107,10 +107,9 @@
     return t<=end;
   };
   const gameSummary=e=>{
-    const sides=[...(e?.game_markets||[])].filter(x=>{
-      const v=Number(x?.ljpc ?? x?.lj_confidence);
-      return Number.isFinite(v) && v>0 && String(x?.evaluation_status||'').toUpperCase()!=='MARKET_EVIDENCE_ONLY';
-    }).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
+    // Game Winner is MONEYLINE ONLY. Spreads/totals may inform JINX, but they
+    // never become the published Game Winner or the center game-side prediction.
+    const sides=[...(e?.game_markets||[])].filter(isCurrentGameMl).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
     const best=sides[0]; if(!best) return null;
     const fmtPrice=s=>{
       if(s?.price===null||s?.price===undefined||s?.price==='') return 'price recheck';
@@ -166,10 +165,30 @@
   const isDisplayEvaluatedProp=p=>{
     const status=String(p?.evaluation_status||'').toUpperCase();
     const evaluated=status==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
-    const freshVerified=p?.market_verified===true && String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH';
-    const durableStale=isStaleProp(p) && (p?.source_snapshot_ids||[]).length>0;
+    const freshVerified=p?.market_verified===true
+      && String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH'
+      && !isStaleProp(p);
     const synthetic=p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER';
-    return evaluated && !synthetic && (freshVerified || durableStale);
+    // Public Hot Top / 20 Piece / QC legs must be live offered POMs, not merely
+    // previously evaluated or cached lines. Historical/stale rows remain research
+    // evidence only until the exact threshold is reacquired from an external market.
+    return evaluated && !synthetic && freshVerified;
+  };
+  const isMoneylineGameMarket=x=>{
+    const raw=[x?.market_class,x?.market_key,x?.market,x?.type,x?.bet_type,x?.name].filter(Boolean).join(' ').toUpperCase();
+    if(/SPREAD|TOTAL|HANDICAP|PUCK LINE|RUN LINE/.test(raw)) return false;
+    if(/GAME_ML|MONEYLINE|MONEY LINE|\bML\b/.test(raw)) return true;
+    // Future-board game_markets are sourced from the dedicated GAME_ML collector;
+    // a side with a participant + American/decimal price and no threshold is treated
+    // as ML only when it is not explicitly another market family.
+    return Boolean((x?.participant||x?.selection) && x?.price!==undefined && x?.price!==null && (x?.threshold===undefined||x?.threshold===null||x?.threshold===''));
+  };
+  const isCurrentGameMl=x=>{
+    const lj=Number(x?.ljpc ?? x?.lj_confidence);
+    return isMoneylineGameMarket(x)
+      && Number.isFinite(lj) && lj>0
+      && String(x?.evaluation_status||'').toUpperCase()!=='MARKET_EVIDENCE_ONLY'
+      && x?.price!==undefined && x?.price!==null && x?.price!=='';
   };
 
   const futureBoardLeagues=(B?.events||[]).filter(isUpcomingEvent).map(e=>e?.league).filter(Boolean);
@@ -182,40 +201,73 @@
       Number(b.market_source_count||0)-Number(a.market_source_count||0)
     );
 
-    const hotRows=[],hotSeen=new Set();
+    // LEGZ HOT TOP = mixed POM board (Props + Odds/Moneyline), but every item
+    // must be externally offered and have completed the L&J evaluation process.
+    // Unlike the 20 Piece, Hot Top is intentionally not player-prop-only.
+    const hotCandidates=[],hotSeen=new Set();
+    const pushHot=(row,key,score)=>{
+      if(!key||hotSeen.has(key)) return;
+      hotSeen.add(key); hotCandidates.push({row,score:Number(score||0)});
+    };
     for(const p of modeled){
-      if(p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER') continue;
-      const key=canonicalKey(p); if(!key||hotSeen.has(key)) continue;
-      hotSeen.add(key);
+      const verified=p.market_verified===true
+        && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH'
+        && !isStaleProp(p)
+        && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0
+        && p?.synthetic!==true && p?.model_generated!==true;
+      if(!verified) continue;
+      const key=canonicalKey(p);
       const price=priceLabel(p.price,p.book||'');
-      hotRows.push([
+      pushHot([
         p.participant||p.pick,
         p.pick,
         pct(ljpcOf(p)),
-        `${price} • POM Value ${pomValueOf(p).toFixed(1)} • Canonical Registry • ${source(p)}`
-      ]);
-      if(hotRows.length>=8) break;
+        `${price} • PLAYER PROP POM • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`
+      ],`PROP|${key}`,pomValueOf(p));
     }
     for(const p of scouts){
-      if(hotRows.length>=8) break;
       if(!isDisplayEvaluatedProp(p)) continue;
       const key=canonicalKey(p);
-      if(!key||hotSeen.has(key)) continue;
-      hotSeen.add(key);
       const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
         ? priceLabel(p.best_price,p.best_book||'')
-        : p.price!==null&&p.price!==undefined&&p.price!==''
-          ? priceLabel(p.price,p.book||'')
-          : 'LINE RECHECK REQUIRED';
-      hotRows.push([
+        : priceLabel(p.price,p.book||'');
+      const pv=Number(p.pom_value||p.legz_value||p.ljpc);
+      pushHot([
         p.participant,
         scoutPick(p),
         pct(Number(p.ljpc)),
-        `${price} • POM Value ${Number(p.pom_value||p.legz_value||p.ljpc).toFixed(1)} • Econ ${Number(p.economic_value??50).toFixed(1)} • LSI Statistical Spectrum • ${Number(p.market_source_count||1)} SRC`,
+        `${price} • PLAYER PROP POM • POM Value ${pv.toFixed(1)} • Econ ${Number(p.economic_value??50).toFixed(1)} • ${Number(p.market_source_count||1)} SRC`,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
-      ]);
+      ],`PROP|${key}`,pv);
     }
-    s.hotTop=hotRows;
+    for(const p of (gameByLeague[league]||[])){
+      const lj=ljpcOf(p);
+      const hasCurrentOffer=p?.price!==null&&p?.price!==undefined&&p?.price!==''
+        && (p?.provenance||[]).some(x=>x?.source);
+      if(!hasCurrentOffer || !Number.isFinite(lj) || lj<=0) continue;
+      const participant=p.participant||p.selection||p.pick;
+      const price=priceLabel(p.price,p.book||'');
+      pushHot([
+        participant||'Moneyline',
+        `${participant||p.pick} ML`,
+        pct(lj),
+        `${price} • MONEYLINE POM • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`
+      ],`ML|${norm(p.event_id)}|${norm(participant)}`,pomValueOf(p));
+    }
+    for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x))){
+      for(const g of (e.game_markets||[]).filter(isCurrentGameMl)){
+        const participant=g.selection||g.participant;
+        const price=priceLabel(g.price,g.book||'');
+        pushHot([
+          participant||'Moneyline',
+          `${participant} ML`,
+          pct(ljpcOf(g)),
+          `${price} • MONEYLINE POM • L&J EVALUATED • ${Number(g.market_source_count||1)} SRC`
+        ],`ML|${norm(e.source_event_id)}|${norm(participant)}`,ljpcOf(g));
+      }
+    }
+    hotCandidates.sort((a,b)=>b.score-a.score);
+    s.hotTop=hotCandidates.slice(0,8).map(x=>x.row);
 
     const winnerRows=[],winnerEvents=new Set();
     for(const p of [...(gameByLeague[league]||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a))){
@@ -232,10 +284,7 @@
     for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x)).sort((a,b)=>eventStartMs(a)-eventStartMs(b))){
       const eventKey=String(e.source_event_id||'').toLowerCase();
       if(eventKey&&winnerEvents.has(eventKey)) continue;
-      const sides=[...(e.game_markets||[])].filter(x=>{
-        const v=Number(x?.ljpc ?? x?.lj_confidence);
-        return Number.isFinite(v) && v>0 && String(x?.evaluation_status||'').toUpperCase()!=='MARKET_EVIDENCE_ONLY';
-      }).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
+      const sides=[...(e.game_markets||[])].filter(isCurrentGameMl).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
       const best=sides[0]; if(!best) continue;
       const price=best.price!==null&&best.price!==undefined&&best.price!==''?`${Number(best.price)>0?'+':''}${best.price}${best.book?` ${best.book}`:''}`:'price recheck';
       winnerRows.push([
@@ -511,7 +560,10 @@
     const lockedDemon=durablePublished(q.demon);
     const manual=lockedHot.map(manualCandidate).filter(Boolean);
     const board=(event?.props||[]).map(boardCandidate).filter(Boolean);
-    let pool=dedupe([...manual,...board]);
+    // Upcoming QC execution is rebuilt only from the CURRENT exact external board.
+    // Previously published/manual legs remain historical evidence, but they may not
+    // carry forward as executable picks unless the same offered threshold is reacquired.
+    let pool=dedupe(board);
     const evaluatedPool=pool.filter(c=>Number.isFinite(Number(c.confidence)) && c.confidence>0);
     const actionablePool=evaluatedPool.filter(c=>!c.stale);
 
@@ -782,7 +834,7 @@
     for(const q of deduped){
       const event=findBoardEvent(league,q);
       const confNum=Number(String(q?.conf||'').replace(/[^0-9.]/g,''));
-      if(!event || !q?.winner || !Number.isFinite(confNum) || confNum<=0 || q?._winnerProvisional) continue;
+      if(!event || !q?.winner || !Number.isFinite(confNum) || confNum<=0 || q?._winnerProvisional || !/\bML\b|MONEYLINE/i.test(String(q.winner))) continue;
       const key=String(event.source_event_id||exactKey(q));
       if(qcWinnerSeen.has(key)) continue;
       qcWinnerSeen.add(key);
