@@ -16,7 +16,19 @@
     if(!refs.length) return 'SOURCE UNAVAILABLE';
     return refs.map(x=>`${x.source} • ${x.snapshot_id} • ${x.collected_at_pt||'time unavailable'}`).join(' | ');
   };
-  const ljpcOf=p=>Number(p?.ljpc ?? p?.lj_confidence ?? p?.lj_probability ?? p?.provisional_probability ?? p?.market_probability ?? p?.market_consensus ?? 0);
+  // Formal LJPC is never inferred from a market/provisional probability.
+  const formalLjpcOf=p=>{
+    const status=String(p?.evaluation_status||'').toUpperCase();
+    if(status!=='LJ_EVALUATED') return 0;
+    const v=Number(p?.ljpc ?? p?.lj_confidence ?? p?.lj_probability);
+    return Number.isFinite(v)&&v>0?v:0;
+  };
+  const ljpcOf=p=>{
+    const formal=formalLjpcOf(p);
+    if(formal>0) return formal;
+    const v=Number(p?.provisional_probability ?? p?.market_probability ?? p?.market_consensus ?? 0);
+    return Number.isFinite(v)?v:0;
+  };
   const legzValueOf=p=>Number(p?.legz_value ?? p?.legzValue ?? 0);
   const pomValueOf=p=>{
     const explicit=Number(p?.pom_value ?? p?.pomValue);
@@ -349,7 +361,9 @@
         : p.price!==null&&p.price!==undefined&&p.price!==''
           ? `${Number(p.price)>0?'+':''}${p.price}${p.book?` ${p.book}`:''}`
           : 'price recheck';
-      const lj=Number(p.ljpc), pv=Number(p.pom_value||p.legz_value||lj);
+      const lj=formalLjpcOf(p);
+      if(!(lj>0)) continue; // 20 Piece is formal LJPC only; never market-baseline/provisional.
+      const pv=Number(p.pom_value||p.legz_value||lj);
       pushTwenty([
         String(league).replace(/_/g,' '),p.participant,scoutPick(p),price,pct(lj),
         `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • ECON ${Number(p.economic_value??50).toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
