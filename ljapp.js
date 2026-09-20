@@ -181,11 +181,14 @@
       const key=matchup.toLowerCase();
       if(seen.has(key)) continue;
       const provisional=/PROVISIONAL|MARKET BASELINE/i.test(String(q.market||'')+' '+String(q.foot||''));
+      const confNum=Number(conf.replace(/[^0-9.]/g,''));
+      if(provisional || !Number.isFinite(confNum) || confNum<=0) continue;
       derived.push([
         matchup,
         winner,
-        conf&&conf!=='—'?conf:'—',
-        provisional?'PROVISIONAL MARKET BASELINE • QC-derived game winner':(q.market||'QC-derived current game winner')
+        conf,
+        q.market||'QC-derived current L&J game winner',
+        ''
       ]);
       seen.add(key);
     }
