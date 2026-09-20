@@ -115,35 +115,77 @@ def get_json(path,params):
         return json.load(resp)
 
 def fetch_open_markets():
-    """Fetch ordinary open events with nested markets so every contract carries
-    authoritative event title + series context. This avoids guessing matchups
-    from isolated market records.
+    """Fetch open contracts with authoritative event context.
+
+    The broad /events feed is retained for discovery, but player-prop inventory
+    is also fetched by sports series. Broad pagination can be dominated by
+    thousands of unrelated open events and otherwise miss live prop series.
     """
-    out=[]; cursor=None; event_count=0
+    out=[]; seen=set(); cursor=None; event_count=0
+
+    def append_event(event):
+        context={
+          "_event_title":event.get("title"),
+          "_event_sub_title":event.get("sub_title"),
+          "_event_category":event.get("category"),
+          "_series_ticker":event.get("series_ticker"),
+          "_event_strike_date":event.get("strike_date"),
+          "_product_metadata":event.get("product_metadata") or {},
+        }
+        for market in (event.get("markets") or []):
+            if str(market.get("status") or "").lower() not in {"open","active"}:continue
+            ticker=str(market.get("ticker") or "")
+            if ticker and ticker in seen:continue
+            if ticker:seen.add(ticker)
+            row=dict(market); row.update(context)
+            out.append(row)
+
+    # General discovery pass.
     for _ in range(MAX_PAGES):
         params={
-          "status":"open","limit":PAGE_LIMIT,"with_nested_markets":"true",
+          "status":"open","limit":min(PAGE_LIMIT,200),"with_nested_markets":"true",
           "min_close_ts":int(NOW.timestamp())
         }
         if cursor:params["cursor"]=cursor
         payload=get_json("/events",params)
         batch=payload.get("events") or []
         event_count+=len(batch)
-        for event in batch:
-            context={
-              "_event_title":event.get("title"),
-              "_event_sub_title":event.get("sub_title"),
-              "_event_category":event.get("category"),
-              "_series_ticker":event.get("series_ticker"),
-              "_event_strike_date":event.get("strike_date"),
-              "_product_metadata":event.get("product_metadata") or {},
-            }
-            for market in (event.get("markets") or []):
-                if str(market.get("status") or "").lower() not in {"open","active"}:continue
-                row=dict(market); row.update(context)
-                out.append(row)
+        for event in batch:append_event(event)
         cursor=payload.get("cursor")
         if not cursor or not batch:break
+
+    # Targeted sports player-prop pass. Discover series first, then query each
+    # qualifying series directly so prop inventory cannot be crowded out by the
+    # global open-event feed.
+    max_series=max(8,min(80,int(os.getenv("KALSHI_MAX_PROP_SERIES","48"))))
+    try:
+        series_payload=get_json("/series",{"category":"Sports"})
+        candidates=[]
+        for series in (series_payload.get("series") or []):
+            ticker=str(series.get("ticker") or "")
+            title=str(series.get("title") or "")
+            probe={"ticker":ticker,"_series_ticker":ticker}
+            league,_sport=league_of(probe)
+            if not league:continue
+            if not any(rx.search(title) or rx.search(ticker.replace("_"," ")) for rx,_name in MARKET_PATTERNS):
+                continue
+            candidates.append(ticker)
+        for series_ticker in candidates[:max_series]:
+            scursor=None
+            for _ in range(2):
+                params={
+                  "status":"open","limit":200,"with_nested_markets":"true",
+                  "series_ticker":series_ticker,"min_close_ts":int(NOW.timestamp())
+                }
+                if scursor:params["cursor"]=scursor
+                payload=get_json("/events",params)
+                batch=payload.get("events") or []
+                for event in batch:append_event(event)
+                scursor=payload.get("cursor")
+                if not scursor or not batch:break
+    except Exception as exc:
+        print(f"WARN targeted Kalshi sports-series sweep failed: {exc}")
+
     return out
 
 def league_of(m):
