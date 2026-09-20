@@ -357,26 +357,58 @@
         const m=raw.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i);
         if(m){hour=Number(m[1])%12+(m[3].toUpperCase()==='PM'?12:0);}
       }
-      if(hour!==null && hour>=17) return ['SUNDAY_NIGHT','Sunday Night Football'];
-      if(hour!==null && hour>=13) return ['SUNDAY_AFTERNOON','Sunday Football — Afternoon'];
-      return ['SUNDAY_MORNING','Sunday Football — Morning'];
+      if(hour!==null && hour>=17) return 'SUNDAY_NIGHT';
+      if(hour!==null && hour>=13) return 'SUNDAY_AFTERNOON';
+      return 'SUNDAY_MORNING';
     };
-    const ordered=['THURSDAY','SATURDAY','SUNDAY_MORNING','SUNDAY_AFTERNOON','SUNDAY_NIGHT','MONDAY'];
-    const groups=new Map();
+
     const visible=visibleQcRows(rows).map(vettedRow).filter(r=>qcStatusOnly(r)||qcHasPublishedPregame(r));
+    const buckets={
+      THURSDAY:[],
+      SUNDAY_MORNING:[],
+      SUNDAY_AFTERNOON:[],
+      SUNDAY_NIGHT:[],
+      MONDAY:[]
+    };
     visible.forEach((r,i)=>{
-      let [key,label]=nflDayBucket(r);
-      if(key==='SUNDAY') [key,label]=sundayBand(r);
-      if(!groups.has(key)) groups.set(key,{label,rows:[]});
-      groups.get(key).rows.push([r,i]);
+      const [day]=nflDayBucket(r);
+      if(day==='THURSDAY') buckets.THURSDAY.push([r,i]);
+      else if(day==='SUNDAY') buckets[sundayBand(r)].push([r,i]);
+      else if(day==='MONDAY') buckets.MONDAY.push([r,i]);
     });
-    groups.forEach(g=>g.rows.sort((a,b)=>kickoffPt(a[0])-kickoffPt(b[0])));
-    const body=ordered.filter(k=>groups.has(k)).map(k=>{
-      const g=groups.get(k);
-      return `<div class="nfl-qc-day nfl-qc-${k.toLowerCase()}"><div class="nfl-qc-daybar">${esc(g.label)}</div><div class="qc-list nfl-qc-list">${g.rows.map(([r,i])=>qcRow(r,i)).join("")}</div></div>`;
-    }).join("");
-    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL PREDICTIONS — ROLLING 0–7 DAY PRE-GAME QCs")}</h2><span class="muted">Only market-acquired player props with an explicit L&J evaluation/LJPC are eligible for NFL QCs • Goblin/Demon status never substitutes for LJPC</span></div>${body}${rules()}<div class="layout-seal">NFL QC ORDER • Thursday Night Football → Sunday morning → Sunday afternoon → Sunday Night Football → Monday Night Football • unscored POMs suppressed</div></section>`;
+    Object.values(buckets).forEach(arr=>arr.sort((a,b)=>kickoffPt(a[0])-kickoffPt(b[0])));
+
+    const renderRows=arr=>arr.length
+      ? `<div class="qc-list nfl-qc-list">${arr.map(([r,i])=>qcRow(r,i)).join("")}</div>`
+      : "";
+
+    const thursday = buckets.THURSDAY.length
+      ? `<div class="nfl-qc-weekday nfl-qc-thursday"><div class="nfl-qc-daybar">Thursday Football</div><div class="nfl-qc-subbar">Thursday Night Football</div>${renderRows(buckets.THURSDAY)}</div>`
+      : "";
+
+    const sundayParts=[
+      buckets.SUNDAY_MORNING.length
+        ? `<div class="nfl-qc-sunday-band nfl-qc-sunday-morning"><div class="nfl-qc-subbar">Morning Games</div>${renderRows(buckets.SUNDAY_MORNING)}</div>`
+        : "",
+      buckets.SUNDAY_AFTERNOON.length
+        ? `<div class="nfl-qc-sunday-band nfl-qc-sunday-afternoon"><div class="nfl-qc-subbar">Afternoon Games</div>${renderRows(buckets.SUNDAY_AFTERNOON)}</div>`
+        : "",
+      buckets.SUNDAY_NIGHT.length
+        ? `<div class="nfl-qc-sunday-band nfl-qc-sunday-night"><div class="nfl-qc-subbar">Sunday Night Football</div>${renderRows(buckets.SUNDAY_NIGHT)}</div>`
+        : ""
+    ].join("");
+    const sunday = sundayParts
+      ? `<div class="nfl-qc-weekday nfl-qc-sunday"><div class="nfl-qc-daybar">Sunday Football</div>${sundayParts}</div>`
+      : "";
+
+    const monday = buckets.MONDAY.length
+      ? `<div class="nfl-qc-weekday nfl-qc-monday"><div class="nfl-qc-daybar">Monday Football</div><div class="nfl-qc-subbar">Monday Night Football</div>${renderRows(buckets.MONDAY)}</div>`
+      : "";
+
+    const body=thursday+sunday+monday;
+    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL — NEXT DAY / TODAY'S QCs")}</h2><span class="muted">Current offered POMs only • explicit LJPC required • game winners are moneyline only</span></div>${body}${rules()}<div class="layout-seal">NFL QC ORDER • Thursday Football → Sunday Football (Morning → Afternoon → Sunday Night Football) → Monday Football</div></section>`;
   }
+
   function groupedQcs(groups){
     if (!groups || !groups.length) return "";
     const visibleGroups=groups.map(g=>({...g,rows:visibleQcRows(g.rows)})).filter(g=>g.rows.length);
