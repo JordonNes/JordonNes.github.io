@@ -17,6 +17,7 @@ on:
     branches: [master]
     paths:
       - 'scripts/odds_adapter.py'
+      - 'scripts/kalshi_public_adapter.py'
       - 'scripts/propline_adapter.py'
       - 'scripts/oddspapi_history_adapter.py'
       - 'scripts/lsi_pipeline.py'
@@ -123,7 +124,15 @@ jobs:
         env:
           ROTOWIRE_API_KEY: ${{ secrets.ROTOWIRE_API_KEY }}
         run: python scripts/rotowire_adapter.py
-      - name: PropLine Level-B prop acquisition — market discovery first
+      - name: Kalshi public offered-POM acquisition — primary free current market
+        continue-on-error: true
+        env:
+          KALSHI_MAX_PAGES: '4'
+          KALSHI_PAGE_LIMIT: '1000'
+          KALSHI_LOOKAHEAD_DAYS: '7'
+          KALSHI_HTTP_TIMEOUT_SEC: '15'
+        run: python scripts/kalshi_public_adapter.py
+      - name: PropLine Level-B prop acquisition — optional overlay
         continue-on-error: true
         env:
           PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
@@ -168,7 +177,7 @@ jobs:
         run: python scripts/lsi_history_warehouse.py
       - name: Merge verified override evidence before Spectrum
         run: python scripts/lsi_apply_verified_overrides.py
-      - name: LEGZ Synthetic Book — verified-source fallback only
+      - name: LEGZ Synthetic Book — internal research shadow only
         run: python scripts/legz_synthetic_book.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
         env:
@@ -291,7 +300,7 @@ jobs:
             data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json
             data/current_game_moneylines.json data/market_history_delta.csv data/event_inventory.csv
             data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json
-            data/rotowire_context.csv data/context_registry.json data/propline_intelligence.json
+            data/rotowire_context.csv data/context_registry.json data/kalshi_state.json data/propline_intelligence.json
             data/propline_state.json data/oddspapi_history_features.csv data/oddspapi_state.json
             data/oddspapi_market_lookup.json data/qc_prop_board.json data/legz_synthetic_book.json data/future_market_board.json
             data/future_market_board.js data/qc_ticket_registry.json data/the_odds_api_state.json
