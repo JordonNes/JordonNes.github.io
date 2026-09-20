@@ -19,6 +19,7 @@ PERF=DATA/"performance_history.csv"
 CONTEXT=DATA/"context_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
 EVAL_STATE=DATA/"lsi_evaluation_state.json"
+SYNTHETIC_BOOK=DATA/"legz_synthetic_book.json"
 HISTORY_ROOT=DATA/"history"
 
 def csv_open(path):
@@ -457,6 +458,14 @@ def main():
       "latest_by_key":latest,
     }
     EVAL_STATE.write_text(json.dumps(state_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"LEGZ Statistical Spectrum v3: evaluated={evaluated}; awaiting_evidence={waiting}; durable_states={len(records_by_id)}")
+    synthetic_events=[]; synthetic_count=0
+    for event in payload.get("events") or []:
+        props=[p for p in (event.get("props") or []) if p.get("synthetic") or p.get("model_generated")]
+        if not props: continue
+        synthetic_count += len(props)
+        synthetic_events.append({"league":event.get("league"),"source_event_id":event.get("source_event_id") or event.get("event_id"),"commence_time":event.get("commence_time"),"away":event.get("away"),"home":event.get("home"),"away_aliases":event.get("away_aliases") or [],"home_aliases":event.get("home_aliases") or [],"source":"LEGZ_SYNTHETIC_BOOK","sweep_status":"LEGZ_SYNTHETIC_EVALUATED","props":props})
+    synthetic_payload={"schema_version":"LSI-LEGZ-SYNTHETIC-BOOK-1","generated_at_utc":datetime.now(timezone.utc).isoformat(),"stage":"POST_SPECTRUM_EVALUATED","policy":"Verified external POMs outrank synthetic lines. Synthetic rows are internal shadow-book thresholds and never external offers.","event_count":len(synthetic_events),"prop_count":synthetic_count,"events":synthetic_events}
+    SYNTHETIC_BOOK.write_text(json.dumps(synthetic_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"LEGZ Statistical Spectrum v3: evaluated={evaluated}; awaiting_evidence={waiting}; durable_states={len(records_by_id)}; synthetic_persisted={synthetic_count}")
 
 if __name__=="__main__": main()
