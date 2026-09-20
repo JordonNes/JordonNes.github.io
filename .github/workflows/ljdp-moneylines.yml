@@ -38,7 +38,10 @@ jobs:
           PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
           PROPLINE_HTTP_TIMEOUT_SEC: '8'
           PROPLINE_HTTP_ATTEMPTS: '1'
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          PROPLINE_LEAGUES: 'NFL'
+          PROPLINE_RATE_LIMIT_COOLDOWN_MIN: '90'
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY || vars.ODDS_API_KEY || secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY }}
+          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY || secrets.ODDS_API_KEY || vars.ODDS_API_KEY }}
           ENABLE_THE_ODDS_API: 'true'
           ODDS_API_LEAGUES: 'NFL'
           ODDS_API_LOOKAHEAD_HOURS: '96'
