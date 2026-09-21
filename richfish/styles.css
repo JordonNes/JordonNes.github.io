@@ -139,3 +139,24 @@ body{background:radial-gradient(circle at 68% 0,#18363a 0,transparent 30%),linea
   .frmap-canvas{min-height:54vh;height:54vh}
   .map-report .ray-call-grid{grid-template-columns:1fr}
 }
+
+.bootcamp-link{color:var(--gold2)!important;font-weight:800;border-bottom:2px solid rgba(217,154,61,.7);padding-bottom:4px}
+.bootcamp-callout{border-color:#7a5a2c;background:linear-gradient(145deg,rgba(66,45,24,.72),rgba(8,37,43,.92))}
+
+
+/* RICHFISH near-me live recommendations */
+.map-nearby-recommendations{display:grid;gap:14px;margin-top:18px}
+.map-nearby-recommendation{display:grid;grid-template-columns:92px minmax(0,1fr);gap:16px;border:1px solid var(--line);border-radius:12px;background:#071f24;padding:16px}
+.map-nearby-rank{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;border-right:1px solid var(--line);padding-right:14px;text-align:center}
+.map-nearby-rank span{font-size:11px;color:var(--muted)}
+.map-nearby-rank strong{font-family:Georgia,serif;font-size:31px;line-height:1;color:var(--gold2)}
+.map-nearby-rank small{font-size:9px;line-height:1.25;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.map-nearby-copy h3{margin:4px 0 8px;font-family:Georgia,serif;color:var(--gold2);font-size:24px}
+.map-nearby-copy p{margin:8px 0;color:#dce8e4}
+.map-nearby-copy .ray-call-grid{margin:12px 0}
+@media(max-width:620px){
+  .map-nearby-recommendation{grid-template-columns:1fr}
+  .map-nearby-rank{display:grid;grid-template-columns:auto auto 1fr;align-items:end;justify-content:start;border-right:0;border-bottom:1px solid var(--line);padding:0 0 10px;text-align:left}
+  .map-nearby-rank strong{font-size:25px}
+  .map-nearby-rank small{padding-bottom:2px}
+}
