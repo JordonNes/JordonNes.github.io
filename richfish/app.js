@@ -636,7 +636,17 @@ async function renderLiveNearbyRecommendations(lat,lng){
             ${dataCard('Tide',tide,row.water?.station?.name||'NOAA CO-OPS')}
             ${dataCard('Water',water,row.water?.station? `Nearest station · ${row.water.station.distanceKm} km`:'NOAA observation')}
             ${dataCard('Weather / wind',wind,row.weather?.shortForecast||row.weather?.sourceNote||'Live weather context')}
-            ${dataCard('Community',row.community?.label||'No registered signal',row.community?.count?`${row.community.count} registered report(s)`:'No bonus or penalty applied')}
+            ${dataCard(
+              'Community',
+              row.community?.count
+                ? (row.community?.label||'Registered local signal')
+                : (row.communityContext?.[0]?.sourceName||'No registered local signal'),
+              row.community?.count
+                ? `${row.community.count} exact-location report(s)`
+                : row.communityContext?.length
+                  ? `Regional context only · ${row.communityContext[0].observedDate||'recent'} · not scored`
+                  : 'No bonus or penalty applied'
+            )}
             ${dataCard('Bait / presentation',bait,(row.patterns||[]).slice(0,2).join(' · ')||'Use local structure and forage')}
           </div>
           <p><strong>Access:</strong> ${escapeHtml(row.access||'Verify access before travel.')}</p>
