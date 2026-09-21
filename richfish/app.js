@@ -289,9 +289,12 @@ function renderSpeciesDetail(id){
 }
 
 function renderDocuments(){
-  const groups=state.documents.reduce((a,d)=>((a[d.category]??=[]).push(d),a),{});
-  $('#doc-count').textContent=`${state.documents.length} cataloged resources`;
-  $('#document-grid').innerHTML=Object.entries(groups).map(([category,docs])=>`<section class="doc-card"><span class="eyebrow">${escapeHtml(category)}</span><h3>${docs.length} resource${docs.length===1?'':'s'}</h3>${docs.map(d=>`<p><strong>${escapeHtml(d.title)}</strong><br><span class="doc-meta">${escapeHtml(d.type)} · ${escapeHtml(d.status)}</span></p>`).join('')}<button class="btn" disabled>Asset import pending</button></section>`).join('');
+  const generalDocs=state.documents.filter(d=>!String(d.category||'').startsWith('101 Bootcamp'));
+  const groups=generalDocs.reduce((a,d)=>((a[d.category]??=[]).push(d),a),{});
+  $('#doc-count').textContent=`${generalDocs.length} general resources · Bootcamps in dedicated library`;
+  $('#document-grid').innerHTML=
+    `<section class="doc-card bootcamp-callout"><span class="eyebrow">RICHFISH 101 BOOTCAMP</span><h3>Dedicated Download Library</h3><p class="doc-meta">Species, baitfish, live bait, methods, crabbing and visual field instruction now have their own library.</p><a class="btn primary" href="bootcamp/">Open 101 Bootcamp Library →</a></section>`+
+    Object.entries(groups).map(([category,docs])=>`<section class="doc-card"><span class="eyebrow">${escapeHtml(category)}</span><h3>${docs.length} resource${docs.length===1?'':'s'}</h3>${docs.map(d=>`<p><strong>${escapeHtml(d.title)}</strong><br><span class="doc-meta">${escapeHtml(d.type)} · ${escapeHtml(d.status)}</span></p>`).join('')}<button class="btn" disabled>Asset import pending</button></section>`).join('');
 }
 function renderSources(){
   $('#source-grid').innerHTML=state.sources.map(s=>`<article class="source-card"><span class="badge">${escapeHtml(s.priority)}</span><h3>${escapeHtml(s.name)}</h3><p>${escapeHtml(s.purpose)}</p>${s.role?`<small><strong>RICHFISH role:</strong> ${escapeHtml(s.role)}</small>`:''}${s.caveat?`<p class="notice"><strong>Data caution:</strong> ${escapeHtml(s.caveat)}</p>`:''}${s.endpoint?`<p><a class="eyebrow" href="${escapeHtml(s.endpoint)}" target="_blank" rel="noopener">Official source →</a></p>`:''}<small>${escapeHtml(s.mode)}</small></article>`).join('');
@@ -567,9 +570,8 @@ function populateMapSpeciesFilter(){
     return {id,name:species?.common_name||species?.name||id};
   }).sort((a,b)=>a.name.localeCompare(b.name));
   select.innerHTML='<option value="">All modeled targets</option>'+rows.map(row=>`<option value="${escapeHtml(row.id)}">${escapeHtml(row.name)}</option>`).join('');
-  if(ids.includes('striped-bass'))state.mapSpeciesId='striped-bass';
-  else state.mapSpeciesId=ids[0]||null;
-  select.value=state.mapSpeciesId||'';
+  state.mapSpeciesId=null;
+  select.value='';
   select.addEventListener('change',()=>{
     state.mapSpeciesId=select.value||null;
     refreshMapLocationMarkers();
@@ -599,6 +601,70 @@ function addNoaaBathymetryLayer(){
   }
   return group;
 }
+async function renderLiveNearbyRecommendations(lat,lng){
+  const panel=$('#frmap-report');
+  if(!panel)return;
+  const speciesParam=state.mapSpeciesId?`&speciesId=${encodeURIComponent(state.mapSpeciesId)}`:'';
+  panel.innerHTML='<span class="eyebrow">RAY\'S NEAR-ME CALL · LIVE</span><h3>Reading season, tide, water, weather and community evidence…</h3><p>Ranking nearby RICHFISH locations from your browser location.</p>';
+  try{
+    const response=await fetch(`${RICHFISH_API}/api/richfish/nearby?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&limit=5${speciesParam}`,{headers:{Accept:'application/json'}});
+    const payload=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(payload.error||`Live advisor returned ${response.status}`);
+    const rows=payload.recommendations||[];
+    if(!rows.length){
+      panel.innerHTML='<span class="eyebrow">RAY\'S NEAR-ME CALL</span><h3>No qualified nearby match yet.</h3><p>Try All modeled targets, expand the map, or select a different species. RICHFISH will not invent a recommendation when the location/target inventory is incomplete.</p>';
+      return;
+    }
+    const cards=rows.map((row,i)=>{
+      const tide=row.tide?.trend
+        ? `${row.tide.trend} · next ${row.tide.nextTurnType||'turn'} ${row.tide.nextTurnAt?new Date(row.tide.nextTurnAt).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):''}`.trim()
+        :'Unavailable';
+      const water=[
+        row.water?.temperatureF!=null?`${cleanNumber(row.water.temperatureF,1)}°F`:null,
+        row.water?.salinityPsu!=null?`${cleanNumber(row.water.salinityPsu,1)} PSU`:null
+      ].filter(Boolean).join(' · ')||'Live water observations incomplete';
+      const wind=row.weather?.effectiveWindMph!=null?`${cleanNumber(row.weather.effectiveWindMph,1)} mph`:'Unavailable';
+      const bait=(row.bait||[]).slice(0,3).join(', ')||'See location/species file';
+      return `<article class="map-nearby-recommendation">
+        <div class="map-nearby-rank"><span>#${i+1}</span><strong>${escapeHtml(row.tripFitIndex)}%</strong><small>Trip Fit Index</small></div>
+        <div class="map-nearby-copy">
+          <span class="eyebrow">${escapeHtml(row.target?.name||'Target')} · ${escapeHtml(cleanNumber(row.distanceKm,1))} km away</span>
+          <h3>${escapeHtml(row.locationName)}</h3>
+          <p><strong>Why:</strong> ${escapeHtml(row.why||'Live factors available.')}</p>
+          <div class="ray-call-grid">
+            ${dataCard('Season',`${cleanNumber(row.season?.score,0)}%`,row.target?.seasonalSummary||'Seasonal baseline')}
+            ${dataCard('Tide',tide,row.water?.station?.name||'NOAA CO-OPS')}
+            ${dataCard('Water',water,row.water?.station? `Nearest station · ${row.water.station.distanceKm} km`:'NOAA observation')}
+            ${dataCard('Weather / wind',wind,row.weather?.shortForecast||row.weather?.sourceNote||'Live weather context')}
+            ${dataCard('Community',row.community?.label||'No registered signal',row.community?.count?`${row.community.count} registered report(s)`:'No bonus or penalty applied')}
+            ${dataCard('Bait / presentation',bait,(row.patterns||[]).slice(0,2).join(' · ')||'Use local structure and forage')}
+          </div>
+          <p><strong>Access:</strong> ${escapeHtml(row.access||'Verify access before travel.')}</p>
+          ${row.risk?`<p><strong>Risk:</strong> ${escapeHtml(row.risk)}</p>`:''}
+          <button class="btn" type="button" data-map-location="${escapeHtml(row.locationId)}">Open this fishing spot</button>
+        </div>
+      </article>`;
+    }).join('');
+    panel.innerHTML=`<span class="eyebrow">RAY'S NEAR-ME CALL · LIVE</span>
+      <h3>Best supported fishing options near you</h3>
+      <p class="notice">Trip Fit Index is planning guidance, not catch probability. It blends source-backed seasonality, live tide/water, wind/weather, community evidence and distance. Verify current regulations, advisories and access before fishing.</p>
+      <div class="map-nearby-recommendations">${cards}</div>
+      <div class="why-panel"><span class="eyebrow">METHOD</span><p>${escapeHtml(payload.methodology||'')}</p><p>Generated ${payload.generatedAt?new Date(payload.generatedAt).toLocaleString():'now'}.</p></div>`;
+    panel.querySelectorAll('[data-map-location]').forEach(button=>button.addEventListener('click',()=>{
+      const loc=state.locations.find(item=>item.id===button.dataset.mapLocation);
+      if(loc?.coordinates){
+        state.map?.setView([loc.coordinates.lat,loc.coordinates.lng],13);
+        renderMapEvaluation(loc.coordinates.lat,loc.coordinates.lng,loc);
+      }
+    }));
+  }catch(error){
+    console.warn('Live nearby advisor unavailable',error);
+    renderNearbyCoordinateIntelligence(lat,lng);
+    const fallback=$('#frmap-report');
+    fallback?.insertAdjacentHTML('afterbegin','<div class="ray-note"><b>LIVE NEAR-ME ADVISOR TEMPORARILY UNAVAILABLE</b><br>Showing the local static/spatial fallback instead. No live factor has been invented.</div>');
+  }
+}
+
 function useMapGeolocation(){
   const panel=$('#frmap-report');
   if(!navigator.geolocation){
@@ -613,6 +679,7 @@ function useMapGeolocation(){
     state.mapUserMarker=L.marker([lat,lng]).addTo(state.map).bindTooltip('Your browser location').openTooltip();
     state.map.setView([lat,lng],13);
     renderNearbyCoordinateIntelligence(lat,lng);
+    renderLiveNearbyRecommendations(lat,lng);
     if(button){button.disabled=false;button.textContent='Use my location';}
   },error=>{
     if(panel)panel.innerHTML=`<span class="eyebrow">FIELD MODE</span><h3>Location was not shared.</h3><p>${escapeHtml(error.message||'Use the map manually instead.')}</p>`;
