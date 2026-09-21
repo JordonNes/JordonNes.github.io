@@ -607,9 +607,23 @@ async function renderLiveNearbyRecommendations(lat,lng){
   const speciesParam=state.mapSpeciesId?`&speciesId=${encodeURIComponent(state.mapSpeciesId)}`:'';
   panel.innerHTML='<span class="eyebrow">RAY\'S NEAR-ME CALL · LIVE</span><h3>Reading season, tide, water, weather and community evidence…</h3><p>Ranking nearby RICHFISH locations from your browser location.</p>';
   try{
-    const response=await fetch(`${RICHFISH_API}/api/richfish/nearby?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&limit=5${speciesParam}`,{headers:{Accept:'application/json'}});
-    const payload=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(payload.error||`Live advisor returned ${response.status}`);
+    let payload=null;
+    if(window.RichFishLocalAdvisor?.buildNearbyAdvice){
+      try{
+        payload=await window.RichFishLocalAdvisor.buildNearbyAdvice({
+          lat,lng,speciesId:state.mapSpeciesId||null,limit:5,
+          locations:state.locations,speciesCatalog:state.speciesCatalog,
+          communityEvidence:state.communityEvidence||{records:[]}
+        });
+      }catch(localError){
+        console.warn('Browser-local RICHFISH advisor unavailable; trying optional Railway fallback',localError);
+      }
+    }
+    if(!payload){
+      const response=await fetch(`${RICHFISH_API}/api/richfish/nearby?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&limit=5${speciesParam}`,{headers:{Accept:'application/json'}});
+      payload=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(payload.error||`Live advisor returned ${response.status}`);
+    }
     const rows=payload.recommendations||[];
     if(!rows.length){
       panel.innerHTML='<span class="eyebrow">RAY\'S NEAR-ME CALL</span><h3>No qualified nearby match yet.</h3><p>Try All modeled targets, expand the map, or select a different species. RICHFISH will not invent a recommendation when the location/target inventory is incomplete.</p>';
@@ -626,7 +640,7 @@ async function renderLiveNearbyRecommendations(lat,lng){
       const wind=row.weather?.effectiveWindMph!=null?`${cleanNumber(row.weather.effectiveWindMph,1)} mph`:'Unavailable';
       const bait=(row.bait||[]).slice(0,3).join(', ')||'See location/species file';
       return `<article class="map-nearby-recommendation">
-        <div class="map-nearby-rank"><span>#${i+1}</span><strong>${escapeHtml(row.tripFitIndex)}%</strong><small>Trip Fit Index</small></div>
+        <div class="map-nearby-rank"><span>#${i+1}</span><strong>${escapeHtml(row.fishRating!=null?`${row.fishRating}/6`:row.tripFitIndex+'%')}</strong><small>${row.fishRating!=null?'Activity Rating':'Trip Fit Index'}</small></div>
         <div class="map-nearby-copy">
           <span class="eyebrow">${escapeHtml(row.target?.name||'Target')} · ${escapeHtml(cleanNumber(row.distanceKm,1))} km away</span>
           <h3>${escapeHtml(row.locationName)}</h3>
