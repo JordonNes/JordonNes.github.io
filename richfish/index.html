@@ -19,7 +19,7 @@
       <a href="#home">Tavern</a>
       <a href="#rooms">Rooms</a>
       <a href="#spots">Fishing Spots</a>
-      <a href="#finder">Fish Now</a>
+      <a href="#fish-now-live">Fish Now</a>
       <a href="#documents">Field Library</a>
       <a class="bootcamp-link" href="bootcamp/">101 Bootcamp</a>
       <a href="#guide">Fishing Bible</a>
@@ -83,6 +83,32 @@
           <h3>Select a mapped fishing location or click the water.</h3>
           <p>RICHFISH will tell you what the evidence supports and what is still missing.</p>
         </article>
+      </div>
+    </section>
+
+    <section id="fish-now-live" class="section shell rf-live-section">
+      <div class="section-heading">
+        <div><span class="eyebrow">RAY'S CURRENT CALL · LOCATION AWARE</span><h2>Where should I fish right now?</h2></div>
+        <span class="sync">Season · NOAA tide/water · NWS weather · moon · community evidence</span>
+      </div>
+      <div class="rf-live-controls">
+        <button class="btn primary" id="rf-use-location" type="button">Use my current location</button>
+        <label for="rf-live-species">Target</label>
+        <select id="rf-live-species" class="map-select"><option value="">Best available target</option></select>
+        <span id="rf-live-status" class="rf-live-status">Share browser location to generate a current fishing call.</span>
+      </div>
+      <p id="rf-location-meta" class="rf-location-meta">Your precise browser location stays in your browser and is used only to rank nearby fishing options and select nearby public-data stations.</p>
+      <div id="rf-live-output" class="rf-live-output">
+        <div class="rf-empty"><h3>Live recommendation ready when you are.</h3><p>RICHFISH will rank nearby fishing locations using season, current tide and water observations, wind/weather, distance, moderated community evidence, and a small conventional lunar factor.</p></div>
+      </div>
+      <div class="rf-tide-module">
+        <div class="rf-tide-heading">
+          <div><span class="eyebrow">TIDE + LUNAR CALENDAR</span><h3>NOAA tide curve and seven-day field calendar</h3></div>
+          <span id="rf-tide-station" class="sync">Nearest NOAA tide station</span>
+        </div>
+        <div id="rf-tide-chart" class="rf-tide-chart"><div class="tide-chart-empty">Share location to load the tide curve.</div></div>
+        <div id="rf-tide-calendar" class="rf-tide-calendar"></div>
+        <p class="notice">The 0–6 fish Activity Rating is RICHFISH's own planning index, not a copied third-party rating and not a catch probability. Lunar phase is intentionally a minor factor; season, tide/current, water, weather and verified local evidence carry more weight.</p>
       </div>
     </section>
 
@@ -184,6 +210,8 @@
 
   <footer><strong>RICHMOND RAY'S FISHIN' TAVERN · RICHFISH</strong><span>Fishing intelligence is educational. Always verify current regulations, advisories, access rules and conditions before fishing.</span></footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="local-advisor.js" defer></script>
+  <script src="conditions-panel.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>
