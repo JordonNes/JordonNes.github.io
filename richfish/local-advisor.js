@@ -187,13 +187,41 @@ async function fetchTideCalendar(lat,lng,days=7){
   }
   return {station:{...station,distanceKm:round(station.distanceKm,1)},turns,series,days:Object.entries(grouped).map(([date,events])=>({date,events,moon:moonInfo(new Date(date+'T20:00:00Z'))}))};
 }
+function reportAgeDays(value){
+  const ms=Date.parse(value);
+  return Number.isFinite(ms)?Math.max(0,(Date.now()-ms)/86400000):Infinity;
+}
+function reportRecencyWeight(value){
+  const age=reportAgeDays(value);
+  if(age<=7)return 1;
+  if(age<=30)return .8;
+  if(age<=90)return .45;
+  if(age<=365)return .15;
+  return 0;
+}
 function communitySignal(location,register){
   const records=register?.records||[],target=slugify(location?.name);
   const matches=records.filter(record=>record?.location_id===location?.id||slugify(record?.claimed_location?.name||record?.claimed_location||'')===target);
-  if(!matches.length)return {score:50,tier:null,label:'No registered recent community signal',count:0};
+  if(!matches.length)return {score:50,tier:null,label:'No registered recent community signal',count:0,currentCount:0,historicalCount:0};
   const order=['unverified_signal','corroborated_signal','strong_recurring_evidence','verified_field_evidence'];
-  const tier=matches.map(r=>r.reliability_tier).sort((a,b)=>order.indexOf(b)-order.indexOf(a))[0];
-  return {score:TIER_SCORES[tier]||56,tier,label:register?.reliability_tiers?.[tier]?.label||tier,count:matches.length};
+  const weighted=matches.map(record=>{
+    const weight=reportRecencyWeight(record.date);
+    const base=TIER_SCORES[record.reliability_tier]||56;
+    return {record,weight,ageDays:reportAgeDays(record.date),score:50+(base-50)*weight};
+  }).filter(item=>item.weight>0);
+  if(!weighted.length)return {score:50,tier:null,label:'Historical community reports only',count:0,currentCount:0,historicalCount:matches.length};
+  const recent=weighted.filter(item=>item.ageDays<=90);
+  const current=weighted.filter(item=>item.ageDays<=30);
+  const strongest=[...weighted].sort((a,b)=>b.score-a.score||order.indexOf(b.record.reliability_tier)-order.indexOf(a.record.reliability_tier))[0];
+  const tier=strongest.record.reliability_tier;
+  const baseLabel=register?.reliability_tiers?.[tier]?.label||tier;
+  const label=current.length?baseLabel:(recent.length?'Aging community signal':'Historical context only');
+  return {
+    score:round(Math.max(50,...weighted.map(item=>item.score))),
+    tier,label,count:recent.length,currentCount:current.length,
+    historicalCount:matches.length-current.length,
+    newestAgeDays:round(Math.min(...weighted.map(item=>item.ageDays)),1)
+  };
 }
 function candidateSpecies(location,speciesCatalog,requestedSpeciesId){
   const allTargets=[...(location?.targets?.primary||[]),...(location?.targets?.secondary||[])];
