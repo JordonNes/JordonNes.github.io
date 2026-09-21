@@ -1,0 +1,199 @@
+{
+  "schema_version": "0.1",
+  "updated_at": "2026-09-21T16:05:00Z",
+  "purpose": "Discovery queue for fishing locations surfaced by community discussion, reports, blogs and official recreation sources. This file does not affect current bite scores until a location is verified and promoted into the canonical location catalog.",
+  "promotion_rules": [
+    "Community chatter can nominate a place but cannot establish current bite status.",
+    "Verify legal public access, current closure status, fishing/license rules, and usable coordinates before promotion.",
+    "Current catch evidence belongs in community-evidence.json and is recency-decayed; historical reports belong here as discovery/context.",
+    "Prefer official park/agency sources for access and closures, then use independent community sources for practical popularity and fishing-pattern context.",
+    "Do not expose fragile, private, trespass-dependent, or conservation-sensitive micro-spots."
+  ],
+  "candidates": [
+    {
+      "id": "paradise-beach-park-pier",
+      "name": "Paradise Beach Park fishing pier",
+      "region": "San Pablo / Central Bay",
+      "status": "ready_for_catalog_verification",
+      "discovery_confidence": "high",
+      "community_sources": [
+        {
+          "url": "https://www.reddit.com/r/FishingForBeginners/comments/1r1ph06/good_fishing_spots_for_beginners_in_the_bay_area/",
+          "date": "2026-02-11",
+          "signal": "Community recommendation names Paradise Pier among Bay Area beginner-access piers."
+        }
+      ],
+      "official_sources": [
+        {
+          "url": "https://www.parks.marincounty.gov/parkspreserves/parks/paradise-beach-park",
+          "verified": "2026-09-21",
+          "signal": "Marin County confirms fishing pier, fish-cleaning station, kayak/canoe access, and pier license exemption."
+        }
+      ],
+      "next_action": "Promote after canonical species/habitat fields are normalized."
+    },
+    {
+      "id": "brannan-island-sra",
+      "name": "Brannan Island State Recreation Area",
+      "region": "Sacramento-San Joaquin Delta",
+      "status": "ready_for_catalog_verification",
+      "discovery_confidence": "high",
+      "community_sources": [
+        {
+          "url": "https://www.reddit.com/r/bayarea/comments/1e3gu15/looking_for_fishing_spots/",
+          "date": "2024-07-15",
+          "signal": "Bank fishing at Brannan Island/Rio Vista discussed for striped bass; historical discovery evidence only."
+        }
+      ],
+      "official_sources": [
+        {
+          "url": "https://parks.ca.gov/?page_id=487",
+          "verified": "2026-09-21",
+          "signal": "California State Parks confirms bank and boat fishing and identifies striped bass, black bass, bluegill and sturgeon."
+        }
+      ],
+      "next_action": "Promote after entrance/fishing-zone coordinates and current regulation gates are bound."
+    },
+    {
+      "id": "antioch-oakley-regional-shoreline",
+      "name": "Antioch/Oakley Regional Shoreline fishing pier",
+      "region": "Delta / San Joaquin River",
+      "status": "ready_for_catalog_verification",
+      "discovery_confidence": "high",
+      "community_sources": [
+        {
+          "url": "https://www.reddit.com/r/bayarea/comments/1mabd8l/fishing_spots/",
+          "date": "2025-07-27",
+          "signal": "Community report identifies the Antioch Bridge area as productive; historical discovery evidence only."
+        }
+      ],
+      "official_sources": [
+        {
+          "url": "https://www.ebparks.org/parks/antioch-oakley",
+          "verified": "2026-09-21",
+          "signal": "EBRPD confirms a 550-foot, 24-hour fishing pier and seasonal striped bass, catfish, sturgeon, steelhead and salmon."
+        }
+      ],
+      "next_action": "Promote as the specific verified replacement/addition to generic Antioch waterfront entry."
+    },
+    {
+      "id": "big-break-regional-shoreline",
+      "name": "Big Break Regional Shoreline fishing pier",
+      "region": "Delta / Oakley",
+      "status": "ready_for_catalog_verification",
+      "discovery_confidence": "high",
+      "community_sources": [],
+      "official_sources": [
+        {
+          "url": "https://www.ebparks.org/parks/big-break",
+          "verified": "2026-09-21",
+          "signal": "EBRPD describes the 100-foot fishing pier as very popular with local anglers and lists striped/largemouth bass and other species."
+        }
+      ],
+      "next_action": "Promote with current water-quality advisory gate; do not infer fish-consumption safety from recreation status."
+    },
+    {
+      "id": "bay-point-regional-shoreline",
+      "name": "Bay Point Regional Shoreline / McAvoy Harbor",
+      "region": "Suisun Bay",
+      "status": "ready_for_catalog_verification",
+      "discovery_confidence": "high",
+      "community_sources": [],
+      "official_sources": [
+        {
+          "url": "https://www.ebparks.org/parks/bay-point",
+          "verified": "2026-09-21",
+          "signal": "EBRPD confirms shoreline fishing and identifies the mouth of the J-shaped channel as a favorite local fishing spot."
+        }
+      ],
+      "next_action": "Promote after precise public fishing-access coordinate is captured."
+    },
+    {
+      "id": "lake-chabot",
+      "name": "Lake Chabot Regional Park",
+      "region": "East Bay freshwater",
+      "status": "ready_for_catalog_verification",
+      "discovery_confidence": "high",
+      "community_sources": [
+        {
+          "url": "https://www.reddit.com/r/FishingForBeginners/comments/1swrl9c/why_cant_i_catch_anything_in_the_bay_area/",
+          "date": "2026-04-27",
+          "signal": "Recent community discussion describes Lake Chabot as popular but pressured, with practical shore-fishing observations."
+        },
+        {
+          "url": "https://www.reddit.com/r/bayarea/comments/1uhkmyb/anywhere_to_get_into_fishing/",
+          "date": "2026-06-28",
+          "signal": "Recent beginner discussion uses Lake Chabot as a Bay Area fishing reference point."
+        }
+      ],
+      "official_sources": [
+        {
+          "url": "https://www.ebparks.org/parks/lake-chabot",
+          "verified": "2026-09-21",
+          "signal": "EBRPD confirms multiple fishing piers, trout/catfish stocking and bass/crappie."
+        }
+      ],
+      "next_action": "Add freshwater condition profile and stocking-data connector before promotion into live recommendations."
+    },
+    {
+      "id": "coyote-point-recreation-area",
+      "name": "Coyote Point Recreation Area fishing breakwater",
+      "region": "Peninsula / Central Bay",
+      "status": "verify_and_promote",
+      "discovery_confidence": "medium-high",
+      "community_sources": [
+        {
+          "url": "https://www.reddit.com/r/StripedBass/comments/1whcay3/tips_for_sf_bay_area_surf_fishing/",
+          "date": "2026-09-15",
+          "signal": "Very recent community discussion calls Coyote Point popular as stripers shift from the coast into the Bay; unverified bite signal until corroborated."
+        }
+      ],
+      "official_sources": [
+        {
+          "url": "https://www.smcgov.org/parks/coyote-point-recreation-area-reservable-facilities",
+          "verified": "2026-09-21",
+          "signal": "San Mateo County confirms a marina with a fishing breakwater."
+        }
+      ],
+      "next_action": "Verify shoreline/breakwater rules and coordinate; keep the Sep. 15 claim as unverified recent community evidence, not a guaranteed bite."
+    },
+    {
+      "id": "crown-memorial-state-beach",
+      "name": "Robert W. Crown Memorial State Beach",
+      "region": "Central Bay / Alameda",
+      "status": "verify_and_promote",
+      "discovery_confidence": "medium",
+      "community_sources": [
+        {
+          "url": "https://www.reddit.com/r/Fishing/comments/1v5zgbz/bass_fishing_northern_california/",
+          "date": "2026-07-25",
+          "signal": "Recent community discussion identifies Alameda shoreline/channel water as striped-bass shore fishing; not specific enough to count as Crown Beach catch evidence."
+        }
+      ],
+      "official_sources": [
+        {
+          "url": "https://www.ebparks.org/parks/crown-beach",
+          "verified": "2026-09-21",
+          "signal": "EBRPD confirms fishing from shore with a California fishing license."
+        }
+      ],
+      "next_action": "Keep separate from existing Encinal rockwall entry; define distinct fishing-access zones before promotion."
+    },
+    {
+      "id": "point-isabel-regional-shoreline",
+      "name": "Point Isabel Regional Shoreline",
+      "region": "Central Bay / Richmond",
+      "status": "promoted_2026-09-21",
+      "discovery_confidence": "high",
+      "community_sources": [],
+      "official_sources": [
+        {
+          "url": "https://www.ebparks.org/parks/point-isabel",
+          "verified": "2026-09-21",
+          "signal": "EBRPD confirms bay fishing and lists striped bass, perch, jacksmelt, sturgeon, leopard shark and flounder."
+        }
+      ],
+      "next_action": "Already in canonical catalog; collect current community evidence without allowing stale posts to inflate live score."
+    }
+  ]
+}
