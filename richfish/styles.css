@@ -160,3 +160,69 @@ body{background:radial-gradient(circle at 68% 0,#18363a 0,transparent 30%),linea
   .map-nearby-rank strong{font-size:25px}
   .map-nearby-rank small{padding-bottom:2px}
 }
+
+
+/* RICHFISH live fishing call + tide/lunar dashboard */
+.rf-live-section{border-top:1px solid rgba(240,192,106,.22)}
+.rf-live-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+.rf-live-controls label{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.rf-live-controls .map-select{min-width:220px}
+.rf-live-status{color:var(--muted);font-size:13px}
+.rf-live-status.error{color:#f3a4a4}
+.rf-location-meta{margin:4px 0 18px;color:var(--muted);font-size:12px}
+.rf-live-output{display:grid;gap:14px}
+.rf-empty{border:1px dashed var(--line);border-radius:12px;padding:20px;background:rgba(5,25,30,.58)}
+.rf-empty h3{margin:0 0 6px;color:var(--gold2);font-family:Georgia,serif}
+.rf-top-call{display:grid;grid-template-columns:180px minmax(0,1fr);gap:20px;border:1px solid #735a31;border-radius:14px;padding:18px;background:linear-gradient(145deg,rgba(68,45,19,.48),rgba(5,30,35,.96))}
+.rf-rating{border-right:1px solid var(--line);padding-right:18px;display:flex;flex-direction:column;gap:6px;justify-content:center}
+.rf-rating>span:first-child{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:850}
+.rf-rating>strong{font-family:Georgia,serif;font-size:46px;line-height:1;color:var(--gold2)}
+.rf-rating>small{font-size:10px;color:var(--muted);line-height:1.35}
+.fish-meter{display:inline-flex;gap:2px;font-size:17px;letter-spacing:1px;white-space:nowrap}
+.fish-meter i{font-style:normal;color:#586867}
+.rf-call-main h3{margin:4px 0 8px;color:var(--gold2);font:800 28px/1.05 Georgia,serif}
+.rf-call-main>p{margin:7px 0 12px}
+.rf-condition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.rf-condition-grid>div{border:1px solid var(--line);border-radius:10px;padding:10px;background:rgba(5,25,30,.72);display:flex;flex-direction:column;gap:4px}
+.rf-condition-grid small{text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-size:9px;font-weight:850}
+.rf-condition-grid b{font-size:13px;color:#f1e6cc}
+.rf-condition-grid span{font-size:10px;line-height:1.35;color:var(--muted)}
+.rf-tackle-line{margin-top:12px;border-left:3px solid var(--gold);padding:9px 11px;background:rgba(217,154,61,.08);font-size:13px}
+.rf-ranked-list{display:grid;gap:7px}
+.rf-ranked-list article{display:grid;grid-template-columns:35px minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#071f24}
+.rf-ranked-list article>span{font-weight:900;color:var(--gold2)}
+.rf-ranked-list b{display:block}
+.rf-ranked-list small{display:block;margin-top:2px;color:var(--muted);font-size:10px}
+.rf-ranked-list article>strong{font-size:12px;white-space:nowrap}
+.rf-ranked-list .fish-meter{font-size:12px}
+.rf-method-note{font-size:11px;line-height:1.55;color:var(--muted);padding:8px 2px}
+.rf-method-note span{display:block;margin-top:3px}
+.rf-tide-module{margin-top:22px;border:1px solid var(--line);border-radius:14px;padding:16px;background:#061b20}
+.rf-tide-heading{display:flex;justify-content:space-between;gap:20px;align-items:flex-end}
+.rf-tide-heading h3{margin:3px 0 0;color:var(--gold2);font:800 22px/1.1 Georgia,serif}
+.rf-tide-chart{margin-top:12px;border:1px solid rgba(130,164,160,.18);border-radius:10px;padding:8px;background:#04171b;overflow:hidden}
+.tide-chart-empty{padding:30px 12px;text-align:center;color:var(--muted);font-size:12px}
+.tide-svg{display:block;width:100%;height:auto;min-height:170px}
+.tide-svg line{stroke:#47615f;stroke-width:1}
+.tide-svg path{fill:none;stroke:var(--gold2);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.tide-svg text{fill:#9fb5b2;font-size:11px}
+.rf-tide-calendar{display:grid;grid-template-columns:repeat(7,minmax(135px,1fr));gap:7px;margin-top:10px;overflow-x:auto;padding-bottom:4px}
+.tide-day{border:1px solid var(--line);border-radius:9px;padding:9px;background:#082329;min-width:135px}
+.tide-day-head{display:flex;justify-content:space-between;align-items:center;gap:6px;padding-bottom:7px;border-bottom:1px solid var(--line);font-size:11px}
+.tide-day-head span{color:#d9c79d}
+.tide-turns{display:grid;gap:5px;margin-top:7px}
+.tide-turns span{display:grid;grid-template-columns:34px 1fr auto;gap:4px;align-items:center;font-size:10px}
+.tide-turns b{font-size:8px;letter-spacing:.07em;color:var(--muted)}
+.tide-turns small{color:var(--gold2);font-size:9px}
+@media(max-width:800px){
+  .rf-top-call{grid-template-columns:1fr}
+  .rf-rating{border-right:0;border-bottom:1px solid var(--line);padding:0 0 13px}
+  .rf-rating>strong{font-size:36px}
+  .rf-condition-grid{grid-template-columns:1fr 1fr}
+  .rf-tide-heading{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:520px){
+  .rf-condition-grid{grid-template-columns:1fr}
+  .rf-ranked-list article{grid-template-columns:28px 1fr}
+  .rf-ranked-list article>strong{grid-column:2}
+}
