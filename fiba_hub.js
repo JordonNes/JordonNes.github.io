@@ -24,7 +24,7 @@
     }).join("")+'</div>';
   }
   function comp(c){
-    return '<article class="fiba-comp"><div class="comp-head"><div><span class="scope">'+esc(c.scope)+'</span><h3>'+esc(c.name)+'</h3><p>'+esc(c.dates)+' • '+esc(c.host)+'</p></div><span class="status-chip">'+esc(c.status)+'</span></div><div class="phase-line"><b>'+esc(c.phase)+'</b> • '+esc(c.format)+'</div><div class="path-strip">'+(c.progression||[]).map(function(x,i){return '<span>'+(i?'<i>→</i> ':'')+esc(x)+'</span>';}).join("")+'</div>'+groups(c)+games(c)+'</article>';
+    return '<article class="fiba-comp"><div class="comp-head"><div><span class="scope">'+esc(c.scope)+'</span><h3>'+esc(c.name)+'</h3><p>'+esc(c.dates)+' • '+esc(c.host)+'</p></div><span class="status-chip">'+esc(c.status)+'</span></div><div class="phase-line"><b>'+esc(c.phase)+'</b> • '+esc(c.format)+'</div><div class="path-strip">'+(c.progression||[]).map(function(x,i){return '<span>'+(i?'<i>→</i> ':'')+esc(x)+'</span>';}).join("")+'</div>'+(c.sourceURL?'<div class="note"><a href="'+esc(c.sourceURL)+'" target="_blank" rel="noopener">Official FIBA source →</a></div>':'')+groups(c)+games(c)+'</article>';
   }
   function track(key){
     var t=F.tracks&&F.tracks[key]; if(!t)return "";
