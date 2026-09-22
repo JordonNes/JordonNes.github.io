@@ -8,7 +8,7 @@ req(html.includes('data/fiba_competitions.js'),'FIBA.html missing competition re
 req(html.includes('fiba_hub.js'),'FIBA.html missing hub renderer');
 req(html.includes('data/future_market_board.js?v=20260920-offeredpom2'),'FIBA.html missing verified future-market board');
 req(html.includes('data/prediction_registry.js?v=20260920-offeredpom2'),'FIBA.html missing prediction registry');
-req(html.includes('lsi_registry_bridge.js?v=20260920-registryfailover1'),'FIBA.html missing registry bridge');
+req(html.includes('lsi_registry_bridge.js?v=20260920-offeredpom2'),'FIBA.html missing registry bridge');
 const ctx={window:{}};vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(ROOT,'data/fiba_competitions.js'),'utf8'),ctx);
 const F=ctx.window.FIBA_COMPETITIONS;
