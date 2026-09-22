@@ -539,18 +539,17 @@
     const map = [
       ["MLB","ACTIVE TODAY","3 upcoming games • 2 early games closed/live • player props refreshed"],
       ["NCAA_Football","ACTIVE TODAY","Florida A&M at Miami • current player-prop board refreshed"],
-      ["Tennis","ACTIVE TODAY","US Open women’s semifinals • current matchup sweep"],
-      ["FIBA_Women","LIVE / CLOSED","Quarterfinal pregame windows passed • no backfilled props"],
-      ["MMA","NEXT: SEP 12","Noche UFC board • MMA method/round props market-gated"],
+      ["Tennis","ACTIVE TODAY","Professional tennis slate • current matchup sweep"],
+      ["FIBA","ACTIVE / UPCOMING","Men’s Intercontinental Cup live • Women’s WBL Americas next • competition-aware hub"],
+      ["MMA","NEXT EVENT","MMA method/round props market-gated"],
       ["Boxing","NEXT: SEP 12","Garcia-Benn card • exact fight props market-gated"],
       ["WNBA","CALENDAR WATCH","No Sep 10 club game independently verified"],
       ["NFL","ACTIVE TODAY","49ers-Rams • current player props refreshed • final inactive gate"],
       ["NBA","OFFSEASON","No stale game/prop slate"],
       ["NHL","OFFSEASON","No stale game/prop slate"],
-      ["NCAA_Basketball","OFFSEASON","Market activation awaits season slate"],
-      ["FIBA_Men","CALENDAR WATCH","No Sep 5 game verified • next announced event gate"]
+      ["NCAA_Basketball","OFFSEASON","Market activation awaits season slate"]
     ];
-    const file = {MLB:"MLB.html",NCAA_Football:"NCAA_Football.html",Tennis:"Tennis.html",FIBA_Women:"FIBA_Women.html",MMA:"MMA.html",Boxing:"Boxing.html",WNBA:"WNBA.html",NFL:"NFL.html",NBA:"NBA.html",NHL:"NHL.html",NCAA_Basketball:"NCAA_Basketball.html",FIBA_Men:"FIBA_Men.html"};
+    const file = {MLB:"MLB.html",NCAA_Football:"NCAA_Football.html",Tennis:"Tennis.html",FIBA:"FIBA.html",MMA:"MMA.html",Boxing:"Boxing.html",WNBA:"WNBA.html",NFL:"NFL.html",NBA:"NBA.html",NHL:"NHL.html",NCAA_Basketball:"NCAA_Basketball.html"};
     return `<section class="section current-status-section"><div class="section-head"><h2>CURRENT STATUS</h2><span class="muted">${esc(D.updated)}</span></div>${lsiPipelinePanel("")}<div class="quickie-grid">${map.map(([k,state,note])=>{const s=D.sports?.[k]; if(!s) return ""; return `<div class="ticket"><div class="ticket-h ${/ACTIVE/.test(state)?"sns":/WATCH|NEXT/.test(state)?"purple":"normal"}">${s.icon||""} ${esc(k.replace(/_/g," "))} • ${esc(state)}</div><ul><li>${esc(note)}</li><li>LEGZ HOT TOP + JINX Winners + 20 Piece retained</li><li>Approved QC layout retained</li></ul><div class="note"><a href="${file[k]}">Open page →</a></div></div>`;}).join("")}</div></section>`;
   }
   function footer(extra=""){
