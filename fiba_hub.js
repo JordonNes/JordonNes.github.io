@@ -1,6 +1,7 @@
 (function(){
   var D=window.LJ_DATA||{};
   var F=window.FIBA_COMPETITIONS||{};
+  var S=window.FIBA_SCENARIOS||{};
   function esc(v){return String(v==null?"":v).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
   function pd(n){n=Number(n||0);return n>0?"+"+n:String(n);}
   function nav(){
@@ -9,11 +10,26 @@
     if(!has)rows.splice(Math.min(5,rows.length),0,["FIBA","🌍🏀","FIBA.html"]);
     return '<section class="section"><div class="section-head"><h2>SPORTS / LEAGUES</h2><span class="muted">One FIBA hub • separate men’s and women’s tracks</span></div><div class="sport-nav">'+rows.map(function(r){return '<a class="sport-nav-item" href="'+esc(r[2])+'"><span>'+esc(r[1])+'</span><b>'+esc(r[0])+'</b></a>';}).join("")+'</div></section>';
   }
+  function scenarioFor(compId,group,team){
+    return (((S.competitions||{})[compId]||{}).groups||{})[group]?.teams?.[team]||null;
+  }
+  function tone(v){
+    v=String(v||"").toLowerCase();
+    if(/elimination|must win|eliminated/.test(v))return "danger";
+    if(/high|clinch/.test(v))return "high";
+    if(/margin/.test(v))return "margin";
+    if(/secured/.test(v))return "secured";
+    return "normal";
+  }
   function groups(c){
     if(!c.groups)return "";
     return '<div class="fiba-groups">'+Object.keys(c.groups).map(function(g){
       return '<div class="fiba-group"><h4>GROUP '+esc(g)+'</h4>'+c.groups[g].map(function(t,i){
-        return '<div class="stand-row"><span>'+(i+1)+'. '+esc(t.team)+'</span><span>'+esc(t.w)+'-'+esc(t.l)+' • PD '+esc(pd(t.pd))+'</span></div>';
+        var a=scenarioFor(c.id,g,t.team),next=a&&a.nextGame?('Next: '+a.nextGame.opponent+' • '+a.nextGame.date):'Group schedule complete';
+        var routes=a&&a.possibleRoutes&&a.possibleRoutes.length?a.possibleRoutes.join(' / '):'—';
+        var flags=a&&a.flags&&a.flags.length?'<div class="scenario-flags">'+a.flags.map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div>':'';
+        var scenario=a?'<div class="scenario-detail"><div class="scenario-line"><span class="scenario-state '+tone(a.state)+'">'+esc(a.state)+'</span><span class="leverage '+tone(a.leverage)+'">JINX '+esc(a.leverage)+' LEVERAGE</span></div><div class="scenario-next">'+esc(next)+' • Routes: '+esc(routes)+'</div><div class="scenario-reason">'+esc(a.reason)+'</div>'+flags+'</div>':'';
+        return '<div class="stand-row scenario-row"><div class="standing-main"><span>'+(i+1)+'. '+esc(t.team)+'</span><span>'+esc(t.w)+'-'+esc(t.l)+' • PD '+esc(pd(t.pd))+'</span></div>'+scenario+'</div>';
       }).join("")+'</div>';
     }).join("")+'</div>';
   }
@@ -24,7 +40,8 @@
     }).join("")+'</div>';
   }
   function comp(c){
-    return '<article class="fiba-comp"><div class="comp-head"><div><span class="scope">'+esc(c.scope)+'</span><h3>'+esc(c.name)+'</h3><p>'+esc(c.dates)+' • '+esc(c.host)+'</p></div><span class="status-chip">'+esc(c.status)+'</span></div><div class="phase-line"><b>'+esc(c.phase)+'</b> • '+esc(c.format)+'</div><div class="path-strip">'+(c.progression||[]).map(function(x,i){return '<span>'+(i?'<i>→</i> ':'')+esc(x)+'</span>';}).join("")+'</div>'+(c.sourceURL?'<div class="note"><a href="'+esc(c.sourceURL)+'" target="_blank" rel="noopener">Official FIBA source →</a></div>':'')+groups(c)+games(c)+'</article>';
+    var sc=(S.competitions||{})[c.id]||{},scenarioNote=sc.note?'<div class="scenario-engine-note"><b>JINX Scenario Engine:</b> '+esc(sc.note)+'</div>':'';
+    return '<article class="fiba-comp"><div class="comp-head"><div><span class="scope">'+esc(c.scope)+'</span><h3>'+esc(c.name)+'</h3><p>'+esc(c.dates)+' • '+esc(c.host)+'</p></div><span class="status-chip">'+esc(c.status)+'</span></div><div class="phase-line"><b>'+esc(c.phase)+'</b> • '+esc(c.format)+'</div><div class="path-strip">'+(c.progression||[]).map(function(x,i){return '<span>'+(i?'<i>→</i> ':'')+esc(x)+'</span>';}).join("")+'</div>'+scenarioNote+(c.sourceURL?'<div class="note"><a href="'+esc(c.sourceURL)+'" target="_blank" rel="noopener">Official FIBA source →</a></div>':'')+groups(c)+games(c)+'</article>';
   }
   function track(key){
     var t=F.tracks&&F.tracks[key]; if(!t)return "";
@@ -57,7 +74,7 @@
   }
   document.title="LEGZ & JINX — FIBA";
   var app=document.getElementById("app");
-  app.innerHTML='<div class="page sport-page sport-fiba"><div class="topbar"><a class="lj-mini" href="LJ_index.html">L&amp;J</a><div class="meta">FIBA COMPETITION INTELLIGENCE • '+esc(D.updated||"CURRENT")+'</div></div><section class="hero fiba-hero"><div class="kicker">🌍🏀 LEGZ &amp; JINX — FIBA</div><h1>FIBA DAILY PREDICTIONS</h1><p>One competition-aware FIBA hub with independent Men’s and Women’s lanes. Club tournaments, national-team qualifiers, advancement math, verified POMs and L&J publication logic remain separated by competition.</p><div class="chips"><a class="chip gold" href="#men">MEN’S FIBA</a><a class="chip purple" href="#women">WOMEN’S FIBA</a><a class="chip green" href="#world-cup-road">WORLD CUP ROAD</a></div><div class="actions"><a class="action" href="LJ_index.html">← Daily Home</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a></div></section>'+nav()+'<section class="section"><div class="section-head"><h2>FIBA COMMAND CENTER</h2><span class="muted">Competition-aware, not league-flattened</span></div><div class="command-grid"><div><b>MEN</b><p>Current club centerpiece: FIBA Intercontinental Cup. National-team lane: 2027 World Cup Qualifiers.</p></div><div><b>WOMEN</b><p>Women’s club competitions are tracked separately, including WBL Americas and WBL Asia. National-team competition remains separate from club play.</p></div><div><b>JINX TOURNAMENT LEVERAGE</b><p>Clinching, elimination, margin/tiebreak pressure and carried records become context for LJPC—not replacement evidence.</p></div></div></section>'+track("men")+track("women")+legacyBoard()+'<section class="section" id="world-cup-road"><div class="section-head"><h2>ROAD TO THE FIBA WORLD CUP</h2><span class="muted">Men and women use different qualification systems</span></div><div class="wc-flow-note"><b>LSI rule:</b> competition stage, carried records, qualification position, point differential and elimination/clinching state become model context. They do not replace player/team market evidence.</div>'+menPath()+womenPath()+'</section><footer class="footer">FIBA hub • legacy FIBA_Men/FIBA_Women URLs preserved as compatibility redirects</footer></div>';
+  app.innerHTML='<div class="page sport-page sport-fiba"><div class="topbar"><a class="lj-mini" href="LJ_index.html">L&amp;J</a><div class="meta">FIBA COMPETITION INTELLIGENCE • '+esc(D.updated||"CURRENT")+'</div></div><section class="hero fiba-hero"><div class="kicker">🌍🏀 LEGZ &amp; JINX — FIBA</div><h1>FIBA DAILY PREDICTIONS</h1><p>One competition-aware FIBA hub with independent Men’s and Women’s lanes. Club tournaments, national-team qualifiers, advancement math, verified POMs and L&J publication logic remain separated by competition.</p><div class="chips"><a class="chip gold" href="#men">MEN’S FIBA</a><a class="chip purple" href="#women">WOMEN’S FIBA</a><a class="chip green" href="#world-cup-road">WORLD CUP ROAD</a></div><div class="actions"><a class="action" href="LJ_index.html">← Daily Home</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a></div></section>'+nav()+'<section class="section"><div class="section-head"><h2>FIBA COMMAND CENTER</h2><span class="muted">Competition-aware, not league-flattened</span></div><div class="command-grid"><div><b>MEN</b><p>Current club centerpiece: FIBA Intercontinental Cup. National-team lane: 2027 World Cup Qualifiers.</p></div><div><b>WOMEN</b><p>Women’s club competitions are tracked separately, including WBL Americas and WBL Asia. National-team competition remains separate from club play.</p></div><div><b>JINX TOURNAMENT LEVERAGE</b><p>Automated scenario enumeration classifies CLINCHED / MUST WIN / CONTROLS OWN PATH / NEEDS HELP states and identifies margin-sensitive tiebreak paths. These signals inform JINX context but never replace verified POM evidence.</p></div></div></section>'+track("men")+track("women")+legacyBoard()+'<section class="section" id="world-cup-road"><div class="section-head"><h2>ROAD TO THE FIBA WORLD CUP</h2><span class="muted">Men and women use different qualification systems</span></div><div class="wc-flow-note"><b>LSI rule:</b> competition stage, carried records, qualification position, point differential and elimination/clinching state become model context. They do not replace player/team market evidence.</div>'+menPath()+womenPath()+'</section><footer class="footer">FIBA hub • legacy FIBA_Men/FIBA_Women URLs preserved as compatibility redirects</footer></div>';
   var req=(new URLSearchParams(location.search).get("track")||"").toLowerCase();
   if(req==="men"||req==="women"){var el=document.getElementById(req);if(el)setTimeout(function(){el.scrollIntoView({behavior:"smooth",block:"start"});},50);}
 })();
