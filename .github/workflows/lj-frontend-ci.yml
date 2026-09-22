@@ -16,8 +16,12 @@ on:
       - 'NHL.html'
       - 'NCAA_Football.html'
       - 'NCAA_Basketball.html'
+      - 'FIBA.html'
       - 'FIBA_Men.html'
       - 'FIBA_Women.html'
+      - 'fiba_hub.js'
+      - 'data/fiba_competitions.js'
+      - 'scripts/fiba_hub_audit.js'
       - 'MMA.html'
       - 'Boxing.html'
       - 'Tennis.html'
@@ -48,7 +52,11 @@ jobs:
           node --check lsi_registry_bridge.js
           node --check scripts/frontend_home_audit.js
           node --check scripts/qc_publication_audit.js
+          node --check fiba_hub.js
+          node --check data/fiba_competitions.js
+          node --check scripts/fiba_hub_audit.js
       - name: LJ_index + QC presentation audit
         run: |
           node scripts/frontend_home_audit.js
           node scripts/qc_publication_audit.js
+          node scripts/fiba_hub_audit.js
