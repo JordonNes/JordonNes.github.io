@@ -20,8 +20,10 @@ on:
       - 'FIBA_Men.html'
       - 'FIBA_Women.html'
       - 'fiba_hub.js'
+      - 'fiba_scenario_engine.js'
       - 'data/fiba_competitions.js'
       - 'scripts/fiba_hub_audit.js'
+      - 'scripts/fiba_scenario_test.js'
       - 'MMA.html'
       - 'Boxing.html'
       - 'Tennis.html'
@@ -53,10 +55,13 @@ jobs:
           node --check scripts/frontend_home_audit.js
           node --check scripts/qc_publication_audit.js
           node --check fiba_hub.js
+          node --check fiba_scenario_engine.js
           node --check data/fiba_competitions.js
           node --check scripts/fiba_hub_audit.js
+          node --check scripts/fiba_scenario_test.js
       - name: LJ_index + QC presentation audit
         run: |
           node scripts/frontend_home_audit.js
           node scripts/qc_publication_audit.js
           node scripts/fiba_hub_audit.js
+          node scripts/fiba_scenario_test.js
