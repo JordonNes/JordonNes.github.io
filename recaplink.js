@@ -5,7 +5,7 @@
 (() => {
   const labels = {
     MLB:"MLB", NFL:"NFL", NBA:"NBA", WNBA:"WNBA", NHL:"NHL",
-    FIBA_Men:"FIBA Men", FIBA_Women:"FIBA Women",
+    FIBA:"FIBA", FIBA_Men:"FIBA Men", FIBA_Women:"FIBA Women",
     NCAA_Football:"CFB", NCAA_Basketball:"CBB",
     MMA:"MMA", Boxing:"Boxing", Tennis:"Tennis",
     LJ_index:"All-Sports Daily Predictions",
@@ -21,6 +21,7 @@
     NBA:`assets/headers/dp-nba.png?v=${v}`,
     WNBA:`assets/headers/dp-wnba.png?v=${v}`,
     NHL:`assets/headers/dp-nhl.png?v=${v}`,
+    FIBA:`assets/headers/dp-fiba.png?v=${v}`,
     FIBA_Men:`assets/headers/dp-fiba.png?v=${v}`,
     FIBA_Women:`assets/headers/dp-fiba.png?v=${v}`,
     NCAA_Football:`assets/headers/dp-ncaa-football.png?v=${v}`,
@@ -179,7 +180,7 @@
     document.head.appendChild(style);
   }
 
-  const sportPages = new Set(["MLB","NFL","NBA","WNBA","NHL","FIBA_Men","FIBA_Women","NCAA_Football","NCAA_Basketball","MMA","Boxing","Tennis"]);
+  const sportPages = new Set(["MLB","NFL","NBA","WNBA","NHL","FIBA","FIBA_Men","FIBA_Women","NCAA_Football","NCAA_Basketball","MMA","Boxing","Tennis"]);
 
   const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
