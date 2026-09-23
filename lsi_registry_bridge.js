@@ -908,7 +908,7 @@
       if(boardQc._propEvaluatedCount!==undefined) prior._propEvaluatedCount=boardQc._propEvaluatedCount;
       if(boardQc._propAwaitingCount!==undefined) prior._propAwaitingCount=boardQc._propAwaitingCount;
       if(boardQc._winnerMarketBaseline) prior._winnerMarketBaseline=boardQc._winnerMarketBaseline;
-      if(!prior.winner && boardQc.winner){ prior.winner=boardQc.winner; prior.conf=boardQc.conf; prior._winnerMarketBaseline=boardQc._winnerMarketBaseline||""; prior._winnerProvisional=boardQc._winnerProvisional; }
+      if(boardQc.winner){ prior.winner=boardQc.winner; prior.conf=boardQc.conf; prior._winnerMarketBaseline=boardQc._winnerMarketBaseline||""; prior._winnerProvisional=boardQc._winnerProvisional; }
       if((!prior.market || /WATCH|MARKET NOT/i.test(String(prior.market))) && boardQc.market) prior.market=boardQc.market;
       if(boardQc.foot && (!prior.foot || /baseline|continues/i.test(String(prior.foot)))) prior.foot=boardQc.foot;
       return prior;
@@ -971,15 +971,10 @@
         ''
       ]);
     }
-    if(qcWinners.length){
-      const merged=[...(s.winners||[])], idx=new Map(merged.map((r,i)=>[winnerKey(r),i]));
-      for(const row of qcWinners){
-        const k=winnerKey(row);
-        if(k&&idx.has(k)) merged[idx.get(k)]=row;
-        else { if(k) idx.set(k,merged.length); merged.push(row); }
-      }
-      s.winners=merged;
-    }
+    // The visible Game Winner board is derived only from the deduplicated current
+    // QC set. Earlier registry/static rows remain provenance, not an alternate
+    // publication path that can duplicate or override the current matchup.
+    s.winners=qcWinners;
   });
 
   window.LJ_QC_PROP_STATUS={
