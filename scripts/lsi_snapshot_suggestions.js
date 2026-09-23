@@ -22,7 +22,8 @@ const PAGES={
 const SAFE=new Set([
   'ljdata.js','nflrefresh.js','ncaarefresh.js','tennisrefresh.js','dailyrefresh.js',
   'morningrefresh.js','middayrefresh.js','lsi_native_refresh.js',
-  'data/future_market_board.js','data/prediction_registry.js','lsi_registry_bridge.js'
+  'data/future_market_board.js','data/prediction_registry.js','lsi_registry_bridge.js',
+  'sep19_morning_refresh.js','sep19_midday_guard.js'
 ]);
 const NON_ACTION=/WATCH|NO BET|^PASS\b|DATA-LIMITED|MARKET NOT|UNSUPPORTED|VERIFY LIVE LINE|AWAITING L&J EVALUATION|MARKET BASELINE/i;
 
