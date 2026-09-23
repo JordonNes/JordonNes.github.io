@@ -1,4 +1,4 @@
-name: LSI Near-Event Market Watch
+name: LSI Near-Event Gate
 
 on:
   workflow_dispatch:
@@ -13,16 +13,45 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  watch:
+  gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v7
         with: {ref: master, fetch-depth: 0}
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
 
-      - name: Refresh Kalshi current offered POM inventory
+      - name: Decide which leagues and events are actually due
+        id: schedule
+        shell: bash
+        run: |
+          python scripts/lsi_league_scheduler.py
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          d=json.load(open('data/lsi_league_schedule.json',encoding='utf-8'))
+          print('has_work=' + ('true' if d.get('has_work') else 'false'))
+          print('due_leagues=' + ','.join(d.get('due_leagues') or []))
+          print('propline_leagues=' + ','.join(d.get('propline_leagues') or []))
+          print('odds_api_leagues=' + ','.join(d.get('odds_api_leagues') or []))
+          PY
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          d=json.load(open('data/lsi_league_schedule.json',encoding='utf-8'))
+          print('## LJDP hourly decision gate')
+          print('Due leagues: ' + (', '.join(d.get('due_leagues') or []) or 'none'))
+          for row in d.get('league_work') or []:
+              print(f"- **{row['league']}**: {', '.join(row.get('reasons') or [])}")
+              for e in row.get('events') or []:
+                  print(f"  - {e.get('away')} @ {e.get('home')} — {e.get('reason')} — {e.get('start_pt')}")
+          PY
+
+      - name: No-op when no league or event is due
+        if: steps.schedule.outputs.has_work != 'true'
+        run: echo "No market collection or L&J recomputation due this hour."
+
+      - name: Refresh Kalshi offered-POM inventory only when work is due
+        if: steps.schedule.outputs.has_work == 'true'
         continue-on-error: true
         env:
           KALSHI_MAX_PAGES: '4'
@@ -31,63 +60,95 @@ jobs:
           KALSHI_HTTP_TIMEOUT_SEC: '15'
         run: python scripts/kalshi_public_adapter.py
 
-      - name: Refresh optional PropLine near-event overlay
+      - name: Refresh due PropLine leagues only
+        if: steps.schedule.outputs.propline_leagues != ''
         continue-on-error: true
         env:
           PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
           PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
           PROPLINE_HTTP_TIMEOUT_SEC: '8'
           PROPLINE_HTTP_ATTEMPTS: '1'
-          PROPLINE_LEAGUES: 'NFL,NCAA_Football,MLB,WNBA,NHL'
-          PROPLINE_MAX_EVENT_REFRESHES_PER_RUN: '8'
-          PROPLINE_MAX_REFRESH_PER_LEAGUE: '2'
+          PROPLINE_LEAGUES: ${{ steps.schedule.outputs.propline_leagues }}
+          PROPLINE_MAX_EVENT_REFRESHES_PER_RUN: '18'
+          PROPLINE_MAX_REFRESH_PER_LEAGUE: '4'
           PROPLINE_RATE_LIMIT_COOLDOWN_MIN: '90'
+          PROPLINE_MAX_PROP_MARKETS_PER_EVENT: '10'
         run: python scripts/propline_adapter.py
 
-      - name: Refresh NFL player props when due
+      - name: Refresh due coverage-gap player props
+        if: steps.schedule.outputs.odds_api_leagues != ''
         continue-on-error: true
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY || vars.ODDS_API_KEY || secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY }}
           THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY || secrets.ODDS_API_KEY || vars.ODDS_API_KEY }}
           ENABLE_THE_ODDS_API: ${{ vars.ENABLE_THE_ODDS_API || 'false' }}
-          ODDS_API_LEAGUES: 'NFL'
+          ODDS_API_LEAGUES: ${{ steps.schedule.outputs.odds_api_leagues }}
           ODDS_API_LOOKAHEAD_HOURS: '96'
-          ODDS_API_MAX_EVENTS_PER_RUN: '16'
+          ODDS_API_MAX_EVENTS_PER_RUN: '24'
           ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
 
-      - name: Refresh near-event visual assets
+      - name: Refresh due context and visual references
+        if: steps.schedule.outputs.has_work == 'true'
         continue-on-error: true
-        run: python scripts/lsi_visual_registry.py
+        env:
+          ROTOWIRE_API_KEY: ${{ secrets.ROTOWIRE_API_KEY }}
+        run: |
+          python scripts/rotowire_adapter.py
+          python scripts/lsi_visual_registry.py
 
-      - name: Refresh persistent registry and local spectrum cache
+      - name: Refresh persistent registry and local Spectrum cache
+        if: steps.schedule.outputs.has_work == 'true'
         run: python scripts/lsi_history_warehouse.py
 
-      - name: Recalculate individualized LJPC
+      - name: Evaluate collected POMs with material-hash reuse
+        if: steps.schedule.outputs.has_work == 'true'
+        env:
+          LSI_FAST_RUNTIME: 'true'
         run: python scripts/legz_statistical_spectrum.py
 
-      - name: Publish rolling market board
-        run: python scripts/lsi_publish_future_board.py
+      - name: Rebuild Prediction Registry and rolling market board
+        if: steps.schedule.outputs.has_work == 'true'
+        run: |
+          python scripts/lsi_pipeline.py
+          python scripts/lsi_publish_future_board.py
+
+      - name: Refresh Game Winner Spectrum only for due leagues
+        if: steps.schedule.outputs.has_work == 'true'
+        env:
+          LSI_GAME_WINNER_LEAGUES: ${{ steps.schedule.outputs.due_leagues }}
+        run: python scripts/lsi_game_winner_spectrum.py
 
       - name: Measure T-48 coverage and readiness
+        if: steps.schedule.outputs.has_work == 'true'
         run: |
           python scripts/lsi_t48_coverage.py
           python scripts/lsi_readiness_report.py
 
+      - name: Validate per-game QC publication
+        if: steps.schedule.outputs.has_work == 'true'
+        run: node scripts/qc_publication_audit.js
+
       - name: Snapshot immutable website POM and Game Winner suggestions
+        if: steps.schedule.outputs.has_work == 'true'
         run: node scripts/lsi_snapshot_suggestions.js
 
+      - name: Acknowledge completed scheduler gates
+        if: steps.schedule.outputs.has_work == 'true'
+        run: python scripts/lsi_league_scheduler.py --ack data/lsi_league_schedule.json
+
       - name: Commit changed near-event intelligence
+        if: steps.schedule.outputs.has_work == 'true'
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/qc_prop_board.json data/future_market_board.json data/future_market_board.js data/market_history.csv data/kalshi_state.json data/propline_intelligence.json data/propline_state.json data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/lsi_readiness.json data/suggestion_ledger.json 2>/dev/null || true
+          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_intelligence.json data/propline_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json 2>/dev/null || true
           if git diff --cached --quiet; then
-            echo 'No near-event intelligence changes.'
+            echo 'Due work produced no durable intelligence changes.'
             exit 0
           fi
-          git commit -m "LSI hourly near-event market watch"
+          git commit -m "LSI gated near-event refresh"
           for attempt in 1 2 3 4 5; do
             git pull --rebase --autostash origin master
             if git push origin master; then exit 0; fi
