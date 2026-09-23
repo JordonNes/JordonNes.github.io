@@ -52,7 +52,7 @@ permissions:
 
 concurrency:
   group: lsi-market-writer
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   clock:
@@ -117,6 +117,21 @@ jobs:
         env:
           CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
         run: python scripts/lsi_ingest.py
+      - name: Resolve league/event work due at this checkpoint
+        id: league_schedule
+        shell: bash
+        run: |
+          python scripts/lsi_league_scheduler.py
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          d=json.load(open('data/lsi_league_schedule.json',encoding='utf-8'))
+          print('has_work=' + ('true' if d.get('has_work') else 'false'))
+          print('due_leagues=' + ','.join(d.get('due_leagues') or []))
+          print('propline_leagues=' + ','.join(d.get('propline_leagues') or []))
+          print('odds_api_leagues=' + ','.join(d.get('odds_api_leagues') or []))
+          PY
+      - name: Verify event-aware scheduling rules
+        run: python scripts/test_lsi_league_scheduler.py
       - name: Preload persistent season schedules and roster identity
         continue-on-error: true
         run: python scripts/lsi_season_preload.py
@@ -128,6 +143,7 @@ jobs:
           ROTOWIRE_API_KEY: ${{ secrets.ROTOWIRE_API_KEY }}
         run: python scripts/rotowire_adapter.py
       - name: Kalshi public offered-POM acquisition — primary free current market
+        if: steps.league_schedule.outputs.has_work == 'true'
         continue-on-error: true
         env:
           KALSHI_MAX_PAGES: '4'
@@ -136,6 +152,7 @@ jobs:
           KALSHI_HTTP_TIMEOUT_SEC: '15'
         run: python scripts/kalshi_public_adapter.py
       - name: PropLine Level-B prop acquisition — optional overlay
+        if: steps.league_schedule.outputs.propline_leagues != ''
         continue-on-error: true
         env:
           PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
@@ -143,7 +160,7 @@ jobs:
           PROPLINE_ANALYTICS_ENABLED: ${{ vars.PROPLINE_ANALYTICS_ENABLED }}
           PROPLINE_HTTP_TIMEOUT_SEC: '8'
           PROPLINE_HTTP_ATTEMPTS: '1'
-          PROPLINE_LEAGUES: 'NFL,NCAA_Football,MLB,NBA,WNBA,NHL,NCAA_Basketball,Tennis'
+          PROPLINE_LEAGUES: ${{ steps.league_schedule.outputs.propline_leagues }}
           PROPLINE_MAX_EVENT_REFRESHES_PER_RUN: '16'
           PROPLINE_MAX_REFRESH_PER_LEAGUE: '3'
           PROPLINE_RATE_LIMIT_COOLDOWN_MIN: '90'
@@ -160,14 +177,16 @@ jobs:
           ODDSPAPI_BOOKMAKERS: ${{ vars.ODDSPAPI_BOOKMAKERS }}
         run: python scripts/oddspapi_history_adapter.py
       - name: NHL authoritative enrichment
+        if: contains(steps.league_schedule.outputs.due_leagues, 'NHL')
         run: python scripts/nhl_adapter.py
       - name: Coverage-gap player-prop fallback — The Odds API
+        if: steps.league_schedule.outputs.odds_api_leagues != ''
         continue-on-error: true
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY || vars.ODDS_API_KEY || secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY }}
           THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY || vars.THE_ODDS_API_KEY || secrets.ODDS_API_KEY || vars.ODDS_API_KEY }}
           ENABLE_THE_ODDS_API: ${{ vars.ENABLE_THE_ODDS_API || 'false' }}
-          ODDS_API_LEAGUES: 'NFL,NCAA_Football,MLB,NBA,WNBA,NHL,NCAA_Basketball'
+          ODDS_API_LEAGUES: ${{ steps.league_schedule.outputs.odds_api_leagues }}
           ODDS_API_LOOKAHEAD_HOURS: '96'
           ODDS_API_MAX_EVENTS_PER_RUN: '24'
           ODDS_API_PROP_TTL_MIN: '240'
@@ -179,12 +198,16 @@ jobs:
         if: needs.clock.outputs.stage == 'MARKET_HISTORY' || needs.clock.outputs.stage == 'MASTER_PUBLICATION'
         run: python scripts/lsi_history_warehouse.py
       - name: Merge verified override evidence before Spectrum
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: python scripts/lsi_apply_verified_overrides.py
       - name: LEGZ Synthetic Book — internal research shadow only
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: python scripts/legz_synthetic_book.py
       - name: Validate forecast-first player-prop ladder
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: python scripts/legz_prop_ladder_test.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
+        if: steps.league_schedule.outputs.has_work == 'true'
         env:
           LSI_FAST_RUNTIME: ${{ needs.clock.outputs.stage == 'DISCOVERY' && 'true' || 'false' }}
         run: |
@@ -215,23 +238,36 @@ jobs:
           print(f'Spectrum v3 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence; durable_live_states={len(ids)}; size_mb={size/1024/1024:.2f}.')
           PY
       - name: T-48 individualized LJPC coverage and readiness report
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: |
           python scripts/lsi_t48_coverage.py
           python scripts/lsi_readiness_report.py
       - name: Build and validate Prediction Registry
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: python scripts/lsi_pipeline.py
       - name: Publish rolling 0-7 day L&J future market board
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: python scripts/lsi_publish_future_board.py
       - name: LEGZ Game Winner Spectrum — independent performance + market evidence
+        if: steps.league_schedule.outputs.has_work == 'true'
+        env:
+          LSI_GAME_WINNER_LEAGUES: ${{ steps.league_schedule.outputs.due_leagues }}
         run: python scripts/lsi_game_winner_spectrum.py
       - name: Per-game QC player-prop completeness audit
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: node scripts/qc_publication_audit.js
       - name: Snapshot immutable published Quickie tickets
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: node scripts/lsi_snapshot_tickets.js
       - name: Snapshot immutable website POM and Game Winner suggestions
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: node scripts/lsi_snapshot_suggestions.js
       - name: OpenAI LSI router — dry run and usage estimate
+        if: steps.league_schedule.outputs.has_work == 'true'
         run: python scripts/lsi_openai_router.py --dry-run
+      - name: Acknowledge completed league/event gates
+        if: steps.league_schedule.outputs.has_work == 'true'
+        run: python scripts/lsi_league_scheduler.py --ack data/lsi_league_schedule.json
       - name: Market Availability Monitor
         shell: bash
         run: |
@@ -314,7 +350,7 @@ jobs:
         run: |
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
           outputs=(
-            data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json
+            data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json data/lsi_league_scheduler_state.json
             data/current_game_moneylines.json data/market_history_delta.csv data/event_inventory.csv
             data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json
             data/rotowire_context.csv data/context_registry.json data/kalshi_state.json data/propline_intelligence.json
