@@ -317,35 +317,25 @@ def main():
         start=parse(e.get("commence_time"))
         if not start or start<=NOW or start>horizon_for(e.get("league")):continue
         best={}
+        pending_prop_count=0
         for raw in e.get("props") or []:
             if not raw.get("participant") or not raw.get("market"):continue
             p=canonical_prop(raw)
+            # Public PLAYER_PROP inventory is formal L&J output only. Fresh market
+            # evidence without a completed forecast remains internal in qc_prop_board
+            # and coverage telemetry; it may not appear as an actionable future POM.
+            if p.get("evaluation_status")!="LJ_EVALUATED" or p.get("ljpc") is None:
+                pending_prop_count+=1
+                continue
+            if p.get("market_verified") is not True or str(p.get("market_verification") or "").upper()!="EXACT_MARKET_MATCH":
+                continue
+            if not p.get("evaluation_id") or not p.get("source_snapshot_ids"):
+                continue
             key=(str(p["participant"]).strip().lower(),str(p["market_key"]).strip().lower())
             prior=best.get(key)
-            # Preserve fresh, externally offered exact-market POMs while Spectrum
-            # evaluation is catching up. These rows are explicitly provisional;
-            # they are never synthetic and never reuse stale thresholds.
-            if p["ljpc"] is None:
-                baseline=p.get("market_baseline_probability")
-                try:
-                    baseline=float(baseline) if baseline not in (None,"") else None
-                except (TypeError,ValueError):
-                    baseline=None
-                if p.get("market_verified") and baseline is not None:
-                    p["provisional_probability"]=round(max(0.0,min(100.0,baseline)),1)
-                    p["evaluation_status"]="PROVISIONAL_MARKET_BASELINE"
-                    p["model"]="MARKET BASELINE — PROVISIONAL L&J PENDING"
-                else:
-                    continue
-            # Canonical identity is independent of confidence. Prefer a formal
-            # LJ_EVALUATED row over a provisional market baseline for the same POM.
-            rank=(1 if p.get("evaluation_status")=="LJ_EVALUATED" else 0,
-                  float(p.get("ljpc") or p.get("provisional_probability") or 0))
-            prior_rank=(1 if prior and prior.get("evaluation_status")=="LJ_EVALUATED" else 0,
-                        float((prior or {}).get("ljpc") or (prior or {}).get("provisional_probability") or 0))
-            if prior is None or rank>prior_rank:
+            if prior is None or float(p.get("ljpc") or 0)>float(prior.get("ljpc") or 0):
                 best[key]=p
-        props=sorted(best.values(),key=lambda x:(-float(x.get("ljpc") or x.get("provisional_probability") or 0),str(x["participant"]),str(x["market"])))
+        props=sorted(best.values(),key=lambda x:(-float(x.get("ljpc") or 0),str(x["participant"]),str(x["market"])))
         events.append({
           "league":e.get("league"),"sport_key":e.get("sport_key"),
           "source_event_id":e.get("source_event_id"),"propline_event_id":e.get("propline_event_id"),
@@ -353,6 +343,7 @@ def main():
           "away_aliases":e.get("away_aliases") or [],"home_aliases":e.get("home_aliases") or [],
           "source":e.get("source"),"sweep_status":e.get("sweep_status"),
           "unique_players":len({str(x["participant"]).lower() for x in props}),
+          "pending_prop_count":pending_prop_count,
           "props":props,
           "game_markets":game_markets_for_event(e,game_markets)
         })
@@ -362,7 +353,7 @@ def main():
       "generated_at_utc":NOW.isoformat(),
       "default_horizon_days":7,
       "nfl_rollover_policy":"Tuesday-Monday publication week. Next-week inventory may stage Monday after 12:00 PT, but public NFL per-game QCs do not roll until Tuesday 00:00 PT.",
-      "actionable_policy":"Only not-yet-started events may expose props or odds. Player-prop LJPC requires completed L&J evaluation; GAME_ML market probability remains market evidence until independently evaluated.",
+      "actionable_policy":"Only not-yet-started events may expose props or odds. Public PLAYER_PROP rows require exact-market verification plus completed L&J evaluation and LJPC. Pending market evidence remains internal. GAME_ML market probability remains secondary evidence until independently evaluated.",
       "events":events,
     }
     live_rows=[]
