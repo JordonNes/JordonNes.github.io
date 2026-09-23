@@ -79,6 +79,17 @@ PLAYER_PROP, GAME_ML, SPREAD, GAME_TOTAL, TEAM_TOTAL. The generator must never i
 ### QG — Quickie Generator
 Consumes PR/current DP collection only. Styles: SNS, NORMAL, AGGRESSIVE, JINX BEST BETS.
 
+### PSL — Published Suggestion Ledger
+`data/suggestion_ledger.json` is the immutable record of what L&J actually suggested on the LJDP website. A POM becomes part of the accuracy population when it is displayed on a sport page, not merely when it is evaluated or available in the internal pool.
+
+Rules:
+- removal from a later page state never deletes the earlier suggestion;
+- a materially updated displayed version is appended and may reference the prior version with `supersedes_suggestion_id`;
+- the same exact suggestion shown in multiple website sections is one suggestion version with multiple `placements`, not multiple accuracy observations;
+- Game Winners are recorded as `GAME_ML` suggestions under the same immutable rule;
+- `outcome_key` supports non-duplicated outcome analysis, while the full suggestion ledger supports version-level publication accuracy;
+- `data/suggestion_accuracy.json` summarizes settled performance by day, sport, game, player, market class, prop market and publication placement.
+
 ## Operational layers
 1. Source Acquisition: official schedules, availability, lineups, StatsHawk, sportsbook/DFS/prediction-market inventory, reputable reporting, weather and other verified context.
 2. LHW: preserve timestamped raw/normalized observations and results.
