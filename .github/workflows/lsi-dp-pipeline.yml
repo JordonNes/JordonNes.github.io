@@ -22,6 +22,7 @@ on:
       - 'scripts/oddspapi_history_adapter.py'
       - 'scripts/lsi_pipeline.py'
       - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/legz_prop_ladder_test.py'
       - 'scripts/legz_synthetic_book.py'
       - 'scripts/lsi_history_warehouse.py'
       - 'scripts/lsi_market_history_delta.py'
@@ -180,6 +181,8 @@ jobs:
         run: python scripts/lsi_apply_verified_overrides.py
       - name: LEGZ Synthetic Book — internal research shadow only
         run: python scripts/legz_synthetic_book.py
+      - name: Validate forecast-first player-prop ladder
+        run: python scripts/legz_prop_ladder_test.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
         env:
           LSI_FAST_RUNTIME: ${{ needs.clock.outputs.stage == 'DISCOVERY' && 'true' || 'false' }}
