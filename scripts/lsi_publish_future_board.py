@@ -30,6 +30,10 @@ def parse(v):
     try:return datetime.fromisoformat(str(v).replace("Z","+00:00")).astimezone(timezone.utc)
     except ValueError:return None
 
+def number(v):
+    try:return float(v)
+    except (TypeError,ValueError):return None
+
 def implied(price):
     """Normalize Kalshi probability-dollars and sportsbook American odds."""
     try:x=float(price)
@@ -201,8 +205,8 @@ def norm_team(value):
     return " ".join(str(value or "").lower().replace("&"," and ").replace("-"," ").replace("."," ").split())
 
 def game_eval_key(event,row):
-    prob=num(row.get("market_probability"))
-    price=num(row.get("price"))
+    prob=number(row.get("market_probability"))
+    price=number(row.get("price"))
     return (
         str(event.get("league") or ""),
         norm_team(event.get("away")),
