@@ -272,3 +272,15 @@ Section roles are permanently separated:
 - **Per-Game QC:** player-prop ticket legs must be current exact-market matches with LJPC; game-side winner is moneyline only; current per-game odds appear centered between the two team/participant visuals.
 
 High LJPC never substitutes for market availability. A statistically attractive threshold that is not currently offered is research evidence, not an executable POM.
+
+
+## CFB Saturday QC override
+
+College football Saturday uses a high-volume exception to the standard per-game QC layout:
+
+- Each Saturday CFB game publishes **one LEGZ HOT TOP parlay only**, with **2–10 legs**.
+- Eligible legs are exact, externally offered, L&J-evaluated **Normal and/or Demon** POMs. Saturday CFB does not publish separate SNS1, SNS2, Normal, and Demon ticket columns.
+- Duplicate exact legs are prohibited and multiple props from the same player should be avoided within the Saturday Hot Top construction.
+- The team-icon game shell retains the L&J moneyline winner/odds and also displays evaluated game-level margin/spread and total-point reads when those exact game markets are available.
+- If an evaluated spread or game-total POM is unavailable, the shell must state that the corresponding projection is pending. It must not fabricate a win-by margin or total.
+- This exception applies **only to Saturday CFB games**. Non-Saturday CFB continues to use the standard per-game QC layout and event-state rules.
