@@ -75,7 +75,7 @@ jobs:
           assert all(p.get('ljpc') is None for p in waiting)
           import os
           size=os.path.getsize('data/lsi_evaluation_state.json')
-          assert state.get('retention_policy')=='LIVE_LATEST_BY_EVALUATION_KEY_PLUS_CURRENT_BOARD'
+          assert state.get('retention_policy')=='LIVE_CURRENT_BOARD_RECORDS_PLUS_LATEST_HASH_INDEX'
           assert size < 80*1024*1024, f'Live evaluation state too large: {size/1024/1024:.2f} MB'
           assert state.get('record_count')==len(state.get('records') or [])
           print(f'Spectrum v3 ledger valid: props={len(props)} evaluated={len(evaluated)} awaiting={len(waiting)} states={len(ids)} size_mb={size/1024/1024:.2f}')
