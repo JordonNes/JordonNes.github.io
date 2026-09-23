@@ -1,8 +1,34 @@
 {
   "schema_version": "LSI-HISTORY-COVERAGE-1",
-  "generated_at_utc": "2026-09-21T22:30:07.119163+00:00",
+  "generated_at_utc": "2026-09-23T17:27:17.147913+00:00",
   "policy": "Incremental warehouse coverage only. Complete-history status is achieved only after league-specific backfill validation.",
   "leagues": {
+    "MLB": {
+      "facts": 204573,
+      "unique_players": 1248,
+      "unique_events": 1011,
+      "metrics": [
+        "earned_runs",
+        "hits",
+        "home_runs",
+        "pitcher_hits_allowed",
+        "pitcher_home_runs_allowed",
+        "pitcher_strikeouts",
+        "pitcher_walks",
+        "pitching_outs",
+        "rbi",
+        "runs",
+        "stolen_bases",
+        "total_bases",
+        "walks"
+      ],
+      "source_files": [
+        "data/history/MLB/2026.csv.gz",
+        "data/performance_history.csv"
+      ],
+      "earliest_event_date": "2026-07-06",
+      "latest_event_date": "2026-09-23"
+    },
     "NBA": {
       "facts": 246483,
       "unique_players": 705,
@@ -22,6 +48,26 @@
       ],
       "earliest_event_date": "2025-10-02",
       "latest_event_date": "2026-06-14"
+    },
+    "NCAA_Basketball": {
+      "facts": 119672,
+      "unique_players": 3763,
+      "unique_events": 778,
+      "metrics": [
+        "assists",
+        "blocks",
+        "minutes",
+        "points",
+        "rebounds",
+        "steals",
+        "threes_made",
+        "turnovers"
+      ],
+      "source_files": [
+        "data/history/NCAA_Basketball/2025-26.csv.gz"
+      ],
+      "earliest_event_date": "2026-01-01",
+      "latest_event_date": "2026-04-07"
     },
     "NCAA_Football": {
       "facts": 26011,
@@ -48,9 +94,9 @@
       "latest_event_date": "2026-09-20"
     },
     "NFL": {
-      "facts": 2573828,
-      "unique_players": 6727,
-      "unique_events": 3608,
+      "facts": 3275536,
+      "unique_players": 8170,
+      "unique_events": 4678,
       "metrics": [
         "extra_points_made",
         "pass_attempts",
@@ -67,6 +113,10 @@
         "targets"
       ],
       "source_files": [
+        "data/history/NFL/2009.csv.gz",
+        "data/history/NFL/2010.csv.gz",
+        "data/history/NFL/2011.csv.gz",
+        "data/history/NFL/2012.csv.gz",
         "data/history/NFL/2013.csv.gz",
         "data/history/NFL/2014.csv.gz",
         "data/history/NFL/2015.csv.gz",
@@ -84,12 +134,12 @@
         "data/performance_history.csv"
       ],
       "earliest_event_date": "2026-09-18",
-      "latest_event_date": "2026-09-21"
+      "latest_event_date": "2026-09-22"
     },
     "NHL": {
-      "facts": 2983,
-      "unique_players": 588,
-      "unique_events": 27,
+      "facts": 160126,
+      "unique_players": 1412,
+      "unique_events": 1454,
       "metrics": [
         "goals",
         "hockey_assists",
@@ -100,13 +150,13 @@
         "data/history/NHL/2025-26.csv.gz",
         "data/performance_history.csv"
       ],
-      "earliest_event_date": "2026-05-23",
-      "latest_event_date": "2026-09-21"
+      "earliest_event_date": "2025-10-01",
+      "latest_event_date": "2026-09-23"
     },
     "WNBA": {
-      "facts": 52015,
+      "facts": 53111,
       "unique_players": 267,
-      "unique_events": 324,
+      "unique_events": 331,
       "metrics": [
         "assists",
         "blocks",
@@ -122,7 +172,7 @@
         "data/performance_history.csv"
       ],
       "earliest_event_date": "2026-05-02",
-      "latest_event_date": "2026-09-21"
+      "latest_event_date": "2026-09-23"
     }
   }
 }
