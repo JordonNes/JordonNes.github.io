@@ -38,6 +38,18 @@ Each sport recap reviews only the exact LEGZ & JINX predictions published for th
 
 Grades are limited to `HIT`, `MISS`, `PUSH/VOID`, or `UNGRADED`. If L&J published no prediction in that sport the prior day, the page must say `NO PUBLISHED PREDICTIONS / NOT SCORED`. If an exact prior market, threshold, confidence value, or result cannot be recovered, do not reconstruct it from memory; mark it `UNGRADED` and exclude it from the accuracy denominator.
 
+## Immutable publication population
+
+The accuracy population is the set of exact POM and Game Winner versions actually displayed on LJDP, preserved in `data/suggestion_ledger.json`.
+
+- Internal evaluation or pool membership alone does **not** make a POM a published suggestion.
+- Once displayed, a suggestion remains in the historical record even if a later refresh removes it from the live page.
+- When a displayed POM is materially updated, the prior version remains unchanged and the updated version is appended as a new suggestion version.
+- Repeating the same exact version in Hot Top, 20 Piece, a QC, or another page section does not multiply its accuracy weight; all placements are attached to the same immutable suggestion version.
+- Game Winners are stored and settled as `GAME_ML` suggestions under the same rule.
+- Primary publication analytics may report version-level accuracy. `outcome_key` must also support unique-outcome accuracy so repeated pricing/LJPC versions of the same event/participant/market/side/threshold can be analyzed without duplicate outcome weighting.
+- Accuracy must be queryable by publication day, sport/league, event/game, player/participant, market class, prop market, and website placement.
+
 ## Data and presentation ownership
 
 - `ljrecapdata.js` is the daily-refresh data layer for all individual sport recap pages.
