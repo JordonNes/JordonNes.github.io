@@ -362,8 +362,8 @@ for(const [page,league] of Object.entries(PAGES)){
     const gameParsed=parseMoneyline(q.winner||'');
     if(q.winner&&q.conf&&!NON_ACTION.test(String(q.winner))){
       record('QC_GAME_WINNER',`${n(q.winner)} ML • LJPC ${n(q.conf)} • ${n(q.market)}`,{
-        market_class:'GAME_ML',event_id:eventId,event_start_pt:eventStart,
-        participant:gameParsed.participant||q.winner,price:gameParsed.price,ljpc:q.conf,selection:q.winner
+        market_class:'GAME_ML',event_id:eventId,event_start_pt:eventStart,away:q.away||'',home:q.home||'',
+        participant:gameParsed.participant||q.winner,price:gameParsed.price,book:gameParsed.book||'',ljpc:q.conf,selection:q.winner
       });
     }
     const groups=[
@@ -371,7 +371,7 @@ for(const [page,league] of Object.entries(PAGES)){
       ['QC_NORMAL',q.normal],['QC_AGGRESSIVE_DEMON',q.demon]
     ];
     for(const [placement,items] of groups){
-      for(const item of Array.isArray(items)?items:[]) record(placement,n(item),{event_id:eventId,event_start_pt:eventStart});
+      for(const item of Array.isArray(items)?items:[]) record(placement,n(item),{event_id:eventId,event_start_pt:eventStart,away:q.away||'',home:q.home||''});
     }
   }
 }
