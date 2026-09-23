@@ -100,16 +100,38 @@ Rules:
 7. Recap/Audit: grade exact historical prediction records without reconstructing missing markets.
 
 ## Collection cadence (America/Los_Angeles)
-- 06:00: schedule/event discovery and seven-day horizon inventory.
-- 09:00: full source/market pull, LAE/JCI refresh, Morning DP publication.
-- 12:00: full source/market pull, confirmed lineup/injury/weather emphasis, Midday DP publication.
-- 15:00: market-history collection; capture newly opened/moved props.
-- 18:00: market + availability/news/context collection.
-- 21:00: final daily collection, recap grading, next-day Master publication.
-- Event day approximately 2 hours pre-start: final availability/lineup/weather/market snapshot for intelligence/history; publication only under applicable DP rules.
-- Post-event: final result/stat collection and grading.
 
-NFL/NCAA weekly expectation: Tuesday establishes schedule/initial market inventory; Wednesday is a major player-prop build; Thursday refreshes TNF plus weekend inventory; Friday makes NCAA Saturday and NFL Sunday substantially populated; weekend work is refinement, not first discovery.
+### Global operating clock
+The six canonical checkpoints remain 06:00, 09:00, 12:00, 15:00, 18:00 and 21:00 PT, but they are no longer commands to blindly refresh every league. Each checkpoint runs schedule/event discovery and then asks the League Scheduler which leagues/events are actually due. The hourly Near-Event Gate performs the same lightweight due check at :27. Market collection, Spectrum evaluation and publication occur only when the scheduler authorizes work.
+
+General system jobs remain independent of league-market cadence:
+- 06:00 / 09:00 / 12:00 / 15:00 / 18:00 / 21:00 PT: global discovery/checkpoint.
+- Hourly at :27: near-event due check.
+- Hourly settlement: completed predictions/results may grade without forcing new pregame evaluation.
+- Every three hours: deployment/registry health validation.
+- History/archive/evaluation jobs retain their own bounded schedules.
+
+### Material-change rule
+Every exact POM receives an `evaluation_material_hash` derived before Spectrum recomputation from the exact player/participant market identity, side, threshold, opponent/event, substantive role/availability/context, relevant market economics, stored performance-history fingerprint and model version. Volatile retrieval timestamps and snapshot IDs are excluded. If the current hash equals the latest stored hash and the prior live evaluation is available, LSI reuses that evaluation instead of recomputing Spectrum.
+
+Operational sequence:
+`DISCOVER → CHECK DUE → COLLECT → MATERIAL-HASH COMPARE → REUSE or EVALUATE → POOL → QC → PUBLISH → LOCK → SETTLE → LEARN`
+
+### League cadence profiles
+- **NFL:** routine windows 06:00, 09:00, 15:00 and 21:00 PT; event gates T-48h, T-24h, T-12h, T-6h and T-2h.
+- **CFB / NCAA Football:** seven-day discovery backstop at 06:00 and 18:00 PT. Every scheduled game, regardless of weekday, receives event gates at T-48h, T-24h, T-12h, T-6h and T-90m. Saturday additionally receives slate-wide volume waves at 05:00, 08:00, 11:00, 14:00 and 17:00 PT so the 100+ game main slate gets repeated coverage without making Saturday the only day CFB receives full attention.
+- **MLB:** routine windows 06:00, 10:00, 13:00 and 16:00 PT; event gates T-12h, T-6h and T-90m.
+- **NBA:** routine windows 06:00, 10:00, 13:00 and 16:00 PT; event gates T-12h, T-6h and T-90m.
+- **WNBA:** routine windows 06:00, 10:00, 14:00 and 17:00 PT; event gates T-12h, T-6h and T-90m.
+- **NHL:** routine windows 06:00, 10:00, 14:00 and 16:00 PT; event gates T-12h, T-6h and T-90m, with goalie/availability information treated as material context.
+- **NCAA Basketball / CBB:** routine windows 06:00, 10:00, 13:00 and 16:00 PT; event gates T-12h, T-6h and T-90m.
+- **Tennis:** routine tournament sweeps 06:00 and 18:00 PT; event gates T-12h and T-90m. Match-relative gates, not a fixed U.S. game-day assumption, control escalation.
+- **MMA:** one daily discovery backstop at 06:00 PT; substantive processing is event-relative at T-72h, T-24h, T-6h and T-90m.
+- **Boxing:** one daily discovery backstop at 06:00 PT; substantive processing is event-relative at T-72h, T-24h, T-6h and T-90m.
+- **FIBA:** routine tournament sweeps 06:00 and 18:00 PT; event gates T-6h and T-90m.
+
+### CFB operating principle
+Saturday is the main volume show, not an exclusivity rule. A Wednesday, Thursday, Friday, Sunday or other off-cycle CFB game that appears in the event inventory enters the same event-relative pipeline as any Saturday game. If a gate was missed because the event was discovered late or a prior run failed, the next successful hourly check catches every crossed, unacknowledged gate in one work cycle and then acknowledges them so they are not repeated unnecessarily.
 
 ## Source policy
 No single preferred source failure is sufficient to declare props unavailable. Perform multi-source discovery. Market observations must retain source and timestamp. Social/news/context sources are evidence inputs, not automatically predictive. Public personal/legal/civil/political/relationship matters receive weight only when there is a defensible pathway to availability, role, preparation, coaching strategy, market behavior, or performance.
