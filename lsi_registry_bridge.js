@@ -130,6 +130,27 @@
     }
     return t<=end;
   };
+  const ptCalendarSerial=value=>{
+    const d=value instanceof Date?value:new Date(value);
+    if(!Number.isFinite(d.getTime())) return NaN;
+    const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d);
+    const get=t=>Number(parts.find(x=>x.type===t)?.value||0);
+    return Date.UTC(get("year"),get("month")-1,get("day"));
+  };
+  const nflWeekBounds=()=>{
+    const today=ptCalendarSerial(new Date());
+    const dow=new Date(today).getUTCDay();
+    const start=today-((dow-2+7)%7)*86400000;
+    return {start,end:start+7*86400000};
+  };
+  const isCurrentNflWeekEvent=e=>{
+    if(e?.league!=="NFL") return true;
+    const t=eventStartMs(e);
+    if(!Number.isFinite(t)) return false;
+    const serial=ptCalendarSerial(new Date(t));
+    const {start,end}=nflWeekBounds();
+    return serial>=start&&serial<end;
+  };
   const gameSummary=e=>{
     // Game Winner is MONEYLINE ONLY. Spreads/totals may inform JINX, but they
     // never become the published Game Winner or the center game-side prediction.
@@ -423,7 +444,7 @@
 
   function findBoardEvent(league,q){
     const candidates=[
-      ...(B?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e)).map(e=>({...e,_priority:0})),
+      ...(B?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e) && isCurrentNflWeekEvent(e)).map(e=>({...e,_priority:0})),
       ...(RAW?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e)).map(e=>({...e,_priority:1}))
     ];
     if(!candidates.length) return null;
@@ -767,7 +788,8 @@
       market:game?.market||`Upcoming event • ${e.source||"verified market board"}`,
       winner:game?.winner||"",conf:game?.conf||"",_winnerMarketBaseline:game?.marketBaseline||"",_winnerProvisional:Boolean(game?.provisional),hot:[],sns1:[],sns2:[],normal:[],demon:[],
       foot:"0–7 day rolling L&J board • exact price/threshold must remain current at entry time.",
-      _propEventId:e.source_event_id||null
+      _propEventId:e.source_event_id||null,
+      _propEventStartPt:e.commence_time||e.event_start_pt||null
     };
     populateGameQc(e.league,q);
     return q;
@@ -796,9 +818,13 @@
     // upcoming QC collection. Historical/final presentation belongs elsewhere.
     const existingPregame=existing.filter(q=>{
       const ev=findBoardEvent(league,q);
-      if(ev) return isUpcomingEvent(ev);
+      if(ev) return isUpcomingEvent(ev) && isCurrentNflWeekEvent(ev);
       const t=Date.parse(q?._propEventStartPt||q?.commence_time||q?.event_start_pt||"");
-      return Number.isFinite(t) && t>Date.now();
+      if(!Number.isFinite(t) || t<=Date.now()) return false;
+      if(league!=="NFL") return true;
+      const serial=ptCalendarSerial(new Date(t));
+      const {start,end}=nflWeekBounds();
+      return serial>=start&&serial<end;
     });
     const merged=[...existingPregame];
     const exactKey=q=>`${norm(q?.away)}|${norm(q?.home)}`;
@@ -827,6 +853,7 @@
       prior.normal=sanitizeExistingPlayerProps(prior.normal);
       prior.demon=sanitizeExistingPlayerProps(prior.demon);
       if(boardQc._propEventId) prior._propEventId=boardQc._propEventId;
+      if(boardQc._propEventStartPt) prior._propEventStartPt=boardQc._propEventStartPt;
       if((boardQc.hot||[]).length) prior.hot=boardQc.hot;
       if((boardQc.sns1||[]).length) prior.sns1=boardQc.sns1;
       if((boardQc.sns2||[]).length) prior.sns2=boardQc.sns2;
@@ -882,6 +909,7 @@
       deduped[i]=enrich(keep,other);
     }
     s.qcs=deduped;
+    if(league==="NFL") s.qcTitle="PER-GAME QUICKIES — NFL CURRENT TUESDAY–MONDAY WEEK";
 
     // Game Winners must be current-event L&J predictions with an explicit confidence.
     // Market-only/provisional baselines never enter the Game Winners list.
