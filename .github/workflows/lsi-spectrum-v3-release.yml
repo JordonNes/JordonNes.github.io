@@ -92,6 +92,9 @@ jobs:
       - name: Publish future board
         run: python scripts/lsi_publish_future_board.py
 
+      - name: Restore evaluated Game Winners after board rebuild
+        run: python scripts/lsi_game_winner_spectrum.py
+
       - name: Validate downstream parity
         run: |
           python - <<'PY'
@@ -134,7 +137,7 @@ jobs:
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/qc_prop_board.json data/lsi_evaluation_state.json data/legz_synthetic_book.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js
+          git add data/qc_prop_board.json data/lsi_evaluation_state.json data/legz_synthetic_book.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json
           if git diff --cached --quiet; then
             echo 'Spectrum v3 artifacts already current.'
           else
