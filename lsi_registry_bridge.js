@@ -247,6 +247,44 @@
       && x?.price!==undefined && x?.price!==null && x?.price!=='';
   };
 
+  const gameMarketClass=x=>String(x?.market_class||x?.market_key||x?.market||x?.type||'').toUpperCase();
+  const currentEvaluatedGameMarket=x=>{
+    const lj=formalLjpcOf(x);
+    return String(x?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' && Number.isFinite(lj) && lj>0;
+  };
+  const signedLine=x=>{
+    const direct=Number(x?.display_threshold??x?.threshold);
+    if(Number.isFinite(direct)) return direct;
+    const raw=String(x?.selection||x?.participant||x?.market||'');
+    const m=raw.match(/([+-]\d+(?:\.\d+)?)/);
+    return m?Number(m[1]):null;
+  };
+  const gameProjectionSummary=e=>{
+    const markets=[...(e?.game_markets||[])].filter(currentEvaluatedGameMarket);
+    const spread=markets.filter(x=>/SPREAD|HANDICAP|RUN LINE|PUCK LINE/.test(gameMarketClass(x))).sort((a,b)=>formalLjpcOf(b)-formalLjpcOf(a))[0];
+    const total=markets.filter(x=>/GAME_TOTAL|TOTAL POINTS|OVER.?UNDER/.test(gameMarketClass(x))).sort((a,b)=>formalLjpcOf(b)-formalLjpcOf(a))[0];
+    let margin='',totalPoints='';
+    if(spread){
+      const team=String(spread.selection||spread.participant||'Selected side').replace(/\s+[+-]\d+(?:\.\d+)?\s*$/,'').trim();
+      const line=signedLine(spread),conf=pct(formalLjpcOf(spread));
+      if(Number.isFinite(line)){
+        margin=line<0
+          ? `${team} WIN BY ${Math.abs(line)}+ • LJPC ${conf}`
+          : line>0
+            ? `${team} +${line} • WIN OR LOSE BY ≤${line} • LJPC ${conf}`
+            : `${team} PICK'EM • LJPC ${conf}`;
+      }else margin=`${spread.selection||spread.participant||'SPREAD LEAN'} • LJPC ${conf}`;
+    }
+    if(total){
+      const line=Number(total.display_threshold??total.threshold);
+      const raw=String(total.side||total.selection||total.participant||'').toUpperCase();
+      const side=/UNDER|LESS/.test(raw)?'UNDER':/OVER|MORE/.test(raw)?'OVER':'TOTAL';
+      const conf=pct(formalLjpcOf(total));
+      totalPoints=Number.isFinite(line)?`TOTAL POINTS ${side} ${line} • LJPC ${conf}`:`${total.selection||total.participant||'GAME TOTAL'} • LJPC ${conf}`;
+    }
+    return {margin,total:totalPoints};
+  };
+
   const futureBoardLeagues=(B?.events||[]).filter(isUpcomingEvent).map(e=>e?.league).filter(Boolean);
   const allLeagues=new Set([...Object.keys(registryByLeague),...Object.keys(gameByLeague),...Object.keys(boardByLeague),...futureBoardLeagues]);
   for(const league of allLeagues){
@@ -601,6 +639,7 @@
 
   function populateGameQc(league,q){
     const event=findBoardEvent(league,q);
+    q._gameProjection=gameProjectionSummary(event);
     // Pregame QC publication is a lock, not a disposable view of the latest scrape.
     // Once a qualified player prop/ticket has been published, a later thin/empty
     // acquisition cycle must not erase it before the event actually starts.
