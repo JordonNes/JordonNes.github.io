@@ -150,6 +150,8 @@ def load_suggestion_predictions():
     raw=payload.get("suggestions") or []
     out=[]
     for s in raw:
+        if s.get("capture_validity")!="VALID" or s.get("accuracy_eligible") is False:
+            continue
         if s.get("structure_status")!="STRUCTURED":
             continue
         sid=s.get("suggestion_id")
