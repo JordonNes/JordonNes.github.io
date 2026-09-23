@@ -164,7 +164,7 @@
   }
   function winners(items,label="JINX GAME WINNERS"){
     const mlOnly=(items||[]).filter(r=>/\bML\b|MONEYLINE/i.test(String((r||[])[1]||"")+" "+String((r||[])[3]||"")));
-    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>MONEYLINE ONLY</span></div>${mlOnly.length ? `<ul class="headliner-list">${mlOnly.map(r=>{const provisional=/PROVISIONAL|MARKET BASELINE/i.test(String(r[3]||''));return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`;}).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX MONEYLINE</b><p>No current L&J-evaluated moneyline prediction is published for this section.</p></div>`}</div>`;
+    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>MONEYLINE ONLY</span></div>${mlOnly.length ? `<ul class="headliner-list">${mlOnly.map(r=>{const odds=/^GAME ODDS\b/i.test(String(r[3]||''))?String(r[3]):"";return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2])}${odds?` <span class="headliner-detail">• ${esc(odds)}</span>`:""}</span></li>`;}).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX MONEYLINE</b><p>No current L&J-evaluated moneyline prediction is published for this section.</p></div>`}</div>`;
   }
   function ensureGameWinners(s){
     if(!s) return;
