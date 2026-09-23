@@ -23,6 +23,7 @@ on:
       - 'scripts/lsi_pipeline.py'
       - 'scripts/lsi_league_scheduler.py'
       - 'scripts/test_lsi_league_scheduler.py'
+      - 'scripts/test_legz_material_hash.py'
       - 'scripts/legz_statistical_spectrum.py'
       - 'scripts/legz_prop_ladder_test.py'
       - 'scripts/legz_synthetic_book.py'
@@ -133,7 +134,9 @@ jobs:
           print('odds_api_leagues=' + ','.join(d.get('odds_api_leagues') or []))
           PY
       - name: Verify event-aware scheduling rules
-        run: python scripts/test_lsi_league_scheduler.py
+        run: |
+          python scripts/test_lsi_league_scheduler.py
+          python scripts/test_legz_material_hash.py
       - name: Preload persistent season schedules and roster identity
         continue-on-error: true
         run: python scripts/lsi_season_preload.py
