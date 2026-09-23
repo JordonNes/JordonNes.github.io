@@ -139,6 +139,15 @@ jobs:
         run: |
           python scripts/test_lsi_league_scheduler.py
           python scripts/test_legz_material_hash.py
+      - name: Verify sportsbook player identity normalization
+        run: |
+          python - <<'PY'
+          from scripts.legz_statistical_spectrum import player_norm, market_metric
+          assert player_norm("CJ Abrams: 1+") == "cj abrams"
+          assert player_norm("Dillon Dingler: 2+") == "dillon dingler"
+          assert market_metric("Outs Recorded") == "pitching_outs"
+          print("MLB player identity normalization and pitching-outs mapping passed.")
+          PY
       - name: Preload persistent season schedules and roster identity
         continue-on-error: true
         run: python scripts/lsi_season_preload.py
