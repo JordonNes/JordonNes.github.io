@@ -120,6 +120,7 @@ def canonical_prop(p):
       "evaluation_material_hash":p.get("evaluation_material_hash"),
       "evaluation_version":p.get("evaluation_version"),
       "evaluated_at_utc":p.get("evaluated_at_utc"),
+      "player_projection":p.get("player_projection") or ((p.get("spectrum") or {}).get("player_projection")),
       "feature_state":p.get("feature_state"),
       "spectrum":p.get("spectrum"),
       "evaluation_reason":p.get("evaluation_reason"),
