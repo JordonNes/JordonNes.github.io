@@ -364,7 +364,10 @@
       return 'SUNDAY_MORNING';
     };
 
-    const visible=visibleQcRows(rows).map(vettedRow).filter(r=>qcStatusOnly(r)||qcHasPublishedPregame(r));
+    const visible=visibleQcRows(rows)
+      .filter(isCurrentNflWeekRow)
+      .map(vettedRow)
+      .filter(r=>qcStatusOnly(r)||qcHasPublishedPregame(r));
     const buckets={
       THURSDAY:[],
       SUNDAY_MORNING:[],
@@ -408,7 +411,7 @@
       : "";
 
     const body=thursday+sunday+monday;
-    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL — NEXT DAY / TODAY'S QCs")}</h2><span class="muted">Current offered POMs only • explicit LJPC required • game winners are moneyline only</span></div>${body}${rules()}<div class="layout-seal">NFL QC ORDER • Thursday Football → Sunday Football (Morning → Afternoon → Sunday Night Football) → Monday Football</div></section>`;
+    return `<section class="section nfl-qc-section"><div class="section-head"><h2>${esc(title || "NFL — CURRENT TUESDAY–MONDAY QCs")}</h2><span class="muted">Current offered POMs only • explicit LJPC required • game winners are moneyline only</span></div>${body}${rules()}<div class="layout-seal">NFL QC ORDER • Thursday Football → Sunday Football (Morning → Afternoon → Sunday Night Football) → Monday Football</div></section>`;
   }
 
   function groupedQcs(groups){
@@ -617,23 +620,57 @@
     const get=t=>parts.find(x=>x.type===t)?.value||"";
     return `${get("year")}${get("month")}${get("day")}`;
   }
+  function ptCalendarSerial(value=new Date()){
+    const d=value instanceof Date?value:new Date(value);
+    if(!Number.isFinite(d.getTime())) return NaN;
+    const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d);
+    const get=t=>Number(parts.find(x=>x.type===t)?.value||0);
+    return Date.UTC(get("year"),get("month")-1,get("day"));
+  }
+  function nflWeekWindowSerial(){
+    const today=ptCalendarSerial(new Date());
+    const dow=new Date(today).getUTCDay();
+    const start=today-((dow-2+7)%7)*86400000;
+    return {start,end:start+7*86400000};
+  }
+  function nflWeekDateKeys(){
+    const {start}=nflWeekWindowSerial();
+    return Array.from({length:7},(_,i)=>{
+      const d=new Date(start+i*86400000);
+      return `${d.getUTCFullYear()}${String(d.getUTCMonth()+1).padStart(2,"0")}${String(d.getUTCDate()).padStart(2,"0")}`;
+    });
+  }
+  function nflRowCalendarSerial(row){
+    const canonical=Date.parse(row?._propEventStartPt||row?.commence_time||row?.event_start_pt||"");
+    if(Number.isFinite(canonical)) return ptCalendarSerial(new Date(canonical));
+    const raw=String(row?.time||"").toUpperCase();
+    const months={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
+    const m=raw.match(/\b(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\s+(\d{1,2})\b/);
+    if(!m) return NaN;
+    const year=Number(new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric"}).format(new Date()));
+    return Date.UTC(year,months[m[1]],Number(m[2]));
+  }
+  function isCurrentNflWeekRow(row){
+    const serial=nflRowCalendarSerial(row);
+    if(!Number.isFinite(serial)) return false;
+    const {start,end}=nflWeekWindowSerial();
+    return serial>=start&&serial<end;
+  }
   function capturedPT(){
     return new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit",second:"2-digit",timeZoneName:"short"}).format(new Date());
   }
   async function fetchCurrentEvents(key){
     const map=ESPN_SCOREBOARD[key]; if(!map) return [];
     const [sport,slug]=map;
-    // NFL QCs retain the entire Thursday–Monday game week until MNF is final,
-    // so runtime status hydration must still be able to find Thursday's completed game
-    // when the page is opened on Friday/Saturday/Sunday/Monday.
-    // Weekly retention windows:
-    // NFL keeps Thursday–Monday visible until MNF is final.
-    // NCAA Football keeps its Sunday–Saturday week visible through Sunday morning;
-    // the page rolls to the new Sunday–Saturday week Sunday afternoon.
-    let offsets=[-1,0,1];
-    if(key==="NFL") offsets=[-4,-3,-2,-1,0,1,2,3];
-    if(key==="NCAA_Football") offsets=[-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7];
-    const dates=offsets.map(ptDate);
+    // NFL page publication week is Tuesday through Monday in Pacific Time.
+    // Tuesday is a hard rollover boundary; prior-week games are not hydrated or rendered.
+    let dates;
+    if(key==="NFL") dates=nflWeekDateKeys();
+    else {
+      let offsets=[-1,0,1];
+      if(key==="NCAA_Football") offsets=[-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7];
+      dates=offsets.map(ptDate);
+    }
     const payloads=await Promise.all(dates.map(async date=>{
       const url=`https://site.api.espn.com/apis/site/v2/sports/${sport}/${slug}/scoreboard?dates=${date}&limit=300&_=${Date.now()}`;
       const res=await fetch(url,{cache:"no-store"});
