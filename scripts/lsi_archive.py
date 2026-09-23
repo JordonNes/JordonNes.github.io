@@ -512,8 +512,8 @@ def main():
         source_generated_at=qc.get("generated_at_utc") if isinstance(qc, dict) else None,
         identity=publication_identity,
     )
-    new_counts["evaluation_state"] = append_items(
-        archive / "evaluation_state_history.jsonl",
+    new_counts["evaluation_state"] = append_sharded_items(
+        archive / "evaluation_state_history",
         kind="EVALUATION_STATE",
         dataset="lsi_evaluation_state",
         items=eval_records,
@@ -542,7 +542,8 @@ def main():
         "result_history": archive / "result_history.jsonl",
         "settlement_history": archive / "settlement_history.jsonl",
         "publication_history": archive / "publication_history.jsonl",
-        "evaluation_state_history": archive / "evaluation_state_history.jsonl",
+        "evaluation_state_history_legacy": archive / "evaluation_state_history.jsonl",
+        "evaluation_state_history": archive / "evaluation_state_history",
     }
     counts = {name: count_jsonl_tree(path) for name, path in archive_files.items()}
 
@@ -626,6 +627,12 @@ def main():
             "layout": "market_history/YYYY-MM/<dataset>-<00..31>.jsonl",
             "hash_buckets": 32,
             "reason": "Keep high-volume immutable history below repository file-size limits.",
+        },
+        "evaluation_state_sharding": {
+            "layout": "evaluation_state_history/YYYY-MM/<dataset>-<00..31>.jsonl",
+            "hash_buckets": 32,
+            "legacy_file": "evaluation_state_history.jsonl remains read-only historical data",
+            "reason": "Preserve immutable evaluation history without allowing one archive file to exceed GitHub limits.",
         },
     }
     (archive / "archive_manifest.json").write_text(
