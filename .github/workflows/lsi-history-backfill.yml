@@ -35,12 +35,17 @@ jobs:
             python scripts/lsi_history_backfill_step.py
           done
 
+      - name: Rebuild reusable history coverage and Spectrum cache
+        run: |
+          python scripts/lsi_history_coverage.py
+          python scripts/lsi_history_warehouse.py
+
       - name: Commit incremental history progress
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/history data/history_backfill_state.json
+          git add data/history data/history_backfill_state.json data/history_coverage.json data/lsi_player_registry.json data/lsi_spectrum_cache.json
           if git diff --cached --quiet; then
             echo 'No new historical facts in this backfill cycle.'
             exit 0
