@@ -46,22 +46,22 @@ function ptDate(d=new Date()){
   const get=k=>parts.find(x=>x.type===k)?.value||'';
   return `${get('year')}-${get('month')}-${get('day')}`;
 }
-function scriptsFor(html){
-  const out=[];
-  for(const m of html.matchAll(/<script[^>]+src=["']([^"']+)["'][^>]*><\/script>/gi)){
-    const clean=m[1].split('?')[0].replace(/^\.\//,'');
-    if(SAFE.has(clean)) out.push(clean);
-  }
-  return out;
-}
-function evaluatePage(page){
-  const html=fs.readFileSync(path.join(ROOT,page),'utf8');
-  const context={console,setTimeout:()=>0,clearTimeout:()=>{}};
+function evaluatePublication(){
+  // Evaluate the publication stack once. Re-reading the large future-board and
+  // prediction-registry payload for every league is both slow and unnecessary.
+  const order=[
+    'ljdata.js','nflrefresh.js','ncaarefresh.js','tennisrefresh.js','dailyrefresh.js',
+    'morningrefresh.js','middayrefresh.js','lsi_native_refresh.js',
+    'data/future_market_board.js','data/prediction_registry.js','lsi_registry_bridge.js',
+    'sep19_morning_refresh.js','sep19_midday_guard.js'
+  ];
+  const context={console,setTimeout:()=>0,clearTimeout:()=>{},setInterval:()=>0,clearInterval:()=>{}};
   context.window=context;
   context.document={querySelector:()=>null,querySelectorAll:()=>[]};
   context.addEventListener=()=>{};
   vm.createContext(context);
-  for(const src of scriptsFor(html)){
+  for(const src of order){
+    if(!SAFE.has(src)) continue;
     const file=path.join(ROOT,src);
     if(fs.existsSync(file)) vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:src});
   }
@@ -217,33 +217,42 @@ const ledger=readLedger();
 const now=new Date().toISOString();
 const date=ptDate();
 const existing=new Map(ledger.suggestions.map(x=>[x.suggestion_id,x]));
+const observedIds=new Set();
 let added=0,seen=0;
 
 function mergeRecord(rec){
   seen++;
+  observedIds.add(rec.suggestion_id);
   const prior=existing.get(rec.suggestion_id);
   if(prior){
+    if(prior.currently_displayed===false) prior.last_reappeared_at_utc=now;
+    prior.currently_displayed=true;
     prior.last_seen_at_utc=now;
     prior.snapshot_count=Number(prior.snapshot_count||1)+1;
     prior.placements=[...new Set([...(prior.placements||[]),...(rec.placements||[])])];
     prior.publication_labels=[...new Set([...(prior.publication_labels||[]),...(rec.publication_labels||[])])];
     return;
   }
+  rec.currently_displayed=true;
+  rec.removed_at_utc=null;
   const priorVersions=ledger.suggestions.filter(x=>x.publication_date_pt===rec.publication_date_pt&&x.family_key===rec.family_key);
   if(priorVersions.length){
     priorVersions.sort((a,b)=>String(a.first_seen_at_utc).localeCompare(String(b.first_seen_at_utc)));
-    rec.supersedes_suggestion_id=priorVersions[priorVersions.length-1].suggestion_id;
+    const old=priorVersions[priorVersions.length-1];
+    rec.supersedes_suggestion_id=old.suggestion_id;
+    old.superseded_by_suggestion_id=rec.suggestion_id;
   }else rec.supersedes_suggestion_id=null;
   ledger.suggestions.push(rec);existing.set(rec.suggestion_id,rec);added++;
 }
 
+const ctx=evaluatePublication();
+const D=ctx.window.LJ_DATA;
+const allCandidates=candidateRows(ctx);
 for(const [page,league] of Object.entries(PAGES)){
   if(!fs.existsSync(path.join(ROOT,page))) continue;
-  const ctx=evaluatePage(page);
-  const D=ctx.window.LJ_DATA;
   const sport=D?.sports?.[league];
   if(!sport) continue;
-  const candidates=candidateRows(ctx).filter(x=>x.league===league);
+  const candidates=allCandidates.filter(x=>x.league===league);
   const publication=n(D.updated||sport.meta||'UNKNOWN PUBLICATION');
   const record=(placement,display,hint={})=>{
     if(!display||NON_ACTION.test(String(display))) return;
@@ -284,6 +293,14 @@ for(const [page,league] of Object.entries(PAGES)){
     for(const [placement,items] of groups){
       for(const item of Array.isArray(items)?items:[]) record(placement,n(item),{event_id:eventId,event_start_pt:eventStart});
     }
+  }
+}
+
+for(const s of ledger.suggestions){
+  if(s.publication_date_pt!==date || observedIds.has(s.suggestion_id)) continue;
+  if(s.currently_displayed!==false){
+    s.currently_displayed=false;
+    s.removed_at_utc=s.removed_at_utc||now;
   }
 }
 
