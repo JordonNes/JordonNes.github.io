@@ -50,6 +50,12 @@
     if(x>=100) return 100/(x+100)*100;
     return null;
   };
+  const publicBookLabel=(book='',source='')=>{
+    const raw=n(book||source);
+    if(!raw) return '';
+    if(/^PROPLINE[:|]/i.test(raw)) return 'PROPLINE|'+raw.replace(/^PROPLINE[:|]/i,'');
+    return raw;
+  };
   const priceLabel=(price,book='')=>{
     const x=Number(price);
     if(price===null||price===undefined||price===''||!Number.isFinite(x)) return 'price recheck';
@@ -321,12 +327,15 @@
     for(const p of [...(gameByLeague[league]||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a))){
       const eventKey=String(p.event_id||'').toLowerCase();
       if(eventKey) winnerEvents.add(eventKey);
-      const price=p.price!==null&&p.price!==undefined&&p.price!==''?`${Number(p.price)>0?'+':''}${p.price}`:'price recheck';
+      const winner=String(p.participant||p.selection||p.pick||'').replace(/\s+ML$/i,'').trim();
+      const price=p.price!==null&&p.price!==undefined&&p.price!==''?`${Number(p.price)>0?'+':''}${p.price}`:'';
+      const book=publicBookLabel(p.book||'',p.market_source||p.source||'');
+      const offer=[price,book].filter(Boolean).join(' ');
       winnerRows.push([
-        p.opponent? `${p.participant||p.selection} vs ${p.opponent}` : (p.event_id||p.participant||"Upcoming event"),
-        p.pick||p.selection,
+        p.opponent? `${winner} vs ${p.opponent}` : (p.event_id||winner||"Upcoming event"),
+        `${winner} ML${offer?` • ${offer}`:''}`,
         pct(ljpcOf(p)),
-        `${price} • Canonical L&J Registry`
+        `GAME ODDS • ${winner}${price?` ${price}`:''}`
       ]);
     }
     for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x)).sort((a,b)=>eventStartMs(a)-eventStartMs(b))){
@@ -334,13 +343,16 @@
       if(eventKey&&winnerEvents.has(eventKey)) continue;
       const sides=[...(e.game_markets||[])].filter(isCurrentGameMl).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
       const best=sides[0]; if(!best) continue;
-      const price=best.price!==null&&best.price!==undefined&&best.price!==''?`${Number(best.price)>0?'+':''}${best.price}${best.book?` ${best.book}`:''}`:'price recheck';
+      const winner=String(best.selection||best.participant||'').replace(/\s+ML$/i,'').trim();
+      const price=best.price!==null&&best.price!==undefined&&best.price!==''?`${Number(best.price)>0?'+':''}${best.price}`:'';
+      const book=publicBookLabel(best.book||best.best_book||'',best.source||'');
+      const offer=[price,book].filter(Boolean).join(' ');
       winnerRows.push([
         `${e.away||''} @ ${e.home||''}`,
-        best.selection||best.participant,
+        `${winner} ML${offer?` • ${offer}`:''}`,
         pct(ljpcOf(best)),
-        `${price} • CANONICAL L&J GAME WINNER`,
-        Number.isFinite(Number(best.market_probability)) ? pct(Number(best.market_probability)) : ''
+        `GAME ODDS • ${winner}${price?` ${price}`:''}`,
+        ''
       ]);
     }
     // Preserve published game-winner calls when GAME_ML acquisition is unavailable.
@@ -938,11 +950,18 @@
       const key=String(event.source_event_id||exactKey(q));
       if(qcWinnerSeen.has(key)) continue;
       qcWinnerSeen.add(key);
+      const winner=String(q.winner||'').replace(/\s+ML\b.*$/i,'').trim();
+      const sides=[...(event.game_markets||[])].filter(isCurrentGameMl).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
+      const match=sides.find(g=>norm(g.selection||g.participant)===norm(winner))||sides[0]||{};
+      const price=match.price!==null&&match.price!==undefined&&match.price!==''?`${Number(match.price)>0?'+':''}${match.price}`:'';
+      const book=publicBookLabel(match.book||match.best_book||'',match.source||'');
+      const offer=[price,book].filter(Boolean).join(' ');
       qcWinners.push([
         `${event.away||q.away||''} @ ${event.home||q.home||''}`,
-        q.winner,
+        `${winner} ML${offer?` • ${offer}`:''}`,
         pct(confNum),
-        `${q.market||'Current L&J game evaluation'} • L&J EVALUATED`
+        `GAME ODDS • ${winner}${price?` ${price}`:''}`,
+        ''
       ]);
     }
     if(qcWinners.length) s.winners=qcWinners;
