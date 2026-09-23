@@ -31,6 +31,7 @@ def player_norm(v):
     s=str(v or "").strip()
     # Strip sportsbook team suffixes and non-identifying generational suffixes.
     s=re.sub(r"\s*\([A-Za-z0-9 .&'\-]{2,24}\)\s*$","",s)
+    s=re.sub(r"\s*:?\s*\d+(?:\.\d+)?\+\s*$","",s)
     tokens=norm(s).split()
     if tokens and tokens[-1] in {"jr","sr","ii","iii","iv","v"}: tokens=tokens[:-1]
     # A.J. Brown / AJ Brown, J.K. Dobbins / JK Dobbins, etc.
@@ -55,7 +56,7 @@ def market_metric(market):
       ("points rebounds","points_rebounds"),("points assists","points_assists"),("rebounds assists","rebounds_assists"),
       ("points","points"),("rebounds","rebounds"),("assists","assists"),("three pointers","threes_made"),("3 pointers","threes_made"),("threes","threes_made"),("3pt","threes_made"),("extra points made","extra_points_made"),("xpm","extra_points_made"),
       ("steals","steals"),("blocks","blocks"),("hits","hits"),("total bases","total_bases"),("home runs","home_runs"),
-      ("rbi","rbi"),("runs","runs"),("stolen bases","stolen_bases"),("strikeouts","pitcher_strikeouts"),
+      ("rbi","rbi"),("runs","runs"),("stolen bases","stolen_bases"),("strikeouts","pitcher_strikeouts"),("outs recorded","pitching_outs"),("pitching outs","pitching_outs"),
       ("shots on goal","shots_on_goal"),("sog","shots_on_goal"),("saves","saves"),("goal scorer","goals"),("goals","goals")
     ]
     if "anytime td" in m or ("touchdown" in m and "passing" not in m and "pass " not in m):
