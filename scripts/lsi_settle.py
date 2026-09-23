@@ -140,6 +140,43 @@ def read_results():
     rows = read_csv(RESULTS)
     return {r.get("prediction_id"): r for r in rows if r.get("prediction_id")}
 
+def load_suggestion_predictions():
+    """Convert immutable website suggestion records into settlement-compatible predictions."""
+    try:
+        payload=json.loads(SUGGESTIONS.read_text(encoding="utf-8"))
+    except Exception:
+        return [], 0, 0
+    raw=payload.get("suggestions") or []
+    out=[]
+    for s in raw:
+        if s.get("structure_status")!="STRUCTURED":
+            continue
+        sid=s.get("suggestion_id")
+        market_class=s.get("market_class")
+        if not sid or market_class not in {"PLAYER_PROP","GAME_ML","SPREAD","GAME_TOTAL","TEAM_TOTAL"}:
+            continue
+        out.append({
+            "prediction_id":sid,
+            "suggestion_id":sid,
+            "publication_date_pt":s.get("publication_date_pt"),
+            "sport":s.get("sport") or s.get("league"),
+            "league":s.get("league"),
+            "event_id":s.get("event_id") or "",
+            "event_start_pt":s.get("event_start_pt"),
+            "market_class":market_class,
+            "participant":s.get("participant") or "",
+            "selection":s.get("selection") or s.get("display_text") or "",
+            "market":s.get("market") or "",
+            "threshold":s.get("threshold"),
+            "side":s.get("side") or "",
+            "price":s.get("price"),
+            "book":s.get("book") or "",
+            "ljpc":s.get("ljpc"),
+            "closing_line":s.get("closing_line"),
+            "source_kind":"WEBSITE_SUGGESTION_LEDGER",
+        })
+    return out, len(raw), len(out)
+
 def save_results(by_prediction):
     RESULTS.parent.mkdir(parents=True, exist_ok=True)
     rows = sorted(by_prediction.values(), key=lambda r: (r.get("settled_at_pt",""), r.get("prediction_id","")))
@@ -523,7 +560,9 @@ def main():
     if not REGISTRY.exists():
         raise SystemExit("prediction_registry.json missing")
     registry=json.loads(REGISTRY.read_text(encoding="utf-8"))
-    predictions=registry.get("predictions") or []
+    registry_predictions=registry.get("predictions") or []
+    suggestion_predictions,suggestion_total,suggestion_structured=load_suggestion_predictions()
+    predictions=[*registry_predictions,*suggestion_predictions]
     existing=read_results()
     inbox=verified_inbox_results()
     for pid,row in inbox.items():
@@ -640,7 +679,10 @@ def main():
             "VERIFIED_INBOX":{"pattern":"data/inbox/results_*.csv","accepted_rows":len(inbox)},
             "pending_automatic_adapters":["Tennis","MMA","Boxing","FIBA_Men","FIBA_Women"]
         },
-        "predictions_in_registry":total,
+        "predictions_in_registry":len(registry_predictions),
+        "website_suggestions_recorded":suggestion_total,
+        "website_suggestions_structured_for_settlement":suggestion_structured,
+        "settlement_population_total":total,
         "settled_predictions":settled_total,
         "settlement_rate_pct":round(settled_total/total*100,2) if total else 0,
         "run_counts":dict(counts),
@@ -651,7 +693,8 @@ def main():
     }
     write_json_if_semantic_change(STATUS,payload,("generated_at_utc","source_registry_generated_at_utc"))
     print("LSI settlement:",json.dumps({
-        "registry":total,"settled_total":settled_total,
+        "registry":len(registry_predictions),"website_suggestions":suggestion_total,
+        "structured_suggestions":suggestion_structured,"settlement_population":total,"settled_total":settled_total,
         "run_counts":dict(counts),"aliases":len(aliases.get("events",{}))
     },sort_keys=True))
 
