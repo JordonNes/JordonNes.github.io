@@ -1,19 +1,9 @@
-name: LJDP Fast Markets
+name: LJDP NFL Manual Recovery
 
+# Normal NFL collection is handled by LSI Near-Event Gate.
+# Keep this workflow only as a deliberate manual recovery/diagnostic path.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '12 * * * *'
-  push:
-    branches: [master]
-    paths:
-      - 'scripts/propline_adapter.py'
-      - 'scripts/odds_adapter.py'
-      - 'scripts/lsi_pipeline.py'
-      - 'scripts/lsi_publish_future_board.py'
-      - 'scripts/lsi_game_winner_spectrum.py'
-      - 'data/verified_market_overrides.json'
-      - '.github/workflows/ljdp-moneylines.yml'
 
 
 permissions:
