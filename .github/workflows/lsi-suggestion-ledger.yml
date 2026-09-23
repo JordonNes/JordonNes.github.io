@@ -1,0 +1,125 @@
+name: LSI Publication Suggestion Ledger
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "LSI Daily Predictions Pipeline"
+      - "LSI Near-Event Gate"
+      - "LSI Extended Markets Refresh"
+      - "LJDP NFL Manual Recovery"
+    types: [completed]
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_snapshot_suggestions.js'
+      - 'scripts/lsi_build_recaps.py'
+      - 'ljdata.js'
+      - 'nflrefresh.js'
+      - 'ncaarefresh.js'
+      - 'tennisrefresh.js'
+      - 'dailyrefresh.js'
+      - 'morningrefresh.js'
+      - 'middayrefresh.js'
+      - 'lsi_native_refresh.js'
+      - 'lsi_registry_bridge.js'
+      - 'data/future_market_board.js'
+      - 'data/prediction_registry.js'
+      - 'MLB.html'
+      - 'NFL.html'
+      - 'NBA.html'
+      - 'WNBA.html'
+      - 'NHL.html'
+      - 'NCAA_Football.html'
+      - 'NCAA_Basketball.html'
+      - 'Tennis.html'
+      - 'MMA.html'
+      - 'Boxing.html'
+      - 'FIBA_Men.html'
+      - 'FIBA_Women.html'
+      - '.github/workflows/lsi-suggestion-ledger.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-suggestion-ledger
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Capture committed LJDP publication state
+        run: node scripts/lsi_snapshot_suggestions.js
+
+      - name: Validate immutable suggestion ledger
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/suggestion_ledger.json')
+          assert p.exists(), 'suggestion_ledger.json missing'
+          d=json.loads(p.read_text(encoding='utf-8'))
+          assert d.get('schema_version')=='LSI-SUGGESTION-LEDGER-2', d.get('schema_version')
+          rows=d.get('suggestions') or []
+          eligible=[r for r in rows if r.get('accuracy_eligible') is True]
+          invalid=[r for r in eligible if r.get('capture_validity')!='VALID' or r.get('structure_status')!='STRUCTURED']
+          assert not invalid, invalid[:3]
+          ambiguous=[r for r in rows if r.get('capture_validity')=='EVENT_AMBIGUOUS']
+          quarantined=[r for r in rows if r.get('capture_validity')=='QUARANTINED_CAPTURE_V1']
+          print(f"Suggestion ledger v2: total={len(rows)} eligible={len(eligible)} ambiguous={len(ambiguous)} quarantined_v1={len(quarantined)}")
+          PY
+
+      - name: Refresh accuracy aggregates from current settled results
+        run: python scripts/lsi_build_recaps.py
+
+      - name: Validate accuracy JSON
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=Path('data/suggestion_accuracy.json')
+          assert a.exists(), 'suggestion_accuracy.json missing'
+          d=json.loads(a.read_text(encoding='utf-8'))
+          assert d.get('schema_version')=='LSI-SUGGESTION-ACCURACY-1'
+          assert 'overall_versions' in d and 'unique_outcomes' in d
+          print('Suggestion accuracy:', d.get('overall_versions'))
+          PY
+
+      - name: Commit publication ledger and accuracy artifacts
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX Publication Ledger'
+          git config user.email 'actions@users.noreply.github.com'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin master
+            if [ "$attempt" -gt 1 ]; then
+              git reset --hard origin/master
+              node scripts/lsi_snapshot_suggestions.js
+              python scripts/lsi_build_recaps.py
+            fi
+            git add data/suggestion_ledger.json data/suggestion_accuracy.json ljrecapdata.js
+            if git diff --cached --quiet; then
+              echo 'Publication ledger already current.'
+              exit 0
+            fi
+            git commit -m "LSI immutable publication suggestion ledger"
+            if git push origin master; then exit 0; fi
+            echo "Publication-ledger push race; retrying ${attempt}/5"
+            sleep 3
+          done
+          exit 1
