@@ -35,7 +35,7 @@ PROP_FIELDS = [
     "player_status", "rotowire_context_timestamp", "sharp_market_signal", "L5_hit_rate",
     "L10_hit_rate", "L20_hit_rate", "actual_result", "win_loss_push", "CLV",
     "evaluation_key", "evaluation_id", "evaluation_material_hash", "evaluation_version",
-    "evaluated_at_utc", "feature_state", "spectrum", "evaluation_reason", "economic_value",
+    "evaluated_at_utc", "player_projection", "feature_state", "spectrum", "evaluation_reason", "economic_value",
 ]
 
 
@@ -522,7 +522,7 @@ def build():
                 qkey=(str(league_name),str(event_id),norm(participant),norm(market_name),numeric_line(threshold),norm(side))
                 q=qc_eval.get(qkey) or {}
                 for field in ("evaluation_key","evaluation_id","evaluation_material_hash","evaluation_version",
-                              "evaluated_at_utc","feature_state","spectrum","evaluation_reason"):
+                              "evaluated_at_utc","player_projection","feature_state","spectrum","evaluation_reason"):
                     record[field]=q.get(field)
                 if q.get("evaluation_status")=="LJ_EVALUATED" and f(q.get("ljpc")) is not None:
                     canonical=f(q.get("ljpc"))
@@ -562,7 +562,7 @@ def build():
         "clv_definition": "Line-based threshold CLV when a sourced closing line exists; positive means L&J captured the more favorable threshold. Price/implied-probability CLV is not inferred.",
         "terminology_policy": "LJPC is the canonical final L&J hit probability. Economics never inflate LJPC. legz_value measures evidence strength; economic_value measures market/payout attractiveness when observable; pom_value combines prediction quality and economics.",
         "pom_value_formula": "0.80 * sqrt(legz_value * ljpc) + 0.20 * economic_value",
-        "evaluation_state_policy": "Current PLAYER_PROP predictions inherit the exact matched LEGZ Statistical Spectrum evaluation state from qc_prop_board when available; evaluation_id and material hash make the feature-level decision auditable and reusable.",
+        "evaluation_state_policy": "Current PLAYER_PROP predictions inherit the exact matched LEGZ Statistical Spectrum evaluation state from qc_prop_board when available; evaluation_id and material hash make the feature-level decision auditable and reusable. player_projection records the L5-primary expected output used to evaluate the exact offered threshold.",
         "learning_policy": "Historical adjustments apply only through LSI-LEARNING-OVERLAY-1 after every maturity gate passes; absolute adjustment is capped at 3 percentage points.",
         "learning_overlay_enabled": bool(learning.get("enabled")),
         "predictions": rows,
