@@ -28,6 +28,6 @@ for(const p of ['FIBA_Men.html','FIBA_Women.html']){
 }
 const q=fs.readFileSync(path.join(ROOT,'Quickie_Generator.html'),'utf8');
 req(q.includes("'FIBA'"),'Quickie must expose canonical FIBA filter');
-req(q.includes("'FIBA_Men','FIBA_Women'"),'Quickie must retain separate FIBA source lanes');
-req(q.includes("sport:'FIBA'"),'Quickie must normalize legacy FIBA lanes to canonical filter');
+req(q.includes('window.LJ_FUTURE_MARKET_BOARD'),'Quickie must consume the canonical future market board');
+req(q.includes('FIBA_(Men|Women)'),'Quickie must normalize legacy FIBA event labels into the canonical FIBA filter');
 console.log('FIBA hub audit passed: canonical hub + separate Men/Women lanes + scenario engine + World Cup paths + migration shims.');
