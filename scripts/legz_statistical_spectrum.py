@@ -157,6 +157,25 @@ def load_evaluation_state():
     payload.setdefault("latest_by_key",{})
     return payload
 
+def compact_evaluation_state(records_by_id, latest, current_ids):
+    """Keep the live state operationally complete while immutable history lives in LSI Archive."""
+    latest_ids={
+        str(v.get("evaluation_id"))
+        for v in (latest or {}).values()
+        if isinstance(v,dict) and v.get("evaluation_id")
+    }
+    keep_ids=latest_ids | {str(x) for x in (current_ids or set()) if x}
+    kept={
+        eid:records_by_id[eid]
+        for eid in keep_ids
+        if eid in records_by_id
+    }
+    clean_latest={
+        key:value for key,value in (latest or {}).items()
+        if isinstance(value,dict) and str(value.get("evaluation_id") or "") in kept
+    }
+    return kept,clean_latest
+
 def historical_results():
     out=defaultdict(list)
     # Settled L&J predictions remain useful exact-market evidence.
@@ -482,6 +501,7 @@ def main():
     records_by_id={r.get("evaluation_id"):r for r in state.get("records") or [] if r.get("evaluation_id")}
     latest=dict(state.get("latest_by_key") or {})
     evaluated=waiting=0
+    current_evaluation_ids=set()
     for event in payload.get("events") or []:
         tournament_ctx=fiba_event_context(event,fiba_scenarios)
         for prop in event.get("props") or []:
@@ -525,6 +545,7 @@ def main():
               "evaluation_reason":result.get("evaluation_reason"),
             }
             records_by_id[evaluation_id]=state_record
+            current_evaluation_ids.add(evaluation_id)
             latest[evaluation_key]={"evaluation_id":evaluation_id,"material_hash":material_hash,"evaluated_at_utc":evaluated_at}
             prop.pop("_league",None); prop.pop("_event_id",None)
             prop.update(result)
@@ -533,10 +554,17 @@ def main():
     payload["evaluation_engine"]="LEGZ_STATISTICAL_SPECTRUM_3"
     payload["evaluation_summary"]={"evaluated":evaluated,"awaiting_evidence":waiting}
     BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    before_compaction=len(records_by_id)
+    records_by_id,latest=compact_evaluation_state(records_by_id,latest,current_evaluation_ids)
     state_payload={
       "schema_version":"LSI-EVALUATION-STATE-1",
       "evaluation_engine":"LEGZ_STATISTICAL_SPECTRUM_3",
       "generated_at_utc":datetime.now(timezone.utc).isoformat(),
+      "retention_policy":"LIVE_LATEST_BY_EVALUATION_KEY_PLUS_CURRENT_BOARD",
+      "historical_record_authority":"LSI Archive Memory Layer / evaluation_state_history shards",
+      "records_before_compaction":before_compaction,
+      "record_count":len(records_by_id),
+      "latest_key_count":len(latest),
       "records":list(records_by_id.values()),
       "latest_by_key":latest,
     }
@@ -549,6 +577,6 @@ def main():
         synthetic_events.append({"league":event.get("league"),"source_event_id":event.get("source_event_id") or event.get("event_id"),"commence_time":event.get("commence_time"),"away":event.get("away"),"home":event.get("home"),"away_aliases":event.get("away_aliases") or [],"home_aliases":event.get("home_aliases") or [],"source":"LEGZ_SYNTHETIC_BOOK","sweep_status":"LEGZ_SYNTHETIC_EVALUATED","props":props})
     synthetic_payload={"schema_version":"LSI-LEGZ-SYNTHETIC-BOOK-1","generated_at_utc":datetime.now(timezone.utc).isoformat(),"stage":"POST_SPECTRUM_EVALUATED","policy":"Verified external POMs outrank synthetic lines. Synthetic rows are internal shadow-book thresholds and never external offers.","event_count":len(synthetic_events),"prop_count":synthetic_count,"events":synthetic_events}
     SYNTHETIC_BOOK.write_text(json.dumps(synthetic_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"LEGZ Statistical Spectrum v3: evaluated={evaluated}; awaiting_evidence={waiting}; durable_states={len(records_by_id)}; synthetic_persisted={synthetic_count}")
+    print(f"LEGZ Statistical Spectrum v3: evaluated={evaluated}; awaiting_evidence={waiting}; durable_live_states={len(records_by_id)}; compacted_from={before_compaction}; synthetic_persisted={synthetic_count}")
 
 if __name__=="__main__": main()
