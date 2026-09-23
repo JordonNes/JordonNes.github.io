@@ -10,7 +10,7 @@ This script never fabricates a winner from market price alone.
 from __future__ import annotations
 import hashlib, json, math, os, re, urllib.parse, urllib.request
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -104,6 +104,12 @@ def scoreboard_evidence(events):
         except Exception:
             continue
         wanted[league].add(day)
+    # NFL future scoreboards do not always expose complete current records for both
+    # participants. Reuse the immediately preceding week as independent performance
+    # evidence before withholding a Game Winner.
+    if "NFL" in wanted:
+        for d in range(1,9):
+            wanted["NFL"].add((NOW-timedelta(days=d)).strftime("%Y%m%d"))
     evidence=defaultdict(dict)
     errors=[]
     calls=0
