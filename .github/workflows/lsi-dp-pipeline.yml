@@ -32,7 +32,8 @@ on:
       - 'scripts/lsi_publish_future_board.py'
       - 'scripts/lsi_promote_learning.py'
       - 'data/learning_overlay.json'
-      - 'data/fiba_scenario_state.json'\n      - 'data/lsi_spectrum_cache.json'
+      - 'data/fiba_scenario_state.json'
+      - 'data/lsi_spectrum_cache.json'
       - 'data/performance_history.csv'
       - 'data/history/**'
       - 'data/history_coverage.json'
@@ -198,6 +199,9 @@ jobs:
           assert all(p.get('ljpc') is not None for p in evaluated)
           assert all(p.get('ljpc') is None for p in waiting)
           assert all((p.get('spectrum') or {}).get('distribution') is not None for p in props)
+          evaluated_projected=[p for p in evaluated if p.get('player_projection')]
+          assert len(evaluated_projected)==len(evaluated), f'Evaluated props missing player_projection: {len(evaluated)-len(evaluated_projected)}'
+          print('Projection coverage:',d.get('projection_summary') or {})
           assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in props)
           state=json.load(open('data/lsi_evaluation_state.json',encoding='utf-8'))
           assert state.get('schema_version')=='LSI-EVALUATION-STATE-1'
