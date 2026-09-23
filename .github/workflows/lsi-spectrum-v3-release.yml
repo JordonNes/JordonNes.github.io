@@ -73,7 +73,12 @@ jobs:
           waiting=[p for p in props if p.get('evaluation_status')=='AWAITING_LJ_EVALUATION']
           assert all(p.get('ljpc') is not None for p in evaluated)
           assert all(p.get('ljpc') is None for p in waiting)
-          print(f'Spectrum v3 ledger valid: props={len(props)} evaluated={len(evaluated)} awaiting={len(waiting)} states={len(ids)}')
+          import os
+          size=os.path.getsize('data/lsi_evaluation_state.json')
+          assert state.get('retention_policy')=='LIVE_LATEST_BY_EVALUATION_KEY_PLUS_CURRENT_BOARD'
+          assert size < 80*1024*1024, f'Live evaluation state too large: {size/1024/1024:.2f} MB'
+          assert state.get('record_count')==len(state.get('records') or [])
+          print(f'Spectrum v3 ledger valid: props={len(props)} evaluated={len(evaluated)} awaiting={len(waiting)} states={len(ids)} size_mb={size/1024/1024:.2f}')
           PY
 
       - name: Build canonical Prediction Registry
