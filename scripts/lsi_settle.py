@@ -30,6 +30,7 @@ NOW = datetime.now(timezone.utc)
 UA = {"User-Agent": "LEGZ-JINX-LSI-Settlement/1.0", "Accept": "application/json"}
 
 REGISTRY = DATA / "prediction_registry.json"
+SUGGESTIONS = DATA / "suggestion_ledger.json"
 RESULTS = DATA / "results.csv"
 STATUS = DATA / "settlement_status.json"
 ALIASES = DATA / "settlement_aliases.json"
