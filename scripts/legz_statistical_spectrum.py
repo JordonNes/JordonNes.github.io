@@ -143,9 +143,31 @@ def implied(price):
 
 def clamp(x,lo=0,hi=100): return max(lo,min(hi,x))
 
+EVALUATION_VERSION=EVALUATION_VERSION
+
 def stable_hash(value):
     raw=json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,default=str)
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+def stable_material_view(value):
+    """Remove volatile retrieval metadata before deciding whether evidence changed."""
+    volatile={
+      "snapshot_id","source_snapshot_ids","evidence_ids","retrieved_at","retrieved_at_utc",
+      "collected_at","collected_at_pt","collected_at_utc","published_at","updated_at",
+      "generated_at","generated_at_utc","generated_at_pt","rotowire_context_timestamp",
+      "source_url","raw_source_id"
+    }
+    if isinstance(value,dict):
+        return {
+          str(k):stable_material_view(v)
+          for k,v in value.items()
+          if str(k) not in volatile
+          and not str(k).endswith("_timestamp")
+          and not str(k).endswith("_snapshot_id")
+        }
+    if isinstance(value,list):
+        return [stable_material_view(v) for v in value]
+    return value
 
 def evaluation_identity(prop):
     return {
@@ -156,6 +178,86 @@ def evaluation_identity(prop):
       "threshold":effective_threshold(prop,market_metric(prop.get("market"))),
       "threshold_operator":norm(prop.get("threshold_operator")),
       "side":norm(prop.get("side")),
+    }
+
+def evaluation_input_material(prop,event,history,contexts,game_contexts,cache,metric_cache,tournament_ctx=None):
+    """Cheap pre-evaluation fingerprint.
+
+    It intentionally excludes retrieval timestamps and snapshot IDs. A new scrape of
+    unchanged evidence must not force Spectrum to recompute the same exact POM.
+    """
+    identity=evaluation_identity(prop)
+    player=player_norm(prop.get("participant"))
+    event_id=str(prop.get("_event_id") or prop.get("event_id") or "")
+    vals,metric=history_values(prop,history)
+    exact_cache_key=(
+      str(prop.get("_league") or ""),player,norm(prop.get("market")),
+      str(prop.get("threshold") or ""),norm(prop.get("side"))
+    )
+    exact_cache=cache.get(exact_cache_key) or {}
+    metric_profile={}
+    if metric:
+        for alias in player_alias_keys(player):
+            rec=(metric_cache or {}).get((str(prop.get("_league") or ""),alias,metric))
+            if rec:
+                metric_profile=rec
+                break
+    context=(contexts or {}).get(player) or {}
+    game_context=(game_contexts or {}).get((player,event_id)) or (game_contexts or {}).get((player,"")) or {}
+
+    prop_fields=(
+      "participant","team","market","threshold","threshold_operator","side","price","best_price",
+      "pom_type","market_source_count","market_live","market_suspended","steam_score","books_moved",
+      "lineup_confirmed","player_status","role","expected_role","sharp_market_signal",
+      "jinx_input","jinx_delta","L3_hit_rate","L5_hit_rate","L10_hit_rate","L20_hit_rate",
+      "l3_hit_rate","l5_hit_rate","l10_hit_rate","l20_hit_rate",
+      "synthetic","model_generated","synthetic_sample_n","synthetic_empirical_probability",
+      "synthetic_mean","synthetic_median","synthetic_stddev"
+    )
+    event_material={
+      "event_id":event_id,
+      "away":event.get("away"),
+      "home":event.get("home"),
+      "commence_time":event.get("commence_time") or event.get("event_start_pt"),
+      "venue":event.get("venue"),
+      "venue_indoor":event.get("venue_indoor"),
+      "status":event.get("status"),
+    }
+    market_material={k:prop.get(k) for k in prop_fields if prop.get(k) not in (None,"")}
+    material={
+      "model_version":EVALUATION_VERSION,
+      "identity":identity,
+      "opponent_event":stable_material_view(event_material),
+      "market_role_availability":stable_material_view(market_material),
+      "performance_history_hash":stable_hash(vals),
+      "performance_history_n":len(vals),
+      "exact_threshold_cache_hash":stable_hash(stable_material_view(exact_cache)),
+      "metric_cache_hash":stable_hash(stable_material_view(metric_profile)),
+      "current_context_hash":stable_hash(stable_material_view(context)),
+      "game_context_hash":stable_hash(stable_material_view(game_context)),
+      "tournament_context_hash":stable_hash(stable_material_view(tournament_ctx or {})),
+    }
+    return material
+
+def evaluation_result_from_state(record):
+    """Rehydrate a prior live evaluation when its pre-evaluation material hash is unchanged."""
+    feature=record.get("feature_state") or {}
+    market=(feature.get("market") or {}) if isinstance(feature,dict) else {}
+    ljpc=record.get("ljpc")
+    return {
+      "evaluation_status":record.get("evaluation_status") or "AWAITING_LJ_EVALUATION",
+      "ljpc":ljpc,
+      "lj_confidence":ljpc,
+      "legz_baseline":record.get("legz_baseline"),
+      "jinx_input":record.get("jinx_input"),
+      "legz_value":record.get("legz_value"),
+      "economic_value":record.get("economic_value"),
+      "pom_value":record.get("pom_value"),
+      "market_baseline_probability":market.get("implied_probability"),
+      "player_projection":record.get("player_projection"),
+      "feature_state":record.get("feature_state"),
+      "spectrum":record.get("spectrum"),
+      "evaluation_reason":record.get("evaluation_reason"),
     }
 
 def load_evaluation_state():
@@ -713,7 +815,7 @@ def main():
     state=load_evaluation_state()
     records_by_id={r.get("evaluation_id"):r for r in state.get("records") or [] if r.get("evaluation_id")}
     latest=dict(state.get("latest_by_key") or {})
-    evaluated=waiting=0
+    evaluated=waiting=reused=recomputed=0
     projection_summary={"total_props":0,"projected":0,"identity_exact":0,"identity_alias":0,"missing_projection":0,"by_league":{}}
     current_evaluation_ids=set()
     for event in payload.get("events") or []:
@@ -721,7 +823,31 @@ def main():
         for prop in event.get("props") or []:
             prop["_league"]=event.get("league") or ""
             prop["_event_id"]=event.get("event_id") or event.get("source_event_id") or ""
-            result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts,metric_cache=metric_cache)
+            identity=evaluation_identity(prop)
+            evaluation_key=stable_hash(identity)[:24]
+            material=evaluation_input_material(
+              prop,event,history,contexts,game_contexts,cache,metric_cache,tournament_ctx=tournament_ctx
+            )
+            material_hash=stable_hash(material)
+            previous=latest.get(evaluation_key) or {}
+            previous_record=records_by_id.get(previous.get("evaluation_id"))
+            can_reuse=bool(
+              previous_record
+              and previous.get("material_hash")==material_hash
+              and previous_record.get("material_hash")==material_hash
+              and previous_record.get("evaluation_version")==EVALUATION_VERSION
+            )
+            if can_reuse:
+                result=evaluation_result_from_state(previous_record)
+                evaluation_id=previous.get("evaluation_id")
+                evaluated_at=previous.get("evaluated_at_utc")
+                reused+=1
+            else:
+                result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts,metric_cache=metric_cache)
+                evaluation_id=f"lse-{stable_hash({'key':evaluation_key,'material_hash':material_hash})[:24]}"
+                evaluated_at=datetime.now(timezone.utc).isoformat()
+                recomputed+=1
+
             projection_summary["total_props"]+=1
             league_key=str(event.get("league") or "")
             bucket=projection_summary["by_league"].setdefault(league_key,{"total":0,"projected":0,"identity_exact":0,"identity_alias":0,"missing_projection":0})
@@ -736,35 +862,29 @@ def main():
                     projection_summary["identity_exact"]+=1; bucket["identity_exact"]+=1
             else:
                 projection_summary["missing_projection"]+=1; bucket["missing_projection"]+=1
-            identity=evaluation_identity(prop)
-            evaluation_key=stable_hash(identity)[:24]
-            material={
-              "identity":identity,
-              "feature_state":result.get("feature_state"),
-              "legz_baseline":result.get("legz_baseline"),
-              "jinx_input":result.get("jinx_input"),
-              "ljpc":result.get("ljpc"),
-              "status":result.get("evaluation_status"),
-            }
-            material_hash=stable_hash(material)
-            previous=latest.get(evaluation_key) or {}
-            if previous.get("material_hash")==material_hash:
-                evaluation_id=previous.get("evaluation_id")
-                evaluated_at=previous.get("evaluated_at_utc")
-            else:
-                evaluation_id=f"lse-{stable_hash({'key':evaluation_key,'material_hash':material_hash})[:24]}"
-                evaluated_at=datetime.now(timezone.utc).isoformat()
+
             result.update({
               "evaluation_key":evaluation_key,
               "evaluation_id":evaluation_id,
               "evaluation_material_hash":material_hash,
-              "evaluation_version":"LEGZ_STATISTICAL_SPECTRUM_3",
+              "evaluation_version":EVALUATION_VERSION,
               "evaluated_at_utc":evaluated_at,
+              "evaluation_reused":can_reuse,
             })
+            basis={
+              "model_version":material.get("model_version"),
+              "performance_history_hash":material.get("performance_history_hash"),
+              "performance_history_n":material.get("performance_history_n"),
+              "opponent_event_hash":stable_hash(material.get("opponent_event")),
+              "market_role_availability_hash":stable_hash(material.get("market_role_availability")),
+              "current_context_hash":material.get("current_context_hash"),
+              "game_context_hash":material.get("game_context_hash"),
+              "tournament_context_hash":material.get("tournament_context_hash"),
+            }
             state_record={
               "evaluation_id":evaluation_id,"evaluation_key":evaluation_key,
-              "material_hash":material_hash,"evaluated_at_utc":evaluated_at,
-              "evaluation_version":"LEGZ_STATISTICAL_SPECTRUM_3",
+              "material_hash":material_hash,"material_basis":basis,"evaluated_at_utc":evaluated_at,
+              "evaluation_version":EVALUATION_VERSION,
               **identity,
               "evaluation_status":result.get("evaluation_status"),
               "legz_baseline":result.get("legz_baseline"),"jinx_input":result.get("jinx_input"),
@@ -780,15 +900,15 @@ def main():
             prop.update(result)
             if result["evaluation_status"]=="LJ_EVALUATED": evaluated+=1
             else: waiting+=1
-    payload["evaluation_engine"]="LEGZ_STATISTICAL_SPECTRUM_3"
-    payload["evaluation_summary"]={"evaluated":evaluated,"awaiting_evidence":waiting}
+    payload["evaluation_engine"]=EVALUATION_VERSION
+    payload["evaluation_summary"]={"evaluated":evaluated,"awaiting_evidence":waiting,"reused_unchanged":reused,"recomputed_changed":recomputed}
     payload["projection_summary"]=projection_summary
     BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     before_compaction=len(records_by_id)
     records_by_id,latest=compact_evaluation_state(records_by_id,latest,current_evaluation_ids)
     state_payload={
       "schema_version":"LSI-EVALUATION-STATE-1",
-      "evaluation_engine":"LEGZ_STATISTICAL_SPECTRUM_3",
+      "evaluation_engine":EVALUATION_VERSION,
       "generated_at_utc":datetime.now(timezone.utc).isoformat(),
       "retention_policy":"LIVE_CURRENT_BOARD_RECORDS_PLUS_LATEST_HASH_INDEX",
       "historical_record_authority":"LSI Archive Memory Layer / evaluation_state_history shards",
