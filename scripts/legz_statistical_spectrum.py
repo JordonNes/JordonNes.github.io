@@ -20,6 +20,7 @@ CONTEXT=DATA/"context_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
 EVAL_STATE=DATA/"lsi_evaluation_state.json"
 SYNTHETIC_BOOK=DATA/"legz_synthetic_book.json"
+FIBA_SCENARIOS=DATA/"fiba_scenario_state.json"
 HISTORY_ROOT=DATA/"history"
 
 def csv_open(path):
@@ -273,6 +274,37 @@ def context_index():
         if player and player not in out: out[player]=row
     return out
 
+def load_fiba_scenarios():
+    if not FIBA_SCENARIOS.exists(): return {}
+    try:
+        payload=json.loads(FIBA_SCENARIOS.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError,OSError,AttributeError):
+        return {}
+    return payload.get("competitions") or {}
+
+def fiba_event_context(event, scenario_competitions):
+    """Attach tournament state only when both event teams resolve to one FIBA group."""
+    league=str(event.get("league") or "")
+    if not league.upper().startswith("FIBA"): return None
+    away=norm(event.get("away")); home=norm(event.get("home"))
+    if not away or not home: return None
+    for comp_id,comp in (scenario_competitions or {}).items():
+        for group_id,group in (comp.get("groups") or {}).items():
+            teams=group.get("teams") or {}
+            by_norm={norm(name):(name,rec) for name,rec in teams.items()}
+            if away in by_norm and home in by_norm:
+                an,ar=by_norm[away]; hn,hr=by_norm[home]
+                return {
+                  "competition_id":comp_id,"group":group_id,
+                  "away":{"team":an,"state":ar.get("state"),"leverage":ar.get("leverage"),"flags":ar.get("flags") or [],
+                          "possible_routes":ar.get("possibleRoutes") or [],"reason":ar.get("reason")},
+                  "home":{"team":hn,"state":hr.get("state"),"leverage":hr.get("leverage"),"flags":hr.get("flags") or [],
+                          "possible_routes":hr.get("possibleRoutes") or [],"reason":hr.get("reason")},
+                  "directional_adjustment_pp":0.0,
+                  "policy":"Tournament leverage is attributable context only until role/market-specific FIBA calibration supports a directional LJPC adjustment."
+                }
+    return None
+
 def jinx_context(prop, contexts):
     """Conservative, attributable context layer. No private inference."""
     row=contexts.get(player_norm(prop.get("participant"))) or {}
@@ -296,7 +328,7 @@ def jinx_context(prop, contexts):
             "context_id":row.get("context_id"),"context_type":ctype or None,
             "status":status or None,"headline":row.get("headline"),"source":row.get("source")}
 
-def spectrum(prop, history, contexts, cache):
+def spectrum(prop, history, contexts, cache, tournament_ctx=None):
     rates=[]
     dist=distribution_features(prop,history)
     synthetic=bool(prop.get("synthetic") or prop.get("model_generated"))
@@ -338,6 +370,9 @@ def spectrum(prop, history, contexts, cache):
     evidence=[x for x in (prop.get("evidence_ids") or []) if x]
 
     ctx=jinx_context(prop,contexts)
+    if tournament_ctx:
+        ctx["tournament"]=tournament_ctx
+        ctx["signals"].append("fiba_tournament_leverage")
     provenance={"snapshot_ids":sorted(set(snapshots)),"evidence_ids":sorted(set(evidence))}
     # Hit-rate windows are correlated views of the same performance history. They are
     # one signal family, not independent confirmations. Market/context remain separate.
@@ -433,7 +468,7 @@ def spectrum(prop, history, contexts, cache):
       "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
       "spectrum":{"performance":ordered,"distribution":dist,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
       "feature_state":feature_state,
-      "evaluation_reason":"LEGZ statistical spectrum combines recency hit rates with a sample-size-smoothed threshold distribution, then applies a bounded market prior; JINX applies attributable availability/role context only."
+      "evaluation_reason":"LEGZ statistical spectrum combines recency hit rates with a sample-size-smoothed threshold distribution, then applies a bounded market prior; JINX applies attributable availability/role context and records FIBA tournament leverage as non-directional context until calibrated."
     }
 
 def main():
@@ -441,16 +476,18 @@ def main():
     payload=json.loads(BOARD.read_text(encoding="utf-8"))
     history=historical_results()
     contexts=context_index()
+    fiba_scenarios=load_fiba_scenarios()
     cache=spectrum_cache_index()
     state=load_evaluation_state()
     records_by_id={r.get("evaluation_id"):r for r in state.get("records") or [] if r.get("evaluation_id")}
     latest=dict(state.get("latest_by_key") or {})
     evaluated=waiting=0
     for event in payload.get("events") or []:
+        tournament_ctx=fiba_event_context(event,fiba_scenarios)
         for prop in event.get("props") or []:
             prop["_league"]=event.get("league") or ""
             prop["_event_id"]=event.get("event_id") or event.get("source_event_id") or ""
-            result=spectrum(prop,history,contexts,cache)
+            result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx)
             identity=evaluation_identity(prop)
             evaluation_key=stable_hash(identity)[:24]
             material={
