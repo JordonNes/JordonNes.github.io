@@ -99,7 +99,7 @@ jobs:
           reg=json.load(open('data/prediction_registry.json',encoding='utf-8'))
           future=json.load(open('data/future_market_board.json',encoding='utf-8'))
           synthetic=json.load(open('data/legz_synthetic_book.json',encoding='utf-8'))
-          required={'evaluation_key','evaluation_id','evaluation_material_hash','evaluation_version','evaluated_at_utc','feature_state','spectrum','evaluation_reason'}
+          required={'evaluation_key','evaluation_id','evaluation_material_hash','evaluation_version','evaluated_at_utc','player_projection','feature_state','spectrum','evaluation_reason'}
           fields=set(reg.get('player_prop_fields') or [])
           assert required <= fields, sorted(required-fields)
           assert reg.get('evaluation_state_policy')
@@ -116,12 +116,16 @@ jobs:
           # must render durable evaluated QC inventory as LINE RECHECK REQUIRED.
           assert future_props or durable_eval, 'No current or durable evaluated player-prop inventory exists'
           assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in future_props)
+          evaluated_future=[p for p in future_props if p.get('evaluation_status')=='LJ_EVALUATED' and p.get('ljpc') is not None]
+          assert all(p.get('player_projection') for p in evaluated_future), 'Public LJ_EVALUATED prop missing player_projection'
+          summary=board.get('projection_summary') or {}
+          print('Projection coverage:',summary)
           if synthetic_props:
               assert synthetic.get('stage')=='POST_SPECTRUM_EVALUATED', synthetic.get('stage')
               assert evaluated_synthetic, 'Synthetic research book exists but contains zero post-Spectrum internal evaluations'
           published_synthetic=[p for p in future_props if p.get('synthetic') or p.get('model_generated') or p.get('market_verification')=='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER']
           assert not published_synthetic, f'Synthetic/model-target POM escaped into public future board: {len(published_synthetic)}'
-          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)} durable_eval_props={len(durable_eval)} internal_synthetic_eval={len(evaluated_synthetic)} public_synthetic=0')
+          print(f'Downstream parity valid: registry_props={len(rprops)} canonical_matches={len(matched)} future_eval_props={len(future_props)} projected_future_eval={len(evaluated_future)} durable_eval_props={len(durable_eval)} internal_synthetic_eval={len(evaluated_synthetic)} public_synthetic=0')
           PY
 
       - name: Commit Spectrum v3 release artifacts
