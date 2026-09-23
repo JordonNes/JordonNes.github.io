@@ -64,12 +64,20 @@ jobs:
           assert 'LJ-RECAP-AUTO-2' in recap
           assert 'window.LJ_RECAP_DATA=' in recap
           assert 'MARKET ANOMALY' in Path('scripts/lsi_build_recaps.py').read_text(encoding='utf-8')
+          ledger=Path('data/suggestion_ledger.json')
+          if ledger.exists():
+              l=json.loads(ledger.read_text(encoding='utf-8'))
+              assert l.get('schema_version')=='LSI-SUGGESTION-LEDGER-1'
+              accuracy=Path('data/suggestion_accuracy.json')
+              assert accuracy.exists(), 'suggestion_accuracy.json missing after recap build'
+              a=json.loads(accuracy.read_text(encoding='utf-8'))
+              assert a.get('schema_version')=='LSI-SUGGESTION-ACCURACY-1'
           PY
 
       - name: Commit settlement-only outputs
         shell: bash
         run: |
-          ALLOWED='data/results.csv data/settlement_status.json data/settlement_aliases.json ljrecapdata.js'
+          ALLOWED='data/results.csv data/settlement_status.json data/settlement_aliases.json data/suggestion_accuracy.json ljrecapdata.js'
           CHANGED="$(git status --porcelain | awk '{print $2}')"
           for f in $CHANGED; do
             case " $ALLOWED " in
