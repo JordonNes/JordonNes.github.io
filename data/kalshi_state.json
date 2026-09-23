@@ -1,17 +1,17 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-09-23T19:31:30.122054+00:00",
+  "checked_at_utc": "2026-09-23T21:51:59.507862+00:00",
   "status": "OK",
-  "raw_market_count": 9434,
-  "normalized_props": 1259,
-  "history_rows_added": 1154,
+  "raw_market_count": 12475,
+  "normalized_props": 2098,
+  "history_rows_added": 1679,
   "skip_reasons": {
-    "ambiguous_matchup": 175,
-    "ambiguous_participant_threshold": 1613,
-    "not_upcoming": 24,
-    "ok": 1259,
-    "unknown_sport": 6007,
-    "unsupported_market": 356
+    "ambiguous_matchup": 201,
+    "ambiguous_participant_threshold": 3756,
+    "no_current_yes_price": 12,
+    "ok": 2098,
+    "unknown_sport": 6048,
+    "unsupported_market": 360
   },
   "skip_samples": {
     "unknown_sport": {
@@ -53,19 +53,6 @@
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
     },
-    "not_upcoming": {
-      "ticker": "KXMLBRBI-26SEP221835TORBAL-TORGSPRINGER4-1",
-      "event_ticker": "KXMLBRBI-26SEP221835TORBAL",
-      "series_ticker": "KXMLBRBI",
-      "event_title": "Toronto vs Baltimore: RBIs",
-      "title": "George Springer: 1+ RBIs?",
-      "subtitle": null,
-      "yes_sub_title": "George Springer: 1+",
-      "primary_participant_key": "baseball_player",
-      "floor_strike": 0.5,
-      "functional_strike": null,
-      "occurrence_datetime": "2026-09-23T01:35:00Z"
-    },
     "ambiguous_matchup": {
       "ticker": "KXNFL60YARDFGS-27-6",
       "event_ticker": "KXNFL60YARDFGS-27",
@@ -78,12 +65,25 @@
       "floor_strike": 6,
       "functional_strike": null,
       "occurrence_datetime": "2027-01-31T15:00:00Z"
+    },
+    "no_current_yes_price": {
+      "ticker": "KXMLBHRR-26SEP231940MIACHC-CHCNHOERNER2-3",
+      "event_ticker": "KXMLBHRR-26SEP231940MIACHC",
+      "series_ticker": "KXMLBHRR",
+      "event_title": "Miami vs Chicago C: Hits + Runs + RBIs",
+      "title": "Nico Hoerner: 3+ hits + runs + RBIs?",
+      "subtitle": null,
+      "yes_sub_title": "Nico Hoerner: 3+",
+      "primary_participant_key": "baseball_player",
+      "floor_strike": 2.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-09-24T02:40:00Z"
     }
   },
   "leagues": {
-    "MLB": 430,
-    "NFL": 805,
-    "WNBA": 24
+    "MLB": 1394,
+    "NFL": 625,
+    "WNBA": 79
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
