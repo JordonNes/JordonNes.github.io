@@ -20,7 +20,7 @@ REGISTRY=DATA/"prediction_registry.json"
 RESULTS=DATA/"results.csv"
 PLAYER_CONTEXT=DATA/"player_context.csv"
 CONTEXT_REGISTRY=DATA/"context_registry.json"
-OUT=ROOT/"ljrecapdata.js"
+OUT=ROOT/"ljrecapdata.js"\nACCURACY_OUT=DATA/"suggestion_accuracy.json"
 
 SPORTS={
  "MLB":("MLB","⚾","MLB.html"),
@@ -58,8 +58,11 @@ def dstr(dt):
     return dt.strftime("%B %-d, %Y")
 
 def created_date(p):
-    raw=p.get("created_at_pt") or p.get("updated_at_pt") or ""
-    try: return datetime.fromisoformat(str(raw).replace("Z","+00:00")).astimezone(PT).date()
+    raw=p.get("publication_date_pt") or p.get("created_at_pt") or p.get("published_at_pt") or p.get("updated_at_pt") or ""
+    try:
+        if re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}",str(raw)):
+            return datetime.fromisoformat(str(raw)).date()
+        return datetime.fromisoformat(str(raw).replace("Z","+00:00")).astimezone(PT).date()
     except Exception: return None
 
 def grade(g):
@@ -116,6 +119,85 @@ def context_matches(p,player_rows,ctx_records):
             if headline:
                 hits.append(("CONTEXT_REGISTRY",x.get("source"),x.get("context_type"),headline,x.get("context_severity")))
     return hits[:8]
+
+def suggestion_as_prediction(s):
+    p=dict(s)
+    p["prediction_id"]=s.get("suggestion_id") or s.get("prediction_id")
+    p["created_at_pt"]=s.get("first_seen_at_utc") or s.get("publication_date_pt")
+    p["lj_confidence"]=s.get("ljpc")
+    p["lj_probability"]=s.get("ljpc")
+    p["selection"]=s.get("selection") or s.get("display_text") or ""
+    p["pick"]=p["selection"]
+    return p
+
+def accuracy_stat():
+    return {"suggested":0,"hits":0,"misses":0,"push_void":0,"ungraded":0}
+
+def add_accuracy(stat,g):
+    stat["suggested"]+=1
+    if g=="HIT": stat["hits"]+=1
+    elif g=="MISS": stat["misses"]+=1
+    elif g=="PUSH/VOID": stat["push_void"]+=1
+    else: stat["ungraded"]+=1
+
+def finish_accuracy(stat):
+    out=dict(stat)
+    decisive=out["hits"]+out["misses"]
+    out["decisive"]=decisive
+    out["settled"]=out["hits"]+out["misses"]+out["push_void"]
+    out["accuracy_pct"]=round(out["hits"]/decisive*100,2) if decisive else None
+    return out
+
+def build_accuracy_report(suggestions,results):
+    buckets={
+      "by_day":defaultdict(accuracy_stat),
+      "by_sport":defaultdict(accuracy_stat),
+      "by_game":defaultdict(accuracy_stat),
+      "by_player":defaultdict(accuracy_stat),
+      "by_market_class":defaultdict(accuracy_stat),
+      "by_prop_market":defaultdict(accuracy_stat),
+      "by_placement":defaultdict(accuracy_stat),
+    }
+    overall=accuracy_stat()
+    unique={}
+    for s in suggestions:
+        sid=s.get("suggestion_id")
+        if not sid: continue
+        g=grade((results.get(sid) or {}).get("grade"))
+        add_accuracy(overall,g)
+        keys={
+          "by_day":s.get("publication_date_pt") or "UNKNOWN",
+          "by_sport":s.get("league") or "UNKNOWN",
+          "by_game":f"{s.get('league') or 'UNKNOWN'}|{s.get('event_id') or 'UNKNOWN'}",
+          "by_player":f"{s.get('league') or 'UNKNOWN'}|{s.get('participant') or 'UNKNOWN'}",
+          "by_market_class":s.get("market_class") or "UNKNOWN",
+          "by_prop_market":f"{s.get('league') or 'UNKNOWN'}|{s.get('market') or s.get('market_class') or 'UNKNOWN'}",
+        }
+        for name,key in keys.items(): add_accuracy(buckets[name][key],g)
+        for placement in s.get("placements") or ["UNKNOWN"]:
+            add_accuracy(buckets["by_placement"][placement],g)
+        unique.setdefault(s.get("outcome_key") or sid,s)
+    unique_stat=accuracy_stat()
+    unique_by_sport=defaultdict(accuracy_stat)
+    for s in unique.values():
+        g=grade((results.get(s.get("suggestion_id")) or {}).get("grade"))
+        add_accuracy(unique_stat,g)
+        add_accuracy(unique_by_sport[s.get("league") or "UNKNOWN"],g)
+    return {
+      "schema_version":"LSI-SUGGESTION-ACCURACY-1",
+      "policy":"Accuracy population is the immutable website suggestion ledger. Version-level accuracy counts each materially different published POM/Game Winner version once; repeated placements of the same version do not duplicate the count. Unique-outcome accuracy collapses identical event/participant/market/side/threshold outcomes.",
+      "overall_versions":finish_accuracy(overall),
+      "unique_outcomes":finish_accuracy(unique_stat),
+      "unique_outcomes_by_sport":{k:finish_accuracy(v) for k,v in sorted(unique_by_sport.items())},
+      **{name:{k:finish_accuracy(v) for k,v in sorted(vals.items())} for name,vals in buckets.items()}
+    }
+
+def write_accuracy_report(payload):
+    try: old=json.loads(ACCURACY_OUT.read_text(encoding="utf-8"))
+    except Exception: old=None
+    if old==payload: return False
+    ACCURACY_OUT.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\\n",encoding="utf-8")
+    return True
 
 def build_sport(key,preds,results,player_rows,ctx_records,target):
     label,icon,current=SPORTS[key]
@@ -198,17 +280,21 @@ def build_sport(key,preds,results,player_rows,ctx_records,target):
 
 def main():
     registry=read_json(REGISTRY,{"predictions":[]})
-    preds=registry.get("predictions") or []
+    suggestion_rows=(read_json(SUGGESTIONS,{"suggestions":[]}).get("suggestions") or [])
+    suggestion_preds=[suggestion_as_prediction(s) for s in suggestion_rows]
+    preds=suggestion_preds if suggestion_preds else (registry.get("predictions") or [])
     result_rows=read_csv(RESULTS)
     results={r.get("prediction_id"):r for r in result_rows if r.get("prediction_id")}
     player_rows=read_csv(PLAYER_CONTEXT)
     ctx_records=(read_json(CONTEXT_REGISTRY,{"records":[]}).get("records") or [])
     target=datetime.now(PT).date()-timedelta(days=1)
     sports={k:build_sport(k,preds,results,player_rows,ctx_records,target) for k in SPORTS}
-    payload={"schema_version":"LJ-RECAP-AUTO-2","priorDate":dstr(datetime.combine(target,datetime.min.time())),
+    payload={"schema_version":"LJ-RECAP-AUTO-3","priorDate":dstr(datetime.combine(target,datetime.min.time())),
              "updated":datetime.now(PT).strftime("Automated recap refreshed %b %-d, %Y • %-I:%M %p PT"),
-             "sourcePolicy":"Published registry + durable settlement results + attributable context only. Correlation/anomaly is not proof of manipulation.",
+             "sourcePolicy":"Immutable website suggestion ledger + durable settlement results + attributable context only. Removed/updated suggestions remain in history. Correlation/anomaly is not proof of manipulation.",
              "sports":sports}
+    if suggestion_rows:
+        write_accuracy_report(build_accuracy_report(suggestion_rows,results))
     prefix="/* AUTO-GENERATED BY scripts/lsi_build_recaps.py — DO NOT HAND-GRADE */\nwindow.LJ_RECAP_DATA="
     try:
         prior=OUT.read_text(encoding="utf-8")
