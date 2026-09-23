@@ -358,7 +358,6 @@
     }
     // Game Winners are current-state only. Never preserve a market-only or stale
     // winner simply because an older QC shell still contains a confidence number.
-    const winnerKey=r=>norm((r||[])[0]);
     s.winners=winnerRows;
 
     // L&J 20 Piece: rank the complete exact-market-verified, L&J-evaluated
