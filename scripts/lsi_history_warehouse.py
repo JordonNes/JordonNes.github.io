@@ -8,7 +8,7 @@ This first production layer is intentionally source-agnostic:
 - emits lightweight JSON artifacts suitable for GitHub today and PostgreSQL migration later.
 """
 from __future__ import annotations
-import csv, gzip, hashlib, json, re
+import csv, gzip, hashlib, json, re, statistics
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -222,6 +222,36 @@ def main():
         items.sort(key=lambda x:(x[0],x[1]))
         hist[key]=[v for _,_,v in items]
 
+    # Player/metric summaries are threshold-independent. They allow fast runtime
+    # evaluation to estimate one player-game output distribution and score any
+    # newly offered ladder line without decompressing the entire historical archive.
+    metric_profiles=[]
+    player_by_id={p.get("lsi_player_id"):p for p in players.values() if p.get("lsi_player_id")}
+    for (pid,metric),vals in sorted(hist.items(),key=lambda kv:(kv[0][0],kv[0][1])):
+        clean=[float(v) for v in vals if v is not None]
+        if not clean: continue
+        meta_player=player_by_id.get(pid,{})
+        recent=clean[-20:]
+        def avg(n):
+            w=clean[-n:] if len(clean)>=n else clean
+            return round(statistics.fmean(w),3) if w else None
+        metric_profiles.append({
+            "lsi_player_id":pid,
+            "league":meta_player.get("league") or "",
+            "player":meta_player.get("canonical_name") or "",
+            "metric":metric,
+            "sample_n":len(clean),
+            "recent_values":[round(v,3) for v in recent],
+            "L3_average":avg(3),
+            "L5_average":avg(5),
+            "L10_average":avg(10),
+            "L20_average":avg(20),
+            "career_average":round(statistics.fmean(clean),3),
+            "career_median":round(statistics.median(clean),3),
+            "career_stddev":round(statistics.pstdev(clean),3) if len(clean)>1 else 0.0,
+            "source":"LSI permanent performance warehouse",
+        })
+
     profiles=[]
     # Build exact-current-threshold features so market evaluation is a local lookup.
     seen=set()
@@ -251,7 +281,13 @@ def main():
             })
 
     REG.write_text(json.dumps({"schema_version":"LSI-PLAYER-REGISTRY-1","generated_at_utc":stamp,"players":sorted(players.values(),key=lambda x:(x.get("league",""),x.get("canonical_name","")))},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    CACHE.write_text(json.dumps({"schema_version":"LSI-SPECTRUM-CACHE-1","generated_at_utc":stamp,"profiles":profiles,"policy":"Derived cache only; historical facts are immutable evidence and market price is never performance history."},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"LSI history warehouse: {len(players)} registered players; {len(profiles)} exact-threshold cached profiles.")
+    CACHE.write_text(json.dumps({
+        "schema_version":"LSI-SPECTRUM-CACHE-2",
+        "generated_at_utc":stamp,
+        "profiles":profiles,
+        "metric_profiles":metric_profiles,
+        "policy":"Derived cache only; threshold-independent player/metric recent values support fast forecast-first evaluation. Historical facts are immutable evidence and market price is never performance history."
+    },indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"LSI history warehouse: {len(players)} registered players; {len(metric_profiles)} metric profiles; {len(profiles)} exact-threshold cached profiles.")
 
 if __name__=="__main__": main()
