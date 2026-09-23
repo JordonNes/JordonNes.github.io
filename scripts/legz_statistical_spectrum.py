@@ -17,6 +17,7 @@ BOARD=DATA/"qc_prop_board.json"
 HISTORY=DATA/"results.csv"
 PERF=DATA/"performance_history.csv"
 CONTEXT=DATA/"context_registry.json"
+PLAYER_CONTEXT=DATA/"player_context.csv"
 CACHE=DATA/"lsi_spectrum_cache.json"
 EVAL_STATE=DATA/"lsi_evaluation_state.json"
 SYNTHETIC_BOOK=DATA/"legz_synthetic_book.json"
@@ -230,45 +231,130 @@ def historical_results():
             out[(league,player,metric)].append(value)
     return out
 
-def distribution_features(prop, history):
+def history_values(prop, history):
     league=str(prop.get("_league") or "")
     player=player_norm(prop.get("participant"))
     market=norm(prop.get("market"))
     metric=market_metric(market)
     vals=(history.get((league,player,metric)) if metric else None) or history.get((league,player,market)) or []
+    return list(vals),metric
+
+def window_hit_probability(vals, threshold, side, operator):
+    if threshold is None or not vals: return None
+    side=norm(side); operator=norm(operator)
+    if side in {"over","more","yes"}:
+        hits=sum(v>=threshold for v in vals) if operator in {"gte","at least","inclusive"} else sum(v>threshold for v in vals)
+    elif side in {"under","less","no"}:
+        hits=sum(v<=threshold for v in vals) if operator in {"lte","at most","inclusive under"} else sum(v<threshold for v in vals)
+    else:
+        return None
+    return hits/len(vals)*100
+
+def distribution_features(prop, history):
+    vals,metric=history_values(prop,history)
     threshold=effective_threshold(prop,metric); side=norm(prop.get("side"))
     operator=norm(prop.get("threshold_operator"))
-    if not vals: return {"n":0}
+    if not vals: return {"n":0,"metric":metric}
+
     mean=statistics.fmean(vals); median=statistics.median(vals); sd=statistics.pstdev(vals) if len(vals)>1 else 0.0
-    hit_count=None; raw_hit=None; smoothed=None; normal_prob=None; model_prob=None
+    windows={}
+    for n in (3,5,10,20):
+        w=vals[-n:] if len(vals)>=n else vals[:]
+        if not w: continue
+        wmean=statistics.fmean(w); wmedian=statistics.median(w); wsd=statistics.pstdev(w) if len(w)>1 else 0.0
+        wh=window_hit_probability(w,threshold,side,operator)
+        windows[f"L{n}"]={
+          "n":len(w),"average":round(wmean,3),"median":round(wmedian,3),"stddev":round(wsd,3),
+          "hit_probability":round(wh,2) if wh is not None else None
+        }
+
+    # Forecast-first center: last five games are the primary anchor. L10 and the
+    # full-history median stabilize the estimate without allowing old history to
+    # overwhelm current form.
+    pieces=[]
+    if windows.get("L5"): pieces.append((windows["L5"]["average"],0.60))
+    elif windows.get("L3"): pieces.append((windows["L3"]["average"],0.60))
+    if len(vals)>=10 and windows.get("L10"): pieces.append((windows["L10"]["average"],0.25))
+    else: pieces.append((mean,0.25))
+    pieces.append((median,0.15))
+    weight=sum(w for _,w in pieces) or 1.0
+    projection=sum(v*w for v,w in pieces)/weight
+
+    # Volatility comes from recent performance first, then longer history. A
+    # non-zero floor prevents a perfectly flat tiny sample from becoming fake 100%.
+    recent_sd=windows.get("L5",{}).get("stddev")
+    if recent_sd in (None,0): recent_sd=windows.get("L10",{}).get("stddev")
+    if recent_sd in (None,0): recent_sd=sd
+    sigma=max(float(recent_sd or 0),abs(projection)*0.035,0.75)
+
+    hit_count=None; raw_hit=None; smoothed=None; normal_prob=None
     if threshold is not None:
-        if side in {"over","more","yes"}:
-            hit_count=sum(v>=threshold for v in vals) if operator in {"gte","at least","inclusive"} else sum(v>threshold for v in vals)
-        elif side in {"under","less","no"}:
-            hit_count=sum(v<=threshold for v in vals) if operator in {"lte","at most","inclusive under"} else sum(v<threshold for v in vals)
-    if hit_count is not None:
-        raw_hit=hit_count/len(vals)*100
-        # Laplace smoothing prevents tiny samples from becoming artificial 0%/100% certainties.
-        smoothed=(hit_count+1)/(len(vals)+2)*100
-        # Continuous yardage/volume markets benefit from threshold distance, which
-        # distinguishes players that happen to share the same empirical hit count.
-        binary_like=metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and threshold is not None and threshold<=0.5
-        if not binary_like and len(vals)>=8 and sd>0:
-            nd=statistics.NormalDist(mu=mean,sigma=sd)
-            # For discrete inclusive contracts (e.g. Kalshi 200+), use a half-unit
-            # continuity correction so the distribution approximation matches >=200.
+        full_hit=window_hit_probability(vals,threshold,side,operator)
+        if full_hit is not None:
+            raw_hit=full_hit
+            hit_count=round(full_hit/100*len(vals))
+            smoothed=(hit_count+1)/(len(vals)+2)*100
+
+        binary_like=metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and threshold<=0.5
+        if not binary_like:
             dist_threshold=threshold-0.5 if operator in {"gte","at least","inclusive"} else (threshold+0.5 if operator in {"lte","at most","inclusive under"} else threshold)
+            nd=statistics.NormalDist(mu=projection,sigma=sigma)
             if side in {"over","more","yes"}: normal_prob=(1-nd.cdf(dist_threshold))*100
             elif side in {"under","less","no"}: normal_prob=nd.cdf(dist_threshold)*100
             if normal_prob is not None: normal_prob=clamp(normal_prob,1,99)
-        model_prob=smoothed if normal_prob is None else smoothed*.70+normal_prob*.30
-    return {"n":len(vals),"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
-            "coefficient_of_variation":round(sd/abs(mean),3) if mean else None,
-            "hit_count":hit_count,
-            "exact_threshold_hit_rate":round(raw_hit,2) if raw_hit is not None else None,
-            "smoothed_hit_probability":round(smoothed,2) if smoothed is not None else None,
-            "distribution_model_probability":round(model_prob,2) if model_prob is not None else None,
-            "normal_threshold_probability":round(normal_prob,2) if normal_prob is not None else None}
+
+    # Same player-game forecast, different offered threshold. This is the central
+    # property of the ladder model: probability moves with distance from projection.
+    l5_hit=windows.get("L5",{}).get("hit_probability")
+    l10_hit=windows.get("L10",{}).get("hit_probability")
+    components=[]
+    if normal_prob is not None: components.append((normal_prob,0.50))
+    if l5_hit is not None: components.append((l5_hit,0.30))
+    if l10_hit is not None: components.append((l10_hit,0.12))
+    if smoothed is not None: components.append((smoothed,0.08))
+    model_prob=(sum(v*w for v,w in components)/sum(w for _,w in components)) if components else None
+
+    distance=(projection-threshold) if threshold is not None else None
+    z=(distance/sigma) if distance is not None and sigma else None
+    if threshold is None:
+        projected_side=None
+    elif abs(distance)<=max(0.5,sigma*0.10):
+        projected_side="NEAR LINE"
+    elif distance>0:
+        projected_side="OVER"
+    else:
+        projected_side="UNDER"
+
+    # Central expected-output band is descriptive, not a guaranteed interval.
+    band=max(0.5,sigma*0.35)
+    player_projection={
+      "metric":metric,
+      "sample_size":len(vals),
+      "l5_average":windows.get("L5",{}).get("average"),
+      "l10_average":windows.get("L10",{}).get("average"),
+      "season_average":round(mean,3),
+      "season_median":round(median,3),
+      "projected_output":round(projection,3),
+      "central_band_low":round(projection-band,3),
+      "central_band_high":round(projection+band,3),
+      "forecast_sigma":round(sigma,3),
+      "offered_threshold":threshold,
+      "distance_to_projection":round(distance,3) if distance is not None else None,
+      "distance_sigma":round(z,3) if z is not None else None,
+      "projected_side":projected_side,
+      "forecast_policy":"L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+    }
+    return {
+      "n":len(vals),"metric":metric,"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
+      "coefficient_of_variation":round(sd/abs(mean),3) if mean else None,
+      "recent_windows":windows,
+      "player_projection":player_projection,
+      "hit_count":hit_count,
+      "exact_threshold_hit_rate":round(raw_hit,2) if raw_hit is not None else None,
+      "smoothed_hit_probability":round(smoothed,2) if smoothed is not None else None,
+      "distribution_model_probability":round(model_prob,2) if model_prob is not None else None,
+      "normal_threshold_probability":round(normal_prob,2) if normal_prob is not None else None
+    }
 
 def spectrum_cache_index():
     if not CACHE.exists(): return {}
@@ -288,6 +374,26 @@ def context_index():
     for row in records:
         player=player_norm(row.get("player"))
         if player and player not in out: out[player]=row
+    return out
+
+def player_game_context_index():
+    out={}
+    if not PLAYER_CONTEXT.exists(): return out
+    try:
+        with PLAYER_CONTEXT.open(newline="",encoding="utf-8-sig") as fh:
+            for row in csv.DictReader(fh):
+                player=player_norm(row.get("participant"))
+                if not player: continue
+                key=(player,str(row.get("event_id") or ""))
+                prior=out.get(key)
+                if prior is None or str(row.get("collected_at_pt") or "")>=str(prior.get("collected_at_pt") or ""):
+                    out[key]=row
+                generic=(player,"")
+                prior=out.get(generic)
+                if prior is None or str(row.get("collected_at_pt") or "")>=str(prior.get("collected_at_pt") or ""):
+                    out[generic]=row
+    except (OSError,UnicodeDecodeError):
+        return {}
     return out
 
 def load_fiba_scenarios():
@@ -321,10 +427,13 @@ def fiba_event_context(event, scenario_competitions):
                 }
     return None
 
-def jinx_context(prop, contexts):
+def jinx_context(prop, contexts, game_contexts=None):
     """Conservative, attributable context layer. No private inference."""
-    row=contexts.get(player_norm(prop.get("participant"))) or {}
-    status=str(row.get("player_status") or "").upper()
+    player=player_norm(prop.get("participant"))
+    row=contexts.get(player) or {}
+    event_id=str(prop.get("_event_id") or prop.get("event_id") or "")
+    game_row=(game_contexts or {}).get((player,event_id)) or (game_contexts or {}).get((player,"")) or {}
+    status=str(row.get("player_status") or game_row.get("availability") or "").upper()
     severity=str(row.get("context_severity") or "").upper()
     ctype=str(row.get("context_type") or "").upper()
     confirmed=str(row.get("lineup_confirmed") or "").lower() in {"1","true","yes","confirmed"}
@@ -340,11 +449,20 @@ def jinx_context(prop, contexts):
     elif status in {"ACTIVE","STARTER"} or confirmed:
         delta=1.0; signals.append("availability_confirmed")
     if severity=="CRITICAL" and delta>-8: delta-=3
+    matchup={
+      "opponent":game_row.get("opponent"),"home_away":game_row.get("home_away"),
+      "role":game_row.get("role"),"rest_travel":game_row.get("rest_travel"),
+      "weather":game_row.get("weather"),"season_phase":game_row.get("season_phase"),
+      "evidence_summary":game_row.get("evidence_summary"),"reliability":game_row.get("reliability"),
+      "source":game_row.get("source")
+    } if game_row else None
+    if matchup: signals.append("attributable_matchup_context")
     return {"delta":round(clamp(delta,-12,12),2),"signals":signals,
-            "context_id":row.get("context_id"),"context_type":ctype or None,
-            "status":status or None,"headline":row.get("headline"),"source":row.get("source")}
+            "context_id":row.get("context_id") or game_row.get("context_id"),"context_type":ctype or game_row.get("context_type") or None,
+            "status":status or None,"headline":row.get("headline"),"source":row.get("source") or game_row.get("source"),
+            "matchup":matchup}
 
-def spectrum(prop, history, contexts, cache, tournament_ctx=None):
+def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=None):
     rates=[]
     dist=distribution_features(prop,history)
     synthetic=bool(prop.get("synthetic") or prop.get("model_generated"))
@@ -379,13 +497,16 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None):
         v=pct(cached.get(key))
         if v is not None and 0<=v<=100:
             rate_map.setdefault(key.upper(),v)
+    for label,key in (("L3","L3_HIT_RATE"),("L5","L5_HIT_RATE"),("L10","L10_HIT_RATE"),("L20","L20_HIT_RATE")):
+        v=((dist.get("recent_windows") or {}).get(label) or {}).get("hit_probability")
+        if v is not None and 0<=v<=100: rate_map.setdefault(key,v)
     rates=list(rate_map.values())
     market_prior=implied(prop.get("best_price") if prop.get("best_price") not in (None,"") else prop.get("price"))
     source_count=0 if synthetic else max(1,int(num(prop.get("market_source_count")) or 1))
     snapshots=[x for x in (prop.get("source_snapshot_ids") or []) if x]
     evidence=[x for x in (prop.get("evidence_ids") or []) if x]
 
-    ctx=jinx_context(prop,contexts)
+    ctx=jinx_context(prop,contexts,game_contexts)
     if tournament_ctx:
         ctx["tournament"]=tournament_ctx
         ctx["signals"].append("fiba_tournament_leverage")
@@ -410,39 +531,51 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None):
           "evaluation_status":"AWAITING_LJ_EVALUATION","ljpc":None,"lj_confidence":None,
           "legz_baseline":None,"jinx_input":None,"legz_value":None,"pom_value":None,
           "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
-          "spectrum":{"performance":[],"distribution":dist,"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
+          "player_projection":dist.get("player_projection"),
+          "spectrum":{"performance":[],"distribution":dist,"player_projection":dist.get("player_projection"),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
           "feature_state":feature_state,
           "evaluation_reason":"No acquired player-performance hit-rate evidence; market probability retained as evidence only."
         }
 
     dist_prob=dist.get("distribution_model_probability")
+    projection_prob=dist.get("normal_threshold_probability")
     if dist_prob is not None:
         rates.append(dist_prob)
         rate_map.setdefault("DISTRIBUTION_MODEL",dist_prob)
+    if projection_prob is not None:
+        rate_map.setdefault("PLAYER_PROJECTION_MODEL",projection_prob)
 
-    # Recency remains primary; the full stored distribution contributes threshold
-    # distance and sample-size smoothing so identical L5/L10 hit counts do not force
-    # unrelated players to identical LJPC values.
-    ordered=[]
+    # Forecast-first ladder model. Every exact offered threshold for this player/
+    # market is evaluated against the same L5-primary expected-output distribution.
     league=str(prop.get("_league") or "")
-    preferred=("L3_HIT_RATE","L5_HIT_RATE","L10_HIT_RATE") if league in {"NFL","NCAA_Football"} else ("L5_HIT_RATE","L10_HIT_RATE","L20_HIT_RATE")
-    for k in preferred:
-        if k in rate_map: ordered.append(rate_map[k])
-    if ordered:
-        weights=[0.50,0.30,0.20][:len(ordered)] if len(ordered)==3 else ([0.60,0.40] if len(ordered)==2 else [1.0])
-        recent=sum(v*w for v,w in zip(ordered,weights))/sum(weights)
-        stat=recent*.70+dist_prob*.30 if dist_prob is not None else recent
-    elif dist_prob is not None:
-        ordered=[dist_prob]; stat=dist_prob
+    l5=rate_map.get("L5_HIT_RATE")
+    l10=rate_map.get("L10_HIT_RATE")
+    l20=rate_map.get("L20_HIT_RATE")
+    model_components=[]
+    if projection_prob is not None: model_components.append((projection_prob,0.50))
+    if l5 is not None: model_components.append((l5,0.30))
+    if l10 is not None: model_components.append((l10,0.12))
+    if l20 is not None: model_components.append((l20,0.03))
+    if dist_prob is not None: model_components.append((dist_prob,0.05))
+    if model_components:
+        stat=sum(v*w for v,w in model_components)/sum(w for _,w in model_components)
+        ordered=[v for v,_ in model_components]
     else:
-        ordered=rates
-        weights=[0.60,0.40] if len(ordered)==2 else [1.0]*max(1,len(ordered))
-        stat=sum(v*w for v,w in zip(ordered,weights))/sum(weights)
+        preferred=("L3_HIT_RATE","L5_HIT_RATE","L10_HIT_RATE") if league in {"NFL","NCAA_Football"} else ("L5_HIT_RATE","L10_HIT_RATE","L20_HIT_RATE")
+        ordered=[rate_map[k] for k in preferred if k in rate_map]
+        if ordered:
+            weights=[0.55,0.30,0.15][:len(ordered)] if len(ordered)==3 else ([0.65,0.35] if len(ordered)==2 else [1.0])
+            stat=sum(v*w for v,w in zip(ordered,weights))/sum(weights)
+        elif dist_prob is not None:
+            ordered=[dist_prob]; stat=dist_prob
+        else:
+            ordered=rates
+            stat=sum(ordered)/len(ordered)
     consistency_values=ordered+([dist_prob] if dist_prob is not None and dist_prob not in ordered else [])
     dispersion=statistics.pstdev(consistency_values) if len(consistency_values)>1 else 0.0
     consistency=max(0.0,100.0-dispersion*3.0)
     # Market prior is a bounded secondary signal, never the prediction itself.
-    L=stat if market_prior is None else stat*0.82+market_prior*0.18
+    L=stat if market_prior is None else stat*0.90+market_prior*0.10
     depth_bonus=min(2.0,max(0,source_count-1)*0.35)
     L=clamp(L+depth_bonus,1,99)
 
@@ -469,7 +602,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None):
         economic_value=50.0
     pom_value=round(clamp(core_value*0.80+economic_value*0.20,0,100),2)
     feature_state={
-      "performance":{"recent_hit_rates":rate_map,"distribution":dist,"consistency":round(consistency,2),
+      "performance":{"recent_hit_rates":rate_map,"distribution":dist,"player_projection":dist.get("player_projection"),"consistency":round(consistency,2),
                      "sample_size":dist.get("n")},
       "market":{"implied_probability":round(market_prior,2) if market_prior is not None else None,
                 "source_count":source_count},
@@ -482,9 +615,10 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None):
       "evaluation_status":"LJ_EVALUATED","ljpc":ljpc,"lj_confidence":ljpc,
       "legz_baseline":round(L,2),"jinx_input":round(j,2),"legz_value":legz_value,"economic_value":economic_value,"pom_value":pom_value,
       "market_baseline_probability":round(market_prior,2) if market_prior is not None else None,
-      "spectrum":{"performance":ordered,"distribution":dist,"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
+      "player_projection":dist.get("player_projection"),
+      "spectrum":{"performance":ordered,"distribution":dist,"player_projection":dist.get("player_projection"),"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
       "feature_state":feature_state,
-      "evaluation_reason":"LEGZ statistical spectrum combines recency hit rates with a sample-size-smoothed threshold distribution, then applies a bounded market prior; JINX applies attributable availability/role context and records FIBA tournament leverage as non-directional context until calibrated."
+      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments."
     }
 
 def main():
@@ -492,6 +626,7 @@ def main():
     payload=json.loads(BOARD.read_text(encoding="utf-8"))
     history=historical_results()
     contexts=context_index()
+    game_contexts=player_game_context_index()
     fiba_scenarios=load_fiba_scenarios()
     cache=spectrum_cache_index()
     state=load_evaluation_state()
@@ -504,7 +639,7 @@ def main():
         for prop in event.get("props") or []:
             prop["_league"]=event.get("league") or ""
             prop["_event_id"]=event.get("event_id") or event.get("source_event_id") or ""
-            result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx)
+            result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts)
             identity=evaluation_identity(prop)
             evaluation_key=stable_hash(identity)[:24]
             material={
@@ -538,6 +673,7 @@ def main():
               "evaluation_status":result.get("evaluation_status"),
               "legz_baseline":result.get("legz_baseline"),"jinx_input":result.get("jinx_input"),
               "ljpc":result.get("ljpc"),"legz_value":result.get("legz_value"),"economic_value":result.get("economic_value"),"pom_value":result.get("pom_value"),
+              "player_projection":result.get("player_projection"),
               "feature_state":result.get("feature_state"),"spectrum":result.get("spectrum"),
               "evaluation_reason":result.get("evaluation_reason"),
             }
