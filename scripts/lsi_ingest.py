@@ -11,7 +11,11 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 ROOT=Path(__file__).resolve().parents[1]; DATA=ROOT/'data'; INBOX=DATA/'inbox'; INBOX.mkdir(parents=True,exist_ok=True)
 PT=ZoneInfo('America/Los_Angeles'); NOW=datetime.now(timezone.utc); TODAY=NOW.astimezone(PT).date()
-UA={'User-Agent':'LEGZ-JINX-LSI/1.0'}
+UA={
+    'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36',
+    'Accept':'application/json,text/plain,*/*',
+    'Referer':'https://www.espn.com/'
+}
 WEATHER_FIELDS=['temperature_2m','apparent_temperature','relative_humidity_2m','precipitation_probability','precipitation','rain','snowfall','weather_code','surface_pressure','wind_speed_10m','wind_direction_10m','wind_gusts_10m']
 
 def get(url,headers=None):
