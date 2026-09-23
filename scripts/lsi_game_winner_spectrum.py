@@ -130,9 +130,20 @@ def scoreboard_evidence(events):
 
 def aliases_for_side(event,side):
     aliases={norm(side)}
-    if norm(side)==norm(event.get("away")):
+    s=norm(side)
+    def matches(team,known):
+        vals=[team,*(known or [])]
+        for value in vals:
+            x=norm(value)
+            if not s or not x:continue
+            if s==x:return True
+            if min(len(s),len(x))>=4 and (s in x or x in s):return True
+        return False
+    if matches(event.get("away"),event.get("away_aliases")):
+        aliases.add(norm(event.get("away")))
         aliases.update(norm(x) for x in (event.get("away_aliases") or []))
-    if norm(side)==norm(event.get("home")):
+    if matches(event.get("home"),event.get("home_aliases")):
+        aliases.add(norm(event.get("home")))
         aliases.update(norm(x) for x in (event.get("home_aliases") or []))
     return {x for x in aliases if x}
 
