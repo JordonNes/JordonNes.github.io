@@ -8,7 +8,7 @@ evidence (record and/or ranking) for every side in the event.
 This script never fabricates a winner from market price alone.
 """
 from __future__ import annotations
-import hashlib, json, math, re, urllib.parse, urllib.request
+import hashlib, json, math, os, re, urllib.parse, urllib.request
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -167,6 +167,9 @@ def main():
     if not BOARD.exists():raise SystemExit("Missing future_market_board.json")
     payload=json.loads(BOARD.read_text(encoding="utf-8"))
     events=payload.get("events") or []
+    league_filter={x.strip() for x in os.getenv("LSI_GAME_WINNER_LEAGUES","").split(",") if x.strip()}
+    if league_filter:
+        events=[e for e in events if str(e.get("league") or "") in league_filter]
     evidence,errors,calls=scoreboard_evidence(events)
     evaluated_events=0;evaluated_sides=0;skipped_events=0
     evidence_rows=[]
