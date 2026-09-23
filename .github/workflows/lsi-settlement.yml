@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/lsi_settle.py'
       - 'scripts/lsi_build_recaps.py'
+      - 'data/suggestion_ledger.json'
       - '.github/workflows/lsi-settlement.yml'
   workflow_run:
     workflows: ["LSI Daily Predictions Pipeline"]
@@ -61,7 +62,7 @@ jobs:
           assert not bad, bad[:3]
           print(f"Settlement validation: {len(rows)} durable result rows; {len(aliases['events'])} resolved event aliases.")
           recap=Path('ljrecapdata.js').read_text(encoding='utf-8')
-          assert 'LJ-RECAP-AUTO-2' in recap
+          assert 'LJ-RECAP-AUTO-3' in recap
           assert 'window.LJ_RECAP_DATA=' in recap
           assert 'MARKET ANOMALY' in Path('scripts/lsi_build_recaps.py').read_text(encoding='utf-8')
           ledger=Path('data/suggestion_ledger.json')
