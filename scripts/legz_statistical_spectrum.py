@@ -50,6 +50,19 @@ def player_norm(v):
         tokens=["".join(tokens[:-1]),tokens[-1]]
     return " ".join(tokens)
 
+def player_alias_keys(value):
+    """Safe name keys for sportsbook↔history resolution; never cross leagues."""
+    p=player_norm(value)
+    if not p: return []
+    tokens=p.split()
+    keys=[p]
+    if len(tokens)>=2:
+        # Initial + surname safely resolves Matthew Stafford / M. Stafford while
+        # collision handling below prevents ambiguous promotion.
+        keys.append(f"{tokens[0][0]} {tokens[-1]}")
+        keys.append(f"{tokens[0]} {tokens[-1]}")
+    return list(dict.fromkeys(keys))
+
 def observation_order(row,source_path=None):
     """Stable chronological key for shard-backed history, including nflverse week IDs."""
     import re
@@ -254,7 +267,15 @@ def distribution_features(prop, history, metric_cache=None):
     vals,metric=history_values(prop,history)
     league=str(prop.get("_league") or "")
     player=player_norm(prop.get("participant"))
-    metric_profile=(metric_cache or {}).get((league,player,metric)) if metric else None
+    metric_profile=None; resolved_player=None; identity_match=None
+    if metric:
+        for idx,alias in enumerate(player_alias_keys(player)):
+            rec=(metric_cache or {}).get((league,alias,metric))
+            if rec:
+                metric_profile=rec
+                resolved_player=rec.get("player") or player
+                identity_match="EXACT" if idx==0 and player_norm(resolved_player)==player else "UNIQUE_ALIAS"
+                break
     cached_vals=[]
     if metric_profile:
         for raw in metric_profile.get("recent_values") or []:
@@ -349,6 +370,9 @@ def distribution_features(prop, history, metric_cache=None):
       "sample_size":len(vals),
       "historical_sample_size":int(metric_profile.get("sample_n") or len(vals)) if metric_profile else len(vals),
       "history_source":history_source,
+      "market_player_name":prop.get("participant"),
+      "resolved_history_player":resolved_player or prop.get("participant"),
+      "identity_match":identity_match or ("EXACT" if vals else None),
       "l5_average":windows.get("L5",{}).get("average"),
       "l10_average":windows.get("L10",{}).get("average"),
       "season_average":round(mean,3),
@@ -375,24 +399,51 @@ def distribution_features(prop, history, metric_cache=None):
       "normal_threshold_probability":round(normal_prob,2) if normal_prob is not None else None
     }
 
+def _alias_index_rows(rows, value_key):
+    """Return exact + unique alias indexes. Ambiguous aliases are deliberately omitted."""
+    exact={}; candidates=defaultdict(dict)
+    for r in rows:
+        league=str(r.get("league") or "")
+        player=player_norm(r.get("player"))
+        value=str(r.get(value_key) or "")
+        if not league or not player or not value: continue
+        exact[(league,player,value)]=r
+        identity=str(r.get("lsi_player_id") or player)
+        for alias in player_alias_keys(player):
+            candidates[(league,alias,value)][identity]=r
+    unique={}
+    for key,by_identity in candidates.items():
+        if len(by_identity)==1:
+            rec=next(iter(by_identity.values()))
+            unique[key]=rec
+    return exact,unique
+
 def spectrum_cache_index():
     if not CACHE.exists(): return {}
     try: rows=json.loads(CACHE.read_text(encoding="utf-8")).get("profiles") or []
     except (json.JSONDecodeError,AttributeError): return {}
-    out={}
+    out={}; aliases=defaultdict(dict)
     for r in rows:
-        key=(str(r.get("league") or ""),player_norm(r.get("player")),norm(r.get("market")),str(r.get("threshold") or ""),norm(r.get("side")))
-        out[key]=r
+        league=str(r.get("league") or ""); player=player_norm(r.get("player"))
+        market=norm(r.get("market")); threshold=str(r.get("threshold") or ""); side=norm(r.get("side"))
+        if not league or not player or not market: continue
+        out[(league,player,market,threshold,side)]=r
+        identity=str(r.get("lsi_player_id") or player)
+        for alias in player_alias_keys(player):
+            aliases[(league,alias,market,threshold,side)][identity]=r
+    for key,by_identity in aliases.items():
+        if key not in out and len(by_identity)==1:
+            out[key]=next(iter(by_identity.values()))
     return out
 
 def spectrum_metric_cache_index():
     if not CACHE.exists(): return {}
     try: rows=json.loads(CACHE.read_text(encoding="utf-8")).get("metric_profiles") or []
     except (json.JSONDecodeError,AttributeError): return {}
-    out={}
-    for r in rows:
-        key=(str(r.get("league") or ""),player_norm(r.get("player")),str(r.get("metric") or ""))
-        if key[0] and key[1] and key[2]: out[key]=r
+    exact,aliases=_alias_index_rows(rows,"metric")
+    out=dict(exact)
+    for key,rec in aliases.items():
+        if key not in out: out[key]=rec
     return out
 
 def context_index():
