@@ -18,6 +18,8 @@ This directory is the durable evidence layer for LEGZ Sports Intelligence (LSI).
 - `predictions.csv` — immutable prediction audit rows.
 - `results.csv` — verified settlement/result rows.
 - `prediction_registry.json` — current typed publication authority consumed by DP/QG.
+- `suggestion_ledger.json` — immutable record of every exact POM and Game Winner version actually displayed on LJDP sport pages, including placement history and supersession links.
+- `suggestion_accuracy.json` — settled accuracy aggregates derived from the website suggestion ledger by day, sport, game, player, market class, prop market and placement.
 
 ## Evidence architecture
 L&J deliberately separates three evidence classes:
