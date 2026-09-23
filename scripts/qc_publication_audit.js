@@ -41,6 +41,27 @@ const WATCH = /WATCH|NO BET|^PASS\b|DATA-LIMITED|MARKET NOT|UNSUPPORTED|VERIFY L
 const PROP = /\bplayer\b|\bbatter\b|\bpitcher\b|yards|points|rebounds|assists|strikeouts|\bks\b|hits|singles|doubles|triples|stolen bases|earned runs|outs|receptions|rush|passing|receiving|reception yds|shots|saves|sacks|completions|attempts|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|double.?double|triple.?double|total bases|home runs|goals|turnovers|steals/i;
 const TEAM_SIDE = /\bML\b|moneyline|game winner|spread|game total|team total|\bNRFI\b|\bYRFI\b|no run first inning|yes run first inning/i;
 
+function ptCalendarSerial(value=new Date()){
+  const d=value instanceof Date?value:new Date(value);
+  if(!Number.isFinite(d.getTime())) return NaN;
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d);
+  const get=t=>Number(parts.find(x=>x.type===t)?.value||0);
+  return Date.UTC(get('year'),get('month')-1,get('day'));
+}
+function currentNflWeekBounds(){
+  const today=ptCalendarSerial(new Date());
+  const dow=new Date(today).getUTCDay();
+  const start=today-((dow-2+7)%7)*86400000;
+  return {start,end:start+7*86400000};
+}
+function nflQcInCurrentWeek(q){
+  const t=Date.parse(q?._propEventStartPt||q?.commence_time||q?.event_start_pt||'');
+  if(!Number.isFinite(t)) return false;
+  const serial=ptCalendarSerial(new Date(t));
+  const {start,end}=currentNflWeekBounds();
+  return serial>=start&&serial<end;
+}
+
 function scriptsFor(html) {
   const srcs = [];
   for (const m of html.matchAll(/<script[^>]+src=["']([^"']+)["'][^>]*><\/script>/gi)) {
@@ -157,6 +178,11 @@ for (const [page, league] of Object.entries(PAGES)) {
   if(!Array.isArray(sport.qcs)) {
     errors.push(`${league}: QC collection is missing from sport publication data.`);
     continue;
+  }
+
+  if(league==='NFL'){
+    const stale=sport.qcs.filter(q=>!nflQcInCurrentWeek(q));
+    if(stale.length) errors.push(`NFL Tuesday-Monday rollover violation: ${stale.length} QC row(s) fall outside the current publication week.`);
   }
 
   if (sport.qcs.length) {
