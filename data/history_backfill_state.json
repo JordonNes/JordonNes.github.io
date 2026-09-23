@@ -1,7 +1,7 @@
 {
   "schema_version": "LSI-HISTORY-BACKFILL-1",
   "chunk_days": 4,
-  "next_index": 0,
+  "next_index": 2,
   "leagues": [
     {
       "league": "NCAA_Football",
@@ -28,13 +28,13 @@
     {
       "league": "MLB",
       "season": "2026",
-      "cursor": "2026-03-15",
+      "cursor": "2026-09-23",
       "floor": "2026-03-15",
-      "status": "COMPLETE",
-      "priority": 2,
+      "status": "ACTIVE",
+      "priority": 0,
       "chunk_days": 5,
       "max_events": 100,
-      "last_run_utc": "2026-09-21T21:15:26.239239+00:00"
+      "last_run_utc": null
     },
     {
       "league": "NBA",
@@ -70,6 +70,6 @@
       "last_run_utc": "2026-09-23T15:36:27.354997+00:00"
     }
   ],
-  "updated_at_utc": "2026-09-23T15:36:27.355014+00:00",
-  "policy": "Capacity-aware: CFB current season first while in-season/game-day, then NBA/WNBA, MLB, NHL/CBB; immutable stored events are skipped."
+  "updated_at_utc": "2026-09-23T16:41:47.718Z",
+  "policy": "Capacity-aware: repair/maintain active in-season history first; a league may be COMPLETE only when its durable season shard exists."
 }
