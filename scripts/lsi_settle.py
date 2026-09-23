@@ -200,14 +200,27 @@ def load_aliases():
         pass
     return {"schema_version":"LSI-SETTLEMENT-ALIASES-1","events":{}}
 
+_SCOREBOARD_CACHE={}
+_SUMMARY_CACHE={}
+
 def scoreboard(league, date):
+    key=(league,date.strftime("%Y%m%d"))
+    if key in _SCOREBOARD_CACHE:
+        return _SCOREBOARD_CACHE[key]
     sport, slug = ESPN[league]
-    query = urllib.parse.urlencode({"dates": date.strftime("%Y%m%d"), "limit": 500})
-    return get_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?{query}")
+    query = urllib.parse.urlencode({"dates": key[1], "limit": 500})
+    payload=get_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?{query}")
+    _SCOREBOARD_CACHE[key]=payload
+    return payload
 
 def summary(league, provider_event_id):
+    key=(league,str(provider_event_id))
+    if key in _SUMMARY_CACHE:
+        return _SUMMARY_CACHE[key]
     sport, slug = ESPN[league]
-    return get_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/summary?event={provider_event_id}")
+    payload=get_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/summary?event={provider_event_id}")
+    _SUMMARY_CACHE[key]=payload
+    return payload
 
 def custom_event_tokens(event_id):
     s = str(event_id or "").upper()
