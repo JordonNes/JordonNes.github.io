@@ -250,11 +250,26 @@ def window_hit_probability(vals, threshold, side, operator):
         return None
     return hits/len(vals)*100
 
-def distribution_features(prop, history):
+def distribution_features(prop, history, metric_cache=None):
     vals,metric=history_values(prop,history)
+    league=str(prop.get("_league") or "")
+    player=player_norm(prop.get("participant"))
+    metric_profile=(metric_cache or {}).get((league,player,metric)) if metric else None
+    cached_vals=[]
+    if metric_profile:
+        for raw in metric_profile.get("recent_values") or []:
+            v=num(raw)
+            if v is not None: cached_vals.append(v)
+    # Fast runtime may only have today's append-only performance file loaded. Prefer
+    # the threshold-independent durable metric cache when it contains a deeper
+    # recent sequence from the permanent archive.
+    history_source="PERFORMANCE_HISTORY"
+    if len(cached_vals)>len(vals):
+        vals=cached_vals
+        history_source="PERMANENT_METRIC_CACHE"
     threshold=effective_threshold(prop,metric); side=norm(prop.get("side"))
     operator=norm(prop.get("threshold_operator"))
-    if not vals: return {"n":0,"metric":metric}
+    if not vals: return {"n":0,"metric":metric,"history_source":history_source}
 
     mean=statistics.fmean(vals); median=statistics.median(vals); sd=statistics.pstdev(vals) if len(vals)>1 else 0.0
     windows={}
@@ -270,7 +285,9 @@ def distribution_features(prop, history):
 
     # Forecast-first center: last five games are the primary anchor. L10 and the
     # full-history median stabilize the estimate without allowing old history to
-    # overwhelm current form.
+    # overwhelm current form. Fewer than three observations are not enough to
+    # publish an expected-output forecast.
+    projection_ready=len(vals)>=3
     pieces=[]
     if windows.get("L5"): pieces.append((windows["L5"]["average"],0.60))
     elif windows.get("L3"): pieces.append((windows["L3"]["average"],0.60))
@@ -296,7 +313,7 @@ def distribution_features(prop, history):
             smoothed=(hit_count+1)/(len(vals)+2)*100
 
         binary_like=metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and threshold<=0.5
-        if not binary_like:
+        if projection_ready and not binary_like:
             dist_threshold=threshold-0.5 if operator in {"gte","at least","inclusive"} else (threshold+0.5 if operator in {"lte","at most","inclusive under"} else threshold)
             nd=statistics.NormalDist(mu=projection,sigma=sigma)
             if side in {"over","more","yes"}: normal_prob=(1-nd.cdf(dist_threshold))*100
@@ -330,6 +347,8 @@ def distribution_features(prop, history):
     player_projection={
       "metric":metric,
       "sample_size":len(vals),
+      "historical_sample_size":int(metric_profile.get("sample_n") or len(vals)) if metric_profile else len(vals),
+      "history_source":history_source,
       "l5_average":windows.get("L5",{}).get("average"),
       "l10_average":windows.get("L10",{}).get("average"),
       "season_average":round(mean,3),
@@ -343,9 +362,9 @@ def distribution_features(prop, history):
       "distance_sigma":round(z,3) if z is not None else None,
       "projected_side":projected_side,
       "forecast_policy":"L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-    }
+    } if projection_ready else None
     return {
-      "n":len(vals),"metric":metric,"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
+      "n":len(vals),"metric":metric,"history_source":history_source,"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
       "coefficient_of_variation":round(sd/abs(mean),3) if mean else None,
       "recent_windows":windows,
       "player_projection":player_projection,
@@ -364,6 +383,16 @@ def spectrum_cache_index():
     for r in rows:
         key=(str(r.get("league") or ""),player_norm(r.get("player")),norm(r.get("market")),str(r.get("threshold") or ""),norm(r.get("side")))
         out[key]=r
+    return out
+
+def spectrum_metric_cache_index():
+    if not CACHE.exists(): return {}
+    try: rows=json.loads(CACHE.read_text(encoding="utf-8")).get("metric_profiles") or []
+    except (json.JSONDecodeError,AttributeError): return {}
+    out={}
+    for r in rows:
+        key=(str(r.get("league") or ""),player_norm(r.get("player")),str(r.get("metric") or ""))
+        if key[0] and key[1] and key[2]: out[key]=r
     return out
 
 def context_index():
@@ -462,9 +491,9 @@ def jinx_context(prop, contexts, game_contexts=None):
             "status":status or None,"headline":row.get("headline"),"source":row.get("source") or game_row.get("source"),
             "matchup":matchup}
 
-def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=None):
+def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=None, metric_cache=None):
     rates=[]
-    dist=distribution_features(prop,history)
+    dist=distribution_features(prop,history,metric_cache)
     synthetic=bool(prop.get("synthetic") or prop.get("model_generated"))
     # Synthetic Book already derived these statistics from LSI's permanent history.
     # Reuse that audited evidence during fast-runtime publication instead of forcing
@@ -519,7 +548,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
 
     # A real statistical evaluation requires player-performance evidence.
     # Price/consensus/source count alone can never mint LJPC.
-    if not rates and dist.get("distribution_model_probability") is None:
+    if (not rates and dist.get("distribution_model_probability") is None) or not dist.get("player_projection"):
         feature_state={
           "performance":{"recent_hit_rates":rate_map,"distribution":dist},
           "market":{"implied_probability":round(market_prior,2) if market_prior is not None else None,"source_count":source_count},
@@ -534,7 +563,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
           "player_projection":dist.get("player_projection"),
           "spectrum":{"performance":[],"distribution":dist,"player_projection":dist.get("player_projection"),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
           "feature_state":feature_state,
-          "evaluation_reason":"No acquired player-performance hit-rate evidence; market probability retained as evidence only."
+          "evaluation_reason":"No reliable forecast-first player projection (minimum 3 completed observations) or no acquired performance evidence; market probability retained as evidence only."
         }
 
     dist_prob=dist.get("distribution_model_probability")
@@ -629,6 +658,7 @@ def main():
     game_contexts=player_game_context_index()
     fiba_scenarios=load_fiba_scenarios()
     cache=spectrum_cache_index()
+    metric_cache=spectrum_metric_cache_index()
     state=load_evaluation_state()
     records_by_id={r.get("evaluation_id"):r for r in state.get("records") or [] if r.get("evaluation_id")}
     latest=dict(state.get("latest_by_key") or {})
@@ -639,7 +669,7 @@ def main():
         for prop in event.get("props") or []:
             prop["_league"]=event.get("league") or ""
             prop["_event_id"]=event.get("event_id") or event.get("source_event_id") or ""
-            result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts)
+            result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts,metric_cache=metric_cache)
             identity=evaluation_identity(prop)
             evaluation_key=stable_hash(identity)[:24]
             material={
