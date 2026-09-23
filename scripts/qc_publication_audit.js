@@ -136,14 +136,14 @@ for (const [page, league] of Object.entries(PAGES)) {
   for (const r of (sport.hotTop||[])) {
     const text=(r||[]).join(' ');
     const score=String((r||[])[2]||'');
-    if (!/%/.test(score) || /AWAITING|MARKET BASELINE/i.test(text) || (/PROVISIONAL/i.test(text) && !SYNTHETIC_LABEL.test(text))) {
+    if (!/%/.test(score) || /AWAITING|MARKET BASELINE|PROVISIONAL/i.test(text)) {
       errors.push(`${league}: Hot Top contains a non-LJPC prediction row: ${text}`);
     }
   }
   for (const r of (sport.twenty||[])) {
     const text=(r||[]).join(' ');
     const score=String((r||[])[4]||'');
-    if (!/%/.test(score) || !Number.isFinite(Number((r||[])[7])) || /AWAITING|MARKET BASELINE/i.test(text) || (/PROVISIONAL/i.test(text) && !SYNTHETIC_LABEL.test(text))) {
+    if (!/%/.test(score) || !Number.isFinite(Number((r||[])[7])) || /AWAITING|MARKET BASELINE|PROVISIONAL/i.test(text)) {
       errors.push(`${league}: 20 Piece contains a non-LJPC POM row: ${text}`);
     }
   }
