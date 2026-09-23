@@ -364,10 +364,13 @@
       return 'SUNDAY_MORNING';
     };
 
-    const visible=visibleQcRows(rows)
+    // NFL page rule: every matchup in the current Tuesday–Monday publication
+    // week remains listed as a per-game QC shell. Ticket/prop cells still render
+    // only when they contain qualified L&J content; no empty parlay boxes are shown.
+    const visible=(rows||[])
+      .filter(r=>r && (r.away||r.home))
       .filter(isCurrentNflWeekRow)
-      .map(vettedRow)
-      .filter(r=>qcStatusOnly(r)||qcHasPublishedPregame(r));
+      .map(vettedRow);
     const buckets={
       THURSDAY:[],
       SUNDAY_MORNING:[],
