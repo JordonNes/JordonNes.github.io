@@ -103,6 +103,16 @@ MARKET_PATTERNS=[
 def norm(v):
     return " ".join(str(v or "").replace("_"," ").replace("-"," ").split()).lower()
 
+def valid_player_identity(value):
+    raw=str(value or "").strip()
+    n=norm(raw)
+    if not raw:return False
+    if n in {"baseball player","football player","basketball player","hockey player","player","pitcher","batter","quarterback","qb"}:return False
+    if re.match(r"^(?:over|under|more|less|at least|fewer than)?\s*\d*(?:\.\d+)?\s*(?:points?|yards?|receptions?|attempts?|completions?|rebounds?|assists?|strikeouts?|hits?|bases?|runs?|saves?|goals?|aces?|takedowns?|knockdowns?)(?:\s+scored)?\b",raw,re.I):return False
+    if re.search(r"\b(?:team|game)\s+total\b|\bpoints?\s+scored\b",raw,re.I):return False
+    words=re.findall(r"[A-Za-z][A-Za-z'.-]*",raw)
+    return 2<=len(words)<=5
+
 def parse_dt(v):
     if not v:return None
     try:return datetime.fromisoformat(str(v).replace("Z","+00:00")).astimezone(timezone.utc)
@@ -235,6 +245,7 @@ def participant_threshold(m,market):
     def human_name(value):
         value=str(value or "").strip()
         if not value or value.lower() in {"yes","no","higher","lower","more","less"}:return None
+        if not valid_player_identity(value):return None
         if re.fullmatch(r"[A-Z0-9_-]{8,}",value):return None
         if not re.search(r"[A-Za-z]",value):return None
         value=re.sub(r"\\s*:?\\s*\\d+(?:\\.\\d+)?\\+\\s*$","",value).strip()
@@ -416,6 +427,10 @@ def merge_qc(rows):
             }
             events.append(e)
         current=e.setdefault("props",[])
+        current[:]=[
+            p for p in current
+            if str(p.get("source") or "").upper()!="KALSHI_PUBLIC" or valid_player_identity(p.get("participant"))
+        ]
         idx={}
         for i,p in enumerate(current):
             key=(norm(p.get("participant")),norm(p.get("market_key") or p.get("market")),str(p.get("threshold") or ""),norm(p.get("side")))
