@@ -284,6 +284,18 @@ function mergeRecord(rec){
       prior.capture_schema_version=2;
       prior.capture_validity=rec.capture_validity;
       prior.accuracy_eligible=rec.capture_validity==='VALID'&&rec.structure_status==='STRUCTURED';
+      prior.event_match_status=rec.event_match_status;
+      prior.event_match_score=rec.event_match_score;
+      prior.event_match_candidates=rec.event_match_candidates;
+      prior.source_price=rec.source_price;
+      prior.source_book=rec.source_book;
+      prior.source_ljpc=rec.source_ljpc;
+      prior.source_kind=rec.source_kind;
+      prior.market_verified=rec.market_verified;
+      prior.market_verification=rec.market_verification;
+      prior.evaluation_id=rec.evaluation_id||prior.evaluation_id||null;
+      prior.evaluation_material_hash=rec.evaluation_material_hash||prior.evaluation_material_hash||null;
+      prior.source_snapshot_ids=Array.isArray(rec.source_snapshot_ids)?rec.source_snapshot_ids:(prior.source_snapshot_ids||[]);
       delete prior.quarantine_reason;
     }
     if(prior.currently_displayed===false) prior.last_reappeared_at_utc=now;
