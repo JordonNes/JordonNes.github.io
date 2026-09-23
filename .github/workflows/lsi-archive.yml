@@ -100,7 +100,14 @@ jobs:
           assert shards, "market_history has no shards"
           oversize=[str(p) for p in shards if p.stat().st_size >= 90*1024*1024]
           assert not oversize, f"market shard(s) approaching GitHub size limit: {oversize}"
-          print(f"Archive boundary validated; {len(shards)} market shards; live publication remains independent.")
+          eval_root=root/"evaluation_state_history"
+          if eval_root.exists():
+              eval_shards=list(eval_root.rglob("*.jsonl"))
+              eval_oversize=[str(p) for p in eval_shards if p.stat().st_size >= 90*1024*1024]
+              assert not eval_oversize, f"evaluation-state shard(s) approaching GitHub size limit: {eval_oversize}"
+          else:
+              eval_shards=[]
+          print(f"Archive boundary validated; {len(shards)} market shards; {len(eval_shards)} evaluation-state shards; live publication remains independent.")
           PY
 
       - name: Commit archive-only changes
