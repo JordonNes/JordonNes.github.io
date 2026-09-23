@@ -45,6 +45,9 @@ def main():
          "--max-events",str(max(1,int(item.get("max_events") or 100))),"--output",out]
     print("Backfill chunk:",item["league"],begin,"through",end,"->",out)
     subprocess.run(cmd,check=True,cwd=ROOT)
+    shard=ROOT/out
+    if not shard.exists() or shard.stat().st_size<100:
+        raise SystemExit(f"Backfill produced no durable history shard for {item['league']}; cursor/state not advanced: {shard}")
     if begin<=floor:
         item["status"]="COMPLETE"; item["cursor"]=floor.isoformat()
     else:
