@@ -503,8 +503,8 @@ def main():
         source_generated_at=settlement_aliases.get("generated_at_utc") if isinstance(settlement_aliases, dict) else None,
     )
 
-    new_counts["qc_prop_board"] = append_items(
-        archive / "publication_history.jsonl",
+    new_counts["qc_prop_board"] = append_sharded_items(
+        archive / "publication_history",
         kind="PUBLICATION_STATE",
         dataset="qc_prop_board",
         items=qc_events,
@@ -541,7 +541,8 @@ def main():
         "event_history": archive / "event_history.jsonl",
         "result_history": archive / "result_history.jsonl",
         "settlement_history": archive / "settlement_history.jsonl",
-        "publication_history": archive / "publication_history.jsonl",
+        "publication_history_legacy": archive / "publication_history.jsonl",
+        "publication_history": archive / "publication_history",
         "evaluation_state_history_legacy": archive / "evaluation_state_history.jsonl",
         "evaluation_state_history": archive / "evaluation_state_history",
     }
@@ -627,6 +628,12 @@ def main():
             "layout": "market_history/YYYY-MM/<dataset>-<00..31>.jsonl",
             "hash_buckets": 32,
             "reason": "Keep high-volume immutable history below repository file-size limits.",
+        },
+        "publication_state_sharding": {
+            "layout": "publication_history/YYYY-MM/<dataset>-<00..31>.jsonl",
+            "hash_buckets": 32,
+            "legacy_file": "publication_history.jsonl remains read-only historical data",
+            "reason": "Preserve immutable publication snapshots without allowing one archive file to exceed GitHub limits.",
         },
         "evaluation_state_sharding": {
             "layout": "evaluation_state_history/YYYY-MM/<dataset>-<00..31>.jsonl",
