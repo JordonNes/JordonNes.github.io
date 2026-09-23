@@ -200,7 +200,12 @@ jobs:
           assert state.get('schema_version')=='LSI-EVALUATION-STATE-1'
           ids={r.get('evaluation_id') for r in state.get('records',[]) if r.get('evaluation_id')}
           assert all(p.get('evaluation_id') in ids for p in props)
-          print(f'Spectrum v3 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence; durable_states={len(ids)}.')
+          import os
+          size=os.path.getsize('data/lsi_evaluation_state.json')
+          assert state.get('retention_policy')=='LIVE_LATEST_BY_EVALUATION_KEY_PLUS_CURRENT_BOARD'
+          assert size < 80*1024*1024, f'Live evaluation state too large: {size/1024/1024:.2f} MB'
+          assert state.get('record_count')==len(state.get('records') or [])
+          print(f'Spectrum v3 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence; durable_live_states={len(ids)}; size_mb={size/1024/1024:.2f}.')
           PY
       - name: T-48 individualized LJPC coverage and readiness report
         run: |
