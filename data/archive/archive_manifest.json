@@ -2,16 +2,16 @@
   "archive_branch": "lsi-archive",
   "archive_files": {
     "context_history": {
-      "bytes": 8813519,
+      "bytes": 9087132,
       "files": 1,
-      "max_file_bytes": 8813519,
-      "records": 6733
+      "max_file_bytes": 9087132,
+      "records": 6946
     },
     "evaluation_state_history": {
-      "bytes": 12050144,
+      "bytes": 21381710,
       "files": 32,
-      "max_file_bytes": 472352,
-      "records": 2513
+      "max_file_bytes": 821905,
+      "records": 4276
     },
     "evaluation_state_history_legacy": {
       "bytes": 79685259,
@@ -20,16 +20,16 @@
       "records": 34135
     },
     "event_history": {
-      "bytes": 2651665,
+      "bytes": 2688513,
       "files": 1,
-      "max_file_bytes": 2651665,
-      "records": 3024
+      "max_file_bytes": 2688513,
+      "records": 3067
     },
     "market_history": {
-      "bytes": 845381416,
+      "bytes": 852489517,
       "files": 96,
       "max_file_bytes": 16977489,
-      "records": 777010
+      "records": 782941
     },
     "prediction_history": {
       "bytes": 167342,
@@ -38,10 +38,10 @@
       "records": 74
     },
     "publication_history": {
-      "bytes": 12421500,
+      "bytes": 22158475,
       "files": 32,
-      "max_file_bytes": 5670377,
-      "records": 442
+      "max_file_bytes": 5725759,
+      "records": 830
     },
     "publication_history_legacy": {
       "bytes": 99924802,
@@ -63,13 +63,13 @@
     }
   },
   "counts": {
-    "context_history": 6733,
-    "evaluation_state_history": 2513,
+    "context_history": 6946,
+    "evaluation_state_history": 4276,
     "evaluation_state_history_legacy": 34135,
-    "event_history": 3024,
-    "market_history": 777010,
+    "event_history": 3067,
+    "market_history": 782941,
     "prediction_history": 74,
-    "publication_history": 442,
+    "publication_history": 830,
     "publication_history_legacy": 2456,
     "result_history": 9,
     "settlement_history": 24
@@ -78,7 +78,7 @@
     "books": 29,
     "events": 341,
     "markets": 204,
-    "participants": 5367
+    "participants": 5429
   },
   "evaluation_state_sharding": {
     "hash_buckets": 32,
@@ -86,27 +86,27 @@
     "legacy_file": "evaluation_state_history.jsonl remains read-only historical data",
     "reason": "Preserve immutable evaluation history without allowing one archive file to exceed GitHub limits."
   },
-  "generated_at_utc": "2026-09-23T00:33:08.324841+00:00",
+  "generated_at_utc": "2026-09-23T01:05:14.959434+00:00",
   "market_sharding": {
     "hash_buckets": 32,
     "layout": "market_history/YYYY-MM/<dataset>-<00..31>.jsonl",
     "reason": "Keep high-volume immutable history below repository file-size limits."
   },
   "new_records": {
-    "context_registry": 38,
-    "evaluation_state": 2513,
-    "event_inventory": 102,
+    "context_registry": 25,
+    "evaluation_state": 1763,
+    "event_inventory": 43,
     "lsi_market": 0,
     "oddspapi_market": 0,
-    "prediction_registry": 9,
+    "prediction_registry": 0,
     "prediction_source": 0,
-    "propline_intelligence": 9942,
-    "qc_prop_board": 442,
+    "propline_intelligence": 5931,
+    "qc_prop_board": 388,
     "results": 0,
-    "rotowire_context": 38,
+    "rotowire_context": 27,
     "settlement_aliases": 0,
     "settlement_status": 0,
-    "weather_history": 324
+    "weather_history": 161
   },
   "phase": "MEMORY_ONLY",
   "publication_state_sharding": {
@@ -116,5 +116,5 @@
     "reason": "Preserve immutable publication snapshots without allowing one archive file to exceed GitHub limits."
   },
   "schema_version": "LSI-ARCHIVE-MANIFEST-1",
-  "source_commit": "b25f40e9c25fdefc1de12139adc5ad6c6a546400"
+  "source_commit": "10ccfe7cf723ff01c3577495763f9ae703c0840c"
 }
