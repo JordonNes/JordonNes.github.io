@@ -240,8 +240,9 @@
     return Boolean((x?.participant||x?.selection) && x?.price!==undefined && x?.price!==null && (x?.threshold===undefined||x?.threshold===null||x?.threshold===''));
   };
   const isCurrentGameMl=x=>{
-    const lj=ljpcOf(x);
+    const lj=formalLjpcOf(x);
     return isMoneylineGameMarket(x)
+      && String(x?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED'
       && Number.isFinite(lj) && lj>0
       && x?.price!==undefined && x?.price!==null && x?.price!=='';
   };
