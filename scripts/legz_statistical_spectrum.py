@@ -108,6 +108,7 @@ def market_metric(market):
       (("rbi",),"rbi"),
       (("stolen bases",),"stolen_bases"),
       (("pitcher strikeouts","strikeouts"),"pitcher_strikeouts"),
+      (("outs recorded","pitching outs"),"pitching_outs"),
       (("shots on goal","shots"),"shots_on_goal"),
       (("saves",),"saves"),
       (("goal scorer","goals"),"goals"),
