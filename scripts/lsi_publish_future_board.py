@@ -388,16 +388,10 @@ def main():
         raise SystemExit("Future-board candidate unexpectedly contains zero upcoming events; last-known-good future board preserved.")
 
     json_text=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
-    js_text="""/* LJDP runtime loader — canonical payload lives in future_market_board.json. */
-(function(){
-  try {
-    var x=new XMLHttpRequest();
-    x.open("GET","data/future_market_board.json?v="+Date.now(),false);
-    x.send(null);
-    if(x.status>=200&&x.status<300) window.LJ_FUTURE_MARKET_BOARD=JSON.parse(x.responseText);
-  } catch(e) { console.error("LJDP future market board load failed",e); }
-})();
-"""
+    js_text=(
+        "/* Generated rolling future market board; canonical JSON mirror is future_market_board.json. */\n"
+        "window.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n"
+    )
     tmp_json=OUT.with_suffix(".json.tmp")
     tmp_js=OUTJS.with_suffix(".js.tmp")
     tmp_json.write_text(json_text,encoding="utf-8")
