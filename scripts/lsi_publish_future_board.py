@@ -4,8 +4,8 @@
 Rules:
 - Player props/odds from started or completed events are never published as actionable.
 - Default actionable horizon is now through +7 days.
-- NFL receives a Monday-noon PT rollover extension so the next Tuesday-Monday week
-  may be staged while the current Monday night QC is still retained as a status shell.
+- NFL inventory may stage the next Tuesday-Monday week beginning Monday noon PT, but the
+  public NFL per-game QC page is hard-gated to the current Tuesday-Monday publication week.
 - Only fully evaluated props carry LJPC. Market baselines remain evidence and never masquerade as LJPC.
 - Alternate thresholds for the same participant/market collapse to one preferred line.
 """
@@ -361,7 +361,7 @@ def main():
       "schema_version":"LJ-FUTURE-MARKET-1",
       "generated_at_utc":NOW.isoformat(),
       "default_horizon_days":7,
-      "nfl_rollover_policy":"Tuesday-Monday slate stages beginning Monday 12:00 PT; current Monday game remains a runtime status shell after start.",
+      "nfl_rollover_policy":"Tuesday-Monday publication week. Next-week inventory may stage Monday after 12:00 PT, but public NFL per-game QCs do not roll until Tuesday 00:00 PT.",
       "actionable_policy":"Only not-yet-started events may expose props or odds. Player-prop LJPC requires completed L&J evaluation; GAME_ML market probability remains market evidence until independently evaluated.",
       "events":events,
     }
