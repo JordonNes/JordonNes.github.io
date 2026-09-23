@@ -714,6 +714,7 @@ def main():
     records_by_id={r.get("evaluation_id"):r for r in state.get("records") or [] if r.get("evaluation_id")}
     latest=dict(state.get("latest_by_key") or {})
     evaluated=waiting=0
+    projection_summary={"total_props":0,"projected":0,"identity_exact":0,"identity_alias":0,"missing_projection":0,"by_league":{}}
     current_evaluation_ids=set()
     for event in payload.get("events") or []:
         tournament_ctx=fiba_event_context(event,fiba_scenarios)
@@ -721,6 +722,20 @@ def main():
             prop["_league"]=event.get("league") or ""
             prop["_event_id"]=event.get("event_id") or event.get("source_event_id") or ""
             result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts,metric_cache=metric_cache)
+            projection_summary["total_props"]+=1
+            league_key=str(event.get("league") or "")
+            bucket=projection_summary["by_league"].setdefault(league_key,{"total":0,"projected":0,"identity_exact":0,"identity_alias":0,"missing_projection":0})
+            bucket["total"]+=1
+            proj=result.get("player_projection") or {}
+            if proj:
+                projection_summary["projected"]+=1; bucket["projected"]+=1
+                mode=str(proj.get("identity_match") or "")
+                if mode=="UNIQUE_ALIAS":
+                    projection_summary["identity_alias"]+=1; bucket["identity_alias"]+=1
+                else:
+                    projection_summary["identity_exact"]+=1; bucket["identity_exact"]+=1
+            else:
+                projection_summary["missing_projection"]+=1; bucket["missing_projection"]+=1
             identity=evaluation_identity(prop)
             evaluation_key=stable_hash(identity)[:24]
             material={
@@ -767,6 +782,7 @@ def main():
             else: waiting+=1
     payload["evaluation_engine"]="LEGZ_STATISTICAL_SPECTRUM_3"
     payload["evaluation_summary"]={"evaluated":evaluated,"awaiting_evidence":waiting}
+    payload["projection_summary"]=projection_summary
     BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     before_compaction=len(records_by_id)
     records_by_id,latest=compact_evaluation_state(records_by_id,latest,current_evaluation_ids)
@@ -792,6 +808,6 @@ def main():
         synthetic_events.append({"league":event.get("league"),"source_event_id":event.get("source_event_id") or event.get("event_id"),"commence_time":event.get("commence_time"),"away":event.get("away"),"home":event.get("home"),"away_aliases":event.get("away_aliases") or [],"home_aliases":event.get("home_aliases") or [],"source":"LEGZ_SYNTHETIC_BOOK","sweep_status":"LEGZ_SYNTHETIC_EVALUATED","props":props})
     synthetic_payload={"schema_version":"LSI-LEGZ-SYNTHETIC-BOOK-1","generated_at_utc":datetime.now(timezone.utc).isoformat(),"stage":"POST_SPECTRUM_EVALUATED","policy":"Verified external POMs outrank synthetic lines. Synthetic rows are internal shadow-book thresholds and never external offers.","event_count":len(synthetic_events),"prop_count":synthetic_count,"events":synthetic_events}
     SYNTHETIC_BOOK.write_text(json.dumps(synthetic_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"LEGZ Statistical Spectrum v3: evaluated={evaluated}; awaiting_evidence={waiting}; durable_live_states={len(records_by_id)}; compacted_from={before_compaction}; synthetic_persisted={synthetic_count}")
+    print(f"LEGZ Statistical Spectrum v3: evaluated={evaluated}; awaiting_evidence={waiting}; projected={projection_summary['projected']}/{projection_summary['total_props']}; alias_resolved={projection_summary['identity_alias']}; durable_live_states={len(records_by_id)}; compacted_from={before_compaction}; synthetic_persisted={synthetic_count}")
 
 if __name__=="__main__": main()
