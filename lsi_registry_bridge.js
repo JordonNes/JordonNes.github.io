@@ -897,11 +897,29 @@
     existing.forEach(sanitizeLegacyQc);
     // PRE-GAME LIST INVARIANT: never retain a completed/started shell in the
     // upcoming QC collection. Historical/final presentation belongs elsewhere.
+    const currentPtDateParts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date(nowMs));
+    const ptDatePart=t=>currentPtDateParts.find(x=>x.type===t)?.value||"";
+    const currentPtStamp=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric"}).format(new Date(nowMs)).toUpperCase();
+    const refreshIsCurrentPtDay=String(D.updated||"").toUpperCase().includes(currentPtStamp);
+    const ptOffsetRaw=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",timeZoneName:"longOffset"}).formatToParts(new Date(nowMs)).find(x=>x.type==="timeZoneName")?.value||"GMT-07:00";
+    const ptOffset=ptOffsetRaw.replace(/^GMT/,"")||"-07:00";
+    const currentPtYmd=ptDatePart("year")+"-"+ptDatePart("month")+"-"+ptDatePart("day");
+    const qcStartMs=q=>{
+      const direct=Date.parse(q?._propEventStartPt||q?.commence_time||q?.event_start_pt||"");
+      if(Number.isFinite(direct)) return direct;
+      if(!refreshIsCurrentPtDay) return NaN;
+      const m=String(q?.time||"").match(/\b(\d{1,2}):(\d{2})\s*(AM|PM)\s*PT\b/i);
+      if(!m) return NaN;
+      let h=Number(m[1])%12;
+      if(String(m[3]).toUpperCase()==="PM") h+=12;
+      return Date.parse(currentPtYmd+"T"+String(h).padStart(2,"0")+":"+m[2]+":00"+ptOffset);
+    };
     const existingPregame=existing.filter(q=>{
       const ev=findBoardEvent(league,q);
-      if(ev) return isUpcomingEvent(ev) && isCurrentNflWeekEvent(ev);
-      const t=Date.parse(q?._propEventStartPt||q?.commence_time||q?.event_start_pt||"");
-      if(!Number.isFinite(t) || t<=Date.now()) return false;
+      if(ev) return (isUpcomingEvent(ev)||isRecentEventShell(ev)) && isCurrentNflWeekEvent(ev);
+      const t=qcStartMs(q);
+      if(!Number.isFinite(t)) return refreshIsCurrentPtDay;
+      if(t<=nowMs) return t>=nowMs-7*3600000;
       if(league!=="NFL") return true;
       const serial=ptCalendarSerial(new Date(t));
       const {start,end}=nflWeekBounds();
