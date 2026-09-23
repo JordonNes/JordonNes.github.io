@@ -200,7 +200,7 @@ def write_accuracy_report(payload):
     try: old=json.loads(ACCURACY_OUT.read_text(encoding="utf-8"))
     except Exception: old=None
     if old==payload: return False
-    ACCURACY_OUT.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\\n",encoding="utf-8")
+    ACCURACY_OUT.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     return True
 
 def build_sport(key,preds,results,player_rows,ctx_records,target):
