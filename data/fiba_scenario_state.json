@@ -1,0 +1,522 @@
+{
+  "schemaVersion": "LJ-FIBA-SCENARIO-1",
+  "generatedAt": "2026-09-22T23:53:00Z",
+  "tiebreakPolicy": {
+    "id": "FIBA_OBR_2024_D1",
+    "sourceURL": "https://assets.fiba.basketball/image/upload/documents-corporate-fiba-official-rules-2024-v10a.pdf",
+    "classificationPoints": {
+      "win": 2,
+      "loss": 1,
+      "forfeit": 0
+    },
+    "order": [
+      "Win-loss record",
+      "Games among tied teams",
+      "Point differential among tied teams",
+      "Points scored among tied teams",
+      "Overall group point differential",
+      "Overall group points scored",
+      "FIBA ranking for national-team competitions if still tied; otherwise draw where no ranking exists"
+    ]
+  },
+  "competitions": {
+    "fiba_intercontinental_cup_2026": {
+      "id": "fiba_intercontinental_cup_2026",
+      "mode": "ROUND_ROBIN",
+      "groups": {
+        "A": {
+          "remainingGroupGames": 2,
+          "scenarioCount": 4,
+          "teams": {
+            "Rytas Vilnius": {
+              "state": "CLINCH WITH WIN",
+              "leverage": "HIGH",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "WIN CLINCHES",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "A win in the next group game guarantees advancement regardless of other remaining results.",
+              "gamesPlayed": 1,
+              "remainingGames": 1,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "5TH-PLACE GAME"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 24",
+                "opponent": "Shanghai Sharks",
+                "home": true,
+                "phase": "Group A"
+              }
+            },
+            "Shanghai Sharks": {
+              "state": "CLINCH WITH WIN",
+              "leverage": "HIGH",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "WIN CLINCHES",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "A win in the next group game guarantees advancement regardless of other remaining results.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "5TH-PLACE GAME"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 23",
+                "opponent": "RSSB Tigers",
+                "home": true,
+                "phase": "Group A"
+              }
+            },
+            "RSSB Tigers": {
+              "state": "MUST WIN",
+              "leverage": "ELIMINATION",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "LOSS ELIMINATES"
+              ],
+              "reason": "A loss in the next group game removes every advancement path.",
+              "gamesPlayed": 1,
+              "remainingGames": 1,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "5TH-PLACE GAME"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": false,
+              "nextGame": {
+                "date": "Sep 23",
+                "opponent": "Shanghai Sharks",
+                "home": false,
+                "phase": "Group A"
+              }
+            }
+          }
+        },
+        "B": {
+          "remainingGroupGames": 2,
+          "scenarioCount": 4,
+          "teams": {
+            "Boca Juniors": {
+              "state": "CLINCH WITH WIN",
+              "leverage": "HIGH",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "WIN CLINCHES",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "A win in the next group game guarantees advancement regardless of other remaining results.",
+              "gamesPlayed": 1,
+              "remainingGames": 1,
+              "possibleRoutes": [
+                "SEMIFINAL • RUNNER-UP",
+                "SEMIFINAL • GROUP WINNER",
+                "5TH-PLACE GAME"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 24",
+                "opponent": "NBA G League United",
+                "home": true,
+                "phase": "Group B"
+              }
+            },
+            "NBA G League United": {
+              "state": "CLINCH WITH WIN",
+              "leverage": "HIGH",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "WIN CLINCHES",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "A win in the next group game guarantees advancement regardless of other remaining results.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "5TH-PLACE GAME"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 23",
+                "opponent": "Beijing Royal Fighters",
+                "home": false,
+                "phase": "Group B"
+              }
+            },
+            "Beijing Royal Fighters": {
+              "state": "MUST WIN",
+              "leverage": "ELIMINATION",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "LOSS ELIMINATES"
+              ],
+              "reason": "A loss in the next group game removes every advancement path.",
+              "gamesPlayed": 1,
+              "remainingGames": 1,
+              "possibleRoutes": [
+                "5TH-PLACE GAME",
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": false,
+              "nextGame": {
+                "date": "Sep 23",
+                "opponent": "NBA G League United",
+                "home": true,
+                "phase": "Group B"
+              }
+            }
+          }
+        }
+      },
+      "note": "Outcome enumeration uses current W/L records and every remaining group-game winner combination. Unknown future scoring margins are never invented; unresolved FIBA tiebreaks are flagged as margin-sensitive."
+    },
+    "fiba_world_cup_2027_qualifiers": {
+      "id": "fiba_world_cup_2027_qualifiers",
+      "mode": "EXTERNAL_GROUP_TABLES",
+      "groups": {},
+      "note": "Scenario engine activates when regional standings and remaining schedules are ingested."
+    },
+    "wbl_americas_2026": {
+      "id": "wbl_americas_2026",
+      "mode": "ROUND_ROBIN",
+      "groups": {
+        "A": {
+          "remainingGroupGames": 3,
+          "scenarioCount": 8,
+          "teams": {
+            "CDC Leones": {
+              "state": "TITLE PATH SECURED",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE"
+              ],
+              "reason": "Every remaining win/loss scenario keeps this team in the championship path; exact seed or round may still depend on tiebreaks.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "DIRECT SEMIFINAL",
+                "QUARTERFINAL • 2ND SEED",
+                "QUARTERFINAL • 3RD SEED"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 29",
+                "opponent": "Defensor Sporting",
+                "home": true,
+                "phase": "Group A"
+              }
+            },
+            "Ferro": {
+              "state": "TITLE PATH SECURED",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE"
+              ],
+              "reason": "Every remaining win/loss scenario keeps this team in the championship path; exact seed or round may still depend on tiebreaks.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "DIRECT SEMIFINAL",
+                "QUARTERFINAL • 2ND SEED",
+                "QUARTERFINAL • 3RD SEED"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 30",
+                "opponent": "Defensor Sporting",
+                "home": false,
+                "phase": "Group A"
+              }
+            },
+            "Defensor Sporting": {
+              "state": "TITLE PATH SECURED",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE"
+              ],
+              "reason": "Every remaining win/loss scenario keeps this team in the championship path; exact seed or round may still depend on tiebreaks.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "DIRECT SEMIFINAL",
+                "QUARTERFINAL • 2ND SEED",
+                "QUARTERFINAL • 3RD SEED"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 29",
+                "opponent": "CDC Leones",
+                "home": false,
+                "phase": "Group A"
+              }
+            }
+          }
+        },
+        "B": {
+          "remainingGroupGames": 3,
+          "scenarioCount": 8,
+          "teams": {
+            "Sportiva Italiana": {
+              "state": "TITLE PATH SECURED",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE"
+              ],
+              "reason": "Every remaining win/loss scenario keeps this team in the championship path; exact seed or round may still depend on tiebreaks.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "DIRECT SEMIFINAL",
+                "QUARTERFINAL • 2ND SEED",
+                "QUARTERFINAL • 3RD SEED"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 29",
+                "opponent": "SESI Araraquara",
+                "home": true,
+                "phase": "Group B"
+              }
+            },
+            "Bay Area Phoenix": {
+              "state": "TITLE PATH SECURED",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE"
+              ],
+              "reason": "Every remaining win/loss scenario keeps this team in the championship path; exact seed or round may still depend on tiebreaks.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "DIRECT SEMIFINAL",
+                "QUARTERFINAL • 2ND SEED",
+                "QUARTERFINAL • 3RD SEED"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 30",
+                "opponent": "SESI Araraquara",
+                "home": false,
+                "phase": "Group B"
+              }
+            },
+            "SESI Araraquara": {
+              "state": "TITLE PATH SECURED",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE"
+              ],
+              "reason": "Every remaining win/loss scenario keeps this team in the championship path; exact seed or round may still depend on tiebreaks.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "DIRECT SEMIFINAL",
+                "QUARTERFINAL • 2ND SEED",
+                "QUARTERFINAL • 3RD SEED"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Sep 29",
+                "opponent": "Sportiva Italiana",
+                "home": false,
+                "phase": "Group B"
+              }
+            }
+          }
+        }
+      },
+      "note": "Outcome enumeration uses current W/L records and every remaining group-game winner combination. Unknown future scoring margins are never invented; unresolved FIBA tiebreaks are flagged as margin-sensitive."
+    },
+    "wbl_asia_2026": {
+      "id": "wbl_asia_2026",
+      "mode": "ROUND_ROBIN",
+      "groups": {
+        "A": {
+          "remainingGroupGames": 3,
+          "scenarioCount": 8,
+          "teams": {
+            "Sichuan Yuanda Meile": {
+              "state": "CONTROLS OWN PATH",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "Winning all remaining group games guarantees advancement without outside help.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "CLASSIFICATION 5–6"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Oct 20",
+                "opponent": "Cathay Life Tigers",
+                "home": false,
+                "phase": "Group A"
+              }
+            },
+            "Cathay Life Tigers": {
+              "state": "CONTROLS OWN PATH",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "Winning all remaining group games guarantees advancement without outside help.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "CLASSIFICATION 5–6"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Oct 20",
+                "opponent": "Sichuan Yuanda Meile",
+                "home": true,
+                "phase": "Group A"
+              }
+            },
+            "Akari Sparks": {
+              "state": "CONTROLS OWN PATH",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "Winning all remaining group games guarantees advancement without outside help.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "CLASSIFICATION 5–6"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Oct 21",
+                "opponent": "Cathay Life Tigers",
+                "home": true,
+                "phase": "Group A"
+              }
+            }
+          }
+        },
+        "B": {
+          "remainingGroupGames": 3,
+          "scenarioCount": 8,
+          "teams": {
+            "Denso Iris": {
+              "state": "CONTROLS OWN PATH",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "Winning all remaining group games guarantees advancement without outside help.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "CLASSIFICATION 5–6"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Oct 20",
+                "opponent": "Indian Railways",
+                "home": false,
+                "phase": "Group B"
+              }
+            },
+            "Cheongju KB Stars": {
+              "state": "CONTROLS OWN PATH",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "Winning all remaining group games guarantees advancement without outside help.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "CLASSIFICATION 5–6"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Oct 21",
+                "opponent": "Indian Railways",
+                "home": true,
+                "phase": "Group B"
+              }
+            },
+            "Indian Railways": {
+              "state": "CONTROLS OWN PATH",
+              "leverage": "NORMAL",
+              "flags": [
+                "MARGIN / TIEBREAK ACTIVE",
+                "NO OUTSIDE HELP NEEDED IF PERFECT"
+              ],
+              "reason": "Winning all remaining group games guarantees advancement without outside help.",
+              "gamesPlayed": 0,
+              "remainingGames": 2,
+              "possibleRoutes": [
+                "SEMIFINAL • GROUP WINNER",
+                "SEMIFINAL • RUNNER-UP",
+                "CLASSIFICATION 5–6"
+              ],
+              "marginSensitive": true,
+              "controlsOwnPath": true,
+              "nextGame": {
+                "date": "Oct 20",
+                "opponent": "Denso Iris",
+                "home": true,
+                "phase": "Group B"
+              }
+            }
+          }
+        }
+      },
+      "note": "Outcome enumeration uses current W/L records and every remaining group-game winner combination. Unknown future scoring margins are never invented; unresolved FIBA tiebreaks are flagged as margin-sensitive."
+    },
+    "fiba_womens_world_cup_2026": {
+      "id": "fiba_womens_world_cup_2026",
+      "groups": {},
+      "note": "Scenario engine unavailable for this competition phase."
+    }
+  }
+}
