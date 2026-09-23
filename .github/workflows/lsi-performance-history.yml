@@ -35,6 +35,9 @@ jobs:
       - name: Ingest completed player-game facts once
         run: python scripts/lsi_performance_ingest.py --days-back 2 --max-events 80
 
+      - name: Warm MLB forecast-first history for current POM evaluation
+        run: python scripts/lsi_performance_ingest.py --days-back 28 --league MLB --max-events 450
+
       - name: Keep active CFB season history warm
         continue-on-error: true
         run: python scripts/lsi_performance_ingest.py --days-back 35 --league NCAA_Football --max-events 700
