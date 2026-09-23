@@ -166,6 +166,8 @@ def load_suggestion_predictions():
             "league":s.get("league"),
             "event_id":s.get("event_id") or "",
             "event_start_pt":s.get("event_start_pt"),
+            "away":s.get("away") or "",
+            "home":s.get("home") or "",
             "market_class":market_class,
             "participant":s.get("participant") or "",
             "selection":s.get("selection") or s.get("display_text") or "",
@@ -229,12 +231,18 @@ def token_matches(token, candidates):
     return any(o in candidates for o in options)
 
 def context_team_hint(prediction, context_rows):
+    # Published-suggestion ledgers carry the exact visible matchup. Prefer those
+    # immutable team identities over inference from external participant context.
+    away=(prediction.get("away") or "").upper()
+    home=(prediction.get("home") or "").upper()
+    if away and home:
+        return away, home
     pid = prediction.get("participant") or ""
     eid = prediction.get("event_id") or ""
     for r in context_rows:
         if r.get("event_id") == eid and norm(r.get("participant")) == norm(pid):
             return (r.get("team") or "").upper(), (r.get("opponent") or "").upper()
-    return "", ""
+    return away, home
 
 def event_candidates(league, prediction):
     start = parse_dt(prediction.get("event_start_pt"))
