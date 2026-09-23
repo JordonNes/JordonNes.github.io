@@ -229,7 +229,15 @@ for (const [page, league] of Object.entries(PAGES)) {
       continue;
     }
     if (status === 'COMPLETE_WITH_PROPS' && count === 0) {
-      errors.push(`${label}: source reports props, but QC bridge has zero usable props.`);
+      // A source can legitimately report exact offered POMs before Spectrum has
+      // enough player-performance evidence to assign formal LJPC. That is an
+      // acquisition/readiness warning, not a publication-bridge defect. Keep the
+      // hard failure only when the event claims an evaluated POM that disappeared.
+      if (evaluatedCount > 0) {
+        errors.push(`${label}: ${evaluatedCount} L&J-evaluated source POM(s) exist, but the QC bridge renders zero usable props.`);
+      } else {
+        warnings.push(`${label}: source reports current POMs, but none has cleared individualized L&J evaluation yet; publication remains fail-closed.`);
+      }
       continue;
     }
     if (count === 0) {
