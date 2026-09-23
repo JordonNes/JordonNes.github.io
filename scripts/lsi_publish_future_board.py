@@ -200,6 +200,53 @@ def load_game_markets():
 def norm_team(value):
     return " ".join(str(value or "").lower().replace("&"," and ").replace("-"," ").replace("."," ").split())
 
+def game_eval_key(event,row):
+    prob=num(row.get("market_probability"))
+    price=num(row.get("price"))
+    return (
+        str(event.get("league") or ""),
+        norm_team(event.get("away")),
+        norm_team(event.get("home")),
+        str(event.get("commence_time") or ""),
+        norm_team(row.get("participant") or row.get("selection")),
+        None if price is None else round(price,4),
+        str(row.get("book") or ""),
+        None if prob is None else round(prob,4),
+    )
+
+GAME_EVAL_FIELDS=(
+    "provisional_probability","performance_probability","legz_baseline","jinx_input",
+    "ljpc","lj_confidence","legz_value","pom_value","evaluation_status","evaluation_id",
+    "evaluation_material_hash","evaluation_version","feature_state","model","evaluation_reason"
+)
+
+def load_previous_game_evaluations():
+    if not OUT.exists() or not OUT.stat().st_size:
+        return {}
+    try:
+        prior=json.loads(OUT.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError,OSError):
+        return {}
+    saved={}
+    for event in prior.get("events") or []:
+        for row in event.get("game_markets") or []:
+            if str(row.get("evaluation_status") or "").upper()!="LJ_EVALUATED":
+                continue
+            if row.get("ljpc") is None or not row.get("evaluation_id") or not row.get("evaluation_material_hash"):
+                continue
+            saved[game_eval_key(event,row)]={k:row.get(k) for k in GAME_EVAL_FIELDS}
+    return saved
+
+def carry_forward_game_evaluations(event,rows,previous):
+    carried=0
+    for row in rows:
+        state=previous.get(game_eval_key(event,row))
+        if not state:
+            continue
+        row.update(state)
+        carried+=1
+    return carried
+
 def game_markets_for_event(event, by_event):
     """Resolve GAME_ML evidence even when source adapters use different event IDs."""
     event_id=str(event.get("source_event_id") or "").strip()
@@ -230,6 +277,7 @@ def game_markets_for_event(event, by_event):
     return best
 
 def main():
+    previous_game_evaluations=load_previous_game_evaluations()
     src=json.loads(SRC.read_text(encoding="utf-8")) if SRC.exists() else {"events":[]}
     source_events=list(src.get("events") or [])
 
@@ -336,6 +384,8 @@ def main():
             if prior is None or float(p.get("ljpc") or 0)>float(prior.get("ljpc") or 0):
                 best[key]=p
         props=sorted(best.values(),key=lambda x:(-float(x.get("ljpc") or 0),str(x["participant"]),str(x["market"])))
+        event_game_markets=game_markets_for_event(e,game_markets)
+        carried_game_evals=carry_forward_game_evaluations(e,event_game_markets,previous_game_evaluations)
         events.append({
           "league":e.get("league"),"sport_key":e.get("sport_key"),
           "source_event_id":e.get("source_event_id"),"propline_event_id":e.get("propline_event_id"),
@@ -345,7 +395,8 @@ def main():
           "unique_players":len({str(x["participant"]).lower() for x in props}),
           "pending_prop_count":pending_prop_count,
           "props":props,
-          "game_markets":game_markets_for_event(e,game_markets)
+          "game_markets":event_game_markets,
+          "carried_game_winner_evaluations":carried_game_evals
         })
     events.sort(key=lambda x:(x.get("commence_time") or "",x.get("league") or "",x.get("away") or ""))
     payload={
@@ -401,6 +452,7 @@ def main():
         raise SystemExit("Future-board candidate validation failed; last-known-good artifacts preserved.")
     tmp_json.replace(OUT)
     tmp_js.replace(OUTJS)
-    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {ml_count} moneyline market-evidence side(s) awaiting/eligible for Game Winner Spectrum.")
+    carried_total=sum(int(e.get("carried_game_winner_evaluations") or 0) for e in events)
+    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {ml_count} GAME_ML side(s), carried_forward_game_evals={carried_total}.")
 
 if __name__=="__main__":main()
