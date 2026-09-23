@@ -243,6 +243,16 @@ def token_matches(token, candidates):
     options = {token} | TEAM_ALIASES.get(token, set())
     return any(o in candidates for o in options)
 
+def hint_matches(hint, candidates):
+    raw=re.sub(r"[^A-Z0-9]","",str(hint or "").upper())
+    if not raw:return False
+    options={raw} | TEAM_ALIASES.get(raw,set())
+    for opt in options:
+        for cand in candidates:
+            if opt==cand or (len(opt)>=3 and opt in cand) or (len(cand)>=3 and cand in opt):
+                return True
+    return False
+
 def context_team_hint(prediction, context_rows):
     # Published-suggestion ledgers carry the exact visible matchup. Prefer those
     # immutable team identities over inference from external participant context.
@@ -322,7 +332,7 @@ def resolve_event(prediction, aliases, context_rows):
         token_hits = sum(1 for tok in tokens if any(token_matches(tok, s) for s in token_sets))
         hint_hits = 0
         for hint in (team_hint, opp_hint):
-            if hint and any(token_matches(hint, s) for s in token_sets):
+            if hint and any(hint_matches(hint, s) for s in token_sets):
                 hint_hits += 1
         estart = event_start(e)
         hours = abs((estart - start).total_seconds())/3600 if estart and start else 999
