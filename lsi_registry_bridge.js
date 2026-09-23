@@ -183,7 +183,9 @@
     return {
       winner:`${best.selection||best.participant} ML • ${fmtPrice(best)}`,
       conf:pct(ljpcOf(best)),
-      marketBaseline:Number.isFinite(Number(best.provisional_probability ?? best.market_probability))?pct(Number(best.provisional_probability ?? best.market_probability)):'',
+      marketBaseline:Number.isFinite(Number(best.market_baseline_probability ?? best.provisional_probability ?? best.market_probability))?pct(Number(best.market_baseline_probability ?? best.provisional_probability ?? best.market_probability)):'',
+      legz:legzComponent(best),
+      jinx:jinxComponent(best),
       provisional:false,
       market:`GAME ODDS • ${odds} • L&J EVALUATED GAME WINNER`
     };
@@ -389,7 +391,9 @@
         p.opponent? `${winner} vs ${p.opponent}` : (p.event_id||winner||"Upcoming event"),
         `${winner} ML${offer?` • ${offer}`:''}`,
         pct(ljpcOf(p)),
-        `GAME ODDS • ${winner}${price?` ${price}`:''}`
+        `GAME ODDS • ${winner}${price?` ${price}`:''}`,
+        Number.isFinite(Number(p.market_baseline_probability ?? p.provisional_probability ?? p.market_probability)) ? pct(Number(p.market_baseline_probability ?? p.provisional_probability ?? p.market_probability)) : '',
+        legzComponent(p),jinxComponent(p)
       ]);
     }
     for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x)).sort((a,b)=>eventStartMs(a)-eventStartMs(b))){
@@ -406,7 +410,8 @@
         `${winner} ML${offer?` • ${offer}`:''}`,
         pct(ljpcOf(best)),
         `GAME ODDS • ${winner}${price?` ${price}`:''}`,
-        ''
+        Number.isFinite(Number(best.market_baseline_probability ?? best.provisional_probability ?? best.market_probability)) ? pct(Number(best.market_baseline_probability ?? best.provisional_probability ?? best.market_probability)) : '',
+        legzComponent(best),jinxComponent(best)
       ]);
     }
     // Game Winners are current-state only. Never preserve a market-only or stale
@@ -846,7 +851,7 @@
     const q={
       time:fmtEventTime(e),away:e.away||"",home:e.home||"",
       market:game?.market||`Upcoming event • ${e.source||"verified market board"}`,
-      winner:game?.winner||"",conf:game?.conf||"",_winnerMarketBaseline:game?.marketBaseline||"",_winnerProvisional:Boolean(game?.provisional),hot:[],sns1:[],sns2:[],normal:[],demon:[],
+      winner:game?.winner||"",conf:game?.conf||"",_winnerMarketBaseline:game?.marketBaseline||"",_winnerLegz:game?.legz??null,_winnerJinx:game?.jinx??null,_winnerProvisional:Boolean(game?.provisional),hot:[],sns1:[],sns2:[],normal:[],demon:[],
       foot:"0–7 day rolling L&J board • exact price/threshold must remain current at entry time.",
       _propEventId:e.source_event_id||null,
       _propEventStartPt:e.commence_time||e.event_start_pt||null
