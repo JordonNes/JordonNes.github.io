@@ -859,9 +859,14 @@
       const A=eventIdentity(a), B=eventIdentity(b);
       const awayMatch=A.away.some(x=>aliasHit(x,B.away)) || B.away.some(x=>aliasHit(x,A.away));
       const homeMatch=A.home.some(x=>aliasHit(x,B.home)) || B.home.some(x=>aliasHit(x,A.home));
-      if(!awayMatch||!homeMatch) return false;
-      if(Number.isFinite(A.time)&&Number.isFinite(B.time) && Math.abs(A.time-B.time)>6*3600000) return false;
-      return true;
+      const timed=Number.isFinite(A.time)&&Number.isFinite(B.time);
+      if(timed){
+        if(Math.abs(A.time-B.time)>6*3600000) return false;
+        // In a narrow game-time window, one matching team uniquely identifies the
+        // event; this safely resolves truncated/provider-specific opponent names.
+        return awayMatch||homeMatch;
+      }
+      return awayMatch&&homeMatch;
     };
     const boardKeyForQc=q=>{
       const ev=findBoardEvent(league,q);
