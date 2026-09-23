@@ -28,6 +28,7 @@ on:
       - 'scripts/legz_prop_ladder_test.py'
       - 'scripts/legz_synthetic_book.py'
       - 'scripts/lsi_history_warehouse.py'
+      - 'scripts/lsi_performance_ingest.py'
       - 'scripts/lsi_market_history_delta.py'
       - 'scripts/lsi_t48_coverage.py'
       - 'scripts/lsi_readiness_report.py'
@@ -171,6 +172,15 @@ jobs:
           PROPLINE_RATE_LIMIT_COOLDOWN_MIN: '90'
           PROPLINE_MAX_PROP_MARKETS_PER_EVENT: '10'
         run: python scripts/propline_adapter.py
+      - name: MLB forecast-first performance evidence warmup
+        if: contains(steps.league_schedule.outputs.due_leagues, 'MLB')
+        continue-on-error: true
+        run: |
+          # Current MLB POMs cannot receive LJPC until the exact player/metric has
+          # enough completed-game evidence. MLB StatsAPI is free/public and avoids
+          # the ESPN scoreboard 403 currently seen from Actions runners.
+          python scripts/lsi_performance_ingest.py --days-back 28 --league MLB --max-events 450
+
       - name: OddsPapi historical calibration — free-first
         env:
           ODDSPAPI_API_KEY: ${{ secrets.ODDSPAPI_API_KEY }}
