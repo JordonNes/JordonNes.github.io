@@ -35,8 +35,30 @@ const numeric=v=>{
   return m?Number(m[0]):null;
 };
 const pct=v=>{
-  const x=n(v).match(/(\d+(?:\.\d+)?)\s*%/);
-  return x?Number(x[1]):(Number.isFinite(Number(v))?Number(v):null);
+  const raw=n(v);
+  const labeled=raw.match(/\bLJPC\s*(\d+(?:\.\d+)?)\s*%/i);
+  if(labeled) return Number(labeled[1]);
+  const exact=raw.match(/^\s*(\d+(?:\.\d+)?)\s*%?\s*$/);
+  return exact?Number(exact[1]):(Number.isFinite(Number(v))?Number(v):null);
+};
+const componentPair=text=>{
+  const m=n(text).match(/⟦\s*L\s*=\s*(-?\d+(?:\.\d+)?)\s*;\s*J\s*=\s*(-?\d+(?:\.\d+)?)\s*⟧/i);
+  return m?{legz:Number(m[1]),jinx:Number(m[2])}:{legz:null,jinx:null};
+};
+const priceBook=text=>{
+  const raw=n(text);
+  let m=raw.match(/(?:\(|•\s*)([+-]\d{2,4})\s+([^•)]+?)(?=\)|\s*•|$)/);
+  if(m) return {price:Number(m[1]),book:n(m[2]).replace(/\s+ML$/i,'').trim()};
+  m=raw.match(/(?:\(|•\s*)(\d+(?:\.\d+)?)¢\s*([^•)]*?)(?=\)|\s*•|$)/);
+  if(m) return {price:Number(m[1])/100,book:n(m[2]).replace(/\s+ML$/i,'').trim()};
+  return {price:null,book:''};
+};
+const pomTypeFromText=text=>{
+  const raw=n(text).toUpperCase();
+  if(/\bGOBLIN\b/.test(raw)) return 'GOBLIN';
+  if(/\bDEMON\b/.test(raw)) return 'DEMON';
+  if(/\bNORMAL\b|\bMARKET\b/.test(raw)) return 'NORMAL';
+  return null;
 };
 const hash=(prefix,parts)=>prefix+crypto.createHash('sha256').update(parts.join('|')).digest('hex').slice(0,24);
 const sameNum=(a,b)=>a===null||b===null?false:Math.abs(Number(a)-Number(b))<1e-9;
@@ -90,7 +112,8 @@ function parsePlayerText(text,participantHint=''){
     market='Anytime TD';
     if(!participant) participant=raw.split(/ANYTIME\s+TD|TOUCHDOWN\s+SCORER/i)[0].trim();
   }
-  return {participant,side,threshold,market,ljpc:pct(raw)};
+  const pb=priceBook(raw), pair=componentPair(raw);
+  return {participant,side,threshold,market,ljpc:pct(raw),price:pb.price,book:pb.book,pom_type:pomTypeFromText(raw),legz_confidence:pair.legz,jinx_input:pair.jinx};
 }
 function parseMoneyline(text,participantHint=''){
   const raw=n(text);
@@ -99,8 +122,8 @@ function parseMoneyline(text,participantHint=''){
     const m=raw.match(/^(.*?)\s+ML\b/i);
     if(m) participant=m[1].replace(/^.*?[:|]\s*/,'').trim();
   }
-  const priceMatch=raw.match(/(?:^|\s)([+-]\d{3,4})(?:\s|$|•|\))/);
-  return {participant,side:'',threshold:null,market:'Moneyline',price:priceMatch?Number(priceMatch[1]):null,ljpc:pct(raw)};
+  const pb=priceBook(raw), pair=componentPair(raw);
+  return {participant,side:'',threshold:null,market:'Moneyline',price:pb.price,book:pb.book,ljpc:pct(raw),legz_confidence:pair.legz,jinx_input:pair.jinx};
 }
 function candidateRows(ctx){
   const rows=[];
@@ -184,15 +207,15 @@ function matchCandidate(candidates,hint){
 function structuredSuggestion(c,hint,display,placement,page,publication,date,now){
   const src=c||{};
   const marketClass=hint.market_class||src.market_class||'PLAYER_PROP';
-  const participant=n(src.participant||hint.participant);
-  const market=n(src.market||hint.market||(marketClass==='GAME_ML'?'Moneyline':''));
-  const threshold=src.threshold!==undefined&&src.threshold!==null&&src.threshold!==''?numeric(src.threshold):hint.threshold;
-  const side=n(src.side||hint.side).toUpperCase();
+  const participant=n(hint.participant||src.participant);
+  const market=n(hint.market||src.market||(marketClass==='GAME_ML'?'Moneyline':''));
+  const threshold=hint.threshold!==undefined&&hint.threshold!==null?numeric(hint.threshold):(src.threshold!==undefined&&src.threshold!==null&&src.threshold!==''?numeric(src.threshold):null);
+  const side=n(hint.side||src.side).toUpperCase();
   const eventId=n(src.event_id||hint.event_id);
-  const price=src.price!==undefined&&src.price!==null&&src.price!==''?Number(src.price):hint.price??null;
-  const book=n(src.book||hint.book);
+  const price=hint.price!==undefined&&hint.price!==null&&hint.price!==''?Number(hint.price):(src.price!==undefined&&src.price!==null&&src.price!==''?Number(src.price):null);
+  const book=n(hint.book||src.book);
   const ljpc=Number.isFinite(Number(hint.ljpc))?Number(hint.ljpc):(Number.isFinite(Number(src.ljpc))?Number(src.ljpc):null);
-  const selection=n(src.selection||hint.selection||display);
+  const selection=n(hint.selection||src.selection||display);
   const core=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side),threshold??'',book,price??'',ljpc??''];
   const outcome=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side),threshold??''];
   const family=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side)];
@@ -202,20 +225,30 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
     league:hint.league||src.league||'',event_id:eventId||null,event_start_pt:src.event_start_pt||hint.event_start_pt||null,
     market_class:marketClass,suggestion_type:marketClass==='GAME_ML'?'GAME_WINNER':'POM',participant:participant||null,
     market:market||null,threshold,side:side||null,selection:selection||null,price,book:book||null,
-    pom_type:src.pom_type||hint.pom_type||null,legz_confidence:src.legz_confidence??null,jinx_input:src.jinx_input??null,
+    pom_type:hint.pom_type||src.pom_type||null,
+    legz_confidence:Number.isFinite(Number(hint.legz_confidence))?Number(hint.legz_confidence):(src.legz_confidence??null),
+    jinx_input:Number.isFinite(Number(hint.jinx_input))?Number(hint.jinx_input):(src.jinx_input??null),
     ljpc,prediction_id:src.prediction_id||null,evaluation_id:src.evaluation_id||null,
     evaluation_material_hash:src.evaluation_material_hash||null,
     source_snapshot_ids:Array.isArray(src.source_snapshot_ids)?src.source_snapshot_ids:[],
     source_kind:src.source_kind||'DISPLAY_PARSE',market_verified:src.market_verified===true,
     market_verification:src.market_verification||null,structure_status:complete?'STRUCTURED':'PARTIAL',
     outcome_key:hash('OUT-',outcome),family_key:hash('FAM-',family),display_text:n(display),placements:[placement],
-    publication_labels:[publication],snapshot_count:1,immutable_publication_record:true,settlement_status:'PENDING'
+    publication_labels:[publication],snapshot_count:1,immutable_publication_record:true,settlement_status:'PENDING',
+    capture_schema_version:2,capture_validity:'VALID'
   };
 }
 
 const ledger=readLedger();
 const now=new Date().toISOString();
 const date=ptDate();
+for(const s of ledger.suggestions){
+  if(Number(s.capture_schema_version||0)<2){
+    s.capture_validity='QUARANTINED_CAPTURE_V1';
+    s.accuracy_eligible=false;
+    s.quarantine_reason='Initial capture parser could select non-displayed LJPC/price/book or misclassify Hot Top moneylines.';
+  }
+}
 const existing=new Map(ledger.suggestions.map(x=>[x.suggestion_id,x]));
 const observedIds=new Set();
 let added=0,seen=0;
@@ -225,6 +258,12 @@ function mergeRecord(rec){
   observedIds.add(rec.suggestion_id);
   const prior=existing.get(rec.suggestion_id);
   if(prior){
+    if(Number(rec.capture_schema_version||0)>=2){
+      prior.capture_schema_version=2;
+      prior.capture_validity='VALID';
+      prior.accuracy_eligible=true;
+      delete prior.quarantine_reason;
+    }
     if(prior.currently_displayed===false) prior.last_reappeared_at_utc=now;
     prior.currently_displayed=true;
     prior.last_seen_at_utc=now;
@@ -235,6 +274,7 @@ function mergeRecord(rec){
   }
   rec.currently_displayed=true;
   rec.removed_at_utc=null;
+  rec.accuracy_eligible=true;
   const priorVersions=ledger.suggestions.filter(x=>x.publication_date_pt===rec.publication_date_pt&&x.family_key===rec.family_key);
   if(priorVersions.length){
     priorVersions.sort((a,b)=>String(a.first_seen_at_utc).localeCompare(String(b.first_seen_at_utc)));
@@ -258,7 +298,7 @@ for(const [page,league] of Object.entries(PAGES)){
     if(!display||NON_ACTION.test(String(display))) return;
     const cls=hint.market_class||'PLAYER_PROP';
     const parsed=cls==='GAME_ML'?parseMoneyline(display,hint.participant):parsePlayerText(display,hint.participant);
-    const merged={...parsed,...hint,league,market_class:cls};
+    const merged={...hint,...parsed,league,market_class:cls};
     if(hint.ljpc!==undefined&&hint.ljpc!==null) merged.ljpc=pct(hint.ljpc);
     const candidate=matchCandidate(candidates,merged);
     mergeRecord(structuredSuggestion(candidate,merged,display,placement,page,publication,date,now));
@@ -266,7 +306,10 @@ for(const [page,league] of Object.entries(PAGES)){
 
   for(const row of sport.hotTop||[]){
     if(!Array.isArray(row)) continue;
-    record('HOT_TOP',`${n(row[0])} — ${n(row[1])} • LJPC ${n(row[2])}`,{participant:row[0],selection:row[1],ljpc:row[2]});
+    const text=`${n(row[0])} — ${n(row[1])} • LJPC ${n(row[2])}${row[3]?` • ${n(row[3])}`:''}`;
+    const ml=/\bML\b|MONEYLINE/i.test(`${n(row[1])} ${n(row[3])}`);
+    const parsed=ml?parseMoneyline(text,row[0]):parsePlayerText(text,row[0]);
+    record('HOT_TOP',text,{...parsed,market_class:ml?'GAME_ML':'PLAYER_PROP',participant:row[0],selection:row[1],ljpc:row[2]});
   }
   for(const row of sport.twenty||[]){
     if(!Array.isArray(row)) continue;
@@ -304,10 +347,10 @@ for(const s of ledger.suggestions){
   }
 }
 
-ledger.schema_version='LSI-SUGGESTION-LEDGER-1';
+ledger.schema_version='LSI-SUGGESTION-LEDGER-2';
 ledger.generated_at_utc=now;
 ledger.suggestion_count=ledger.suggestions.length;
-ledger.policy='Every exact POM or Game Winner displayed on an LJDP sport page is an immutable suggestion for that Pacific publication date. Later removal never deletes history. A materially different line/price/book/LJPC version is appended; repeated placement of the same version is de-duplicated and placement history is retained.';
+ledger.policy='Every exact POM or Game Winner displayed on an LJDP sport page is an immutable suggestion for that Pacific publication date. Displayed LJPC, line, price and book are authoritative. Later removal never deletes history. A materially different line/price/book/LJPC version is appended; repeated placement of the same version is de-duplicated and placement history is retained. Capture-v1 rows are quarantined unless re-observed and validated by capture v2.';
 ledger.accuracy_policy='Primary suggestion accuracy may count immutable suggestion versions. outcome_key is also retained so analytics can report unique-outcome accuracy without double-counting the same exact event/participant/market/side/threshold shown in multiple placements.';
 ledger.suggestions.sort((a,b)=>String(a.first_seen_at_utc).localeCompare(String(b.first_seen_at_utc))||String(a.suggestion_id).localeCompare(String(b.suggestion_id)));
 fs.mkdirSync(path.dirname(OUT),{recursive:true});
