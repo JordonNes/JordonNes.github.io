@@ -85,3 +85,28 @@ assert abs(cached["player_projection"]["l5_average"]-207.0)<1e-9
 thin=m.spectrum(prop(205,"Over"),thin_history,{}, {},game_contexts={},metric_cache={})
 assert thin["evaluation_status"]=="AWAITING_LJ_EVALUATION"
 assert thin["player_projection"] is None
+
+
+# Sportsbook abbreviations must resolve to one unambiguous historical player
+# profile without guessing across similarly named players.
+alias_metric_cache={
+  ("NFL","m stafford","pass_yards"):{
+    "lsi_player_id":"LSIP-STAFFORD",
+    "league":"NFL",
+    "player":"Matthew Stafford",
+    "metric":"pass_yards",
+    "sample_n":10,
+    "recent_values":[245,212,268,231,251,226,239,257,203,248],
+  }
+}
+alias_prop={
+  "_league":"NFL","_event_id":"TEST-NFL-2",
+  "participant":"M. Stafford","market":"Passing Yards",
+  "threshold":235.5,"side":"Over","pom_type":"NORMAL","market_source_count":1
+}
+alias_result=m.spectrum(alias_prop,{}, {}, {},game_contexts={},metric_cache=alias_metric_cache)
+assert alias_result["evaluation_status"]=="LJ_EVALUATED"
+assert alias_result["player_projection"]["resolved_history_player"]=="Matthew Stafford"
+assert alias_result["player_projection"]["identity_match"] in {"EXACT","UNIQUE_ALIAS"}
+assert alias_result["player_projection"]["l5_average"] is not None
+print("Alias resolution test passed:",alias_result["player_projection"])
