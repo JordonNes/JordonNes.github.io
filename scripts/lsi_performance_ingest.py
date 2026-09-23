@@ -48,9 +48,25 @@ def get(url):
     req=urllib.request.Request(url,headers=UA)
     with urllib.request.urlopen(req,timeout=25) as r:return json.load(r)
 def scoreboard(league,day):
+    if league=="MLB":
+        q=urllib.parse.urlencode({"sportId":1,"date":day.isoformat()})
+        raw=get(f"https://statsapi.mlb.com/api/v1/schedule?{q}")
+        events=[]
+        for block in raw.get("dates") or []:
+            for game in block.get("games") or []:
+                status=game.get("status") or {}
+                detailed=str(status.get("detailedState") or status.get("abstractGameState") or "")
+                events.append({
+                  "id":str(game.get("gamePk") or ""),
+                  "date":game.get("gameDate") or "",
+                  "status":{"type":{"completed":detailed.lower() in {"final","game over","completed early"},"name":detailed,"description":detailed}}
+                })
+        return {"events":events}
     sport,slug=ESPN[league]; q=urllib.parse.urlencode({"dates":day.strftime("%Y%m%d"),"limit":500})
     return get(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?{q}")
 def summary(league,eid):
+    if league=="MLB":
+        return get(f"https://statsapi.mlb.com/api/v1/game/{eid}/boxscore")
     sport,slug=ESPN[league]
     return get(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/summary?event={eid}")
 def final(event):
@@ -94,7 +110,56 @@ def canonical(category,label):
         if (not cat or cat in ccompact) and lab==compact:return metric
     return None
 
+def mlb_event_rows(event,payload,stamp):
+    rows=[]; event_id=str(event.get("id") or ""); start=event.get("date") or ""
+    metric_map={
+      "batting":{
+        "hits":"hits","totalBases":"total_bases","homeRuns":"home_runs","rbi":"rbi",
+        "runs":"runs","stolenBases":"stolen_bases","baseOnBalls":"walks"
+      },
+      "pitching":{
+        "strikeOuts":"pitcher_strikeouts","hits":"pitcher_hits_allowed","earnedRuns":"earned_runs",
+        "baseOnBalls":"pitcher_walks","homeRuns":"pitcher_home_runs_allowed","outs":"pitching_outs"
+      }
+    }
+    for side in ("away","home"):
+        team=(payload.get("teams") or {}).get(side) or {}
+        team_obj=team.get("team") or {}
+        team_name=team_obj.get("abbreviation") or team_obj.get("name") or ""
+        for row in (team.get("players") or {}).values():
+            person=row.get("person") or {}
+            name=person.get("fullName") or person.get("displayName")
+            if not name: continue
+            pid=str(person.get("id") or "")
+            stats=row.get("stats") or {}
+            for group,mapping in metric_map.items():
+                values=stats.get(group) or {}
+                for raw_key,metric in mapping.items():
+                    value=num(values.get(raw_key))
+                    if value is None: continue
+                    rid="MLBHIST-"+digest("MLB",event_id,pid or name,metric)
+                    rows.append({"record_id":rid,"collected_at_utc":stamp,"league":"MLB","event_id":f"MLB-{event_id}",
+                      "provider_event_id":event_id,"event_start_utc":start,"participant":name,"provider_player_id":pid,
+                      "team":team_name,"metric":metric,"value":value,"source":"MLB_STATS_API"})
+            pit=(stats.get("pitching") or {})
+            ip=str(pit.get("inningsPitched") or "")
+            if ip:
+                parts=ip.split(".",1)
+                try:
+                    outs=int(parts[0])*3+(int(parts[1]) if len(parts)>1 and parts[1].isdigit() else 0)
+                    rid="MLBHIST-"+digest("MLB",event_id,pid or name,"pitching_outs")
+                    # overwrite/avoid duplicate if API also supplied outs
+                    if not any(x["record_id"]==rid for x in rows):
+                        rows.append({"record_id":rid,"collected_at_utc":stamp,"league":"MLB","event_id":f"MLB-{event_id}",
+                          "provider_event_id":event_id,"event_start_utc":start,"participant":name,"provider_player_id":pid,
+                          "team":team_name,"metric":"pitching_outs","value":float(outs),"source":"MLB_STATS_API"})
+                except ValueError:
+                    pass
+    return rows
+
 def event_rows(league,event,payload,stamp):
+    if league=="MLB":
+        return mlb_event_rows(event,payload,stamp)
     rows=[]; event_id=str(event.get("id") or ""); start=event.get("date") or ""
     for team in ((payload.get("boxscore") or {}).get("players") or []):
         team_obj=team.get("team") or {}; team_name=team_obj.get("abbreviation") or team_obj.get("displayName") or ""
