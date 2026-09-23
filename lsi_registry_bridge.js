@@ -10,7 +10,7 @@
   const norm=v=>n(v).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   const watchRx=/WATCH|NO BET|^PASS\b|CLOSED|STARTED|LIVE|UNSUPPORTED|VERIFY LIVE LINE|MARKET NOT|DATA-LIMITED/i;
   const propRx=/\bplayer\b|\bbatter\b|\bpitcher\b|yards|points|rebounds|assists|strikeouts|\bks\b|hits|singles|doubles|triples|stolen bases|earned runs|outs|receptions|rush|passing|receiving|reception yds|shots|saves|sacks|completions|attempts|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|games won|sets won|double.?double|triple.?double|total bases|home runs|goals|turnovers|steals/i;
-  const teamSideRx=/\bML\b|moneyline|game winner|match winner|spread|game total|team total/i;
+  const teamSideRx=/\bML\b|moneyline|game winner|match winner|spread|game total|team total|\bNRFI\b|\bYRFI\b|no run first inning|yes run first inning/i;
   const source=p=>{
     const refs=(p.provenance||[]).filter(x=>x?.source);
     if(!refs.length) return 'SOURCE UNAVAILABLE';
@@ -55,6 +55,17 @@
     if(price===null||price===undefined||price===''||!Number.isFinite(x)) return 'price recheck';
     const raw=x>0&&x<=1?`${(x*100).toFixed((x*100)%1?1:0)}¢`:`${x>0?'+':''}${price}`;
     return `${raw}${book?` ${book}`:''}`;
+  };
+  const projectionOf=p=>p?.player_projection||p?.spectrum?.player_projection||p?.feature_state?.performance?.player_projection||{};
+  const statNumber=v=>{
+    const x=Number(v);
+    if(!Number.isFinite(x)) return '';
+    return x.toFixed(Math.abs(x-Math.round(x))<.05?0:1);
+  };
+  const projectionLabel=p=>{
+    const x=projectionOf(p), l5=statNumber(x?.l5_average), proj=statNumber(x?.projected_output);
+    if(!l5&&!proj) return '';
+    return `${l5?`L5 AVG ${l5}`:''}${l5&&proj?' • ':''}${proj?`L&J PROJ ${proj}`:''}`;
   };
   const marketBaselineLj=p=>{
     const consensus=Number(p.consensus_confidence_pct);
@@ -247,7 +258,7 @@
         p.participant||p.pick,
         p.pick,
         pct(ljpcOf(p)),
-        `${price} • PLAYER PROP POM • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`
+        `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`
       ],`PROP|${key}`,pomValueOf(p));
     }
     for(const p of scouts){
@@ -261,7 +272,7 @@
         p.participant,
         scoutPick(p),
         pct(Number(p.ljpc)),
-        `${price} • PLAYER PROP POM • POM Value ${pv.toFixed(1)} • Econ ${Number(p.economic_value??50).toFixed(1)} • ${Number(p.market_source_count||1)} SRC`,
+        `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pv.toFixed(1)} • Econ ${Number(p.economic_value??50).toFixed(1)} • ${Number(p.market_source_count||1)} SRC`,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
       ],`PROP|${key}`,pv);
     }
@@ -366,7 +377,7 @@
       const pv=Number(p.pom_value||p.legz_value||lj);
       pushTwenty([
         String(league).replace(/_/g,' '),p.participant,scoutPick(p),price,pct(lj),
-        `LJPC • POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • ECON ${Number(p.economic_value??50).toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
+        `LJPC • ${projectionLabel(p)?projectionLabel(p)+' • ':''}POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • ECON ${Number(p.economic_value??50).toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
         risk({ljpc:lj}),lj,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
       ],key);
@@ -494,10 +505,12 @@
     const conf=evaluated?Number(p.ljpc):null;
     const stale=String(p.market_freshness||'').toUpperCase()==='STALE_RECHECK_REQUIRED';
     const freshness=stale?` • LINE RECHECK REQUIRED${Number.isFinite(Number(p.stale_market_age_hours))?` (${Number(p.stale_market_age_hours).toFixed(1)}h old)`:''}`:'';
+    const proj=projectionLabel(p);
+    const tier=explicitPomType(p)||'NORMAL';
     return {
       display:evaluated
-        ? `${core}${price} • PROV ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${freshness}`
-        : `${core}${price} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)${freshness}`,
+        ? `${core}${price} • ${tier}${proj?` • ${proj}`:''} • PROV ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${freshness}`
+        : `${core}${price} • ${tier}${proj?` • ${proj}`:''} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)${freshness}`,
       confidence:conf,
       participant:n(p.participant),
       market:`${market}|${side}|${p.threshold??''}`,
@@ -508,7 +521,7 @@
       market_source_count:Number(p.market_source_count||0),
       economicValue:Number.isFinite(Number(p.economic_value))?Number(p.economic_value):50,
       pomValue:Number.isFinite(Number(p.pom_value))?Number(p.pom_value):conf,
-      pomType:explicitPomType(p)||'NORMAL',
+      pomType:tier,
       stale,
       sourceMode:evaluated?'LJ_EVALUATED_OVERRIDE':'AWAITING_LJ_EVALUATION'
     };
@@ -575,7 +588,7 @@
     // acquisition cycle must not erase it before the event actually starts.
     const durablePublished=items=>(items||[]).filter(x=>{
       const s=n(x);
-      return s && !watchRx.test(s)
+      return s && !watchRx.test(s) && !teamSideRx.test(s)
         && !/SYNTHETIC|MODEL TARGET|INTERNAL SHADOW/i.test(s)
         && !/AWAITING L&J EVALUATION|MARKET BASELINE|PROVISIONAL HIT ESTIMATE/i.test(s)
         && /(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i.test(s);
