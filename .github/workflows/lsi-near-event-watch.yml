@@ -23,7 +23,9 @@ jobs:
         with: {python-version: '3.12'}
 
       - name: Verify event-aware scheduler rules
-        run: python scripts/test_lsi_league_scheduler.py
+        run: |
+          python scripts/test_lsi_league_scheduler.py
+          python scripts/test_legz_material_hash.py
 
       - name: Decide which leagues and events are actually due
         id: schedule
