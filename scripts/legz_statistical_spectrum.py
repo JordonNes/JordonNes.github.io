@@ -158,21 +158,18 @@ def load_evaluation_state():
     return payload
 
 def compact_evaluation_state(records_by_id, latest, current_ids):
-    """Keep the live state operationally complete while immutable history lives in LSI Archive."""
-    latest_ids={
-        str(v.get("evaluation_id"))
-        for v in (latest or {}).values()
-        if isinstance(v,dict) and v.get("evaluation_id")
-    }
-    keep_ids=latest_ids | {str(x) for x in (current_ids or set()) if x}
+    """Keep full live records for the current board; keep lightweight latest hashes for dedup."""
+    keep_ids={str(x) for x in (current_ids or set()) if x}
     kept={
         eid:records_by_id[eid]
         for eid in keep_ids
         if eid in records_by_id
     }
+    # latest_by_key is intentionally broader than records: it is the compact material-hash
+    # index that lets a previously seen POM reuse its evaluation identity when it reappears.
     clean_latest={
         key:value for key,value in (latest or {}).items()
-        if isinstance(value,dict) and str(value.get("evaluation_id") or "") in kept
+        if isinstance(value,dict) and value.get("evaluation_id") and value.get("material_hash")
     }
     return kept,clean_latest
 
@@ -560,8 +557,9 @@ def main():
       "schema_version":"LSI-EVALUATION-STATE-1",
       "evaluation_engine":"LEGZ_STATISTICAL_SPECTRUM_3",
       "generated_at_utc":datetime.now(timezone.utc).isoformat(),
-      "retention_policy":"LIVE_LATEST_BY_EVALUATION_KEY_PLUS_CURRENT_BOARD",
+      "retention_policy":"LIVE_CURRENT_BOARD_RECORDS_PLUS_LATEST_HASH_INDEX",
       "historical_record_authority":"LSI Archive Memory Layer / evaluation_state_history shards",
+      "latest_index_policy":"All known evaluation keys retain evaluation_id + material_hash metadata; full feature payloads remain live only while present on the current QC board.",
       "records_before_compaction":before_compaction,
       "record_count":len(records_by_id),
       "latest_key_count":len(latest),
