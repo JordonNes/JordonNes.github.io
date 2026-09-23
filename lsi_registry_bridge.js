@@ -107,6 +107,17 @@
     return Math.round(product*1000)/10;
   };
 
+  const componentNumber=v=>{const x=Number(v);return Number.isFinite(x)?x:null;};
+  const legzComponent=p=>componentNumber(p?.legz_baseline ?? p?.legz_confidence);
+  const jinxComponent=p=>componentNumber(p?.jinx_input ?? p?.jinx_delta);
+  const componentToken=p=>{
+    const l=legzComponent(p),j=jinxComponent(p);
+    if(l===null&&j===null) return '';
+    const ls=l===null?'':l.toFixed(Math.abs(l-Math.round(l))<.05?0:1);
+    const js=j===null?'':j.toFixed(Math.abs(j-Math.round(j))<.05?0:1);
+    return ` ⟦L=${ls};J=${js}⟧`;
+  };
+
   const nowMs=Date.now(), horizonMs=nowMs+7*86400000;
   const predictionUpcoming=p=>{
     const t=Date.parse(p?.event_start_pt||"");
@@ -316,7 +327,9 @@
         p.participant||p.pick,
         p.pick,
         pct(ljpcOf(p)),
-        `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`
+        `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`,
+        Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
+        legzComponent(p),jinxComponent(p)
       ],`PROP|${key}`,pomValueOf(p));
     }
     for(const p of scouts){
@@ -331,7 +344,8 @@
         scoutPick(p),
         pct(Number(p.ljpc)),
         `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pv.toFixed(1)} • Econ ${Number(p.economic_value??50).toFixed(1)} • ${Number(p.market_source_count||1)} SRC`,
-        Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
+        Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
+        legzComponent(p),jinxComponent(p)
       ],`PROP|${key}`,pv);
     }
     for(const p of (gameByLeague[league]||[])){
@@ -415,7 +429,9 @@
       pushTwenty([
         String(p.league||p.sport||'').replace(/_/g,' '),
         p.participant||p.pick,p.pick,p.price||'price recheck',pct(ljpcOf(p)),
-        `LJPC • POM VALUE ${pomValueOf(p).toFixed(1)} • ${quality(p)}`,risk(p),ljpcOf(p)
+        `LJPC • POM VALUE ${pomValueOf(p).toFixed(1)} • ${quality(p)}`,risk(p),ljpcOf(p),
+        Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
+        legzComponent(p),jinxComponent(p)
       ],key);
     }
     for(const p of scouts){
@@ -433,7 +449,8 @@
         String(league).replace(/_/g,' '),p.participant,scoutPick(p),price,pct(lj),
         `LJPC • ${projectionLabel(p)?projectionLabel(p)+' • ':''}POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • ECON ${Number(p.economic_value??50).toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
         risk({ljpc:lj}),lj,
-        Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : ''
+        Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
+        legzComponent(p),jinxComponent(p)
       ],key);
     }
     // 20 Piece ranks overall POM opportunity (prediction quality + economics),
@@ -563,7 +580,7 @@
     const tier=explicitPomType(p)||'NORMAL';
     return {
       display:evaluated
-        ? `${core}${price} • ${tier}${proj?` • ${proj}`:''} • PROV ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${freshness}`
+        ? `${core}${price} • ${tier}${proj?` • ${proj}`:''} • STAT ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${componentToken(p)}${freshness}`
         : `${core}${price} • ${tier}${proj?` • ${proj}`:''} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)${freshness}`,
       confidence:conf,
       participant:n(p.participant),
