@@ -814,6 +814,22 @@
     // The refresh layer is the durable weekly/day schedule; the registry bridge only
     // enriches it with newly acquired events/props/odds.
     const existing=Array.isArray(s.qcs)?s.qcs:[];
+    // Sanitize every retained pregame shell, even when current acquisition has no
+    // matching board event. Game-side ML/NRFI/YRFI content is never a player prop.
+    const sanitizeLegacyQc=q=>{
+      if(!q||typeof q!=='object') return q;
+      const clean=items=>(items||[]).filter(x=>{
+        const txt=n(x);
+        return txt && propRx.test(txt) && !watchRx.test(txt) && !teamSideRx.test(txt)
+          && !/SYNTHETIC|MODEL TARGET|INTERNAL SHADOW/i.test(txt)
+          && !/AWAITING L&J EVALUATION|MARKET BASELINE|PROVISIONAL HIT ESTIMATE/i.test(txt)
+          && /(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i.test(txt);
+      });
+      q.hot=clean(q.hot); q.sns1=clean(q.sns1); q.sns2=clean(q.sns2);
+      q.normal=clean(q.normal); q.demon=clean(q.demon);
+      return q;
+    };
+    existing.forEach(sanitizeLegacyQc);
     // PRE-GAME LIST INVARIANT: never retain a completed/started shell in the
     // upcoming QC collection. Historical/final presentation belongs elsewhere.
     const existingPregame=existing.filter(q=>{
