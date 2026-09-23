@@ -89,6 +89,11 @@ function evaluatePage(page) {
   for (const src of srcList) {
     const file = path.join(ROOT, src);
     if (!fs.existsSync(file)) continue;
+    if (src === 'data/future_market_board.js') {
+      const jsonFile=path.join(ROOT,'data/future_market_board.json');
+      context.window.LJ_FUTURE_MARKET_BOARD=JSON.parse(fs.readFileSync(jsonFile,'utf8'));
+      continue;
+    }
     vm.runInContext(fs.readFileSync(file, 'utf8'), context, { filename: src });
   }
   PAGE_CONTEXT_CACHE.set(cacheKey, context);
