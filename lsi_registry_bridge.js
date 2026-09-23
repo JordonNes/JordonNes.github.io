@@ -295,7 +295,7 @@
       ],`PROP|${key}`,pv);
     }
     for(const p of (gameByLeague[league]||[])){
-      const lj=ljpcOf(p);
+      const lj=formalLjpcOf(p);
       const hasCurrentOffer=p?.price!==null&&p?.price!==undefined&&p?.price!==''
         && (p?.provenance||[]).some(x=>x?.source);
       if(!hasCurrentOffer || !Number.isFinite(lj) || lj<=0) continue;
@@ -355,19 +355,10 @@
         ''
       ]);
     }
-    // Preserve published game-winner calls when GAME_ML acquisition is unavailable.
-    // Fresh canonical/market rows enrich or replace the matching matchup only; they
-    // never erase the durable DP winner board.
-    const existingWinners=Array.isArray(s.winners)?s.winners:[];
+    // Game Winners are current-state only. Never preserve a market-only or stale
+    // winner simply because an older QC shell still contains a confidence number.
     const winnerKey=r=>norm((r||[])[0]);
-    const mergedWinners=[...existingWinners];
-    const winnerIndex=new Map(mergedWinners.map((r,i)=>[winnerKey(r),i]));
-    for(const row of winnerRows){
-      const k=winnerKey(row);
-      if(k&&winnerIndex.has(k)) mergedWinners[winnerIndex.get(k)]=row;
-      else { if(k) winnerIndex.set(k,mergedWinners.length); mergedWinners.push(row); }
-    }
-    s.winners=mergedWinners;
+    s.winners=winnerRows;
 
     // L&J 20 Piece: rank the complete exact-market-verified, L&J-evaluated
     // inventory; publish the highest-ranked 20%, with a four-POM floor when
@@ -952,7 +943,8 @@
       qcWinnerSeen.add(key);
       const winner=String(q.winner||'').replace(/\s+ML\b.*$/i,'').trim();
       const sides=[...(event.game_markets||[])].filter(isCurrentGameMl).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
-      const match=sides.find(g=>norm(g.selection||g.participant)===norm(winner))||sides[0]||{};
+      const match=sides.find(g=>norm(g.selection||g.participant)===norm(winner));
+      if(!match) continue;
       const price=match.price!==null&&match.price!==undefined&&match.price!==''?`${Number(match.price)>0?'+':''}${match.price}`:'';
       const book=publicBookLabel(match.book||match.best_book||'',match.source||'');
       const offer=[price,book].filter(Boolean).join(' ');
@@ -964,11 +956,15 @@
         ''
       ]);
     }
-    if(qcWinners.length) s.winners=qcWinners;
-    else s.winners=(s.winners||[]).filter(r=>{
-      const confNum=Number(String((r||[])[2]||'').replace(/[^0-9.]/g,''));
-      return Number.isFinite(confNum)&&confNum>0&&!/PROVISIONAL|MARKET BASELINE/i.test((r||[]).join(' '));
-    });
+    if(qcWinners.length){
+      const merged=[...(s.winners||[])], idx=new Map(merged.map((r,i)=>[winnerKey(r),i]));
+      for(const row of qcWinners){
+        const k=winnerKey(row);
+        if(k&&idx.has(k)) merged[idx.get(k)]=row;
+        else { if(k) idx.set(k,merged.length); merged.push(row); }
+      }
+      s.winners=merged;
+    }
   });
 
   window.LJ_QC_PROP_STATUS={
