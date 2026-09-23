@@ -796,7 +796,7 @@
   };
   Object.entries(D.sports).forEach(([league,s])=>{
     const future=(B?.events||[])
-      .filter(e=>e.league===league && isUpcomingEvent(e))
+      .filter(e=>e.league===league && isUpcomingEvent(e) && isCurrentNflWeekEvent(e))
       .sort((a,b)=>eventStartMs(a)-eventStartMs(b));
     const recent=(RAW?.events||[])
       .filter(e=>e.league===league && isRecentEventShell(e))
