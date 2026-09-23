@@ -33,10 +33,21 @@
       }).join("")+'</div>';
     }).join("")+'</div>';
   }
+  function gameLeverage(c,g){
+    if(String(g.status||"").toUpperCase()==="FINAL")return null;
+    var gid=(String(g.phase||"").match(/Group\s+([A-Z0-9]+)/i)||[])[1];
+    var group=gid&&(((S.competitions||{})[c.id]||{}).groups||{})[String(gid).toUpperCase()];
+    if(!group||!group.teams)return null;
+    var a=group.teams[g.away],h=group.teams[g.home],levels=[a&&a.leverage,h&&h.leverage].filter(Boolean);
+    var level=levels.indexOf("ELIMINATION")>=0?"ELIMINATION":levels.indexOf("MARGIN")>=0?"MARGIN":levels.indexOf("HIGH")>=0?"HIGH":"NORMAL";
+    var reason=level==="ELIMINATION"?"At least one team can lose its championship path with this result.":level==="MARGIN"?"FIBA tiebreak exposure makes score margin strategically relevant.":level==="HIGH"?"Win/loss result materially changes advancement or seeding.":"Standard tournament leverage.";
+    return {level:level,reason:reason};
+  }
   function games(c){
     if(!c.games||!c.games.length)return "";
     return '<div class="fiba-games">'+c.games.map(function(g){
-      return '<div class="game-row"><span><b>'+esc(g.date)+'</b> • '+esc(g.phase)+'</span><span>'+esc(g.away)+' @ '+esc(g.home)+'</span><span class="'+(g.status==="FINAL"?"final":"")+'">'+esc(g.status)+(g.score?' • '+esc(g.score):'')+'</span></div>';
+      var gl=gameLeverage(c,g),lev=gl?'<span class="game-leverage '+tone(gl.level)+'">JINX '+esc(gl.level)+' • '+esc(gl.reason)+'</span>':'';
+      return '<div class="game-row"><span><b>'+esc(g.date)+'</b> • '+esc(g.phase)+'</span><span>'+esc(g.away)+' @ '+esc(g.home)+lev+'</span><span class="'+(g.status==="FINAL"?"final":"")+'">'+esc(g.status)+(g.score?' • '+esc(g.score):'')+'</span></div>';
     }).join("")+'</div>';
   }
   function comp(c){
