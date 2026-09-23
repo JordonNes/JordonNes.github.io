@@ -810,7 +810,22 @@
       const target=boardKeyForQc(q);
       return merged.findIndex(row=>boardKeyForQc(row)===target);
     };
+    const sanitizeExistingPlayerProps=items=>(items||[]).filter(x=>{
+      const s=n(x);
+      return s && propRx.test(s) && !watchRx.test(s) && !teamSideRx.test(s)
+        && !/SYNTHETIC|MODEL TARGET|INTERNAL SHADOW/i.test(s)
+        && !/AWAITING L&J EVALUATION|MARKET BASELINE|PROVISIONAL HIT ESTIMATE/i.test(s)
+        && /(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i.test(s);
+    });
     const enrich=(prior,boardQc)=>{
+      // Static/older QC shells may contain a game-side lean in a player-prop
+      // column. Sanitize them even when the fresh board has no evaluated props
+      // to replace that column.
+      prior.hot=sanitizeExistingPlayerProps(prior.hot);
+      prior.sns1=sanitizeExistingPlayerProps(prior.sns1);
+      prior.sns2=sanitizeExistingPlayerProps(prior.sns2);
+      prior.normal=sanitizeExistingPlayerProps(prior.normal);
+      prior.demon=sanitizeExistingPlayerProps(prior.demon);
       if(boardQc._propEventId) prior._propEventId=boardQc._propEventId;
       if((boardQc.hot||[]).length) prior.hot=boardQc.hot;
       if((boardQc.sns1||[]).length) prior.sns1=boardQc.sns1;
