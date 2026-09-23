@@ -1,0 +1,55 @@
+name: LSI Player Metric Cache Refresh
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_history_warehouse.py'
+      - 'data/performance_history.csv'
+      - 'data/history/**'
+      - '.github/workflows/lsi-history-cache-refresh.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-history-cache-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: master, fetch-depth: 0}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+      - name: Rebuild permanent player registry and metric cache
+        run: python scripts/lsi_history_warehouse.py
+      - name: Validate threshold-independent metric profiles
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('data/lsi_spectrum_cache.json',encoding='utf-8'))
+          assert p.get('schema_version')=='LSI-SPECTRUM-CACHE-2'
+          rows=p.get('metric_profiles') or []
+          assert rows, 'metric_profiles missing'
+          usable=[r for r in rows if len(r.get('recent_values') or [])>=3]
+          assert usable, 'no metric profile has at least 3 recent observations'
+          nfl=[r for r in usable if r.get('league')=='NFL']
+          print(f"Metric cache validated: total={len(rows)} usable={len(usable)} NFL={len(nfl)}")
+          PY
+      - name: Commit refreshed durable cache
+        run: |
+          if git diff --quiet -- data/lsi_player_registry.json data/lsi_spectrum_cache.json; then
+            echo "Player metric cache already current."
+            exit 0
+          fi
+          git config user.name "LEGZ-JINX LSI"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/lsi_player_registry.json data/lsi_spectrum_cache.json
+          git commit -m "Refresh durable player metric forecast cache"
+          git pull --rebase origin master
+          git push origin HEAD:master
