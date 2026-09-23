@@ -239,6 +239,7 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
   return {
     suggestion_id:hash('SUG-',core),publication_date_pt:date,first_seen_at_utc:now,last_seen_at_utc:now,page,
     league:hint.league||src.league||'',event_id:eventId||null,event_start_pt:src.event_start_pt||hint.event_start_pt||null,
+    away:n(src.away||hint.away)||null,home:n(src.home||hint.home)||null,
     market_class:marketClass,suggestion_type:marketClass==='GAME_ML'?'GAME_WINNER':'POM',participant:participant||null,
     market:market||null,threshold,side:side||null,selection:selection||null,price,book:book||null,
     pom_type:hint.pom_type||src.pom_type||null,
@@ -287,6 +288,8 @@ function mergeRecord(rec){
       prior.event_match_status=rec.event_match_status;
       prior.event_match_score=rec.event_match_score;
       prior.event_match_candidates=rec.event_match_candidates;
+      prior.away=rec.away||prior.away||null;
+      prior.home=rec.home||prior.home||null;
       prior.source_price=rec.source_price;
       prior.source_book=rec.source_book;
       prior.source_ljpc=rec.source_ljpc;
