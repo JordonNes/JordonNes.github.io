@@ -21,7 +21,8 @@ SUGGESTIONS=DATA/"suggestion_ledger.json"
 RESULTS=DATA/"results.csv"
 PLAYER_CONTEXT=DATA/"player_context.csv"
 CONTEXT_REGISTRY=DATA/"context_registry.json"
-OUT=ROOT/"ljrecapdata.js"\nACCURACY_OUT=DATA/"suggestion_accuracy.json"
+OUT=ROOT/"ljrecapdata.js"
+ACCURACY_OUT=DATA/"suggestion_accuracy.json"
 
 SPORTS={
  "MLB":("MLB","⚾","MLB.html"),
