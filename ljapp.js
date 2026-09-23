@@ -197,7 +197,9 @@
         winner,
         conf,
         q.market||'QC-derived current L&J game winner',
-        ''
+        q._winnerMarketBaseline||'',
+        q._winnerLegz??'',
+        q._winnerJinx??''
       ]);
       seen.add(key);
     }
@@ -275,7 +277,7 @@
     const market=isEmptyDecision(r.market)?"":String(r.market||"");
     const winner=isEmptyDecision(r.winner)?"":String(r.winner||"");
     const provisionalWinner=/PROVISIONAL|MARKET BASELINE/i.test(String(r.market||'')+' '+String(r.foot||''));
-    const conf = winner && r.conf && r.conf !== "—" ? ` • ${ljpcBadge(r.conf,r._winnerMarketBaseline||"")}` : "";
+    const conf = winner && r.conf && r.conf !== "—" ? ` • ${ljpcBadge(r.conf,r._winnerMarketBaseline||"",r._winnerLegz??"",r._winnerJinx??"")}` : "";
     const cells=[];
     const pregame=!qcStatusOnly(r);
     const placeholder=(label,kind,extraClass)=>`<div class="qc-cell qc-ticket ${extraClass} qc-pending"><div class="qc-ticket-h ${kind}">${esc(label)}</div><div class="qc-foot">No qualified executable POM parlay currently meets this mode's publication gate.</div></div>`;
@@ -336,7 +338,7 @@
     const legs=cfbSaturdayLegs(r);
     const market=isEmptyDecision(r.market)?'':String(r.market||'');
     const winner=isEmptyDecision(r.winner)?'':String(r.winner||'');
-    const conf=winner&&r.conf&&r.conf!=='—'?` • ${ljpcBadge(r.conf,r._winnerMarketBaseline||'')}`:'';
+    const conf=winner&&r.conf&&r.conf!=='—'?` • ${ljpcBadge(r.conf,r._winnerMarketBaseline||'',r._winnerLegz??'',r._winnerJinx??'')}`:'';
     const game=`<div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams">${teamNameHTML(r.away)}<span class="qc-vs">VS</span>${teamNameHTML(r.home)}</div>${market?`<div class="qc-market">${esc(market)}</div>`:''}${winner?`<div class="qc-winner"><div class="qc-label">JINX GAME WINNER</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:''}${cfbProjectionHTML(r)}<div class="qc-runtime-status" hidden></div></div>`;
     const joint=legs.length?Math.round(legs.reduce((p,x)=>p*Math.max(0,Math.min(1,qcConfidenceOf(x)/100)),1)*1000)/10:null;
     const hot=legs.length
