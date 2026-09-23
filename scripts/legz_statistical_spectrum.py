@@ -143,7 +143,7 @@ def implied(price):
 
 def clamp(x,lo=0,hi=100): return max(lo,min(hi,x))
 
-EVALUATION_VERSION=EVALUATION_VERSION
+EVALUATION_VERSION="LEGZ_STATISTICAL_SPECTRUM_3"
 
 def stable_hash(value):
     raw=json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,default=str)
