@@ -323,6 +323,7 @@
     hotCandidates.sort((a,b)=>b.score-a.score);
     s.hotTop=hotCandidates.slice(0,8).map(x=>x.row);
 
+    const winnerKey=r=>norm((r||[])[0]);
     const winnerRows=[],winnerEvents=new Set();
     for(const p of [...(gameByLeague[league]||[])].sort((a,b)=>ljpcOf(b)-ljpcOf(a))){
       const eventKey=String(p.event_id||'').toLowerCase();
