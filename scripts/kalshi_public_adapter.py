@@ -103,6 +103,11 @@ MARKET_PATTERNS=[
 def norm(v):
     return " ".join(str(v or "").replace("_"," ").replace("-"," ").split()).lower()
 
+def canonical_player_label(value):
+    """Keep the athlete name in participant; offered ladder stays in threshold."""
+    value=str(value or "").strip()
+    return re.sub(r"\s*:?\s*\d+(?:\.\d+)?\+\s*$","",value).strip()
+
 def valid_player_identity(value):
     raw=str(value or "").strip()
     n=norm(raw)
@@ -240,34 +245,32 @@ def participant_threshold(m,market):
     primary=str(m.get("primary_participant_key") or "").strip()
 
     stat_words=r"(?:points?|yards?|receptions?|attempts?|completions?|rebounds?|assists?|strikeouts?|hits?|bases?|runs?|saves?|goals?|aces?|takedowns?|knockdowns?)"
-    bad_participant=re.compile(r"^(?:over|under|more|less|at least|fewer than)?\\s*\\d*(?:\\.\\d+)?\\s*"+stat_words+r"(?:\\s+scored)?",re.I)
+    bad_participant=re.compile(r"^(?:over|under|more|less|at least|fewer than)?\s*\d*(?:\.\d+)?\s*"+stat_words+r"(?:\s+scored)?",re.I)
 
     def human_name(value):
-        value=str(value or "").strip()
+        value=canonical_player_label(value)
         if not value or value.lower() in {"yes","no","higher","lower","more","less"}:return None
         if not valid_player_identity(value):return None
         if re.fullmatch(r"[A-Z0-9_-]{8,}",value):return None
         if not re.search(r"[A-Za-z]",value):return None
-        value=re.sub(r"\\s*:?\\s*\\d+(?:\\.\\d+)?\\+\\s*$","",value).strip()
-        # A PLAYER_PROP participant must look like a person, never a threshold/stat label.
         if bad_participant.search(value):return None
-        if re.search(r"\\b(?:team|game)\\s+total\\b|\\bpoints?\\s+scored\\b",value,re.I):return None
+        if re.search(r"\b(?:team|game)\s+total\b|\bpoints?\s+scored\b",value,re.I):return None
         words=re.findall(r"[A-Za-z][A-Za-z'.-]*",value)
         if len(words)<2 or len(words)>5:return None
         return value
 
     def threshold_from_text(value):
-        mt=re.search(r"(\\d+(?:\\.\\d+)?)\\s*\\+",str(value or ""))
+        mt=re.search(r"(\d+(?:\.\d+)?)\s*\+",str(value or ""))
         if mt:return float(mt.group(1)),f"{mt.group(1)}+","gte"
         return None,None,None
 
     # Best case: athlete and exact offered threshold are in the same label.
     for text in (yes,subtitle,title):
-        mt=re.match(r"^\\s*([^:]{2,80}?)\\s*:\\s*(\\d+(?:\\.\\d+)?)\\+\\s*$",text)
+        mt=re.match(r"^\s*([^:]{2,80}?)\s*:\s*(\d+(?:\.\d+)?)\+\s*$",text)
         if mt:
             player=human_name(mt.group(1))
             if player:return player,float(mt.group(2)),f"{mt.group(2)}+","gte"
-        mt=re.match(r"^\\s*(.{2,80}?)\\s+(\\d+(?:\\.\\d+)?)\\+\\s*$",text)
+        mt=re.match(r"^\s*(.{2,80}?)\s+(\d+(?:\.\d+)?)\+\s*$",text)
         if mt:
             player=human_name(mt.group(1))
             if player:return player,float(mt.group(2)),f"{mt.group(2)}+","gte"
@@ -396,6 +399,27 @@ def merge_qc(rows):
     except (json.JSONDecodeError,OSError):
         board={"schema_version":"LJ-QC-PROP-BOARD-3","events":[]}
     events=board.setdefault("events",[])
+    # Normalize cached Kalshi participant identities before fresh merge.
+    # Older rows may store ladder text in participant (for example "CJ Abrams: 1+").
+    # Threshold is already a separate field, so keeping that suffix breaks the
+    # player-history join without adding market information.
+    for e in events:
+        others=[]
+        kalshi={}
+        for p in (e.get("props") or []):
+            if str(p.get("source") or "").upper()!="KALSHI_PUBLIC":
+                others.append(p)
+                continue
+            participant=canonical_player_label(p.get("participant"))
+            if not participant or not valid_player_identity(participant):
+                continue
+            p["participant"]=participant
+            key=(norm(participant),norm(p.get("market_key") or p.get("market")),str(p.get("threshold") or ""),norm(p.get("side")))
+            prior=kalshi.get(key)
+            if prior is None or str(p.get("collected_at_pt") or "") >= str(prior.get("collected_at_pt") or ""):
+                kalshi[key]=p
+        e["props"]=others+list(kalshi.values())
+
     grouped=defaultdict(list)
     for r in rows:grouped[r["event_id"]].append(r)
 
