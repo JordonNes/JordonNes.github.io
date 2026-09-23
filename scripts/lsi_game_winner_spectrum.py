@@ -145,6 +145,12 @@ def aliases_for_side(event,side):
     if matches(event.get("home"),event.get("home_aliases")):
         aliases.add(norm(event.get("home")))
         aliases.update(norm(x) for x in (event.get("home_aliases") or []))
+    # Provider abbreviations frequently preserve the nickname while shortening the
+    # city (GB Packers, ATL Falcons). Nickname tokens are safe here because lookup
+    # remains league/event constrained and fuzzy fallback must still be unambiguous.
+    for value in list(aliases):
+        parts=value.split()
+        if parts and len(parts[-1])>=4:aliases.add(parts[-1])
     return {x for x in aliases if x}
 
 def lookup(evidence,event,side):
