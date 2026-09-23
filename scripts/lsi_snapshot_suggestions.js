@@ -134,7 +134,7 @@ function candidateRows(ctx){
     const eventStart=e.commence_time||e.event_start_pt||null;
     for(const p of e.props||[]){
       add({
-        source_kind:'FUTURE_BOARD',league:e.league,event_id:eventId,event_start_pt:eventStart,
+        source_kind:'FUTURE_BOARD',league:e.league,event_id:eventId,event_start_pt:eventStart,away:e.away||'',home:e.home||'',
         market_class:'PLAYER_PROP',participant:p.participant||'',market:p.market||p.market_key||'',
         threshold:p.display_threshold??p.threshold??null,side:n(p.side).toUpperCase(),selection:p.selection||'',
         price:p.price??p.best_price??null,book:p.book||p.best_book||'',ljpc:Number(p.ljpc??p.lj_confidence??0)||null,
@@ -148,7 +148,7 @@ function candidateRows(ctx){
       const cls=String(g.market_class||g.market_key||g.market||'GAME_ML').toUpperCase();
       if(!/GAME_ML|MONEYLINE|MONEY LINE|\bML\b/.test(cls) && g.threshold!==null && g.threshold!==undefined && g.threshold!=='') continue;
       add({
-        source_kind:'FUTURE_BOARD',league:e.league,event_id:eventId,event_start_pt:eventStart,
+        source_kind:'FUTURE_BOARD',league:e.league,event_id:eventId,event_start_pt:eventStart,away:e.away||'',home:e.home||'',
         market_class:'GAME_ML',participant:g.selection||g.participant||'',market:'Moneyline',threshold:null,side:'',
         selection:g.selection||g.participant||'',price:g.price??g.best_price??null,book:g.book||g.best_book||'',
         ljpc:Number(g.ljpc??g.lj_confidence??0)||null,legz_confidence:g.legz_confidence??null,jinx_input:g.jinx_input??null,
@@ -160,7 +160,7 @@ function candidateRows(ctx){
   const reg=ctx.window.LSI_PR||{};
   for(const p of reg.predictions||[]){
     add({
-      source_kind:'PREDICTION_REGISTRY',league:p.league,event_id:p.event_id||'',event_start_pt:p.event_start_pt||null,
+      source_kind:'PREDICTION_REGISTRY',league:p.league,event_id:p.event_id||'',event_start_pt:p.event_start_pt||null,away:'',home:'',
       market_class:p.market_class,participant:p.participant||'',market:p.market||p.market_class||'',threshold:p.threshold??null,
       side:n(p.side).toUpperCase(),selection:p.selection||p.pick||'',price:p.price??null,book:p.book||'',
       ljpc:Number(p.ljpc??p.lj_confidence??p.lj_probability??0)||null,legz_confidence:p.legz_confidence??null,
@@ -172,22 +172,29 @@ function candidateRows(ctx){
   return rows;
 }
 function matchCandidate(candidates,hint){
-  let best=null,bestScore=-1;
-  for(const c of candidates){
+  const scored=[];
+  for(const cand of candidates){
+    const c={...cand};
     if(hint.league&&c.league!==hint.league) continue;
     if(hint.market_class&&c.market_class!==hint.market_class) continue;
     let score=0;
-    if(hint.event_id&&c.event_id===hint.event_id) score+=100;
-    else if(hint.event_id&&c.event_id) score-=25;
+    if(hint.event_id){
+      if(c.event_id===hint.event_id) score+=150;
+      else if(c.event_id) continue;
+    }
     const hp=norm(hint.participant),cp=norm(c.participant);
     if(hp&&cp){
       if(hp===cp) score+=60;
       else if(hp.includes(cp)||cp.includes(hp)) score+=35;
       else continue;
     }
-    if(hint.side&&c.side){if(norm(hint.side)===norm(c.side)) score+=18; else score-=20;}
+    if(hint.side&&c.side){
+      if(norm(hint.side)===norm(c.side)) score+=18;
+      else score-=20;
+    }
     if(hint.threshold!==null&&hint.threshold!==undefined&&c.threshold!==null&&c.threshold!==undefined){
-      if(sameNum(hint.threshold,numeric(c.threshold))) score+=35; else score-=30;
+      if(sameNum(hint.threshold,numeric(c.threshold))) score+=35;
+      else score-=30;
     }
     const hm=norm(hint.market),cm=norm(c.market);
     if(hm&&cm){
@@ -200,9 +207,15 @@ function matchCandidate(candidates,hint){
     }
     if(hint.market_class==='GAME_ML'&&hp&&cp&&hp===cp) score+=20;
     if(Number.isFinite(Number(c.ljpc))&&Number(c.ljpc)>0) score+=4;
-    if(score>bestScore){best=c;bestScore=score;}
+    scored.push({candidate:c,score});
   }
-  return bestScore>=45?best:null;
+  scored.sort((a,b)=>b.score-a.score);
+  if(!scored.length||scored[0].score<45) return null;
+  const top=scored[0];
+  const tied=scored.filter(x=>x.score===top.score);
+  const eventIds=[...new Set(tied.map(x=>n(x.candidate.event_id)).filter(Boolean))];
+  const ambiguous=!hint.event_id&&eventIds.length>1;
+  return {...top.candidate,_match_score:top.score,_match_ambiguous:ambiguous,_match_event_ids:eventIds};
 }
 function structuredSuggestion(c,hint,display,placement,page,publication,date,now){
   const src=c||{};
@@ -211,7 +224,10 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
   const market=n(hint.market||src.market||(marketClass==='GAME_ML'?'Moneyline':''));
   const threshold=hint.threshold!==undefined&&hint.threshold!==null?numeric(hint.threshold):(src.threshold!==undefined&&src.threshold!==null&&src.threshold!==''?numeric(src.threshold):null);
   const side=n(hint.side||src.side).toUpperCase();
-  const eventId=n(src.event_id||hint.event_id);
+  const explicitEventId=n(hint.event_id);
+  const inferredEventId=n(src.event_id);
+  const eventAmbiguous=Boolean(src._match_ambiguous);
+  const eventId=explicitEventId||(!eventAmbiguous?inferredEventId:'');
   const price=hint.price!==undefined&&hint.price!==null&&hint.price!==''?Number(hint.price):null;
   const book=n(hint.book);
   const ljpc=Number.isFinite(Number(hint.ljpc))?Number(hint.ljpc):null;
@@ -219,7 +235,7 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
   const core=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side),threshold??'',book,price??'',ljpc??''];
   const outcome=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side),threshold??''];
   const family=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side)];
-  const complete=Boolean((marketClass==='GAME_ML'&&eventId&&participant)||(marketClass==='PLAYER_PROP'&&eventId&&participant&&market&&side&&(threshold!==null||/touchdown|anytime td/i.test(market))));
+  const complete=Boolean(!eventAmbiguous&&((marketClass==='GAME_ML'&&eventId&&participant)||(marketClass==='PLAYER_PROP'&&eventId&&participant&&market&&side&&(threshold!==null||/touchdown|anytime td/i.test(market)))));
   return {
     suggestion_id:hash('SUG-',core),publication_date_pt:date,first_seen_at_utc:now,last_seen_at_utc:now,page,
     league:hint.league||src.league||'',event_id:eventId||null,event_start_pt:src.event_start_pt||hint.event_start_pt||null,
@@ -232,6 +248,8 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
     evaluation_material_hash:src.evaluation_material_hash||null,
     source_snapshot_ids:Array.isArray(src.source_snapshot_ids)?src.source_snapshot_ids:[],
     source_kind:src.source_kind||'DISPLAY_PARSE',market_verified:src.market_verified===true,
+    event_match_status:explicitEventId?'EXPLICIT_EVENT':eventAmbiguous?'EVENT_AMBIGUOUS':eventId?'UNIQUE_INFERRED_EVENT':'EVENT_UNRESOLVED',
+    event_match_score:src._match_score??null,event_match_candidates:src._match_event_ids||[],
     market_verification:src.market_verification||null,
     source_price:src.price!==undefined&&src.price!==null&&src.price!==''?Number(src.price):null,
     source_book:n(src.book)||null,
@@ -239,7 +257,7 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
     structure_status:complete?'STRUCTURED':'PARTIAL',
     outcome_key:hash('OUT-',outcome),family_key:hash('FAM-',family),display_text:n(display),placements:[placement],
     publication_labels:[publication],snapshot_count:1,immutable_publication_record:true,settlement_status:'PENDING',
-    capture_schema_version:2,capture_validity:'VALID'
+    capture_schema_version:2,capture_validity:eventAmbiguous?'EVENT_AMBIGUOUS':'VALID'
   };
 }
 
@@ -264,8 +282,8 @@ function mergeRecord(rec){
   if(prior){
     if(Number(rec.capture_schema_version||0)>=2){
       prior.capture_schema_version=2;
-      prior.capture_validity='VALID';
-      prior.accuracy_eligible=true;
+      prior.capture_validity=rec.capture_validity;
+      prior.accuracy_eligible=rec.capture_validity==='VALID'&&rec.structure_status==='STRUCTURED';
       delete prior.quarantine_reason;
     }
     if(prior.currently_displayed===false) prior.last_reappeared_at_utc=now;
@@ -278,7 +296,7 @@ function mergeRecord(rec){
   }
   rec.currently_displayed=true;
   rec.removed_at_utc=null;
-  rec.accuracy_eligible=true;
+  rec.accuracy_eligible=rec.capture_validity==='VALID'&&rec.structure_status==='STRUCTURED';
   const priorVersions=ledger.suggestions.filter(x=>x.publication_date_pt===rec.publication_date_pt&&x.family_key===rec.family_key);
   if(priorVersions.length){
     priorVersions.sort((a,b)=>String(a.first_seen_at_utc).localeCompare(String(b.first_seen_at_utc)));
