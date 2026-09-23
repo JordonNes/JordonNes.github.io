@@ -56,6 +56,7 @@ jobs:
           python scripts/lsi_pipeline.py
           python -m py_compile scripts/lsi_publish_future_board.py
           python scripts/lsi_publish_future_board.py
+          LSI_GAME_WINNER_LEAGUES=NFL python scripts/lsi_game_winner_spectrum.py
 
       - name: Validate NFL QC market publication
         run: |
@@ -90,9 +91,11 @@ jobs:
           if len(prop_events)<10:
               print(f"::warning::NFL player-prop acquisition shortfall: {len(prop_events)} event(s) currently carry props. Preserve the durable slate and let the T-48 coverage monitor expose the deficit instead of blocking publication.")
           assert prop_count>0 and future_prop_count>0, 'NFL props did not reach future market board'
+          evaluated_ml=[g for e in nfl_f for g in (e.get('game_markets') or []) if g.get('market_class')=='GAME_ML' and g.get('evaluation_status')=='LJ_EVALUATED' and g.get('ljpc') is not None]
+          assert evaluated_ml, 'NFL GAME_ML rows were refreshed but not re-evaluated for QG/DP publication'
           pairs=sorted(f"{e.get('away')} @ {e.get('home')}" for e in nfl_q)
           print("NFL board events:", " | ".join(pairs))
-          print(f'NFL QC markets publishable: events={len(nfl_q)}/15 prop_events={len(prop_events)} props={prop_count} future_props={future_prop_count}. Missing event remains on the durable DP shell rather than blocking the week.')
+          print(f'NFL QC markets publishable: events={len(nfl_q)}/15 prop_events={len(prop_events)} props={prop_count} future_props={future_prop_count} evaluated_ml={len(evaluated_ml)}. Missing event remains on the durable DP shell rather than blocking the week.')
           PY
 
       - name: Verify rendered NFL QC population
@@ -104,7 +107,7 @@ jobs:
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
           files=()
-          for f in data/current_game_moneylines.json data/qc_prop_board.json data/the_odds_api_state.json data/market_history.csv data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js; do
+          for f in data/current_game_moneylines.json data/qc_prop_board.json data/the_odds_api_state.json data/market_history.csv data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json; do
             [ -s "$f" ] && files+=("$f")
           done
           git add "${files[@]}"
