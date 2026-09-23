@@ -94,7 +94,7 @@ function readLedger(){
     const x=JSON.parse(fs.readFileSync(OUT,'utf8'));
     if(Array.isArray(x.suggestions)) return x;
   }catch(_){}
-  return {schema_version:'LSI-SUGGESTION-LEDGER-1',suggestions:[]};
+  return {schema_version:'LSI-SUGGESTION-LEDGER-2',suggestions:[]};
 }
 function parsePlayerText(text,participantHint=''){
   const raw=n(text);
@@ -212,9 +212,9 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
   const threshold=hint.threshold!==undefined&&hint.threshold!==null?numeric(hint.threshold):(src.threshold!==undefined&&src.threshold!==null&&src.threshold!==''?numeric(src.threshold):null);
   const side=n(hint.side||src.side).toUpperCase();
   const eventId=n(src.event_id||hint.event_id);
-  const price=hint.price!==undefined&&hint.price!==null&&hint.price!==''?Number(hint.price):(src.price!==undefined&&src.price!==null&&src.price!==''?Number(src.price):null);
-  const book=n(hint.book||src.book);
-  const ljpc=Number.isFinite(Number(hint.ljpc))?Number(hint.ljpc):(Number.isFinite(Number(src.ljpc))?Number(src.ljpc):null);
+  const price=hint.price!==undefined&&hint.price!==null&&hint.price!==''?Number(hint.price):null;
+  const book=n(hint.book);
+  const ljpc=Number.isFinite(Number(hint.ljpc))?Number(hint.ljpc):null;
   const selection=n(hint.selection||src.selection||display);
   const core=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side),threshold??'',book,price??'',ljpc??''];
   const outcome=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side),threshold??''];
@@ -232,7 +232,11 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
     evaluation_material_hash:src.evaluation_material_hash||null,
     source_snapshot_ids:Array.isArray(src.source_snapshot_ids)?src.source_snapshot_ids:[],
     source_kind:src.source_kind||'DISPLAY_PARSE',market_verified:src.market_verified===true,
-    market_verification:src.market_verification||null,structure_status:complete?'STRUCTURED':'PARTIAL',
+    market_verification:src.market_verification||null,
+    source_price:src.price!==undefined&&src.price!==null&&src.price!==''?Number(src.price):null,
+    source_book:n(src.book)||null,
+    source_ljpc:Number.isFinite(Number(src.ljpc))?Number(src.ljpc):null,
+    structure_status:complete?'STRUCTURED':'PARTIAL',
     outcome_key:hash('OUT-',outcome),family_key:hash('FAM-',family),display_text:n(display),placements:[placement],
     publication_labels:[publication],snapshot_count:1,immutable_publication_record:true,settlement_status:'PENDING',
     capture_schema_version:2,capture_validity:'VALID'
