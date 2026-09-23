@@ -200,16 +200,7 @@
       && !isStaleProp(p);
     const synthetic=p?.synthetic===true || p?.model_generated===true || String(p?.market_verification||'').toUpperCase()==='LEGZ_SYNTHETIC_NOT_EXTERNAL_OFFER';
     if(synthetic || !freshVerified) return false;
-    const evaluated=status==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
-    if(evaluated) return true;
-    const provisional=marketBaselineLj(p);
-    if(Number.isFinite(provisional)&&provisional>0){
-      p.ljpc=provisional;
-      p.provisional_probability=provisional;
-      p.evaluation_status='PROVISIONAL_MARKET_BASELINE';
-      return true;
-    }
-    return false;
+    return status==='LJ_EVALUATED' && Number.isFinite(Number(p?.ljpc)) && Number(p?.ljpc)>0;
   };
   const isMoneylineGameMarket=x=>{
     const raw=[x?.market_class,x?.market_key,x?.market,x?.type,x?.bet_type,x?.name].filter(Boolean).join(' ').toUpperCase();
@@ -521,6 +512,8 @@
       market_source_count:Number(p.market_source_count||0),
       economicValue:Number.isFinite(Number(p.economic_value))?Number(p.economic_value):50,
       pomValue:Number.isFinite(Number(p.pom_value))?Number(p.pom_value):conf,
+      projectedOutput:Number.isFinite(Number(projectionOf(p)?.projected_output))?Number(projectionOf(p).projected_output):null,
+      projectionDistanceSigma:Number.isFinite(Number(projectionOf(p)?.distance_sigma))?Number(projectionOf(p).distance_sigma):null,
       pomType:tier,
       stale,
       sourceMode:evaluated?'LJ_EVALUATED_OVERRIDE':'AWAITING_LJ_EVALUATION'
@@ -669,7 +662,9 @@
     const demonBase=[...actionablePool].filter(c=>(c.pomType==='DEMON'||c.pomType==='NORMAL')&&c.confidence>=51.8).sort((a,b)=>{
       const ae=Number(a.economicValue||0), be=Number(b.economicValue||0);
       const ap=a.best_price??-9999, bp=b.best_price??-9999;
-      return (be-ae)||(bp-ap)||(Number(b.pomValue||0)-Number(a.pomValue||0))||(b.confidence-a.confidence)||(b.market_source_count-a.market_source_count);
+      const ad=Number.isFinite(Number(a.projectionDistanceSigma))?Math.abs(Number(a.projectionDistanceSigma)):999;
+      const bd=Number.isFinite(Number(b.projectionDistanceSigma))?Math.abs(Number(b.projectionDistanceSigma)):999;
+      return (be-ae)||(ad-bd)||(bp-ap)||(Number(b.pomValue||0)-Number(a.pomValue||0))||(b.confidence-a.confidence)||(b.market_source_count-a.market_source_count);
     });
     const demon=diverseTake(demonBase,6,0,usedAcross);
 
