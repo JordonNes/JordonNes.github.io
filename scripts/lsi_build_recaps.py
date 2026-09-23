@@ -17,6 +17,7 @@ ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
 PT=ZoneInfo("America/Los_Angeles")
 REGISTRY=DATA/"prediction_registry.json"
+SUGGESTIONS=DATA/"suggestion_ledger.json"
 RESULTS=DATA/"results.csv"
 PLAYER_CONTEXT=DATA/"player_context.csv"
 CONTEXT_REGISTRY=DATA/"context_registry.json"
