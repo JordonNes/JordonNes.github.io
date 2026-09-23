@@ -68,7 +68,7 @@ jobs:
           ledger=Path('data/suggestion_ledger.json')
           if ledger.exists():
               l=json.loads(ledger.read_text(encoding='utf-8'))
-              assert l.get('schema_version')=='LSI-SUGGESTION-LEDGER-1'
+              assert l.get('schema_version') in {'LSI-SUGGESTION-LEDGER-1','LSI-SUGGESTION-LEDGER-2'}
               accuracy=Path('data/suggestion_accuracy.json')
               assert accuracy.exists(), 'suggestion_accuracy.json missing after recap build'
               a=json.loads(accuracy.read_text(encoding='utf-8'))
