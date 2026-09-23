@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/lsi-spectrum-v3-release.yml'
       - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/legz_prop_ladder_test.py'
       - 'scripts/lsi_apply_verified_overrides.py'
       - 'data/verified_market_overrides.json'
       - 'data/fiba_scenario_state.json'
@@ -50,6 +51,9 @@ jobs:
 
       - name: Generate LEGZ Synthetic Book fallback
         run: python scripts/legz_synthetic_book.py
+
+      - name: Validate forecast-first player-prop ladder
+        run: python scripts/legz_prop_ladder_test.py
 
       - name: Execute Spectrum v3 from durable cache
         env:
