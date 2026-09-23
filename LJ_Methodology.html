@@ -52,7 +52,7 @@
 </style>
 </head>
 <body><div class="page method-page">
-<div class="topbar"><a class="lj-mini" href="LJ_index.html">L&amp;J</a><div class="meta">LSI / LJDP STANDARD • VERSION 2026.09.22</div></div>
+<div class="topbar"><a class="lj-mini" href="LJ_index.html">L&amp;J</a><div class="meta">LSI / LJDP STANDARD • VERSION 2026.09.23</div></div>
 <section class="hero">
   <div class="kicker">LEGZ &amp; JINX INTELLIGENCE STANDARD</div>
   <h1>Methodology, Terminology &amp; Formulas</h1>
@@ -88,6 +88,50 @@
 <span class="flow-node">Settlement &amp; Calibration</span>
 </div>
 <p class="small-note">LSI prepares the schedule, player identity and historical profile before the market arrives. When an exact POM is acquired, LEGZ evaluates it from stored evidence, JINX checks what changed, and only then may the POM receive LJPC. L&amp;J separates prediction quality from payout.</p>
+</section>
+
+<section class="section">
+<div class="section-head"><h2>LJDP OPERATIONS CLOCK</h2><span class="muted">Pacific Time • event-aware, change-driven processing</span></div>
+<div class="method-callout"><strong>Hourly does not mean recompute everything hourly.</strong> The Near-Event Gate asks what is actually due. A league/event is collected only when its cadence or T-minus gate requires attention. Each exact POM is then compared by <strong>evaluation_material_hash</strong>; unchanged evidence reuses the prior L&amp;J evaluation, while a material change triggers a new Spectrum/JINX evaluation.</div>
+<div class="method-flow" style="margin-top:14px">
+<span class="flow-node">DISCOVER</span><span class="flow-arrow">→</span>
+<span class="flow-node">CHECK DUE</span><span class="flow-arrow">→</span>
+<span class="flow-node">COLLECT</span><span class="flow-arrow">→</span>
+<span class="flow-node gold-txt">HASH COMPARE</span><span class="flow-arrow">→</span>
+<span class="flow-node">REUSE / EVALUATE</span><span class="flow-arrow">→</span>
+<span class="flow-node">POOL</span><span class="flow-arrow">→</span>
+<span class="flow-node">QC</span><span class="flow-arrow">→</span>
+<span class="flow-node">PUBLISH</span><span class="flow-arrow">→</span>
+<span class="flow-node">LOCK</span><span class="flow-arrow">→</span>
+<span class="flow-node">SETTLE / LEARN</span>
+</div>
+
+<div class="card" style="margin-top:14px"><div class="card-body">
+<table class="term-table"><thead><tr><th>General operation</th><th>When</th><th>Purpose</th></tr></thead><tbody>
+<tr><td>Global checkpoints</td><td>06:00 • 09:00 • 12:00 • 15:00 • 18:00 • 21:00 PT</td><td>Refresh schedules/context and ask the League Scheduler what market work is actually due.</td></tr>
+<tr><td>Near-Event Gate</td><td>Hourly at :27</td><td>Lightweight due check. If nothing is due, market collection and Spectrum recomputation do not run.</td></tr>
+<tr><td>Settlement</td><td>Hourly</td><td>Grade completed predictions without forcing new pregame work.</td></tr>
+<tr><td>Deployment health</td><td>Every 3 hours</td><td>Validate registry freshness, deployed artifacts and site wiring.</td></tr>
+</tbody></table>
+</div></div>
+
+<div class="card" style="margin-top:14px"><div class="card-body">
+<table class="term-table"><thead><tr><th>League</th><th>Routine collection / discovery</th><th>Event-relative escalation</th><th>Operating note</th></tr></thead><tbody>
+<tr><td>NFL</td><td>06:00 • 09:00 • 15:00 • 21:00</td><td>T−48h • T−24h • T−12h • T−6h • T−2h</td><td>Weekly market build plus game-relative refreshes.</td></tr>
+<tr><td>CFB</td><td>Daily 06:00 &amp; 18:00; Saturday waves 05:00 • 08:00 • 11:00 • 14:00 • 17:00</td><td><strong>Every day:</strong> T−48h • T−24h • T−12h • T−6h • T−90m</td><td>Saturday is the high-volume main show, not an exclusivity rule. Wednesday/Thursday/Friday or other off-cycle games receive the same event-level attention.</td></tr>
+<tr><td>MLB</td><td>06:00 • 10:00 • 13:00 • 16:00</td><td>T−12h • T−6h • T−90m</td><td>Lineups and late scratches can create material changes.</td></tr>
+<tr><td>NBA</td><td>06:00 • 10:00 • 13:00 • 16:00</td><td>T−12h • T−6h • T−90m</td><td>Availability and role changes are material inputs.</td></tr>
+<tr><td>WNBA</td><td>06:00 • 10:00 • 14:00 • 17:00</td><td>T−12h • T−6h • T−90m</td><td>Same change-driven treatment as NBA with its own clock.</td></tr>
+<tr><td>NHL</td><td>06:00 • 10:00 • 14:00 • 16:00</td><td>T−12h • T−6h • T−90m</td><td>Goalie and availability confirmation are material context.</td></tr>
+<tr><td>CBB</td><td>06:00 • 10:00 • 13:00 • 16:00</td><td>T−12h • T−6h • T−90m</td><td>Large slates use event gates rather than indiscriminate full-board reruns.</td></tr>
+<tr><td>Tennis</td><td>06:00 &amp; 18:00 tournament sweeps</td><td>T−12h • T−90m</td><td>Match-relative timing handles global tournament schedules.</td></tr>
+<tr><td>MMA</td><td>06:00 discovery backstop</td><td>T−72h • T−24h • T−6h • T−90m</td><td>No need to repeatedly process an unchanged Saturday card all week.</td></tr>
+<tr><td>Boxing</td><td>06:00 discovery backstop</td><td>T−72h • T−24h • T−6h • T−90m</td><td>Event-relative rather than aggressive daily polling.</td></tr>
+<tr><td>FIBA</td><td>06:00 &amp; 18:00 while active</td><td>T−6h • T−90m</td><td>Tournament leverage remains a contextual input, not a substitute for POM evidence.</td></tr>
+</tbody></table>
+</div></div>
+
+<p class="small-note"><strong>CFB weekday protection:</strong> any scheduled college-football game enters the event-relative ladder based on kickoff time, regardless of weekday. If an event is discovered late or a prior run fails, the next successful hourly gate processes all crossed, unacknowledged gates in one cycle and then records them as complete.</p>
 </section>
 
 <section class="section">
