@@ -21,6 +21,8 @@ on:
       - 'scripts/propline_adapter.py'
       - 'scripts/oddspapi_history_adapter.py'
       - 'scripts/lsi_pipeline.py'
+      - 'scripts/lsi_league_scheduler.py'
+      - 'scripts/test_lsi_league_scheduler.py'
       - 'scripts/legz_statistical_spectrum.py'
       - 'scripts/legz_prop_ladder_test.py'
       - 'scripts/legz_synthetic_book.py'
@@ -108,9 +110,9 @@ jobs:
         run: python scripts/lsi_market_history_delta.py merge
       - name: Reuse durable game lines before detailed prop acquisition
         run: |
-          # GAME_ML has its own high-frequency workflow. Do not spend PropLine quota
-          # here before the detailed player-prop sweep; simply republish the durable
-          # last-known-good game-line artifact into the rolling board.
+          # The hourly near-event gate owns high-frequency due checks. Before any
+          # detailed prop sweep, reuse the durable last-known-good game-line artifact
+          # rather than recollecting an unchanged market merely because the clock ran.
           python scripts/lsi_publish_future_board.py
 
       - name: LSI free-first source acquisition
