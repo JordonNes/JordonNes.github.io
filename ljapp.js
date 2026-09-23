@@ -279,6 +279,69 @@
     const grid=`grid-template-columns:minmax(210px,1.18fr) repeat(${cols},minmax(150px,1fr))`;
     return `<div class="qc-row" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||"")}" style="${grid}"><div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams">${teamNameHTML(r.away)}<span class="qc-vs">VS</span>${teamNameHTML(r.home)}</div>${market?`<div class="qc-market">${esc(market)}</div>`:""}${winner?`<div class="qc-winner"><div class="qc-label">${r._winnerProvisional?"PROVISIONAL WINNER — MARKET BASELINE":"JINX GAME WINNER"}</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:""}<div class="qc-runtime-status" hidden></div></div>${cells.join("")}</div>`;
   }
+  function qcConfidenceOf(value){
+    const s=String(value||'');
+    const m=s.match(/(?:LJPC|L&J)\s*(\d+(?:\.\d+)?)%/i)||s.match(/(\d+(?:\.\d+)?)%/);
+    return m?Number(m[1]):0;
+  }
+  function qcPlayerOf(value){
+    return String(value||'')
+      .replace(/^\s*(?:GOBLIN|DEMON|NORMAL|MARKET)\s*[•:—-]?\s*/i,'')
+      .split(/\bOVER\b|\bUNDER\b|\bMORE\b|\bLESS\b|\bYES\b|\bNO\b/i)[0]
+      .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  }
+  function cfbIsSaturday(r){
+    const canonical=Date.parse(r?._propEventStartPt||'');
+    if(Number.isFinite(canonical)){
+      return new Intl.DateTimeFormat('en-US',{weekday:'long',timeZone:'America/Los_Angeles'}).format(new Date(canonical)).toUpperCase()==='SATURDAY';
+    }
+    return /\bSAT(?:URDAY)?\b/i.test(String(r?.time||''));
+  }
+  function cfbSaturdayLegs(r){
+    const candidates=[
+      ...cleanDecisionItems(r?.normal).map(text=>({text,kind:'NORMAL',conf:qcConfidenceOf(text)})),
+      ...cleanDecisionItems(r?.demon).map(text=>({text,kind:'DEMON',conf:qcConfidenceOf(text)}))
+    ].filter(x=>x.conf>0);
+    candidates.sort((a,b)=>(b.conf-a.conf)||(a.kind==='DEMON'?-1:1));
+    const out=[],exact=new Set(),players=new Set();
+    for(const x of candidates){
+      if(out.length>=10) break;
+      const ek=String(x.text).toLowerCase().replace(/\s*•\s*(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i,'').trim();
+      const pk=qcPlayerOf(x.text);
+      if(exact.has(ek)||(pk&&players.has(pk))) continue;
+      exact.add(ek); if(pk) players.add(pk); out.push(x.text);
+    }
+    return out.length>=2?out:[];
+  }
+  function cfbProjectionHTML(r){
+    const p=r?._gameProjection||{};
+    const margin=String(p.margin||'').trim();
+    const total=String(p.total||'').trim();
+    const marginText=margin||'MARGIN / WIN-BY READ PENDING EVALUATED SPREAD POM';
+    const totalText=total||'TOTAL-POINT READ PENDING EVALUATED GAME-TOTAL POM';
+    return `<div class="qc-game-projection"><div><span>RESULT / MARGIN</span><b>${esc(marginText)}</b></div><div><span>TOTAL POINTS</span><b>${esc(totalText)}</b></div></div>`;
+  }
+  function cfbSaturdayQcRow(r,index=0){
+    const legs=cfbSaturdayLegs(r);
+    const market=isEmptyDecision(r.market)?'':String(r.market||'');
+    const winner=isEmptyDecision(r.winner)?'':String(r.winner||'');
+    const conf=winner&&r.conf&&r.conf!=='—'?` • ${ljpcBadge(r.conf,r._winnerMarketBaseline||'')}`:'';
+    const game=`<div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams">${teamNameHTML(r.away)}<span class="qc-vs">VS</span>${teamNameHTML(r.home)}</div>${market?`<div class="qc-market">${esc(market)}</div>`:''}${winner?`<div class="qc-winner"><div class="qc-label">JINX GAME WINNER</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:''}${cfbProjectionHTML(r)}<div class="qc-runtime-status" hidden></div></div>`;
+    const joint=legs.length?Math.round(legs.reduce((p,x)=>p*Math.max(0,Math.min(1,qcConfidenceOf(x)/100)),1)*1000)/10:null;
+    const hot=legs.length
+      ? `<div class="qc-cell qc-hot qc-cfb-saturday-hot"><h4>LEGZ HOT TOP — SATURDAY CFB • ${legs.length} LEGS</h4><div class="qc-hot-list">${legs.map((x,i)=>`<p>${i+1}. ${renderQcLeg(x)}</p>`).join('')}</div><div class="qc-foot">ONE PARLAY ONLY • NORMAL / DEMON POMs ONLY${joint!==null?` • independent-leg baseline ${joint}%`:''}</div></div>`
+      : `<div class="qc-cell qc-hot qc-pending qc-cfb-saturday-hot"><h4>LEGZ HOT TOP — SATURDAY CFB</h4><div class="qc-hot-list"><p>Awaiting at least two qualified Normal/Demon POMs.</p></div></div>`;
+    return `<div class="qc-row qc-cfb-saturday" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||'')}" style="grid-template-columns:minmax(250px,1fr) minmax(360px,1.55fr)">${game}${hot}</div>`;
+  }
+  function cfbQcs(title,rows){
+    const visible=(rows||[]).filter(r=>{
+      if(cfbIsSaturday(r)) return qcStatusOnly(r)||cfbSaturdayLegs(r).length>=2;
+      return qcStatusOnly(r)||qcHasPublishedPregame(r);
+    });
+    if(!visible.length) return '';
+    const override=`<div class="card qc-standard cfb-saturday-rule"><div class="card-title purple"><span>SATURDAY CFB QC OVERRIDE</span><span>HIGH-VOLUME SLATE MODE</span></div><div class="qc-rules"><div class="qc-rule"><b>One Parlay</b><span>Saturday games publish one LEGZ Hot Top parlay only.</span></div><div class="qc-rule"><b>2–10 Legs</b><span>Only L&J-evaluated Normal and/or Demon POMs qualify; Goblins are excluded from the Saturday game QC.</span></div><div class="qc-rule"><b>Game Projection</b><span>The team-icon shell carries L&J winner/moneyline plus evaluated margin and total-point reads when those exact game markets are available.</span></div></div></div>`;
+    return `<section class="section cfb-qc-section"><div class="section-head"><h2>${esc(title||'CFB PER-GAME QUICKIES')}</h2><span class="muted">Saturday = one Normal/Demon LEGZ Hot Top parlay per game • non-Saturday CFB retains the standard QC</span></div><div class="qc-list">${visible.map((r,i)=>cfbIsSaturday(r)?cfbSaturdayQcRow(r,i):qcRow(r,i)).join('')}</div>${override}${rules()}<div class="layout-seal">CFB SATURDAY QC • one 2–10 leg Normal/Demon parlay • team shell carries L&J game projection</div></section>`;
+  }
   function qcHasParlay(r){
     return [r?.sns1,r?.sns2,r?.normal,r?.demon]
       .some(items=>cleanDecisionItems(items).length>=2);
@@ -731,6 +794,7 @@
     const marketText=marketNode?.textContent?.trim()||"";
     const winner=cell.querySelector(".qc-winner");
     const winnerInner=winner?.innerHTML||"";
+    const projection=cell.querySelector(".qc-game-projection")?.outerHTML||"";
     const oddsHtml=marketText
       ? `<div class="qc-center-odds"><div class="qc-center-odds-label">PER-GAME ODDS</div><div class="qc-center-odds-value">${esc(marketText)}</div></div>`
       : `<div class="qc-center-odds qc-center-odds-pending"><div class="qc-center-odds-label">PER-GAME ODDS</div><div class="qc-center-odds-value">PENDING VERIFIED MONEYLINE</div></div>`;
@@ -740,7 +804,7 @@
     // Team logos frame the game-side intelligence. The evaluated winner and
     // current per-game moneyline odds sit in the center, exactly where the user
     // makes the side comparison; odds are no longer stranded below the matchup.
-    cell.innerHTML=`${time}<div class="qc-matchup-visual"><div class="qc-team-side qc-team-away">${teamNameHTML(away)}</div>${winnerHtml}<div class="qc-team-side qc-team-home">${teamNameHTML(home)}</div></div>${pregameBoxShellHTML(ACTIVE_SPORT_KEY,event,state)}<div class="qc-runtime-status" hidden></div>`;
+    cell.innerHTML=`${time}<div class="qc-matchup-visual"><div class="qc-team-side qc-team-away">${teamNameHTML(away)}</div>${winnerHtml}<div class="qc-team-side qc-team-home">${teamNameHTML(home)}</div></div>${projection}${pregameBoxShellHTML(ACTIVE_SPORT_KEY,event,state)}<div class="qc-runtime-status" hidden></div>`;
     cell.classList.add("qc-game-pregame-integrated");
   }
 
@@ -984,7 +1048,7 @@
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
     ensureGameWinners(s);
     document.title = `LEGZ & JINX — ${s.title}`;
-    const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : qcs(s.qcTitle,s.qcs));
+    const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : key==="NCAA_Football" ? cfbQcs(s.qcTitle,s.qcs) : qcs(s.qcTitle,s.qcs));
     const headliners=headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel);
     const twentyPiece=twenty(s.twenty,s.twentyNote,false,key);
     // Sport page order is locked: L&J Headliners → 20 Piece → Per-Game QCs.
