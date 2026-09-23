@@ -847,14 +847,26 @@
     });
     const merged=[...existingPregame];
     const exactKey=q=>`${norm(q?.away)}|${norm(q?.home)}`;
+    const eventIdentity=q=>{
+      const ev=findBoardEvent(league,q);
+      const away=[q?.away,ev?.away,...(ev?.away_aliases||[])].filter(Boolean);
+      const home=[q?.home,ev?.home,...(ev?.home_aliases||[])].filter(Boolean);
+      const time=eventStartMs(ev||q);
+      return {ev,away,home,time};
+    };
+    const sameEvent=(a,b)=>{
+      const A=eventIdentity(a), B=eventIdentity(b);
+      const awayMatch=A.away.some(x=>aliasHit(x,B.away)) || B.away.some(x=>aliasHit(x,A.away));
+      const homeMatch=A.home.some(x=>aliasHit(x,B.home)) || B.home.some(x=>aliasHit(x,A.home));
+      if(!awayMatch||!homeMatch) return false;
+      if(Number.isFinite(A.time)&&Number.isFinite(B.time) && Math.abs(A.time-B.time)>6*3600000) return false;
+      return true;
+    };
     const boardKeyForQc=q=>{
       const ev=findBoardEvent(league,q);
       return ev ? `EVENT:${ev.source_event_id||exactKey(q)}` : `TEXT:${exactKey(q)}`;
     };
-    const findExistingIndex=q=>{
-      const target=boardKeyForQc(q);
-      return merged.findIndex(row=>boardKeyForQc(row)===target);
-    };
+    const findExistingIndex=q=>merged.findIndex(row=>sameEvent(row,q));
     const sanitizeExistingPlayerProps=items=>(items||[]).filter(x=>{
       const s=n(x);
       return s && propRx.test(s) && !watchRx.test(s) && !teamSideRx.test(s)
@@ -914,15 +926,12 @@
       return tickets*100 + hot*10 + (q?._propSweepCount||0);
     };
     const deduped=[];
-    const byEvent=new Map();
     for(const row of merged){
-      const k=boardKeyForQc(row);
-      if(!byEvent.has(k)){
-        byEvent.set(k,deduped.length);
+      const i=deduped.findIndex(existing=>sameEvent(existing,row));
+      if(i<0){
         deduped.push(row);
         continue;
       }
-      const i=byEvent.get(k);
       const keep=richness(row)>richness(deduped[i])?row:deduped[i];
       const other=keep===row?deduped[i]:row;
       deduped[i]=enrich(keep,other);
