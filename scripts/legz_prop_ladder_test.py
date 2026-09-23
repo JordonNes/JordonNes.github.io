@@ -59,3 +59,29 @@ print(
   f"over195/205/215/225={over}",
   f"under195/205/215/225={under}"
 )
+
+
+# Fast-runtime fallback must recover a durable multi-game projection from the
+# threshold-independent metric cache even when today's append-only performance
+# file contains only one observation.
+thin_history={("NFL","test quarterback","pass_yards"):[205]}
+metric_cache={
+  ("NFL","test quarterback","pass_yards"):{
+    "sample_n":10,
+    "recent_values":[180,190,200,205,210,208,212,204,206,205],
+    "L5_average":207.0,
+    "L10_average":202.0,
+  }
+}
+cached=m.spectrum(prop(205,"Over"),thin_history,{}, {},game_contexts={},metric_cache=metric_cache)
+assert cached["evaluation_status"]=="LJ_EVALUATED", cached["evaluation_status"]
+assert cached["player_projection"]["sample_size"]==10
+assert cached["player_projection"]["historical_sample_size"]==10
+assert cached["player_projection"]["history_source"]=="PERMANENT_METRIC_CACHE"
+assert abs(cached["player_projection"]["l5_average"]-207.0)<1e-9
+
+# A single observation without a deeper durable cache must never mint a formal
+# expected-output LJPC.
+thin=m.spectrum(prop(205,"Over"),thin_history,{}, {},game_contexts={},metric_cache={})
+assert thin["evaluation_status"]=="AWAITING_LJ_EVALUATION"
+assert thin["player_projection"] is None
