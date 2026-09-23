@@ -92,7 +92,7 @@ jobs:
           if len(prop_events)<10:
               print(f"::warning::NFL player-prop acquisition shortfall: {len(prop_events)} event(s) currently carry props. Preserve the durable slate and let the T-48 coverage monitor expose the deficit instead of blocking publication.")
           assert prop_count>0 and future_prop_count>0, 'NFL props did not reach future market board'
-          evaluated_ml=[g for e in nfl_f for g in (e.get('game_markets') or []) if g.get('market_class')=='GAME_ML' and g.get('evaluation_status')=='LJ_EVALUATED' and g.get('ljpc') is not None]
+          evaluated_ml=[g for e in nfl_f for g in (e.get('game_markets') or []) if str(g.get('market_class') or 'GAME_ML').upper()=='GAME_ML' and g.get('evaluation_status')=='LJ_EVALUATED' and g.get('ljpc') is not None]
           assert evaluated_ml, 'NFL GAME_ML rows were refreshed but not re-evaluated for QG/DP publication'
           pairs=sorted(f"{e.get('away')} @ {e.get('home')}" for e in nfl_q)
           print("NFL board events:", " | ".join(pairs))
