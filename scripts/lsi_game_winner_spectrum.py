@@ -134,26 +134,27 @@ def scoreboard_evidence(events):
                         if prior is None or score>pscore:evidence[league][key]=item
     return evidence,errors,calls
 
+def side_role(event,side):
+    s=norm(side)
+    if not s:return None
+    for role in ("away","home"):
+        vals=[event.get(role),*(event.get(f"{role}_aliases") or [])]
+        normalized={norm(x) for x in vals if x}
+        # Nickname token provides a safe event-local bridge for GB Packers ↔
+        # Green Bay Packers, ATL Falcons ↔ Atlanta Falcons, etc.
+        normalized.update(x.split()[-1] for x in list(normalized) if x.split() and len(x.split()[-1])>=4)
+        if s in normalized:return role
+        if any(min(len(s),len(x))>=4 and (s in x or x in s) for x in normalized):return role
+        last=s.split()[-1] if s.split() else ""
+        if last and len(last)>=4 and last in normalized:return role
+    return None
+
 def aliases_for_side(event,side):
     aliases={norm(side)}
-    s=norm(side)
-    def matches(team,known):
-        vals=[team,*(known or [])]
-        for value in vals:
-            x=norm(value)
-            if not s or not x:continue
-            if s==x:return True
-            if min(len(s),len(x))>=4 and (s in x or x in s):return True
-        return False
-    if matches(event.get("away"),event.get("away_aliases")):
-        aliases.add(norm(event.get("away")))
-        aliases.update(norm(x) for x in (event.get("away_aliases") or []))
-    if matches(event.get("home"),event.get("home_aliases")):
-        aliases.add(norm(event.get("home")))
-        aliases.update(norm(x) for x in (event.get("home_aliases") or []))
-    # Provider abbreviations frequently preserve the nickname while shortening the
-    # city (GB Packers, ATL Falcons). Nickname tokens are safe here because lookup
-    # remains league/event constrained and fuzzy fallback must still be unambiguous.
+    role=side_role(event,side)
+    if role:
+        aliases.add(norm(event.get(role)))
+        aliases.update(norm(x) for x in (event.get(f"{role}_aliases") or []))
     for value in list(aliases):
         parts=value.split()
         if parts and len(parts[-1])>=4:aliases.add(parts[-1])
@@ -199,73 +200,85 @@ def main():
     for event in events:
         markets=event.get("game_markets") or []
         if len(markets)<2:continue
-        # Match current market sides to independent performance evidence.
-        rows=[]
+
+        # Consolidate bookmaker quotes into actual game sides first. Bookmakers are
+        # observations of the same team outcome, not separate possible outcomes.
+        grouped=defaultdict(list)
         for g in markets:
             side=str(g.get("participant") or g.get("selection") or "")
+            role=side_role(event,side)
             mp=num(g.get("market_probability"))
+            if role is None or not side or mp is None:continue
             ev=lookup(evidence,event,side)
             ps=perf_strength(ev)
-            if not side or mp is None or ps is None:continue
-            rows.append((g,side,mp,ev,ps))
-        # Require independent evidence for every market side before creating LJPC.
-        if len(rows)!=len(markets):
+            if ev is None or ps is None:continue
+            grouped[role].append((g,side,mp,ev,ps))
+
+        # A two-sided game prediction requires at least one current quote and
+        # independent performance evidence for BOTH actual teams.
+        if not grouped.get("away") or not grouped.get("home"):
             skipped_events+=1
             continue
-        msum=sum(max(0.01,x[2]) for x in rows)
-        psum=sum(max(0.0001,x[4]) for x in rows)
+
+        side_market={role:sum(x[2] for x in rows)/len(rows) for role,rows in grouped.items()}
+        side_perf={role:max(rows,key=lambda x:((x[3].get("record") or {}).get("games",0),1 if x[3].get("rank") else 0))[4] for role,rows in grouped.items()}
+        msum=sum(max(0.01,v) for v in side_market.values())
+        psum=sum(max(0.0001,v) for v in side_perf.values())
         if msum<=0 or psum<=0:
             skipped_events+=1
             continue
-        for g,side,mp,ev,ps in rows:
-            provisional=mp/msum*100
-            performance=ps/psum*100
-            # Performance is primary; market acts as bounded secondary evidence.
+
+        for role,rows in grouped.items():
+            consensus_mp=side_market[role]
+            provisional=consensus_mp/msum*100
+            performance=side_perf[role]/psum*100
             legz=clamp(performance*0.62+provisional*0.38,2.0,98.0)
             jinx=0.0
             ljpc=round(clamp(legz+jinx,2.0,98.0),1)
-            games=((ev.get("record") or {}).get("games") or 0)
-            src=max(1,int(g.get("market_source_count") or 1))
-            evidence_strength=clamp(40+min(games,30)*1.2+min(src,5)*5+(5 if ev.get("rank") else 0),1,100)
+            source_count=len({str(x[0].get("book") or x[0].get("source") or "") for x in rows if x[0].get("book") or x[0].get("source")})
+            representative=max(rows,key=lambda x:((x[3].get("record") or {}).get("games",0),1 if x[3].get("rank") else 0))[3]
+            games=((representative.get("record") or {}).get("games") or 0)
+            evidence_strength=clamp(40+min(games,30)*1.2+min(max(1,source_count),5)*5+(5 if representative.get("rank") else 0),1,100)
             feature_state={
               "performance":{
-                "record":ev.get("record"),"rank":ev.get("rank"),
+                "record":representative.get("record"),"rank":representative.get("rank"),
                 "normalized_strength_probability":round(performance,2)
               },
               "market":{
-                "raw_market_probability":round(mp,2),
+                "team_consensus_probability":round(consensus_mp,2),
                 "event_normalized_probability":round(provisional,2),
-                "source_count":src
+                "source_count":max(1,source_count)
               },
               "context":{"jinx_delta":jinx},
-              "safeguards":{"market_only_prohibited":True,"independent_performance_required":True}
+              "safeguards":{"market_only_prohibited":True,"independent_performance_required":True,"books_are_observations_not_outcomes":True}
             }
-            material={"league":event.get("league"),"event_id":event.get("source_event_id"),"side":norm(side),"feature_state":feature_state}
+            material={"league":event.get("league"),"event_id":event.get("source_event_id"),"side_role":role,"feature_state":feature_state}
             h=digest(material)
-            g.update({
-              "provisional_probability":round(provisional,1),
-              "performance_probability":round(performance,1),
-              "legz_baseline":round(legz,1),
-              "jinx_input":jinx,
-              "ljpc":ljpc,"lj_confidence":ljpc,
-              "legz_value":round(evidence_strength,1),
-              "pom_value":round(math.sqrt(max(1,evidence_strength)*max(1,ljpc)),1),
-              "evaluation_status":"LJ_EVALUATED",
-              "evaluation_id":"GW-"+h[:24],
-              "evaluation_material_hash":h,
-              "evaluation_version":"LEGZ_GAME_SPECTRUM_1",
-              "feature_state":feature_state,
-              "model":"LEGZ GAME SPECTRUM 1",
-              "evaluation_reason":"Current multi-source moneyline evidence blended with independent public performance record/ranking evidence; JINX adjustment currently neutral unless attributable context is available."
-            })
-            evidence_rows.append({"league":event.get("league"),"event_id":event.get("source_event_id"),"side":side,"evaluation_id":g["evaluation_id"],"feature_state":feature_state})
-            evaluated_sides+=1
+            for g,side,mp,ev,ps in rows:
+                g.update({
+                  "provisional_probability":round(provisional,1),
+                  "performance_probability":round(performance,1),
+                  "legz_baseline":round(legz,1),
+                  "jinx_input":jinx,
+                  "ljpc":ljpc,"lj_confidence":ljpc,
+                  "legz_value":round(evidence_strength,1),
+                  "pom_value":round(math.sqrt(max(1,evidence_strength)*max(1,ljpc)),1),
+                  "evaluation_status":"LJ_EVALUATED",
+                  "evaluation_id":"GW-"+h[:24],
+                  "evaluation_material_hash":h,
+                  "evaluation_version":"LEGZ_GAME_SPECTRUM_2",
+                  "feature_state":feature_state,
+                  "model":"LEGZ GAME SPECTRUM 2",
+                  "evaluation_reason":"Current multi-source moneylines are consolidated by actual team, then blended with independent public performance record/ranking evidence. Book quotes are observations of one team outcome, not separate outcomes."
+                })
+                evidence_rows.append({"league":event.get("league"),"event_id":event.get("source_event_id"),"side":side,"side_role":role,"evaluation_id":g["evaluation_id"],"feature_state":feature_state})
+                evaluated_sides+=1
         evaluated_events+=1
         event["game_markets"].sort(key=lambda x:-(num(x.get("ljpc")) or -1))
     payload["game_winner_evaluation"]={
       "schema_version":"LSI-GAME-WINNER-SPECTRUM-1",
       "generated_at_utc":NOW.isoformat(),
-      "model":"LEGZ_GAME_SPECTRUM_1",
+      "model":"LEGZ_GAME_SPECTRUM_2",
       "evaluated_events":evaluated_events,
       "evaluated_sides":evaluated_sides,
       "skipped_events_without_complete_independent_evidence":skipped_events,
