@@ -553,3 +553,36 @@ td{font-size:12px!important;line-height:1.45}
   outline-offset:2px;
   border-radius:2px;
 }
+
+/* 2026-09-23 QC far-left matchup space refinement */
+.qc-matchup-visual{
+  grid-template-columns:minmax(42px,.55fr) minmax(124px,1.65fr) minmax(42px,.55fr);
+  gap:5px;
+}
+.qc-matchup-visual .qc-team-side{
+  justify-content:center;
+}
+.qc-matchup-visual .qc-team-name{
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  width:100%;
+  font-size:8px;
+  line-height:1;
+  text-align:center;
+}
+.qc-matchup-visual .qc-team-name:last-child{
+  justify-content:center;
+  text-align:center;
+}
+.qc-matchup-visual .qc-team-logo{
+  width:23px;
+  height:23px;
+  flex-basis:23px;
+}
+@media(max-width:690px){
+  .qc-matchup-visual{grid-template-columns:minmax(38px,.5fr) minmax(116px,1.7fr) minmax(38px,.5fr);gap:4px}
+  .qc-matchup-visual .qc-team-name{font-size:7px}
+  .qc-matchup-visual .qc-team-logo{width:21px;height:21px;flex-basis:21px}
+}
