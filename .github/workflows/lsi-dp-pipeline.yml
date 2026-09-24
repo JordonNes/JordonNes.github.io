@@ -159,7 +159,7 @@ jobs:
           ROTOWIRE_API_KEY: ${{ secrets.ROTOWIRE_API_KEY }}
         run: python scripts/rotowire_adapter.py
       - name: Kalshi public offered-POM acquisition — primary free current market
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: github.event_name == 'push' || steps.league_schedule.outputs.has_work == 'true'
         continue-on-error: true
         env:
           KALSHI_MAX_PAGES: '4'
