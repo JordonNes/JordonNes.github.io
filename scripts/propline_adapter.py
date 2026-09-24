@@ -68,6 +68,7 @@ QC_TARGET_UNIQUE_PLAYERS = 20
 QC_MAX_SNAPSHOT_AGE = timedelta(hours=12)
 QC_FALLBACK_SNAPSHOT_AGE = timedelta(hours=48)
 QC_POST_START_RETENTION = timedelta(hours=7)
+PROPLINE_INTELLIGENCE_RETENTION_DAYS = max(2, min(30, int(os.getenv("PROPLINE_INTELLIGENCE_RETENTION_DAYS", "14"))))
 
 TEAM_ALIASES = {
     "Connecticut Sun":["CON"],"Atlanta Dream":["ATL"],"Washington Mystics":["WSH","WAS"],
@@ -480,8 +481,115 @@ def load_existing_intelligence():
     except (FileNotFoundError,json.JSONDecodeError):return []
 
 def write_intelligence(records):
-    payload={"schema_version":"LSI-PL-1","generated_at_utc":NOW.isoformat(),"analytics_enabled":ANALYTICS,"policy":"PropLine supplies market/context evidence. Steam is distinct from Sharp Market Signal and never changes JINX automatically.","records":sorted(merge_intelligence(records),key=lambda r:r.get("retrieved_at") or "",reverse=True)}
-    (DATA/"propline_intelligence.json").write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    # This artifact is current operational intelligence, not the permanent market
+    # archive. Keep a bounded recent window here; durable snapshots live in
+    # market_history(_delta).csv. Minified JSON prevents the current-state file from
+    # ever becoming a GitHub-sized archive by accident.
+    cutoff=NOW-timedelta(days=PROPLINE_INTELLIGENCE_RETENTION_DAYS)
+    recent=[]
+    for r in merge_intelligence(records):
+        stamp=parse_dt(r.get("retrieved_at"))
+        if stamp is None or stamp>=cutoff:
+            recent.append(r)
+    recent.sort(key=lambda r:r.get("retrieved_at") or "",reverse=True)
+    payload={
+      "schema_version":"LSI-PL-1","generated_at_utc":NOW.isoformat(),
+      "analytics_enabled":ANALYTICS,
+      "retention_days":PROPLINE_INTELLIGENCE_RETENTION_DAYS,
+      "policy":"Current PropLine market/context intelligence only; durable observations persist in market history. Steam is distinct from Sharp Market Signal and never changes JINX automatically.",
+      "records":recent,
+    }
+    (DATA/"propline_intelligence.json").write_text(
+        json.dumps(payload,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8"
+    )
+    print(f"PropLine current-intelligence cache: retained={len(recent)} window={PROPLINE_INTELLIGENCE_RETENTION_DAYS}d")
+
+
+def refresh_current_game_moneylines(markets_out,event_catalog):
+    """Refresh the canonical GAME_ML artifact from the bulk h2h rows already fetched.
+
+    Normal bounded PropLine runs used to collect fresh moneylines into market history
+    without updating current_game_moneylines.json. That left DP/QG Game Winners stale
+    even while acquisition was healthy. Replace refreshed leagues with this run's
+    current rows and retain only still-upcoming, recently collected rows for leagues
+    not touched in this pass.
+    """
+    fresh=[]
+    for r in markets_out:
+        if str(r.get("market_class") or "").upper()!="GAME_ML": continue
+        if str(r.get("status") or "").upper()!="OPEN": continue
+        start=parse_dt(r.get("event_start_pt"))
+        if not start or start<=NOW or start>NOW+QC_LOOKAHEAD: continue
+        if not r.get("event_id") or not r.get("participant") or r.get("price") in (None,""): continue
+        fresh.append(r)
+    if not fresh:
+        return
+
+    refreshed_leagues={str(r.get("league") or "") for r in fresh if r.get("league")}
+    try:
+        prior=json.loads(GAME_ML_BOARD.read_text(encoding="utf-8")) if GAME_ML_BOARD.exists() else {}
+    except (json.JSONDecodeError,OSError):
+        prior={}
+
+    retain_cutoff=NOW-timedelta(hours=8)
+    retained=[]
+    for r in prior.get("rows") or []:
+        if str(r.get("league") or "") in refreshed_leagues: continue
+        start=parse_dt(r.get("event_start_pt"))
+        stamp=parse_dt(r.get("collected_at_pt"))
+        if not start or start<=NOW or not stamp or stamp<retain_cutoff: continue
+        if str(r.get("market_class") or "").upper()!="GAME_ML": continue
+        retained.append(r)
+
+    latest={}
+    for r in retained+fresh:
+        key=(str(r.get("event_id") or ""),norm(r.get("participant")),str(r.get("source") or ""))
+        prior_row=latest.get(key)
+        if prior_row is None or str(r.get("collected_at_pt") or "")>=str(prior_row.get("collected_at_pt") or ""):
+            latest[key]=r
+    rows=list(latest.values())
+    event_ids={str(r.get("event_id") or "") for r in rows}
+
+    events=[]
+    seen=set()
+    for e in event_catalog:
+        eid=str(e.get("event_id") or "")
+        if eid not in event_ids: continue
+        key=(str(e.get("league") or ""),eid)
+        if key in seen: continue
+        seen.add(key)
+        away=str(e.get("away") or "").strip(); home=str(e.get("home") or "").strip()
+        events.append({
+          "league":e.get("league"),"sport_key":e.get("sport_key") or "",
+          "source_event_id":eid,"propline_event_id":e.get("propline_event_id"),
+          "commence_time":e.get("commence_time"),"away":away,"home":home,
+          "away_aliases":team_aliases(away),"home_aliases":team_aliases(home),
+          "source":"PROPLINE_BULK_H2H",
+        })
+    for e in prior.get("events") or []:
+        league=str(e.get("league") or "")
+        eid=str(e.get("source_event_id") or "")
+        if league in refreshed_leagues or eid not in event_ids: continue
+        start=parse_dt(e.get("commence_time"))
+        if not start or start<=NOW: continue
+        key=(league,eid)
+        if key not in seen:
+            seen.add(key); events.append(e)
+
+    payload={
+      "schema_version":"LJ-CURRENT-GAME-ML-1",
+      "generated_at_utc":NOW.isoformat(),
+      "source":"PROPLINE_BULK_H2H_INCREMENTAL",
+      "event_count":len(events),"events":events,"rows":rows,
+    }
+    tmp=GAME_ML_BOARD.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    check=json.loads(tmp.read_text(encoding="utf-8"))
+    if not check.get("rows") or not check.get("events"):
+        tmp.unlink(missing_ok=True)
+        return
+    tmp.replace(GAME_ML_BOARD)
+    print(f"Canonical GAME_ML refreshed: leagues={sorted(refreshed_leagues)} events={len(events)} rows={len(rows)}")
 
 
 def run_game_odds_only():
@@ -664,7 +772,9 @@ def run():
                             if r.get("propline_event_id")==eid and norm(r.get("player")) in signals:r["steam_score"],r["books_moved"]=signals[norm(r.get("player"))]
                 except Exception as exc:print(f"WARN PropLine movement {league} {eid}: {exc}")
             state.setdefault("events",{})[f"{sport_key}:{eid}"]=NOW.isoformat()
-    added=append_market_rows(markets_out);write_intelligence(existing+new)
+    added=append_market_rows(markets_out)
+    refresh_current_game_moneylines(markets_out,event_catalog)
+    write_intelligence(existing+new)
     if auth_errors: health_status="AUTH_ERROR"
     elif rate_limits: health_status="RATE_LIMITED"
     elif source_errors: health_status="DEGRADED"
