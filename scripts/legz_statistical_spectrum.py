@@ -958,7 +958,10 @@ def main():
     payload["evaluation_engine"]=EVALUATION_VERSION
     payload["evaluation_summary"]={"evaluated":evaluated,"awaiting_evidence":waiting,"reused_unchanged":reused,"recomputed_changed":recomputed}
     payload["projection_summary"]=projection_summary
-    BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    # qc_prop_board is a machine artifact consumed by Python/JS. Keep it minified:
+    # the fully evaluated board can contain thousands of POMs and pretty JSON alone
+    # adds tens of MiB to every GitHub Pages deployment.
+    BOARD.write_text(json.dumps(payload,separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
     before_compaction=len(records_by_id)
     records_by_id,latest=compact_evaluation_state(records_by_id,latest,current_evaluation_ids)
     state_payload={
