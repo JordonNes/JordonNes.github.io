@@ -169,13 +169,15 @@ def fetch_open_markets():
         cursor=payload.get("cursor")
         if not cursor or not batch:break
 
-    # Targeted sports player-prop pass. Discover series first, then query each
-    # qualifying series directly so prop inventory cannot be crowded out by the
-    # global open-event feed.
+    # Targeted sports player-prop pass. The old implementation simply used the
+    # first N qualifying sports series returned by Kalshi. In large slates, NFL/MLB
+    # series could consume the entire budget before NHL (or another smaller league)
+    # was ever queried. Build league queues and round-robin them instead.
     max_series=max(8,min(80,int(os.getenv("KALSHI_MAX_PROP_SERIES","48"))))
+    targeted_diag={"selected":[],"by_league":{},"forced":[]}
     try:
         series_payload=get_json("/series",{"category":"Sports"})
-        candidates=[]
+        candidates=defaultdict(list)
         for series in (series_payload.get("series") or []):
             ticker=str(series.get("ticker") or "")
             title=str(series.get("title") or "")
@@ -184,8 +186,36 @@ def fetch_open_markets():
             if not league:continue
             if not any(rx.search(title) or rx.search(ticker.replace("_"," ")) for rx,_name in MARKET_PATTERNS):
                 continue
-            candidates.append(ticker)
-        for series_ticker in candidates[:max_series]:
+            if ticker and ticker not in candidates[league]:
+                candidates[league].append(ticker)
+
+        # Verified Kalshi NHL player-points series. Keep it in the targeted queue
+        # even when Kalshi's /series ordering or title metadata does not surface it.
+        forced={"NHL":["KXNHLPTS"]}
+        for league,tickers in forced.items():
+            for ticker in reversed(tickers):
+                if ticker not in candidates[league]:
+                    candidates[league].insert(0,ticker)
+                    targeted_diag["forced"].append(ticker)
+
+        queues={league:list(tickers) for league,tickers in sorted(candidates.items())}
+        selected=[]
+        while len(selected)<max_series:
+            progressed=False
+            for league in sorted(queues):
+                if not queues[league]:continue
+                selected.append((league,queues[league].pop(0)))
+                progressed=True
+                if len(selected)>=max_series:break
+            if not progressed:break
+
+        targeted_diag["selected"]=[ticker for _league,ticker in selected]
+        targeted_diag["by_league"]={
+          league:sum(1 for lg,_ticker in selected if lg==league)
+          for league in sorted({lg for lg,_ticker in selected})
+        }
+
+        for league,series_ticker in selected:
             scursor=None
             for _ in range(2):
                 params={
@@ -199,9 +229,10 @@ def fetch_open_markets():
                 scursor=payload.get("cursor")
                 if not scursor or not batch:break
     except Exception as exc:
+        targeted_diag["error"]=str(exc)
         print(f"WARN targeted Kalshi sports-series sweep failed: {exc}")
 
-    return out
+    return out,targeted_diag
 
 def league_of(m):
     ticker=str(m.get("ticker") or "")
@@ -482,7 +513,7 @@ def merge_qc(rows):
 def main():
     state={"schema_version":"LSI-KALSHI-STATE-1","checked_at_utc":NOW.isoformat(),"status":"STARTED"}
     try:
-        markets=fetch_open_markets()
+        markets,targeted_diag=fetch_open_markets()
     except Exception as exc:
         state.update({"status":"SOURCE_ERROR","error":str(exc),"raw_market_count":0,"normalized_props":0})
         STATE.write_text(json.dumps(state,indent=2)+"\n",encoding="utf-8")
@@ -523,6 +554,7 @@ def main():
     state.update({
       "status":"OK","raw_market_count":len(markets),"normalized_props":len(rows),
       "history_rows_added":added,"skip_reasons":dict(sorted(reasons.items())),"skip_samples":samples,
+      "targeted_series":targeted_diag,
       "leagues":{lg:sum(1 for r in rows if r["league"]==lg) for lg in sorted({r["league"] for r in rows})},
       "policy":"Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
     })
