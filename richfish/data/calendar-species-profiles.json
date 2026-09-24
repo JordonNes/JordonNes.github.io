@@ -1,0 +1,161 @@
+{
+  "schema_version": "0.1",
+  "name": "RICHFISH Species-Aware Calendar Profiles",
+  "purpose": "Forward planning profiles for species-specific calendar fit. These are planning indices, not catch probabilities, and do not override regulations, access, safety, water-quality advisories, or the live Fish Now engine.",
+  "score_definition": {
+    "season_weight": 0.3,
+    "location_weight": 0.25,
+    "tide_weight": 0.25,
+    "timing_weight": 0.12,
+    "community_weight": 0.08
+  },
+  "profiles": {
+    "striped-bass": {
+      "label": "Striped bass",
+      "auto_rank": true,
+      "data_quality": "high",
+      "legal_gate": false,
+      "season": {
+        "basis": "Catalog summary: often strongest during spring and fall movements.",
+        "month_scores": {
+          "1": 52,
+          "2": 56,
+          "3": 88,
+          "4": 94,
+          "5": 90,
+          "6": 70,
+          "7": 64,
+          "8": 68,
+          "9": 94,
+          "10": 96,
+          "11": 88,
+          "12": 58
+        }
+      },
+      "tide_preference": "moving",
+      "window_mode": "moving_low_light",
+      "low_light_bonus": true,
+      "target_aliases": [
+        "striped bass"
+      ],
+      "preferred_baits": [
+        "anchovy",
+        "sardine",
+        "pile worm",
+        "grass shrimp",
+        "swimbait",
+        "hair raiser"
+      ],
+      "notes": "Favor meaningful moving water, structure/current seams, bait presence and low-light overlap."
+    },
+    "california-halibut": {
+      "label": "California halibut",
+      "auto_rank": true,
+      "data_quality": "high",
+      "legal_gate": false,
+      "season": {
+        "basis": "Catalog summary: usually targeted most heavily from spring through fall.",
+        "month_scores": {
+          "1": 42,
+          "2": 46,
+          "3": 72,
+          "4": 84,
+          "5": 92,
+          "6": 96,
+          "7": 96,
+          "8": 94,
+          "9": 90,
+          "10": 82,
+          "11": 68,
+          "12": 44
+        }
+      },
+      "tide_preference": "moderate",
+      "preferred_direction": "incoming",
+      "window_mode": "incoming_moderate",
+      "low_light_bonus": false,
+      "target_aliases": [
+        "california halibut",
+        "halibut"
+      ],
+      "preferred_baits": [
+        "live anchovy",
+        "herring",
+        "swimbait",
+        "soft plastic"
+      ],
+      "notes": "Favor moderate incoming movement over sand/mud flats, channel edges and bait concentrations."
+    },
+    "starry-flounder": {
+      "label": "Starry flounder",
+      "auto_rank": true,
+      "data_quality": "limited",
+      "legal_gate": false,
+      "season": {
+        "basis": "Species-specific seasonal module is not yet source-complete; neutral seasonal weighting is used rather than inventing a peak season.",
+        "month_scores": {
+          "1": 58,
+          "2": 58,
+          "3": 58,
+          "4": 58,
+          "5": 58,
+          "6": 58,
+          "7": 58,
+          "8": 58,
+          "9": 58,
+          "10": 58,
+          "11": 58,
+          "12": 58
+        }
+      },
+      "tide_preference": "slower",
+      "window_mode": "near_turn",
+      "low_light_bonus": false,
+      "target_aliases": [
+        "starry flounder",
+        "flounder"
+      ],
+      "preferred_baits": [],
+      "notes": "Lower-confidence calendar model until the species seasonal/technique research module is completed."
+    },
+    "white-sturgeon": {
+      "label": "White sturgeon",
+      "auto_rank": false,
+      "data_quality": "high",
+      "legal_gate": true,
+      "season": {
+        "basis": "Catalog summary says availability varies with regulation, freshwater outflow, water temperature and migration; no season boost is applied without a current legal gate.",
+        "month_scores": {
+          "1": 55,
+          "2": 55,
+          "3": 55,
+          "4": 55,
+          "5": 55,
+          "6": 55,
+          "7": 55,
+          "8": 55,
+          "9": 55,
+          "10": 55,
+          "11": 55,
+          "12": 55
+        }
+      },
+      "tide_preference": "moving",
+      "window_mode": "moving",
+      "low_light_bonus": false,
+      "target_aliases": [
+        "white sturgeon",
+        "sturgeon c&r",
+        "sturgeon"
+      ],
+      "preferred_baits": [
+        "grass shrimp",
+        "ghost shrimp",
+        "pile worm",
+        "herring roe",
+        "eel"
+      ],
+      "notes": "Planning context only until current CDFW season, possession, report-card and emergency rules are verified."
+    }
+  }
+}
