@@ -262,6 +262,9 @@ jobs:
           assert state.get('record_count')==len(state.get('records') or [])
           print(f'Spectrum v3 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence; durable_live_states={len(ids)}; size_mb={size/1024/1024:.2f}.')
           PY
+      - name: Explain forecast-first projection gaps
+        if: steps.league_schedule.outputs.has_work == 'true'
+        run: python scripts/lsi_projection_gap_report.py
       - name: T-48 individualized LJPC coverage and readiness report
         if: steps.league_schedule.outputs.has_work == 'true'
         run: |
@@ -386,6 +389,7 @@ jobs:
             data/lsi_player_registry.json data/lsi_spectrum_cache.json data/season_schedule_registry.json
             data/team_roster_registry.json data/visual_asset_registry.json data/visual_asset_registry.js
             data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json data/game_winner_evidence.json
+            data/projection_gap_report.json
           )
           snapshot="$(mktemp -d)"
           for p in "${outputs[@]}"; do
