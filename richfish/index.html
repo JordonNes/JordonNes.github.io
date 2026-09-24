@@ -84,9 +84,23 @@
       </div>
 
       <div class="calendar-toolbar">
-        <div class="calendar-field">
-          <label for="calendar-station">Tide reference</label>
-          <select id="calendar-station" class="map-select" aria-label="Fishing calendar tide station"></select>
+        <div class="calendar-planning-controls">
+          <div class="calendar-field">
+            <label for="calendar-species">Target species</label>
+            <select id="calendar-species" class="map-select" aria-label="Species-aware fishing calendar target">
+              <option value="best">Best supported target</option>
+            </select>
+          </div>
+          <div class="calendar-field">
+            <label for="calendar-location">Fishing location</label>
+            <select id="calendar-location" class="map-select" aria-label="Species-aware fishing calendar location">
+              <option value="best">Best supported location near tide reference</option>
+            </select>
+          </div>
+          <div class="calendar-field">
+            <label for="calendar-station">Tide reference</label>
+            <select id="calendar-station" class="map-select" aria-label="Fishing calendar tide station"></select>
+          </div>
         </div>
         <div class="calendar-actions">
           <button class="btn" id="calendar-prev" type="button" aria-label="Previous month">← Previous</button>
@@ -113,7 +127,7 @@
         <article id="calendar-detail" class="calendar-detail">
           <span class="eyebrow">DAY PLAN</span>
           <h3>Select a day.</h3>
-          <p>RICHFISH will show predicted tide turns, tide range, moon phase, moonrise/moonset, sunrise/sunset, solunar windows and the 0–6 RICHFISH Calendar Rating.</p>
+          <p>RICHFISH will rank the selected species/location, identify a planning window, and show the tide, moon, sunrise/sunset and evidence behind the call.</p>
         </article>
       </div>
 
