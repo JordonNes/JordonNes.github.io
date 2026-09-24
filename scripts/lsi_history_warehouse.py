@@ -214,6 +214,13 @@ def main():
             series[(pid,metric)].append((order,event,value))
         if "rush_tds" in stats or "receiving_tds" in stats:
             series[(pid,"anytime_td")].append((order,event,(stats.get("rush_tds") or 0)+(stats.get("receiving_tds") or 0)))
+        # Canonical NHL market aliases: sportsbook/prediction-market "Points" is
+        # goals + assists; "Assists" maps to hockey_assists from the boxscore feed.
+        player_meta=players.get(pid,{})
+        if (player_meta.get("league") or "")=="NHL" and "hockey_assists" in stats:
+            series[(pid,"assists")].append((order,event,stats["hockey_assists"]))
+        if (player_meta.get("league") or "")=="NHL" and "goals" in stats and "hockey_assists" in stats:
+            series[(pid,"points")].append((order,event,stats["goals"]+stats["hockey_assists"]))
         if all(k in stats for k in ("points","rebounds","assists")):
             series[(pid,"pra")].append((order,event,stats["points"]+stats["rebounds"]+stats["assists"]))
             series[(pid,"points_rebounds")].append((order,event,stats["points"]+stats["rebounds"]))
