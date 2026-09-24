@@ -289,13 +289,15 @@ def main():
             })
 
     REG.write_text(json.dumps({"schema_version":"LSI-PLAYER-REGISTRY-1","generated_at_utc":stamp,"players":sorted(players.values(),key=lambda x:(x.get("league",""),x.get("canonical_name","")))},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    # This is machine cache, not a human-edited artifact. Minified JSON keeps the
+    # durable cache below GitHub's 100 MiB hard file limit without dropping evidence.
     CACHE.write_text(json.dumps({
         "schema_version":"LSI-SPECTRUM-CACHE-2",
         "generated_at_utc":stamp,
         "profiles":profiles,
         "metric_profiles":metric_profiles,
         "policy":"Derived cache only; threshold-independent player/metric recent values support fast forecast-first evaluation. Historical facts are immutable evidence and market price is never performance history."
-    },indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    },separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
     print(f"LSI history warehouse: {len(players)} registered players; {len(metric_profiles)} metric profiles; {len(profiles)} exact-threshold cached profiles.")
 
 if __name__=="__main__": main()
