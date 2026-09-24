@@ -37,6 +37,67 @@ function nearestCalendarDay(calendar,lat,lng,date=new Date()){
   const key=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
   return {station,day:(station.days||[]).find(d=>d.date===key)||null};
 }
+
+function pacificDateKey(date=new Date()){
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
+  const p=Object.fromEntries(parts.filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
+  return `${p.year}-${p.month}-${p.day}`;
+}
+function pacificZonedDate(dateStr,hour=12,minute=0){
+  const [year,month,day]=dateStr.split('-').map(Number);
+  let guess=new Date(Date.UTC(year,month-1,day,hour,minute,0));
+  for(let i=0;i<3;i++){
+    const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(guess);
+    const p=Object.fromEntries(parts.filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
+    const represented=Date.UTC(Number(p.year),Number(p.month)-1,Number(p.day),Number(p.hour),Number(p.minute),Number(p.second));
+    guess=new Date(guess.getTime()+(Date.UTC(year,month-1,day,hour,minute,0)-represented));
+  }
+  return guess;
+}
+function localWindow(center,minutes,label,type){
+  if(!(center instanceof Date)||Number.isNaN(center.getTime()))return null;
+  return {type,label,center:center.toISOString(),local:`${fmtTime(new Date(center.getTime()-minutes*60000).toISOString())}–${fmtTime(new Date(center.getTime()+minutes*60000).toISOString())}`};
+}
+function rangeForEvents(events=[]){
+  const values=events.map(e=>Number(e.heightFt)).filter(Number.isFinite);
+  return values.length>=2?Math.max(...values)-Math.min(...values):null;
+}
+function browserAstronomyContext(calendar,lat,lng,date=new Date()){
+  const SunCalc=window.SunCalc;
+  if(!SunCalc||!Number.isFinite(Number(lat))||!Number.isFinite(Number(lng)))return null;
+  const key=pacificDateKey(date),noon=pacificZonedDate(key,12,0);
+  const sun=SunCalc.getTimes(noon,lat,lng),moonTimes=SunCalc.getMoonTimes(noon,lat,lng,true),illum=SunCalc.getMoonIllumination(noon);
+  const moon=window.RichFishLocalAdvisor?.moonInfo?.(noon)||{phase:'Unknown',illuminationPct:Math.round((illum.fraction||0)*100)};
+  let high=null,low=null;
+  for(let minute=0;minute<1440;minute+=15){
+    const d=pacificZonedDate(key,Math.floor(minute/60),minute%60);
+    const altitude=SunCalc.getMoonPosition(d,lat,lng).altitude;
+    if(!high||altitude>high.altitude)high={date:d,altitude};
+    if(!low||altitude<low.altitude)low={date:d,altitude};
+  }
+  const major=[localWindow(high?.date,60,'Moon overhead','major'),localWindow(low?.date,60,'Moon underfoot','major')].filter(Boolean);
+  const minor=[localWindow(moonTimes.rise,30,'Moonrise','minor'),localWindow(moonTimes.set,30,'Moonset','minor')].filter(Boolean);
+  const todayEvents=(calendar?.turns||[]).filter(e=>pacificDateKey(new Date(e.time))===key);
+  const tideRange=rangeForEvents(todayEvents);
+  const ranges=(calendar?.days||[]).map(d=>rangeForEvents(d.events||[])).filter(Number.isFinite);
+  const minRange=ranges.length?Math.min(...ranges):null,maxRange=ranges.length?Math.max(...ranges):null;
+  const energy=tideRange==null?null:(maxRange!=null&&minRange!=null&&maxRange>minRange?Math.round(Math.max(0,Math.min(1,(tideRange-minRange)/(maxRange-minRange)))*100):50);
+  const tidePoints=energy==null?0:Math.max(0,Math.min(5,Math.round(energy/20)));
+  const lunarPoint=Math.abs(Math.cos(2*Math.PI*illum.phase))>=.7?1:0;
+  return {
+    station:calendar?.station||{name:'Browser location',lat,lng},
+    day:{
+      date:key,
+      sun:{sunrise:sun.sunrise?fmtTime(sun.sunrise.toISOString()):null,sunset:sun.sunset?fmtTime(sun.sunset.toISOString()):null},
+      moon:{phase:moon.phase,illumination_pct:moon.illuminationPct,moonrise:moonTimes.rise?fmtTime(moonTimes.rise.toISOString()):null,moonset:moonTimes.set?fmtTime(moonTimes.set.toISOString()):null},
+      solunar:{major,minor},
+      tide_range_ft:tideRange==null?null:Number(tideRange.toFixed(2)),
+      tide_energy_index:energy,
+      ray_fish_rating:Math.max(0,Math.min(6,tidePoints+lunarPoint)),
+      browser_fallback:true
+    }
+  };
+}
 function nearestPublicWeather(publicWater,lat,lng){
   const rows=Object.values(publicWater?.weatherBySpot||{}).filter(r=>Number.isFinite(r?.coordinates?.lat)&&Number.isFinite(r?.coordinates?.lon));
   if(!rows.length)return null;
@@ -161,7 +222,8 @@ async function runForPosition(pos){
       window.RichFishLocalAdvisor.fetchTideCalendar(lat,lng,7)
     ]);
     const top=payload?.recommendations?.[0]||null;
-    const astronomy=top?.coordinates?nearestCalendarDay(data.fishingCalendar,top.coordinates.lat,top.coordinates.lng):null;
+    let astronomy=top?.coordinates?nearestCalendarDay(data.fishingCalendar,top.coordinates.lat,top.coordinates.lng):null;
+    if(!astronomy&&top?.coordinates)astronomy=browserAstronomyContext(calendar,top.coordinates.lat,top.coordinates.lng);
     const weatherSpot=top?.coordinates?nearestPublicWeather(data.publicWater,top.coordinates.lat,top.coordinates.lng):null;
     const publicStation=top?.water?.station?.id?stationPublicWater(data.publicWater,top.water.station.id):null;
     renderTop(payload,calendar,{astronomy,weatherSpot,publicStation});
