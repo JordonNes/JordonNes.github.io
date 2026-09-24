@@ -339,6 +339,15 @@ def historical_results():
             derived["anytime_td"]=m.get("rush_tds",0)+m.get("receiving_tds",0)
         if any(k in m for k in ("rush_yards","receiving_yards")):
             derived["rush_receiving_yards"]=m.get("rush_yards",0)+m.get("receiving_yards",0)
+        # NHL boxscore history stores assists separately as hockey_assists. Offered
+        # hockey "Points" contracts mean goals + assists, while "Assists" should
+        # resolve to the same underlying assist count. Publish canonical aliases so
+        # Spectrum can evaluate those real offered POMs without sport-specific hacks
+        # in the market parser.
+        if league=="NHL" and "hockey_assists" in m:
+            derived["assists"]=m["hockey_assists"]
+        if league=="NHL" and "goals" in m and "hockey_assists" in m:
+            derived["points"]=m["goals"]+m["hockey_assists"]
         if all(k in m for k in ("points","rebounds","assists")):
             derived["pra"]=m["points"]+m["rebounds"]+m["assists"]
         if all(k in m for k in ("points","rebounds")): derived["points_rebounds"]=m["points"]+m["rebounds"]
