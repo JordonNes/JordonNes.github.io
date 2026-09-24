@@ -9,7 +9,7 @@ on:
       - 'data/suggestion_ledger.json'
       - '.github/workflows/lsi-settlement.yml'
   workflow_run:
-    workflows: ["LSI Daily Predictions Pipeline"]
+    workflows: ["LSI Publication Suggestion Ledger"]
     types: [completed]
   workflow_dispatch:
   schedule:
@@ -24,6 +24,8 @@ concurrency:
 
 jobs:
   settle:
+    # Settlement is intentionally downstream of the committed publication ledger.
+    # This avoids grading a stale ledger when prediction and ledger workflows run concurrently.
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
