@@ -1,6 +1,6 @@
 {
   "name": "RICHFISH Decision Methodology",
-  "version": "0.4",
+  "version": "0.7",
   "principle": "Fish the junctions, not generic open shoreline.",
   "steps": [
     {
@@ -75,7 +75,7 @@
     }
   ],
   "conditionEngine": {
-    "version": "0.2",
+    "version": "0.2.2",
     "outputs": [
       {
         "name": "Site Fit",
@@ -103,7 +103,13 @@
       "SFBOFS North Bay salinity is not used as a high-confidence scoring input while NOAA's published boundary-forcing warning remains active.",
       "Raw provider payloads and internal scoring configuration remain private; the public Tavern receives the normalized Condition Engine snapshot.",
       "Regulation, access, consumption-advisory and safety gates remain outside the environmental score and can override a favorable condition score.",
-      "Every factor should retain source, station/model identifier, observation or forecast time, retrieval time, units and applicable quality flags."
+      "Every factor should retain source, station/model identifier, observation or forecast time, retrieval time, units and applicable quality flags.",
+      "SFBOFS eastward and northward current components must resolve to the same horizontal model element; mixed-cell vectors are rejected.",
+      "Wind-current interaction is reported as operational fishing difficulty and is not independently treated as species catch probability.",
+      "Generated Condition Engine output must pass structural and range validation before the public Tavern bundle is assembled.",
+      "Local current shear is a tactical model-scale proxy and is not independently treated as species catch probability until calibrated against field outcomes.",
+      "Species-specific best current windows rank modeled current suitability within the next 24 hours; they do not override access, safety, regulation, or evidence-quality gates.",
+      "Automatic environmental refreshes are trip-oriented at 05:15, 12:15, and 21:15 America/Los_Angeles, with manual workflow dispatch retained for unscheduled trips."
     ],
     "factors": [
       "NOAA CO-OPS tide phase",
@@ -111,7 +117,38 @@
       "NOAA observed salinity",
       "NOAA observed wind",
       "USGS discharge IV versus recent DV baseline",
-      "NOAA SFBOFS surface-current speed and direction"
+      "NOAA SFBOFS surface-current speed and direction",
+      "Derived wind-current interaction difficulty for shore fishability",
+      "Derived local SFBOFS velocity-gradient / seam-potential index",
+      "Species-specific 24-hour modeled current windows"
+    ]
+  },
+  "calendarEngine": {
+    "version": "0.1",
+    "purpose": "Species-specific forward planning layered on top of the NOAA tide/lunar calendar.",
+    "outputs": [
+      "Species Planning Fit (0–6)",
+      "Best supported location",
+      "Best planning time window",
+      "Factor scores",
+      "Data confidence",
+      "Regulation/data-quality caveats"
+    ],
+    "weights": {
+      "season": 0.3,
+      "location_fit": 0.25,
+      "species_tide_fit": 0.25,
+      "timing_window": 0.12,
+      "community_evidence": 0.08
+    },
+    "rules": [
+      "Species Planning Fit is not catch probability.",
+      "The base tide/lunar Calendar Rating remains separate from Species Planning Fit.",
+      "Only locations catalogued for the species are eligible; closed locations are excluded.",
+      "White sturgeon is not eligible to win Best Supported Target automatically while a current legal gate is unresolved.",
+      "Species with incomplete season research retain reduced confidence rather than receiving invented peak months.",
+      "Specific locations automatically bind to the nearest supported NOAA tide station.",
+      "The live Fish Now engine remains the preferred surface for immediate weather/water decisions; the calendar is a forward-planning surface."
     ]
   }
 }
