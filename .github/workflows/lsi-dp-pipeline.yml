@@ -428,8 +428,20 @@ jobs:
               exit 0
             fi
             git commit -m "LSI ${{ needs.clock.outputs.stage }} ${{ needs.clock.outputs.date }} PT"
-            if git push origin HEAD:master; then exit 0; fi
-            echo "Push race detected; refreshing master and re-overlaying generated outputs (${attempt}/5)."
+            LOCAL_SHA="$(git rev-parse HEAD)"
+            if git push origin HEAD:master; then
+              # Do not treat a successful transport response as publication success.
+              # Re-fetch master and require the remote ref to contain the exact commit
+              # produced by this run before the pipeline can report success.
+              git fetch origin master
+              REMOTE_SHA="$(git rev-parse origin/master)"
+              if [ "$REMOTE_SHA" = "$LOCAL_SHA" ]; then
+                echo "LSI publication verified on master: $LOCAL_SHA"
+                exit 0
+              fi
+              echo "::warning::Push returned success but master verification differed: local=$LOCAL_SHA remote=$REMOTE_SHA"
+            fi
+            echo "Push race or verification failure; refreshing master and re-overlaying generated outputs (${attempt}/5)."
             sleep 3
           done
           echo "::error::Unable to publish LSI outputs after 5 overlay retries."
