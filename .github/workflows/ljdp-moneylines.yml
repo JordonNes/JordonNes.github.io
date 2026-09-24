@@ -101,7 +101,7 @@ jobs:
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
           files=()
-          for f in data/current_game_moneylines.json data/qc_prop_board.json data/the_odds_api_state.json data/market_history.csv data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/suggestion_ledger.json; do
+          for f in data/current_game_moneylines.json data/qc_prop_board.json data/the_odds_api_state.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/suggestion_ledger.json; do
             [ -s "$f" ] && files+=("$f")
           done
           git add "${files[@]}"
