@@ -79,6 +79,13 @@ def observation_order(row,source_path=None):
 
 def market_metric(market):
     m=norm(market)
+    # Do not coerce different scoring systems into unrelated performance metrics.
+    # Fantasy points require a source-specific scoring model; field goals require
+    # kicker history. Both remain fail-closed until those evidence layers exist.
+    if "fantasy points" in m or "fantasy score" in m or "field goal" in m:
+        return None
+    if any(x in m for x in ("2plus td","2 plus td","2 td","2 touchdowns")):
+        return "anytime_td"
     rules=[
       (("passing yards","pass yards","pass yds"),"pass_yards"),
       (("passing attempts","pass attempts"),"pass_attempts"),
@@ -103,6 +110,8 @@ def market_metric(market):
       (("extra points made","xp made","xpm"),"extra_points_made"),
       (("steals",),"steals"),
       (("blocks",),"blocks"),
+      (("turnovers",),"turnovers"),
+      (("pitcher hits allowed","hits allowed"),"pitcher_hits_allowed"),
       (("hits",),"hits"),
       (("total bases",),"total_bases"),
       (("home runs","home run"),"home_runs"),
@@ -121,6 +130,9 @@ def market_metric(market):
 def effective_threshold(prop,metric=None):
     t=num(prop.get("threshold"))
     if t is not None:return t
+    market=norm(prop.get("market"))
+    if metric=="anytime_td" and any(x in market for x in ("2plus td","2 plus td","2 td","2 touchdowns")):
+        return 1.5
     side=norm(prop.get("side"))
     if metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and side in {"yes","over","more"}:
         return 0.5

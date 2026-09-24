@@ -110,3 +110,51 @@ assert alias_result["player_projection"]["resolved_history_player"]=="Matthew St
 assert alias_result["player_projection"]["identity_match"] in {"EXACT","UNIQUE_ALIAS"}
 assert alias_result["player_projection"]["l5_average"] is not None
 print("Alias resolution test passed:",alias_result["player_projection"])
+
+
+# Market semantics: do not mistake sportsbook wording for a different stat.
+assert m.market_metric("Pitcher Hits Allowed")=="pitcher_hits_allowed"
+assert m.market_metric("Player Turnovers")=="turnovers"
+assert m.market_metric("Fantasy Points") is None
+assert m.market_metric("Field Goals Made") is None
+assert m.market_metric("Player 1St Td") is None
+assert m.market_metric("Player Last Td") is None
+assert m.market_metric("Player 2Plus Td")=="anytime_td"
+assert m.effective_threshold({"market":"Player 2Plus Td","threshold":"","side":"Yes"},"anytime_td")==1.5
+
+# Kalshi labels sometimes embed the proposition after the athlete name. Strip the
+# proposition from identity while preserving the exact offered threshold.
+kspec=importlib.util.spec_from_file_location("kalshi_adapter",ROOT/"scripts/kalshi_public_adapter.py")
+kmod=importlib.util.module_from_spec(kspec)
+kspec.loader.exec_module(kmod)
+
+rec_market={
+  "_event_title":"Atlanta vs Green Bay: Reception Yards",
+  "title":"Tucker Kraft reception yards",
+  "yes_sub_title":"Tucker Kraft: over 20.5 yards",
+  "floor_strike":20.5,
+}
+assert kmod.market_name(rec_market)=="Receiving Yards"
+kp,kt,_kd,_ko=kmod.participant_threshold(rec_market,"Receiving Yards")
+assert kp=="Tucker Kraft" and abs(kt-20.5)<1e-9, (kp,kt)
+
+fantasy_market={
+  "_event_title":"Atlanta vs Green Bay: Fantasy Points",
+  "title":"Tucker Kraft fantasy points",
+  "yes_sub_title":"Tucker Kraft: Over 11.6 fantasy points",
+  "floor_strike":11.6,
+}
+assert kmod.market_name(fantasy_market)=="Fantasy Points"
+fp,ft,_fd,_fo=kmod.participant_threshold(fantasy_market,"Fantasy Points")
+assert fp=="Tucker Kraft" and abs(ft-11.6)<1e-9, (fp,ft)
+
+hits_allowed={
+  "_event_title":"Milwaukee vs Philadelphia: Pitcher Hits Allowed",
+  "title":"Aaron Nola hits allowed",
+  "yes_sub_title":"Aaron Nola: 5+",
+  "floor_strike":5,
+}
+assert kmod.market_name(hits_allowed)=="Pitcher Hits Allowed"
+hp,ht,_hd,_ho=kmod.participant_threshold(hits_allowed,"Pitcher Hits Allowed")
+assert hp=="Aaron Nola" and abs(ht-5)<1e-9, (hp,ht)
+print("Market semantic normalization tests passed.")

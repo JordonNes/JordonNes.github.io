@@ -48,18 +48,22 @@ def player_id(league,name):
     return "LSIP-"+hashlib.sha1(f"{league}|{player_norm(name)}".encode()).hexdigest()[:16].upper()
 def market_metric(market):
     m=norm(market)
+    if "fantasy points" in m or "fantasy score" in m or "field goal" in m:
+        return None
+    if any(x in m for x in ("2plus td","2 plus td","2 td","2 touchdowns")):
+        return "anytime_td"
     pairs=[
       ("passing yards","pass_yards"),("pass yards","pass_yards"),("pass yds","pass_yards"),("passing attempts","pass_attempts"),("pass attempts","pass_attempts"),
-      ("passing touchdowns","pass_tds"),("passing tds","pass_tds"),("rushing attempts","rush_attempts"),("rush attempts","rush_attempts"),
+      ("passing completions","pass_completions"),("completions","pass_completions"),("passing touchdowns","pass_tds"),("passing tds","pass_tds"),("rushing attempts","rush_attempts"),("rush attempts","rush_attempts"),
       ("carries","rush_attempts"),("rushing yards","rush_yards"),("rush yards","rush_yards"),("rush yds","rush_yards"),("receiving yards","receiving_yards"),("reception yds","receiving_yards"),("receiving yds","receiving_yards"),
       ("receptions","receptions"),("targets","targets"),("points rebounds assists","pra"),("pra","pra"),
       ("points rebounds","points_rebounds"),("points assists","points_assists"),("rebounds assists","rebounds_assists"),
       ("points","points"),("rebounds","rebounds"),("assists","assists"),("three pointers","threes_made"),("3 pointers","threes_made"),("threes","threes_made"),("3pt","threes_made"),("extra points made","extra_points_made"),("xpm","extra_points_made"),
-      ("steals","steals"),("blocks","blocks"),("hits","hits"),("total bases","total_bases"),("home runs","home_runs"),
+      ("steals","steals"),("blocks","blocks"),("turnovers","turnovers"),("pitcher hits allowed","pitcher_hits_allowed"),("hits allowed","pitcher_hits_allowed"),("hits","hits"),("total bases","total_bases"),("home runs","home_runs"),
       ("rbi","rbi"),("runs","runs"),("stolen bases","stolen_bases"),("strikeouts","pitcher_strikeouts"),("outs recorded","pitching_outs"),("pitching outs","pitching_outs"),
       ("shots on goal","shots_on_goal"),("sog","shots_on_goal"),("saves","saves"),("goal scorer","goals"),("goals","goals")
     ]
-    if "anytime td" in m or ("touchdown" in m and "passing" not in m and "pass " not in m):
+    if "anytime td" in m or "anytime touchdown" in m or "to score a touchdown" in m:
         return "anytime_td"
     for needle,metric in pairs:
         if needle in m:return metric
@@ -240,9 +244,10 @@ def main():
         if not clean: continue
         meta_player=player_by_id.get(pid,{})
         recent=clean[-20:]
-        def avg(n):
-            w=clean[-n:] if len(clean)>=n else clean
-            return round(statistics.fmean(w),3) if w else None
+        # Fast Spectrum only needs identity, sample depth, and the most recent
+        # observations. Derived averages are recomputed locally from recent_values;
+        # omitting redundant summary fields keeps this durable cache well below
+        # GitHub's 100 MiB hard file limit.
         metric_profiles.append({
             "lsi_player_id":pid,
             "league":meta_player.get("league") or "",
@@ -250,14 +255,6 @@ def main():
             "metric":metric,
             "sample_n":len(clean),
             "recent_values":[round(v,3) for v in recent],
-            "L3_average":avg(3),
-            "L5_average":avg(5),
-            "L10_average":avg(10),
-            "L20_average":avg(20),
-            "career_average":round(statistics.fmean(clean),3),
-            "career_median":round(statistics.median(clean),3),
-            "career_stddev":round(statistics.pstdev(clean),3) if len(clean)>1 else 0.0,
-            "source":"LSI permanent performance warehouse",
         })
 
     profiles=[]
@@ -269,7 +266,10 @@ def main():
             name=p.get("participant") or ""; market=p.get("market") or ""
             metric=market_metric(market)
             threshold=num(p.get("threshold")); side=p.get("side") or ""
-            if threshold is None and metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and norm(side) in {"yes","over","more"}:
+            market_norm=norm(market)
+            if threshold is None and metric=="anytime_td" and any(x in market_norm for x in ("2plus td","2 plus td","2 td","2 touchdowns")):
+                threshold=1.5
+            elif threshold is None and metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and norm(side) in {"yes","over","more"}:
                 threshold=0.5
             if not name or not market or threshold is None: continue
             pid=player_id(league,name); key=(pid,norm(market),threshold,norm(side))

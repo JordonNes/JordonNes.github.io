@@ -68,20 +68,23 @@ MARKET_PATTERNS=[
   (re.compile(r"points\s*\+\s*rebounds\s*\+\s*assists|points rebounds assists|\bPRA\b",re.I),"Points Rebounds Assists"),
   (re.compile(r"passing yards?",re.I),"Passing Yards"),
   (re.compile(r"rushing yards?",re.I),"Rushing Yards"),
-  (re.compile(r"receiving yards?",re.I),"Receiving Yards"),
+  (re.compile(r"(?:receiving|reception) yards?",re.I),"Receiving Yards"),
   (re.compile(r"receptions?",re.I),"Receptions"),
   (re.compile(r"passing (?:touchdowns?|TDs?)",re.I),"Passing TDs"),
   (re.compile(r"anytime (?:touchdowns?|TDs?)|to score (?:a )?touchdown",re.I),"Anytime TD"),
   (re.compile(r"rush(?:ing)? attempts?",re.I),"Rushing Attempts"),
   (re.compile(r"pass(?:ing)? attempts?",re.I),"Passing Attempts"),
   (re.compile(r"completions?",re.I),"Completions"),
+  (re.compile(r"fantasy points?|fantasy score",re.I),"Fantasy Points"),
   (re.compile(r"points?",re.I),"Points"),
   (re.compile(r"rebounds?",re.I),"Rebounds"),
   (re.compile(r"assists?",re.I),"Assists"),
   (re.compile(r"three(?:-| )?pointers?|3(?:-| )?pointers?|threes?",re.I),"Threes"),
   (re.compile(r"steals?",re.I),"Steals"),
   (re.compile(r"blocks?",re.I),"Blocks"),
+  (re.compile(r"turnovers?",re.I),"Turnovers"),
   (re.compile(r"pitcher strikeouts?|strikeouts?",re.I),"Pitcher Strikeouts"),
+  (re.compile(r"pitcher hits? allowed|hits? allowed by",re.I),"Pitcher Hits Allowed"),
   (re.compile(r"total bases?",re.I),"Total Bases"),
   (re.compile(r"home runs?|\bHRs?\b",re.I),"Home Runs"),
   (re.compile(r"\bRBIs?\b|runs batted in",re.I),"RBI"),
@@ -90,6 +93,7 @@ MARKET_PATTERNS=[
   (re.compile(r"outs recorded",re.I),"Outs Recorded"),
   (re.compile(r"shots on goal",re.I),"Shots on Goal"),
   (re.compile(r"saves?",re.I),"Saves"),
+  (re.compile(r"field goals?(?: made)?|field goal attempts?",re.I),"Field Goals Made"),
   (re.compile(r"goal scorer|goals?",re.I),"Goals"),
   (re.compile(r"aces?",re.I),"Aces"),
   (re.compile(r"double faults?",re.I),"Double Faults"),
@@ -104,9 +108,14 @@ def norm(v):
     return " ".join(str(v or "").replace("_"," ").replace("-"," ").split()).lower()
 
 def canonical_player_label(value):
-    """Keep the athlete name in participant; offered ladder stays in threshold."""
+    """Keep only athlete identity; proposition wording belongs to market/threshold."""
     value=str(value or "").strip()
-    return re.sub(r"\s*:?\s*\d+(?:\.\d+)?\+\s*$","",value).strip()
+    value=re.sub(r"\s*:?\s*\d+(?:\.\d+)?\+\s*$","",value).strip()
+    value=re.sub(
+      r"\s*:\s*(?:over|under|more|less|at least|fewer than)\s+\d+(?:\.\d+)?(?:\s+[A-Za-z][A-Za-z0-9 .+'/-]*)?\s*$",
+      "",value,flags=re.I
+    ).strip()
+    return value
 
 def valid_player_identity(value):
     raw=str(value or "").strip()

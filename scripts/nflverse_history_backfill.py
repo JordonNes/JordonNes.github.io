@@ -15,7 +15,7 @@ OUTROOT=ROOT/"data"/"history"/"NFL"
 UA={"User-Agent":"LEGZ-JINX-LSI-NFL-History/1.0"}
 FIELDS=["record_id","collected_at_utc","league","event_id","provider_event_id","event_start_utc","participant","provider_player_id","team","metric","value","source"]
 STAT_MAP={
- "attempts":"pass_attempts","passing_yards":"pass_yards","passing_tds":"pass_tds","interceptions":"pass_interceptions",
+ "completions":"pass_completions","attempts":"pass_attempts","passing_yards":"pass_yards","passing_tds":"pass_tds","interceptions":"pass_interceptions",
  "carries":"rush_attempts","rushing_yards":"rush_yards","rushing_tds":"rush_tds",
  "receptions":"receptions","receiving_yards":"receiving_yards","receiving_tds":"receiving_tds","targets":"targets"
 }
