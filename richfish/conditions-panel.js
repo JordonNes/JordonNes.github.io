@@ -9,18 +9,45 @@ let datasets=null,lastPosition=null;
 
 async function loadDatasets(){
   if(datasets)return datasets;
-  const [locationsRaw,speciesRaw,community]=await Promise.all([
+  const [locationsRaw,speciesRaw,community,fishingCalendar,publicWater]=await Promise.all([
     fetch('data/catalog/locations.json').then(r=>r.json()),
     fetch('data/catalog/species.json').then(r=>r.json()),
-    fetch('data/community-evidence.json').then(r=>r.json()).catch(()=>({records:[],reliability_tiers:{}}))
+    fetch('data/community-evidence.json').then(r=>r.json()).catch(()=>({records:[],reliability_tiers:{}})),
+    fetch('data/live/fishing-calendar.json').then(r=>r.json()).catch(()=>null),
+    fetch('data/live/public-water.json').then(r=>r.json()).catch(()=>null)
   ]);
   datasets={
     locations:Array.isArray(locationsRaw)?locationsRaw:(locationsRaw.locations||[]),
     species:Array.isArray(speciesRaw)?speciesRaw:(speciesRaw.species||[]),
-    community
+    community,
+    fishingCalendar,
+    publicWater
   };
   return datasets;
 }
+function haversineKm(aLat,aLng,bLat,bLng){
+  const R=6371,toRad=x=>x*Math.PI/180,dLat=toRad(bLat-aLat),dLng=toRad(bLng-aLng);
+  const q=Math.sin(dLat/2)**2+Math.cos(toRad(aLat))*Math.cos(toRad(bLat))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.min(1,Math.sqrt(q)));
+}
+function nearestCalendarDay(calendar,lat,lng,date=new Date()){
+  const stations=Object.values(calendar?.stations||{});
+  if(!stations.length)return null;
+  const station=[...stations].sort((a,b)=>haversineKm(lat,lng,a.lat,a.lng)-haversineKm(lat,lng,b.lat,b.lng))[0];
+  const key=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
+  return {station,day:(station.days||[]).find(d=>d.date===key)||null};
+}
+function nearestPublicWeather(publicWater,lat,lng){
+  const rows=Object.values(publicWater?.weatherBySpot||{}).filter(r=>Number.isFinite(r?.coordinates?.lat)&&Number.isFinite(r?.coordinates?.lon));
+  if(!rows.length)return null;
+  return [...rows].sort((a,b)=>haversineKm(lat,lng,a.coordinates.lat,a.coordinates.lon)-haversineKm(lat,lng,b.coordinates.lat,b.coordinates.lon))[0];
+}
+function stationPublicWater(publicWater,stationId){return publicWater?.coopsStations?.[stationId]||null;}
+function pressureText(row){
+  const raw=Number(row?.products?.airPressure?.value?.v);
+  return Number.isFinite(raw)?raw.toFixed(1)+' mb':'Unavailable';
+}
+function fmtWindow(w){return w?.local||'—';}
 function fishMeter(value){
   const n=Math.max(0,Math.min(6,Number(value)||0));
   return `<span class="fish-meter" aria-label="${n} of 6 fish activity rating">${'🐟'.repeat(n)}<i>${'·'.repeat(6-n)}</i></span>`;
@@ -61,7 +88,7 @@ function renderCalendar(calendar){
     <div class="tide-turns">${day.events.map(e=>`<span><b>${e.type==='high'?'HIGH':'LOW'}</b> ${esc(fmtTime(e.time))}<small>${Number(e.heightFt).toFixed(1)} ft</small></span>`).join('')}</div>
   </article>`).join('');
 }
-function renderTop(payload,calendar){
+function renderTop(payload,calendar,context={}){
   const row=payload?.recommendations?.[0],panel=q('#rf-live-output'),meta=q('#rf-location-meta');
   if(!panel)return;
   if(!row){
@@ -72,6 +99,15 @@ function renderTop(payload,calendar){
   const water=[row.water?.temperatureF!=null?`${Number(row.water.temperatureF).toFixed(1)}°F`:null,row.water?.salinityPsu!=null?`${Number(row.water.salinityPsu).toFixed(1)} PSU`:null].filter(Boolean).join(' · ')||'Observation incomplete';
   const wind=row.weather?.effectiveWindMph!=null?`${Number(row.weather.effectiveWindMph).toFixed(1)} mph`:'Unavailable';
   const moon=row.moon||window.RichFishLocalAdvisor.moonInfo();
+  const astro=context.astronomy?.day||null, astroStation=context.astronomy?.station||null;
+  const weatherSpot=context.weatherSpot||null, hour=weatherSpot?.hourly?.[0]||null;
+  const publicStation=context.publicStation||null;
+  const humidity=hour?.relativeHumidity??publicStation?.products?.humidity?.value?.v??null;
+  const dewpointF=Number.isFinite(Number(hour?.dewpointC))?(Number(hour.dewpointC)*9/5+32):null;
+  const alerts=weatherSpot?.alerts||[];
+  const astronomyLine=astro?'Sunrise '+(astro.sun?.sunrise||'—')+' · Sunset '+(astro.sun?.sunset||'—')+' · Moonrise '+(astro.moon?.moonrise||'—')+' · Moonset '+(astro.moon?.moonset||'—'):'Astronomy snapshot unavailable';
+  const major=(astro?.solunar?.major||[]).map(fmtWindow).join(' / ')||'—';
+  const minor=(astro?.solunar?.minor||[]).map(fmtWindow).join(' / ')||'—';
   if(meta)meta.textContent=`Using your browser location · ${row.distanceKm} km to #1 option · generated ${new Date(payload.generatedAt).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`;
   panel.innerHTML=`
     <article class="rf-top-call">
@@ -90,9 +126,14 @@ function renderTop(payload,calendar){
           <div><small>Tide</small><b>${esc(tide)}</b><span>${esc(row.water?.station?.name||'Nearest NOAA station')}</span></div>
           <div><small>Water</small><b>${esc(water)}</b><span>NOAA observation</span></div>
           <div><small>Wind / weather</small><b>${esc(wind)}</b><span>${esc(row.weather?.shortForecast||row.weather?.sourceNote||'Weather context')}</span></div>
+          <div><small>Pressure / humidity</small><b>${esc(pressureText(publicStation))}${humidity!=null?' · '+esc(humidity)+'% RH':''}</b><span>${dewpointF!=null?'dew point '+dewpointF.toFixed(0)+'°F · ':''}NOAA/NWS observation context</span></div>
           <div><small>Moon</small><b>${moonGlyph(moon.phase)} ${esc(moon.phase)}</b><span>${esc(moon.illuminationPct)}% illuminated · minor weight</span></div>
+          <div><small>Sun / moon timing</small><b>${esc(astronomyLine)}</b><span>${astroStation?esc(astroStation.name):'nearest tide station'}</span></div>
+          <div><small>Tide movement</small><b>${astro?.tide_range_ft!=null?esc(astro.tide_range_ft)+' ft range · energy '+esc(astro.tide_energy_index)+'%':'Unavailable'}</b><span>general tide/lunar rating ${astro?.ray_fish_rating!=null?esc(astro.ray_fish_rating)+'/6':'—'}</span></div>
+          <div><small>Best timing windows</small><b>${esc(major)}</b><span>minor: ${esc(minor)}</span></div>
           <div><small>Community</small><b>${esc(row.community?.label||'No registered signal')}</b><span>${row.community?.count||0} moderated recent report(s)</span></div>
         </div>
+        ${alerts.length?'<div class="rf-alert-line"><strong>Weather alert:</strong> '+esc(alerts[0].headline||alerts[0].event||'Active NWS alert')+(alerts.length>1?' +'+(alerts.length-1)+' more':'')+'</div>':''}
         <div class="rf-tackle-line"><strong>Start with:</strong> ${esc((row.bait||[]).join(', ')||'match local forage')} · ${esc((row.patterns||[]).join(' · ')||'fish structure and moving water')}</div>
       </div>
     </article>
@@ -116,10 +157,14 @@ async function runForPosition(pos){
   try{
     const data=await loadDatasets(),speciesId=q('#rf-live-species')?.value||null;
     const [payload,calendar]=await Promise.all([
-      window.RichFishLocalAdvisor.buildNearbyAdvice({lat,lng,speciesId,limit:5,locations:data.locations,speciesCatalog:data.species,communityEvidence:data.community}),
+      window.RichFishLocalAdvisor.buildNearbyAdvice({lat,lng,speciesId,limit:5,locations:data.locations,speciesCatalog:data.species,communityEvidence:data.community,publicWater:data.publicWater}),
       window.RichFishLocalAdvisor.fetchTideCalendar(lat,lng,7)
     ]);
-    renderTop(payload,calendar);
+    const top=payload?.recommendations?.[0]||null;
+    const astronomy=top?.coordinates?nearestCalendarDay(data.fishingCalendar,top.coordinates.lat,top.coordinates.lng):null;
+    const weatherSpot=top?.coordinates?nearestPublicWeather(data.publicWater,top.coordinates.lat,top.coordinates.lng):null;
+    const publicStation=top?.water?.station?.id?stationPublicWater(data.publicWater,top.water.station.id):null;
+    renderTop(payload,calendar,{astronomy,weatherSpot,publicStation});
     setStatus('Live recommendation ready.');
   }catch(error){
     console.error('RICHFISH live panel failed',error);
