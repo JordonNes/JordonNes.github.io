@@ -172,6 +172,45 @@ async function fetchStationSnapshot(station){
     fetchedAt:new Date().toISOString()
   };
 }
+function staticStationSnapshot(publicWater,station){
+  const row=publicWater?.coopsStations?.[station.id];
+  if(!row)return null;
+  const temp=Number(row?.products?.waterTemperature?.value?.v);
+  const sal=Number(row?.products?.salinity?.value?.v);
+  const w=row?.products?.wind?.value||null;
+  const speed=Number(w?.s);
+  const tideRows=row?.products?.tidePredictions?.value||[];
+  return {
+    station:{id:station.id,name:row.name||station.name,distanceKm:round(station.distanceKm,1)},
+    waterTemperatureF:Number.isFinite(temp)?temp:null,
+    salinityPsu:Number.isFinite(sal)?sal:null,
+    wind:w?{speedMph:Number.isFinite(speed)?speed:null,direction:w.dr||null,degreesFrom:Number.isFinite(Number(w.d))?Number(w.d):null,observedAt:w.t||null}:null,
+    tide:deriveTide(tideRows),
+    fetchedAt:row?.products?.waterTemperature?.retrievedAt||publicWater?.generatedAt||null,
+    source:'hourly-static-snapshot'
+  };
+}
+function mergeSnapshot(live,fallback){
+  if(!live)return fallback;
+  if(!fallback)return live;
+  return {
+    ...fallback,...live,
+    station:live.station||fallback.station,
+    waterTemperatureF:Number.isFinite(live.waterTemperatureF)?live.waterTemperatureF:fallback.waterTemperatureF,
+    salinityPsu:Number.isFinite(live.salinityPsu)?live.salinityPsu:fallback.salinityPsu,
+    wind:(live.wind&&Number.isFinite(live.wind.speedMph))?live.wind:fallback.wind,
+    tide:live.tide||fallback.tide,
+    source:'live-with-static-fallback'
+  };
+}
+function staticWeather(publicWater,lat,lng){
+  const rows=Object.values(publicWater?.weatherBySpot||{}).filter(r=>Number.isFinite(r?.coordinates?.lat)&&Number.isFinite(r?.coordinates?.lon));
+  if(!rows.length)return null;
+  const spot=[...rows].sort((a,b)=>haversineKm(lat,lng,a.coordinates.lat,a.coordinates.lon)-haversineKm(lat,lng,b.coordinates.lat,b.coordinates.lon))[0];
+  const p=spot?.hourly?.[0];
+  if(!p)return null;
+  return {temperatureF:p.temperature,windMph:parseWindMph(p.windSpeed),windDirection:p.windDirection,shortForecast:p.shortForecast,precipitationProbability:p.probabilityOfPrecipitation??null,startTime:p.startTime,source:'hourly-static-snapshot'};
+}
 async function fetchTideCalendar(lat,lng,days=7){
   const station=nearestStation(lat,lng),begin=yyyymmdd(new Date()),range=String(Math.max(24,Math.min(days,10)*24));
   const [hilo,hourly]=await Promise.all([
@@ -229,7 +268,7 @@ function candidateSpecies(location,speciesCatalog,requestedSpeciesId){
   if(requestedSpeciesId)return ids.includes(requestedSpeciesId)?speciesCatalog.filter(s=>s.id===requestedSpeciesId):[];
   return speciesCatalog.filter(s=>ids.includes(s.id));
 }
-async function buildNearbyAdvice({lat,lng,speciesId=null,limit=5,locations=[],speciesCatalog=[],communityEvidence={records:[]}}){
+async function buildNearbyAdvice({lat,lng,speciesId=null,limit=5,locations=[],speciesCatalog=[],communityEvidence={records:[]},publicWater=null}){
   const month=new Date().getMonth()+1,moon=moonInfo();
   const nearby=locations.filter(l=>l?.coordinates&&l?.access_gate?.status!=='closed').map(location=>({location,distanceKm:haversineKm(lat,lng,Number(location.coordinates.lat),Number(location.coordinates.lng))})).filter(r=>Number.isFinite(r.distanceKm)).sort((a,b)=>a.distanceKm-b.distanceKm).slice(0,14);
   const uniqueStations=new Map(),stationByLocation=new Map();
@@ -239,8 +278,11 @@ async function buildNearbyAdvice({lat,lng,speciesId=null,limit=5,locations=[],sp
   }
   const stationSnapshots=new Map();
   const weatherPromise=fetchWeather(lat,lng);
-  await Promise.all([...uniqueStations.values()].map(async s=>stationSnapshots.set(s.id,await fetchStationSnapshot(s))));
-  const weather=await weatherPromise,evaluated=[];
+  await Promise.all([...uniqueStations.values()].map(async s=>{
+    const live=await fetchStationSnapshot(s).catch(()=>null);
+    stationSnapshots.set(s.id,mergeSnapshot(live,staticStationSnapshot(publicWater,s)));
+  }));
+  const weather=(await weatherPromise)||staticWeather(publicWater,lat,lng),evaluated=[];
   for(const row of nearby){
     const speciesOptions=candidateSpecies(row.location,speciesCatalog,speciesId);
     if(!speciesOptions.length)continue;
@@ -286,7 +328,7 @@ async function buildNearbyAdvice({lat,lng,speciesId=null,limit=5,locations=[],sp
   }
   evaluated.sort((a,b)=>b.tripFitIndex-a.tripFitIndex||a.distanceKm-b.distanceKm);
   return {
-    generatedAt:new Date().toISOString(),engine:'browser-local-v0.1',location:{lat,lng},requestedSpeciesId:speciesId,
+    generatedAt:new Date().toISOString(),engine:'browser-local-v0.2',location:{lat,lng},requestedSpeciesId:speciesId,
     methodology:'RICHFISH Activity Rating and Trip Fit Index blend source-backed seasonality, live NOAA tide/water, NOAA/NWS wind/weather, registered community evidence, distance, and a small conventional lunar factor. They are planning indices, not catch probabilities.',
     lunarPolicy:'Lunar phase is a minor conventional factor only; tide, water, weather, season, forage and verified local evidence carry more weight.',
     recommendations:evaluated.slice(0,limit)
