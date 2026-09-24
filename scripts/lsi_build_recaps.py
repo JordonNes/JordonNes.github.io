@@ -62,7 +62,7 @@ def dstr(dt):
 def created_date(p):
     raw=p.get("publication_date_pt") or p.get("created_at_pt") or p.get("published_at_pt") or p.get("updated_at_pt") or ""
     try:
-        if re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}",str(raw)):
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}",str(raw)):
             return datetime.fromisoformat(str(raw)).date()
         return datetime.fromisoformat(str(raw).replace("Z","+00:00")).astimezone(PT).date()
     except Exception: return None
