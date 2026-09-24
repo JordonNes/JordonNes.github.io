@@ -974,7 +974,9 @@ def main():
       "records":list(records_by_id.values()),
       "latest_by_key":latest,
     }
-    # Machine state is intentionally minified. At thousands of live offered POMs,\n    # pretty-print whitespace alone can push the state artifact over the CI size guard.\n    EVAL_STATE.write_text(json.dumps(state_payload,separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
+    # Machine state is intentionally minified. At thousands of live offered POMs,
+    # pretty-print whitespace alone can push the state artifact over the CI size guard.
+    EVAL_STATE.write_text(json.dumps(state_payload,separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
     synthetic_events=[]; synthetic_count=0
     for event in payload.get("events") or []:
         props=[p for p in (event.get("props") or []) if p.get("synthetic") or p.get("model_generated")]
