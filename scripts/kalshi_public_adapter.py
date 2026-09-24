@@ -526,9 +526,28 @@ def main():
     },indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 
     rows=[]; reasons=defaultdict(int); samples={}
+    targeted_selected=set(targeted_diag.get("selected") or [])
+    targeted_series_diag=defaultdict(lambda:{"raw":0,"normalized":0,"skip_reasons":defaultdict(int),"skip_samples":{}})
+    for series in targeted_selected:
+        targeted_series_diag[series]  # retain explicit zero-result series in diagnostics
     for m in markets:
+        series=str(m.get("_series_ticker") or "")
+        diag=targeted_series_diag[series] if series in targeted_selected else None
+        if diag is not None:diag["raw"]+=1
         row,reason=normalize_market(m)
         reasons[reason]+=1
+        if diag is not None:
+            diag["skip_reasons"][reason]+=1
+            if row:diag["normalized"]+=1
+            elif reason not in diag["skip_samples"]:
+                diag["skip_samples"][reason]={
+                  "ticker":m.get("ticker"),"event_ticker":m.get("event_ticker"),
+                  "event_title":m.get("_event_title"),"title":m.get("title"),
+                  "subtitle":m.get("subtitle"),"yes_sub_title":m.get("yes_sub_title"),
+                  "primary_participant_key":m.get("primary_participant_key"),
+                  "floor_strike":m.get("floor_strike"),"functional_strike":m.get("functional_strike"),
+                  "occurrence_datetime":m.get("occurrence_datetime"),
+                }
         if row:rows.append(row)
         elif reason not in samples:
             samples[reason]={
@@ -555,6 +574,14 @@ def main():
       "status":"OK","raw_market_count":len(markets),"normalized_props":len(rows),
       "history_rows_added":added,"skip_reasons":dict(sorted(reasons.items())),"skip_samples":samples,
       "targeted_series":targeted_diag,
+      "targeted_series_diagnostics":{
+        series:{
+          "raw":diag["raw"],"normalized":diag["normalized"],
+          "skip_reasons":dict(sorted(diag["skip_reasons"].items())),
+          "skip_samples":diag["skip_samples"],
+        }
+        for series,diag in sorted(targeted_series_diag.items())
+      },
       "leagues":{lg:sum(1 for r in rows if r["league"]==lg) for lg in sorted({r["league"] for r in rows})},
       "policy":"Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
     })

@@ -242,9 +242,44 @@ def evaluation_input_material(prop,event,history,contexts,game_contexts,cache,me
     return material
 
 def evaluation_result_from_state(record):
-    """Rehydrate a prior live evaluation when its pre-evaluation material hash is unchanged."""
+    """Rehydrate a prior live evaluation when its pre-evaluation material hash is unchanged.
+
+    New state files store one canonical feature payload instead of duplicating the
+    same distribution/projection/context again inside spectrum. Older full records
+    remain readable so deployment is backwards compatible.
+    """
     feature=record.get("feature_state") or {}
+    if isinstance(feature,dict):
+        feature=dict(feature)
+        performance=dict(feature.get("performance") or {})
+        distribution=performance.get("distribution") or {}
+        player_projection=(
+          performance.get("player_projection")
+          or (distribution.get("player_projection") if isinstance(distribution,dict) else None)
+          or record.get("player_projection")
+        )
+        if player_projection:
+            performance["player_projection"]=player_projection
+        feature["performance"]=performance
+    else:
+        feature={}; performance={}; distribution={}; player_projection=record.get("player_projection")
+
     market=(feature.get("market") or {}) if isinstance(feature,dict) else {}
+    context=(feature.get("context") or {}) if isinstance(feature,dict) else {}
+    spectrum=record.get("spectrum")
+    if not isinstance(spectrum,dict):
+        spectrum={
+          "performance":record.get("spectrum_performance") or [],
+          "distribution":distribution,
+          "player_projection":player_projection,
+          "market_prior":market.get("implied_probability"),
+          "source_depth":market.get("source_count"),
+          "jinx_context":context,
+        }
+        consistency=performance.get("consistency") if isinstance(performance,dict) else None
+        if consistency is not None:
+            spectrum["consistency"]=consistency
+
     ljpc=record.get("ljpc")
     return {
       "evaluation_status":record.get("evaluation_status") or "AWAITING_LJ_EVALUATION",
@@ -256,9 +291,9 @@ def evaluation_result_from_state(record):
       "economic_value":record.get("economic_value"),
       "pom_value":record.get("pom_value"),
       "market_baseline_probability":market.get("implied_probability"),
-      "player_projection":record.get("player_projection"),
-      "feature_state":record.get("feature_state"),
-      "spectrum":record.get("spectrum"),
+      "player_projection":player_projection,
+      "feature_state":feature,
+      "spectrum":spectrum,
       "evaluation_reason":record.get("evaluation_reason"),
     }
 
@@ -892,6 +927,15 @@ def main():
               "game_context_hash":material.get("game_context_hash"),
               "tournament_context_hash":material.get("tournament_context_hash"),
             }
+            feature_for_state=result.get("feature_state") or {}
+            if isinstance(feature_for_state,dict):
+                feature_for_state=dict(feature_for_state)
+                perf_for_state=dict(feature_for_state.get("performance") or {})
+                # distribution already contains the same projection; avoid storing
+                # player_projection twice inside every live evaluation state.
+                perf_for_state.pop("player_projection",None)
+                feature_for_state["performance"]=perf_for_state
+            spectrum_for_state=result.get("spectrum") or {}
             state_record={
               "evaluation_id":evaluation_id,"evaluation_key":evaluation_key,
               "material_hash":material_hash,"material_basis":basis,"evaluated_at_utc":evaluated_at,
@@ -900,8 +944,8 @@ def main():
               "evaluation_status":result.get("evaluation_status"),
               "legz_baseline":result.get("legz_baseline"),"jinx_input":result.get("jinx_input"),
               "ljpc":result.get("ljpc"),"legz_value":result.get("legz_value"),"economic_value":result.get("economic_value"),"pom_value":result.get("pom_value"),
-              "player_projection":result.get("player_projection"),
-              "feature_state":result.get("feature_state"),"spectrum":result.get("spectrum"),
+              "feature_state":feature_for_state,
+              "spectrum_performance":spectrum_for_state.get("performance") or [],
               "evaluation_reason":result.get("evaluation_reason"),
             }
             records_by_id[evaluation_id]=state_record
@@ -923,14 +967,14 @@ def main():
       "generated_at_utc":datetime.now(timezone.utc).isoformat(),
       "retention_policy":"LIVE_CURRENT_BOARD_RECORDS_PLUS_LATEST_HASH_INDEX",
       "historical_record_authority":"LSI Archive Memory Layer / evaluation_state_history shards",
-      "latest_index_policy":"All known evaluation keys retain evaluation_id + material_hash metadata; full feature payloads remain live only while present on the current QC board.",
+      "latest_index_policy":"All known evaluation keys retain evaluation_id + material_hash metadata; one compact canonical feature payload remains live only while present on the current QC board.",
       "records_before_compaction":before_compaction,
       "record_count":len(records_by_id),
       "latest_key_count":len(latest),
       "records":list(records_by_id.values()),
       "latest_by_key":latest,
     }
-    EVAL_STATE.write_text(json.dumps(state_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    # Machine state is intentionally minified. At thousands of live offered POMs,\n    # pretty-print whitespace alone can push the state artifact over the CI size guard.\n    EVAL_STATE.write_text(json.dumps(state_payload,separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
     synthetic_events=[]; synthetic_count=0
     for event in payload.get("events") or []:
         props=[p for p in (event.get("props") or []) if p.get("synthetic") or p.get("model_generated")]
