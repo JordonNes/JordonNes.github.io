@@ -6,6 +6,10 @@ const state={
   documents:[],
   sources:[],
   communityEvidence:null,
+  fishingCalendar:null,
+  calendarStationId:'9414863',
+  calendarMonth:null,
+  calendarDate:null,
   selectedLocation:null,
   selectedSpecies:null,
   publicWater:null,
@@ -800,6 +804,408 @@ function initMap(){
   setTimeout(()=>map.invalidateSize(),100);
 }
 
+function localCalendarDateKey(date=new Date()){
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
+  const p=Object.fromEntries(parts.filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
+  return `${p.year}-${p.month}-${p.day}`;
+}
+function shiftCalendarMonth(monthKey,delta){
+  const [year,month]=String(monthKey).split('-').map(Number);
+  const d=new Date(Date.UTC(year,month-1+delta,1,12));
+  return d.toISOString().slice(0,7);
+}
+function calendarMonthName(monthKey){
+  const [year,month]=String(monthKey).split('-').map(Number);
+  return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(year,month-1,1,12)));
+}
+function calendarStations(){return Object.values(state.fishingCalendar?.stations||{});}
+function selectedCalendarStation(){
+  return state.fishingCalendar?.stations?.[state.calendarStationId]||calendarStations()[0]||null;
+}
+function calendarDay(dateKey){
+  return selectedCalendarStation()?.days?.find(day=>day.date===dateKey)||null;
+}
+function fishScale(rating){
+  const n=Math.max(0,Math.min(6,Number(rating)||0));
+  return `<span class="fish-scale" aria-label="${n} out of 6 fish">${Array.from({length:6},(_,i)=>`<span class="${i<n?'active':''}">🐟</span>`).join('')}</span>`;
+}
+function activityClass(label){return String(label||'low').toLowerCase().replaceAll(' ','-');}
+function dateNumber(dateKey){return Number(String(dateKey).slice(8,10));}
+function stationDistanceKm(lat,lng,station){
+  return haversineKm({lat:Number(lat),lng:Number(lng)},{lat:Number(station.lat),lng:Number(station.lng)});
+}
+function formatCalendarDay(dateKey){
+  const [year,month,day]=String(dateKey).split('-').map(Number);
+  return new Intl.DateTimeFormat('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(year,month-1,day,12)));
+}
+function calendarWeatherSummary(){
+  if(!state.selectedLocation)return 'Select a RICHFISH location for live weather context';
+  const weather=weatherForLocation(state.selectedLocation);
+  if(!weather)return 'No current NWS weather binding for selected location';
+  const candidate=weather.current||weather.hourly?.[0]||weather.periods?.[0]||weather;
+  const values=[];
+  const temp=candidate?.temperatureF??candidate?.temperature??candidate?.tempF;
+  const wind=candidate?.windSpeedMph??candidate?.windSpeed??candidate?.wind_mph;
+  const dir=candidate?.windDirection??candidate?.wind_dir;
+  if(Number.isFinite(Number(temp)))values.push(`${cleanNumber(temp,0)}°F`);
+  if(Number.isFinite(Number(wind)))values.push(`${cleanNumber(wind,0)} mph${dir?` ${dir}`:''}`);
+  return values.join(' · ')||'Current NWS weather layer is available';
+}
+function renderCalendarWeekStrip(){
+  const el=$('#calendar-week-strip');
+  if(!el||!state.fishingCalendar)return;
+  const today=localCalendarDateKey();
+  const station=selectedCalendarStation();
+  if(!station)return;
+  const startIndex=station.days.findIndex(d=>d.date===today);
+  const start=startIndex>=0?startIndex:Math.max(0,station.days.findIndex(d=>d.date>today));
+  const days=station.days.slice(start,start+7);
+  el.innerHTML=days.map(day=>`
+    <button type="button" class="calendar-week-day ${day.date===state.calendarDate?'selected':''}" data-calendar-date="${escapeHtml(day.date)}">
+      <small>${escapeHtml(new Intl.DateTimeFormat('en-US',{weekday:'short',timeZone:'UTC'}).format(new Date(day.date+'T12:00:00Z')))}</small>
+      <strong>${dateNumber(day.date)}</strong>
+      <span>${escapeHtml(day.moon?.symbol||'🌙')} · ${escapeHtml(day.activity_label||'')}</span>
+      <b>🐟 ${escapeHtml(day.ray_fish_rating??0)}/6</b>
+    </button>`).join('');
+  el.querySelectorAll('[data-calendar-date]').forEach(button=>button.addEventListener('click',()=>{
+    state.calendarDate=button.dataset.calendarDate;
+    state.calendarMonth=state.calendarDate.slice(0,7);
+    renderFishingCalendar();
+  }));
+}
+function renderCalendarDetail(day){
+  const panel=$('#calendar-detail');
+  const station=selectedCalendarStation();
+  if(!panel||!station)return;
+  if(!day){
+    panel.innerHTML='<span class="eyebrow">DAY PLAN</span><h3>No calendar data for this date.</h3>';
+    return;
+  }
+  const evidence=state.selectedLocation?evidenceForLocation(state.selectedLocation):[];
+  const tier=strongestEvidenceTier(evidence);
+  const tideRows=(day.tides||[]).map(t=>`
+    <div class="calendar-tide-row">
+      <b class="${t.type==='high'?'high':'low'}">${t.type==='high'?'HIGH':'LOW'}</b>
+      <strong>${escapeHtml(t.local_time||'')}</strong>
+      <span>${escapeHtml(cleanNumber(t.height_ft,1)??'—')} ft MLLW</span>
+    </div>`).join('')||'<p>No NOAA high/low predictions were returned.</p>';
+  const major=(day.solunar?.major||[]).map(w=>`<li><b>${escapeHtml(w.label)}</b> · ${escapeHtml(w.local)}</li>`).join('');
+  const minor=(day.solunar?.minor||[]).map(w=>`<li><b>${escapeHtml(w.label)}</b> · ${escapeHtml(w.local)}</li>`).join('');
+  const basis=day.rating_basis||{};
+  panel.innerHTML=`
+    <span class="eyebrow">DAY PLAN · ${escapeHtml(station.name)}</span>
+    <h3>${escapeHtml(formatCalendarDay(day.date))}</h3>
+    <div class="calendar-rating-hero ${activityClass(day.activity_label)}">
+      <div><small>CALENDAR RATING</small><strong>${escapeHtml(day.ray_fish_rating)}/6</strong><span>${escapeHtml(day.activity_label)}</span></div>
+      ${fishScale(day.ray_fish_rating)}
+    </div>
+    <div class="ray-call-grid">
+      ${dataCard('Tide range',day.tide_range_ft!=null?`${cleanNumber(day.tide_range_ft,2)} ft`:'Unavailable',`Tide Energy ${day.tide_energy_index??'—'}/100`)}
+      ${dataCard('Moon',`${day.moon?.symbol||'🌙'} ${day.moon?.phase||'Unknown'}`,`${day.moon?.illumination_pct??'—'}% illuminated`)}
+      ${dataCard('Sun',`${day.sun?.sunrise||'—'} → ${day.sun?.sunset||'—'}`,'Local Pacific time')}
+      ${dataCard('Moonrise / set',`${day.moon?.moonrise||'—'} / ${day.moon?.moonset||'—'}`,'Local Pacific time')}
+    </div>
+
+    <div class="calendar-detail-section">
+      <span class="eyebrow">NOAA TIDE TURNS</span>
+      <div class="calendar-tides">${tideRows}</div>
+    </div>
+
+    <div class="calendar-detail-section calendar-solunar">
+      <span class="eyebrow">SOLUNAR WINDOWS</span>
+      <div class="calendar-window-grid">
+        <div><small>Major</small><ul>${major||'<li>Unavailable</li>'}</ul></div>
+        <div><small>Minor</small><ul>${minor||'<li>Unavailable</li>'}</ul></div>
+      </div>
+    </div>
+
+    <div class="calendar-detail-section">
+      <span class="eyebrow">RATING EXPLANATION</span>
+      ${basis.browser_fallback?`<p>This browser-direct 0–6 fallback uses <b>${escapeHtml(basis.tide_movement_points??0)}</b>/5 points from relative NOAA monthly tide range plus <b>${escapeHtml(basis.spring_geometry_point??0)}</b>/1 point for new/full-moon geometry. Use the Fish Now panel above for the condition-heavy live rating.</p>`:`<p>The 0–6 rating rewards stronger relative tide movement plus useful overlap among tide turns, lunar windows and dawn/dusk. Today it received <b>${escapeHtml(basis.tide_movement_points??0)}</b>/2 tide-movement points and ${escapeHtml((basis.spring_geometry_point||0)+(basis.solunar_low_light_point||0)+(basis.tide_low_light_point||0)+(basis.tide_solunar_overlap_point||0))}/4 lunar/low-light alignment points.</p>`}
+      <p class="notice">${escapeHtml(basis.caveat||'This is general planning guidance, not catch probability.')}</p>
+    </div>
+
+    <div class="calendar-detail-section current-overlay">
+      <span class="eyebrow">CURRENT RICHFISH OVERLAY</span>
+      <div class="ray-call-grid">
+        ${dataCard('Selected fishing location',state.selectedLocation?.name||'None','Choose a location elsewhere in the Tavern')}
+        ${dataCard('Current weather',calendarWeatherSummary(),'NWS/RICHFISH live context')}
+        ${dataCard('Community evidence',evidence.length?`${evidence.length} record${evidence.length===1?'':'s'}`:'No registered reports',tierLabel(tier))}
+        ${dataCard('Station datum','MLLW','NOAA CO-OPS prediction reference')}
+      </div>
+    </div>
+
+    <p class="calendar-source-links">
+      <a href="https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=${encodeURIComponent(station.id)}" target="_blank" rel="noopener">NOAA station predictions →</a>
+      <a href="https://tides4fishing.com/us/california/richmond" target="_blank" rel="noopener">Tides4Fishing reference →</a>
+    </p>`;
+}
+const BROWSER_CALENDAR_STATIONS=[
+  {id:'9414863',name:'Richmond, CA',role:'Richmond / San Pablo Bay',lat:37.9283,lng:-122.4000},
+  {id:'9415102',name:'Martinez-Amorco Pier, CA',role:'Carquinez Strait',lat:38.0346,lng:-122.1252},
+  {id:'9415144',name:'Port Chicago, CA',role:'Suisun Bay',lat:38.0560,lng:-122.0395},
+  {id:'9414290',name:'San Francisco, CA',role:'Central Bay / Golden Gate',lat:37.8063,lng:-122.4659},
+  {id:'9414750',name:'Alameda, CA',role:'Central / South Bay',lat:37.7717,lng:-122.3000},
+  {id:'9415020',name:'Point Reyes, CA',role:'Outer coast',lat:37.9942,lng:-122.9748}
+];
+const calendarTimeFormatter=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'numeric',minute:'2-digit'});
+function calendarZoneParts(date){
+  return Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(date).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+}
+function calendarZonedDate(dateStr,hour=12,minute=0){
+  const [year,month,day]=dateStr.split('-').map(Number);
+  let guess=new Date(Date.UTC(year,month-1,day,hour,minute,0));
+  for(let i=0;i<3;i++){
+    const p=calendarZoneParts(guess);
+    const represented=Date.UTC(Number(p.year),Number(p.month)-1,Number(p.day),Number(p.hour),Number(p.minute),Number(p.second));
+    guess=new Date(guess.getTime()+(Date.UTC(year,month-1,day,hour,minute,0)-represented));
+  }
+  return guess;
+}
+function calendarMoonSymbol(phaseName){
+  return ({'New Moon':'🌑','Waxing Crescent':'🌒','First Quarter':'🌓','Waxing Gibbous':'🌔','Full Moon':'🌕','Waning Gibbous':'🌖','Last Quarter':'🌗','Waning Crescent':'🌘'})[phaseName]||'🌙';
+}
+function calendarMoonPhaseName(phase){
+  const p=((phase%1)+1)%1;
+  if(p<.03||p>=.97)return 'New Moon';
+  if(p<.22)return 'Waxing Crescent';
+  if(p<.28)return 'First Quarter';
+  if(p<.47)return 'Waxing Gibbous';
+  if(p<.53)return 'Full Moon';
+  if(p<.72)return 'Waning Gibbous';
+  if(p<.78)return 'Last Quarter';
+  return 'Waning Crescent';
+}
+function calendarWindow(center,minutes,label,type){
+  if(!(center instanceof Date)||Number.isNaN(center.getTime()))return null;
+  return {type,label,center:center.toISOString(),local:`${calendarTimeFormatter.format(new Date(center.getTime()-minutes*60000))}–${calendarTimeFormatter.format(new Date(center.getTime()+minutes*60000))}`};
+}
+function calendarAstronomy(dateKey,station){
+  const SunCalc=window.SunCalc;
+  if(!SunCalc)return {moon:{phase:'Unknown',symbol:'🌙',illumination_pct:null,moonrise:null,moonset:null},sun:{sunrise:null,sunset:null},solunar:{major:[],minor:[]},spring:0};
+  const noon=calendarZonedDate(dateKey,12,0);
+  const sun=SunCalc.getTimes(noon,station.lat,station.lng);
+  const moonTimes=SunCalc.getMoonTimes(noon,station.lat,station.lng,true);
+  const illum=SunCalc.getMoonIllumination(noon);
+  const phase=calendarMoonPhaseName(illum.phase);
+  let high=null,low=null;
+  for(let minute=0;minute<1440;minute+=15){
+    const d=calendarZonedDate(dateKey,Math.floor(minute/60),minute%60);
+    const altitude=SunCalc.getMoonPosition(d,station.lat,station.lng).altitude;
+    if(!high||altitude>high.altitude)high={date:d,altitude};
+    if(!low||altitude<low.altitude)low={date:d,altitude};
+  }
+  const major=[calendarWindow(high?.date,60,'Moon overhead','major'),calendarWindow(low?.date,60,'Moon underfoot','major')].filter(Boolean);
+  const minor=[calendarWindow(moonTimes.rise,30,'Moonrise','minor'),calendarWindow(moonTimes.set,30,'Moonset','minor')].filter(Boolean);
+  return {
+    moon:{phase,symbol:calendarMoonSymbol(phase),illumination_pct:Math.round((illum.fraction||0)*100),phase_fraction:Number(illum.phase.toFixed(4)),moonrise:moonTimes.rise?calendarTimeFormatter.format(moonTimes.rise):null,moonset:moonTimes.set?calendarTimeFormatter.format(moonTimes.set):null},
+    sun:{sunrise:sun.sunrise?calendarTimeFormatter.format(sun.sunrise):null,sunset:sun.sunset?calendarTimeFormatter.format(sun.sunset):null},
+    solunar:{major,minor},
+    spring:Math.abs(Math.cos(2*Math.PI*illum.phase))
+  };
+}
+function initializeBrowserCalendar(){
+  if(state.fishingCalendar)return;
+  const stations={};
+  for(const station of BROWSER_CALENDAR_STATIONS){
+    stations[station.id]={...station,datum:'MLLW',units:'feet',time_zone:'America/Los_Angeles',days:[]};
+  }
+  state.fishingCalendar={
+    schema_version:'browser-fallback-0.1',
+    generated_at:new Date().toISOString(),
+    browser_fallback:true,
+    methodology:{numerical_authority:'NOAA CO-OPS predictions fetched directly by the browser',lunar_solar_engine:'SunCalc browser calculation'},
+    stations
+  };
+}
+function monthEndKey(monthKey){
+  const [year,month]=monthKey.split('-').map(Number);
+  const count=new Date(Date.UTC(year,month,0,12)).getUTCDate();
+  return `${monthKey}-${String(count).padStart(2,'0')}`;
+}
+function calendarLocalTimeFromNoaa(value){
+  const time=String(value||'').split(' ')[1]||'';
+  const [h,m]=time.split(':').map(Number);
+  if(!Number.isFinite(h)||!Number.isFinite(m))return time||'—';
+  const suffix=h>=12?'PM':'AM',hour=(h%12)||12;
+  return `${hour}:${String(m).padStart(2,'0')} ${suffix}`;
+}
+function calendarPercentile(values,p){
+  const a=values.filter(Number.isFinite).sort((x,y)=>x-y);
+  if(!a.length)return null;
+  const idx=(a.length-1)*p,lo=Math.floor(idx),hi=Math.ceil(idx);
+  return lo===hi?a[lo]:a[lo]+(a[hi]-a[lo])*(idx-lo);
+}
+async function ensureBrowserCalendarMonth(stationId,monthKey){
+  initializeBrowserCalendar();
+  const station=state.fishingCalendar?.stations?.[stationId];
+  if(!station)return;
+  if(station.days.some(d=>d.date.startsWith(monthKey)))return;
+  const sync=$('#calendar-sync');
+  if(sync)sync.textContent=`Loading ${calendarMonthName(monthKey)} NOAA tides…`;
+  const url=new URL('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter');
+  url.searchParams.set('product','predictions');
+  url.searchParams.set('application','RICHFISH_BROWSER');
+  url.searchParams.set('begin_date',(`${monthKey}-01`).replaceAll('-',''));
+  url.searchParams.set('end_date',monthEndKey(monthKey).replaceAll('-',''));
+  url.searchParams.set('datum','MLLW');
+  url.searchParams.set('station',station.id);
+  url.searchParams.set('time_zone','lst_ldt');
+  url.searchParams.set('units','english');
+  url.searchParams.set('interval','hilo');
+  url.searchParams.set('format','json');
+  const response=await fetch(url.toString(),{headers:{Accept:'application/json'}});
+  if(!response.ok)throw new Error(`NOAA calendar request returned ${response.status}`);
+  const payload=await response.json();
+  if(payload?.error)throw new Error(payload.error.message||'NOAA calendar request failed');
+  const grouped={};
+  for(const row of payload.predictions||[]){
+    const date=String(row.t).slice(0,10);
+    (grouped[date]??=[]).push(row);
+  }
+  const [year,month]=monthKey.split('-').map(Number),count=new Date(Date.UTC(year,month,0,12)).getUTCDate();
+  const days=[];
+  for(let n=1;n<=count;n++){
+    const date=`${monthKey}-${String(n).padStart(2,'0')}`,rows=grouped[date]||[];
+    const astronomy=calendarAstronomy(date,station);
+    const tides=rows.map(row=>({time:row.t,local_time:calendarLocalTimeFromNoaa(row.t),type:row.type==='H'?'high':'low',height_ft:Number(row.v)}));
+    const highs=tides.filter(t=>t.type==='high').map(t=>t.height_ft),lows=tides.filter(t=>t.type==='low').map(t=>t.height_ft);
+    const range=highs.length&&lows.length?Math.max(...highs)-Math.min(...lows):null;
+    days.push({date,moon:astronomy.moon,sun:astronomy.sun,solunar:astronomy.solunar,tides,tide_range_ft:range==null?null:Number(range.toFixed(2)),_spring:astronomy.spring});
+  }
+  const ranges=days.map(d=>d.tide_range_ft).filter(Number.isFinite),p10=calendarPercentile(ranges,.1),p90=calendarPercentile(ranges,.9);
+  const denom=(p10!=null&&p90!=null&&p90>p10)?(p90-p10):1;
+  for(const day of days){
+    const energy=day.tide_range_ft==null?null:Math.round(Math.max(0,Math.min(1,(day.tide_range_ft-(p10??day.tide_range_ft))/denom))*100);
+    const tidePoints=energy==null?0:Math.max(0,Math.min(5,Math.round(energy/20)));
+    const lunarPoint=day._spring>=.7?1:0;
+    const rating=Math.max(0,Math.min(6,tidePoints+lunarPoint));
+    day.tide_energy_index=energy;
+    day.ray_fish_rating=rating;
+    day.activity_label=rating>=6?'PRIME':rating===5?'VERY GOOD':rating===4?'GOOD':rating===3?'MODERATE':rating===2?'FAIR':'LOW';
+    day.rating_basis={browser_fallback:true,tide_movement_points:tidePoints,spring_geometry_point:lunarPoint,solunar_low_light_point:0,tide_low_light_point:0,tide_solunar_overlap_point:0,max_points:6,caveat:'Browser-direct fallback: 0–5 points from relative NOAA monthly tide range plus at most 1 point for new/full-moon geometry. It is not catch probability. The live Fish Now rating separately weighs season, weather, water and community evidence.'};
+    delete day._spring;
+  }
+  station.days.push(...days);
+  station.days.sort((a,b)=>a.date.localeCompare(b.date));
+  state.fishingCalendar.generated_at=new Date().toISOString();
+}
+
+function renderFishingCalendar(){
+  const data=state.fishingCalendar;
+  const grid=$('#calendar-grid');
+  const title=$('#calendar-month-title');
+  const note=$('#calendar-station-note');
+  const select=$('#calendar-station');
+  if(!grid||!title||!select)return;
+  if(!data){
+    grid.innerHTML='<div class="calendar-empty">Fishing calendar data is not available yet. The live build will populate it from NOAA CO-OPS.</div>';
+    title.textContent='Calendar feed unavailable';
+    return;
+  }
+  const stations=calendarStations();
+  if(!stations.length)return;
+  if(!state.calendarStationId||!data.stations?.[state.calendarStationId])state.calendarStationId=stations[0].id;
+  if(!select.options.length){
+    select.innerHTML=stations.map(s=>`<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)} · ${escapeHtml(s.role||'')}</option>`).join('');
+  }
+  select.value=state.calendarStationId;
+  const today=localCalendarDateKey();
+  if(!state.calendarMonth)state.calendarMonth=today.slice(0,7);
+  if(!state.calendarDate)state.calendarDate=calendarDay(today)?today:(selectedCalendarStation()?.days?.find(d=>d.date.startsWith(state.calendarMonth))?.date||null);
+
+  title.textContent=calendarMonthName(state.calendarMonth);
+  const station=selectedCalendarStation();
+  note.textContent=`${station.name} · ${station.role||''} · ${station.datum||'MLLW'}`;
+  const [year,month]=state.calendarMonth.split('-').map(Number);
+  const firstDay=new Date(Date.UTC(year,month-1,1,12)).getUTCDay();
+  const count=new Date(Date.UTC(year,month,0,12)).getUTCDate();
+  const cells=[];
+  for(let i=0;i<firstDay;i++)cells.push('<div class="calendar-cell blank" aria-hidden="true"></div>');
+  for(let dayNum=1;dayNum<=count;dayNum++){
+    const dateKey=`${state.calendarMonth}-${String(dayNum).padStart(2,'0')}`;
+    const day=calendarDay(dateKey);
+    const selected=dateKey===state.calendarDate;
+    const todayClass=dateKey===today;
+    if(!day){
+      cells.push(`<button class="calendar-cell unavailable" type="button" disabled><span class="calendar-date">${dayNum}</span><small>No data</small></button>`);
+      continue;
+    }
+    const compactTides=(day.tides||[]).slice(0,4).map(t=>`<span class="${t.type}">${t.type==='high'?'H':'L'} ${escapeHtml(t.local_time)} ${escapeHtml(cleanNumber(t.height_ft,1))}′</span>`).join('');
+    cells.push(`
+      <button class="calendar-cell ${selected?'selected':''} ${todayClass?'today':''}" type="button" data-calendar-date="${dateKey}">
+        <div class="calendar-cell-top"><span class="calendar-date">${dayNum}</span><span class="calendar-moon" title="${escapeHtml(day.moon?.phase||'')}">${escapeHtml(day.moon?.symbol||'🌙')}</span></div>
+        <div class="calendar-cell-rating"><b>🐟 ${escapeHtml(day.ray_fish_rating)}/6</b><small>${escapeHtml(day.activity_label)}</small></div>
+        <div class="calendar-mini-tides">${compactTides}</div>
+        <div class="calendar-cell-foot"><span>Range ${day.tide_range_ft!=null?escapeHtml(cleanNumber(day.tide_range_ft,1))+' ft':'—'}</span><span>${escapeHtml(day.moon?.illumination_pct??'—')}% moon</span></div>
+      </button>`);
+  }
+  grid.innerHTML=cells.join('');
+  grid.querySelectorAll('[data-calendar-date]').forEach(button=>button.addEventListener('click',()=>{
+    state.calendarDate=button.dataset.calendarDate;
+    renderFishingCalendar();
+  }));
+  renderCalendarDetail(calendarDay(state.calendarDate));
+  renderCalendarWeekStrip();
+  const sync=$('#calendar-sync');
+  if(sync){
+    const generated=data.generated_at?new Date(data.generated_at).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'unknown';
+    sync.textContent=`NOAA-backed calendar · built ${generated}`;
+  }
+}
+async function initFishingCalendar(){
+  const select=$('#calendar-station');
+  const prev=$('#calendar-prev'),next=$('#calendar-next'),today=$('#calendar-today'),near=$('#calendar-near-me');
+  if(!select)return;
+  initializeBrowserCalendar();
+  const todayKey=localCalendarDateKey();
+  if(!state.calendarMonth)state.calendarMonth=todayKey.slice(0,7);
+  try{await ensureBrowserCalendarMonth(state.calendarStationId,state.calendarMonth);}
+  catch(error){console.warn('Browser calendar fallback unavailable',error);}
+
+  select.addEventListener('change',async()=>{
+    state.calendarStationId=select.value;
+    try{await ensureBrowserCalendarMonth(state.calendarStationId,state.calendarMonth||todayKey.slice(0,7));}
+    catch(error){console.warn('Calendar station load failed',error);}
+    state.calendarDate=calendarDay(todayKey)?todayKey:(selectedCalendarStation()?.days?.find(d=>d.date.startsWith(state.calendarMonth||todayKey.slice(0,7)))?.date||null);
+    renderFishingCalendar();
+  });
+  prev?.addEventListener('click',async()=>{
+    state.calendarMonth=shiftCalendarMonth(state.calendarMonth||todayKey.slice(0,7),-1);
+    try{await ensureBrowserCalendarMonth(state.calendarStationId,state.calendarMonth);}catch(error){console.warn(error);}
+    state.calendarDate=selectedCalendarStation()?.days?.find(d=>d.date.startsWith(state.calendarMonth))?.date||null;
+    renderFishingCalendar();
+  });
+  next?.addEventListener('click',async()=>{
+    state.calendarMonth=shiftCalendarMonth(state.calendarMonth||todayKey.slice(0,7),1);
+    try{await ensureBrowserCalendarMonth(state.calendarStationId,state.calendarMonth);}catch(error){console.warn(error);}
+    state.calendarDate=selectedCalendarStation()?.days?.find(d=>d.date.startsWith(state.calendarMonth))?.date||null;
+    renderFishingCalendar();
+  });
+  today?.addEventListener('click',async()=>{
+    const key=localCalendarDateKey();state.calendarMonth=key.slice(0,7);
+    try{await ensureBrowserCalendarMonth(state.calendarStationId,state.calendarMonth);}catch(error){console.warn(error);}
+    state.calendarDate=calendarDay(key)?key:null;renderFishingCalendar();
+  });
+  near?.addEventListener('click',()=>{
+    if(!navigator.geolocation){near.textContent='Location unavailable';return;}
+    near.disabled=true;near.textContent='Locating…';
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      const stations=calendarStations().filter(s=>Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng)));
+      const nearest=stations.map(s=>({station:s,distance:stationDistanceKm(pos.coords.latitude,pos.coords.longitude,s)})).sort((a,b)=>a.distance-b.distance)[0];
+      if(nearest){
+        state.calendarStationId=nearest.station.id;
+        const key=localCalendarDateKey();state.calendarMonth=key.slice(0,7);
+        try{await ensureBrowserCalendarMonth(state.calendarStationId,state.calendarMonth);}catch(error){console.warn(error);}
+        state.calendarDate=calendarDay(key)?key:null;renderFishingCalendar();
+        const note=$('#calendar-station-note');if(note)note.textContent+=` · nearest calendar station ${cleanNumber(nearest.distance,1)} km away`;
+      }
+      near.disabled=false;near.textContent='Use my location';
+    },()=>{near.disabled=false;near.textContent='Use my location';},{enableHighAccuracy:true,timeout:10000,maximumAge:300000});
+  });
+  renderFishingCalendar();
+}
+
 function updateRayContext(){
   const locationEl=$('#ray-location-context');
   const speciesEl=$('#ray-species-context');
@@ -912,7 +1318,7 @@ function nav(){
 }
 async function boot(){
   try{
-    [state.liveSpots,state.liveSpecies,state.locations,state.speciesCatalog,state.documents,state.sources,state.communityEvidence,state.publicWater,state.conditionEngine]=await Promise.all([
+    [state.liveSpots,state.liveSpecies,state.locations,state.speciesCatalog,state.documents,state.sources,state.communityEvidence,state.publicWater,state.fishingCalendar,state.conditionEngine]=await Promise.all([
       getJson('spots.json'),
       getJson('species.json'),
       getJson('catalog/locations.json'),
@@ -921,6 +1327,7 @@ async function boot(){
       getJson('sources.json'),
       getJson('community-evidence.json'),
       getJsonOptional('live/public-water.json'),
+      getJsonOptional('live/fishing-calendar.json'),
       getJsonOptional('live/condition-engine.json')
     ]);
     state.locations=Array.isArray(state.locations)?state.locations:(state.locations?.locations||[]);
@@ -935,6 +1342,7 @@ async function boot(){
     renderDocuments();
     renderSources();
     renderEvidenceStatus();
+    initFishingCalendar();
     initRayChat();
     $('#spot-search')?.addEventListener('input',e=>renderSpotList(e.target.value));
     $('#species-search')?.addEventListener('input',e=>renderSpeciesList(e.target.value));
