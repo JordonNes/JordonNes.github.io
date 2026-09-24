@@ -57,6 +57,23 @@
     if(/^PROPLINE[:|]/i.test(raw)) return 'PROPLINE|'+raw.replace(/^PROPLINE[:|]/i,'');
     return raw;
   };
+  const marketSourceTooltip=(market={})=>{
+    const src=n(market.market_source||market.source||market.provider||'');
+    const book=n(market.book||market.best_book||'');
+    if(src&&book){
+      if(norm(src)===norm(book)) return publicBookLabel(book,src);
+      if(/^PROPLINE(?:[:|]|$)/i.test(src)) return `PROPLINE|${book}`;
+      if(/^PROPLINE[:|]/i.test(book)) return book;
+      return `${src}|${book}`;
+    }
+    return publicBookLabel(book,src);
+  };
+  const ptTimeLabel=value=>{
+    const d=new Date(value);
+    if(!Number.isFinite(d.getTime())) return '';
+    return new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'numeric',minute:'2-digit',hour12:true})
+      .format(d).replace(/\s+/g,'').toLowerCase();
+  };
   const priceLabel=(price,book='')=>{
     const x=Number(price);
     if(price===null||price===undefined||price===''||!Number.isFinite(x)) return 'price recheck';
@@ -384,16 +401,18 @@
       const eventKey=String(p.event_id||'').toLowerCase();
       if(eventKey) winnerEvents.add(eventKey);
       const winner=String(p.participant||p.selection||p.pick||'').replace(/\s+ML$/i,'').trim();
-      const price=p.price!==null&&p.price!==undefined&&p.price!==''?`${Number(p.price)>0?'+':''}${p.price}`:'';
-      const book=publicBookLabel(p.book||'',p.market_source||p.source||'');
-      const offer=[price,book].filter(Boolean).join(' ');
+      const rawPrice=priceLabel(p.price);
+      const price=rawPrice==='price recheck'?'':rawPrice;
+      const sourceTip=marketSourceTooltip(p);
+      const statValue=Number(p.market_baseline_probability ?? p.provisional_probability ?? p.market_probability);
       winnerRows.push([
         p.opponent? `${winner} vs ${p.opponent}` : (p.event_id||winner||"Upcoming event"),
-        `${winner} ML${offer?` • ${offer}`:''}`,
+        `${winner} ML${price?` • ${price}`:''}`,
         pct(ljpcOf(p)),
         `GAME ODDS • ${winner}${price?` ${price}`:''}`,
-        Number.isFinite(Number(p.market_baseline_probability ?? p.provisional_probability ?? p.market_probability)) ? pct(Number(p.market_baseline_probability ?? p.provisional_probability ?? p.market_probability)) : '',
-        legzComponent(p),jinxComponent(p)
+        Number.isFinite(statValue)&&statValue>0 ? pct(statValue) : '??%',
+        legzComponent(p),jinxComponent(p),
+        ptTimeLabel(p.event_start_pt),sourceTip
       ]);
     }
     for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x)).sort((a,b)=>eventStartMs(a)-eventStartMs(b))){
@@ -402,16 +421,18 @@
       const sides=[...(e.game_markets||[])].filter(isCurrentGameMl).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
       const best=sides[0]; if(!best) continue;
       const winner=String(best.selection||best.participant||'').replace(/\s+ML$/i,'').trim();
-      const price=best.price!==null&&best.price!==undefined&&best.price!==''?`${Number(best.price)>0?'+':''}${best.price}`:'';
-      const book=publicBookLabel(best.book||best.best_book||'',best.source||'');
-      const offer=[price,book].filter(Boolean).join(' ');
+      const rawPrice=priceLabel(best.price);
+      const price=rawPrice==='price recheck'?'':rawPrice;
+      const sourceTip=marketSourceTooltip(best);
+      const statValue=Number(best.market_baseline_probability ?? best.provisional_probability ?? best.market_probability);
       winnerRows.push([
         `${e.away||''} @ ${e.home||''}`,
-        `${winner} ML${offer?` • ${offer}`:''}`,
+        `${winner} ML${price?` • ${price}`:''}`,
         pct(ljpcOf(best)),
         `GAME ODDS • ${winner}${price?` ${price}`:''}`,
-        Number.isFinite(Number(best.market_baseline_probability ?? best.provisional_probability ?? best.market_probability)) ? pct(Number(best.market_baseline_probability ?? best.provisional_probability ?? best.market_probability)) : '',
-        legzComponent(best),jinxComponent(best)
+        Number.isFinite(statValue)&&statValue>0 ? pct(statValue) : '??%',
+        legzComponent(best),jinxComponent(best),
+        ptTimeLabel(e.commence_time||e.event_start_pt),sourceTip
       ]);
     }
     // Game Winners are current-state only. Never preserve a market-only or stale
@@ -1039,15 +1060,18 @@
       const sides=[...(event.game_markets||[])].filter(isCurrentGameMl).sort((a,b)=>ljpcOf(b)-ljpcOf(a));
       const match=sides.find(g=>norm(g.selection||g.participant)===norm(winner));
       if(!match) continue;
-      const price=match.price!==null&&match.price!==undefined&&match.price!==''?`${Number(match.price)>0?'+':''}${match.price}`:'';
-      const book=publicBookLabel(match.book||match.best_book||'',match.source||'');
-      const offer=[price,book].filter(Boolean).join(' ');
+      const rawPrice=priceLabel(match.price);
+      const price=rawPrice==='price recheck'?'':rawPrice;
+      const sourceTip=marketSourceTooltip(match);
+      const statValue=Number(match.market_baseline_probability ?? match.provisional_probability ?? match.market_probability);
       qcWinners.push([
         `${event.away||q.away||''} @ ${event.home||q.home||''}`,
-        `${winner} ML${offer?` • ${offer}`:''}`,
+        `${winner} ML${price?` • ${price}`:''}`,
         pct(confNum),
         `GAME ODDS • ${winner}${price?` ${price}`:''}`,
-        ''
+        Number.isFinite(statValue)&&statValue>0 ? pct(statValue) : '??%',
+        legzComponent(match),jinxComponent(match),
+        ptTimeLabel(event.commence_time||event.event_start_pt),sourceTip
       ]);
     }
     // The visible Game Winner board is derived only from the deduplicated current
