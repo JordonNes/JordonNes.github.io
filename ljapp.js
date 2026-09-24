@@ -172,7 +172,20 @@
   }
   function winners(items,label="JINX GAME WINNERS"){
     const mlOnly=(items||[]).filter(r=>/\bML\b|MONEYLINE/i.test(String((r||[])[1]||"")+" "+String((r||[])[3]||"")));
-    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>MONEYLINE ONLY</span></div>${mlOnly.length ? `<ul class="headliner-list">${mlOnly.map(r=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${esc(r[0])}: ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4],r[5],r[6])}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX MONEYLINE</b><p>No current L&J-evaluated moneyline prediction is published for this section.</p></div>`}</div>`;
+    const renderWinner=r=>{
+      const pick=String((r||[])[1]||"").trim();
+      const split=pick.match(/^(.*?)\s+ML\b(.*)$/i);
+      const winner=(split?.[1]||pick).trim();
+      const tail=String(split?.[2]||"");
+      const price=(tail.match(/[+-]?\d+(?:\.\d+)?(?:¢)?/)||[])[0]||"";
+      const gameTime=String((r||[])[7]||"").trim();
+      const sourceTip=String((r||[])[8]||"").trim();
+      const stat=String((r||[])[4]||"").trim()||"??%";
+      const marketText=`ML${price?` • ${price}`:""}`;
+      const marketAttrs=sourceTip?` title="${esc(sourceTip)}" aria-label="${esc(marketText)} source ${esc(sourceTip)}"`:"";
+      return `<li class="gw-row ${isWatch(r.join(" • "))?"qc-watch":""}"><div class="gw-matchup"><strong>${esc(r[0])}</strong>${gameTime?` <span class="gw-time">${esc(gameTime)}</span>`:""}</div><div class="gw-pickline"><strong class="gw-winner">${esc(winner)}</strong><span class="gw-market"${marketAttrs}>${esc(marketText)}</span><span class="gw-confidence">${ljpcBadge(r[2],stat,r[5],r[6])}</span></div></li>`;
+    };
+    return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>MONEYLINE ONLY</span></div>${mlOnly.length ? `<ul class="headliner-list gw-list">${mlOnly.map(renderWinner).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX MONEYLINE</b><p>No current L&J-evaluated moneyline prediction is published for this section.</p></div>`}</div>`;
   }
   function ensureGameWinners(s){
     if(!s) return;
