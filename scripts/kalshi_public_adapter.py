@@ -194,9 +194,13 @@ def fetch_open_markets():
         forced={"NHL":["KXNHLPTS"]}
         for league,tickers in forced.items():
             for ticker in reversed(tickers):
-                if ticker not in candidates[league]:
-                    candidates[league].insert(0,ticker)
-                    targeted_diag["forced"].append(ticker)
+                # A forced series must be first even when it was already discovered.
+                # Previously, discovered KXNHLPTS stayed deep in the NHL queue and
+                # could still miss the per-league selection cap.
+                if ticker in candidates[league]:
+                    candidates[league].remove(ticker)
+                candidates[league].insert(0,ticker)
+                targeted_diag["forced"].append(ticker)
 
         queues={league:list(tickers) for league,tickers in sorted(candidates.items())}
         selected=[]
