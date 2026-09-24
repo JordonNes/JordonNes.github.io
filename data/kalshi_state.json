@@ -1,16 +1,15 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-09-24T16:15:08.251158+00:00",
+  "checked_at_utc": "2026-09-24T23:26:38.046149+00:00",
   "status": "OK",
-  "raw_market_count": 8685,
-  "normalized_props": 1316,
-  "history_rows_added": 1291,
+  "raw_market_count": 6676,
+  "normalized_props": 261,
+  "history_rows_added": 258,
   "skip_reasons": {
-    "ambiguous_matchup": 86,
-    "ambiguous_participant_threshold": 813,
-    "ok": 1316,
-    "unknown_sport": 6034,
-    "unsupported_market": 436
+    "ambiguous_participant_threshold": 4,
+    "ok": 261,
+    "unknown_sport": 6050,
+    "unsupported_market": 361
   },
   "skip_samples": {
     "unknown_sport": {
@@ -51,71 +50,58 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
-    },
-    "ambiguous_matchup": {
-      "ticker": "KXNHLSEASONGOALS-27C20-PKANE88",
-      "event_ticker": "KXNHLSEASONGOALS-27C20",
-      "series_ticker": "KXNHLSEASONGOALS",
-      "event_title": "NHL: 20+ Goals Season",
-      "title": "Patrick Kane: 20+ goals in 2026-27 NHL regular season?",
-      "subtitle": "Patrick Kane:: CHI Blackhawks",
-      "yes_sub_title": "Patrick Kane",
-      "primary_participant_key": "hockey_player",
-      "floor_strike": 19.5,
-      "functional_strike": null,
-      "occurrence_datetime": "2027-04-11T14:00:00Z"
     }
   },
   "targeted_series": {
     "selected": [
-      "KXMLBHRDERBYFIN",
-      "KXUFCWHITEHOUSE",
-      "KXNBAH2HPRA",
-      "KXNCAAFTEAMREC",
-      "KXNFLLADDERRSHYDS",
-      "KXNHLPTS",
-      "KXATPACES",
-      "KXWNBA3PTCONTESTOU",
       "KXMLBRBI",
       "KXUFCOCCUR",
       "KXNBA3PT",
-      "KXNCAAFTEAMRSHATT",
-      "KXNFLLONGFG",
-      "KXNHLTOTAL",
-      "KXWTAACES",
+      "KXNCAAFTEAMREC",
+      "KXNFLCAREERPASSYDS",
+      "KXNHLPTS",
+      "KXATPACES",
       "KXWNBAREB",
-      "KXMLBHRDERBYOU",
-      "KXNBABLK",
+      "KXMLBHRDERBYSEMI",
+      "KXUFCWHITEHOUSE",
+      "KXNBASERIES3PMLEADER",
       "KXNCAAFTEAMRSHYDS",
-      "KXNFLSEASONRUSHYDS",
-      "KXNHLSEASONGOALS",
-      "KXWNBA40PTS",
-      "KXMLBASGHIT",
-      "KXNBAWHATTEND",
-      "KXNCAAFFIRSTTDTEAM",
-      "KXNFL2PTCONV",
-      "KXNHLFIRSTGOAL",
-      "KXWNBAPTS",
-      "KXMLBTB",
-      "KXNBAPLAYOFFPTS",
-      "KXNCAAF2PT",
-      "KXNFLRSHYDS",
-      "KXNHLAST",
-      "KXWNBAH2HPTS",
-      "KXMLBHR",
-      "KXNBASERIESTOTALPTS",
-      "KXNCAAF1HTEAMTOTAL",
-      "KXNFLLONGREC",
-      "KXNHLSEASONPTS",
-      "KXWNBA3PTCONTEST",
-      "KXMLBHRDERBYQUAL",
-      "KXNBASTL",
-      "KXNCAAFTEAMFG",
       "KXNFLRECYDSRECORD",
+      "KXNHLF10G",
+      "KXWTAACES",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBASGHIT",
+      "KXNBAPA",
+      "KXNCAAFTEAMTO",
+      "KXNFLCAREERRECYDS",
+      "KXNHLTOTAL",
+      "KXWNBA3PTCONTEST",
+      "KXMLBHRR",
+      "KXNBAPR",
+      "KXNCAAF1HTEAMTOTAL",
+      "KXNFLRECYDS",
+      "KXNHLSAVES",
+      "KXWNBA3PTROUND",
+      "KXMLBHRDERBYDISTANCE",
+      "KXNBAPTSLEADER",
+      "KXNCAAFTEAMTOTAL",
+      "KXNFLRRYDS",
+      "KXNHLSEASONPTS",
+      "KXWNBA40PTS",
+      "KXMLBHRDERBYVELO",
+      "KXNBACELEBRITY3PT",
+      "KXNCAAFTEAMFG",
+      "KXNFLRECYDSH2H",
       "KXNHLGOAL",
       "KXWNBAAST",
-      "KXMLBHRDERBY500",
-      "KXNBASTOCK"
+      "KXMLBHRDERBYLONGEST",
+      "KXNBASTADIUM",
+      "KXNCAAFTEAMRECYDS",
+      "KXNFLPASSCOMP",
+      "KXNHLSERIESTOTALGOALS",
+      "KXWNBAH2HPTS",
+      "KXMLBHRDERBYMATCHUP",
+      "KXNBAH2HTEAM3PT"
     ],
     "by_league": {
       "MLB": 8,
@@ -129,7 +115,8 @@
     },
     "forced": [
       "KXNHLPTS"
-    ]
+    ],
+    "error": "HTTP Error 429: Too Many Requests"
   },
   "targeted_series_diagnostics": {
     "KXATPACES": {
@@ -144,51 +131,47 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHR": {
-      "raw": 182,
-      "normalized": 182,
-      "skip_reasons": {
-        "ok": 182
-      },
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBY500": {
+    "KXMLBHRDERBYDISTANCE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYFIN": {
+    "KXMLBHRDERBYLONGEST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYOU": {
+    "KXMLBHRDERBYMATCHUP": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYQUAL": {
+    "KXMLBHRDERBYSEMI": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBHRDERBYVELO": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBHRR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXMLBRBI": {
-      "raw": 201,
-      "normalized": 201,
+      "raw": 228,
+      "normalized": 228,
       "skip_reasons": {
-        "ok": 201
-      },
-      "skip_samples": {}
-    },
-    "KXMLBTB": {
-      "raw": 379,
-      "normalized": 379,
-      "skip_reasons": {
-        "ok": 379
+        "ok": 228
       },
       "skip_samples": {}
     },
@@ -198,110 +181,68 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBABLK": {
+    "KXNBACELEBRITY3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAH2HPRA": {
+    "KXNBAH2HTEAM3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPLAYOFFPTS": {
+    "KXNBAPA": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASERIESTOTALPTS": {
+    "KXNBAPR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASTL": {
+    "KXNBAPTSLEADER": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASTOCK": {
+    "KXNBASERIES3PMLEADER": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAWHATTEND": {
+    "KXNBASTADIUM": {
       "raw": 1,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1
+        "unsupported_market": 1
       },
       "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBAWHATTEND-26NYK-Y",
-          "event_ticker": "KXNBAWHATTEND-26NYK",
-          "event_title": "Will the New York Pro Basketball team visit the White House?",
-          "title": "Will the New York Pro Basketball team visit the White House before Dec 31, 2026?",
+        "unsupported_market": {
+          "ticker": "KXNBASTADIUM-30MAY01PHI-Y",
+          "event_ticker": "KXNBASTADIUM-30MAY01PHI",
+          "event_title": "Will the new Flyers/Philadelphia Pro Basketball arena be completed before May 1, 2030?",
+          "title": "Will Harris Blitzer Sports & Entertainment and Comcast Spectacor complete the new Flyers/Philadelphia Pro Basketball arena in the South Philadelphia Sports Complex before May 1, 2030?",
           "subtitle": null,
-          "yes_sub_title": "New York Pro Basketball team to visit the White House",
+          "yes_sub_title": "Before May 1, 2030",
           "primary_participant_key": null,
           "floor_strike": null,
           "functional_strike": null,
-          "occurrence_datetime": "2026-12-31T15:00:00Z"
+          "occurrence_datetime": "2030-05-01T14:00:00Z"
         }
       }
     },
     "KXNCAAF1HTEAMTOTAL": {
-      "raw": 269,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 269
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAF1HTEAMTOTAL-26SEP25NWIND-IND9",
-          "event_ticker": "KXNCAAF1HTEAMTOTAL-26SEP25NWIND",
-          "event_title": "Northwestern vs Indiana: 1st Half Team Total",
-          "title": "Indiana scores over 8.5 1H points",
-          "subtitle": null,
-          "yes_sub_title": "Indiana over 8.5 1H points scored",
-          "primary_participant_key": null,
-          "floor_strike": 8.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-09-26T03:00:00Z"
-        }
-      }
-    },
-    "KXNCAAF2PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
-    },
-    "KXNCAAFFIRSTTDTEAM": {
-      "raw": 75,
-      "normalized": 0,
-      "skip_reasons": {
-        "unsupported_market": 75
-      },
-      "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXNCAAFFIRSTTDTEAM-26SEP25NWIND-IND",
-          "event_ticker": "KXNCAAFFIRSTTDTEAM-26SEP25NWIND",
-          "event_title": "Northwestern vs Indiana: First Team to Score a TD",
-          "title": "Indiana scores first TD",
-          "subtitle": null,
-          "yes_sub_title": "Indiana scores first TD",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-09-26T03:00:00Z"
-        }
-      }
     },
     "KXNCAAFTEAMFG": {
       "raw": 0,
@@ -315,7 +256,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMRSHATT": {
+    "KXNCAAFTEAMRECYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -327,45 +268,46 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFL2PTCONV": {
+    "KXNCAAFTEAMTO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLLADDERRSHYDS": {
-      "raw": 3,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 3
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLLADDERRSHYDS-26SEP24ATLGB-ATLBROBINSON7",
-          "event_ticker": "KXNFLLADDERRSHYDS-26SEP24ATLGB",
-          "event_title": "Atlanta vs Green Bay: Rushing Yards Ladder",
-          "title": "Bijan Robinson rushing yards ladder",
-          "subtitle": null,
-          "yes_sub_title": "Bijan Robinson",
-          "primary_participant_key": "football_player",
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-09-25T03:15:00Z"
-        }
-      }
-    },
-    "KXNFLLONGFG": {
+    "KXNCAAFTEAMTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLLONGREC": {
-      "raw": 10,
-      "normalized": 10,
-      "skip_reasons": {
-        "ok": 10
-      },
+    "KXNFLCAREERPASSYDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLCAREERRECYDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLPASSCOMP": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLRECYDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLRECYDSH2H": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNFLRECYDSRECORD": {
@@ -374,27 +316,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLRSHYDS": {
-      "raw": 464,
-      "normalized": 464,
-      "skip_reasons": {
-        "ok": 464
-      },
-      "skip_samples": {}
-    },
-    "KXNFLSEASONRUSHYDS": {
+    "KXNFLRRYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLAST": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLFIRSTGOAL": {
+    "KXNHLF10G": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -412,68 +340,29 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLSEASONGOALS": {
-      "raw": 86,
+    "KXNHLSAVES": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 86
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNHLSEASONGOALS-27C20-PKANE88",
-          "event_ticker": "KXNHLSEASONGOALS-27C20",
-          "event_title": "NHL: 20+ Goals Season",
-          "title": "Patrick Kane: 20+ goals in 2026-27 NHL regular season?",
-          "subtitle": "Patrick Kane:: CHI Blackhawks",
-          "yes_sub_title": "Patrick Kane",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": 19.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-04-11T14:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNHLSEASONPTS": {
-      "raw": 320,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 320
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNHLSEASONPTS-27ANA-70",
-          "event_ticker": "KXNHLSEASONPTS-27ANA",
-          "event_title": "NHL: ANA Ducks Total Points",
-          "title": "Will the ANA Ducks NHL team earn at least 70 points in the 2026-27 regular season?",
-          "subtitle": null,
-          "yes_sub_title": "70+ points",
-          "primary_participant_key": null,
-          "floor_strike": 70,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-04-18T14:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLSERIESTOTALGOALS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNHLTOTAL": {
-      "raw": 216,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 216
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNHLTOTAL-26SEP24BOSPHI-2",
-          "event_ticker": "KXNHLTOTAL-26SEP24BOSPHI",
-          "event_title": "Boston vs Philadelphia: Total Goals",
-          "title": "Full Game: Over 1.5 goals scored",
-          "subtitle": null,
-          "yes_sub_title": "Over 1.5 goals scored",
-          "primary_participant_key": null,
-          "floor_strike": 1.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-09-25T02:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXUFCOCCUR": {
       "raw": 0,
@@ -499,6 +388,12 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
+    "KXWNBA3PTROUND": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXWNBA40PTS": {
       "raw": 0,
       "normalized": 0,
@@ -506,25 +401,15 @@
       "skip_samples": {}
     },
     "KXWNBAAST": {
-      "raw": 8,
-      "normalized": 8,
-      "skip_reasons": {
-        "ok": 8
-      },
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
     "KXWNBAH2HPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXWNBAPTS": {
-      "raw": 39,
-      "normalized": 39,
-      "skip_reasons": {
-        "ok": 39
-      },
       "skip_samples": {}
     },
     "KXWNBAREB": {
@@ -543,9 +428,8 @@
     }
   },
   "leagues": {
-    "MLB": 762,
-    "NFL": 474,
-    "WNBA": 80
+    "MLB": 228,
+    "WNBA": 33
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }

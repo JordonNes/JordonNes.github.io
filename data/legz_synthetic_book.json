@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-LEGZ-SYNTHETIC-BOOK-1",
-  "generated_at_utc": "2026-09-24T23:21:20.701611+00:00",
+  "generated_at_utc": "2026-09-24T23:29:31.950455+00:00",
   "stage": "POST_SPECTRUM_EVALUATED",
   "policy": "Verified external POMs outrank synthetic lines. Synthetic rows are internal shadow-book thresholds and never external offers.",
   "event_count": 1,
@@ -4103,6 +4103,136 @@
             "projected_side": "OVER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
           },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 100.0,
+                "L5_HIT_RATE": 80.0,
+                "L10_HIT_RATE": 70.0,
+                "L20_HIT_RATE": 83.33,
+                "DISTRIBUTION_MODEL": 72.96,
+                "PLAYER_PROJECTION_MODEL": 68.32
+              },
+              "distribution": {
+                "n": 18,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 19.556,
+                "median": 19.0,
+                "stddev": 5.52,
+                "coefficient_of_variation": 0.282,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 20.333,
+                    "median": 21.0,
+                    "stddev": 3.3,
+                    "hit_probability": 100.0
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 18.6,
+                    "median": 21.0,
+                    "stddev": 6.053,
+                    "hit_probability": 80.0
+                  },
+                  "L10": {
+                    "n": 10,
+                    "average": 17.5,
+                    "median": 17.5,
+                    "stddev": 4.78,
+                    "hit_probability": 70.0
+                  },
+                  "L20": {
+                    "n": 18,
+                    "average": 19.556,
+                    "median": 19.0,
+                    "stddev": 5.52,
+                    "hit_probability": 83.33
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 18,
+                  "historical_sample_size": 18,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Jordan Love",
+                  "resolved_history_player": "Jordan Love",
+                  "identity_match": "EXACT",
+                  "l5_average": 18.6,
+                  "l10_average": 17.5,
+                  "season_average": 19.556,
+                  "season_median": 19.0,
+                  "projected_output": 18.385,
+                  "central_band_low": 16.266,
+                  "central_band_high": 20.504,
+                  "forecast_sigma": 6.053,
+                  "offered_threshold": 15.5,
+                  "distance_to_projection": 2.885,
+                  "distance_sigma": 0.477,
+                  "projected_side": "OVER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 15,
+                "exact_threshold_hit_rate": 83.33,
+                "smoothed_hit_probability": 80.0,
+                "distribution_model_probability": 72.96,
+                "normal_threshold_probability": 68.32
+              },
+              "consistency": 82.6,
+              "sample_size": 18,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 18,
+                "historical_sample_size": 18,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Jordan Love",
+                "resolved_history_player": "Jordan Love",
+                "identity_match": "EXACT",
+                "l5_average": 18.6,
+                "l10_average": 17.5,
+                "season_average": 19.556,
+                "season_median": 19.0,
+                "projected_output": 18.385,
+                "central_band_low": 16.266,
+                "central_band_high": 20.504,
+                "forecast_sigma": 6.053,
+                "offered_threshold": 15.5,
+                "distance_to_projection": 2.885,
+                "distance_sigma": 0.477,
+                "projected_side": "OVER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 0.0,
+              "signals": [],
+              "context_id": null,
+              "context_type": null,
+              "status": null,
+              "headline": null,
+              "source": null,
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-jordan-love-pass_completions-GOBLIN"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
+          },
           "spectrum": {
             "performance": [
               68.32,
@@ -4199,7 +4329,6 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 82.6,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -4211,137 +4340,8 @@
               "headline": null,
               "source": null,
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 100.0,
-                "L5_HIT_RATE": 80.0,
-                "L10_HIT_RATE": 70.0,
-                "L20_HIT_RATE": 83.33,
-                "DISTRIBUTION_MODEL": 72.96,
-                "PLAYER_PROJECTION_MODEL": 68.32
-              },
-              "distribution": {
-                "n": 18,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 19.556,
-                "median": 19.0,
-                "stddev": 5.52,
-                "coefficient_of_variation": 0.282,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 20.333,
-                    "median": 21.0,
-                    "stddev": 3.3,
-                    "hit_probability": 100.0
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 18.6,
-                    "median": 21.0,
-                    "stddev": 6.053,
-                    "hit_probability": 80.0
-                  },
-                  "L10": {
-                    "n": 10,
-                    "average": 17.5,
-                    "median": 17.5,
-                    "stddev": 4.78,
-                    "hit_probability": 70.0
-                  },
-                  "L20": {
-                    "n": 18,
-                    "average": 19.556,
-                    "median": 19.0,
-                    "stddev": 5.52,
-                    "hit_probability": 83.33
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 18,
-                  "historical_sample_size": 18,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Jordan Love",
-                  "resolved_history_player": "Jordan Love",
-                  "identity_match": "EXACT",
-                  "l5_average": 18.6,
-                  "l10_average": 17.5,
-                  "season_average": 19.556,
-                  "season_median": 19.0,
-                  "projected_output": 18.385,
-                  "central_band_low": 16.266,
-                  "central_band_high": 20.504,
-                  "forecast_sigma": 6.053,
-                  "offered_threshold": 15.5,
-                  "distance_to_projection": 2.885,
-                  "distance_sigma": 0.477,
-                  "projected_side": "OVER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 15,
-                "exact_threshold_hit_rate": 83.33,
-                "smoothed_hit_probability": 80.0,
-                "distribution_model_probability": 72.96,
-                "normal_threshold_probability": 68.32
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 18,
-                "historical_sample_size": 18,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Jordan Love",
-                "resolved_history_player": "Jordan Love",
-                "identity_match": "EXACT",
-                "l5_average": 18.6,
-                "l10_average": 17.5,
-                "season_average": 19.556,
-                "season_median": 19.0,
-                "projected_output": 18.385,
-                "central_band_low": 16.266,
-                "central_band_high": 20.504,
-                "forecast_sigma": 6.053,
-                "offered_threshold": 15.5,
-                "distance_to_projection": 2.885,
-                "distance_sigma": 0.477,
-                "projected_side": "OVER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 82.6,
-              "sample_size": 18
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
-              "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-jordan-love-pass_completions-GOBLIN"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 82.6
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "f9c56702257d39b098b289d1",
@@ -4349,7 +4349,7 @@
           "evaluation_material_hash": "01d70dd7aed91ffb5538883ee90a4788fc7a1afafafe8d4a529f28f5b1517266",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.665384+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         },
         {
           "participant": "Jordan Love",
@@ -4413,6 +4413,136 @@
             "distance_sigma": -0.184,
             "projected_side": "UNDER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+          },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 66.67,
+                "L5_HIT_RATE": 60.0,
+                "L10_HIT_RATE": 40.0,
+                "L20_HIT_RATE": 38.89,
+                "DISTRIBUTION_MODEL": 47.35,
+                "PLAYER_PROJECTION_MODEL": 42.69
+              },
+              "distribution": {
+                "n": 18,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 19.556,
+                "median": 19.0,
+                "stddev": 5.52,
+                "coefficient_of_variation": 0.282,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 20.333,
+                    "median": 21.0,
+                    "stddev": 3.3,
+                    "hit_probability": 66.67
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 18.6,
+                    "median": 21.0,
+                    "stddev": 6.053,
+                    "hit_probability": 60.0
+                  },
+                  "L10": {
+                    "n": 10,
+                    "average": 17.5,
+                    "median": 17.5,
+                    "stddev": 4.78,
+                    "hit_probability": 40.0
+                  },
+                  "L20": {
+                    "n": 18,
+                    "average": 19.556,
+                    "median": 19.0,
+                    "stddev": 5.52,
+                    "hit_probability": 38.89
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 18,
+                  "historical_sample_size": 18,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Jordan Love",
+                  "resolved_history_player": "Jordan Love",
+                  "identity_match": "EXACT",
+                  "l5_average": 18.6,
+                  "l10_average": 17.5,
+                  "season_average": 19.556,
+                  "season_median": 19.0,
+                  "projected_output": 18.385,
+                  "central_band_low": 16.266,
+                  "central_band_high": 20.504,
+                  "forecast_sigma": 6.053,
+                  "offered_threshold": 19.5,
+                  "distance_to_projection": -1.115,
+                  "distance_sigma": -0.184,
+                  "projected_side": "UNDER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 7,
+                "exact_threshold_hit_rate": 38.89,
+                "smoothed_hit_probability": 40.0,
+                "distribution_model_probability": 47.35,
+                "normal_threshold_probability": 42.69
+              },
+              "consistency": 76.95,
+              "sample_size": 18,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 18,
+                "historical_sample_size": 18,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Jordan Love",
+                "resolved_history_player": "Jordan Love",
+                "identity_match": "EXACT",
+                "l5_average": 18.6,
+                "l10_average": 17.5,
+                "season_average": 19.556,
+                "season_median": 19.0,
+                "projected_output": 18.385,
+                "central_band_low": 16.266,
+                "central_band_high": 20.504,
+                "forecast_sigma": 6.053,
+                "offered_threshold": 19.5,
+                "distance_to_projection": -1.115,
+                "distance_sigma": -0.184,
+                "projected_side": "UNDER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 0.0,
+              "signals": [],
+              "context_id": null,
+              "context_type": null,
+              "status": null,
+              "headline": null,
+              "source": null,
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-jordan-love-pass_completions-NORMAL"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
           },
           "spectrum": {
             "performance": [
@@ -4510,7 +4640,6 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 76.95,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -4522,137 +4651,8 @@
               "headline": null,
               "source": null,
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 66.67,
-                "L5_HIT_RATE": 60.0,
-                "L10_HIT_RATE": 40.0,
-                "L20_HIT_RATE": 38.89,
-                "DISTRIBUTION_MODEL": 47.35,
-                "PLAYER_PROJECTION_MODEL": 42.69
-              },
-              "distribution": {
-                "n": 18,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 19.556,
-                "median": 19.0,
-                "stddev": 5.52,
-                "coefficient_of_variation": 0.282,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 20.333,
-                    "median": 21.0,
-                    "stddev": 3.3,
-                    "hit_probability": 66.67
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 18.6,
-                    "median": 21.0,
-                    "stddev": 6.053,
-                    "hit_probability": 60.0
-                  },
-                  "L10": {
-                    "n": 10,
-                    "average": 17.5,
-                    "median": 17.5,
-                    "stddev": 4.78,
-                    "hit_probability": 40.0
-                  },
-                  "L20": {
-                    "n": 18,
-                    "average": 19.556,
-                    "median": 19.0,
-                    "stddev": 5.52,
-                    "hit_probability": 38.89
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 18,
-                  "historical_sample_size": 18,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Jordan Love",
-                  "resolved_history_player": "Jordan Love",
-                  "identity_match": "EXACT",
-                  "l5_average": 18.6,
-                  "l10_average": 17.5,
-                  "season_average": 19.556,
-                  "season_median": 19.0,
-                  "projected_output": 18.385,
-                  "central_band_low": 16.266,
-                  "central_band_high": 20.504,
-                  "forecast_sigma": 6.053,
-                  "offered_threshold": 19.5,
-                  "distance_to_projection": -1.115,
-                  "distance_sigma": -0.184,
-                  "projected_side": "UNDER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 7,
-                "exact_threshold_hit_rate": 38.89,
-                "smoothed_hit_probability": 40.0,
-                "distribution_model_probability": 47.35,
-                "normal_threshold_probability": 42.69
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 18,
-                "historical_sample_size": 18,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Jordan Love",
-                "resolved_history_player": "Jordan Love",
-                "identity_match": "EXACT",
-                "l5_average": 18.6,
-                "l10_average": 17.5,
-                "season_average": 19.556,
-                "season_median": 19.0,
-                "projected_output": 18.385,
-                "central_band_low": 16.266,
-                "central_band_high": 20.504,
-                "forecast_sigma": 6.053,
-                "offered_threshold": 19.5,
-                "distance_to_projection": -1.115,
-                "distance_sigma": -0.184,
-                "projected_side": "UNDER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 76.95,
-              "sample_size": 18
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
-              "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-jordan-love-pass_completions-NORMAL"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 76.95
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "8ac0d9ca7c3561a9061c8ca2",
@@ -4660,7 +4660,7 @@
           "evaluation_material_hash": "f9feac85b326519a96ead876a00f2373f282cf37d873b543134914fe72490665",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.666004+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         },
         {
           "participant": "Jordan Love",
@@ -4724,6 +4724,136 @@
             "distance_sigma": -1.01,
             "projected_side": "UNDER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+          },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 0.0,
+                "L5_HIT_RATE": 0.0,
+                "L10_HIT_RATE": 0.0,
+                "L20_HIT_RATE": 16.67,
+                "DISTRIBUTION_MODEL": 9.41,
+                "PLAYER_PROJECTION_MODEL": 15.62
+              },
+              "distribution": {
+                "n": 18,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 19.556,
+                "median": 19.0,
+                "stddev": 5.52,
+                "coefficient_of_variation": 0.282,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 20.333,
+                    "median": 21.0,
+                    "stddev": 3.3,
+                    "hit_probability": 0.0
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 18.6,
+                    "median": 21.0,
+                    "stddev": 6.053,
+                    "hit_probability": 0.0
+                  },
+                  "L10": {
+                    "n": 10,
+                    "average": 17.5,
+                    "median": 17.5,
+                    "stddev": 4.78,
+                    "hit_probability": 0.0
+                  },
+                  "L20": {
+                    "n": 18,
+                    "average": 19.556,
+                    "median": 19.0,
+                    "stddev": 5.52,
+                    "hit_probability": 16.67
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 18,
+                  "historical_sample_size": 18,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Jordan Love",
+                  "resolved_history_player": "Jordan Love",
+                  "identity_match": "EXACT",
+                  "l5_average": 18.6,
+                  "l10_average": 17.5,
+                  "season_average": 19.556,
+                  "season_median": 19.0,
+                  "projected_output": 18.385,
+                  "central_band_low": 16.266,
+                  "central_band_high": 20.504,
+                  "forecast_sigma": 6.053,
+                  "offered_threshold": 24.5,
+                  "distance_to_projection": -6.115,
+                  "distance_sigma": -1.01,
+                  "projected_side": "UNDER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 3,
+                "exact_threshold_hit_rate": 16.67,
+                "smoothed_hit_probability": 20.0,
+                "distribution_model_probability": 9.41,
+                "normal_threshold_probability": 15.62
+              },
+              "consistency": 78.26,
+              "sample_size": 18,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 18,
+                "historical_sample_size": 18,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Jordan Love",
+                "resolved_history_player": "Jordan Love",
+                "identity_match": "EXACT",
+                "l5_average": 18.6,
+                "l10_average": 17.5,
+                "season_average": 19.556,
+                "season_median": 19.0,
+                "projected_output": 18.385,
+                "central_band_low": 16.266,
+                "central_band_high": 20.504,
+                "forecast_sigma": 6.053,
+                "offered_threshold": 24.5,
+                "distance_to_projection": -6.115,
+                "distance_sigma": -1.01,
+                "projected_side": "UNDER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 0.0,
+              "signals": [],
+              "context_id": null,
+              "context_type": null,
+              "status": null,
+              "headline": null,
+              "source": null,
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-jordan-love-pass_completions-DEMON"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
           },
           "spectrum": {
             "performance": [
@@ -4821,7 +4951,6 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 78.26,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -4833,137 +4962,8 @@
               "headline": null,
               "source": null,
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 0.0,
-                "L5_HIT_RATE": 0.0,
-                "L10_HIT_RATE": 0.0,
-                "L20_HIT_RATE": 16.67,
-                "DISTRIBUTION_MODEL": 9.41,
-                "PLAYER_PROJECTION_MODEL": 15.62
-              },
-              "distribution": {
-                "n": 18,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 19.556,
-                "median": 19.0,
-                "stddev": 5.52,
-                "coefficient_of_variation": 0.282,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 20.333,
-                    "median": 21.0,
-                    "stddev": 3.3,
-                    "hit_probability": 0.0
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 18.6,
-                    "median": 21.0,
-                    "stddev": 6.053,
-                    "hit_probability": 0.0
-                  },
-                  "L10": {
-                    "n": 10,
-                    "average": 17.5,
-                    "median": 17.5,
-                    "stddev": 4.78,
-                    "hit_probability": 0.0
-                  },
-                  "L20": {
-                    "n": 18,
-                    "average": 19.556,
-                    "median": 19.0,
-                    "stddev": 5.52,
-                    "hit_probability": 16.67
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 18,
-                  "historical_sample_size": 18,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Jordan Love",
-                  "resolved_history_player": "Jordan Love",
-                  "identity_match": "EXACT",
-                  "l5_average": 18.6,
-                  "l10_average": 17.5,
-                  "season_average": 19.556,
-                  "season_median": 19.0,
-                  "projected_output": 18.385,
-                  "central_band_low": 16.266,
-                  "central_band_high": 20.504,
-                  "forecast_sigma": 6.053,
-                  "offered_threshold": 24.5,
-                  "distance_to_projection": -6.115,
-                  "distance_sigma": -1.01,
-                  "projected_side": "UNDER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 3,
-                "exact_threshold_hit_rate": 16.67,
-                "smoothed_hit_probability": 20.0,
-                "distribution_model_probability": 9.41,
-                "normal_threshold_probability": 15.62
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 18,
-                "historical_sample_size": 18,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Jordan Love",
-                "resolved_history_player": "Jordan Love",
-                "identity_match": "EXACT",
-                "l5_average": 18.6,
-                "l10_average": 17.5,
-                "season_average": 19.556,
-                "season_median": 19.0,
-                "projected_output": 18.385,
-                "central_band_low": 16.266,
-                "central_band_high": 20.504,
-                "forecast_sigma": 6.053,
-                "offered_threshold": 24.5,
-                "distance_to_projection": -6.115,
-                "distance_sigma": -1.01,
-                "projected_side": "UNDER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 78.26,
-              "sample_size": 18
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
-              "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-jordan-love-pass_completions-DEMON"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 78.26
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "71e9b0e2a16cf71f7e7b0298",
@@ -4971,7 +4971,7 @@
           "evaluation_material_hash": "6d637dafaee85b72c63365b3b9d3f9cf0fca865e11b1eee4d580872e04d7a915",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.666642+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         },
         {
           "participant": "Tua Tagovailoa",
@@ -7226,6 +7226,139 @@
             "projected_side": "OVER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
           },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 33.33,
+                "L5_HIT_RATE": 60.0,
+                "L10_HIT_RATE": 70.0,
+                "L20_HIT_RATE": 78.57,
+                "DISTRIBUTION_MODEL": 72.15,
+                "PLAYER_PROJECTION_MODEL": 79.5
+              },
+              "distribution": {
+                "n": 14,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 18.571,
+                "median": 18.5,
+                "stddev": 5.165,
+                "coefficient_of_variation": 0.278,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 15.667,
+                    "median": 13.0,
+                    "stddev": 4.497,
+                    "hit_probability": 33.33
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 15.2,
+                    "median": 14.0,
+                    "stddev": 3.544,
+                    "hit_probability": 60.0
+                  },
+                  "L10": {
+                    "n": 10,
+                    "average": 18.1,
+                    "median": 17.5,
+                    "stddev": 5.3,
+                    "hit_probability": 70.0
+                  },
+                  "L20": {
+                    "n": 14,
+                    "average": 18.571,
+                    "median": 18.5,
+                    "stddev": 5.165,
+                    "hit_probability": 78.57
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 14,
+                  "historical_sample_size": 14,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Tua Tagovailoa",
+                  "resolved_history_player": "Tua Tagovailoa",
+                  "identity_match": "EXACT",
+                  "l5_average": 15.2,
+                  "l10_average": 18.1,
+                  "season_average": 18.571,
+                  "season_median": 18.5,
+                  "projected_output": 16.42,
+                  "central_band_low": 15.18,
+                  "central_band_high": 17.66,
+                  "forecast_sigma": 3.544,
+                  "offered_threshold": 13.5,
+                  "distance_to_projection": 2.92,
+                  "distance_sigma": 0.824,
+                  "projected_side": "OVER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 11,
+                "exact_threshold_hit_rate": 78.57,
+                "smoothed_hit_probability": 75.0,
+                "distribution_model_probability": 72.15,
+                "normal_threshold_probability": 79.5
+              },
+              "consistency": 78.9,
+              "sample_size": 14,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 14,
+                "historical_sample_size": 14,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Tua Tagovailoa",
+                "resolved_history_player": "Tua Tagovailoa",
+                "identity_match": "EXACT",
+                "l5_average": 15.2,
+                "l10_average": 18.1,
+                "season_average": 18.571,
+                "season_median": 18.5,
+                "projected_output": 16.42,
+                "central_band_low": 15.18,
+                "central_band_high": 17.66,
+                "forecast_sigma": 3.544,
+                "offered_threshold": 13.5,
+                "distance_to_projection": 2.92,
+                "distance_sigma": 0.824,
+                "projected_side": "OVER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed"
+              ],
+              "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
+              "context_type": "INJURY_PRACTICE",
+              "status": "ACTIVE",
+              "headline": "Turns in full practice",
+              "source": "ROTOWIRE_COMPOSITE",
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-tua-tagovailoa-pass_completions-GOBLIN"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
+          },
           "spectrum": {
             "performance": [
               79.5,
@@ -7322,7 +7455,6 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 78.9,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -7336,140 +7468,8 @@
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 33.33,
-                "L5_HIT_RATE": 60.0,
-                "L10_HIT_RATE": 70.0,
-                "L20_HIT_RATE": 78.57,
-                "DISTRIBUTION_MODEL": 72.15,
-                "PLAYER_PROJECTION_MODEL": 79.5
-              },
-              "distribution": {
-                "n": 14,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 18.571,
-                "median": 18.5,
-                "stddev": 5.165,
-                "coefficient_of_variation": 0.278,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 15.667,
-                    "median": 13.0,
-                    "stddev": 4.497,
-                    "hit_probability": 33.33
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 15.2,
-                    "median": 14.0,
-                    "stddev": 3.544,
-                    "hit_probability": 60.0
-                  },
-                  "L10": {
-                    "n": 10,
-                    "average": 18.1,
-                    "median": 17.5,
-                    "stddev": 5.3,
-                    "hit_probability": 70.0
-                  },
-                  "L20": {
-                    "n": 14,
-                    "average": 18.571,
-                    "median": 18.5,
-                    "stddev": 5.165,
-                    "hit_probability": 78.57
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 14,
-                  "historical_sample_size": 14,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Tua Tagovailoa",
-                  "resolved_history_player": "Tua Tagovailoa",
-                  "identity_match": "EXACT",
-                  "l5_average": 15.2,
-                  "l10_average": 18.1,
-                  "season_average": 18.571,
-                  "season_median": 18.5,
-                  "projected_output": 16.42,
-                  "central_band_low": 15.18,
-                  "central_band_high": 17.66,
-                  "forecast_sigma": 3.544,
-                  "offered_threshold": 13.5,
-                  "distance_to_projection": 2.92,
-                  "distance_sigma": 0.824,
-                  "projected_side": "OVER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 11,
-                "exact_threshold_hit_rate": 78.57,
-                "smoothed_hit_probability": 75.0,
-                "distribution_model_probability": 72.15,
-                "normal_threshold_probability": 79.5
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 14,
-                "historical_sample_size": 14,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Tua Tagovailoa",
-                "resolved_history_player": "Tua Tagovailoa",
-                "identity_match": "EXACT",
-                "l5_average": 15.2,
-                "l10_average": 18.1,
-                "season_average": 18.571,
-                "season_median": 18.5,
-                "projected_output": 16.42,
-                "central_band_low": 15.18,
-                "central_band_high": 17.66,
-                "forecast_sigma": 3.544,
-                "offered_threshold": 13.5,
-                "distance_to_projection": 2.92,
-                "distance_sigma": 0.824,
-                "projected_side": "OVER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 78.9,
-              "sample_size": 14
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 1.0,
-              "signals": [
-                "availability_confirmed"
-              ],
-              "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
-              "context_type": "INJURY_PRACTICE",
-              "status": "ACTIVE",
-              "headline": "Turns in full practice",
-              "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-tua-tagovailoa-pass_completions-GOBLIN"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY",
-                "CURRENT_CONTEXT"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 78.9
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "8d2fd16b057dc56d7370bc13",
@@ -7477,7 +7477,7 @@
           "evaluation_material_hash": "0b630ea500e2681e0fce6e6bf1300d7013fee032b5dbb43d24c797f015dd5291",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.668910+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         },
         {
           "participant": "Tua Tagovailoa",
@@ -7541,6 +7541,139 @@
             "distance_sigma": -0.587,
             "projected_side": "UNDER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+          },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 33.33,
+                "L5_HIT_RATE": 20.0,
+                "L10_HIT_RATE": 50.0,
+                "L20_HIT_RATE": 50.0,
+                "DISTRIBUTION_MODEL": 29.93,
+                "PLAYER_PROJECTION_MODEL": 27.86
+              },
+              "distribution": {
+                "n": 14,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 18.571,
+                "median": 18.5,
+                "stddev": 5.165,
+                "coefficient_of_variation": 0.278,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 15.667,
+                    "median": 13.0,
+                    "stddev": 4.497,
+                    "hit_probability": 33.33
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 15.2,
+                    "median": 14.0,
+                    "stddev": 3.544,
+                    "hit_probability": 20.0
+                  },
+                  "L10": {
+                    "n": 10,
+                    "average": 18.1,
+                    "median": 17.5,
+                    "stddev": 5.3,
+                    "hit_probability": 50.0
+                  },
+                  "L20": {
+                    "n": 14,
+                    "average": 18.571,
+                    "median": 18.5,
+                    "stddev": 5.165,
+                    "hit_probability": 50.0
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 14,
+                  "historical_sample_size": 14,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Tua Tagovailoa",
+                  "resolved_history_player": "Tua Tagovailoa",
+                  "identity_match": "EXACT",
+                  "l5_average": 15.2,
+                  "l10_average": 18.1,
+                  "season_average": 18.571,
+                  "season_median": 18.5,
+                  "projected_output": 16.42,
+                  "central_band_low": 15.18,
+                  "central_band_high": 17.66,
+                  "forecast_sigma": 3.544,
+                  "offered_threshold": 18.5,
+                  "distance_to_projection": -2.08,
+                  "distance_sigma": -0.587,
+                  "projected_side": "UNDER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 7,
+                "exact_threshold_hit_rate": 50.0,
+                "smoothed_hit_probability": 50.0,
+                "distribution_model_probability": 29.93,
+                "normal_threshold_probability": 27.86
+              },
+              "consistency": 63.25,
+              "sample_size": 14,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 14,
+                "historical_sample_size": 14,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Tua Tagovailoa",
+                "resolved_history_player": "Tua Tagovailoa",
+                "identity_match": "EXACT",
+                "l5_average": 15.2,
+                "l10_average": 18.1,
+                "season_average": 18.571,
+                "season_median": 18.5,
+                "projected_output": 16.42,
+                "central_band_low": 15.18,
+                "central_band_high": 17.66,
+                "forecast_sigma": 3.544,
+                "offered_threshold": 18.5,
+                "distance_to_projection": -2.08,
+                "distance_sigma": -0.587,
+                "projected_side": "UNDER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed"
+              ],
+              "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
+              "context_type": "INJURY_PRACTICE",
+              "status": "ACTIVE",
+              "headline": "Turns in full practice",
+              "source": "ROTOWIRE_COMPOSITE",
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-tua-tagovailoa-pass_completions-NORMAL"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
           },
           "spectrum": {
             "performance": [
@@ -7638,7 +7771,6 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 63.25,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -7652,140 +7784,8 @@
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 33.33,
-                "L5_HIT_RATE": 20.0,
-                "L10_HIT_RATE": 50.0,
-                "L20_HIT_RATE": 50.0,
-                "DISTRIBUTION_MODEL": 29.93,
-                "PLAYER_PROJECTION_MODEL": 27.86
-              },
-              "distribution": {
-                "n": 14,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 18.571,
-                "median": 18.5,
-                "stddev": 5.165,
-                "coefficient_of_variation": 0.278,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 15.667,
-                    "median": 13.0,
-                    "stddev": 4.497,
-                    "hit_probability": 33.33
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 15.2,
-                    "median": 14.0,
-                    "stddev": 3.544,
-                    "hit_probability": 20.0
-                  },
-                  "L10": {
-                    "n": 10,
-                    "average": 18.1,
-                    "median": 17.5,
-                    "stddev": 5.3,
-                    "hit_probability": 50.0
-                  },
-                  "L20": {
-                    "n": 14,
-                    "average": 18.571,
-                    "median": 18.5,
-                    "stddev": 5.165,
-                    "hit_probability": 50.0
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 14,
-                  "historical_sample_size": 14,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Tua Tagovailoa",
-                  "resolved_history_player": "Tua Tagovailoa",
-                  "identity_match": "EXACT",
-                  "l5_average": 15.2,
-                  "l10_average": 18.1,
-                  "season_average": 18.571,
-                  "season_median": 18.5,
-                  "projected_output": 16.42,
-                  "central_band_low": 15.18,
-                  "central_band_high": 17.66,
-                  "forecast_sigma": 3.544,
-                  "offered_threshold": 18.5,
-                  "distance_to_projection": -2.08,
-                  "distance_sigma": -0.587,
-                  "projected_side": "UNDER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 7,
-                "exact_threshold_hit_rate": 50.0,
-                "smoothed_hit_probability": 50.0,
-                "distribution_model_probability": 29.93,
-                "normal_threshold_probability": 27.86
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 14,
-                "historical_sample_size": 14,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Tua Tagovailoa",
-                "resolved_history_player": "Tua Tagovailoa",
-                "identity_match": "EXACT",
-                "l5_average": 15.2,
-                "l10_average": 18.1,
-                "season_average": 18.571,
-                "season_median": 18.5,
-                "projected_output": 16.42,
-                "central_band_low": 15.18,
-                "central_band_high": 17.66,
-                "forecast_sigma": 3.544,
-                "offered_threshold": 18.5,
-                "distance_to_projection": -2.08,
-                "distance_sigma": -0.587,
-                "projected_side": "UNDER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 63.25,
-              "sample_size": 14
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 1.0,
-              "signals": [
-                "availability_confirmed"
-              ],
-              "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
-              "context_type": "INJURY_PRACTICE",
-              "status": "ACTIVE",
-              "headline": "Turns in full practice",
-              "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-tua-tagovailoa-pass_completions-NORMAL"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY",
-                "CURRENT_CONTEXT"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 63.25
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "e1a385a10d9434b7199e61ce",
@@ -7793,7 +7793,7 @@
           "evaluation_material_hash": "81b7c4fa176593e37d992d95ef5aab257ec3d71b0f6b22631fdb033f564d6508",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.669541+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         },
         {
           "participant": "Tua Tagovailoa",
@@ -7857,6 +7857,139 @@
             "distance_sigma": -1.716,
             "projected_side": "UNDER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+          },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 0.0,
+                "L5_HIT_RATE": 0.0,
+                "L10_HIT_RATE": 20.0,
+                "L20_HIT_RATE": 21.43,
+                "DISTRIBUTION_MODEL": 6.56,
+                "PLAYER_PROJECTION_MODEL": 4.31
+              },
+              "distribution": {
+                "n": 14,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 18.571,
+                "median": 18.5,
+                "stddev": 5.165,
+                "coefficient_of_variation": 0.278,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 15.667,
+                    "median": 13.0,
+                    "stddev": 4.497,
+                    "hit_probability": 0.0
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 15.2,
+                    "median": 14.0,
+                    "stddev": 3.544,
+                    "hit_probability": 0.0
+                  },
+                  "L10": {
+                    "n": 10,
+                    "average": 18.1,
+                    "median": 17.5,
+                    "stddev": 5.3,
+                    "hit_probability": 20.0
+                  },
+                  "L20": {
+                    "n": 14,
+                    "average": 18.571,
+                    "median": 18.5,
+                    "stddev": 5.165,
+                    "hit_probability": 21.43
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 14,
+                  "historical_sample_size": 14,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Tua Tagovailoa",
+                  "resolved_history_player": "Tua Tagovailoa",
+                  "identity_match": "EXACT",
+                  "l5_average": 15.2,
+                  "l10_average": 18.1,
+                  "season_average": 18.571,
+                  "season_median": 18.5,
+                  "projected_output": 16.42,
+                  "central_band_low": 15.18,
+                  "central_band_high": 17.66,
+                  "forecast_sigma": 3.544,
+                  "offered_threshold": 22.5,
+                  "distance_to_projection": -6.08,
+                  "distance_sigma": -1.716,
+                  "projected_side": "UNDER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 3,
+                "exact_threshold_hit_rate": 21.43,
+                "smoothed_hit_probability": 25.0,
+                "distribution_model_probability": 6.56,
+                "normal_threshold_probability": 4.31
+              },
+              "consistency": 74.06,
+              "sample_size": 14,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 14,
+                "historical_sample_size": 14,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Tua Tagovailoa",
+                "resolved_history_player": "Tua Tagovailoa",
+                "identity_match": "EXACT",
+                "l5_average": 15.2,
+                "l10_average": 18.1,
+                "season_average": 18.571,
+                "season_median": 18.5,
+                "projected_output": 16.42,
+                "central_band_low": 15.18,
+                "central_band_high": 17.66,
+                "forecast_sigma": 3.544,
+                "offered_threshold": 22.5,
+                "distance_to_projection": -6.08,
+                "distance_sigma": -1.716,
+                "projected_side": "UNDER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed"
+              ],
+              "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
+              "context_type": "INJURY_PRACTICE",
+              "status": "ACTIVE",
+              "headline": "Turns in full practice",
+              "source": "ROTOWIRE_COMPOSITE",
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-tua-tagovailoa-pass_completions-DEMON"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
           },
           "spectrum": {
             "performance": [
@@ -7954,7 +8087,6 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 74.06,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -7968,140 +8100,8 @@
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 0.0,
-                "L5_HIT_RATE": 0.0,
-                "L10_HIT_RATE": 20.0,
-                "L20_HIT_RATE": 21.43,
-                "DISTRIBUTION_MODEL": 6.56,
-                "PLAYER_PROJECTION_MODEL": 4.31
-              },
-              "distribution": {
-                "n": 14,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 18.571,
-                "median": 18.5,
-                "stddev": 5.165,
-                "coefficient_of_variation": 0.278,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 15.667,
-                    "median": 13.0,
-                    "stddev": 4.497,
-                    "hit_probability": 0.0
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 15.2,
-                    "median": 14.0,
-                    "stddev": 3.544,
-                    "hit_probability": 0.0
-                  },
-                  "L10": {
-                    "n": 10,
-                    "average": 18.1,
-                    "median": 17.5,
-                    "stddev": 5.3,
-                    "hit_probability": 20.0
-                  },
-                  "L20": {
-                    "n": 14,
-                    "average": 18.571,
-                    "median": 18.5,
-                    "stddev": 5.165,
-                    "hit_probability": 21.43
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 14,
-                  "historical_sample_size": 14,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Tua Tagovailoa",
-                  "resolved_history_player": "Tua Tagovailoa",
-                  "identity_match": "EXACT",
-                  "l5_average": 15.2,
-                  "l10_average": 18.1,
-                  "season_average": 18.571,
-                  "season_median": 18.5,
-                  "projected_output": 16.42,
-                  "central_band_low": 15.18,
-                  "central_band_high": 17.66,
-                  "forecast_sigma": 3.544,
-                  "offered_threshold": 22.5,
-                  "distance_to_projection": -6.08,
-                  "distance_sigma": -1.716,
-                  "projected_side": "UNDER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 3,
-                "exact_threshold_hit_rate": 21.43,
-                "smoothed_hit_probability": 25.0,
-                "distribution_model_probability": 6.56,
-                "normal_threshold_probability": 4.31
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 14,
-                "historical_sample_size": 14,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Tua Tagovailoa",
-                "resolved_history_player": "Tua Tagovailoa",
-                "identity_match": "EXACT",
-                "l5_average": 15.2,
-                "l10_average": 18.1,
-                "season_average": 18.571,
-                "season_median": 18.5,
-                "projected_output": 16.42,
-                "central_band_low": 15.18,
-                "central_band_high": 17.66,
-                "forecast_sigma": 3.544,
-                "offered_threshold": 22.5,
-                "distance_to_projection": -6.08,
-                "distance_sigma": -1.716,
-                "projected_side": "UNDER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 74.06,
-              "sample_size": 14
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 1.0,
-              "signals": [
-                "availability_confirmed"
-              ],
-              "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
-              "context_type": "INJURY_PRACTICE",
-              "status": "ACTIVE",
-              "headline": "Turns in full practice",
-              "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-tua-tagovailoa-pass_completions-DEMON"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY",
-                "CURRENT_CONTEXT"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 74.06
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "48a048a326fcaba3d7f9aa51",
@@ -8109,7 +8109,7 @@
           "evaluation_material_hash": "952ecb102cceb06c1c60a13288cd7b18d0c7d33012803b101de890b2373ea696",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.670149+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         },
         {
           "participant": "Jonnu Smith",
@@ -8728,7 +8728,7 @@
           "evaluation_id": "lse-ce84c1236b7232e826cb65da",
           "evaluation_material_hash": "cc529cff05fbd4f2720ed69d1d1e92328bd78410d2165f30d9333bc6f5c7a0cd",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-24T23:21:17.670983+00:00",
+          "evaluated_at_utc": "2026-09-24T23:29:28.633691+00:00",
           "evaluation_reused": false
         },
         {
@@ -9039,7 +9039,7 @@
           "evaluation_id": "lse-e478d8fc82afc543174bdd8f",
           "evaluation_material_hash": "40dd5b195d5ad1dde06d361e3422f2a3e3f6c77f1f829ca26661bab147b5a555",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-24T23:21:17.671593+00:00",
+          "evaluated_at_utc": "2026-09-24T23:29:28.634305+00:00",
           "evaluation_reused": false
         },
         {
@@ -9350,7 +9350,7 @@
           "evaluation_id": "lse-d4770f7682ba7c681d362492",
           "evaluation_material_hash": "19bb2f115b33e4724057d060a75d3ae45687aaec76be38047f566b8c706c96a2",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-24T23:21:17.672169+00:00",
+          "evaluated_at_utc": "2026-09-24T23:29:28.634901+00:00",
           "evaluation_reused": false
         },
         {
@@ -10349,6 +10349,136 @@
             "projected_side": "OVER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
           },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 66.67,
+                "L5_HIT_RATE": 80.0,
+                "L10_HIT_RATE": 88.89,
+                "L20_HIT_RATE": 88.89,
+                "DISTRIBUTION_MODEL": 86.73,
+                "PLAYER_PROJECTION_MODEL": 91.03
+              },
+              "distribution": {
+                "n": 9,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 18.444,
+                "median": 20.0,
+                "stddev": 4.693,
+                "coefficient_of_variation": 0.254,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 15.667,
+                    "median": 13.0,
+                    "stddev": 4.497,
+                    "hit_probability": 66.67
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 17.6,
+                    "median": 20.0,
+                    "stddev": 4.224,
+                    "hit_probability": 80.0
+                  },
+                  "L10": {
+                    "n": 9,
+                    "average": 18.444,
+                    "median": 20.0,
+                    "stddev": 4.693,
+                    "hit_probability": 88.89
+                  },
+                  "L20": {
+                    "n": 9,
+                    "average": 18.444,
+                    "median": 20.0,
+                    "stddev": 4.693,
+                    "hit_probability": 88.89
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 9,
+                  "historical_sample_size": 9,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Michael Penix Jr.",
+                  "resolved_history_player": "Michael Penix Jr.",
+                  "identity_match": "EXACT",
+                  "l5_average": 17.6,
+                  "l10_average": 18.444,
+                  "season_average": 18.444,
+                  "season_median": 20.0,
+                  "projected_output": 18.171,
+                  "central_band_low": 16.693,
+                  "central_band_high": 19.65,
+                  "forecast_sigma": 4.224,
+                  "offered_threshold": 12.5,
+                  "distance_to_projection": 5.671,
+                  "distance_sigma": 1.343,
+                  "projected_side": "OVER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 8,
+                "exact_threshold_hit_rate": 88.89,
+                "smoothed_hit_probability": 81.82,
+                "distribution_model_probability": 86.73,
+                "normal_threshold_probability": 91.03
+              },
+              "consistency": 88.58,
+              "sample_size": 9,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 9,
+                "historical_sample_size": 9,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Michael Penix Jr.",
+                "resolved_history_player": "Michael Penix Jr.",
+                "identity_match": "EXACT",
+                "l5_average": 17.6,
+                "l10_average": 18.444,
+                "season_average": 18.444,
+                "season_median": 20.0,
+                "projected_output": 18.171,
+                "central_band_low": 16.693,
+                "central_band_high": 19.65,
+                "forecast_sigma": 4.224,
+                "offered_threshold": 12.5,
+                "distance_to_projection": 5.671,
+                "distance_sigma": 1.343,
+                "projected_side": "OVER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 0.0,
+              "signals": [],
+              "context_id": null,
+              "context_type": null,
+              "status": null,
+              "headline": null,
+              "source": null,
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-michael-penix-pass_completions-GOBLIN"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
+          },
           "spectrum": {
             "performance": [
               91.03,
@@ -10445,7 +10575,6 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 88.58,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -10457,137 +10586,8 @@
               "headline": null,
               "source": null,
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 66.67,
-                "L5_HIT_RATE": 80.0,
-                "L10_HIT_RATE": 88.89,
-                "L20_HIT_RATE": 88.89,
-                "DISTRIBUTION_MODEL": 86.73,
-                "PLAYER_PROJECTION_MODEL": 91.03
-              },
-              "distribution": {
-                "n": 9,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 18.444,
-                "median": 20.0,
-                "stddev": 4.693,
-                "coefficient_of_variation": 0.254,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 15.667,
-                    "median": 13.0,
-                    "stddev": 4.497,
-                    "hit_probability": 66.67
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 17.6,
-                    "median": 20.0,
-                    "stddev": 4.224,
-                    "hit_probability": 80.0
-                  },
-                  "L10": {
-                    "n": 9,
-                    "average": 18.444,
-                    "median": 20.0,
-                    "stddev": 4.693,
-                    "hit_probability": 88.89
-                  },
-                  "L20": {
-                    "n": 9,
-                    "average": 18.444,
-                    "median": 20.0,
-                    "stddev": 4.693,
-                    "hit_probability": 88.89
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 9,
-                  "historical_sample_size": 9,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Michael Penix Jr.",
-                  "resolved_history_player": "Michael Penix Jr.",
-                  "identity_match": "EXACT",
-                  "l5_average": 17.6,
-                  "l10_average": 18.444,
-                  "season_average": 18.444,
-                  "season_median": 20.0,
-                  "projected_output": 18.171,
-                  "central_band_low": 16.693,
-                  "central_band_high": 19.65,
-                  "forecast_sigma": 4.224,
-                  "offered_threshold": 12.5,
-                  "distance_to_projection": 5.671,
-                  "distance_sigma": 1.343,
-                  "projected_side": "OVER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 8,
-                "exact_threshold_hit_rate": 88.89,
-                "smoothed_hit_probability": 81.82,
-                "distribution_model_probability": 86.73,
-                "normal_threshold_probability": 91.03
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 9,
-                "historical_sample_size": 9,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Michael Penix Jr.",
-                "resolved_history_player": "Michael Penix Jr.",
-                "identity_match": "EXACT",
-                "l5_average": 17.6,
-                "l10_average": 18.444,
-                "season_average": 18.444,
-                "season_median": 20.0,
-                "projected_output": 18.171,
-                "central_band_low": 16.693,
-                "central_band_high": 19.65,
-                "forecast_sigma": 4.224,
-                "offered_threshold": 12.5,
-                "distance_to_projection": 5.671,
-                "distance_sigma": 1.343,
-                "projected_side": "OVER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 88.58,
-              "sample_size": 9
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
-              "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-michael-penix-pass_completions-GOBLIN"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 88.58
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "32c1a11f066d6ad912d69ab5",
@@ -10595,7 +10595,7 @@
           "evaluation_material_hash": "61ae7cd5b75a2a6d6fd5ecfa1684a718995b6aa4219e0c2a86b2995b3dc4a278",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.673485+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         },
         {
           "participant": "Michael Penix Jr.",
@@ -10659,6 +10659,136 @@
             "distance_sigma": -0.551,
             "projected_side": "UNDER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+          },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 33.33,
+                "L5_HIT_RATE": 40.0,
+                "L10_HIT_RATE": 33.33,
+                "L20_HIT_RATE": 33.33,
+                "DISTRIBUTION_MODEL": 33.44,
+                "PLAYER_PROJECTION_MODEL": 29.07
+              },
+              "distribution": {
+                "n": 9,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 18.444,
+                "median": 20.0,
+                "stddev": 4.693,
+                "coefficient_of_variation": 0.254,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 15.667,
+                    "median": 13.0,
+                    "stddev": 4.497,
+                    "hit_probability": 33.33
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 17.6,
+                    "median": 20.0,
+                    "stddev": 4.224,
+                    "hit_probability": 40.0
+                  },
+                  "L10": {
+                    "n": 9,
+                    "average": 18.444,
+                    "median": 20.0,
+                    "stddev": 4.693,
+                    "hit_probability": 33.33
+                  },
+                  "L20": {
+                    "n": 9,
+                    "average": 18.444,
+                    "median": 20.0,
+                    "stddev": 4.693,
+                    "hit_probability": 33.33
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 9,
+                  "historical_sample_size": 9,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Michael Penix Jr.",
+                  "resolved_history_player": "Michael Penix Jr.",
+                  "identity_match": "EXACT",
+                  "l5_average": 17.6,
+                  "l10_average": 18.444,
+                  "season_average": 18.444,
+                  "season_median": 20.0,
+                  "projected_output": 18.171,
+                  "central_band_low": 16.693,
+                  "central_band_high": 19.65,
+                  "forecast_sigma": 4.224,
+                  "offered_threshold": 20.5,
+                  "distance_to_projection": -2.329,
+                  "distance_sigma": -0.551,
+                  "projected_side": "UNDER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 3,
+                "exact_threshold_hit_rate": 33.33,
+                "smoothed_hit_probability": 36.36,
+                "distribution_model_probability": 33.44,
+                "normal_threshold_probability": 29.07
+              },
+              "consistency": 89.49,
+              "sample_size": 9,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 9,
+                "historical_sample_size": 9,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Michael Penix Jr.",
+                "resolved_history_player": "Michael Penix Jr.",
+                "identity_match": "EXACT",
+                "l5_average": 17.6,
+                "l10_average": 18.444,
+                "season_average": 18.444,
+                "season_median": 20.0,
+                "projected_output": 18.171,
+                "central_band_low": 16.693,
+                "central_band_high": 19.65,
+                "forecast_sigma": 4.224,
+                "offered_threshold": 20.5,
+                "distance_to_projection": -2.329,
+                "distance_sigma": -0.551,
+                "projected_side": "UNDER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 0.0,
+              "signals": [],
+              "context_id": null,
+              "context_type": null,
+              "status": null,
+              "headline": null,
+              "source": null,
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-michael-penix-pass_completions-NORMAL"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
           },
           "spectrum": {
             "performance": [
@@ -10756,7 +10886,6 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 89.49,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -10768,137 +10897,8 @@
               "headline": null,
               "source": null,
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 33.33,
-                "L5_HIT_RATE": 40.0,
-                "L10_HIT_RATE": 33.33,
-                "L20_HIT_RATE": 33.33,
-                "DISTRIBUTION_MODEL": 33.44,
-                "PLAYER_PROJECTION_MODEL": 29.07
-              },
-              "distribution": {
-                "n": 9,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 18.444,
-                "median": 20.0,
-                "stddev": 4.693,
-                "coefficient_of_variation": 0.254,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 15.667,
-                    "median": 13.0,
-                    "stddev": 4.497,
-                    "hit_probability": 33.33
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 17.6,
-                    "median": 20.0,
-                    "stddev": 4.224,
-                    "hit_probability": 40.0
-                  },
-                  "L10": {
-                    "n": 9,
-                    "average": 18.444,
-                    "median": 20.0,
-                    "stddev": 4.693,
-                    "hit_probability": 33.33
-                  },
-                  "L20": {
-                    "n": 9,
-                    "average": 18.444,
-                    "median": 20.0,
-                    "stddev": 4.693,
-                    "hit_probability": 33.33
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 9,
-                  "historical_sample_size": 9,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Michael Penix Jr.",
-                  "resolved_history_player": "Michael Penix Jr.",
-                  "identity_match": "EXACT",
-                  "l5_average": 17.6,
-                  "l10_average": 18.444,
-                  "season_average": 18.444,
-                  "season_median": 20.0,
-                  "projected_output": 18.171,
-                  "central_band_low": 16.693,
-                  "central_band_high": 19.65,
-                  "forecast_sigma": 4.224,
-                  "offered_threshold": 20.5,
-                  "distance_to_projection": -2.329,
-                  "distance_sigma": -0.551,
-                  "projected_side": "UNDER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 3,
-                "exact_threshold_hit_rate": 33.33,
-                "smoothed_hit_probability": 36.36,
-                "distribution_model_probability": 33.44,
-                "normal_threshold_probability": 29.07
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 9,
-                "historical_sample_size": 9,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Michael Penix Jr.",
-                "resolved_history_player": "Michael Penix Jr.",
-                "identity_match": "EXACT",
-                "l5_average": 17.6,
-                "l10_average": 18.444,
-                "season_average": 18.444,
-                "season_median": 20.0,
-                "projected_output": 18.171,
-                "central_band_low": 16.693,
-                "central_band_high": 19.65,
-                "forecast_sigma": 4.224,
-                "offered_threshold": 20.5,
-                "distance_to_projection": -2.329,
-                "distance_sigma": -0.551,
-                "projected_side": "UNDER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 89.49,
-              "sample_size": 9
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
-              "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-michael-penix-pass_completions-NORMAL"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 89.49
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "a67e130b8cd3d78a8e3554da",
@@ -10906,7 +10906,7 @@
           "evaluation_material_hash": "6d77f2da2f9a8ad4158559e1cc90dd7e187849d7f1b3b4496d9502aed95f8e53",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.674073+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         },
         {
           "participant": "Michael Penix Jr.",
@@ -10970,6 +10970,136 @@
             "distance_sigma": -0.788,
             "projected_side": "UNDER",
             "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+          },
+          "feature_state": {
+            "performance": {
+              "recent_hit_rates": {
+                "L3_HIT_RATE": 33.33,
+                "L5_HIT_RATE": 20.0,
+                "L10_HIT_RATE": 22.22,
+                "L20_HIT_RATE": 22.22,
+                "DISTRIBUTION_MODEL": 21.61,
+                "PLAYER_PROJECTION_MODEL": 21.53
+              },
+              "distribution": {
+                "n": 9,
+                "metric": "pass_completions",
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "mean": 18.444,
+                "median": 20.0,
+                "stddev": 4.693,
+                "coefficient_of_variation": 0.254,
+                "recent_windows": {
+                  "L3": {
+                    "n": 3,
+                    "average": 15.667,
+                    "median": 13.0,
+                    "stddev": 4.497,
+                    "hit_probability": 33.33
+                  },
+                  "L5": {
+                    "n": 5,
+                    "average": 17.6,
+                    "median": 20.0,
+                    "stddev": 4.224,
+                    "hit_probability": 20.0
+                  },
+                  "L10": {
+                    "n": 9,
+                    "average": 18.444,
+                    "median": 20.0,
+                    "stddev": 4.693,
+                    "hit_probability": 22.22
+                  },
+                  "L20": {
+                    "n": 9,
+                    "average": 18.444,
+                    "median": 20.0,
+                    "stddev": 4.693,
+                    "hit_probability": 22.22
+                  }
+                },
+                "player_projection": {
+                  "metric": "pass_completions",
+                  "sample_size": 9,
+                  "historical_sample_size": 9,
+                  "history_source": "PERMANENT_METRIC_CACHE",
+                  "market_player_name": "Michael Penix Jr.",
+                  "resolved_history_player": "Michael Penix Jr.",
+                  "identity_match": "EXACT",
+                  "l5_average": 17.6,
+                  "l10_average": 18.444,
+                  "season_average": 18.444,
+                  "season_median": 20.0,
+                  "projected_output": 18.171,
+                  "central_band_low": 16.693,
+                  "central_band_high": 19.65,
+                  "forecast_sigma": 4.224,
+                  "offered_threshold": 21.5,
+                  "distance_to_projection": -3.329,
+                  "distance_sigma": -0.788,
+                  "projected_side": "UNDER",
+                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+                },
+                "hit_count": 2,
+                "exact_threshold_hit_rate": 22.22,
+                "smoothed_hit_probability": 27.27,
+                "distribution_model_probability": 21.61,
+                "normal_threshold_probability": 21.53
+              },
+              "consistency": 97.56,
+              "sample_size": 9,
+              "player_projection": {
+                "metric": "pass_completions",
+                "sample_size": 9,
+                "historical_sample_size": 9,
+                "history_source": "PERMANENT_METRIC_CACHE",
+                "market_player_name": "Michael Penix Jr.",
+                "resolved_history_player": "Michael Penix Jr.",
+                "identity_match": "EXACT",
+                "l5_average": 17.6,
+                "l10_average": 18.444,
+                "season_average": 18.444,
+                "season_median": 20.0,
+                "projected_output": 18.171,
+                "central_band_low": 16.693,
+                "central_band_high": 19.65,
+                "forecast_sigma": 4.224,
+                "offered_threshold": 21.5,
+                "distance_to_projection": -3.329,
+                "distance_sigma": -0.788,
+                "projected_side": "UNDER",
+                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+              }
+            },
+            "market": {
+              "implied_probability": null,
+              "source_count": 0
+            },
+            "context": {
+              "delta": 0.0,
+              "signals": [],
+              "context_id": null,
+              "context_type": null,
+              "status": null,
+              "headline": null,
+              "source": null,
+              "matchup": null
+            },
+            "provenance": {
+              "snapshot_ids": [
+                "LEGZ-SYNTH-NFL-401872948-michael-penix-pass_completions-DEMON"
+              ],
+              "evidence_ids": []
+            },
+            "safeguards": {
+              "market_only_prohibited": true,
+              "correlated_windows_count_as_one_family": true,
+              "independent_signal_families": [
+                "PERFORMANCE_HISTORY"
+              ],
+              "jinx_adjustment_cap_pp": 12
+            }
           },
           "spectrum": {
             "performance": [
@@ -11067,7 +11197,6 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
-            "consistency": 97.56,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
@@ -11079,137 +11208,8 @@
               "headline": null,
               "source": null,
               "matchup": null
-            }
-          },
-          "feature_state": {
-            "performance": {
-              "recent_hit_rates": {
-                "L3_HIT_RATE": 33.33,
-                "L5_HIT_RATE": 20.0,
-                "L10_HIT_RATE": 22.22,
-                "L20_HIT_RATE": 22.22,
-                "DISTRIBUTION_MODEL": 21.61,
-                "PLAYER_PROJECTION_MODEL": 21.53
-              },
-              "distribution": {
-                "n": 9,
-                "metric": "pass_completions",
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "mean": 18.444,
-                "median": 20.0,
-                "stddev": 4.693,
-                "coefficient_of_variation": 0.254,
-                "recent_windows": {
-                  "L3": {
-                    "n": 3,
-                    "average": 15.667,
-                    "median": 13.0,
-                    "stddev": 4.497,
-                    "hit_probability": 33.33
-                  },
-                  "L5": {
-                    "n": 5,
-                    "average": 17.6,
-                    "median": 20.0,
-                    "stddev": 4.224,
-                    "hit_probability": 20.0
-                  },
-                  "L10": {
-                    "n": 9,
-                    "average": 18.444,
-                    "median": 20.0,
-                    "stddev": 4.693,
-                    "hit_probability": 22.22
-                  },
-                  "L20": {
-                    "n": 9,
-                    "average": 18.444,
-                    "median": 20.0,
-                    "stddev": 4.693,
-                    "hit_probability": 22.22
-                  }
-                },
-                "player_projection": {
-                  "metric": "pass_completions",
-                  "sample_size": 9,
-                  "historical_sample_size": 9,
-                  "history_source": "PERMANENT_METRIC_CACHE",
-                  "market_player_name": "Michael Penix Jr.",
-                  "resolved_history_player": "Michael Penix Jr.",
-                  "identity_match": "EXACT",
-                  "l5_average": 17.6,
-                  "l10_average": 18.444,
-                  "season_average": 18.444,
-                  "season_median": 20.0,
-                  "projected_output": 18.171,
-                  "central_band_low": 16.693,
-                  "central_band_high": 19.65,
-                  "forecast_sigma": 4.224,
-                  "offered_threshold": 21.5,
-                  "distance_to_projection": -3.329,
-                  "distance_sigma": -0.788,
-                  "projected_side": "UNDER",
-                  "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-                },
-                "hit_count": 2,
-                "exact_threshold_hit_rate": 22.22,
-                "smoothed_hit_probability": 27.27,
-                "distribution_model_probability": 21.61,
-                "normal_threshold_probability": 21.53
-              },
-              "player_projection": {
-                "metric": "pass_completions",
-                "sample_size": 9,
-                "historical_sample_size": 9,
-                "history_source": "PERMANENT_METRIC_CACHE",
-                "market_player_name": "Michael Penix Jr.",
-                "resolved_history_player": "Michael Penix Jr.",
-                "identity_match": "EXACT",
-                "l5_average": 17.6,
-                "l10_average": 18.444,
-                "season_average": 18.444,
-                "season_median": 20.0,
-                "projected_output": 18.171,
-                "central_band_low": 16.693,
-                "central_band_high": 19.65,
-                "forecast_sigma": 4.224,
-                "offered_threshold": 21.5,
-                "distance_to_projection": -3.329,
-                "distance_sigma": -0.788,
-                "projected_side": "UNDER",
-                "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              },
-              "consistency": 97.56,
-              "sample_size": 9
             },
-            "market": {
-              "implied_probability": null,
-              "source_count": 0
-            },
-            "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
-              "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "provenance": {
-              "snapshot_ids": [
-                "LEGZ-SYNTH-NFL-401872948-michael-penix-pass_completions-DEMON"
-              ],
-              "evidence_ids": []
-            },
-            "safeguards": {
-              "market_only_prohibited": true,
-              "correlated_windows_count_as_one_family": true,
-              "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
-              ],
-              "jinx_adjustment_cap_pp": 12
-            }
+            "consistency": 97.56
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "dcf40d1aa125a839a741e3d4",
@@ -11217,7 +11217,7 @@
           "evaluation_material_hash": "3066fa60f3ea11bb77f2e3f0901e79caeac55227c0837a6f7a960a1b8e38fe33",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
           "evaluated_at_utc": "2026-09-24T23:21:17.674680+00:00",
-          "evaluation_reused": false
+          "evaluation_reused": true
         }
       ]
     }
