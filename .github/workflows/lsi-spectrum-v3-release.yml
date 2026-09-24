@@ -140,11 +140,44 @@ jobs:
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/qc_prop_board.json data/lsi_evaluation_state.json data/legz_synthetic_book.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/projection_gap_report.json
-          if git diff --cached --quiet; then
-            echo 'Spectrum v3 artifacts already current.'
-          else
+          outputs=(
+            data/qc_prop_board.json data/lsi_evaluation_state.json data/legz_synthetic_book.json
+            data/prediction_registry.json data/prediction_registry.js
+            data/future_market_board.json data/future_market_board.js
+            data/game_winner_evidence.json data/projection_gap_report.json
+          )
+          snapshot="$(mktemp -d)"
+          for p in "${outputs[@]}"; do
+            if [ -e "$p" ]; then
+              mkdir -p "$snapshot/$(dirname "$p")"
+              cp -a "$p" "$snapshot/$p"
+            fi
+          done
+
+          # Generated runtime artifacts are authoritative for this run; current
+          # master is authoritative for code/UI and unrelated projects. Never
+          # rebase multi-megabyte generated JSON against a moving branch.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin master
+            git reset --hard origin/master
+            for p in "${outputs[@]}"; do
+              if [ -e "$snapshot/$p" ]; then
+                rm -rf "$p"
+                mkdir -p "$(dirname "$p")"
+                cp -a "$snapshot/$p" "$p"
+              fi
+            done
+            git add "${outputs[@]}" 2>/dev/null || true
+            if git diff --cached --quiet; then
+              echo 'Spectrum v3 artifacts already current.'
+              exit 0
+            fi
             git commit -m 'LSI Spectrum v3 runtime release'
-            git pull --rebase --autostash origin master
-            git push origin master
-          fi
+            if git push origin HEAD:master; then
+              exit 0
+            fi
+            echo "Push race detected; refreshing master and re-overlaying Spectrum artifacts (${attempt}/5)."
+            sleep 3
+          done
+          echo "::error::Unable to publish Spectrum v3 artifacts after 5 overlay retries."
+          exit 1
