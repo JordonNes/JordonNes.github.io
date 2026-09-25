@@ -13,6 +13,8 @@ The adapter:
 * uses conservative free-tier guards: an 8-hour per-league refresh gate, max
   three sport calls per run, 900-credit local ceiling and 100-credit reserve.
 
+Activation is verified by the persisted data/parlayapi_state.json artifact on the next LSI run.
+
 If ParlayAPI reports a truncated/partial page, the adapter upserts fresh rows but
 does not delete older retail rows solely because they were absent from that
 partial response.
