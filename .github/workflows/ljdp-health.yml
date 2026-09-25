@@ -100,11 +100,33 @@ jobs:
           }
           missing=sorted(current_ids-future_ids)
           assert not missing, f'Deployed future board lost current GAME_ML event(s): {missing[:12]}'
+          published_at=datetime.fromisoformat(future['generated_at_utc'].replace('Z','+00:00'))
+          guard=future.get('publication_guard') or {}
+          cutoff_raw=guard.get('cutoff_utc') or future['generated_at_utc']
+          cutoff=datetime.fromisoformat(cutoff_raw.replace('Z','+00:00'))
+          aged_out=[]
           for event in future.get('events',[]):
               start=datetime.fromisoformat(event['commence_time'].replace('Z','+00:00'))
-              assert start>now, f"started event exposed as actionable: {event.get('source_event_id')}"
+              # Publication invariant: no event may already be started when a writer
+              # emits the actionable future-board artifact. Events that start later
+              # may naturally remain in static JSON until the next refresh; runtime
+              # consumers must suppress those by current clock.
+              assert start>cutoff, (
+                  f"event was already started at publication cutoff: "
+                  f"{event.get('source_event_id')} start={start.isoformat()} cutoff={cutoff.isoformat()}"
+              )
+              if start<=now:
+                  aged_out.append(str(event.get('source_event_id') or event.get('event_id') or 'UNKNOWN'))
               for prop in event.get('props',[]):
                   assert prop.get('ljpc') is not None or prop.get('lj_confidence') is not None
                   assert prop.get('source_snapshot_ids')
-          print(f"Deployed semantic health: {len(registry.get('predictions',[]))} predictions; {len(future.get('events',[]))} future events; {len(usable_ml)} GAME_ML rows; moneyline age={ml_age:.2f}h")
+          print(
+              f"Deployed semantic health: {len(registry.get('predictions',[]))} predictions; "
+              f"{len(future.get('events',[]))} published future events; {len(usable_ml)} GAME_ML rows; "
+              f"moneyline age={ml_age:.2f}h; aged-out static rows hidden at runtime={len(aged_out)}"
+          )
+          if aged_out:
+              print(f"Aged-out static future rows (runtime non-actionable): {aged_out[:20]}")
           PY
+          grep -Fq 'if(!Number.isFinite(t)||t<=nowMs) return false;' lsi_registry_bridge.js || { echo '::error::Runtime DP/QC start-time gate missing'; exit 1; }
+          grep -Fq 'if(!Number.isFinite(t)||t<=now||t>horizon)return;' Quickie_Generator.html || { echo '::error::Quickie start-time gate missing'; exit 1; }
