@@ -120,7 +120,8 @@ jobs:
         continue-on-error: true
         env:
           ESPN_PLAYER_ENRICHMENT_TTL_HOURS: '12'
-          ESPN_PLAYER_ENRICHMENT_MAX_PLAYERS: '80'
+          ESPN_PLAYER_ENRICHMENT_MAX_PLAYERS: '40'
+          ESPN_PLAYER_ENRICHMENT_MAX_WORKERS: '8'
         run: python scripts/espn_player_enrichment.py
 
       - name: Evaluate collected POMs with material-hash reuse
