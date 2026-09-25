@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 EVENTS = DATA / "event_inventory.csv"
 FUTURE = DATA / "future_market_board.json"
+ESPN_EVENTS = DATA / "espn_event_intelligence.json"
 OUT = DATA / "lsi_league_schedule.json"
 STATE = DATA / "lsi_league_scheduler_state.json"
 PT = ZoneInfo("America/Los_Angeles")
@@ -157,22 +158,57 @@ def future_board_events():
     return out
 
 
+def espn_intelligence_events():
+    try:
+        payload=json.loads(ESPN_EVENTS.read_text(encoding="utf-8"))
+    except (FileNotFoundError,json.JSONDecodeError):
+        return []
+    out=[]
+    for row in payload.get("events") or []:
+        league=canon_league(row.get("league"))
+        start=parse_dt(row.get("start_utc"))
+        if not league or not start: continue
+        teams=row.get("teams") or []
+        away=next((x for x in teams if str(x.get("home_away") or "").lower()=="away"),{})
+        home=next((x for x in teams if str(x.get("home_away") or "").lower()=="home"),{})
+        out.append({
+            "league":league,
+            "event_id":str(row.get("event_id") or ""),
+            "commence_time":start.isoformat(),
+            "away":away.get("display_name") or "",
+            "home":home.get("display_name") or "",
+            "status":row.get("status") or "",
+            "source":"ESPN_EVENT_INTELLIGENCE",
+        })
+    return out
+
+
+def team_key(value):
+    parts=[x for x in str(value or "").lower().replace("&"," ").replace("'","").replace("."," ").split() if x]
+    return parts[-1] if parts else ""
+
+
 def merged_events():
-    merged = {}
-    for row in latest_inventory_events() + future_board_events():
-        start = parse_dt(row.get("commence_time"))
-        if not start:
-            continue
-        key = (
-            row["league"],
-            row.get("event_id") or "",
-            start.isoformat(),
-            row.get("away") or "",
-            row.get("home") or "",
-        )
-        current = merged.get(key)
-        if current is None or row.get("source") == "FUTURE_MARKET_BOARD":
-            merged[key] = row
+    """Merge event discovery across durable inventory, market board and ESPN truth.
+
+    Different providers use different event IDs. De-duplicate the same contest by
+    league/start/team nicknames and prefer the ESPN event identity when available.
+    """
+    merged={}
+    priority={"EVENT_INVENTORY":1,"FUTURE_MARKET_BOARD":2,"ESPN_EVENT_INTELLIGENCE":3}
+    rows=latest_inventory_events()+future_board_events()+espn_intelligence_events()
+    for row in rows:
+        start=parse_dt(row.get("commence_time"))
+        if not start: continue
+        start_key=start.replace(second=0,microsecond=0).isoformat()
+        away_key=team_key(row.get("away"))
+        home_key=team_key(row.get("home"))
+        key=(row["league"],start_key,away_key,home_key)
+        current=merged.get(key)
+        source=row.get("source") or "EVENT_INVENTORY"
+        current_source=(current or {}).get("source") or "EVENT_INVENTORY"
+        if current is None or priority.get(source,0)>=priority.get(current_source,0):
+            merged[key]=row
     return list(merged.values())
 
 
