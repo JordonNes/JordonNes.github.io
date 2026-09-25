@@ -76,7 +76,7 @@ jobs:
           wait_for_file_match https://jordonnes.github.io/data/future_market_board.json data/future_market_board.json /tmp/future.json "future market board"
           wait_for_file_match https://jordonnes.github.io/data/future_market_board.js data/future_market_board.js /tmp/future.js "future market board JS"
           wait_for_file_match https://jordonnes.github.io/data/current_game_moneylines.json data/current_game_moneylines.json /tmp/moneylines.json "GAME_ML artifact"
-          wait_for_file_match https://jordonnes.github.io/data/espn_event_intelligence.json data/espn_event_intelligence.json /tmp/espn-events.json "ESPN event intelligence"
+          curl --fail --silent --show-error --retry 4 --retry-delay 10 "https://jordonnes.github.io/data/espn_event_intelligence.json?health_ts=$(date +%s)" -o /tmp/espn-events.json
           test -s /tmp/future.json && test -s /tmp/future.js && test -s /tmp/moneylines.json
           grep -q 'LEGZ &amp; JINX — Daily Predictions' /tmp/ljdp.html
           grep -q 'provenance_policy' /tmp/registry.json
@@ -96,6 +96,11 @@ jobs:
           assert settlement.get('schema_version')=='LSI-SETTLEMENT-1'
           assert future.get('schema_version')=='LJ-FUTURE-MARKET-1'
           assert moneylines.get('schema_version')=='LJ-CURRENT-GAME-ML-1'
+          espn=json.load(open('/tmp/espn-events.json'))
+          assert espn.get('schema_version')=='LSI-ESPN-EVENT-1'
+          espn_stamp=datetime.fromisoformat(espn['generated_at_utc'].replace('Z','+00:00'))
+          espn_age=(now-espn_stamp).total_seconds()/3600
+          assert espn_age <= 12, f'Deployed ESPN sports-truth stale: {espn_age:.1f}h'
           assert all(p.get('source_snapshot_ids') and p.get('provenance') and p.get('evidence_ids') for p in registry.get('predictions',[]))
           assert all(p.get('ljpc') is not None and p.get('legz_value') is not None and p.get('pom_value') is not None for p in registry.get('predictions',[]))
           now=datetime.now(timezone.utc)
@@ -142,7 +147,7 @@ jobs:
           print(
               f"Deployed semantic health: {len(registry.get('predictions',[]))} predictions; "
               f"{len(future.get('events',[]))} published future events; {len(usable_ml)} GAME_ML rows; "
-              f"moneyline age={ml_age:.2f}h; aged-out static rows hidden at runtime={len(aged_out)}"
+              f"moneyline age={ml_age:.2f}h; ESPN age={espn_age:.2f}h; aged-out static rows hidden at runtime={len(aged_out)}"
           )
           if aged_out:
               print(f"Aged-out static future rows (runtime non-actionable): {aged_out[:20]}")
