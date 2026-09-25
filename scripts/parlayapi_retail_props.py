@@ -213,6 +213,10 @@ def aliases(team):
         out.add("".join(w[0] for w in words).upper())
     if words and 2<=len(words[0])<=5:
         out.add(words[0].upper())
+    # Mascot/club token is a strong cross-provider alias (e.g. "NO Saints"
+    # vs "New Orleans Saints") and avoids depending only on city abbreviations.
+    if len(words)>=2 and len(words[-1])>=3:
+        out.add(words[-1].upper())
     return sorted(out)
 
 def available_side_tokens(row):
