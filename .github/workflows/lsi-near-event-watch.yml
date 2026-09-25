@@ -33,6 +33,7 @@ jobs:
         run: |
           python scripts/test_lsi_league_scheduler.py
           python scripts/test_legz_material_hash.py
+          python scripts/test_parlayapi_retail_props.py
 
       - name: Decide which leagues and events are actually due
         id: schedule
@@ -87,6 +88,20 @@ jobs:
           PROPLINE_MAX_PROP_MARKETS_PER_EVENT: '10'
           PROPLINE_INTELLIGENCE_RETENTION_DAYS: '2'
         run: python scripts/propline_adapter.py
+
+      - name: Refresh retail PrizePicks / Underdog / DraftKings POMs
+        if: steps.schedule.outputs.has_work == 'true'
+        continue-on-error: true
+        env:
+          PARLAY_API_KEY: ${{ secrets.PARLAY_API_KEY || vars.PARLAY_API_KEY }}
+          PARLAYAPI_API_KEY: ${{ secrets.PARLAYAPI_API_KEY || vars.PARLAYAPI_API_KEY }}
+          PARLAY_API_LEAGUES: ${{ steps.schedule.outputs.due_leagues }}
+          PARLAY_API_MAX_SPORT_CALLS_PER_RUN: '3'
+          PARLAY_API_MIN_REFRESH_MINUTES: '480'
+          PARLAY_API_MONTHLY_CREDIT_CAP: '900'
+          PARLAY_API_CREDIT_RESERVE: '100'
+          PARLAY_API_MAX_AGE_SEC: '900'
+        run: python scripts/parlayapi_retail_props.py
 
       - name: Refresh due coverage-gap player props
         if: steps.schedule.outputs.odds_api_leagues != ''
@@ -181,7 +196,7 @@ jobs:
           rm -f "$generated_market"
           git reset HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
           git checkout HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
-          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json 2>/dev/null || true
+          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_state.json data/parlayapi_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'Due work produced no durable intelligence changes.'
             exit 0
