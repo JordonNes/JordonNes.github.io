@@ -102,6 +102,12 @@ def canonical_prop(p):
       "price_format":p.get("price_format"),
       "book":p.get("best_book"),
       "draftkings_available":bool(p.get("draftkings_available")),
+      "prizepicks_available":bool(p.get("prizepicks_available")),
+      "underdog_available":bool(p.get("underdog_available")),
+      "retail_books":p.get("retail_books") or [],
+      "provider_offers":p.get("provider_offers") or [],
+      "provider_projection_type":p.get("provider_projection_type"),
+      "promo_variant":bool(p.get("promo_variant")),
       "market_verified":verified,
       "synthetic":synthetic,
       "model_generated":synthetic,
@@ -404,7 +410,14 @@ def main():
                 continue
             if not p.get("evaluation_id") or not p.get("source_snapshot_ids"):
                 continue
-            key=(str(p["participant"]).strip().lower(),str(p["market_key"]).strip().lower())
+            # Preserve exact threshold + side variants. Goblin/Normal/Demon
+            # ladders must not collapse into one player+market row before ranking.
+            key=(
+                str(p["participant"]).strip().lower(),
+                str(p["market_key"]).strip().lower(),
+                str(p.get("threshold") if p.get("threshold") is not None else ""),
+                str(p.get("side") or "").strip().lower(),
+            )
             prior=best.get(key)
             if prior is None or float(p.get("ljpc") or 0)>float(prior.get("ljpc") or 0):
                 best[key]=p
