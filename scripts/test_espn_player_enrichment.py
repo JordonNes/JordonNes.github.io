@@ -16,3 +16,23 @@ sg=compact_gamelog(string_opp)
 assert sg["events"][0]["opponent"]["display_name"]=="@ BOS"
 assert sg["events"][0]["stats"]=={"minutes":"31","points":"18"}
 print("ESPN live-schema normalization checks passed.")
+
+# MLB common/v3 can return events keyed by event ID instead of a list.
+# This is the production shape that previously made the parser iterate strings.
+mlb_dict_shape={
+    "names":["date","opponent","gameResult","atBats","runs","hits"],
+    "events":{
+        "401999001":{
+            "date":"2026-09-24T00:00Z",
+            "opponent":"Seattle Mariners",
+            "gameResult":"W",
+            "stats":["4","1","2"]
+        }
+    }
+}
+parsed=compact_gamelog(mlb_dict_shape)
+assert len(parsed["events"])==1
+assert parsed["events"][0]["id"]=="401999001"
+assert parsed["events"][0]["opponent"]["display_name"]=="Seattle Mariners"
+assert parsed["events"][0]["stats"]=={"atBats":"4","runs":"1","hits":"2"}
+print("ESPN MLB gamelog dictionary-shape parser passed.")

@@ -118,25 +118,48 @@ def compact_splits(payload):
       "filters":payload.get("filters") or [],
     }
 
+def gamelog_event_rows(payload):
+    """Normalize ESPN gamelog schema variants into event dictionaries.
+
+    Some MLB responses return events as an object keyed by event ID rather than
+    the list shown in the generic docs. Iterating that object directly yields
+    string keys, which caused the prior "'str' object has no attribute 'get'"
+    failure. Preserve the key as the event ID and ignore non-record values.
+    """
+    raw=payload.get("events") or []
+    if isinstance(raw,dict):
+        rows=[]
+        for event_id,value in raw.items():
+            if isinstance(value,dict):
+                row=dict(value); row.setdefault("id",str(event_id)); rows.append(row)
+        return rows
+    if isinstance(raw,list):
+        return [row for row in raw if isinstance(row,dict)]
+    return []
+
+
 def compact_gamelog(payload):
-    names=list(payload.get("names") or [])
-    labels=list(payload.get("labels") or [])
+    names=list(payload.get("names") or []) if isinstance(payload.get("names") or [],list) else []
+    labels=list(payload.get("labels") or []) if isinstance(payload.get("labels") or [],list) else []
     events=[]
-    for e in payload.get("events") or []:
+    for e in gamelog_event_rows(payload):
         opponent=e.get("opponent") or {}
         if isinstance(opponent,dict):
-            opponent_obj={"id":opponent.get("id"),"display_name":opponent.get("displayName"),"abbreviation":opponent.get("abbreviation")}
+            opponent_obj={"id":opponent.get("id"),"display_name":opponent.get("displayName") or opponent.get("display_name"),"abbreviation":opponent.get("abbreviation")}
         else:
             opponent_obj={"id":None,"display_name":str(opponent),"abbreviation":None}
-        stats=list(e.get("stats") or [])
-        # ESPN often supplies structural date/opponent/result labels before the
-        # numeric stat array. Preserve raw labels/names plus aligned tail mapping.
-        stat_names=names[-len(stats):] if stats and len(names)>=len(stats) else []
-        mapped={stat_names[i]:stats[i] for i in range(min(len(stat_names),len(stats)))}
+        raw_stats=e.get("stats") or []
+        if isinstance(raw_stats,dict):
+            mapped={str(k):v for k,v in raw_stats.items()}
+            stats=list(raw_stats.values())
+        else:
+            stats=list(raw_stats) if isinstance(raw_stats,(list,tuple)) else []
+            stat_names=names[-len(stats):] if stats and len(names)>=len(stats) else []
+            mapped={stat_names[i]:stats[i] for i in range(min(len(stat_names),len(stats)))}
         events.append({
           "id":e.get("id"),"date":e.get("date"),
           "opponent":opponent_obj,
-          "game_result":e.get("gameResult"),"stats":mapped,"raw_stats":stats
+          "game_result":e.get("gameResult") or e.get("game_result"),"stats":mapped,"raw_stats":stats
         })
     events.sort(key=lambda x:str(x.get("date") or ""))
     return {"labels":labels,"names":names,"events":events[-20:],"filters":payload.get("filters") or []}

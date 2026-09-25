@@ -1,0 +1,48 @@
+name: LSI Publication Hygiene
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/lsi_publication_hygiene.py'
+      - 'scripts/test_lsi_publication_hygiene.py'
+      - '.github/workflows/lsi-publication-hygiene.yml'
+  schedule:
+    - cron: '3,13,23,33,43,53 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-market-writer
+  cancel-in-progress: false
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: master, fetch-depth: 0}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+      - name: Verify publication-hygiene rule
+        run: python scripts/test_lsi_publication_hygiene.py
+      - name: Remove events that have crossed start time
+        id: hygiene
+        run: python scripts/lsi_publication_hygiene.py --github-output "$GITHUB_OUTPUT"
+      - name: Commit only when public board changed
+        if: steps.hygiene.outputs.changed == 'true'
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX LSI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/future_market_board.json data/future_market_board.js
+          git commit -m "LSI prune started public events"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase --autostash origin master
+            if git push origin master; then exit 0; fi
+            sleep 3
+          done
+          exit 1

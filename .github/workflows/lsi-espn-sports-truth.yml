@@ -6,14 +6,26 @@ on:
     branches: [master]
     paths:
       - 'scripts/espn_intelligence_adapter.py'
+      - 'scripts/lsi_checkpoint_clock.py'
+      - 'scripts/test_lsi_checkpoint_clock.py'
       - 'scripts/test_espn_intelligence_adapter.py'
       - 'scripts/espn_player_enrichment.py'
       - 'scripts/test_espn_player_enrichment.py'
       - 'config/lsi_sources.json'
       - '.github/workflows/lsi-espn-sports-truth.yml'
   schedule:
-    - cron: '15 1,4,13,16,19,22 * * *'
-    - cron: '15 2,5,14,17,20,23 * * *'
+    - cron: '15 1 * * *'
+    - cron: '15 2 * * *'
+    - cron: '15 4 * * *'
+    - cron: '15 5 * * *'
+    - cron: '15 13 * * *'
+    - cron: '15 14 * * *'
+    - cron: '15 16 * * *'
+    - cron: '15 17 * * *'
+    - cron: '15 19 * * *'
+    - cron: '15 20 * * *'
+    - cron: '15 22 * * *'
+    - cron: '15 23 * * *'
 
 permissions:
   contents: write
@@ -32,23 +44,23 @@ jobs:
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
 
-      - name: Resolve DST-safe Pacific checkpoint
+      - name: Resolve delay-safe Pacific checkpoint
         id: clock
         shell: bash
+        env:
+          SCHEDULE_EXPR: ${{ github.event.schedule }}
         run: |
-          PT_HOUR=$(TZ=America/Los_Angeles date +%H)
-          case "$PT_HOUR" in
-            06|09|12|15|18|21) ALLOWED=true;;
-            *) ALLOWED=false;;
-          esac
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "push" ]; then ALLOWED=true; fi
-          echo "allowed=$ALLOWED" >> "$GITHUB_OUTPUT"
-          echo "Pacific hour=$PT_HOUR; allowed=$ALLOWED"
+          python scripts/lsi_checkpoint_clock.py \
+            --event-name "${{ github.event_name }}" \
+            --schedule "$SCHEDULE_EXPR" \
+            --push-stage DISCOVERY \
+            --github-output "$GITHUB_OUTPUT"
 
       - name: Compile and unit-check ESPN intelligence
         if: steps.clock.outputs.allowed == 'true'
         run: |
-          python -m py_compile scripts/espn_intelligence_adapter.py scripts/espn_player_enrichment.py
+          python -m py_compile scripts/espn_intelligence_adapter.py scripts/espn_player_enrichment.py scripts/lsi_checkpoint_clock.py
+          python scripts/test_lsi_checkpoint_clock.py
           python scripts/test_espn_intelligence_adapter.py
           python scripts/test_espn_player_enrichment.py
 

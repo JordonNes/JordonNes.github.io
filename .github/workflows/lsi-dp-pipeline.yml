@@ -17,6 +17,8 @@ on:
     branches: [master]
     paths:
       - 'scripts/lsi_ingest.py'
+      - 'scripts/lsi_checkpoint_clock.py'
+      - 'scripts/test_lsi_checkpoint_clock.py'
       - 'scripts/espn_intelligence_adapter.py'
       - 'scripts/test_espn_intelligence_adapter.py'
       - 'scripts/espn_player_enrichment.py'
@@ -53,10 +55,20 @@ on:
       - 'lsi_registry_bridge.js'
       - '.github/workflows/lsi-dp-pipeline.yml'
   schedule:
-    - cron: '0 13,16,19,22 * * *'
-    - cron: '0 1,4 * * *'
-    - cron: '0 14,17,20,23 * * *'
-    - cron: '0 2,5 * * *'
+    # Separate cron identities are intentional. The checkpoint resolver uses the
+    # exact triggering cron, so GitHub runner delays cannot change the PT stage.
+    - cron: '0 1 * * *'
+    - cron: '0 2 * * *'
+    - cron: '0 4 * * *'
+    - cron: '0 5 * * *'
+    - cron: '0 13 * * *'
+    - cron: '0 14 * * *'
+    - cron: '0 16 * * *'
+    - cron: '0 17 * * *'
+    - cron: '0 19 * * *'
+    - cron: '0 20 * * *'
+    - cron: '0 22 * * *'
+    - cron: '0 23 * * *'
 
 permissions:
   contents: write
@@ -72,38 +84,27 @@ jobs:
       stage: ${{ steps.resolve.outputs.stage }}
       date: ${{ steps.resolve.outputs.date }}
       run_allowed: ${{ steps.resolve.outputs.run_allowed }}
+      canonical_checkpoint: ${{ steps.resolve.outputs.canonical_checkpoint }}
+      scheduled_for_pt: ${{ steps.resolve.outputs.scheduled_for_pt }}
     steps:
-      - name: Resolve DST-safe Pacific run stage
+      - uses: actions/checkout@v7
+        with: {ref: master}
+      - name: Resolve delay-safe Pacific checkpoint
         id: resolve
         shell: bash
         env:
           MANUAL_STAGE: ${{ inputs.stage }}
+          SCHEDULE_EXPR: ${{ github.event.schedule }}
+          # TEMPORARY one-run force. Reverted to DISCOVERY after the fresh
+          # MASTER publication validates successfully.
+          PUSH_STAGE: MASTER_PUBLICATION
         run: |
-          PT_HOUR=$(TZ=America/Los_Angeles date +%H)
-          PT_DATE=$(TZ=America/Los_Angeles date +%F)
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            STAGE="$MANUAL_STAGE"
-            RUN_ALLOWED=true
-          elif [ "${{ github.event_name }}" = "push" ]; then
-            STAGE=DISCOVERY
-            RUN_ALLOWED=true
-          else
-            case "$PT_HOUR" in
-              06) STAGE=DISCOVERY;;
-              09) STAGE=MORNING_PUBLICATION;;
-              12) STAGE=MIDDAY_PUBLICATION;;
-              15) STAGE=MARKET_HISTORY;;
-              18) STAGE=CONTEXT_MARKETS;;
-              21) STAGE=MASTER_PUBLICATION;;
-              *) STAGE=NONCANONICAL_DST_DUPLICATE; RUN_ALLOWED=false;;
-            esac
-            RUN_ALLOWED=${RUN_ALLOWED:-true}
-          fi
-          echo "hour=$PT_HOUR" >> "$GITHUB_OUTPUT"
-          echo "date=$PT_DATE" >> "$GITHUB_OUTPUT"
-          echo "stage=$STAGE" >> "$GITHUB_OUTPUT"
-          echo "run_allowed=$RUN_ALLOWED" >> "$GITHUB_OUTPUT"
-          echo "Pacific stage: $STAGE; allowed: $RUN_ALLOWED"
+          python scripts/lsi_checkpoint_clock.py \
+            --event-name "${{ github.event_name }}" \
+            --schedule "$SCHEDULE_EXPR" \
+            --manual-stage "$MANUAL_STAGE" \
+            --push-stage "$PUSH_STAGE" \
+            --github-output "$GITHUB_OUTPUT"
 
   lsi:
     needs: clock
@@ -131,18 +132,24 @@ jobs:
       - name: Resolve league/event work due at this checkpoint
         id: league_schedule
         shell: bash
+        env:
+          CANONICAL_CHECKPOINT: ${{ needs.clock.outputs.canonical_checkpoint }}
         run: |
           python scripts/lsi_league_scheduler.py
           python - <<'PY' >> "$GITHUB_OUTPUT"
-          import json
+          import json,os
           d=json.load(open('data/lsi_league_schedule.json',encoding='utf-8'))
-          print('has_work=' + ('true' if d.get('has_work') else 'false'))
+          market_work=bool(d.get('has_work'))
+          checkpoint=os.environ.get('CANONICAL_CHECKPOINT','false').lower()=='true'
+          print('has_work=' + ('true' if market_work else 'false'))
+          print('cycle_required=' + ('true' if (market_work or checkpoint) else 'false'))
           print('due_leagues=' + ','.join(d.get('due_leagues') or []))
           print('propline_leagues=' + ','.join(d.get('propline_leagues') or []))
           print('odds_api_leagues=' + ','.join(d.get('odds_api_leagues') or []))
           PY
       - name: Verify event-aware scheduling rules
         run: |
+          python scripts/test_lsi_checkpoint_clock.py
           python scripts/test_lsi_league_scheduler.py
           python scripts/test_legz_material_hash.py
       - name: Verify ESPN sports-truth adapter
@@ -160,7 +167,7 @@ jobs:
         continue-on-error: true
         run: python scripts/lsi_season_preload.py
       - name: Refresh ESPN persistent sports-truth intelligence
-        if: github.event_name == 'push' || steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         continue-on-error: true
         env:
           ESPN_INTELLIGENCE_LEAGUES: ${{ steps.league_schedule.outputs.due_leagues }}
@@ -178,7 +185,7 @@ jobs:
           ROTOWIRE_API_KEY: ${{ secrets.ROTOWIRE_API_KEY }}
         run: python scripts/rotowire_adapter.py
       - name: Kalshi public offered-POM acquisition — primary free current market
-        if: github.event_name == 'push' || steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         continue-on-error: true
         env:
           KALSHI_MAX_PAGES: '4'
@@ -243,7 +250,7 @@ jobs:
         if: needs.clock.outputs.stage == 'MARKET_HISTORY' || needs.clock.outputs.stage == 'MASTER_PUBLICATION'
         run: python scripts/lsi_history_warehouse.py
       - name: Refresh TTL-gated ESPN player gamelog and split evidence
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         continue-on-error: true
         env:
           ESPN_PLAYER_ENRICHMENT_TTL_HOURS: '12'
@@ -255,16 +262,16 @@ jobs:
           python scripts/test_espn_player_enrichment.py
           python scripts/espn_player_enrichment.py
       - name: Merge verified override evidence before Spectrum
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/lsi_apply_verified_overrides.py
       - name: LEGZ Synthetic Book — internal research shadow only
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/legz_synthetic_book.py
       - name: Validate forecast-first player-prop ladder
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/legz_prop_ladder_test.py
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         env:
           LSI_FAST_RUNTIME: ${{ needs.clock.outputs.stage == 'DISCOVERY' && 'true' || 'false' }}
         run: |
@@ -295,35 +302,35 @@ jobs:
           print(f'Spectrum v3 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence; durable_live_states={len(ids)}; size_mb={size/1024/1024:.2f}.')
           PY
       - name: Explain forecast-first projection gaps
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/lsi_projection_gap_report.py
       - name: T-48 individualized LJPC coverage and readiness report
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: |
           python scripts/lsi_t48_coverage.py
           python scripts/lsi_readiness_report.py
       - name: Build and validate Prediction Registry
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/lsi_pipeline.py
       - name: Publish rolling 0-7 day L&J future market board
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/lsi_publish_future_board.py
       - name: LEGZ Game Winner Spectrum — independent performance + market evidence
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         env:
           LSI_GAME_WINNER_LEAGUES: ${{ steps.league_schedule.outputs.due_leagues }}
         run: python scripts/lsi_game_winner_spectrum.py
       - name: Per-game QC player-prop completeness audit
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: node scripts/qc_publication_audit.js
       - name: Snapshot immutable published Quickie tickets
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: node scripts/lsi_snapshot_tickets.js
       - name: Snapshot immutable website POM and Game Winner suggestions
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: node scripts/lsi_snapshot_suggestions.js
       - name: OpenAI LSI router — dry run and usage estimate
-        if: steps.league_schedule.outputs.has_work == 'true'
+        if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/lsi_openai_router.py --dry-run
       - name: Acknowledge completed league/event gates
         if: steps.league_schedule.outputs.has_work == 'true'
