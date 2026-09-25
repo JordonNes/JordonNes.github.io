@@ -48,6 +48,10 @@ on:
       - 'scripts/lsi_visual_registry.py'
       - 'scripts/lsi_publish_future_board.py'
       - 'scripts/lsi_ispy_observer.py'
+      - 'scripts/lsi_ispy_discovery.py'
+      - 'scripts/test_lsi_ispy_discovery.py'
+      - 'scripts/lsi_publish_ispy.py'
+      - 'scripts/lsi_ispy_observer.py'
       - 'scripts/test_lsi_ispy_observer.py'
       - 'scripts/lsi_publish_ispy.py'
       - 'scripts/test_lsi_future_board_guard.py'
@@ -346,7 +350,9 @@ jobs:
       - name: Observe and publish JINX I Spy signals
         if: steps.league_schedule.outputs.cycle_required == 'true'
         run: |
+          python scripts/test_lsi_ispy_discovery.py
           python scripts/lsi_ispy_observer.py
+          python scripts/lsi_ispy_discovery.py
           python scripts/lsi_publish_ispy.py
       - name: LEGZ Game Winner Spectrum — independent performance + market evidence
         if: steps.league_schedule.outputs.cycle_required == 'true'
@@ -409,6 +415,7 @@ jobs:
           test -f data/qc_ticket_registry.json
           test -f data/suggestion_ledger.json
           test -f data/future_market_board.json && test -f data/future_market_board.js
+          test -f data/lsi_ispy_candidates.json && test -f data/lsi_ispy_pattern_library.json && test -f data/lsi_ispy_signals.json
           test -f data/openai_dry_run_router.json && test -f data/openai_usage_estimates.csv && test -f data/openai_usage_summary.json
           test -f data/lsi_evaluation_state.json
           test -f data/legz_synthetic_book.json
