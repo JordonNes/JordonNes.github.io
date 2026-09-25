@@ -83,6 +83,11 @@ def identity_index():
         league=str(row.get("league") or "")
         name=row.get("canonical_name")
         espn=(row.get("provider_ids") or {}).get("ESPN")
+        # MLB historical performance rows used MLB Stats API IDs. Until the
+        # canonical registry has been fully migrated, never treat its legacy
+        # "ESPN" field as authoritative for MLB.
+        if league=="MLB":
+            continue
         if league in ROUTES and name and espn:
             aliases=[name,*(row.get("aliases") or [])]
             for alias in aliases:
@@ -95,7 +100,7 @@ def identity_index():
         name=row.get("name"); espn=row.get("espn_id")
         if league in ROUTES and name and espn:
             prior=out.get((league,norm(name))) or {}
-            out[(league,norm(name))]={"espn_id":str(espn),"name":name,"lsi_player_id":prior.get("lsi_player_id")}
+            out[(league,norm(name))]={"espn_id":str(espn),"name":name,"lsi_player_id":prior.get("lsi_player_id"),"position":row.get("position")}
     return out
 
 def compact_splits(payload):
@@ -119,6 +124,10 @@ def compact_gamelog(payload):
     events=[]
     for e in payload.get("events") or []:
         opponent=e.get("opponent") or {}
+        if isinstance(opponent,dict):
+            opponent_obj={"id":opponent.get("id"),"display_name":opponent.get("displayName"),"abbreviation":opponent.get("abbreviation")}
+        else:
+            opponent_obj={"id":None,"display_name":str(opponent),"abbreviation":None}
         stats=list(e.get("stats") or [])
         # ESPN often supplies structural date/opponent/result labels before the
         # numeric stat array. Preserve raw labels/names plus aligned tail mapping.
@@ -126,7 +135,7 @@ def compact_gamelog(payload):
         mapped={stat_names[i]:stats[i] for i in range(min(len(stat_names),len(stats)))}
         events.append({
           "id":e.get("id"),"date":e.get("date"),
-          "opponent":{"id":opponent.get("id"),"display_name":opponent.get("displayName"),"abbreviation":opponent.get("abbreviation")},
+          "opponent":opponent_obj,
           "game_result":e.get("gameResult"),"stats":mapped,"raw_stats":stats
         })
     events.sort(key=lambda x:str(x.get("date") or ""))
@@ -152,7 +161,13 @@ def fetch_player(league,market_name,identity,prior):
     except Exception as ex:
         errors.append({"league":league,"espn_id":espn_id,"kind":"gamelog","error":str(ex)[:220]})
     try:
-        row["splits"]=compact_splits(get(base+f"/splits?season={YEAR}"));successes+=1
+        split_url=base+f"/splits?season={YEAR}"
+        if league=="MLB":
+            pos=str(identity.get("position") or "").upper()
+            category="pitching" if pos in {"P","SP","RP","CP"} else "batting"
+            split_url+=f"&category={category}"
+            row["split_category"]=category
+        row["splits"]=compact_splits(get(split_url));successes+=1
     except Exception as ex:
         errors.append({"league":league,"espn_id":espn_id,"kind":"splits","error":str(ex)[:220]})
     if successes:
