@@ -1,7 +1,7 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-09-25T00:53:34.203077+00:00",
-  "source_registry_generated_at_utc": "2026-09-25T00:49:12.388802+00:00",
+  "generated_at_utc": "2026-09-25T01:01:44.154789+00:00",
+  "source_registry_generated_at_utc": "2026-09-25T00:56:14.137116+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
     "ESPN_PUBLIC": {
@@ -23,14 +23,19 @@
       },
       "cost": "free/public"
     },
+    "FIBA_OFFICIAL_LINKED": {
+      "coverage": {
+        "FIBA_Men": "GAME_ML final scores",
+        "FIBA_Women": "GAME_ML final scores"
+      },
+      "source": "data/fiba_competitions.js official FIBA URLs"
+    },
     "VERIFIED_INBOX": {
       "pattern": "data/inbox/results_*.csv",
       "accepted_rows": 0
     },
     "pending_automatic_adapters": [
-      "Boxing",
-      "FIBA_Men",
-      "FIBA_Women"
+      "Boxing"
     ],
     "pending_player_prop_adapters": [
       "Tennis",
@@ -41,43 +46,48 @@
     ]
   },
   "predictions_in_registry": 9,
-  "website_suggestions_recorded": 3573,
-  "website_suggestions_structured_for_settlement": 2870,
-  "settlement_population_total": 2879,
-  "settled_predictions": 174,
-  "settlement_rate_pct": 6.04,
+  "website_suggestions_recorded": 3682,
+  "website_suggestions_structured_for_settlement": 2960,
+  "settlement_population_total": 2969,
+  "settled_predictions": 179,
+  "settlement_rate_pct": 6.03,
   "run_counts": {
     "already_settled": 173,
-    "PENDING_EVENT": 1997,
-    "PLAYER_NOT_IN_BOXSCORE": 542,
-    "AMBIGUOUS_EVENT": 33,
-    "UNSUPPORTED_PLAYER_MARKET": 133,
-    "TEAM_UNRESOLVED": 1
+    "PENDING_EVENT": 2023,
+    "PLAYER_NOT_IN_BOXSCORE": 583,
+    "AMBIGUOUS_EVENT": 38,
+    "UNSUPPORTED_PLAYER_MARKET": 146,
+    "TEAM_UNRESOLVED": 1,
+    "settled": 5
   },
   "by_league": {
     "MLB": {
-      "PENDING_EVENT": 458,
+      "PENDING_EVENT": 442,
       "already_settled": 58,
-      "PLAYER_NOT_IN_BOXSCORE": 482,
-      "UNSUPPORTED_PLAYER_MARKET": 131,
+      "PLAYER_NOT_IN_BOXSCORE": 523,
+      "UNSUPPORTED_PLAYER_MARKET": 144,
       "TEAM_UNRESOLVED": 1,
+      "settled": 5,
       "AMBIGUOUS_EVENT": 14
     },
     "MMA": {
-      "PENDING_EVENT": 13
+      "PENDING_EVENT": 14
     },
     "NCAA_Football": {
       "already_settled": 5,
-      "PENDING_EVENT": 377,
-      "AMBIGUOUS_EVENT": 19
+      "PENDING_EVENT": 392,
+      "AMBIGUOUS_EVENT": 22
     },
     "NFL": {
       "already_settled": 4,
-      "PENDING_EVENT": 859
+      "PENDING_EVENT": 868
     },
     "NHL": {
       "already_settled": 10,
-      "PENDING_EVENT": 221
+      "PENDING_EVENT": 238
+    },
+    "Tennis": {
+      "AMBIGUOUS_EVENT": 2
     },
     "WNBA": {
       "already_settled": 96,
@@ -86,736 +96,54 @@
       "UNSUPPORTED_PLAYER_MARKET": 2
     }
   },
-  "recent_settlements": [],
+  "recent_settlements": [
+    {
+      "prediction_id": "SUG-0d3ea6755401570fa8066c84",
+      "league": "MLB",
+      "selection": "Brewers ML • -112 PROPLINE:Smarkets",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401817062",
+      "source": "ESPN_PUBLIC:401817062:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-62b1ff432d4430d9aaf59c90",
+      "league": "MLB",
+      "selection": "Brewers ML • -112 PROPLINE:Smarkets",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401817062",
+      "source": "ESPN_PUBLIC:401817062:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-b72d0d5c49e8dd4d3afd3799",
+      "league": "MLB",
+      "selection": "Brewers ML • -112 PROPLINE:Smarkets",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401817062",
+      "source": "ESPN_PUBLIC:401817062:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-8f2d819d37e0e659d3f45196",
+      "league": "MLB",
+      "selection": "Brewers ML • +120 PROPLINE:Smarkets",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401817062",
+      "source": "ESPN_PUBLIC:401817062:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-c64c83a19a6ef723b2807cc4",
+      "league": "MLB",
+      "selection": "Brewers lean",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401817062",
+      "source": "ESPN_PUBLIC:401817062:FINAL_SCORE_ML"
+    }
+  ],
   "unresolved": [
-    {
-      "prediction_id": "SUG-b36bfe32f15dc86c46c9fbd3",
-      "league": "NHL",
-      "event_id": "PL-184843",
-      "provider_event_id": "401879453",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-b3a2a805106063d43300f2a9",
-      "league": "NHL",
-      "event_id": "PL-184821",
-      "provider_event_id": "401879457",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-b3b5d51400a97ef6b882b32d",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241845CLEBOS",
-      "provider_event_id": "401817061",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-b672e52a0c6176d523c33603",
-      "league": "NCAA_Football",
-      "event_id": "PL-219277",
-      "reason": "AMBIGUOUS_EVENT",
-      "detail": {
-        "top_score": 18.0,
-        "second_score": 16.5,
-        "token_hits": 0,
-        "time_delta_hours": 0.0
-      }
-    },
-    {
-      "prediction_id": "SUG-b71d41c680a11a6016fbcf72",
-      "league": "WNBA",
-      "event_id": "PL-238085",
-      "provider_event_id": "401857219",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-b76b07542be79e482817a583",
-      "league": "MLB",
-      "event_id": "401817070",
-      "provider_event_id": "401817070",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-b9e686facf7936099d335f86",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241915CINATL",
-      "provider_event_id": "401817060",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-be765348ec965135269d888c",
-      "league": "NHL",
-      "event_id": "PL-78387",
-      "provider_event_id": "401891780",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-bed2d7b397956bbc9808259a",
-      "league": "NHL",
-      "event_id": "PL-184820",
-      "provider_event_id": "401879935",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-bf7fa9f71a018b4a8627b4a8",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241915CINATL",
-      "provider_event_id": "401817060",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-bf97a054f6dfb115455bc577",
-      "league": "NFL",
-      "event_id": "PL-32649",
-      "provider_event_id": "401872950",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-bfe56a2e3b97f6aad4ce7c34",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241905TBNYY",
-      "provider_event_id": "401817064",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-c02031db1593a794af50bade",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP242140LAASEA",
-      "provider_event_id": "401817069",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-c40c99ca4e0ba7f56ad4d55d",
-      "league": "MLB",
-      "event_id": "401817070",
-      "provider_event_id": "401817070",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-c41680d318a395db5f5fb0f4",
-      "league": "NFL",
-      "event_id": "PL-32648",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-c701b32322cf542ccc503d80",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241845CLEBOS",
-      "provider_event_id": "401817061",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-c931edebd351d5c74f9130d4",
-      "league": "NCAA_Football",
-      "event_id": "PL-218061",
-      "provider_event_id": "401860894",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-c947f4c841408468a8253f52",
-      "league": "NFL",
-      "event_id": "PL-32649",
-      "provider_event_id": "401872950",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-c99aa81b2424f8ab3494d624",
-      "league": "NHL",
-      "event_id": "PL-219054",
-      "provider_event_id": "401892431",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-cb8d2056c09b33d048561186",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241915CINATL",
-      "provider_event_id": "401817060",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-cc4b3c993c24ee60e32fabfe",
-      "league": "NHL",
-      "event_id": "2026010061",
-      "provider_event_id": "401879453",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-cc6dc35bcca8436fd32681aa",
-      "league": "MLB",
-      "event_id": "401817069",
-      "provider_event_id": "401817069",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ceffde38bec0239b0de123b5",
-      "league": "NHL",
-      "event_id": "2026010037",
-      "provider_event_id": "401878103",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-cf796f7778183ba1b07fd9c7",
-      "league": "MLB",
-      "event_id": "PL-238664",
-      "reason": "AMBIGUOUS_EVENT",
-      "detail": {
-        "top_score": 17.916666666666668,
-        "second_score": 17.916666666666668,
-        "token_hits": 0,
-        "time_delta_hours": 0.08
-      }
-    },
-    {
-      "prediction_id": "SUG-d07feb7c388f367c94939166",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241905TBNYY",
-      "provider_event_id": "401817064",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-d0fb349a85ae0bd132fc5a89",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241915CINATL",
-      "provider_event_id": "401817060",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-d14c839094fd5979782201c3",
-      "league": "MMA",
-      "event_id": "PL-218881",
-      "provider_event_id": "401914472",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-d1abf16fdd060b382311583c",
-      "league": "NHL",
-      "event_id": "PL-219054",
-      "provider_event_id": "401892431",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-d22c161592aa379befd0e42f",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241905TBNYY",
-      "provider_event_id": "401817064",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-d2ad6d96dd1611d919687069",
-      "league": "NHL",
-      "event_id": "2026010053",
-      "provider_event_id": "401879935",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-d7f76f6a16dd4768ae9dd877",
-      "league": "NFL",
-      "event_id": "PL-32648",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-d87f54d4c8e160f9082a6a94",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241905TBNYY",
-      "provider_event_id": "401817064",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-d88c93bf08c88f2484b3ac7c",
-      "league": "NCAA_Football",
-      "event_id": "PL-218173",
-      "provider_event_id": "401860896",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-d9e5a547c4f105795ed9598f",
-      "league": "NFL",
-      "event_id": "PL-32655",
-      "provider_event_id": "401872953",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-dbdcaa70c81dde05ecb1abfb",
-      "league": "NCAA_Football",
-      "event_id": "PL-217520",
-      "provider_event_id": "401856697",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-dc71746ed168a53cc49cc540",
-      "league": "NHL",
-      "event_id": "PL-179445",
-      "provider_event_id": "401879370",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-dd9245f3b85be2a936d1ab97",
-      "league": "NFL",
-      "event_id": "401872948",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-def68aef672d8214929da39a",
-      "league": "NFL",
-      "event_id": "PL-32648",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-e0272280cd28e8349d7fc6e5",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP242140LAASEA",
-      "provider_event_id": "401817069",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-e0835104a07bf4bf0219f69f",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP242140LAASEA",
-      "provider_event_id": "401817069",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-e0c29647863f6e0c89cf862a",
-      "league": "NCAA_Football",
-      "event_id": "PL-217994",
-      "provider_event_id": "401871048",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-e1982b1ddccc6f322f8a901b",
-      "league": "NFL",
-      "event_id": "PL-32654",
-      "provider_event_id": "401872951",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-e24767d76e62dc3d7c992507",
-      "league": "NHL",
-      "event_id": "2026010055",
-      "provider_event_id": "401879457",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-e3e25e31b61965650ab9def3",
-      "league": "WNBA",
-      "event_id": "PL-238083",
-      "provider_event_id": "401857217",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-e596d05a841f7cb4f0c398e8",
-      "league": "NFL",
-      "event_id": "PL-32652",
-      "provider_event_id": "401872955",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-e734366b61663b26c6b27a2a",
-      "league": "MLB",
-      "event_id": "PL-232572",
-      "provider_event_id": "401817089",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-e97fbd30df8ce21e91aa075f",
-      "league": "NCAA_Football",
-      "event_id": "PL-215508",
-      "provider_event_id": "401858234",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ea4c9bb41e143a3237721778",
-      "league": "MLB",
-      "event_id": "PL-238669",
-      "provider_event_id": "401817112",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ea5d98724fd5296b15e3d2ec",
-      "league": "NFL",
-      "event_id": "PL-32649",
-      "provider_event_id": "401872950",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ebc7e503acdd64c5b1c8640f",
-      "league": "NFL",
-      "event_id": "PL-32648",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-ec075e47ce835714b7890355",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP242140LAASEA",
-      "provider_event_id": "401817069",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-edf21501db81c4500fd407b8",
-      "league": "NHL",
-      "event_id": "2026010048",
-      "provider_event_id": "401878108",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-eefa7aa209bbbff0dd84375a",
-      "league": "NFL",
-      "event_id": "PL-32649",
-      "provider_event_id": "401872950",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ef3836bd4e7186123bcea6c5",
-      "league": "WNBA",
-      "event_id": "PL-238083",
-      "provider_event_id": "401857217",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-f0f68f6c40f989dcbb665231",
-      "league": "MLB",
-      "event_id": "401817070",
-      "provider_event_id": "401817070",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f296d5c083479252b2c5e9d8",
-      "league": "MLB",
-      "event_id": "401817069",
-      "provider_event_id": "401817069",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f41bbff86847028ee67bd627",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-f4798967691ed774b41699d8",
-      "league": "NHL",
-      "event_id": "PL-78462",
-      "provider_event_id": "401891781",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f5110381bf744421a3bac753",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-f579ee732a994abae7211352",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241845CLEBOS",
-      "provider_event_id": "401817061",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-f703c678a45162eaedd00ca2",
-      "league": "MLB",
-      "event_id": "PL-232570",
-      "provider_event_id": "401817094",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f78fb5f932e6b4623f21589c",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-f7e9550908d6df0609ac03a6",
-      "league": "NCAA_Football",
-      "event_id": "PL-214326",
-      "provider_event_id": "401862779",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f88efa556e6d96281e844dab",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241845CLEBOS",
-      "provider_event_id": "401817061",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-f8c96db54bcbe3cb290b6a2c",
-      "league": "NCAA_Football",
-      "event_id": "PL-217629",
-      "provider_event_id": "401862785",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f954f1a963ad5ed41ce8ac17",
-      "league": "NFL",
-      "event_id": "PL-32655",
-      "provider_event_id": "401872953",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-fa2bbfde27d41ac9967e82d9",
-      "league": "NFL",
-      "event_id": "PL-23215",
-      "provider_event_id": "401872960",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-fb6ec8e41a38b983a1e65820",
-      "league": "MLB",
-      "event_id": "PL-238668",
-      "provider_event_id": "401817111",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-fcae3104078a89389d99f3be",
-      "league": "NCAA_Football",
-      "event_id": "PL-217968",
-      "provider_event_id": "401856704",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-fcc4bbbd5f3e7d11f3a3e18e",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-fcde0e3a3a6061bd0d28279e",
-      "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-fd015a3e5a1a52c8282177c4",
-      "league": "NFL",
-      "event_id": "PL-23215",
-      "provider_event_id": "401872960",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-fd787c44eb9b0803d5fca593",
-      "league": "NFL",
-      "event_id": "401872948",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-fe46949cb0a2f9a8f6eadf52",
-      "league": "NFL",
-      "event_id": "PL-32655",
-      "provider_event_id": "401872953",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ff022fd84b45e62fd7af1f89",
-      "league": "MLB",
-      "event_id": "401817070",
-      "provider_event_id": "401817070",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ff15768cd9dc9297b6211d31",
-      "league": "NCAA_Football",
-      "event_id": "PL-219149",
-      "provider_event_id": "401862784",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ffce218e26a66e0ed1159de4",
-      "league": "NHL",
-      "event_id": "PL-184820",
-      "provider_event_id": "401879935",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-35f9d7078713c8e188787fee",
-      "league": "WNBA",
-      "event_id": "401857218",
-      "provider_event_id": "401857218",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-028ac1321e4a65f30cc156ad",
-      "league": "NFL",
-      "event_id": "KXNFLPASSTDS-26SEP24ATLGB",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-05704a58ddae220a0e79c0a8",
-      "league": "NFL",
-      "event_id": "KXNFLPASSTDS-26SEP24ATLGB",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-0a000e0698f24e859842209a",
-      "league": "NFL",
-      "event_id": "PL-32654",
-      "provider_event_id": "401872951",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-10f10fea8393697509121f0a",
-      "league": "NFL",
-      "event_id": "KXNFLPASSTDS-26SEP24ATLGB",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-11c439f1d9863307453829cb",
-      "league": "NFL",
-      "event_id": "KXNFLTOTAL-26SEP27NEJAC",
-      "provider_event_id": "401872957",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-147bc7f2f276d43ccf00d955",
-      "league": "NFL",
-      "event_id": "PL-32658",
-      "provider_event_id": "401872959",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-1ceb7421964410315aebc56e",
-      "league": "NFL",
-      "event_id": "PL-32661",
-      "provider_event_id": "401872962",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-20c66196c408a990a80c2ba9",
-      "league": "NFL",
-      "event_id": "KXNFLPASSTDS-26SEP24ATLGB",
-      "provider_event_id": "401872948",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-24c2a10242e401a8f6321a63",
-      "league": "NFL",
-      "event_id": "KXNFLRECYDS-26SEP27ARISF",
-      "provider_event_id": "401872958",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-26073be1005e010a9c6ed6b3",
-      "league": "NFL",
-      "event_id": "PL-23215",
-      "provider_event_id": "401872960",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-2a5fef9119a552c7a5165129",
-      "league": "MMA",
-      "event_id": "PL-218881",
-      "provider_event_id": "401914472",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-3014184fba65f5069858bc57",
-      "league": "NFL",
-      "event_id": "KXNFLPASSTDS-26SEP27MINTB",
-      "provider_event_id": "401872959",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
     {
       "prediction_id": "SUG-332ffdc2b4fe73e43508ec19",
       "league": "NFL",
@@ -1259,10 +587,8 @@
     {
       "prediction_id": "SUG-1081e12a7832e311abb49cc6",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(41¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-164ee8dfb8f6f8328190516d",
@@ -1299,10 +625,8 @@
     {
       "prediction_id": "SUG-293b05b0744d9d31fc65697d",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(31¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-2aaacc41189052ab8617dc89",
@@ -1323,10 +647,8 @@
     {
       "prediction_id": "SUG-34c3568fd034213e8aa190dc",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "Total Bases",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-422fe97b06b11e29282143d4",
@@ -1347,10 +669,8 @@
     {
       "prediction_id": "SUG-4aa4208b4d8f43f5c64c60af",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(25¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-529418cc23716879a4514872",
@@ -1427,18 +747,14 @@
     {
       "prediction_id": "SUG-6e2a3d8674f1ad3d7757b53c",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "RBI",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-6f56a7e62f4a46b7cb2d5ab6",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(23¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-6f8d708bc99d4f91a0cc423e",
@@ -1459,10 +775,8 @@
     {
       "prediction_id": "SUG-90736928e67ef3a357bc6ebb",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "RBI",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-929ff4610428cf0366a48abb",
@@ -1499,10 +813,8 @@
     {
       "prediction_id": "SUG-ae5b52f932482f2ea36d67cb",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(16¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-b9988624c10d10035183f3f8",
@@ -1563,10 +875,8 @@
     {
       "prediction_id": "SUG-cd7f96a00e0b437815fdd875",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(18¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-ce143dc5b128931bd88e389a",
@@ -1671,10 +981,8 @@
     {
       "prediction_id": "SUG-ea41040b58c27bcc142861f7",
       "league": "MLB",
-      "event_id": "KXMLBRBI-26SEP241805MILPHI",
-      "provider_event_id": "401817062",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(29.0¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-ece89d649cbbe20282956958",
@@ -1699,6 +1007,746 @@
       "provider_event_id": "401817064",
       "reason": "PENDING_EVENT",
       "state": "STATUS_IN_PROGRESS"
+    },
+    {
+      "prediction_id": "SUG-03b30091a59ecbe2bb0a3dff",
+      "league": "MLB",
+      "event_id": "PL-228441",
+      "provider_event_id": "401817076",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-04a1f0a672a6f338c1c72abd",
+      "league": "MLB",
+      "event_id": "PL-228451",
+      "provider_event_id": "401817079",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-064182518d9cd7cabe63e685",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-078067a537989bb29dce75c5",
+      "league": "MLB",
+      "event_id": "PL-232573",
+      "provider_event_id": "401817088",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-07a0b3f7750ed7adb2864bc6",
+      "league": "NHL",
+      "event_id": "2026010037",
+      "provider_event_id": "401878103",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-0882b8b803a66596486c47b0",
+      "league": "NFL",
+      "event_id": "PL-32661",
+      "provider_event_id": "401872962",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-0c11087d447a1941f7887844",
+      "league": "NCAA_Football",
+      "event_id": "PL-217325",
+      "provider_event_id": "401860891",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-122091cba2108f80128db3ef",
+      "league": "NHL",
+      "event_id": "2026010057",
+      "provider_event_id": "401879361",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-12ed6d0c85ba9659ed2e8655",
+      "league": "MLB",
+      "event_id": "PL-228440",
+      "provider_event_id": "401817082",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-1444123180543d7d28464100",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-14d587797c8d69ac39c9ef24",
+      "league": "MLB",
+      "event_id": "PL-228449",
+      "provider_event_id": "401817072",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-15e4c0768b021bb5e0cef889",
+      "league": "MLB",
+      "event_id": "PL-228439",
+      "provider_event_id": "401817084",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-1b5e7ddc977120ffdf3b478c",
+      "league": "NCAA_Football",
+      "event_id": "PL-219203",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 14.0,
+        "second_score": 6.0,
+        "token_hits": 0,
+        "time_delta_hours": 4.0
+      }
+    },
+    {
+      "prediction_id": "SUG-1c9bc8bee0b898aeae31a238",
+      "league": "NCAA_Football",
+      "event_id": "PL-216133",
+      "provider_event_id": "401858236",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-1fc08919ab3c9fe95fd57fbe",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-20a5f43852929db4711a02df",
+      "league": "MLB",
+      "event_id": "PL-228432",
+      "provider_event_id": "401817077",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-241a1f90e65a71f1debfde44",
+      "league": "MLB",
+      "event_id": "PL-228432",
+      "provider_event_id": "401817077",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-2d0bcffc58421bb5e3dd8047",
+      "league": "NHL",
+      "event_id": "PL-184843",
+      "provider_event_id": "401879453",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-3178208af00c04867ab735f4",
+      "league": "NHL",
+      "event_id": "2026010055",
+      "provider_event_id": "401879457",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-326dd4fb6fdbb6b8e81d1f44",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-3454c95f0495752f2ff91cae",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-39afaa8409de5e3cc24ff7e8",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-41ec2f2b549c1c34ae8edf8a",
+      "league": "NHL",
+      "event_id": "2026010061",
+      "provider_event_id": "401879453",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-431c89068e533989ea952e78",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-4384c024f70014b03a767dcf",
+      "league": "NCAA_Football",
+      "event_id": "PL-217055",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 12.5,
+        "second_score": 6.0,
+        "token_hits": 0,
+        "time_delta_hours": 5.5
+      }
+    },
+    {
+      "prediction_id": "SUG-468fae8824255516bd28abfa",
+      "league": "MLB",
+      "event_id": "PL-228441",
+      "provider_event_id": "401817076",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-47710455aeab302635ae9570",
+      "league": "NCAA_Football",
+      "event_id": "PL-217741",
+      "provider_event_id": "401856703",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-47bc63b4ddb0c21b4ba8eee9",
+      "league": "NCAA_Football",
+      "event_id": "PL-37375",
+      "provider_event_id": "401856700",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-483f0b08f40764935c52f31a",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-48e6054932c5158308056532",
+      "league": "NCAA_Football",
+      "event_id": "PL-219277",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 18.0,
+        "second_score": 16.5,
+        "token_hits": 0,
+        "time_delta_hours": 0.0
+      }
+    },
+    {
+      "prediction_id": "SUG-4bee4c18ae6ab9abb46a72f6",
+      "league": "NCAA_Football",
+      "event_id": "PL-217386",
+      "provider_event_id": "401860892",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-4fdc70f349ce11a1854d6181",
+      "league": "NHL",
+      "event_id": "PL-78382",
+      "provider_event_id": "401891827",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-4ff9082f060a7df74d5629f8",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-5113bdc4fe27e892a9b25383",
+      "league": "NCAA_Football",
+      "event_id": "PL-215319",
+      "provider_event_id": "401868188",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-51cd32b6df108f4fedd36ac5",
+      "league": "NFL",
+      "event_id": "PL-32653",
+      "provider_event_id": "401872956",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-566d9e604c05ebcfc8357e36",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-56dbcdbfbb2c29ad31c6b01a",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-58a4154674c41280198cfc3e",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-5a4da7e3419a51674c5cc345",
+      "league": "MLB",
+      "event_id": "PL-228445",
+      "provider_event_id": "401817078",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-647fcf4a303944244cee6f2d",
+      "league": "NHL",
+      "event_id": "2026010038",
+      "provider_event_id": "401879332",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-6664eaf34a98cd8ee8688f91",
+      "league": "NCAA_Football",
+      "event_id": "PL-217486",
+      "provider_event_id": "401858240",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-7c114c644002080a0429497c",
+      "league": "NHL",
+      "event_id": "2026010057",
+      "provider_event_id": "401879361",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-7cc216f40e7524a58de0ee75",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-7e028b3b1222b88e138b1107",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-7e85b8827c52807f6f1ac8f6",
+      "league": "NCAA_Football",
+      "event_id": "PL-37376",
+      "provider_event_id": "401856704",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-80adc836d9b3930b50b9383a",
+      "league": "NCAA_Football",
+      "event_id": "PL-238894",
+      "provider_event_id": "401860897",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-82cb8f9fdd55cd4f0dd63273",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-87dcdbd69d387fac40b10665",
+      "league": "Tennis",
+      "event_id": "PL-244118",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 5.833333333333333,
+        "second_score": 5.833333333333333,
+        "token_hits": 0,
+        "time_delta_hours": 0.17
+      }
+    },
+    {
+      "prediction_id": "SUG-889408474e5b045d089aa4fa",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-8897b70353a401a3c81dacfc",
+      "league": "NFL",
+      "event_id": "PL-32653",
+      "provider_event_id": "401872956",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-893eba0481c034fffdacc184",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-897077c6d15e467ba9c19954",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-8bf8c73d76e890a828f468a7",
+      "league": "NCAA_Football",
+      "event_id": "PL-217325",
+      "provider_event_id": "401860891",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-8c93707b06ab2c088343bafa",
+      "league": "NHL",
+      "event_id": "2026010058",
+      "provider_event_id": "401886261",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9224b6a81901728487fb6c51",
+      "league": "NHL",
+      "event_id": "2026010061",
+      "provider_event_id": "401879453",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9332f59bbe42e27d5f9b2d9b",
+      "league": "NFL",
+      "event_id": "PL-23215",
+      "provider_event_id": "401872960",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-942efba684d25b79ca21b348",
+      "league": "NHL",
+      "event_id": "PL-78461",
+      "provider_event_id": "401891816",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-99fb1702be06488d2c52e53c",
+      "league": "NCAA_Football",
+      "event_id": "PL-217486",
+      "provider_event_id": "401858240",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-a0c931bbb43c8309172bf810",
+      "league": "MLB",
+      "event_id": "PL-228451",
+      "provider_event_id": "401817079",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-a13070ce79d93c53f0c236c7",
+      "league": "NCAA_Football",
+      "event_id": "PL-37375",
+      "provider_event_id": "401856700",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-ac0d6bfe85f563cf859bb249",
+      "league": "NFL",
+      "event_id": "PL-32654",
+      "provider_event_id": "401872951",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-b49378ef75e4d9343334dd7e",
+      "league": "MLB",
+      "event_id": "PL-228452",
+      "provider_event_id": "401817081",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-b56e736cf5d4eb5a0d3d1cee",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-b8d9e794be4929e5ff9796a3",
+      "league": "Tennis",
+      "event_id": "PL-244424",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 12,
+        "second_score": 6.0,
+        "token_hits": 0,
+        "time_delta_hours": 82.92
+      }
+    },
+    {
+      "prediction_id": "SUG-ba7638ef774e0e33feb8510b",
+      "league": "NCAA_Football",
+      "event_id": "PL-217997",
+      "provider_event_id": "401860895",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-c1efb74cebc10d895819547a",
+      "league": "NHL",
+      "event_id": "PL-78461",
+      "provider_event_id": "401891816",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-c36edf80f67d43afcad71aad",
+      "league": "NHL",
+      "event_id": "PL-243754",
+      "provider_event_id": "401879371",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-c50565f7746a65e44eaf5ca0",
+      "league": "NFL",
+      "event_id": "PL-32654",
+      "provider_event_id": "401872951",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-c5bf8e256d669521b2dbee58",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-c78c92b3ad99e13f8dc2d65e",
+      "league": "NCAA_Football",
+      "event_id": "PL-216854",
+      "provider_event_id": "401856699",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-cbdcf5fc9e05120f5b4ffb90",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-cf4d92bf94a0bb02b82e9d60",
+      "league": "MLB",
+      "event_id": "PL-228452",
+      "provider_event_id": "401817081",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-cfc6ad6b02f5f34fec652018",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-d2734a1679474c10f3383407",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-d3c1dd62c175f027e4f463ca",
+      "league": "MLB",
+      "event_id": "PL-228450",
+      "provider_event_id": "401817080",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-d3f45707615ca5f9ff00c640",
+      "league": "NFL",
+      "event_id": "PL-32657",
+      "provider_event_id": "401872949",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-d446478e7809dff370a72918",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-dc95ad1b225265d5b3dd7ffa",
+      "league": "MLB",
+      "event_id": "PL-238659",
+      "provider_event_id": "401817104",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-dcad6800cb8efdc9bbfda746",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-e1f3d08011ba88fe14931b2c",
+      "league": "MLB",
+      "event_id": "PL-225823",
+      "provider_event_id": "401817069",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-e2187a1a2c0c3777bac14888",
+      "league": "NHL",
+      "event_id": "PL-184819",
+      "provider_event_id": "401879651",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-e589bd0d438a9d852c7176da",
+      "league": "MLB",
+      "event_id": "PL-225822",
+      "provider_event_id": "401817070",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-e6d6b1500f3a5a4044e40798",
+      "league": "NCAA_Football",
+      "event_id": "PL-217886",
+      "provider_event_id": "401866426",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-e89de1324f4e515aaa2d5407",
+      "league": "MMA",
+      "event_id": "PL-218881",
+      "provider_event_id": "401914472",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-eba448ad97fc80f5707de551",
+      "league": "NHL",
+      "event_id": "PL-184844",
+      "provider_event_id": "401879453",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-f633a445278d36973e805042",
+      "league": "NHL",
+      "event_id": "2026010056",
+      "provider_event_id": "401879653",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-f8608ed355c8b942f141d683",
+      "league": "MLB",
+      "event_id": "PL-228445",
+      "provider_event_id": "401817078",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-f88fa6fe74d8ff3c1b52bf22",
+      "league": "NFL",
+      "event_id": "PL-23215",
+      "provider_event_id": "401872960",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-f92b9869749762a91311bce2",
+      "league": "NFL",
+      "event_id": "PL-32657",
+      "provider_event_id": "401872949",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-fd6d7fddcc390f727cb3be8d",
+      "league": "NHL",
+      "event_id": "2026010059",
+      "provider_event_id": "401881134",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
     }
   ],
   "influence_effect": "NONE"
