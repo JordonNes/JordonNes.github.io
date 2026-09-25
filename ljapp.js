@@ -197,9 +197,7 @@
     const hint=String(participantHint||"").trim();
     let player=hint, prop=core;
     if(hint){
-      const q=hint.replace(/[.*+?^$(){}|[\\]\\]/g,"\\  function hotTop(items,label="LEGZ HOT TOP"){
-    return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4],r[5],r[6])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
-  }");
+      const q=hint.replace(/[.*+?^$(){}|[\\]\\]/g,m=>"\\"+m);
       prop=core.replace(new RegExp("^"+q+"\\s*(?:—|-)?\\s*","i"),"").trim();
     }else{
       const split=core.match(/^(.+?)\\s+((?:OVER|UNDER|MORE|LESS)\\b.*)$/i);
