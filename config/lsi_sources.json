@@ -2,7 +2,7 @@
   "schema_version": "LSI-SOURCES-4",
   "policy": "free-first, provenance-required, no fabricated observations",
   "prop_acquisition": {
-    "level_a": "KALSHI public API + other public/connected market discovery",
+    "level_a": "PARLAY_API_RETAIL (PrizePicks + Underdog + DraftKings) + KALSHI public API",
     "level_b": "PROPLINE normalized sportsbook/exchange markets",
     "level_c": "checked-in/manual researched snapshots",
     "rule": "Acquire externally offered POMs first, preserve exact participant/market/threshold/side/source/time, then evaluate. Synthetic/model-target thresholds remain internal and never fill public Hot Top, 20 Piece, QCs, or Quickie."
@@ -35,6 +35,32 @@
       "priority": "PRIMARY_FREE_CURRENT_POM",
       "auth_required_for_market_data": false,
       "note": "Use public market-data endpoints for currently offered contracts. Normalize only exact externally listed participant/threshold expressions; Kalshi prices are market evidence/economics and never become LJPC by themselves."
+    },
+    {
+      "id": "PARLAY_API_RETAIL",
+      "sports": [
+        "NFL",
+        "NCAA_Football",
+        "MLB",
+        "NBA",
+        "WNBA",
+        "NHL",
+        "NCAA_Basketball"
+      ],
+      "roles": [
+        "player_props",
+        "retail_market_validation",
+        "dfs_projection_type",
+        "sportsbook_prices",
+        "cross_source_line_confirmation"
+      ],
+      "mode": "authenticated_api",
+      "base_url": "https://parlay-api.com/v1",
+      "secret_env": "PARLAY_API_KEY",
+      "optional": true,
+      "priority": "PRIMARY_RETAIL_POM_FREE_TIER",
+      "zero_dollar_policy": "Free tier only by default: 900-credit local ceiling, 100-credit reserve, 8-hour per-league refresh gate, maximum 3 sport calls/run.",
+      "note": "One market-filtered /props call per sport collects PrizePicks, Underdog and DraftKings together. Provider Goblin/Demon/standard metadata is preserved. DFS normalized comparison prices are not treated as native sportsbook prices."
     },
     {
       "id": "PROPLINE",
