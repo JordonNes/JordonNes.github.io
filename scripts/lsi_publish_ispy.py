@@ -2,9 +2,10 @@
 """Validate and publish evidence-backed I Spy signals.
 
 The upstream research layer may write data/lsi_ispy_candidates.json. This gate
-publishes only signals with a current match, provenance, n>=25, and >=7.5pp
+publishes only signals with a current match, provenance, and >=7.5pp
 lift over a stated baseline. An empty publication is safer than a story-driven
-or underpowered correlation.
+correlation. Sample size remains visible evidence, but is not a fixed publication
+gate; JINX must explain the strength and limits of the observed cohort.
 """
 import json
 from datetime import datetime, timezone
@@ -32,7 +33,7 @@ def qualified(signal):
         signal["lift_pp"] = round(lift, 2)
     return (
         str(signal.get("status", "")).upper() == "VALIDATED"
-        and sample is not None and sample >= 25
+        and sample is not None and sample > 0
         and observed is not None and baseline is not None
         and lift is not None and lift >= 7.5
         and bool(signal.get("cohort_definition") or signal.get("conditions"))
@@ -52,7 +53,7 @@ def main():
     payload = {
         "schema_version": "LJ-ISPY-1",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "publication_rules": {"min_sample_size": 25, "min_lift_pp": 7.5, "current_match_required": True, "current_pom_required": True, "provenance_required": True},
+        "publication_rules": {"sample_size_disclosed": True, "min_lift_pp": 7.5, "current_match_required": True, "current_pom_required": True, "provenance_required": True},
         "candidate_count": len(candidates),
         "signals": signals,
     }
