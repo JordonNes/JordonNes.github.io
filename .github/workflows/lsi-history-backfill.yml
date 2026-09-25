@@ -44,25 +44,72 @@ jobs:
             python scripts/lsi_history_backfill_step.py
           done
 
+      - name: Persist immutable history before derived-cache work
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'LEGZ-JINX LSI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/history data/history_backfill_state.json
+          if git diff --cached --quiet; then
+            echo 'No new immutable historical facts in this backfill cycle.'
+          else
+            git commit -m "LSI durable historical shard progress"
+            for attempt in 1 2 3 4 5; do
+              if git pull --rebase --autostash origin master && git push origin master; then
+                echo 'Immutable history/state safely persisted.'
+                break
+              fi
+              git rebase --abort 2>/dev/null || true
+              if [ "$attempt" -eq 5 ]; then
+                echo '::error::Unable to persist immutable history/state.'
+                exit 1
+              fi
+              sleep 3
+            done
+          fi
+
+      - name: Refresh from master before derived-cache rebuild
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin master
+          git reset --hard origin/master
+
       - name: Rebuild reusable history coverage and Spectrum cache
         run: |
           python scripts/lsi_history_coverage.py
           python scripts/lsi_history_warehouse.py
 
-      - name: Commit incremental history progress
+      - name: Persist derived history cache from fresh master
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/history data/history_backfill_state.json data/history_coverage.json data/lsi_player_registry.json data/lsi_spectrum_cache.json
-          if git diff --cached --quiet; then
-            echo 'No new historical facts in this backfill cycle.'
-            exit 0
-          fi
-          git commit -m "LSI capacity-aware historical backfill"
-          for attempt in 1 2 3 4 5; do
-            git pull --rebase --autostash origin master
-            if git push origin master; then exit 0; fi
-            sleep 3
+
+          rebuild_cache() {
+            python scripts/lsi_history_coverage.py
+            python scripts/lsi_history_warehouse.py
+          }
+
+          for attempt in 1 2 3; do
+            git add data/history_coverage.json data/lsi_player_registry.json data/lsi_spectrum_cache.json
+            if git diff --cached --quiet; then
+              echo 'Derived history cache already current.'
+              exit 0
+            fi
+            git commit -m "LSI rebuild durable history cache"
+            if git push origin master; then
+              exit 0
+            fi
+
+            echo "Derived-cache push raced master; rebuilding from fresh master (attempt $attempt/3)."
+            git fetch origin master
+            git reset --hard origin/master
+            if [ "$attempt" -lt 3 ]; then
+              rebuild_cache
+            fi
           done
+          echo '::error::Unable to persist derived history cache after fresh-master rebuilds.'
           exit 1
