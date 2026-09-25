@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from scripts.espn_intelligence_adapter import normalize_availability, compact_odds, injury_nodes
+from espn_intelligence_adapter import normalize_availability, compact_odds, injury_nodes
 
 assert normalize_availability("Questionable - knee") == "QUESTIONABLE"
 assert normalize_availability("Placed on injured reserve") == "IR/IL"
