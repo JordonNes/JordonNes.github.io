@@ -420,6 +420,10 @@ def main():
                 if row.get("market_class")=="GAME_ML"
                 and parse(row.get("event_start_pt"))
                 and parse(row.get("event_start_pt"))>NOW
+                # The future board intentionally publishes only its league-specific
+                # horizon. A valid moneyline beyond that horizon is not "lost"; it
+                # simply is not yet eligible for this rolling board.
+                and parse(row.get("event_start_pt"))<=horizon_for(str(row.get("league") or ""))
                 and row.get("price") not in (None,"")
             ]
         except (json.JSONDecodeError,OSError):
