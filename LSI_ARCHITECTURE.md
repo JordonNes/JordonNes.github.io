@@ -145,6 +145,7 @@ Persistent artifacts:
 - `data/espn_player_registry.json`: durable ESPN athlete IDs, team identity, position and available visual references for active-team players.
 - `data/espn_event_intelligence.json`: bounded current-event summary/predictor/odds/state evidence for due and near-event games.
 - `data/espn_context.csv`: append-only attributable injury/availability observations consumed by JCI/Spectrum.
+- `data/espn_player_enrichment.json`: TTL-gated active-player ESPN gamelog/home-away split evidence. Stored for diagnostics and calibration; it does not receive a directional LJPC weight until market-specific out-of-sample validation supports one.
 
 The ESPN adapter is fail-soft because the endpoints are undocumented. Single-date/event-scoped calls and bounded active-team/event collection are preferred over large range requests. Previously stored evidence is not destroyed when a refresh fails.
 
