@@ -505,6 +505,29 @@ def write_intelligence(records):
     print(f"PropLine current-intelligence cache: retained={len(recent)} window={PROPLINE_INTELLIGENCE_RETENTION_DAYS}d")
 
 
+def bulk_event_catalog_entry(payload,league,sport_key,ljid):
+    """Create an event shell directly from a bulk h2h payload.
+
+    Bulk odds can include more upcoming events than the bounded detailed-event
+    candidate list. Every accepted GAME_ML therefore needs a catalog shell at
+    the moment it is collected, otherwise rows become orphaned and publication
+    correctly fails closed.
+    """
+    peid=str(payload.get("id") or "")
+    start=parse_dt(payload.get("commence_time"))
+    if not peid or not start or not (NOW < start <= NOW+QC_LOOKAHEAD):
+        return None
+    away=str(payload.get("away_team") or payload.get("away") or "").strip()
+    home=str(payload.get("home_team") or payload.get("home") or "").strip()
+    if not away or not home:
+        return None
+    return {
+      "league":league,"sport_key":sport_key,"event_id":str(ljid or f"PL-{peid}"),
+      "propline_event_id":peid,"commence_time":payload.get("commence_time") or start.isoformat(),
+      "away":away,"home":home,
+    }
+
+
 def refresh_current_game_moneylines(markets_out,event_catalog):
     """Refresh the canonical GAME_ML artifact from the bulk h2h rows already fetched.
 
@@ -715,7 +738,12 @@ def run():
                 if not start or not (NOW-timedelta(hours=6)<=start<=NOW+QC_LOOKAHEAD):continue
                 seen_bulk_moneyline_events.add((sport_key,peid))
                 mrows,_=parse_odds(payload,league,ljid,collected_bulk)
-                markets_out.extend(r for r in mrows if r.get("market_class")=="GAME_ML")
+                game_rows=[r for r in mrows if r.get("market_class")=="GAME_ML"]
+                markets_out.extend(game_rows)
+                if game_rows:
+                    shell=bulk_event_catalog_entry(payload,league,sport_key,ljid)
+                    if shell:
+                        event_catalog.append(shell)
         except Exception as exc:
             source_errors+=1; last_error=str(exc)
             if isinstance(exc,urllib.error.HTTPError):
