@@ -17,6 +17,9 @@ on:
     branches: [master]
     paths:
       - 'scripts/lsi_ingest.py'
+      - 'scripts/espn_intelligence_adapter.py'
+      - 'scripts/test_espn_intelligence_adapter.py'
+      - 'config/lsi_sources.json'
       - 'scripts/odds_adapter.py'
       - 'scripts/kalshi_public_adapter.py'
       - 'scripts/propline_adapter.py'
@@ -139,6 +142,8 @@ jobs:
         run: |
           python scripts/test_lsi_league_scheduler.py
           python scripts/test_legz_material_hash.py
+      - name: Verify ESPN sports-truth adapter
+        run: python scripts/test_espn_intelligence_adapter.py
       - name: Verify sportsbook player identity normalization
         run: |
           python - <<'PY'
@@ -151,6 +156,17 @@ jobs:
       - name: Preload persistent season schedules and roster identity
         continue-on-error: true
         run: python scripts/lsi_season_preload.py
+      - name: Refresh ESPN persistent sports-truth intelligence
+        if: github.event_name == 'push' || steps.league_schedule.outputs.has_work == 'true'
+        continue-on-error: true
+        env:
+          ESPN_INTELLIGENCE_LEAGUES: ${{ steps.league_schedule.outputs.due_leagues }}
+          ESPN_INTELLIGENCE_LOOKAHEAD_HOURS: '96'
+          ESPN_INTELLIGENCE_MAX_EVENTS_PER_LEAGUE: '24'
+          ESPN_INTELLIGENCE_MAX_TEAMS: '48'
+          ESPN_INTELLIGENCE_HTTP_TIMEOUT_SEC: '15'
+          ESPN_INTELLIGENCE_HTTP_ATTEMPTS: '2'
+        run: python scripts/espn_intelligence_adapter.py
       - name: Refresh ESPN visual asset reference registry
         continue-on-error: true
         run: python scripts/lsi_visual_registry.py
@@ -388,6 +404,7 @@ jobs:
             data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json
             data/lsi_player_registry.json data/lsi_spectrum_cache.json data/season_schedule_registry.json
             data/team_roster_registry.json data/visual_asset_registry.json data/visual_asset_registry.js
+            data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv
             data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json data/game_winner_evidence.json
             data/projection_gap_report.json
           )
