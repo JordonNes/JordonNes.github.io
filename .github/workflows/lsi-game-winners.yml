@@ -1,0 +1,84 @@
+name: LSI Game Winner Refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Lightweight independent GAME_ML refresh every three hours.
+    - cron: '7 */3 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-game-winner-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Collect current GAME_ML only
+        env:
+          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
+          PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
+          PROPLINE_HTTP_TIMEOUT_SEC: '8'
+          PROPLINE_HTTP_ATTEMPTS: '1'
+          PROPLINE_RATE_LIMIT_COOLDOWN_MIN: '90'
+        run: python scripts/propline_adapter.py --game-odds-only
+
+      - name: Merge current GAME_ML into rolling board
+        run: python scripts/lsi_publish_future_board.py
+
+      - name: Evaluate Game Winners
+        run: python scripts/lsi_game_winner_spectrum.py
+
+      - name: Validate current Game Winner publication
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime,timezone
+          from pathlib import Path
+          ml=json.loads(Path('data/current_game_moneylines.json').read_text(encoding='utf-8'))
+          board=json.loads(Path('data/future_market_board.json').read_text(encoding='utf-8'))
+          assert ml.get('schema_version')=='LJ-CURRENT-GAME-ML-1'
+          age=(datetime.now(timezone.utc)-datetime.fromisoformat(ml['generated_at_utc'].replace('Z','+00:00'))).total_seconds()/3600
+          assert age <= 1.0, f'GAME_ML candidate unexpectedly stale after refresh: {age:.2f}h'
+          offered=[r for r in ml.get('rows',[]) if r.get('market_class')=='GAME_ML' and r.get('event_id') and r.get('participant') and r.get('price') not in (None,'')]
+          evaluated=[g for e in board.get('events',[]) for g in (e.get('game_markets') or []) if str(g.get('market_class') or '').upper()=='GAME_ML' and g.get('evaluation_status')=='LJ_EVALUATED' and g.get('ljpc') is not None]
+          assert offered, 'No current offered GAME_ML rows'
+          assert evaluated, 'No evaluated Game Winners reached future board'
+          print(f'Independent Game Winner refresh: offered={len(offered)} evaluated={len(evaluated)} age={age:.2f}h')
+          PY
+
+      - name: Snapshot displayed suggestions
+        run: node scripts/lsi_snapshot_suggestions.js
+
+      - name: Commit bounded Game Winner artifacts
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX Game Winners'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/current_game_moneylines.json data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/suggestion_ledger.json
+          if git diff --cached --quiet; then
+            echo 'Game Winner artifacts already current.'
+            exit 0
+          fi
+          git commit -m "LSI independent Game Winner refresh"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase --autostash origin master
+            if git push origin master; then exit 0; fi
+            sleep 3
+          done
+          exit 1
