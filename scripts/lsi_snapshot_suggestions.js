@@ -151,7 +151,7 @@ function candidateRows(ctx){
         source_kind:'FUTURE_BOARD',league:e.league,event_id:eventId,event_start_pt:eventStart,away:e.away||'',home:e.home||'',
         market_class:'GAME_ML',participant:g.selection||g.participant||'',market:'Moneyline',threshold:null,side:'',
         selection:g.selection||g.participant||'',price:g.price??g.best_price??null,book:g.book||g.best_book||'',
-        ljpc:Number(g.ljpc??g.lj_confidence??0)||null,legz_confidence:g.legz_confidence??null,jinx_input:g.jinx_input??null,
+        ljpc:Number(g.ljpc??g.lj_confidence??0)||null,legz_confidence:g.legz_baseline??g.legz_confidence??null,jinx_input:g.jinx_input??null,
         pom_type:null,evaluation_id:g.evaluation_id||null,evaluation_material_hash:g.evaluation_material_hash||null,
         source_snapshot_ids:g.source_snapshot_ids||[],market_verified:true,market_verification:g.market_verification||'GAME_ML_CURRENT'
       });
