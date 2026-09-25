@@ -161,13 +161,17 @@ def main():
                 pid=player_id(league,name); prior=players.get(pid,{})
                 aliases=set(prior.get("aliases") or []); aliases.add(str(name))
                 provider_ids=dict(prior.get("provider_ids") or {})
-                if r.get("provider_player_id"): provider_ids["ESPN"]=str(r.get("provider_player_id"))
+                if r.get("provider_player_id"):
+                    source=str(r.get("source") or "")
+                    provider_key="ESPN" if source.startswith("ESPN") else ("MLB_STATS" if source.startswith("MLB") else (source or "HISTORY"))
+                    provider_ids[provider_key]=str(r.get("provider_player_id"))
                 event_time=r.get("event_start_utc") or stamp
                 first=prior.get("first_seen_utc") or event_time
                 last=prior.get("last_seen_utc") or event_time
                 if event_time and first and event_time < first: first=event_time
                 if event_time and last and event_time > last: last=event_time
                 players[pid]={
+                    **prior,
                     "lsi_player_id":pid,"league":league,"canonical_name":prior.get("canonical_name") or str(name),
                     "aliases":sorted(aliases),"provider_ids":provider_ids,
                     "first_seen_utc":first,"last_seen_utc":last,
@@ -192,6 +196,7 @@ def main():
                     if event_time and first and event_time < first: first=event_time
                     if event_time and last and event_time > last: last=event_time
                     players[pid]={
+                        **prior,
                         "lsi_player_id":pid,"league":league,"canonical_name":prior.get("canonical_name") or str(name),
                         "aliases":sorted(aliases),"provider_ids":provider_ids,
                         "first_seen_utc":first,"last_seen_utc":last,
