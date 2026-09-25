@@ -1,0 +1,107 @@
+{
+  "schema_version": "LSI-LEGZ-JINX-ACCOUNTABILITY-1",
+  "generated_at_utc": "2026-09-25T00:46:10.852543+00:00",
+  "policy": "Compare published LEGZ baseline probability with final LJPC on the same settled suggestion. A lower final Brier score means JINX/context improved probability accuracy for that sample.",
+  "overall": {
+    "paired_decisive": 122,
+    "legz_brier": 0.634845,
+    "final_ljpc_brier": 0.229292,
+    "brier_delta_final_minus_legz": -0.405553,
+    "jinx_effect": "IMPROVED",
+    "jinx_improved": 74,
+    "jinx_worsened": 34,
+    "jinx_neutral": 14,
+    "jinx_improvement_rate_pct": 60.66
+  },
+  "by_sport": {
+    "MLB": {
+      "paired_decisive": 57,
+      "legz_brier": 0.666667,
+      "final_ljpc_brier": 0.233107,
+      "brier_delta_final_minus_legz": -0.43356,
+      "jinx_effect": "IMPROVED",
+      "jinx_improved": 38,
+      "jinx_worsened": 19,
+      "jinx_neutral": 0,
+      "jinx_improvement_rate_pct": 66.67
+    },
+    "NHL": {
+      "paired_decisive": 6,
+      "legz_brier": 0.166667,
+      "final_ljpc_brier": 0.316859,
+      "brier_delta_final_minus_legz": 0.150192,
+      "jinx_effect": "WORSENED",
+      "jinx_improved": 1,
+      "jinx_worsened": 5,
+      "jinx_neutral": 0,
+      "jinx_improvement_rate_pct": 16.67
+    },
+    "WNBA": {
+      "paired_decisive": 59,
+      "legz_brier": 0.651712,
+      "final_ljpc_brier": 0.216701,
+      "brier_delta_final_minus_legz": -0.435011,
+      "jinx_effect": "IMPROVED",
+      "jinx_improved": 35,
+      "jinx_worsened": 10,
+      "jinx_neutral": 14,
+      "jinx_improvement_rate_pct": 59.32
+    }
+  },
+  "by_market_class": {
+    "GAME_ML": {
+      "paired_decisive": 63,
+      "legz_brier": 0.619048,
+      "final_ljpc_brier": 0.241083,
+      "brier_delta_final_minus_legz": -0.377965,
+      "jinx_effect": "IMPROVED",
+      "jinx_improved": 39,
+      "jinx_worsened": 24,
+      "jinx_neutral": 0,
+      "jinx_improvement_rate_pct": 61.9
+    },
+    "PLAYER_PROP": {
+      "paired_decisive": 59,
+      "legz_brier": 0.651712,
+      "final_ljpc_brier": 0.216701,
+      "brier_delta_final_minus_legz": -0.435011,
+      "jinx_effect": "IMPROVED",
+      "jinx_improved": 35,
+      "jinx_worsened": 10,
+      "jinx_neutral": 14,
+      "jinx_improvement_rate_pct": 59.32
+    }
+  },
+  "jinx_adjustment_direction": {
+    "POSITIVE": {
+      "decisive": 0,
+      "hits": 0,
+      "misses": 0,
+      "hit_rate_pct": null,
+      "avg_ljpc_pct": null,
+      "calibration_error_pp": null,
+      "calibration_bias": null,
+      "brier_score": null
+    },
+    "NEGATIVE": {
+      "decisive": 0,
+      "hits": 0,
+      "misses": 0,
+      "hit_rate_pct": null,
+      "avg_ljpc_pct": null,
+      "calibration_error_pp": null,
+      "calibration_bias": null,
+      "brier_score": null
+    },
+    "ZERO_OR_UNKNOWN": {
+      "decisive": 163,
+      "hits": 118,
+      "misses": 45,
+      "hit_rate_pct": 72.39,
+      "avg_ljpc_pct": 74.84,
+      "calibration_error_pp": 2.45,
+      "calibration_bias": "CALIBRATED_WITHIN_3PP",
+      "brier_score": 0.212435
+    }
+  }
+}
