@@ -284,3 +284,12 @@ College football Saturday uses a high-volume exception to the standard per-game 
 - The team-icon game shell retains the L&J moneyline winner/odds and also displays evaluated game-level margin/spread and total-point reads when those exact game markets are available.
 - If an evaluated spread or game-total POM is unavailable, the shell must state that the corresponding projection is pending. It must not fabricate a win-by margin or total.
 - This exception applies **only to Saturday CFB games**. Non-Saturday CFB continues to use the standard per-game QC layout and event-state rules.
+
+
+## Elite player-prop surface quality rule — effective September 25, 2026
+
+The 20 Piece, LEGZ Hot Top player-prop pool, and JINX Best Bets are **not SNS boards**. They exclude provider-labeled Goblins, internally classified TROLL/GOBLIN thresholds, and ultra-low-payout exact lines with market-implied probability of 80% or greater. High LJPC alone never promotes an intentionally easy or economically trivial line onto an elite surface.
+
+LSI maintains a separate statistical line profile derived from the exact offered threshold versus LEGZ's L5-primary / L10 / full-L15 player forecast. TROLL is diagnostic-only, Goblin is SNS-oriented, Normal is the fair-market band, and Demon is the harder/upside band. Provider labels remain preserved independently.
+
+JINX Best Bets requires positive attributable contextual evidence. An active/confirmed player status is not, by itself, a positive JINX signal. Directional opponent, role, injury, weather or game-plan adjustments must come from structured sourced evidence.

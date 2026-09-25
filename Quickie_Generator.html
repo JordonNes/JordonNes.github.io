@@ -21,7 +21,7 @@ function filters(){
   const a=availability();
   const active=sportOrder.filter(k=>(a.sports[k]||0)>0).slice(0,6);
   const type=(value,label)=>`<label><input type="checkbox" name="kind" value="${value}" ${(a.counts[value]||0)>0?'checked':'disabled'}> ${label} (${a.counts[value]||0})</label>`;
-  return `<aside class="filter-rail"><h3>QUICKIE FILTERS</h3><div class="filter-group"><span class="filter-label">PARLAYS</span><select id="parlayCount"><option value="1">1 parlay</option><option value="2">2 parlays</option></select></div><div class="filter-group"><span class="filter-label">LEGS EACH</span><select id="legCount">${[2,3,4,5,6].map(n=>`<option value="${n}" ${n===4?'selected':''}>${n} legs</option>`).join('')}</select></div><div class="filter-group"><span class="filter-label">PREDICTION TYPE</span><div class="filter-row">${type('PLAYER_PROP','Player props')}${type('GAME_ML','ML')}${type('TEAM_ODDS','Team odds')}</div></div><div class="filter-group"><span class="filter-label">L&amp;J STYLE</span><select id="tier"><option value="SNS1">SNS1 / Goblin 1 ≥77%</option><option value="SNS2">SNS2 / Goblin 2 ≥70%</option><option value="NORMAL" selected>Normal</option><option value="AGGRESSIVE">Aggressive</option><option value="BEST">Jinx Best Bets</option></select></div><div class="filter-group"><span class="filter-label">SPORTS / LEAGUES — SELECT 1–6</span><div class="sport-list">${sportOrder.map(k=>`<label class="sport-pick"><input type="checkbox" name="sport" value="${k}" ${active.includes(k)?'checked':''} ${(a.sports[k]||0)>0?'':'disabled'}> ${esc(sportNames[k]||k)} (${a.sports[k]||0})</label>`).join('')}</div></div><button id="generate">GENERATE QUICKIE</button><div class="generator-note">Only prediction types and sports with current L&amp;J-evaluated inventory are selectable. SNS1 is Goblin-only at ≥77% LJPC. SNS2 accepts Goblin/Normal at ≥70% LJPC. Normal ranks by prediction-first POM Value. Aggressive/Demon requires the 51.8% LJPC gate before payout economics. Jinx Best Bets is a JINX context-selection layer, not a blended average.</div></aside>`}
+  return `<aside class="filter-rail"><h3>QUICKIE FILTERS</h3><div class="filter-group"><span class="filter-label">PARLAYS</span><select id="parlayCount"><option value="1">1 parlay</option><option value="2">2 parlays</option></select></div><div class="filter-group"><span class="filter-label">LEGS EACH</span><select id="legCount">${[2,3,4,5,6].map(n=>`<option value="${n}" ${n===4?'selected':''}>${n} legs</option>`).join('')}</select></div><div class="filter-group"><span class="filter-label">PREDICTION TYPE</span><div class="filter-row">${type('PLAYER_PROP','Player props')}${type('GAME_ML','ML')}${type('TEAM_ODDS','Team odds')}</div></div><div class="filter-group"><span class="filter-label">L&amp;J STYLE</span><select id="tier"><option value="SNS1">SNS1 / Goblin 1 ≥77%</option><option value="SNS2">SNS2 / Goblin 2 ≥70%</option><option value="NORMAL" selected>Normal</option><option value="AGGRESSIVE">Aggressive</option><option value="BEST">Jinx Best Bets</option></select></div><div class="filter-group"><span class="filter-label">SPORTS / LEAGUES — SELECT 1–6</span><div class="sport-list">${sportOrder.map(k=>`<label class="sport-pick"><input type="checkbox" name="sport" value="${k}" ${active.includes(k)?'checked':''} ${(a.sports[k]||0)>0?'':'disabled'}> ${esc(sportNames[k]||k)} (${a.sports[k]||0})</label>`).join('')}</div></div><button id="generate">GENERATE QUICKIE</button><div class="generator-note">Only prediction types and sports with current L&amp;J-evaluated inventory are selectable. SNS1 is Goblin-only at ≥77% LJPC. SNS2 accepts Goblin/Normal at ≥70% LJPC. Normal ranks by prediction-first POM Value. Aggressive/Demon requires the 51.8% LJPC gate before payout economics. Jinx Best Bets requires positive attributable JINX support and excludes TROLL/Goblin/ultra-low-payout player lines; it is a JINX context-selection layer, not a blended average.</div></aside>`}
 function add(pool,seen,item){if(!item.pick||watch(item.pick+' '+item.context))return;if(/^FIBA_(Men|Women)$/i.test(String(item.sport||'')))item={...item,sport:'FIBA'};const key=(item.sport+'|'+item.marketClass+'|'+item.pick).toLowerCase();if(seen.has(key))return;seen.add(key);pool.push(item)}
 function buildPool(){
   const pool=[],seen=new Set(),now=Date.now(),horizon=now+7*86400000,B=window.LJ_FUTURE_MARKET_BOARD;
@@ -47,7 +47,7 @@ function buildPool(){
       const l5=numStat(proj.l5_average),pred=numStat(proj.projected_output);
       const projText=[l5!==null?`L5 AVG ${l5.toFixed(Math.abs(l5-Math.round(l5))<.05?0:1)}`:'',pred!==null?`L&J PROJ ${pred.toFixed(Math.abs(pred-Math.round(pred))<.05?0:1)}`:''].filter(Boolean).join(' • ');
       const legz=Number(p.legz_baseline??p.ljpc),jinx=Number(p.jinx_input||0),ljpc=Number(p.ljpc),legzValue=Number(p.legz_value||0),pomValue=Number(p.pom_value||(legzValue>0?Math.sqrt(legzValue*ljpc):ljpc));
-      add(pool,seen,{sport,marketClass:'PLAYER_PROP',pick:core+priceText,participant:String(p.participant||'').trim(),eventKey:String(e.source_event_id||e.event_id||`${sport}|${e.away||''}@${e.home||''}|${e.commence_time||''}`),marketFamily:String(p.market||'').toUpperCase(),side,legz,jinxDelta:jinx,ljpc,legzValue,pomValue,price:rawPrice,pomType:String(p.pom_type||p.tier||'NORMAL').toUpperCase(),evaluationId:p.evaluation_id,context:[projText,`${e.away||""} @ ${e.home||""}`].filter(Boolean).join(' • '),provisional:(p.market_baseline_probability!==null&&p.market_baseline_probability!==undefined&&p.market_baseline_probability!==''&&Number.isFinite(Number(p.market_baseline_probability)))?Number(p.market_baseline_probability):null});
+      add(pool,seen,{sport,marketClass:'PLAYER_PROP',pick:core+priceText,participant:String(p.participant||'').trim(),eventKey:String(e.source_event_id||e.event_id||`${sport}|${e.away||''}@${e.home||''}|${e.commence_time||''}`),marketFamily:String(p.market||'').toUpperCase(),side,legz,jinxDelta:jinx,ljpc,legzValue,pomValue,price:rawPrice,pomType:String(p.pom_type||p.tier||'NORMAL').toUpperCase(),lineProfileClass:String(proj.line_profile_class||'').toUpperCase(),evaluationId:p.evaluation_id,context:[projText,`${e.away||""} @ ${e.home||""}`].filter(Boolean).join(' • '),provisional:(p.market_baseline_probability!==null&&p.market_baseline_probability!==undefined&&p.market_baseline_probability!==''&&Number.isFinite(Number(p.market_baseline_probability)))?Number(p.market_baseline_probability):null});
     });
 
     (e.game_markets||[]).forEach(g=>{
@@ -66,19 +66,39 @@ function buildPool(){
   });
   return pool;
 }
+function impliedProbability(price){
+  const x=Number(price);
+  if(!Number.isFinite(x)||x===0)return null;
+  if(x>0&&x<=1)return x*100;
+  if(x<=-100)return (-x)/((-x)+100)*100;
+  if(x>=100)return 100/(x+100)*100;
+  return null;
+}
+function easyLineClass(x){const p=String(x.lineProfileClass||'').toUpperCase();return p==='TROLL'||p==='GOBLIN'}
+function lowPayout(x){const p=impliedProbability(x.price);return Number.isFinite(p)&&p>=80}
 function styleEligible(x,tier){
-  const ljpc=Number(x.ljpc||0),pt=String(x.pomType||'NORMAL').toUpperCase();
-  if(tier==='SNS1') return x.marketClass==='PLAYER_PROP'&&pt==='GOBLIN'&&ljpc>=77;
+  const ljpc=Number(x.ljpc||0),pt=String(x.pomType||'NORMAL').toUpperCase(),profile=String(x.lineProfileClass||'').toUpperCase();
+  if(x.marketClass==='PLAYER_PROP'&&profile==='TROLL') return false;
+  if(tier==='SNS1') return x.marketClass==='PLAYER_PROP'&&ljpc>=77&&!lowPayout(x)&&(pt==='GOBLIN'||profile==='GOBLIN');
   if(tier==='SNS2'){
     if(ljpc<70)return false;
-    return x.marketClass!=='PLAYER_PROP'||pt==='GOBLIN'||pt==='NORMAL';
+    if(x.marketClass!=='PLAYER_PROP')return true;
+    return !lowPayout(x)&&pt!=='DEMON'&&(profile==='GOBLIN'||profile==='NORMAL'||(!profile&&(pt==='GOBLIN'||pt==='NORMAL')));
   }
-  if(tier==='NORMAL') return x.marketClass!=='PLAYER_PROP'||pt==='NORMAL';
+  if(tier==='NORMAL'){
+    if(x.marketClass!=='PLAYER_PROP')return true;
+    return pt!=='GOBLIN'&&!lowPayout(x)&&(profile?profile==='NORMAL':pt==='NORMAL');
+  }
   if(tier==='AGGRESSIVE'){
     if(ljpc<51.8)return false;
-    return x.marketClass!=='PLAYER_PROP'||pt==='DEMON'||pt==='NORMAL';
+    if(x.marketClass!=='PLAYER_PROP')return true;
+    return pt!=='GOBLIN'&&!easyLineClass(x)&&!lowPayout(x)&&(profile?profile==='NORMAL'||profile==='DEMON':pt==='DEMON'||pt==='NORMAL');
   }
-  if(tier==='BEST') return ljpc>=51.8&&Number(x.jinxDelta||0)>=0;
+  if(tier==='BEST'){
+    if(ljpc<51.8||Number(x.jinxDelta||0)<=0)return false;
+    if(x.marketClass!=='PLAYER_PROP')return true;
+    return pt!=='GOBLIN'&&!easyLineClass(x)&&!lowPayout(x);
+  }
   return true;
 }
 function score(x,tier){

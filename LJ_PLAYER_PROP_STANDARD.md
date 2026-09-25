@@ -150,3 +150,23 @@ The public and internal terminology is standardized as follows:
 - **Calibration** = comparison of historical LJPC bands with actual settled hit rates.
 
 During migration, registry fields `lj_probability` and `lj_confidence` remain backward-compatible aliases of `ljpc`. They may not diverge from LJPC. `legz_confidence` remains the LEGZ baseline probability input and must not be mislabeled as LEGZ Value.
+
+
+## 12. Statistical line-profile classification and elite-surface eligibility — effective September 25, 2026
+
+Provider market labels and LSI statistical line profiles are separate fields and must never be conflated.
+
+- **Provider POM class** (`pom_type`) preserves the platform's own Goblin / Normal / Demon designation when the provider explicitly supplies one.
+- **LSI line profile** (`player_projection.line_profile_class`) describes where the exact offered threshold sits relative to LEGZ's one-player/one-game forecast distribution. It may classify an offered line as **TROLL, GOBLIN, NORMAL, or DEMON** even when the provider itself does not use that terminology.
+- LSI never rewrites a provider's label. A Kalshi or sportsbook line can remain provider-class `NORMAL` while being internally recognized as a statistically TROLL-like threshold.
+
+LEGZ's player forecast is **L5-primary**, with L10 and a full L15 window used as recency stabilizers. The exact offered threshold is measured in forecast standard deviations in the direction of the selected side:
+
+- **TROLL:** at least **+1.35σ** favorable to the selected side. Diagnostic only; not recommendation inventory.
+- **GOBLIN:** **+0.60σ to < +1.35σ** favorable.
+- **NORMAL / FAIR MARKET:** between **-0.60σ and +0.60σ**.
+- **DEMON:** at least **0.60σ adverse** to the selected side.
+
+A provider-labeled Goblin, an internal TROLL/GOBLIN profile, or an exact line carrying **80% or greater market-implied probability** (approximately -400 American odds or shorter) is excluded from **20 Piece, LEGZ Hot Top player-prop ranking, and JINX Best Bets**. TROLL lines are not recommended in SNS either; Goblin lines remain eligible for SNS when they meet the applicable confidence and market-verification rules.
+
+JINX Best Bets additionally requires a **positive attributable JINX adjustment**. Mere active/starting status is confirmation, not positive directional evidence. Opponent, injury, role, weather, coaching/game-plan or similar context may affect JINX only when a sourced evidence record supplies a structured directional adjustment; narrative prose alone never creates percentage points.

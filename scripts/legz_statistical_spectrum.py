@@ -457,7 +457,7 @@ def distribution_features(prop, history, metric_cache=None):
 
     mean=statistics.fmean(vals); median=statistics.median(vals); sd=statistics.pstdev(vals) if len(vals)>1 else 0.0
     windows={}
-    for n in (3,5,10,20):
+    for n in (3,5,10,15,20):
         w=vals[-n:] if len(vals)>=n else vals[:]
         if not w: continue
         wmean=statistics.fmean(w); wmedian=statistics.median(w); wsd=statistics.pstdev(w) if len(w)>1 else 0.0
@@ -477,7 +477,10 @@ def distribution_features(prop, history, metric_cache=None):
     elif windows.get("L3"): pieces.append((windows["L3"]["average"],0.60))
     if len(vals)>=10 and windows.get("L10"): pieces.append((windows["L10"]["average"],0.25))
     else: pieces.append((mean,0.25))
-    pieces.append((median,0.15))
+    # L15 is the longer recent-form stabilizer. If a full 15-game window does
+    # not exist, retain the season median rather than mislabeling a short sample.
+    if len(vals)>=15 and windows.get("L15"): pieces.append((windows["L15"]["average"],0.15))
+    else: pieces.append((median,0.15))
     weight=sum(w for _,w in pieces) or 1.0
     projection=sum(v*w for v,w in pieces)/weight
 
@@ -508,15 +511,30 @@ def distribution_features(prop, history, metric_cache=None):
     # property of the ladder model: probability moves with distance from projection.
     l5_hit=windows.get("L5",{}).get("hit_probability")
     l10_hit=windows.get("L10",{}).get("hit_probability")
+    l15_hit=windows.get("L15",{}).get("hit_probability") if len(vals)>=15 else None
     components=[]
     if normal_prob is not None: components.append((normal_prob,0.50))
-    if l5_hit is not None: components.append((l5_hit,0.30))
-    if l10_hit is not None: components.append((l10_hit,0.12))
-    if smoothed is not None: components.append((smoothed,0.08))
+    if l5_hit is not None: components.append((l5_hit,0.28))
+    if l10_hit is not None: components.append((l10_hit,0.10))
+    if l15_hit is not None: components.append((l15_hit,0.07))
+    if smoothed is not None: components.append((smoothed,0.05))
     model_prob=(sum(v*w for v,w in components)/sum(w for _,w in components)) if components else None
 
     distance=(projection-threshold) if threshold is not None else None
     z=(distance/sigma) if distance is not None and sigma else None
+
+    # Internal statistical line profile: separate from provider Goblin/Normal/Demon.
+    side_edge_sigma=None
+    if z is not None:
+        if side in {"over","more","yes"}: side_edge_sigma=z
+        elif side in {"under","less","no"}: side_edge_sigma=-z
+    line_profile_class=None
+    if side_edge_sigma is not None:
+        if side_edge_sigma>=1.35: line_profile_class="TROLL"
+        elif side_edge_sigma>=0.60: line_profile_class="GOBLIN"
+        elif side_edge_sigma<=-0.60: line_profile_class="DEMON"
+        else: line_profile_class="NORMAL"
+
     if threshold is None:
         projected_side=None
     elif abs(distance)<=max(0.5,sigma*0.10):
@@ -538,6 +556,8 @@ def distribution_features(prop, history, metric_cache=None):
       "identity_match":identity_match or ("EXACT" if vals else None),
       "l5_average":windows.get("L5",{}).get("average"),
       "l10_average":windows.get("L10",{}).get("average"),
+      "l15_average":windows.get("L15",{}).get("average") if len(vals)>=15 else None,
+      "l15_n":windows.get("L15",{}).get("n") if len(vals)>=15 else 0,
       "season_average":round(mean,3),
       "season_median":round(median,3),
       "projected_output":round(projection,3),
@@ -547,8 +567,11 @@ def distribution_features(prop, history, metric_cache=None):
       "offered_threshold":threshold,
       "distance_to_projection":round(distance,3) if distance is not None else None,
       "distance_sigma":round(z,3) if z is not None else None,
+      "line_profile_edge_sigma":round(side_edge_sigma,3) if side_edge_sigma is not None else None,
+      "line_profile_class":line_profile_class,
+      "line_profile_probability":round(model_prob,2) if model_prob is not None else None,
       "projected_side":projected_side,
-      "forecast_policy":"L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
+      "forecast_policy":"L5-primary expected output; L10 and full L15 stabilize; exact offered threshold evaluated against one shared player-game forecast. Provider market labels remain separate from LSI statistical line profile."
     } if projection_ready else None
     return {
       "n":len(vals),"metric":metric,"history_source":history_source,"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
@@ -695,8 +718,28 @@ def jinx_context(prop, contexts, game_contexts=None):
     elif status in {"LIMITED"}:
         delta=-2.0; signals.append("limited")
     elif status in {"ACTIVE","STARTER"} or confirmed:
-        delta=1.0; signals.append("availability_confirmed")
+        signals.append("availability_confirmed")
     if severity=="CRITICAL" and delta>-8: delta-=3
+
+    # Matchup/game-plan direction must come from structured attributable evidence.
+    structured={}
+    total_directional=num(game_row.get("directional_adjustment_pp") if game_row else None)
+    if total_directional is None: total_directional=num(row.get("directional_adjustment_pp"))
+    if total_directional is not None:
+        total_directional=clamp(total_directional,-8,8)
+        delta+=total_directional
+        structured["directional_adjustment_pp"]=round(total_directional,2)
+        signals.append("structured_directional_context")
+    else:
+        for field in ("opponent_adjustment_pp","matchup_adjustment_pp","role_adjustment_pp","weather_adjustment_pp","gameplan_adjustment_pp"):
+            raw=(game_row.get(field) if game_row else None)
+            if raw in (None,""): raw=row.get(field)
+            value=num(raw)
+            if value is None or value==0: continue
+            value=clamp(value,-4,4)
+            structured[field]=round(value,2)
+            delta+=value
+            signals.append(field)
     matchup={
       "opponent":game_row.get("opponent"),"home_away":game_row.get("home_away"),
       "role":game_row.get("role"),"rest_travel":game_row.get("rest_travel"),
@@ -705,7 +748,7 @@ def jinx_context(prop, contexts, game_contexts=None):
       "source":game_row.get("source")
     } if game_row else None
     if matchup: signals.append("attributable_matchup_context")
-    return {"delta":round(clamp(delta,-12,12),2),"signals":signals,
+    return {"delta":round(clamp(delta,-12,12),2),"signals":signals,"directional_components":structured,
             "context_id":row.get("context_id") or game_row.get("context_id"),"context_type":ctype or game_row.get("context_type") or None,
             "status":status or None,"headline":row.get("headline"),"source":row.get("source") or game_row.get("source"),
             "matchup":matchup}
@@ -866,7 +909,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
       "player_projection":dist.get("player_projection"),
       "spectrum":{"performance":ordered,"distribution":dist,"player_projection":dist.get("player_projection"),"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
       "feature_state":feature_state,
-      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments."
+      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, stabilized by L10/full-L15 evidence, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX challenges the forecast with attributable role, availability, opponent, injury, weather and game-plan evidence; directional adjustments require structured sourced evidence and are never invented from narrative prose."
     }
 
 def main():

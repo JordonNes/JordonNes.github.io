@@ -118,6 +118,14 @@
     if(/\bDEMON\b/.test(raw)) return 'DEMON';
     return 'NORMAL';
   };
+  const lineProfileClass=p=>String(projectionOf(p)?.line_profile_class||'').toUpperCase();
+  const marketImpliedProbability=p=>impliedProb(p?.best_price ?? p?.price);
+  const elitePlayerPropEligible=p=>{
+    const provider=explicitPomType(p), profile=lineProfileClass(p), implied=marketImpliedProbability(p);
+    if(provider==='GOBLIN'||profile==='TROLL'||profile==='GOBLIN') return false;
+    if(Number.isFinite(implied)&&implied>=80) return false;
+    return true;
+  };
   const jointProbability=arr=>{
     if(!arr?.length) return null;
     const product=arr.reduce((p,c)=>p*Math.max(0,Math.min(1,Number(c.confidence||0)/100)),1);
@@ -339,7 +347,7 @@
         && !isStaleProp(p)
         && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0
         && p?.synthetic!==true && p?.model_generated!==true;
-      if(!verified || !validPlayerName(p)) continue;
+      if(!verified || !validPlayerName(p) || !elitePlayerPropEligible(p)) continue;
       const key=canonicalKey(p);
       const price=priceLabel(p.price,p.book||'');
       pushHot([
@@ -352,7 +360,7 @@
       ],`PROP|${key}`,pomValueOf(p));
     }
     for(const p of scouts){
-      if(!isDisplayEvaluatedProp(p)) continue;
+      if(!isDisplayEvaluatedProp(p) || !elitePlayerPropEligible(p)) continue;
       const key=canonicalKey(p);
       const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
         ? priceLabel(p.best_price,p.best_book||'')
@@ -450,7 +458,7 @@
       // Registry rows are actionable only when they carry the same exact-market
       // verification contract as the Future Market Board.
       const verified=p.market_verified===true && String(p.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' && Number.isFinite(ljpcOf(p)) && ljpcOf(p)>0;
-      if(!verified) continue;
+      if(!verified || !elitePlayerPropEligible(p)) continue;
       const key=canonicalKey(p);
       pushTwenty([
         String(p.league||p.sport||'').replace(/_/g,' '),
@@ -461,7 +469,7 @@
       ],key);
     }
     for(const p of scouts){
-      if(!isDisplayEvaluatedProp(p)) continue;
+      if(!isDisplayEvaluatedProp(p) || !elitePlayerPropEligible(p)) continue;
       const key=canonicalKey(p);
       const price=p.best_price!==null&&p.best_price!==undefined&&p.best_price!==''
         ? `${Number(p.best_price)>0?'+':''}${p.best_price}${p.best_book?` ${p.best_book}`:''}`
@@ -501,7 +509,7 @@
     s.twenty=twenty;
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
     const staleSelected=twenty.filter(r=>/LINE RECHECK REQUIRED/i.test(String(r?.[3]||''))).length;
-    s.twentyNote=`L&J 20 Piece • top 20% of ${inventoryCount} L&J-evaluated POMs • ${twenty.length} selected props • ${uniquePlayers} unique players • ${staleSelected?staleSelected+' retained evaluated line(s) require live line recheck • ':''}minimum 4 when available • 20 unique-player floor above 40 inventory POMs • maximum 60 props.`;
+    s.twentyNote=`L&J 20 Piece • top 20% of ${inventoryCount} elite-eligible, market-verified L&J POMs • TROLL/Goblin and ≥80% implied-probability low-payout lines excluded • ${twenty.length} selected props • ${uniquePlayers} unique players • ${staleSelected?staleSelected+' retained evaluated line(s) require live line recheck • ':''}minimum 4 when available • 20 unique-player floor above 40 inventory POMs • maximum 60 props.`;
   }
 
   const canonical=R.predictions.map(p=>({

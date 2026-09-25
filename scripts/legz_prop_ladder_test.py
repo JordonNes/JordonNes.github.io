@@ -10,7 +10,7 @@ m=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
 
 history={
-  ("NFL","test quarterback","pass_yards"):[180,190,200,205,210,208,212,204,206,205]
+  ("NFL","test quarterback","pass_yards"):[188,194,199,202,205,207,211,203,208,206,209,205,212,204,210]
 }
 
 def prop(threshold,side="Over",tier="NORMAL"):
@@ -32,7 +32,16 @@ assert len(centers)==1, f"Threshold ladder changed the player forecast: {centers
 center=centers.pop()
 assert 200 < center < 212, center
 l5=rows[("over",205)]["player_projection"]["l5_average"]
-assert abs(l5-207.0)<1e-9, l5
+assert abs(l5-208.0)<1e-9, l5
+assert rows[("over",205)]["player_projection"]["l15_average"] is not None
+assert rows[("over",205)]["player_projection"]["l15_n"]==15
+
+troll=m.spectrum(prop(180,"Over","NORMAL"),history,{}, {},game_contexts={})
+normal=m.spectrum(prop(205,"Over","NORMAL"),history,{}, {},game_contexts={})
+demon=m.spectrum(prop(225,"Over","NORMAL"),history,{}, {},game_contexts={})
+assert troll["player_projection"]["line_profile_class"]=="TROLL", troll["player_projection"]
+assert normal["player_projection"]["line_profile_class"]=="NORMAL", normal["player_projection"]
+assert demon["player_projection"]["line_profile_class"]=="DEMON", demon["player_projection"]
 
 # As the over line rises, over probability must fall; under probability must rise.
 over=[rows[("over",t)]["ljpc"] for t in (195,205,215,225)]

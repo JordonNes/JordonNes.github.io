@@ -103,6 +103,24 @@ function evaluatePage(page) {
 function actionable(items) {
   return Array.isArray(items) ? items.filter(x => x && !WATCH.test(String(x))) : [];
 }
+function impliedProbability(price){
+  const x=Number(price);
+  if(!Number.isFinite(x)||x===0)return null;
+  if(x>0&&x<=1)return x*100;
+  if(x<=-100)return (-x)/((-x)+100)*100;
+  if(x>=100)return 100/(x+100)*100;
+  return null;
+}
+function elitePlayerPropEligible(p){
+  const tags=Array.isArray(p?.tags)?p.tags.join(' '):'';
+  const provider=[p?.pom_type,p?.pomType,p?.variant,p?.difficulty,p?.projection_type,p?.pick_type,p?.label,tags].filter(Boolean).join(' ').toUpperCase();
+  const projection=p?.player_projection||p?.spectrum?.player_projection||p?.feature_state?.performance?.player_projection||{};
+  const profile=String(projection?.line_profile_class||'').toUpperCase();
+  const implied=impliedProbability(p?.best_price??p?.price);
+  if(/\bGOBLIN\b/.test(provider)||profile==='TROLL'||profile==='GOBLIN')return false;
+  if(Number.isFinite(implied)&&implied>=80)return false;
+  return true;
+}
 
 const errors = [];
 const warnings = [];
@@ -148,16 +166,17 @@ for (const [page, league] of Object.entries(PAGES)) {
     String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' &&
     Number.isFinite(Number(p?.ljpc))
   );
+  const eliteEvaluatedBoardProps=evaluatedBoardProps.filter(elitePlayerPropEligible);
   const renderedTwenty=(sport.twenty||[]).filter(r=>Number.isFinite(Number((r||[])[7]))&&Number((r||[])[7])>0);
   const renderedHot=(sport.hotTop||[]).filter(r=>{
     const score=String((r||[])[2]||'');
     return /%/.test(score) && !/AWAITING|MARKET BASELINE/i.test((r||[]).join(' '));
   });
-  if(evaluatedBoardProps.length && !renderedTwenty.length){
-    errors.push(`${league}: ${evaluatedBoardProps.length} evaluated future-board POMs exist but the 20 Piece renders zero LJPC props.`);
+  if(eliteEvaluatedBoardProps.length && !renderedTwenty.length){
+    errors.push(`${league}: ${eliteEvaluatedBoardProps.length} elite-eligible evaluated future-board POMs exist but the 20 Piece renders zero LJPC props.`);
   }
-  if(evaluatedBoardProps.length && !renderedHot.length){
-    errors.push(`${league}: ${evaluatedBoardProps.length} evaluated future-board POMs exist but LEGZ Hot Top renders zero LJPC props.`);
+  if(eliteEvaluatedBoardProps.length && !renderedHot.length){
+    errors.push(`${league}: ${eliteEvaluatedBoardProps.length} elite-eligible evaluated future-board POMs exist but LEGZ Hot Top renders zero LJPC props.`);
   }
   for (const r of (sport.hotTop||[])) {
     const text=(r||[]).join(' ');
