@@ -184,16 +184,14 @@
   };
   function parsePlayerPom(raw,participantHint=""){
     const text=String(raw||"").trim();
-    const coreRaw=text.split(/\s+•\s+/)[0].trim();
+    const parts=text.split(/\s+•\s+/);
+    const sportRx=/^(?:NFL|MLB|NBA|WNBA|NHL|FIBA|CFB|CBB|NCAA(?: FOOTBALL| BASKETBALL)?|NCAA_FOOTBALL|NCAA_BASKETBALL|TENNIS|MMA|BOXING)$/i;
+    let sport="";
+    if(parts.length>1 && sportRx.test(String(parts[0]||"").trim())) sport=String(parts.shift()||"").trim();
+    const coreRaw=String(parts.shift()||"").trim();
     const sourcePrice=(coreRaw.match(/\(([^)]+)\)\s*$/)||[])[1]||"";
     let core=coreRaw.replace(/\s*\([^)]+\)\s*$/,"").trim()
       .replace(/^\s*(?:GOBLIN|DEMON|NORMAL|MARKET)\s*[•:—-]?\s*/i,"");
-    let sport="";
-    const sportPrefix=core.match(/^([A-Za-z_ ]{2,24})\s*•\s*(.+)$/);
-    if(sportPrefix && /^(?:NFL|MLB|NBA|WNBA|NHL|FIBA|CFB|CBB|NCAA(?: FOOTBALL| BASKETBALL)?|TENNIS|MMA|BOXING)$/i.test(sportPrefix[1].trim())){
-      sport=sportPrefix[1].trim();
-      core=sportPrefix[2].trim();
-    }
     const hint=String(participantHint||"").trim();
     let player=hint, prop=core;
     if(hint){
