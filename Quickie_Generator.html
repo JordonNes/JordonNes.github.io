@@ -98,23 +98,50 @@ function score(x,tier){
 const normKey=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const exactKey=x=>normKey(x.sport+'|'+x.marketClass+'|'+x.pick);
 const playerKey=x=>x.marketClass==='PLAYER_PROP'?normKey(x.participant):'';
-function chooseTicket(pool,legCount,usedAcross){
-  const chosen=[],usedExact=new Set(),players=new Set(),events=new Set();
-  const passes=[
-    x=>!usedAcross.has(exactKey(x))&&!events.has(x.eventKey),
-    x=>!usedAcross.has(exactKey(x))
-  ];
-  for(const pass of passes){
-    for(const x of pool){
-      if(chosen.length>=legCount)break;
-      const ek=exactKey(x),pk=playerKey(x);
-      if(usedExact.has(ek)||!pass(x))continue;
-      if(pk&&players.has(pk))continue;
-      chosen.push(x);usedExact.add(ek);if(pk)players.add(pk);if(x.eventKey)events.add(x.eventKey);
-    }
-    if(chosen.length>=legCount)break;
+function ticketUtility(legs,tier){
+  if(!legs.length)return -Infinity;
+  const prob=Math.max(1e-9,ticketProbability(legs).adjusted/100);
+  const avgPom=legs.reduce((s,x)=>s+Math.max(0,Math.min(100,Number(x.pomValue||x.ljpc||0))),0)/legs.length;
+  const families=new Map();
+  legs.forEach(x=>{const k=normKey(x.marketFamily||x.marketClass);families.set(k,(families.get(k)||0)+1)});
+  const familyRepeats=[...families.values()].reduce((s,n)=>s+Math.max(0,n-1),0);
+  let economic=0;
+  if(tier==='AGGRESSIVE'){
+    economic=legs.reduce((s,x)=>{
+      const p=Number(x.price);
+      const upside=Number.isFinite(p)&&p>0?Math.min(p,500)/500:0;
+      return s+upside;
+    },0)/legs.length;
   }
-  return chosen.length===legCount?chosen:[];
+  // Probability remains dominant. POM/economic value and market-family
+  // diversification only separate portfolios with similar joint probability.
+  return Math.log(prob)+(avgPom/100)*0.06+economic*0.035-familyRepeats*0.015;
+}
+function chooseTicket(pool,legCount,usedAcross,tier){
+  const candidates=pool.filter(x=>!usedAcross.has(exactKey(x))).slice(0,120);
+  let beam=[{legs:[],exact:new Set(),players:new Set(),score:0}];
+  const width=220;
+  for(let depth=0;depth<legCount;depth++){
+    const next=[],signatures=new Set();
+    for(const state of beam){
+      for(const x of candidates){
+        const ek=exactKey(x),pk=playerKey(x);
+        if(state.exact.has(ek)||(pk&&state.players.has(pk)))continue;
+        const legs=[...state.legs,x];
+        const exact=new Set(state.exact);exact.add(ek);
+        const players=new Set(state.players);if(pk)players.add(pk);
+        const signature=[...exact].sort().join('||');
+        if(signatures.has(signature))continue;
+        signatures.add(signature);
+        next.push({legs,exact,players,score:ticketUtility(legs,tier)});
+      }
+    }
+    next.sort((a,b)=>b.score-a.score);
+    beam=next.slice(0,width);
+    if(!beam.length)break;
+  }
+  const best=beam.find(x=>x.legs.length===legCount);
+  return best?best.legs:[];
 }
 function ticketProbability(legs){
   if(!legs.length)return {raw:0,adjusted:0,correlated:false};
@@ -147,15 +174,15 @@ function generate(){
   if(pool.length<lc){res.innerHTML=`<div class="empty-state">Only ${pool.length} current prediction${pool.length===1?'':'s'} cleared these filters. Reduce the leg count or broaden the filters.</div>`;return}
   const usedAcross=new Set(),cards=[];
   for(let p=0;p<pc;p++){
-    const legs=chooseTicket(pool,lc,usedAcross);
+    const legs=chooseTicket(pool,lc,usedAcross,tier);
     if(!legs.length)break;
     legs.forEach(x=>usedAcross.add(exactKey(x)));
     const title=tier==='BEST'?'JINX BEST BETS':tier==='SNS1'?'SNS1 / GOBLIN 1':tier==='SNS2'?'SNS2 / GOBLIN 2':tier;
     const prob=ticketProbability(legs);
     const raw=prob.raw.toFixed(prob.raw<10?2:1),adj=prob.adjusted.toFixed(prob.adjusted<10?2:1);
     const probLine=prob.correlated
-      ? `<div class="ticket-summary"><span class="ticket-prob">Ticket LJPC / hit probability: ${adj}%</span><div class="ticket-note">Independent-leg baseline ${raw}%; conservative same-event correlation penalty applied.</div></div>`
-      : `<div class="ticket-summary"><span class="ticket-prob">Ticket LJPC / hit probability: ${raw}%</span><div class="ticket-note">Joint probability from the published leg-level LJPCs; duplicate-player stacking is blocked.</div></div>`;
+      ? `<div class="ticket-summary"><span class="ticket-prob">Ticket LJPC / hit probability: ${adj}%</span><div class="ticket-note">Portfolio-optimized joint probability. Independent-leg baseline ${raw}%; conservative same-event correlation penalty applied.</div></div>`
+      : `<div class="ticket-summary"><span class="ticket-prob">Ticket LJPC / hit probability: ${raw}%</span><div class="ticket-note">Portfolio-optimized joint probability from published leg-level LJPCs; duplicate-player stacking is blocked and POM economics are secondary.</div></div>`;
     cards.push(`<article class="parlay-card"><div class="parlay-head">${title} QUICKIE ${p+1} • ${lc} LEGS</div><div class="parlay-body">${legs.map((x,i)=>`<div class="parlay-leg"><div class="leg-main">${i+1}. ${esc(sportNames[x.sport]||x.sport)} • ${esc(x.pick)}</div><div class="leg-sub">${confHTML(x)}<br>${esc(x.context|| (x.marketClass==='PLAYER_PROP'?'Player prop':x.marketClass==='GAME_ML'?'Moneyline':'Team odds'))}</div></div>`).join('')}${probLine}</div></article>`);
   }
   if(cards.length<pc){
