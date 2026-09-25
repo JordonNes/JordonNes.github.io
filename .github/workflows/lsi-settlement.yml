@@ -89,21 +89,32 @@ jobs:
       - name: Commit settlement-only outputs
         shell: bash
         run: |
+          set -euo pipefail
           ALLOWED='data/results.csv data/settlement_status.json data/settlement_aliases.json data/suggestion_accuracy.json data/ljpc_calibration.json data/legz_jinx_accountability.json ljrecapdata.js'
-          CHANGED="$(git status --porcelain | awk '{print $2}')"
-          for f in $CHANGED; do
-            case " $ALLOWED " in
-              *" $f "*) ;;
-              *) echo "::error::Settlement changed unauthorized path: $f"; exit 1;;
-            esac
-          done
           git config user.name 'LEGZ-JINX LSI Settlement'
           git config user.email 'actions@users.noreply.github.com'
-          git add $ALLOWED
-          if git diff --cached --quiet; then
-            echo 'No settlement changes.'
-          else
+          for attempt in 1 2 3 4 5; do
+            git fetch origin master
+            git reset --hard origin/master
+            python scripts/lsi_settle.py
+            python -m unittest scripts/test_lsi_settle.py
+            python scripts/lsi_build_recaps.py
+            python scripts/lsi_suggestion_calibration.py
+            CHANGED="$(git status --porcelain | awk '{print $2}')"
+            for f in $CHANGED; do
+              case " $ALLOWED " in
+                *" $f "*) ;;
+                *) echo "::error::Settlement changed unauthorized path: $f"; exit 1;;
+              esac
+            done
+            git add $ALLOWED
+            if git diff --cached --quiet; then
+              echo 'Settlement outputs already current.'
+              exit 0
+            fi
             git commit -m "LSI automatic settlement"
-            git pull --rebase origin master
-            git push origin master
-          fi
+            if git push origin master; then exit 0; fi
+            echo "Settlement writer race; rebuilding on newest master (${attempt}/5)"
+            sleep 3
+          done
+          exit 1
