@@ -7,7 +7,7 @@ Rules:
 - NFL inventory may stage the next Tuesday-Monday week beginning Monday noon PT, but the
   public NFL per-game QC page is hard-gated to the current Tuesday-Monday publication week.
 - Only fully evaluated props carry LJPC. Market baselines remain evidence and never masquerade as LJPC.
-- Alternate thresholds for the same participant/market collapse to one preferred line.
+- Exact participant/market/threshold/side variants are preserved so provider ladders remain distinct.
 """
 from __future__ import annotations
 import csv, json, math
