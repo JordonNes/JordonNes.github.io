@@ -58,4 +58,23 @@ assert d[0]["price"] is None
 unsupported={**base,"bookmaker":"draftkings","market_key":"player_fantasy_points"}
 assert m.normalize_row("NFL",unsupported)==[]
 
+# Cross-provider event matching must survive abbreviation/full-name differences.
+event={
+    "league":"NFL",
+    "commence_time":future,
+    "away":"NO Saints",
+    "home":"BAL Ravens",
+    "away_aliases":["NO"],
+    "home_aliases":["BAL"],
+}
+row={
+    "league":"NFL",
+    "event_start_pt":future,
+    "away":"New Orleans Saints",
+    "home":"Baltimore Ravens",
+    "away_aliases":m.aliases("New Orleans Saints"),
+    "home_aliases":m.aliases("Baltimore Ravens"),
+}
+assert m.event_match([event],row) is event
+
 print("ParlayAPI retail adapter tests passed.")
