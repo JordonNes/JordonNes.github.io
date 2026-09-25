@@ -246,10 +246,10 @@ jobs:
           ODDS_API_PROP_TTL_MIN: '240'
         run: python scripts/odds_adapter.py
       - name: Refresh durable history coverage
-        if: needs.clock.outputs.stage == 'MARKET_HISTORY' || needs.clock.outputs.stage == 'MASTER_PUBLICATION'
+        if: needs.clock.outputs.stage == 'MARKET_HISTORY'
         run: python scripts/lsi_history_coverage.py
       - name: Refresh persistent player registry and spectrum cache
-        if: needs.clock.outputs.stage == 'MARKET_HISTORY' || needs.clock.outputs.stage == 'MASTER_PUBLICATION'
+        if: needs.clock.outputs.stage == 'MARKET_HISTORY'
         run: python scripts/lsi_history_warehouse.py
       - name: Refresh TTL-gated ESPN player gamelog and split evidence
         if: steps.league_schedule.outputs.cycle_required == 'true'
