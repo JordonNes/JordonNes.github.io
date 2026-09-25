@@ -96,6 +96,7 @@ jobs:
           assert settlement.get('schema_version')=='LSI-SETTLEMENT-1'
           assert future.get('schema_version')=='LJ-FUTURE-MARKET-1'
           assert moneylines.get('schema_version')=='LJ-CURRENT-GAME-ML-1'
+          now=datetime.now(timezone.utc)
           espn=json.load(open('/tmp/espn-events.json'))
           assert espn.get('schema_version')=='LSI-ESPN-EVENT-1'
           espn_stamp=datetime.fromisoformat(espn['generated_at_utc'].replace('Z','+00:00'))
@@ -103,7 +104,6 @@ jobs:
           assert espn_age <= 12, f'Deployed ESPN sports-truth stale: {espn_age:.1f}h'
           assert all(p.get('source_snapshot_ids') and p.get('provenance') and p.get('evidence_ids') for p in registry.get('predictions',[]))
           assert all(p.get('ljpc') is not None and p.get('legz_value') is not None and p.get('pom_value') is not None for p in registry.get('predictions',[]))
-          now=datetime.now(timezone.utc)
           ml_stamp=datetime.fromisoformat(moneylines['generated_at_utc'].replace('Z','+00:00'))
           ml_age=(now-ml_stamp).total_seconds()/3600
           assert ml_age <= 8, f'GAME_ML artifact stale: {ml_age:.1f}h'
