@@ -81,6 +81,7 @@ jobs:
           PROPLINE_MAX_REFRESH_PER_LEAGUE: '4'
           PROPLINE_RATE_LIMIT_COOLDOWN_MIN: '90'
           PROPLINE_MAX_PROP_MARKETS_PER_EVENT: '10'
+          PROPLINE_INTELLIGENCE_RETENTION_DAYS: '2'
         run: python scripts/propline_adapter.py
 
       - name: Refresh due coverage-gap player props
@@ -171,10 +172,12 @@ jobs:
           # replacement blob.
           generated_market="$(mktemp)"
           cp data/market_history.csv "$generated_market"
-          git checkout HEAD -- data/market_history.csv
+          git checkout HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
           python scripts/lsi_market_history_delta.py split "$generated_market"
           rm -f "$generated_market"
-          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_intelligence.json data/propline_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json 2>/dev/null || true
+          git reset HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
+          git checkout HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
+          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'Due work produced no durable intelligence changes.'
             exit 0
