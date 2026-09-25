@@ -1,0 +1,112 @@
+name: LSI ESPN Sports Truth Refresh
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/espn_intelligence_adapter.py'
+      - 'scripts/test_espn_intelligence_adapter.py'
+      - 'scripts/espn_player_enrichment.py'
+      - 'scripts/test_espn_player_enrichment.py'
+      - 'config/lsi_sources.json'
+      - '.github/workflows/lsi-espn-sports-truth.yml'
+  schedule:
+    - cron: '15 1,4,13,16,19,22 * * *'
+    - cron: '15 2,5,14,17,20,23 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lsi-espn-sports-truth-writer
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: master, fetch-depth: 0}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+
+      - name: Resolve DST-safe Pacific checkpoint
+        id: clock
+        shell: bash
+        run: |
+          PT_HOUR=$(TZ=America/Los_Angeles date +%H)
+          case "$PT_HOUR" in
+            06|09|12|15|18|21) ALLOWED=true;;
+            *) ALLOWED=false;;
+          esac
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "push" ]; then ALLOWED=true; fi
+          echo "allowed=$ALLOWED" >> "$GITHUB_OUTPUT"
+          echo "Pacific hour=$PT_HOUR; allowed=$ALLOWED"
+
+      - name: Compile and unit-check ESPN intelligence
+        if: steps.clock.outputs.allowed == 'true'
+        run: |
+          python -m py_compile scripts/espn_intelligence_adapter.py scripts/espn_player_enrichment.py
+          python scripts/test_espn_intelligence_adapter.py
+          python scripts/test_espn_player_enrichment.py
+
+      - name: Refresh persistent ESPN sports truth
+        if: steps.clock.outputs.allowed == 'true'
+        env:
+          ESPN_INTELLIGENCE_LOOKAHEAD_HOURS: '96'
+          ESPN_INTELLIGENCE_MAX_EVENTS_PER_LEAGUE: '24'
+          ESPN_INTELLIGENCE_MAX_TEAMS: '48'
+          ESPN_INTELLIGENCE_HTTP_TIMEOUT_SEC: '15'
+          ESPN_INTELLIGENCE_HTTP_ATTEMPTS: '2'
+        run: python scripts/espn_intelligence_adapter.py
+
+      - name: Refresh stale active-player gamelog and split cache
+        if: steps.clock.outputs.allowed == 'true'
+        continue-on-error: true
+        env:
+          ESPN_PLAYER_ENRICHMENT_TTL_HOURS: '12'
+          ESPN_PLAYER_ENRICHMENT_MAX_PLAYERS: '80'
+          ESPN_PLAYER_ENRICHMENT_HTTP_TIMEOUT_SEC: '15'
+          ESPN_PLAYER_ENRICHMENT_HTTP_ATTEMPTS: '2'
+        run: python scripts/espn_player_enrichment.py
+
+      - name: Commit ESPN evidence independently of market publication
+        if: steps.clock.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          git config user.name 'LEGZ-JINX LSI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/espn_event_intelligence.json data/espn_player_registry.json data/espn_context.csv data/espn_player_enrichment.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo 'ESPN sports-truth evidence already current.'
+          else
+            git commit -m "LSI ESPN sports-truth refresh"
+            for attempt in 1 2 3 4 5; do
+              git pull --rebase --autostash origin master
+              if git push origin master; then break; fi
+              [ "$attempt" = "5" ] && exit 1
+              sleep 3
+            done
+          fi
+
+      - name: Validate live ESPN evidence coverage
+        if: steps.clock.outputs.allowed == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          events=json.load(open('data/espn_event_intelligence.json',encoding='utf-8'))
+          players=json.load(open('data/espn_player_registry.json',encoding='utf-8'))
+          enrichment=json.load(open('data/espn_player_enrichment.json',encoding='utf-8'))
+          assert events.get('schema_version')=='LSI-ESPN-EVENT-1'
+          assert players.get('schema_version')=='LSI-ESPN-PLAYER-1'
+          assert enrichment.get('schema_version')=='LSI-ESPN-PLAYER-ENRICHMENT-1'
+          shells=int(events.get('market_shell_count') or 0)
+          count=int(events.get('event_count') or 0)
+          if shells and count==0:
+              raise SystemExit(f'ESPN sports-truth degraded: {shells} active market shells but zero resolved ESPN events')
+          if count and int(players.get('player_count') or 0)==0:
+              raise SystemExit(f'ESPN sports-truth degraded: {count} events but zero rostered player identities')
+          print(f"ESPN live coverage: events={count}; schedule_resolved={events.get('team_schedule_resolved_event_count',0)}; market_shells={shells}; players={players.get('player_count',0)}; active_enrichment={enrichment.get('active_player_count',0)}; errors={len(events.get('errors') or [])}")
+          PY
