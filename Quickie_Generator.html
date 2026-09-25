@@ -61,7 +61,7 @@ function buildPool(){
       let pick='';
       if(mc==='GAME_ML') pick=`${e.away||""} @ ${e.home||""} — ${participant} ML${fp?` • ${fp}`:""}`;
       else pick=`${e.away||""} @ ${e.home||""} — ${g.selection||g.participant||g.market||mc}${fp?` • ${fp}`:""}`;
-      add(pool,seen,{sport,marketClass:cls,pick,participant:String(participant||'').trim(),eventKey:String(e.source_event_id||e.event_id||`${sport}|${e.away||''}@${e.home||''}|${e.commence_time||''}`),marketFamily:mc,side:String(g.side||'').toUpperCase(),legz:ljpc,jinxDelta:Number(g.jinx_input||0),ljpc,legzValue:Number(g.legz_value||0),pomValue:Number(g.pom_value||ljpc),price:Number(g.price),pomType:'NORMAL',directLj:true,provisional:false,context:mc==='GAME_ML'?'JINX GAME WINNER':'L&J TEAM ODDS'});
+      add(pool,seen,{sport,marketClass:cls,pick,participant:String(participant||'').trim(),eventKey:String(e.source_event_id||e.event_id||`${sport}|${e.away||''}@${e.home||''}|${e.commence_time||''}`),marketFamily:mc,side:String(g.side||'').toUpperCase(),legz:Number(g.legz_baseline??g.legz_confidence??ljpc),jinxDelta:Number(g.jinx_input||0),ljpc,legzValue:Number(g.legz_value||0),pomValue:Number(g.pom_value||ljpc),price:Number(g.price),pomType:'NORMAL',directLj:true,provisional:false,context:mc==='GAME_ML'?'JINX GAME WINNER':'L&J TEAM ODDS'});
     });
   });
   return pool;
