@@ -1,7 +1,7 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-09-25T00:39:04.676760+00:00",
-  "source_registry_generated_at_utc": "2026-09-25T00:35:19.703327+00:00",
+  "generated_at_utc": "2026-09-25T00:53:34.203077+00:00",
+  "source_registry_generated_at_utc": "2026-09-25T00:49:12.388802+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
     "ESPN_PUBLIC": {
@@ -16,11 +16,23 @@
       ],
       "cost": "free/public"
     },
+    "ESPN_PUBLIC_SPECIAL": {
+      "coverage": {
+        "Tennis": "ATP/WTA GAME_ML finals",
+        "MMA": "UFC GAME_ML finals"
+      },
+      "cost": "free/public"
+    },
     "VERIFIED_INBOX": {
       "pattern": "data/inbox/results_*.csv",
       "accepted_rows": 0
     },
     "pending_automatic_adapters": [
+      "Boxing",
+      "FIBA_Men",
+      "FIBA_Women"
+    ],
+    "pending_player_prop_adapters": [
       "Tennis",
       "MMA",
       "Boxing",
@@ -36,11 +48,10 @@
   "settlement_rate_pct": 6.04,
   "run_counts": {
     "already_settled": 173,
-    "PENDING_EVENT": 1984,
+    "PENDING_EVENT": 1997,
     "PLAYER_NOT_IN_BOXSCORE": 542,
     "AMBIGUOUS_EVENT": 33,
     "UNSUPPORTED_PLAYER_MARKET": 133,
-    "PROVIDER_PENDING": 13,
     "TEAM_UNRESOLVED": 1
   },
   "by_league": {
@@ -53,7 +64,7 @@
       "AMBIGUOUS_EVENT": 14
     },
     "MMA": {
-      "PROVIDER_PENDING": 13
+      "PENDING_EVENT": 13
     },
     "NCAA_Football": {
       "already_settled": 5,
@@ -296,7 +307,10 @@
     {
       "prediction_id": "SUG-d14c839094fd5979782201c3",
       "league": "MMA",
-      "reason": "PROVIDER_PENDING"
+      "event_id": "PL-218881",
+      "provider_event_id": "401914472",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-d1abf16fdd060b382311583c",
@@ -789,7 +803,10 @@
     {
       "prediction_id": "SUG-2a5fef9119a552c7a5165129",
       "league": "MMA",
-      "reason": "PROVIDER_PENDING"
+      "event_id": "PL-218881",
+      "provider_event_id": "401914472",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-3014184fba65f5069858bc57",
@@ -1146,7 +1163,10 @@
     {
       "prediction_id": "SUG-cee8dd96b7e177b958ddbce0",
       "league": "MMA",
-      "reason": "PROVIDER_PENDING"
+      "event_id": "PL-218881",
+      "provider_event_id": "401914472",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-d9e7f91244d85ce9d6fefd3a",
