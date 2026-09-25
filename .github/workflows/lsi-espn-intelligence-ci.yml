@@ -1,0 +1,49 @@
+name: LSI ESPN Intelligence CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/espn_intelligence_adapter.py'
+      - 'scripts/test_espn_intelligence_adapter.py'
+      - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/lsi_history_warehouse.py'
+      - 'config/lsi_sources.json'
+      - '.github/workflows/lsi-espn-intelligence-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: master}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+      - name: Compile ESPN-connected LSI modules
+        run: |
+          python -m py_compile scripts/espn_intelligence_adapter.py
+          python -m py_compile scripts/legz_statistical_spectrum.py
+          python -m py_compile scripts/lsi_history_warehouse.py
+      - name: Run ESPN adapter unit checks
+        run: python scripts/test_espn_intelligence_adapter.py
+      - name: Validate fail-soft zero-league execution
+        env:
+          ESPN_INTELLIGENCE_LEAGUES: NONE
+        run: |
+          python scripts/espn_intelligence_adapter.py
+          python - <<'PY'
+          import json
+          event=json.load(open('data/espn_event_intelligence.json',encoding='utf-8'))
+          players=json.load(open('data/espn_player_registry.json',encoding='utf-8'))
+          assert event.get('schema_version')=='LSI-ESPN-EVENT-1'
+          assert players.get('schema_version')=='LSI-ESPN-PLAYER-1'
+          assert event.get('selected_leagues')==[]
+          assert event.get('event_count')==0
+          assert 'never become LJPC' in event.get('policy','')
+          print('ESPN zero-league fail-soft contract passed.')
+          PY
