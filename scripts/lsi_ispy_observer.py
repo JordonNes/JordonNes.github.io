@@ -77,16 +77,24 @@ def norm(value):
 def dictish(value):
     return value if isinstance(value,dict) else {}
 
+def first_number(mapping,*keys):
+    for key in keys:
+        if key in mapping and mapping.get(key) not in (None,""):
+            value=number(mapping.get(key))
+            if value is not None:
+                return value
+    return None
+
 def weather_values(raw):
     """Return numeric weather magnitudes without turning mere presence into a signal."""
     if isinstance(raw,dict):
         source=raw
         return {
-            "temperature_f":number(source.get("temperature_2m") or source.get("temperature_f") or source.get("temperature")),
-            "rain_in":number(source.get("rain") or source.get("precipitation")),
-            "precip_probability":number(source.get("precipitation_probability") or source.get("precip_probability")),
-            "wind_mph":number(source.get("wind_speed_10m") or source.get("wind_mph") or source.get("wind_speed")),
-            "wind_gust_mph":number(source.get("wind_gusts_10m") or source.get("wind_gust_mph") or source.get("gusts")),
+            "temperature_f":first_number(source,"temperature_2m","temperature_f","temperature"),
+            "rain_in":first_number(source,"rain","precipitation"),
+            "precip_probability":first_number(source,"precipitation_probability","precip_probability"),
+            "wind_mph":first_number(source,"wind_speed_10m","wind_mph","wind_speed"),
+            "wind_gust_mph":first_number(source,"wind_gusts_10m","wind_gust_mph","gusts"),
         }
     text=str(raw or "")
     patterns={
