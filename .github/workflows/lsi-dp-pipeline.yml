@@ -47,6 +47,9 @@ on:
       - 'scripts/lsi_readiness_report.py'
       - 'scripts/lsi_visual_registry.py'
       - 'scripts/lsi_publish_future_board.py'
+      - 'scripts/lsi_ispy_observer.py'
+      - 'scripts/test_lsi_ispy_observer.py'
+      - 'scripts/lsi_publish_ispy.py'
       - 'scripts/test_lsi_future_board_guard.py'
       - 'scripts/lsi_game_winner_spectrum.py'
       - 'scripts/lsi_promote_learning.py'
@@ -158,6 +161,7 @@ jobs:
           python scripts/test_lsi_checkpoint_clock.py
           python scripts/test_ncaa_history_continuity.py
           python scripts/test_lsi_future_board_guard.py
+          python scripts/test_lsi_ispy_observer.py
           python scripts/test_propline_bulk_catalog.py
           python scripts/test_parlayapi_retail_props.py
           python scripts/test_lsi_league_scheduler.py
@@ -339,9 +343,11 @@ jobs:
       - name: Publish rolling 0-7 day L&J future market board
         if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/lsi_publish_future_board.py
-      - name: Publish qualified JINX I Spy signals
-        if: steps.league_schedule.outputs.has_work == 'true'
-        run: python scripts/lsi_publish_ispy.py
+      - name: Observe and publish JINX I Spy signals
+        if: steps.league_schedule.outputs.cycle_required == 'true'
+        run: |
+          python scripts/lsi_ispy_observer.py
+          python scripts/lsi_publish_ispy.py
       - name: LEGZ Game Winner Spectrum — independent performance + market evidence
         if: steps.league_schedule.outputs.cycle_required == 'true'
         env:
@@ -456,7 +462,7 @@ jobs:
             data/team_roster_registry.json data/visual_asset_registry.json data/visual_asset_registry.js
             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json
             data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json data/game_winner_evidence.json
-            data/projection_gap_report.json data/lsi_ispy_signals.json data/lsi_ispy_signals.js
+            data/projection_gap_report.json data/lsi_ispy_candidates.json data/lsi_ispy_signals.json data/lsi_ispy_signals.js
           )
           snapshot="$(mktemp -d)"
           for p in "${outputs[@]}"; do
