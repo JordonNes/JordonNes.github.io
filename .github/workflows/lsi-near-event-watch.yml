@@ -2,6 +2,10 @@ name: LSI Near-Event Gate
 
 on:
   workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/lsi-near-event-watch.yml'
   schedule:
     - cron: '27 * * * *'
 
