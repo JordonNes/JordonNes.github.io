@@ -557,29 +557,43 @@ def merge_library(candidates):
     return payload
 
 def main():
+    prior=load_json(CANDIDATES,{"signals":[]})
+    pom_candidates=[
+        x for x in (prior.get("signals") or [])
+        if isinstance(x,dict) and str(x.get("method") or "").startswith("CONTINUOUS_NEAREST_NEIGHBOR")
+    ]
     ctx=refresh_context();raw=ctx.get("rows") or []
     history,histories,records=rolling_pregame_rows(raw)
     future=load_json(FUTURE,{"events":[]});wx=current_weather();player_teams=current_prop_team_index()
     schedule_list=list(ctx.get("games") or [])
-    candidates=[]
+    game_candidates=[]
     for event in future.get("events") or []:
         if event.get("league")!="NFL":continue
         game=match_schedule_for_event(event,schedule_list)
         if not game:continue
         for focus in (game.get("away_team"),game.get("home_team")):
             current=current_state_for_team(game,focus,histories,records,wx)
-            candidates.extend(discover_for_state(current,history,event,player_teams))
-    candidates.sort(key=lambda x:(x.get("status")=="VALIDATED",number(x.get("lift_pp")) or 0,number(x.get("mean_similarity_pct")) or 0),reverse=True)
-    library=merge_library(candidates)
+            game_candidates.extend(discover_for_state(current,history,event,player_teams))
+    game_candidates.sort(key=lambda x:(x.get("status")=="VALIDATED",abs(number(x.get("lift_pp")) or 0),number(x.get("mean_similarity_pct")) or 0),reverse=True)
+    library=merge_library(game_candidates)
+    merged={}
+    for item in [*pom_candidates,*game_candidates]:
+        key=str(item.get("signal_id") or hashlib.sha1(json.dumps(item,sort_keys=True,default=str).encode()).hexdigest())
+        merged[key]=item
+    candidates=list(merged.values())
+    rank={"VALIDATED":4,"DEVELOPING":3,"EMERGING":2,"TRACKING":1}
+    candidates.sort(key=lambda x:(rank.get(str(x.get("status") or "").upper(),0),abs(number(x.get("lift_pp")) or 0),number(x.get("mean_similarity_pct")) or 0),reverse=True)
     payload={
-      "schema_version":"LJ-ISPY-CANDIDATES-2","generated_at_utc":NOW.isoformat(),"engine":"JINX_ANALOG_DISCOVERY_2",
+      "schema_version":"LJ-ISPY-CANDIDATES-2","generated_at_utc":NOW.isoformat(),"engine":"JINX_COMBINED_DISCOVERY_2",
       "candidate_count":len(candidates),"signals":candidates,
       "coverage":{"league":"NFL","historical_analog_rows":len(history),"context_rows":len(raw),"lookback_seasons":LOOKBACK_SEASONS,
-                  "weather_note":"Historical NFL schedules provide temperature/wind. Open-Meteo adds richer current-event weather when available; precipitation is not used as a historical similarity dimension until equivalent historical coverage exists."},
-      "method":{"raw_observation_minimum":None,"effective_sample":"Kish ESS from similarity weights","neighborhood_depths":[5,10,25,50],"causality_claimed":False},
+                  "pom_analog_candidates":len(pom_candidates),"game_state_candidates":len(game_candidates),
+                  "weather_note":"Historical NFL game-state analogs use measured temperature/wind. Open-Meteo adds richer current-event weather when available; precipitation is not used as a deep historical game-state similarity dimension until equivalent coverage exists."},
+      "method":{"raw_observation_minimum":None,"effective_sample":"Kish ESS from similarity weights","neighborhood_depths":[5,10,25,50],"causality_claimed":False,
+                "layers":["exact-POM continuous similarity","whole-game-state analog similarity"]},
       "library_pattern_count":len(library.get("patterns") or [])
     }
     CANDIDATES.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"I Spy discovery: historical_analogs={len(history)} candidates={len(candidates)} validated={sum(x.get('status')=='VALIDATED' for x in candidates)} emerging={sum(x.get('status')=='EMERGING' for x in candidates)} library={len(library.get('patterns') or [])}")
+    print(f"I Spy discovery: pom_candidates={len(pom_candidates)} game_candidates={len(game_candidates)} combined={len(candidates)} library={len(library.get('patterns') or [])}")
 
 if __name__=="__main__":main()
