@@ -101,7 +101,14 @@ jobs:
         continue-on-error: true
         env:
           ROTOWIRE_API_KEY: ${{ secrets.ROTOWIRE_API_KEY }}
+          ESPN_INTELLIGENCE_LEAGUES: ${{ steps.schedule.outputs.due_leagues }}
+          ESPN_INTELLIGENCE_LOOKAHEAD_HOURS: '96'
+          ESPN_INTELLIGENCE_MAX_EVENTS_PER_LEAGUE: '24'
+          ESPN_INTELLIGENCE_MAX_TEAMS: '48'
+          ESPN_INTELLIGENCE_HTTP_TIMEOUT_SEC: '15'
+          ESPN_INTELLIGENCE_HTTP_ATTEMPTS: '2'
         run: |
+          python scripts/espn_intelligence_adapter.py
           python scripts/rotowire_adapter.py
           python scripts/lsi_visual_registry.py
 
@@ -159,7 +166,7 @@ jobs:
           git checkout HEAD -- data/market_history.csv
           python scripts/lsi_market_history_delta.py split "$generated_market"
           rm -f "$generated_market"
-          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_intelligence.json data/propline_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json 2>/dev/null || true
+          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_intelligence.json data/propline_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'Due work produced no durable intelligence changes.'
             exit 0
