@@ -420,22 +420,32 @@ def append_history(offers):
             writer.writerow(row)
     return len(fresh)
 
+def _team_alias_set(values):
+    out=set()
+    for value in values:
+        if not value:
+            continue
+        out.add(norm(value))
+        for alias in aliases(value):
+            out.add(norm(alias))
+    return {x for x in out if x}
+
 def event_match(events,row):
     row_start=parse_dt(row.get("event_start_pt"))
-    row_aliases={norm(x) for x in [
+    row_aliases=_team_alias_set([
         row.get("away"),row.get("home"),
         *(row.get("away_aliases") or []),*(row.get("home_aliases") or [])
-    ] if x}
+    ])
     for event in events:
         if str(event.get("league") or "")!=str(row.get("league") or ""):
             continue
         event_start=parse_dt(event.get("commence_time") or event.get("event_start_pt"))
         if not event_start or not row_start or abs((event_start-row_start).total_seconds())>3600:
             continue
-        event_aliases={norm(x) for x in [
+        event_aliases=_team_alias_set([
             event.get("away"),event.get("home"),
             *(event.get("away_aliases") or []),*(event.get("home_aliases") or [])
-        ] if x}
+        ])
         if row_aliases and event_aliases and row_aliases & event_aliases:
             return event
     return None
