@@ -32,6 +32,9 @@ PT = ZoneInfo("America/Los_Angeles")
 NOW = datetime.now(timezone.utc)
 
 EVENT_INVENTORY = DATA / "event_inventory.csv"
+CURRENT_ML = DATA / "current_game_moneylines.json"
+FUTURE_BOARD = DATA / "future_market_board.json"
+QC_BOARD = DATA / "qc_prop_board.json"
 PLAYER_REGISTRY = DATA / "espn_player_registry.json"
 EVENT_INTELLIGENCE = DATA / "espn_event_intelligence.json"
 CONTEXT_HISTORY = DATA / "espn_context.csv"
@@ -106,6 +109,182 @@ def selected_leagues():
     if not raw:
         return set(ESPN)
     return {x for x in raw if x in ESPN}
+
+
+def load_json(path, default):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return default
+
+
+def market_event_shells():
+    """Current externally discovered games used only to resolve ESPN event identity.
+
+    Market source IDs never become ESPN IDs. Team/date matching is conservative and
+    merely provides a route to ESPN's working team-schedule endpoints when scoreboard
+    discovery is unavailable from an Actions runner.
+    """
+    out = {}
+    for path in (CURRENT_ML, FUTURE_BOARD, QC_BOARD):
+        payload = load_json(path, {"events": []})
+        for row in payload.get("events") or []:
+            league = str(row.get("league") or row.get("sport") or "")
+            if league not in ESPN:
+                continue
+            start = row.get("commence_time") or row.get("event_start_pt")
+            dt = parse_dt(start)
+            if dt is None or dt < NOW - timedelta(hours=4) or dt > NOW + timedelta(hours=LOOKAHEAD_HOURS):
+                continue
+            away = clean(row.get("away"))
+            home = clean(row.get("home"))
+            if not away or not home:
+                continue
+            key = (league, dt.isoformat(), norm(away), norm(home))
+            out[key] = {
+                "league": league,
+                "event_start_pt": dt.isoformat(),
+                "away": away,
+                "home": home,
+                "away_aliases": list(row.get("away_aliases") or []),
+                "home_aliases": list(row.get("home_aliases") or []),
+                "market_source_event_id": clean(row.get("source_event_id") or row.get("event_id")),
+            }
+    return list(out.values())
+
+
+def team_aliases(team):
+    values = [
+        team.get("displayName"), team.get("shortDisplayName"), team.get("name"),
+        team.get("abbreviation"), team.get("location"),
+    ]
+    aliases = {norm(x) for x in values if x}
+    display = norm(team.get("displayName"))
+    if display:
+        parts = display.split()
+        if parts:
+            aliases.add(parts[-1])
+    return {x for x in aliases if x}
+
+
+def shell_side_aliases(shell, side):
+    values = [shell.get(side), *(shell.get(f"{side}_aliases") or [])]
+    aliases = {norm(x) for x in values if x}
+    for value in list(aliases):
+        parts = value.split()
+        if parts:
+            aliases.add(parts[-1])
+        if len(parts) >= 2:
+            aliases.add(parts[0])
+    return {x for x in aliases if x}
+
+
+def team_id_for_aliases(index, aliases):
+    candidates = {}
+    for alias in aliases:
+        for team in index.get(alias) or []:
+            candidates[str(team.get("id"))] = team
+    return next(iter(candidates.values())) if len(candidates) == 1 else None
+
+
+def schedule_competitors(event):
+    competition = (event.get("competitions") or [{}])[0]
+    teams = competition.get("competitors") or []
+    away = next((x for x in teams if x.get("homeAway") == "away"), {})
+    home = next((x for x in teams if x.get("homeAway") == "home"), {})
+    return away, home, competition
+
+
+def schedule_event_matches(shell, event):
+    estart = parse_dt(event.get("date"))
+    sstart = parse_dt(shell.get("event_start_pt"))
+    if not estart or not sstart or abs((estart - sstart).total_seconds()) > 90 * 60:
+        return False
+    away, home, _ = schedule_competitors(event)
+    event_away = team_aliases(away.get("team") or {})
+    event_home = team_aliases(home.get("team") or {})
+    shell_away = shell_side_aliases(shell, "away")
+    shell_home = shell_side_aliases(shell, "home")
+    return bool(event_away & shell_away) and bool(event_home & shell_home)
+
+
+def resolve_market_shells_via_team_schedules(leagues, known_ids):
+    """Resolve active market shells to ESPN event IDs without scoreboard calls."""
+    shells = [x for x in market_event_shells() if x.get("league") in leagues]
+    if not shells:
+        return [], []
+    resolved = []
+    errors = []
+    schedule_cache = {}
+    team_indexes = {}
+    for league in sorted({x["league"] for x in shells}):
+        sport, slug = ESPN[league]
+        try:
+            payload = get_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/teams?limit=500")
+            wrappers = (((payload.get("sports") or [{}])[0].get("leagues") or [{}])[0].get("teams") or [])
+            teams = [(x.get("team") or x) for x in wrappers]
+            index = defaultdict(list)
+            for team in teams:
+                for alias in team_aliases(team):
+                    index[alias].append(team)
+            team_indexes[league] = index
+        except Exception as exc:
+            errors.append({"league": league, "kind": "team_index", "error": str(exc)[:240]})
+
+    for shell in shells:
+        league = shell["league"]
+        index = team_indexes.get(league)
+        if not index:
+            continue
+        # Prefer home team, then away. One schedule route is enough to resolve the game.
+        anchor = team_id_for_aliases(index, shell_side_aliases(shell, "home"))
+        if anchor is None:
+            anchor = team_id_for_aliases(index, shell_side_aliases(shell, "away"))
+        if not anchor:
+            errors.append({"league": league, "kind": "team_identity", "event": shell.get("market_source_event_id"), "error": "No unique ESPN team match"})
+            continue
+        team_id = str(anchor.get("id") or "")
+        cache_key = (league, team_id)
+        if cache_key not in schedule_cache:
+            sport, slug = ESPN[league]
+            try:
+                schedule_cache[cache_key] = get_json(
+                    f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/teams/{team_id}/schedule?season={NOW.year}"
+                ).get("events") or []
+            except Exception as exc:
+                schedule_cache[cache_key] = []
+                errors.append({"league": league, "team_id": team_id, "kind": "team_schedule", "error": str(exc)[:240]})
+        matches = [e for e in schedule_cache[cache_key] if schedule_event_matches(shell, e)]
+        if len(matches) != 1:
+            if len(matches) > 1:
+                errors.append({"league": league, "kind": "schedule_ambiguous", "event": shell.get("market_source_event_id"), "error": f"{len(matches)} ESPN matches"})
+            continue
+        event = matches[0]
+        eid = clean(event.get("id"))
+        if not eid or (league, eid) in known_ids:
+            continue
+        away, home, competition = schedule_competitors(event)
+        venue = competition.get("venue") or {}
+        address = venue.get("address") or {}
+        resolved.append({
+            "snapshot_id": f"ESPN-SCHEDULE-{league}-{eid}-{NOW:%Y%m%dT%H%M%SZ}",
+            "collected_at_pt": NOW.astimezone(PT).isoformat(),
+            "sport": league,
+            "league": league,
+            "event_id": eid,
+            "event_start_pt": event.get("date") or shell.get("event_start_pt"),
+            "away": clean((away.get("team") or {}).get("displayName") or shell.get("away")),
+            "home": clean((home.get("team") or {}).get("displayName") or shell.get("home")),
+            "venue": clean(venue.get("fullName")),
+            "venue_city": clean(address.get("city")),
+            "venue_state": clean(address.get("state")),
+            "venue_indoor": venue.get("indoor", ""),
+            "source": "ESPN_TEAM_SCHEDULE_RESOLUTION",
+            "status": ((event.get("status") or {}).get("type") or {}).get("name") or "",
+            "market_source_event_id": shell.get("market_source_event_id"),
+        })
+        known_ids.add((league, eid))
+    return resolved, errors
 
 
 def load_active_events():
@@ -447,8 +626,13 @@ def atomic_json(path, payload):
 def main():
     leagues = selected_leagues()
     events = load_active_events()
+    known_ids={(str(e.get("league") or e.get("sport") or ""),clean(e.get("event_id"))) for e in events if e.get("event_id")}
+    schedule_resolved, discovery_errors = resolve_market_shells_via_team_schedules(leagues, known_ids)
+    if schedule_resolved:
+        events.extend(schedule_resolved)
+        events.sort(key=lambda r: parse_dt(r.get("event_start_pt")) or NOW + timedelta(days=365))
     event_rows = []
-    errors = []
+    errors = list(discovery_errors)
 
     for event in events:
         league = event.get("league") or event.get("sport")
@@ -495,6 +679,8 @@ def main():
         "lookahead_hours": LOOKAHEAD_HOURS,
         "selected_leagues": sorted(leagues),
         "event_count": len(event_rows),
+        "team_schedule_resolved_event_count": len(schedule_resolved),
+        "market_shell_count": len(market_event_shells()),
         "events": event_rows,
         "errors": errors[-200:],
     }
