@@ -19,6 +19,8 @@ on:
       - 'scripts/lsi_ingest.py'
       - 'scripts/espn_intelligence_adapter.py'
       - 'scripts/test_espn_intelligence_adapter.py'
+      - 'scripts/espn_player_enrichment.py'
+      - 'scripts/test_espn_player_enrichment.py'
       - 'config/lsi_sources.json'
       - 'scripts/odds_adapter.py'
       - 'scripts/kalshi_public_adapter.py'
@@ -238,6 +240,17 @@ jobs:
       - name: Refresh persistent player registry and spectrum cache
         if: needs.clock.outputs.stage == 'MARKET_HISTORY' || needs.clock.outputs.stage == 'MASTER_PUBLICATION'
         run: python scripts/lsi_history_warehouse.py
+      - name: Refresh TTL-gated ESPN player gamelog and split evidence
+        if: steps.league_schedule.outputs.has_work == 'true'
+        continue-on-error: true
+        env:
+          ESPN_PLAYER_ENRICHMENT_TTL_HOURS: '12'
+          ESPN_PLAYER_ENRICHMENT_MAX_PLAYERS: '80'
+          ESPN_PLAYER_ENRICHMENT_HTTP_TIMEOUT_SEC: '15'
+          ESPN_PLAYER_ENRICHMENT_HTTP_ATTEMPTS: '2'
+        run: |
+          python scripts/test_espn_player_enrichment.py
+          python scripts/espn_player_enrichment.py
       - name: Merge verified override evidence before Spectrum
         if: steps.league_schedule.outputs.has_work == 'true'
         run: python scripts/lsi_apply_verified_overrides.py
@@ -404,7 +417,7 @@ jobs:
             data/openai_dry_run_router.json data/openai_usage_estimates.csv data/openai_usage_summary.json
             data/lsi_player_registry.json data/lsi_spectrum_cache.json data/season_schedule_registry.json
             data/team_roster_registry.json data/visual_asset_registry.json data/visual_asset_registry.js
-            data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv
+            data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json
             data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json data/game_winner_evidence.json
             data/projection_gap_report.json
           )
