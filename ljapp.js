@@ -175,7 +175,7 @@
   };
   const titlePropWords=value=>{
     const keepUpper=new Set(["PRA","TD","TDS","RBI","HR","HRS","SOG","3PT","FGM","FGA","QB","RB","WR","TE","MLB","NFL","NBA","WNBA","NHL","FIBA"]);
-    return String(value||"").replace(/_/g," ").replace(/\\s+/g," ").trim().split(" ").map(w=>{
+    return String(value||"").replace(/_/g," ").replace(/\s+/g," ").trim().split(" ").map(w=>{
       const bare=w.replace(/[^A-Za-z0-9]/g,"").toUpperCase();
       if(keepUpper.has(bare)) return w.toUpperCase();
       if(/^[+-]?\\d/.test(w)) return w;
@@ -184,12 +184,12 @@
   };
   function parsePlayerPom(raw,participantHint=""){
     const text=String(raw||"").trim();
-    const coreRaw=text.split(/\\s+•\\s+/)[0].trim();
-    const sourcePrice=(coreRaw.match(/\\(([^)]+)\\)\\s*$/)||[])[1]||"";
-    let core=coreRaw.replace(/\\s*\\([^)]+\\)\\s*$/,"").trim()
-      .replace(/^\\s*(?:GOBLIN|DEMON|NORMAL|MARKET)\\s*[•:—-]?\\s*/i,"");
+    const coreRaw=text.split(/\s+•\s+/)[0].trim();
+    const sourcePrice=(coreRaw.match(/\(([^)]+)\)\s*$/)||[])[1]||"";
+    let core=coreRaw.replace(/\s*\([^)]+\)\s*$/,"").trim()
+      .replace(/^\s*(?:GOBLIN|DEMON|NORMAL|MARKET)\s*[•:—-]?\s*/i,"");
     let sport="";
-    const sportPrefix=core.match(/^([A-Za-z_ ]{2,24})\\s*•\\s*(.+)$/);
+    const sportPrefix=core.match(/^([A-Za-z_ ]{2,24})\s*•\s*(.+)$/);
     if(sportPrefix && /^(?:NFL|MLB|NBA|WNBA|NHL|FIBA|CFB|CBB|NCAA(?: FOOTBALL| BASKETBALL)?|TENNIS|MMA|BOXING)$/i.test(sportPrefix[1].trim())){
       sport=sportPrefix[1].trim();
       core=sportPrefix[2].trim();
@@ -200,18 +200,18 @@
       const q=hint.replace(/[.*+?^$(){}|[\\]\\]/g,m=>"\\"+m);
       prop=core.replace(new RegExp("^"+q+"\\s*(?:—|-)?\\s*","i"),"").trim();
     }else{
-      const split=core.match(/^(.+?)\\s+((?:OVER|UNDER|MORE|LESS)\\b.*)$/i);
+      const split=core.match(/^(.+?)\s+((?:OVER|UNDER|MORE|LESS)\b.*)$/i);
       if(split){player=split[1].trim();prop=split[2].trim();}
       else{
-        const yesNo=core.match(/^(.+?)\\s+(.+?)\\s*[—-]\\s*(YES|NO)$/i);
+        const yesNo=core.match(/^(.+?)\s+(.+?)\s*[—-]\s*(YES|NO)$/i);
         if(yesNo){player=yesNo[1].trim();prop=`${yesNo[3]} ${yesNo[2]}`;}
       }
     }
-    prop=prop.replace(/^(OVER|UNDER|MORE|LESS|YES|NO)\\b/i,m=>m.charAt(0).toUpperCase()+m.slice(1).toLowerCase());
-    const side=prop.match(/^(Over|Under|More|Less|Yes|No)\\b/i);
+    prop=prop.replace(/^(OVER|UNDER|MORE|LESS|YES|NO)\b/i,m=>m.charAt(0).toUpperCase()+m.slice(1).toLowerCase());
+    const side=prop.match(/^(Over|Under|More|Less|Yes|No)\b/i);
     if(side){
       const rest=prop.slice(side[0].length).trim();
-      const line=rest.match(/^([+-]?\\d+(?:\\.\\d+)?)\\s*(.*)$/);
+      const line=rest.match(/^([+-]?\d+(?:\.\d+)?)\s*(.*)$/);
       prop=line ? `${side[0]} ${line[1]}${line[2]?` ${titlePropWords(line[2])}`:""}` : `${side[0]} ${titlePropWords(rest)}`.trim();
     }else prop=titlePropWords(prop);
     return {
@@ -219,7 +219,7 @@
       l5:pomNum(text,"L5 AVG"),
       projection:pomNum(text,"L&J PROJ"),
       pomValue:pomNum(text,"POM Value"),
-      ljpc:(text.match(/(?:LJPC|L&J)\\s*(\\d+(?:\\.\\d+)?)%/i)||[])[1]||"",
+      ljpc:(text.match(/(?:LJPC|L&J)\s*(\d+(?:\.\d+)?)%/i)||[])[1]||"",
       legz:(text.match(/⟦L=([^;]*);J=/)||[])[1]||"",
       jinx:(text.match(/⟦L=[^;]*;J=([^⟧]*)⟧/)||[])[1]||""
     };
@@ -234,7 +234,7 @@
   function hotTop(items,label="LEGZ HOT TOP"){
     const render=(r,i)=>{
       const detail=String((r||[])[3]||"");
-      const isPlayer=/PLAYER PROP|\\b(?:OVER|UNDER|MORE|LESS)\\b/i.test(String((r||[])[1]||"")+" "+detail) && !/\\bML\\b|MONEYLINE/i.test(String((r||[])[1]||""));
+      const isPlayer=/PLAYER PROP|\b(?:OVER|UNDER|MORE|LESS)\b/i.test(String((r||[])[1]||"")+" "+detail) && !/\bML\b|MONEYLINE/i.test(String((r||[])[1]||""));
       if(!isPlayer) return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4],r[5],r[6])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`;
       const parsed=parsePlayerPom(`${r[0]} ${r[1]} • ${detail}`,r[0]);
       return `<li class="pom-row ${isWatch(r.join(" • "))?"qc-watch":""}">${pomPlayerRow({index:i+1,sport:r[7]||parsed.sport||ACTIVE_SPORT_KEY,player:r[0]||parsed.player,prop:parsed.prop||r[1],ljpc:String(r[2]||"").replace(/[^0-9.]/g,""),l5:parsed.l5,projection:parsed.projection,pomValue:parsed.pomValue,legz:r[5]??parsed.legz,jinx:r[6]??parsed.jinx,tooltip:parsed.sourcePrice})}</li>`;
