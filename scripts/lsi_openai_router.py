@@ -31,6 +31,7 @@ USAGE_SUMMARY = DATA / "openai_usage_summary.json"
 # Current standard API text-token prices, USD per 1M tokens.
 # Re-check against OpenAI pricing before enabling paid calls.
 PRICING_AS_OF = "2026-09-17"
+TRUSTED_TELEMETRY_START_UTC = "2026-09-25T17:46:13+00:00"  # scheduler/publication stabilization release
 PRICES = {
     "gpt-5.6-luna": {"input": 0.20, "output": 1.20},
     "gpt-5.6-terra": {"input": 2.00, "output": 12.00},
@@ -346,6 +347,13 @@ def main() -> None:
     changed = [int(r.get("changed_events") or 0) for r in history]
     observation_days = sorted({str(r.get("generated_at_utc") or "")[:10] for r in history if r.get("generated_at_utc")})
     scheduled_days = sorted({str(r.get("generated_at_utc") or "")[:10] for r in history if r.get("generated_at_utc") and r.get("telemetry_source") == "schedule"})
+    trusted_scheduled_rows=[
+        r for r in history
+        if r.get("generated_at_utc")
+        and r.get("telemetry_source") == "schedule"
+        and str(r.get("generated_at_utc")) >= TRUSTED_TELEMETRY_START_UTC
+    ]
+    trusted_scheduled_days=sorted({str(r.get("generated_at_utc"))[:10] for r in trusted_scheduled_rows})
     summary = {
         "schema_version": "LSI-OAI-USAGE-1",
         "generated_at_utc": now,
@@ -359,9 +367,13 @@ def main() -> None:
         "scheduled_telemetry_days": scheduled_days,
         "distinct_scheduled_telemetry_days": len(scheduled_days),
         "minimum_required_telemetry_days": 3,
-        "paid_api_decision_ready": len(scheduled_days) >= 3,
+        "trusted_telemetry_start_utc": TRUSTED_TELEMETRY_START_UTC,
+        "trusted_scheduled_telemetry_days": trusted_scheduled_days,
+        "distinct_trusted_scheduled_telemetry_days": len(trusted_scheduled_days),
+        "paid_api_decision_ready": len(trusted_scheduled_days) >= 3,
         "api_calls_actually_made": 0,
-        "recommendation_gate": "Remain $0 until at least 3 distinct scheduled telemetry days are recorded and measured demand and value justify prepaid API credits.",
+        "paid_automation_enabled": False,
+        "recommendation_gate": "Remain $0 until at least 3 distinct trustworthy scheduled telemetry days are recorded after the scheduler/publication stabilization release and measured demand and value justify prepaid API credits.",
     }
     USAGE_SUMMARY.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 
