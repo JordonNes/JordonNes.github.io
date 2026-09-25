@@ -6,7 +6,7 @@
   const norm=v=>n(v).toLowerCase();
   const asDate=v=>n(v).slice(0,10);
   const money=v=>v===null||v===undefined||v===""?"—":(Number(v)>0?"+":"")+String(v);
-  const state={ledger:[],results:new Map(),filtered:[],loaded:false};
+  const state={ledger:[],results:new Map(),filtered:[],calibration:null,accountability:null,loaded:false};
 
   function csv(text){
     const rows=[];let row=[],cell="",q=false;
@@ -95,25 +95,48 @@
       '</tr>';
     }).join(""):'<tr><td colspan="9" class="muted">No published suggestions match these filters.</td></tr>';
   }
+  function renderCalibration(){
+    const box=document.getElementById("calibration-metrics");
+    const bands=document.getElementById("calibration-bands");
+    const c=state.calibration||{}, a=state.accountability||{}, o=c.overall||{}, la=a.overall||{};
+    if(!box||!bands)return;
+    const v=x=>x===null||x===undefined?"—":x;
+    box.innerHTML=[
+      ["AVG PUBLISHED LJPC",o.avg_ljpc_pct==null?"—":o.avg_ljpc_pct+"%",(o.decisive||0)+" decisive suggestions"],
+      ["OBSERVED HIT RATE",o.hit_rate_pct==null?"—":o.hit_rate_pct+"%",o.calibration_bias||"insufficient sample"],
+      ["BRIER SCORE",v(o.brier_score),"Lower is better"],
+      ["CALIBRATION ERROR",o.calibration_error_pp==null?"—":((o.calibration_error_pp>0?"+":"")+o.calibration_error_pp+" pp"),"Published LJPC minus observed hit rate"],
+      ["ECE",c.expected_calibration_error_pp==null?"—":c.expected_calibration_error_pp+" pp","Weighted 5-point-band error"],
+      ["JINX EFFECT",la.jinx_effect||"INSUFFICIENT",la.paired_decisive?("Paired sample "+la.paired_decisive+" • Δ Brier "+v(la.brier_delta_final_minus_legz)):"No paired LEGZ/JINX sample yet"]
+    ].map(([x,y,z])=>'<div class="key-item"><b>'+esc(x)+'</b><span class="acc-big">'+esc(y)+'</span><span>'+esc(z)+'</span></div>').join("");
+    const rows=(c.bands||[]).filter(x=>(x.decisive||0)>0);
+    bands.innerHTML=rows.length?rows.map(x=>'<tr><td>'+esc(x.band)+'</td><td>'+esc(x.decisive)+'</td><td>'+esc((x.avg_ljpc_pct??"—")+(x.avg_ljpc_pct!=null?"%":""))+'</td><td>'+esc((x.hit_rate_pct??"—")+(x.hit_rate_pct!=null?"%":""))+'</td><td>'+esc((x.calibration_error_pp??"—")+(x.calibration_error_pp!=null?" pp":""))+'</td><td>'+esc(x.calibration_bias||"—")+'</td><td>'+esc(x.brier_score??"—")+'</td></tr>').join(""):'<tr><td colspan="7" class="muted">Calibration will populate as decisive settlements accumulate.</td></tr>';
+  }
+
   async function load(){
     const status=document.getElementById("acc-load");
     try{
       status.textContent="Loading immutable publication history…";
-      const [lr,rr]=await Promise.all([
+      const [lr,rr,cr,ar]=await Promise.all([
         fetch("data/suggestion_ledger.json",{cache:"no-store"}),
-        fetch("data/results.csv",{cache:"no-store"})
+        fetch("data/results.csv",{cache:"no-store"}),
+        fetch("data/ljpc_calibration.json",{cache:"no-store"}),
+        fetch("data/legz_jinx_accountability.json",{cache:"no-store"})
       ]);
       if(!lr.ok)throw new Error("suggestion ledger unavailable");
       const ledger=await lr.json();
       const resultRows=rr.ok?csv(await rr.text()):[];
       state.results=new Map(resultRows.map(r=>[r.prediction_id,r]));
       state.ledger=(ledger.suggestions||[]);
+      state.calibration=cr.ok?await cr.json():null;
+      state.accountability=ar.ok?await ar.json():null;
       state.loaded=true;
       const valid=state.ledger.filter(s=>s.capture_validity==="VALID"&&s.accuracy_eligible===true);
       document.getElementById("acc-date").innerHTML=options(valid.map(s=>s.publication_date_pt),"All publication dates");
       document.getElementById("acc-league").innerHTML=options(valid.map(s=>s.league),"All sports");
       document.getElementById("acc-placement").innerHTML=options(valid.flatMap(s=>s.placements||[]),"All website placements");
       status.textContent="Immutable ledger loaded • "+valid.length+" accuracy-eligible version(s)";
+      renderCalibration();
       render();
     }catch(err){
       status.textContent="Accuracy Explorer could not load: "+err.message;
@@ -135,6 +158,7 @@
           '<button id="acc-clear" class="action" type="button">Clear</button>'+
         '</div></section>'+
       '<section class="section"><div id="acc-metrics" class="confidence-key"></div></section>'+
+      '<section class="section"><div class="section-head"><h2>LJPC CALIBRATION + LEGZ/JINX ACCOUNTABILITY</h2><span class="muted">Descriptive audit only • no automatic weight changes</span></div><div id="calibration-metrics" class="confidence-key"></div><div class="card" style="margin-top:10px"><div class="card-body accuracy-table-wrap"><table><thead><tr><th>LJPC Band</th><th>Decisive</th><th>Avg LJPC</th><th>Hit Rate</th><th>Error</th><th>Read</th><th>Brier</th></tr></thead><tbody id="calibration-bands"><tr><td colspan="7" class="muted">Loading calibration…</td></tr></tbody></table></div></div></section>'+
       '<section class="section"><div class="section-head"><h2>EXACT IMMUTABLE SUGGESTIONS</h2><span id="acc-count" class="muted"></span></div><div class="card"><div class="card-body accuracy-table-wrap"><table><thead><tr><th>Date</th><th>Sport</th><th>Game</th><th>Player / Pick</th><th>Class</th><th>Price / Book</th><th>LJPC</th><th>Placement</th><th>Grade</th></tr></thead><tbody id="acc-body"><tr><td colspan="9" class="muted">Loading…</td></tr></tbody></table></div></div></section>'+
       '<div class="footer">LEGZ &amp; JINX • Immutable publication history • Quarantined and ambiguous records are preserved but excluded from accuracy</div>'+
     '</div>';
