@@ -46,6 +46,9 @@ jobs:
       - name: Build evidence-based recap data
         run: python scripts/lsi_build_recaps.py
 
+      - name: Calibrate published LJPC and audit LEGZ vs JINX
+        run: python scripts/lsi_suggestion_calibration.py
+
       - name: Validate settlement outputs
         shell: bash
         run: |
@@ -75,12 +78,16 @@ jobs:
               assert accuracy.exists(), 'suggestion_accuracy.json missing after recap build'
               a=json.loads(accuracy.read_text(encoding='utf-8'))
               assert a.get('schema_version')=='LSI-SUGGESTION-ACCURACY-1'
+              cal=json.loads(Path('data/ljpc_calibration.json').read_text(encoding='utf-8'))
+              acct=json.loads(Path('data/legz_jinx_accountability.json').read_text(encoding='utf-8'))
+              assert cal.get('schema_version')=='LSI-LJPC-CALIBRATION-1'
+              assert acct.get('schema_version')=='LSI-LEGZ-JINX-ACCOUNTABILITY-1'
           PY
 
       - name: Commit settlement-only outputs
         shell: bash
         run: |
-          ALLOWED='data/results.csv data/settlement_status.json data/settlement_aliases.json data/suggestion_accuracy.json ljrecapdata.js'
+          ALLOWED='data/results.csv data/settlement_status.json data/settlement_aliases.json data/suggestion_accuracy.json data/ljpc_calibration.json data/legz_jinx_accountability.json ljrecapdata.js'
           CHANGED="$(git status --porcelain | awk '{print $2}')"
           for f in $CHANGED; do
             case " $ALLOWED " in
