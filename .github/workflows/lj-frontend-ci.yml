@@ -66,10 +66,11 @@ jobs:
           node --check scripts/fiba_hub_audit.js
           node --check scripts/fiba_scenario_test.js
           node --check scripts/test_lj_special_pages.js
+      - name: Specialty intelligence regression tests
+        run: node scripts/test_lj_special_pages.js
       - name: LJ_index + QC presentation audit
         run: |
           node scripts/frontend_home_audit.js
           node scripts/qc_publication_audit.js
           node scripts/fiba_hub_audit.js
           node scripts/fiba_scenario_test.js
-          node scripts/test_lj_special_pages.js
