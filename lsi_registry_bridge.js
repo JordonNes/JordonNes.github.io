@@ -348,7 +348,7 @@
         pct(ljpcOf(p)),
         `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
-        legzComponent(p),jinxComponent(p)
+        legzComponent(p),jinxComponent(p),league
       ],`PROP|${key}`,pomValueOf(p));
     }
     for(const p of scouts){
@@ -364,7 +364,7 @@
         pct(Number(p.ljpc)),
         `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pv.toFixed(1)} • Econ ${Number(p.economic_value??50).toFixed(1)} • ${Number(p.market_source_count||1)} SRC`,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
-        legzComponent(p),jinxComponent(p)
+        legzComponent(p),jinxComponent(p),league
       ],`PROP|${key}`,pv);
     }
     for(const p of (gameByLeague[league]||[])){
@@ -604,9 +604,11 @@
     const freshness=stale?` • LINE RECHECK REQUIRED${Number.isFinite(Number(p.stale_market_age_hours))?` (${Number(p.stale_market_age_hours).toFixed(1)}h old)`:''}`:'';
     const proj=projectionLabel(p);
     const tier=explicitPomType(p)||'NORMAL';
+    const pom=Number.isFinite(Number(p.pom_value))?Number(p.pom_value):conf;
+    const pomText=Number.isFinite(pom)?` • POM Value ${pom.toFixed(1)}`:'';
     return {
       display:evaluated
-        ? `${core}${price} • ${tier}${proj?` • ${proj}`:''} • STAT ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${componentToken(p)}${freshness}`
+        ? `${core}${price} • ${tier}${proj?` • ${proj}`:''}${pomText} • STAT ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${componentToken(p)}${freshness}`
         : `${core}${price} • ${tier}${proj?` • ${proj}`:''} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)${freshness}`,
       confidence:conf,
       participant:n(p.participant),
