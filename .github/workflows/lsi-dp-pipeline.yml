@@ -199,6 +199,7 @@ jobs:
           PROPLINE_MAX_REFRESH_PER_LEAGUE: '3'
           PROPLINE_RATE_LIMIT_COOLDOWN_MIN: '90'
           PROPLINE_MAX_PROP_MARKETS_PER_EVENT: '10'
+          PROPLINE_INTELLIGENCE_RETENTION_DAYS: '2'
         run: python scripts/propline_adapter.py
       - name: MLB forecast-first performance evidence warmup
         if: contains(steps.league_schedule.outputs.due_leagues, 'MLB')
