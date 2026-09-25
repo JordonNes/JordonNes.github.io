@@ -35,14 +35,15 @@ def qualifies(signal,status):
     minimum_lift=7.5 if status=='VALIDATED' else 5.0
     minimum_sim=58 if status=='VALIDATED' else 52
     minimum_stability=.66 if status=='VALIDATED' else .50
+    stability_ok = stability is None or stability>=minimum_stability
     return (
         str(signal.get('status','')).upper()==status
         and sample is not None and sample>0
         and observed is not None and baseline is not None and lift is not None
         and ess is not None and ess>=minimum_ess
         and sim is not None and sim>=minimum_sim
-        and stability is not None and stability>=minimum_stability
-        and lift>=minimum_lift
+        and stability_ok
+        and abs(lift)>=minimum_lift
         and bool(signal.get('current_matches'))
         and bool(signal.get('provenance'))
         and bool(signal.get('outcome'))
@@ -60,8 +61,10 @@ def main():
         if not isinstance(item,dict):continue
         copy=dict(item);status=str(copy.get('status','')).upper()
         if status=='VALIDATED' and qualifies(copy,'VALIDATED'):validated.append(copy)
-        elif status=='EMERGING' and qualifies(copy,'EMERGING'):emerging.append(copy)
-    key=lambda item:(number(item.get('lift_pp')) or 0,number(item.get('mean_similarity_pct')) or 0,number(item.get('effective_sample_size')) or 0)
+        elif status in {'DEVELOPING','EMERGING'}:
+            copy['status']='EMERGING'
+            if qualifies(copy,'EMERGING'):emerging.append(copy)
+    key=lambda item:(abs(number(item.get('lift_pp')) or 0),number(item.get('mean_similarity_pct')) or 0,number(item.get('effective_sample_size')) or 0)
     validated.sort(key=key,reverse=True);emerging.sort(key=key,reverse=True)
     learned=[]
     if LIBRARY.exists():
