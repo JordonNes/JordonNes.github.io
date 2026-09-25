@@ -170,3 +170,44 @@ LEGZ's player forecast is **L5-primary**, with L10 and a full L15 window used as
 A provider-labeled Goblin, an internal TROLL/GOBLIN profile, or an exact line carrying **80% or greater market-implied probability** (approximately -400 American odds or shorter) is excluded from **20 Piece, LEGZ Hot Top player-prop ranking, and JINX Best Bets**. TROLL lines are not recommended in SNS either; Goblin lines remain eligible for SNS when they meet the applicable confidence and market-verification rules.
 
 JINX Best Bets additionally requires a **positive attributable JINX adjustment**. Mere active/starting status is confirmation, not positive directional evidence. Opponent, injury, role, weather, coaching/game-plan or similar context may affect JINX only when a sourced evidence record supplies a structured directional adjustment; narrative prose alone never creates percentage points.
+
+## 13. Treasure Troll and JINX I Spy intelligence surfaces — effective September 25, 2026
+
+### Treasure Troll
+
+Treasure Troll is the dedicated **Easy Pickings / Super-Goblin** surface. It is intentionally separate from the 20 Piece, LEGZ Hot Top, JINX Best Bets and ordinary SNS boards.
+
+A Treasure Troll POM must satisfy all of the following:
+
+- it is a current, externally offered, exact-match **Kalshi** player prop;
+- it has completed L&J evaluation and carries a real LJPC;
+- its **internal LSI statistical line profile is TROLL**, meaning the selected side is at least **+1.35σ favorable** to LEGZ's player-game forecast;
+- it is not synthetic, model-generated or a threshold invented by LSI; and
+- the event has not started.
+
+The provider's own label does not determine Treasure Troll eligibility. A provider-side promotional/easy label alone is insufficient if the internal statistical profile is not TROLL. Conversely, LSI's TROLL classification never rewrites the provider's official market label.
+
+Treasure Troll publishes the **top 20% of the qualifying current inventory**, ranked first by evidence-backed hit probability and then by the magnitude of favorable line separation. **Payout is not a ranking objective.** These are deliberately the “of course they're going over / of course they're going under” lines; their economic return may be poor, which is why they are excluded from the elite-value surfaces.
+
+### JINX's I Spy
+
+I Spy is an observational pattern-intelligence layer. Its purpose is to find situations in which a **measured combination of conditions** has historically produced an outcome unusually often or unusually rarely relative to an appropriate baseline.
+
+I Spy does **not** reduce conditions to simple present/absent flags when a magnitude is available. Examples include:
+
+- line distance from the LEGZ forecast in standard deviations;
+- L5 versus L10 recent-form displacement;
+- performance consistency / volatility;
+- market-implied probability and source depth;
+- JINX contextual adjustment magnitude;
+- opponent, matchup, role, weather and game-plan adjustment magnitude; and
+- numeric weather intensity such as precipitation amount/probability, wind speed/gusts and temperature.
+
+For each current exact L&J-evaluated POM, I Spy compares historical settled POMs in the same league / market / side cell using **continuous nearest-neighbor similarity**. Closer historical condition profiles receive more weight. The observation reports the raw comparable-result count, similarity-weighted effective sample size, average similarity, similar-cohort hit rate, baseline hit rate, lift or drag, and an uncertainty interval.
+
+There is **no 25-result publication rule**. An observation may progress through **EMERGING → DEVELOPING → VALIDATED** when effect size, condition similarity, effective sample size and uncertainty justify showing it. Weak observations remain internal as **TRACKING**. Small samples must remain visibly small; they are not converted into false certainty.
+
+I Spy may either **SUPPORT** or **CHALLENGE** a current POM. A negative association is as valuable as a positive one when it identifies a recurring risk.
+
+I Spy correlations are descriptive evidence, **not proof of causation**. An I Spy observation does not automatically change LJPC, LEGZ/JINX weights or a live prediction. Any future systematic model influence must pass the existing learning/calibration governance and methodology controls.
+
