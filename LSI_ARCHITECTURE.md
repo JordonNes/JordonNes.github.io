@@ -138,6 +138,20 @@ No single preferred source failure is sufficient to declare props unavailable. P
 
 Claims that sportsbooks, gambling organizations, players, officials, or teams manipulate results remain hypotheses unless supported by reliable evidence. LSI may study unusual statistical/market patterns, correlations, allegations, and documented misconduct without assuming causation from correlation alone.
 
+## ESPN sports-truth protocol
+ESPN_PUBLIC is the primary free sports-truth enrichment layer for supported LJDP leagues. It is deliberately separate from market acquisition. ESPN may establish schedules, event/team/athlete identity, roster membership, injury/availability context, event summaries, broadcasts, game odds context, predictor/win-probability context, live/final state and settlement evidence.
+
+Persistent artifacts:
+- `data/espn_player_registry.json`: durable ESPN athlete IDs, team identity, position and available visual references for active-team players.
+- `data/espn_event_intelligence.json`: bounded current-event summary/predictor/odds/state evidence for due and near-event games.
+- `data/espn_context.csv`: append-only attributable injury/availability observations consumed by JCI/Spectrum.
+
+The ESPN adapter is fail-soft because the endpoints are undocumented. Single-date/event-scoped calls and bounded active-team/event collection are preferred over large range requests. Previously stored evidence is not destroyed when a refresh fails.
+
+**Market boundary:** ESPN odds, predictor data, win probability, BPI/FPI-style evidence or any internally derived fair line may inform analysis, calibration or Game Winner research, but none of those establish that an exact player prop is currently executable. Public Hot Top, 20 Piece, QC and Quickie player props still require an exact externally offered participant/market/threshold/side/source/timestamp from the market-acquisition layer. ESPN evidence never becomes LJPC by itself.
+
+**Identity boundary:** ESPN athlete/event/team IDs are durable join keys. Sportsbook/DFS names are normalized and mapped to those identities; source-specific names are not rewritten in the immutable market observation.
+
 ## JCI weather protocol
 Open-Meteo supplies event-hour forecast snapshots for outdoor NFL, NCAA football, and MLB games. JCI may flag precipitation, heat/cold, sustained wind, gusts, humidity, or pressure only when the game/market pathway is stated. Indoor events are excluded. Forecast snapshots remain timestamped because forecast error changes as start time approaches.
 
