@@ -30,6 +30,24 @@ jobs:
           print(f'Registry age: {age:.1f} hours')
           if age > 30: raise SystemExit('Prediction Registry is more than 30 hours old')
           PY
+      - name: Validate ESPN sports-truth freshness
+        run: |
+          test -f data/espn_event_intelligence.json
+          test -f data/espn_player_registry.json
+          test -f data/espn_context.csv
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          event=json.load(open('data/espn_event_intelligence.json',encoding='utf-8'))
+          players=json.load(open('data/espn_player_registry.json',encoding='utf-8'))
+          assert event.get('schema_version')=='LSI-ESPN-EVENT-1'
+          assert players.get('schema_version')=='LSI-ESPN-PLAYER-1'
+          stamp=datetime.fromisoformat(event['generated_at_utc'].replace('Z','+00:00'))
+          age=(datetime.now(timezone.utc)-stamp).total_seconds()/3600
+          assert age <= 12, f'ESPN event intelligence stale: {age:.1f}h'
+          assert 'never become LJPC' in event.get('policy','')
+          print(f"ESPN sports-truth health: events={event.get('event_count',0)} players={players.get('player_count',0)} age={age:.2f}h errors={len(event.get('errors') or [])}")
+          PY
       - name: Verify deployed Pages endpoints
         run: |
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/LJ_index.html -o /tmp/ljdp.html
@@ -37,6 +55,7 @@ jobs:
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/settlement_status.json -o /tmp/settlement.json
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/future_market_board.json -o /tmp/future.json
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/current_game_moneylines.json -o /tmp/moneylines.json
+          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/espn_event_intelligence.json -o /tmp/espn-events.json
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/future_market_board.js -o /tmp/future.js
           curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/LJ_Methodology.html -o /tmp/methodology.html
           test -s /tmp/future.json && test -s /tmp/future.js && test -s /tmp/moneylines.json
@@ -50,6 +69,7 @@ jobs:
           cmp --silent data/future_market_board.json /tmp/future.json || { echo '::error::Pages future market board does not match master'; exit 1; }
           cmp --silent data/future_market_board.js /tmp/future.js || { echo '::error::Pages future market board JS does not match master'; exit 1; }
           cmp --silent data/current_game_moneylines.json /tmp/moneylines.json || { echo '::error::Pages GAME_ML artifact does not match master'; exit 1; }
+          cmp --silent data/espn_event_intelligence.json /tmp/espn-events.json || { echo '::error::Pages ESPN event intelligence does not match master'; exit 1; }
       - name: Validate deployed data semantics
         run: |
           python - <<'PY'
