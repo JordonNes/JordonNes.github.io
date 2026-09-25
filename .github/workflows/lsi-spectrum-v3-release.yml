@@ -65,9 +65,10 @@ jobs:
         run: |
           python - <<'PY'
           import json
+          from scripts.legz_statistical_spectrum import EVALUATION_VERSION
           board=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
           state=json.load(open('data/lsi_evaluation_state.json',encoding='utf-8'))
-          assert board.get('evaluation_engine')=='LEGZ_STATISTICAL_SPECTRUM_3'
+          assert board.get('evaluation_engine')==EVALUATION_VERSION, f"Evaluation engine drift: board={board.get('evaluation_engine')} code={EVALUATION_VERSION}"
           assert state.get('schema_version')=='LSI-EVALUATION-STATE-1'
           props=[p for e in board.get('events',[]) for p in (e.get('props') or [])]
           ids={r.get('evaluation_id') for r in state.get('records',[]) if r.get('evaluation_id')}
@@ -83,7 +84,7 @@ jobs:
           assert state.get('retention_policy')=='LIVE_CURRENT_BOARD_RECORDS_PLUS_LATEST_HASH_INDEX'
           assert size < 80*1024*1024, f'Live evaluation state too large: {size/1024/1024:.2f} MB'
           assert state.get('record_count')==len(state.get('records') or [])
-          print(f'Spectrum v3 ledger valid: props={len(props)} evaluated={len(evaluated)} awaiting={len(waiting)} states={len(ids)} size_mb={size/1024/1024:.2f}')
+          print(f'Spectrum ledger valid ({EVALUATION_VERSION}): props={len(props)} evaluated={len(evaluated)} awaiting={len(waiting)} states={len(ids)} size_mb={size/1024/1024:.2f}')
           PY
 
       - name: Explain forecast-first projection gaps
