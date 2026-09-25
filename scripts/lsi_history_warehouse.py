@@ -22,6 +22,7 @@ REG=DATA/"lsi_player_registry.json"
 CACHE=DATA/"lsi_spectrum_cache.json"
 PERF=DATA/"performance_history.csv"
 HISTORY_ROOT=DATA/"history"
+ESPN_REG=DATA/"espn_player_registry.json"
 
 def csv_open(path):
     return gzip.open(path,"rt",encoding="utf-8-sig",newline="") if str(path).endswith(".gz") else path.open(newline="",encoding="utf-8-sig")
@@ -124,6 +125,29 @@ def main():
             "lsi_player_id":pid,"league":league,"canonical_name":prior.get("canonical_name") or str(name),
             "aliases":sorted(aliases),"provider_ids":provider_ids,
             "first_seen_utc":prior.get("first_seen_utc") or stamp,"last_seen_utc":stamp
+        }
+
+    # Bridge current ESPN identities before historical ingestion. This gives a newly
+    # rostered player a stable ESPN ID even before LSI has accumulated a completed-game
+    # performance row for that athlete.
+    espn_registry=load_json(ESPN_REG,{"players":[]})
+    for row in espn_registry.get("players") or []:
+        league=row.get("league") or ""; name=row.get("name") or ""; espn_id=row.get("espn_id")
+        if not league or not name or not espn_id: continue
+        pid=player_id(league,name); prior=players.get(pid,{})
+        aliases=set(prior.get("aliases") or []); aliases.add(str(name))
+        provider_ids=dict(prior.get("provider_ids") or {}); provider_ids["ESPN"]=str(espn_id)
+        players[pid]={
+            **prior,
+            "lsi_player_id":pid,"league":league,
+            "canonical_name":prior.get("canonical_name") or str(name),
+            "aliases":sorted(aliases),"provider_ids":provider_ids,
+            "first_seen_utc":prior.get("first_seen_utc") or row.get("first_seen_utc") or stamp,
+            "last_seen_utc":max(str(prior.get("last_seen_utc") or ""),str(row.get("last_seen_utc") or stamp)),
+            "current_team":row.get("team") or prior.get("current_team"),
+            "current_team_id":row.get("team_id") or prior.get("current_team_id"),
+            "position":row.get("position") or prior.get("position"),
+            "headshot":row.get("headshot") or prior.get("headshot"),
         }
 
     # Historical players belong in the registry even when they are retired or absent
