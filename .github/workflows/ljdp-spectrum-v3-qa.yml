@@ -104,11 +104,12 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
+          from scripts.legz_statistical_spectrum import EVALUATION_VERSION
           board=json.loads(Path("data/qc_prop_board.json").read_text(encoding="utf-8"))
           state=json.loads(Path("data/lsi_evaluation_state.json").read_text(encoding="utf-8"))
           future=json.loads(Path("data/future_market_board.json").read_text(encoding="utf-8"))
           reg=json.loads(Path("data/prediction_registry.json").read_text(encoding="utf-8"))
-          assert board.get("evaluation_engine")=="LEGZ_STATISTICAL_SPECTRUM_3"
+          assert board.get("evaluation_engine")==EVALUATION_VERSION, f"Evaluation engine drift: board={board.get('evaluation_engine')} code={EVALUATION_VERSION}"
           assert state.get("schema_version")=="LSI-EVALUATION-STATE-1"
           props=[p for e in board.get("events",[]) for p in (e.get("props") or [])]
           assert props and len(state.get("records") or [])>=len(props)
