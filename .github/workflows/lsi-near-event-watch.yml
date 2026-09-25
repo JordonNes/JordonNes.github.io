@@ -115,6 +115,13 @@ jobs:
       - name: Refresh persistent registry and local Spectrum cache
         if: steps.schedule.outputs.has_work == 'true'
         run: python scripts/lsi_history_warehouse.py
+      - name: Reuse or refresh ESPN active-player split evidence
+        if: steps.schedule.outputs.has_work == 'true'
+        continue-on-error: true
+        env:
+          ESPN_PLAYER_ENRICHMENT_TTL_HOURS: '12'
+          ESPN_PLAYER_ENRICHMENT_MAX_PLAYERS: '80'
+        run: python scripts/espn_player_enrichment.py
 
       - name: Evaluate collected POMs with material-hash reuse
         if: steps.schedule.outputs.has_work == 'true'
@@ -166,7 +173,7 @@ jobs:
           git checkout HEAD -- data/market_history.csv
           python scripts/lsi_market_history_delta.py split "$generated_market"
           rm -f "$generated_market"
-          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_intelligence.json data/propline_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv 2>/dev/null || true
+          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_intelligence.json data/propline_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json data/suggestion_ledger.json             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'Due work produced no durable intelligence changes.'
             exit 0
