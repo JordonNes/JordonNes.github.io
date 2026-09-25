@@ -2,6 +2,13 @@ name: LSI Game Winner Refresh
 
 on:
   workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/lsi-game-winners.yml'
+      - 'scripts/propline_adapter.py'
+      - 'scripts/lsi_publish_future_board.py'
+      - 'scripts/lsi_game_winner_spectrum.py'
   schedule:
     # Lightweight independent GAME_ML refresh every three hours.
     - cron: '7 */3 * * *'
