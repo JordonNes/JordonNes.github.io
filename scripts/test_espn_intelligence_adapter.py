@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from espn_intelligence_adapter import normalize_availability, compact_odds, injury_nodes
+from espn_intelligence_adapter import normalize_availability, compact_odds, injury_nodes, schedule_event_matches, team_aliases
 
 assert normalize_availability("Questionable - knee") == "QUESTIONABLE"
 assert normalize_availability("Placed on injured reserve") == "IR/IL"
@@ -35,3 +35,15 @@ assert node["athlete"]["id"] == "99"
 assert team["id"] == "1"
 
 print("ESPN intelligence adapter unit checks passed.")
+
+team={"id":"9","displayName":"Green Bay Packers","abbreviation":"GB","name":"Packers","location":"Green Bay"}
+assert "gb" in team_aliases(team)
+assert "packers" in team_aliases(team)
+
+shell={"event_start_pt":"2026-09-25T00:15:00+00:00","away":"ATL Falcons","home":"GB Packers","away_aliases":["ATL"],"home_aliases":["GB"]}
+event={"date":"2026-09-25T00:15:00Z","competitions":[{"competitors":[
+    {"homeAway":"away","team":{"id":"1","displayName":"Atlanta Falcons","abbreviation":"ATL","name":"Falcons"}},
+    {"homeAway":"home","team":{"id":"9","displayName":"Green Bay Packers","abbreviation":"GB","name":"Packers"}}
+]}]}
+assert schedule_event_matches(shell,event)
+print("ESPN team-schedule fallback checks passed.")
