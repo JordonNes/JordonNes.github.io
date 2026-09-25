@@ -37,6 +37,7 @@ ALIASES = DATA / "settlement_aliases.json"
 MARKETS = DATA / "market_history.csv"
 PLAYER_CONTEXT = DATA / "player_context.csv"
 INBOX = DATA / "inbox"
+FIBA_COMPETITIONS = DATA / "fiba_competitions.js"
 
 RESULT_FIELDS = [
     "result_id","settled_at_pt","sport","league","event_id","prediction_id",
@@ -665,6 +666,88 @@ def closing_lookup(predictions):
                 latest[key]=row
     return latest
 
+def load_fiba_games():
+    """Load official-linked FIBA competition finals from the durable site registry."""
+    if not FIBA_COMPETITIONS.exists():
+        return {"FIBA_Men":[],"FIBA_Women":[]}
+    raw=FIBA_COMPETITIONS.read_text(encoding="utf-8")
+    m=re.search(r"window\.FIBA_COMPETITIONS\s*=\s*(\{.*\})\s*;?\s*$",raw,re.S)
+    if not m:
+        return {"FIBA_Men":[],"FIBA_Women":[]}
+    try:
+        payload=json.loads(m.group(1))
+    except json.JSONDecodeError:
+        return {"FIBA_Men":[],"FIBA_Women":[]}
+    out={"FIBA_Men":[],"FIBA_Women":[]}
+    for track,league in (("men","FIBA_Men"),("women","FIBA_Women")):
+        for competition in (((payload.get("tracks") or {}).get(track) or {}).get("competitions") or []):
+            source=str(competition.get("sourceURL") or "")
+            for game in competition.get("games") or []:
+                item=dict(game)
+                item["competition_id"]=competition.get("id")
+                item["competition_name"]=competition.get("name")
+                item["sourceURL"]=source
+                out[league].append(item)
+    return out
+
+def fiba_match_name(want,actual):
+    a=norm_words(want); b=norm_words(actual)
+    if not a or not b:return False
+    return a==b or (min(len(a),len(b))>=7 and (a in b or b in a))
+
+def resolve_fiba_game(prediction,fiba_games):
+    league=prediction.get("league")
+    games=fiba_games.get(league) or []
+    away=str(prediction.get("away") or "")
+    home=str(prediction.get("home") or "")
+    participant=str(prediction.get("selection") or prediction.get("participant") or "")
+    start=parse_dt(prediction.get("event_start_pt"))
+    candidates=[]
+    for g in games:
+        if away and home:
+            direct=fiba_match_name(away,g.get("away")) and fiba_match_name(home,g.get("home"))
+            reverse=fiba_match_name(away,g.get("home")) and fiba_match_name(home,g.get("away"))
+            if not (direct or reverse):continue
+        elif participant:
+            if not (fiba_match_name(participant,g.get("away")) or fiba_match_name(participant,g.get("home"))):continue
+        else:
+            continue
+        # Date is supporting evidence only because registry rows use short labels
+        # such as "Sep 24" without a timezone.
+        date_score=0
+        if start and g.get("date"):
+            try:
+                gd=datetime.strptime(f"{g.get('date')} {start.year}","%b %d %Y").date()
+                date_score=2 if abs((gd-start.date()).days)<=1 else 0
+            except ValueError:
+                pass
+        candidates.append((date_score,g))
+    if not candidates:
+        return None,"FIBA_GAME_NOT_FOUND"
+    candidates.sort(key=lambda x:x[0],reverse=True)
+    if len(candidates)>1 and candidates[0][0]==candidates[1][0]:
+        return None,"FIBA_GAME_AMBIGUOUS"
+    return candidates[0][1],"FIBA_GAME_MATCHED"
+
+def settle_fiba_game(prediction,game):
+    if str(game.get("status") or "").upper()!="FINAL":
+        return None,None,"PENDING_EVENT"
+    source=str(game.get("sourceURL") or "")
+    if not source.startswith("https://www.fiba.basketball/"):
+        return None,None,"FIBA_SOURCE_UNVERIFIED"
+    nums=[float(x) for x in re.findall(r"\d+(?:\.\d+)?",str(game.get("score") or ""))]
+    if len(nums)!=2:
+        return None,None,"FIBA_FINAL_SCORE_UNAVAILABLE"
+    away_score,home_score=nums
+    if away_score==home_score:
+        return None,None,"FIBA_TIE_UNRESOLVED"
+    winner=str(game.get("away") if away_score>home_score else game.get("home"))
+    selection=str(prediction.get("selection") or prediction.get("participant") or "")
+    if not (fiba_match_name(selection,game.get("away")) or fiba_match_name(selection,game.get("home"))):
+        return None,None,"TEAM_UNRESOLVED"
+    actual=1 if fiba_match_name(selection,winner) else 0
+    return actual,source,"FIBA_FINAL_SCORE_ML"
+
 def main():
     if not REGISTRY.exists():
         raise SystemExit("prediction_registry.json missing")
@@ -679,6 +762,7 @@ def main():
     aliases=load_aliases()
     context_rows=read_csv(PLAYER_CONTEXT)
     closing=closing_lookup(predictions)
+    fiba_games=load_fiba_games()
 
     counts=Counter()
     by_league=defaultdict(Counter)
@@ -695,6 +779,42 @@ def main():
         if pid in existing and existing[pid].get("grade") in {"WIN","LOSS","PUSH","VOID"}:
             counts["already_settled"]+=1
             by_league[league]["already_settled"]+=1
+            continue
+
+        if league in {"FIBA_Men","FIBA_Women"}:
+            if p.get("market_class")!="GAME_ML":
+                reason="PLAYER_PROP_PROVIDER_PENDING"
+                counts[reason]+=1; by_league[league][reason]+=1
+                unresolved.append({"prediction_id":pid,"league":league,"market":p.get("market"),"reason":reason})
+                continue
+            game,resolution=resolve_fiba_game(p,fiba_games)
+            if not game:
+                counts[resolution]+=1; by_league[league][resolution]+=1
+                unresolved.append({"prediction_id":pid,"league":league,"event_id":p.get("event_id"),"reason":resolution})
+                continue
+            actual,source,evidence=settle_fiba_game(p,game)
+            if actual is None:
+                counts[evidence]+=1; by_league[league][evidence]+=1
+                unresolved.append({"prediction_id":pid,"league":league,"event_id":p.get("event_id"),"reason":evidence})
+                continue
+            grade=grade_numeric(p,actual)
+            if not grade:
+                counts["UNGRADED_MARKET_RULE"]+=1; by_league[league]["UNGRADED_MARKET_RULE"]+=1
+                continue
+            row={
+                "result_id":f"SETTLE-{pid}",
+                "settled_at_pt":NOW.astimezone(PT).isoformat(),
+                "sport":p.get("sport") or league,"league":league,
+                "event_id":p.get("event_id") or "","prediction_id":pid,
+                "actual_result":str(int(actual)),"grade":grade,
+                "closing_threshold":"","closing_price":"",
+                "source":f"FIBA_OFFICIAL_LINKED:{source}:{evidence}",
+            }
+            existing[pid]=row
+            counts["settled"]+=1; by_league[league]["settled"]+=1
+            recent.append({"prediction_id":pid,"league":league,"selection":p.get("selection"),
+                           "actual_result":row["actual_result"],"grade":grade,
+                           "provider_event_id":game.get("competition_id"),"source":row["source"]})
             continue
 
         if league not in ESPN and league not in ESPN_SPECIAL:
@@ -790,8 +910,9 @@ def main():
         "providers":{
             "ESPN_PUBLIC":{"leagues":sorted(ESPN.keys()),"cost":"free/public"},
             "ESPN_PUBLIC_SPECIAL":{"coverage":{"Tennis":"ATP/WTA GAME_ML finals","MMA":"UFC GAME_ML finals"},"cost":"free/public"},
+            "FIBA_OFFICIAL_LINKED":{"coverage":{"FIBA_Men":"GAME_ML final scores","FIBA_Women":"GAME_ML final scores"},"source":"data/fiba_competitions.js official FIBA URLs"},
             "VERIFIED_INBOX":{"pattern":"data/inbox/results_*.csv","accepted_rows":len(inbox)},
-            "pending_automatic_adapters":["Boxing","FIBA_Men","FIBA_Women"],
+            "pending_automatic_adapters":["Boxing"],
             "pending_player_prop_adapters":["Tennis","MMA","Boxing","FIBA_Men","FIBA_Women"]
         },
         "predictions_in_registry":len(registry_predictions),
