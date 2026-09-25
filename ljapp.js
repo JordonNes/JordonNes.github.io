@@ -196,7 +196,8 @@
     let player=hint, prop=core;
     if(hint){
       const q=hint.replace(/[.*+?^$(){}|[\\]\\]/g,m=>"\\"+m);
-      prop=core.replace(new RegExp("^"+q+"\\s*(?:—|-)?\\s*","i"),"").trim();
+      const lead=new RegExp("^"+q+"\\s*(?:—|-)?\\s*","i");
+      prop=core.replace(lead,"").replace(lead,"").trim();
     }else{
       const split=core.match(/^(.+?)\s+((?:OVER|UNDER|MORE|LESS)\b.*)$/i);
       if(split){player=split[1].trim();prop=split[2].trim();}
