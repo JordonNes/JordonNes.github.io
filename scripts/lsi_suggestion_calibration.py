@@ -74,8 +74,12 @@ def calibration(rows):
 def legz_summary(records):
     paired=[]
     for r in records:
-        l=num(r.get("legz")); f=num(r.get("ljpc")); y=r.get("y")
-        if l is None or f is None or y is None: continue
+        l=num(r.get("legz")); j=num(r.get("jinx")); f=num(r.get("ljpc")); y=r.get("y")
+        if l is None or j is None or f is None or y is None: continue
+        # Component accountability is valid only when the published/captured
+        # decomposition reconciles to final LJPC. Missing components must never
+        # be coerced to zero and credited to JINX.
+        if not (0 < l <= 100) or abs((l+j)-f) > 0.25: continue
         lb=((l/100)-y)**2; fb=((f/100)-y)**2
         paired.append((r,l,f,y,lb,fb))
     if not paired:
