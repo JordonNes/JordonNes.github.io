@@ -47,3 +47,20 @@ assert team_compatible("ARMY","Army Black Knights")
 assert team_compatible("USC","USC Trojans")
 assert not team_compatible("ARMY","NAVY")
 print("NCAA current-season/prior-continuity policy tests passed.")
+
+implicit_team_profile={
+    "current_team":"",
+    "recent_observations":[
+        {"event_start_utc":"2025-11-01T00:00:00Z","team":"ARMY","value":40},
+        {"event_start_utc":"2026-09-05T00:00:00Z","team":"ARMY","value":55},
+        {"event_start_utc":"2026-09-12T00:00:00Z","team":"ARMY","value":65},
+    ],
+}
+vals,meta=select_ncaa_projection_values(
+    {"_league":"NCAA_Football","_event_start":"2026-09-26T19:00:00Z","participant":"Test Player"},
+    [40,55,65],implicit_team_profile
+)
+assert vals==[40.0,55.0,65.0]
+assert meta["prior_continuity_n"]==1
+assert meta["continuity_team"]=="ARMY"
+print("NCAA current-team inference from current-season observations passed.")

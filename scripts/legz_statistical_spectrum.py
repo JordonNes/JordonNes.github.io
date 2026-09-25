@@ -152,6 +152,10 @@ def select_ncaa_projection_values(prop,fallback_vals,metric_profile):
 
     current_team=participant_team_hint(prop) or str(metric_profile.get("current_team") or "")
     if not current_team:
+        observed_teams=[str(x.get("team") or "").strip() for x in current if str(x.get("team") or "").strip()]
+        if len(observed_teams)==len(current) and observed_teams and all(team_compatible(observed_teams[0],t) for t in observed_teams[1:]):
+            current_team=observed_teams[0]
+    if not current_team:
         return [x["value"] for x in current],{
           "policy":"NCAA_CURRENT_SEASON_THIN_NO_TEAM_CONTINUITY","current_season_n":2,
           "prior_continuity_n":0,"team_continuity":None
