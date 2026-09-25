@@ -1,17 +1,17 @@
 {
   "schema_version": "LSI-LEGZ-JINX-ACCOUNTABILITY-1",
-  "generated_at_utc": "2026-09-25T01:34:32.571020+00:00",
+  "generated_at_utc": "2026-09-25T05:55:46.735435+00:00",
   "policy": "Compare published LEGZ baseline probability with final LJPC on the same settled suggestion. A lower final Brier score means JINX/context improved probability accuracy for that sample.",
   "overall": {
-    "paired_decisive": 26,
-    "legz_brier": 0.254791,
-    "final_ljpc_brier": 0.25485,
-    "brier_delta_final_minus_legz": 5.9e-05,
+    "paired_decisive": 42,
+    "legz_brier": 0.267646,
+    "final_ljpc_brier": 0.267676,
+    "brier_delta_final_minus_legz": 3e-05,
     "jinx_effect": "WORSENED",
-    "jinx_improved": 0,
-    "jinx_worsened": 2,
-    "jinx_neutral": 24,
-    "jinx_improvement_rate_pct": 0.0
+    "jinx_improved": 1,
+    "jinx_worsened": 3,
+    "jinx_neutral": 38,
+    "jinx_improvement_rate_pct": 2.38
   },
   "by_sport": {
     "MLB": {
@@ -23,7 +23,7 @@
       "jinx_worsened": 0,
       "jinx_neutral": 0
     },
-    "NHL": {
+    "NCAA_Football": {
       "paired_decisive": 0,
       "legz_brier": null,
       "final_ljpc_brier": null,
@@ -32,37 +32,61 @@
       "jinx_worsened": 0,
       "jinx_neutral": 0
     },
+    "NFL": {
+      "paired_decisive": 7,
+      "legz_brier": 0.266403,
+      "final_ljpc_brier": 0.266472,
+      "brier_delta_final_minus_legz": 6.9e-05,
+      "jinx_effect": "WORSENED",
+      "jinx_improved": 0,
+      "jinx_worsened": 1,
+      "jinx_neutral": 6,
+      "jinx_improvement_rate_pct": 0.0
+    },
+    "NHL": {
+      "paired_decisive": 1,
+      "legz_brier": 0.148996,
+      "final_ljpc_brier": 0.148225,
+      "brier_delta_final_minus_legz": -0.000771,
+      "jinx_effect": "IMPROVED",
+      "jinx_improved": 1,
+      "jinx_worsened": 0,
+      "jinx_neutral": 0,
+      "jinx_improvement_rate_pct": 100.0
+    },
     "WNBA": {
-      "paired_decisive": 26,
-      "legz_brier": 0.254791,
-      "final_ljpc_brier": 0.25485,
-      "brier_delta_final_minus_legz": 5.9e-05,
+      "paired_decisive": 34,
+      "legz_brier": 0.271391,
+      "final_ljpc_brier": 0.271437,
+      "brier_delta_final_minus_legz": 4.5e-05,
       "jinx_effect": "WORSENED",
       "jinx_improved": 0,
       "jinx_worsened": 2,
-      "jinx_neutral": 24,
+      "jinx_neutral": 32,
       "jinx_improvement_rate_pct": 0.0
     }
   },
   "by_market_class": {
     "GAME_ML": {
-      "paired_decisive": 0,
-      "legz_brier": null,
-      "final_ljpc_brier": null,
-      "brier_delta_final_minus_legz": null,
-      "jinx_improved": 0,
+      "paired_decisive": 1,
+      "legz_brier": 0.148996,
+      "final_ljpc_brier": 0.148225,
+      "brier_delta_final_minus_legz": -0.000771,
+      "jinx_effect": "IMPROVED",
+      "jinx_improved": 1,
       "jinx_worsened": 0,
-      "jinx_neutral": 0
+      "jinx_neutral": 0,
+      "jinx_improvement_rate_pct": 100.0
     },
     "PLAYER_PROP": {
-      "paired_decisive": 26,
-      "legz_brier": 0.254791,
-      "final_ljpc_brier": 0.25485,
-      "brier_delta_final_minus_legz": 5.9e-05,
+      "paired_decisive": 41,
+      "legz_brier": 0.27054,
+      "final_ljpc_brier": 0.270589,
+      "brier_delta_final_minus_legz": 4.9e-05,
       "jinx_effect": "WORSENED",
       "jinx_improved": 0,
-      "jinx_worsened": 2,
-      "jinx_neutral": 24,
+      "jinx_worsened": 3,
+      "jinx_neutral": 38,
       "jinx_improvement_rate_pct": 0.0
     }
   },
@@ -88,14 +112,14 @@
       "brier_score": null
     },
     "ZERO_OR_UNKNOWN": {
-      "decisive": 219,
-      "hits": 160,
-      "misses": 59,
-      "hit_rate_pct": 73.06,
-      "avg_ljpc_pct": 71.07,
-      "calibration_error_pp": -1.99,
-      "calibration_bias": "CALIBRATED_WITHIN_3PP",
-      "brier_score": 0.214115
+      "decisive": 390,
+      "hits": 259,
+      "misses": 131,
+      "hit_rate_pct": 66.41,
+      "avg_ljpc_pct": 70.02,
+      "calibration_error_pp": 3.61,
+      "calibration_bias": "OVERCONFIDENT",
+      "brier_score": 0.229456
     }
   }
 }
