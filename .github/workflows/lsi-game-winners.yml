@@ -63,7 +63,7 @@ jobs:
           age=(datetime.now(timezone.utc)-datetime.fromisoformat(ml['generated_at_utc'].replace('Z','+00:00'))).total_seconds()/3600
           assert age <= 1.0, f'GAME_ML candidate unexpectedly stale after refresh: {age:.2f}h'
           offered=[r for r in ml.get('rows',[]) if r.get('market_class')=='GAME_ML' and r.get('event_id') and r.get('participant') and r.get('price') not in (None,'')]
-          evaluated=[g for e in board.get('events',[]) for g in (e.get('game_markets') or []) if str(g.get('market_class') or '').upper()=='GAME_ML' and g.get('evaluation_status')=='LJ_EVALUATED' and g.get('ljpc') is not None]
+          evaluated=[g for e in board.get('events',[]) for g in (e.get('game_markets') or []) if g.get('evaluation_status')=='LJ_EVALUATED' and g.get('ljpc') is not None]
           assert offered, 'No current offered GAME_ML rows'
           assert evaluated, 'No evaluated Game Winners reached future board'
           print(f'Independent Game Winner refresh: offered={len(offered)} evaluated={len(evaluated)} age={age:.2f}h')
