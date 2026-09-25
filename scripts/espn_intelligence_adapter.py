@@ -606,14 +606,21 @@ def append_context(rows):
         with CONTEXT_HISTORY.open(newline="", encoding="utf-8-sig") as handle:
             seen = {row.get("context_id", "") for row in csv.DictReader(handle)}
     fresh = [row for row in rows if row.get("context_id") not in seen]
-    if not fresh:
-        return 0
     new = not CONTEXT_HISTORY.exists() or CONTEXT_HISTORY.stat().st_size == 0
-    with CONTEXT_HISTORY.open("a", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=CONTEXT_FIELDS, extrasaction="ignore")
-        if new:
+    # Keep the artifact structurally present even when today's supported leagues
+    # have no reportable injuries. Health checks can distinguish zero observations
+    # from a missing acquisition layer.
+    if new:
+        with CONTEXT_HISTORY.open("a", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=CONTEXT_FIELDS, extrasaction="ignore")
             writer.writeheader()
-        writer.writerows(fresh)
+            if fresh:
+                writer.writerows(fresh)
+        return len(fresh)
+    if fresh:
+        with CONTEXT_HISTORY.open("a", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=CONTEXT_FIELDS, extrasaction="ignore")
+            writer.writerows(fresh)
     return len(fresh)
 
 
