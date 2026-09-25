@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-LEGZ-SYNTHETIC-BOOK-1",
-  "generated_at_utc": "2026-09-25T00:45:25.626522+00:00",
+  "generated_at_utc": "2026-09-25T00:49:04.399341+00:00",
   "stage": "POST_SPECTRUM_EVALUATED",
   "policy": "Verified external POMs outrank synthetic lines. Synthetic rows are internal shadow-book thresholds and never external offers.",
   "event_count": 1,
@@ -464,8 +464,6 @@
                 "distribution_model_probability": 0.73,
                 "normal_threshold_probability": null
               },
-              "consistency": 99.05,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 20,
@@ -487,21 +485,36 @@
                 "distance_sigma": -0.667,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 99.05,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-b7963e10176f2294eeda2022",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -513,7 +526,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -613,27 +627,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 99.05,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-b7963e10176f2294eeda2022",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 99.05
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "148431882f4e344a9b3eec37",
-          "evaluation_id": "lse-0315477f85c82b6d4e4e4fb1",
-          "evaluation_material_hash": "d9ee3a4d3bab2ce9e36f00231f126448200ac831371b4742af5e51507a70e28e",
+          "evaluation_id": "lse-408a8a49c5d77acdf3542607",
+          "evaluation_material_hash": "467724b7733904d84a58d54591c7dcfd6b0d69e4c231913df3419c71e90973cc",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.967217+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.785576+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Skyy Moore",
@@ -773,8 +800,6 @@
                 "distribution_model_probability": 0.73,
                 "normal_threshold_probability": null
               },
-              "consistency": 99.05,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 20,
@@ -796,21 +821,36 @@
                 "distance_sigma": -0.667,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 99.05,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-a6c20eb922f50ee289d83928",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -822,7 +862,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -922,27 +963,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 99.05,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-a6c20eb922f50ee289d83928",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 99.05
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "693d47347e80c3c314e4f83a",
-          "evaluation_id": "lse-7ca3ecb711d888b1e647e650",
-          "evaluation_material_hash": "3c4173eb7e7ac953333824e942434d63642fed99ed5c66f905bbc7dcc80ed793",
+          "evaluation_id": "lse-dd7b0f2363b61075d27b345f",
+          "evaluation_material_hash": "648ca7872d4211ab472f77c9342461a4f549c9a9e8ee65da99ecf29a8c011fd2",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.967595+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.786241+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Kaleb Johnson",
@@ -1082,8 +1136,6 @@
                 "distribution_model_probability": 1.07,
                 "normal_threshold_probability": null
               },
-              "consistency": 98.61,
-              "sample_size": 13,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 13,
@@ -1105,21 +1157,36 @@
                 "distance_sigma": -0.667,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 98.61,
+              "sample_size": 13
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e7b69cab2597dc4878d84979",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -1131,7 +1198,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -1231,27 +1299,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 98.61,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e7b69cab2597dc4878d84979",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 98.61
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "b4c59ff6b669ed038d6bef0a",
-          "evaluation_id": "lse-3ed679daf96e8c3c6e6f3708",
-          "evaluation_material_hash": "5992cb654a8e699ac13da0446e481e321e130298d9aa96f5d29b75d6f626b83c",
+          "evaluation_id": "lse-4c09c8f0a797c6ae1ae71782",
+          "evaluation_material_hash": "899ba1f779b3a19a203c07b86176e12abbe9793fd0c00165e272fdbba9013cbe",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.967969+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.786859+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Bo Melton",
@@ -1391,8 +1472,6 @@
                 "distribution_model_probability": 3.85,
                 "normal_threshold_probability": null
               },
-              "consistency": 89.29,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 20,
@@ -1414,21 +1493,36 @@
                 "distance_sigma": -0.633,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 89.29,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e5ec095f615bd8e383ab6135",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -1440,7 +1534,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -1540,27 +1635,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 89.29,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e5ec095f615bd8e383ab6135",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 89.29
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "9109fb0cea4bb186fdd201dd",
-          "evaluation_id": "lse-184454e6c7778aef639cc9ea",
-          "evaluation_material_hash": "1c027b72938d5ecc3208d8105c8d5ade407da997dd1632b9d43accfb66c507cb",
+          "evaluation_id": "lse-3bfaff39b50243e5ccc03b49",
+          "evaluation_material_hash": "296e2bea37d307c674698f98973b77e2d9ad84ec6294a619c710e8573a68c8aa",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.968359+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.787527+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Jahan Dotson",
@@ -1700,8 +1808,6 @@
                 "distribution_model_probability": 1.45,
                 "normal_threshold_probability": null
               },
-              "consistency": 93.87,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 20,
@@ -1723,21 +1829,36 @@
                 "distance_sigma": -0.667,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 93.87,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-6d3ddf56f5adb3ba08a6aa12",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -1749,7 +1870,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -1849,27 +1971,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 93.87,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-6d3ddf56f5adb3ba08a6aa12",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 93.87
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "9372811e96596912f8a3c9b4",
-          "evaluation_id": "lse-481658a7b1b25632527bb398",
-          "evaluation_material_hash": "a0b47fc55238eb9b2d496d2aee76212cded4e1b3dee59ad85ead6caaa4b1e184",
+          "evaluation_id": "lse-6a70a7057ecbeee561be1a5e",
+          "evaluation_material_hash": "88ead32a683d0f67ba8efbb3fbfd05b366c2f8807c0556099d93da1d585e3726",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.968732+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.788191+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Bijan Robinson",
@@ -2010,8 +2145,6 @@
                 "distribution_model_probability": 94.79,
                 "normal_threshold_probability": 93.22
               },
-              "consistency": 78.02,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "rush_attempts",
                 "sample_size": 20,
@@ -2033,21 +2166,36 @@
                 "distance_sigma": 1.492,
                 "projected_side": "OVER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 78.02,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -2059,7 +2207,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -2160,27 +2309,40 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 78.02,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 78.02
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "2ca377eb74ad4c0b125d6689",
-          "evaluation_id": "lse-3783f5905cba85d5e0a770de",
-          "evaluation_material_hash": "3a2789abf9c01fcb8712c645e9a80e960868fb4225f4c5291969cdf83beec537",
+          "evaluation_id": "lse-86ce0fc0f5b05b4123ca931b",
+          "evaluation_material_hash": "5d76bd14690c77011e6318b2f57daff62a2a89a0d0bc7ca02cf27c3b27787e8f",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.969140+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.788872+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Bijan Robinson",
@@ -2321,8 +2483,6 @@
                 "distribution_model_probability": 55.81,
                 "normal_threshold_probability": 67.62
               },
-              "consistency": 72.9,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "rush_attempts",
                 "sample_size": 20,
@@ -2344,21 +2504,36 @@
                 "distance_sigma": 0.457,
                 "projected_side": "OVER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 72.9,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -2370,7 +2545,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -2471,27 +2647,40 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 72.9,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 72.9
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "f589a6ad6a07c5df176affe0",
-          "evaluation_id": "lse-72e9850be6c6a76a7b28a0d2",
-          "evaluation_material_hash": "eef26e7c1ee0f10dbc822a64f6ab77299afe68a8b034258faabf4bae12e96cc6",
+          "evaluation_id": "lse-72c7f16829b765fe6287987c",
+          "evaluation_material_hash": "e07f6a586409bd0aa610fc21908bb03268533f7ec3aaff31fb0d86f3bda1f44e",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.969551+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.789573+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Bijan Robinson",
@@ -2632,8 +2821,6 @@
                 "distribution_model_probability": 15.34,
                 "normal_threshold_probability": 10.24
               },
-              "consistency": 88.35,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "rush_attempts",
                 "sample_size": 20,
@@ -2655,21 +2842,36 @@
                 "distance_sigma": -1.268,
                 "projected_side": "UNDER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 88.35,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -2681,7 +2883,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -2782,27 +2985,40 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 88.35,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 88.35
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "cbb98bb301ae18740b3ba4cc",
-          "evaluation_id": "lse-357bfe20229f94b8c8a8e137",
-          "evaluation_material_hash": "dee7222a92afa8fd2962717f47ac98b272669f7c81fe4e49d9aba59bb98190fd",
+          "evaluation_id": "lse-0a193c38a747cece82b77123",
+          "evaluation_material_hash": "0464d52edd6bafabe4ded0d8e107d8b1e03416a6f5dccefc6c7669dea132f3ec",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.969938+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.790266+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Matthew Golden",
@@ -2942,8 +3158,6 @@
                 "distribution_model_probability": 16.0,
                 "normal_threshold_probability": null
               },
-              "consistency": 83.41,
-              "sample_size": 18,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 18,
@@ -2965,21 +3179,36 @@
                 "distance_sigma": -0.473,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 83.41,
+              "sample_size": 18
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-db9ab2b128c928c36c7f4426",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -2991,7 +3220,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -3091,27 +3321,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 83.41,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-db9ab2b128c928c36c7f4426",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 83.41
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "446962cbe8df6c9f1460b704",
-          "evaluation_id": "lse-32d016715ca877da52c89786",
-          "evaluation_material_hash": "e53632b1801f4590b8427475e1ecfe29fd2a74eaea022fc474ef200c9a146ad6",
+          "evaluation_id": "lse-47962a89fd1300935e5fd83b",
+          "evaluation_material_hash": "4c5a5ad0dfc33085a49c59a74d409d05d4f4de30c7a267e4b2d1e1f77e78ce86",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.970339+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.790939+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Austin Hooper",
@@ -3251,8 +3494,6 @@
                 "distribution_model_probability": 4.58,
                 "normal_threshold_probability": null
               },
-              "consistency": 87.46,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 20,
@@ -3274,21 +3515,36 @@
                 "distance_sigma": -0.633,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 87.46,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-b9f5b2b94bcf35df76840179",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "TE",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -3300,7 +3556,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -3400,27 +3657,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 87.46,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-b9f5b2b94bcf35df76840179",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 87.46
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "TE",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "71839312aa751861f98f83c1",
-          "evaluation_id": "lse-03c608a43b2f537fb81f32f1",
-          "evaluation_material_hash": "65cedac7790c2bab3f3c8ce08819ded38af464e069d47ef39720f4671fa63c5b",
+          "evaluation_id": "lse-4beb3ebd36473e01fdb7c694",
+          "evaluation_material_hash": "4f6ddcaac47e47341b59bb2e9489c4468e0f0030095cdcadeec0fdadeb2f3e93",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.970725+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.791588+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Brian Robinson Jr.",
@@ -3560,8 +3830,6 @@
                 "distribution_model_probability": 2.18,
                 "normal_threshold_probability": null
               },
-              "consistency": 87.66,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 20,
@@ -3583,21 +3851,36 @@
                 "distance_sigma": -0.667,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 87.66,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-84734753f6fded9a08a01373",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -3609,7 +3892,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -3709,27 +3993,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 87.66,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-84734753f6fded9a08a01373",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 87.66
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "71c6cc983c8c86738634d2fe",
-          "evaluation_id": "lse-b0156c7929a51274974a0ddc",
-          "evaluation_material_hash": "3880ec8900f6c8b4898905de9eafffcaec1fc2ef7ef1e3e88c87e7561871de03",
+          "evaluation_id": "lse-2431ef9643892c0a4560ef6c",
+          "evaluation_material_hash": "3e2bf273aecf8dfff92c3e9113dc50348a20940ffc5fb42be55b34d73bf9d389",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.971109+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.792268+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Josh Whyle",
@@ -5112,8 +5409,6 @@
                 "distribution_model_probability": 65.41,
                 "normal_threshold_probability": 66.39
               },
-              "consistency": 85.04,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "pass_yards",
                 "sample_size": 20,
@@ -5135,7 +5430,9 @@
                 "distance_sigma": 0.423,
                 "projected_side": "OVER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 85.04,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
@@ -5144,14 +5441,25 @@
             "context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -5265,29 +5573,40 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 85.04,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "consistency": 85.04
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "48aabca20262c91a1c016adb",
-          "evaluation_id": "lse-07189ba1d5cc563e0590d9fa",
-          "evaluation_material_hash": "41da3ba87394d6857dced0acce7d740fb3f10ed3a78e196c7334cd5ae3ac2e39",
+          "evaluation_id": "lse-9533b4f3a574586dd1227e19",
+          "evaluation_material_hash": "b0490a724f78f0b15c9f3e3cd55557322c4757b185fca243461d2ae2c50df3fa",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.973158+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.793964+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Tua Tagovailoa",
@@ -5428,8 +5747,6 @@
                 "distribution_model_probability": 28.48,
                 "normal_threshold_probability": 30.48
               },
-              "consistency": 75.84,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "pass_yards",
                 "sample_size": 20,
@@ -5451,7 +5768,9 @@
                 "distance_sigma": -0.511,
                 "projected_side": "UNDER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 75.84,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
@@ -5460,14 +5779,25 @@
             "context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -5581,29 +5911,40 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 75.84,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "consistency": 75.84
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "0f4a402d5587ce48a4d46aa2",
-          "evaluation_id": "lse-1020469b034580d750e2ff60",
-          "evaluation_material_hash": "de5e2725a14662cf6ebe72b0b6f3b0c2c1b83e8781037789ff849d16e69d7b81",
+          "evaluation_id": "lse-a0933bfec91b71045bd5bee8",
+          "evaluation_material_hash": "2018fb033d1cf333bcb23676d2b1cd923981fd05ba6e02f5de06962d98f3f97a",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.973571+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.794639+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Tua Tagovailoa",
@@ -5744,8 +6085,6 @@
                 "distribution_model_probability": 3.27,
                 "normal_threshold_probability": 2.18
               },
-              "consistency": 71.38,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "pass_yards",
                 "sample_size": 20,
@@ -5767,7 +6106,9 @@
                 "distance_sigma": -2.019,
                 "projected_side": "UNDER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 71.38,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
@@ -5776,14 +6117,25 @@
             "context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -5897,29 +6249,40 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 71.38,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "consistency": 71.38
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "05a3569fc77cf21c77e2d4f7",
-          "evaluation_id": "lse-d98f381065226bc6c5fdd207",
-          "evaluation_material_hash": "f473f86840b696acb20ab2c80129b68ddea11f21f71170b9057d7b01ebc28ebc",
+          "evaluation_id": "lse-3cf083dadfddfd2a8030dfac",
+          "evaluation_material_hash": "552f2db9fb5c1dab0e2349549e56ad69b037c57c92e00610a7f8d293a12b44e5",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.973968+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.795344+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Jordan Love",
@@ -6992,8 +7355,6 @@
                 "distribution_model_probability": 19.71,
                 "normal_threshold_probability": null
               },
-              "consistency": 93.62,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 20,
@@ -7015,21 +7376,36 @@
                 "distance_sigma": -0.44,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 93.62,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-65e130d641e0aac78a5cd225",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -7041,7 +7417,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -7141,27 +7518,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 93.62,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-65e130d641e0aac78a5cd225",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 93.62
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "WR",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "28b70c3f80ec72971e161d59",
-          "evaluation_id": "lse-eeec1a8c8a9e92eb908f61e9",
-          "evaluation_material_hash": "ac83cbb0f4c431e56f8097c06348c1424c0210fb2039c0c50fe17c70595fe106",
+          "evaluation_id": "lse-77e9e43658cbb99e9d55abf1",
+          "evaluation_material_hash": "b29faffc399ea015b4f8f371f3f5ceb8486ebe908cd2bea223941338ba6b60dc",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.975537+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.796758+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Tua Tagovailoa",
@@ -7302,8 +7692,6 @@
                 "distribution_model_probability": 72.15,
                 "normal_threshold_probability": 79.5
               },
-              "consistency": 78.9,
-              "sample_size": 14,
               "player_projection": {
                 "metric": "pass_completions",
                 "sample_size": 14,
@@ -7325,7 +7713,9 @@
                 "distance_sigma": 0.824,
                 "projected_side": "OVER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 78.9,
+              "sample_size": 14
             },
             "market": {
               "implied_probability": null,
@@ -7334,14 +7724,25 @@
             "context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -7455,29 +7856,40 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 78.9,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "consistency": 78.9
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "8d2fd16b057dc56d7370bc13",
-          "evaluation_id": "lse-c44bd97a39158a37911c4c35",
-          "evaluation_material_hash": "527a7966deda86d55faaf8d8a00a3c146f8a4ce3a33b4ca61769d23ed79b096f",
+          "evaluation_id": "lse-41089e535df446bf756c90f1",
+          "evaluation_material_hash": "63497ef62c02ee09da21f5fc8e6e417d019e5e3c79298d53c1a789199bd6426f",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.975966+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.797474+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Tua Tagovailoa",
@@ -7618,8 +8030,6 @@
                 "distribution_model_probability": 29.93,
                 "normal_threshold_probability": 27.86
               },
-              "consistency": 63.25,
-              "sample_size": 14,
               "player_projection": {
                 "metric": "pass_completions",
                 "sample_size": 14,
@@ -7641,7 +8051,9 @@
                 "distance_sigma": -0.587,
                 "projected_side": "UNDER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 63.25,
+              "sample_size": 14
             },
             "market": {
               "implied_probability": null,
@@ -7650,14 +8062,25 @@
             "context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -7771,29 +8194,40 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 63.25,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "consistency": 63.25
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "e1a385a10d9434b7199e61ce",
-          "evaluation_id": "lse-5a43d28a7ce746d28d87ca20",
-          "evaluation_material_hash": "74acef4998997f09e9e796b7fcb8fd09f7cdbb9785518f284f12c654ef519db0",
+          "evaluation_id": "lse-cfce2c8441cb72f6f757463c",
+          "evaluation_material_hash": "ed2c63835baea49edf70590832879e1872810c1f59bb45fa204a08dcdde4deb3",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.976391+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.798181+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Tua Tagovailoa",
@@ -7934,8 +8368,6 @@
                 "distribution_model_probability": 6.56,
                 "normal_threshold_probability": 4.31
               },
-              "consistency": 74.06,
-              "sample_size": 14,
               "player_projection": {
                 "metric": "pass_completions",
                 "sample_size": 14,
@@ -7957,7 +8389,9 @@
                 "distance_sigma": -1.716,
                 "projected_side": "UNDER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 74.06,
+              "sample_size": 14
             },
             "market": {
               "implied_probability": null,
@@ -7966,14 +8400,25 @@
             "context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -8087,29 +8532,40 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 74.06,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
               "delta": 1.0,
               "signals": [
-                "availability_confirmed"
+                "availability_confirmed",
+                "attributable_matchup_context"
               ],
               "context_id": "RW-CURRENT-75bcddbcb4ccb2b623bae140",
               "context_type": "INJURY_PRACTICE",
               "status": "ACTIVE",
               "headline": "Turns in full practice",
               "source": "ROTOWIRE_COMPOSITE",
-              "matchup": null
-            },
-            "consistency": 74.06
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "48a048a326fcaba3d7f9aa51",
-          "evaluation_id": "lse-154950f4463ad0a6b2db664d",
-          "evaluation_material_hash": "3f976912f9500a20227a5f4c60ccd886d427556e89c3d8879215ae3aeba6f0d3",
+          "evaluation_id": "lse-06915290f5564ce62de7c686",
+          "evaluation_material_hash": "313f0bb179b083b47bacf5e5e2c9690ae4efdc3746b0b0fc44ea1b5a805460cf",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.976790+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.798850+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Jonnu Smith",
@@ -8249,8 +8705,6 @@
                 "distribution_model_probability": 6.04,
                 "normal_threshold_probability": null
               },
-              "consistency": 78.17,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "anytime_td",
                 "sample_size": 20,
@@ -8272,21 +8726,36 @@
                 "distance_sigma": -0.633,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 78.17,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-ea40b2e833056c6c040a7fc5",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "TE",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -8298,7 +8767,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -8398,27 +8868,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 78.17,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-ea40b2e833056c6c040a7fc5",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 78.17
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "TE",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "ecaf13b98749253cf8d56079",
-          "evaluation_id": "lse-5d1e2cfdd0a2aeb7b9f4893f",
-          "evaluation_material_hash": "86571e02504ba65092d560d2f4e624af1eb42fa1b59433c0feeaaf6c97307c32",
+          "evaluation_id": "lse-d0ff663cf9eb46a714720898",
+          "evaluation_material_hash": "cc8a1a0da3c4ce71c6c1aff26f7b4163c080a7143e7789cc1fed8148ab7d2b62",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.977188+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.799527+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Kaleb Johnson",
@@ -8583,14 +9066,27 @@
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e7b69cab2597dc4878d84979",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             }
           },
           "feature_state": {
@@ -8699,14 +9195,27 @@
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e7b69cab2597dc4878d84979",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -8718,17 +9227,18 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "ddf400af77e91cf498aabfa8",
-          "evaluation_id": "lse-ae836dec7d45de9ce76a89ed",
-          "evaluation_material_hash": "1ae1828393b727b8835eb231232e4623dcf5b1ee7811fb72be9618e2ac816b44",
+          "evaluation_id": "lse-060cefd34211078eeedcfba2",
+          "evaluation_material_hash": "c177d9304b9630389f18c7279b76333565e62b4e7d25f0fd8afd1b87438ed11c",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:45:24.104566+00:00",
+          "evaluated_at_utc": "2026-09-25T00:49:00.800199+00:00",
           "evaluation_reused": false
         },
         {
@@ -8894,14 +9404,27 @@
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e7b69cab2597dc4878d84979",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             }
           },
           "feature_state": {
@@ -9010,14 +9533,27 @@
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e7b69cab2597dc4878d84979",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -9029,17 +9565,18 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "ddf400af77e91cf498aabfa8",
-          "evaluation_id": "lse-8779d93f1de3ffdc6757806c",
-          "evaluation_material_hash": "c5f9882ade1de1738be8237d3460db1b2c5d80e18e0ef4456f26849384dead83",
+          "evaluation_id": "lse-9d07af3e5fb855595ca15c64",
+          "evaluation_material_hash": "c66c6ace850890cbe6484315b65f0a688485cc98667cd342f0b59ff636a5118a",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:45:24.104847+00:00",
+          "evaluated_at_utc": "2026-09-25T00:49:00.800834+00:00",
           "evaluation_reused": false
         },
         {
@@ -9205,14 +9742,27 @@
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e7b69cab2597dc4878d84979",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             }
           },
           "feature_state": {
@@ -9321,14 +9871,27 @@
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-e7b69cab2597dc4878d84979",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -9340,17 +9903,18 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "ddf400af77e91cf498aabfa8",
-          "evaluation_id": "lse-8af945823bacefbac6fdfdd1",
-          "evaluation_material_hash": "a77ecc2b822082afa49495a1c1e69d25805e84f8af53051f42eaceb33f85db15",
+          "evaluation_id": "lse-0002f48116462615f1b80232",
+          "evaluation_material_hash": "e1e2929f218905b93b6214fa9eb5f222ca73471b8266970876aabebc399a7fe6",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:45:24.105118+00:00",
+          "evaluated_at_utc": "2026-09-25T00:49:00.801492+00:00",
           "evaluation_reused": false
         },
         {
@@ -9492,8 +10056,6 @@
                 "distribution_model_probability": 88.24,
                 "normal_threshold_probability": 84.2
               },
-              "consistency": 79.64,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "receptions",
                 "sample_size": 20,
@@ -9515,21 +10077,36 @@
                 "distance_sigma": 1.003,
                 "projected_side": "OVER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 79.64,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -9541,7 +10118,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -9642,27 +10220,40 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 79.64,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 79.64
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "d0206c4698b9ac5954429155",
-          "evaluation_id": "lse-a454233efdc06a6204b8f5c9",
-          "evaluation_material_hash": "c848f1f60b9db82266bef3398d79a33311177b3b5af57faa36806764984e0700",
+          "evaluation_id": "lse-a864f96b60820546e9924eea",
+          "evaluation_material_hash": "22d3ada2cfc9880fb63f1652e8e87dcb9c9c99ff55bb47c5c7280aa4e920e75a",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.978745+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.802178+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Bijan Robinson",
@@ -9803,8 +10394,6 @@
                 "distribution_model_probability": 46.64,
                 "normal_threshold_probability": 49.29
               },
-              "consistency": 88.6,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "receptions",
                 "sample_size": 20,
@@ -9826,21 +10415,36 @@
                 "distance_sigma": -0.018,
                 "projected_side": "NEAR LINE",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 88.6,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -9852,7 +10456,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -9953,27 +10558,40 @@
               "projected_side": "NEAR LINE",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 88.6,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 88.6
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "8915da8aef10a2f9b59bbeb7",
-          "evaluation_id": "lse-aaa676dd135cf01cd675512d",
-          "evaluation_material_hash": "389f7cc703f0baebae0e94991f808270fb782eb6e0b0b4b45429532200ba5b5e",
+          "evaluation_id": "lse-b16899ca570d52c460d95797",
+          "evaluation_material_hash": "8cb39f3d1214d142d6290ecf45335b15d73322cbfbdb9201f7543a35f09fffa1",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.979148+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.802836+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Bijan Robinson",
@@ -10114,8 +10732,6 @@
                 "distribution_model_probability": 18.9,
                 "normal_threshold_probability": 14.96
               },
-              "consistency": 85.08,
-              "sample_size": 20,
               "player_projection": {
                 "metric": "receptions",
                 "sample_size": 20,
@@ -10137,21 +10753,36 @@
                 "distance_sigma": -1.038,
                 "projected_side": "UNDER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 85.08,
+              "sample_size": 20
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -10163,7 +10794,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -10264,27 +10896,40 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 85.08,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-8e7e7e9d9653f8184307879c",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 85.08
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "RB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "19956d18952488b424c88438",
-          "evaluation_id": "lse-4e722f1af33c92823e1b4851",
-          "evaluation_material_hash": "bbfacc1f27b3f8e40c7626c0ea0b2c31fe853255942e511d6d73f5f9bc4112dd",
+          "evaluation_id": "lse-8a0caa4cb0ef6d375a0053e9",
+          "evaluation_material_hash": "5d088b98b5df4a21af1ce56e58385b9406feaf3fbedc74d3e16df4e22eaedd8d",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.979550+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.803524+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Michael Penix Jr.",
@@ -10425,8 +11070,6 @@
                 "distribution_model_probability": 86.73,
                 "normal_threshold_probability": 91.03
               },
-              "consistency": 88.58,
-              "sample_size": 9,
               "player_projection": {
                 "metric": "pass_completions",
                 "sample_size": 9,
@@ -10448,21 +11091,36 @@
                 "distance_sigma": 1.343,
                 "projected_side": "OVER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 88.58,
+              "sample_size": 9
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-060df02cbdb730c8ae7bf96a",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -10474,7 +11132,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -10575,27 +11234,40 @@
               "projected_side": "OVER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 88.58,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-060df02cbdb730c8ae7bf96a",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 88.58
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "32c1a11f066d6ad912d69ab5",
-          "evaluation_id": "lse-45a7fa5d3b43d73f3541f23a",
-          "evaluation_material_hash": "d9273b5fd56219f933c2ed7fbc3eec2674db1737017865fd5f00be7655b6d619",
+          "evaluation_id": "lse-10c70d3ab4dcbd71723b0811",
+          "evaluation_material_hash": "a3f80864dc78a29d9e536ea47acc38308e3684d33575f8275eb00359cd42b31c",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.979936+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.804207+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Michael Penix Jr.",
@@ -10736,8 +11408,6 @@
                 "distribution_model_probability": 33.44,
                 "normal_threshold_probability": 29.07
               },
-              "consistency": 89.49,
-              "sample_size": 9,
               "player_projection": {
                 "metric": "pass_completions",
                 "sample_size": 9,
@@ -10759,21 +11429,36 @@
                 "distance_sigma": -0.551,
                 "projected_side": "UNDER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 89.49,
+              "sample_size": 9
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-060df02cbdb730c8ae7bf96a",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -10785,7 +11470,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -10886,27 +11572,40 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 89.49,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-060df02cbdb730c8ae7bf96a",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 89.49
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "a67e130b8cd3d78a8e3554da",
-          "evaluation_id": "lse-81d49674b6dfd6dcbbc945ae",
-          "evaluation_material_hash": "48b55d2d9e6a0cfc6e6399e6a388e38be906cc09f6b4a4218ebff6f2e20755fe",
+          "evaluation_id": "lse-53c1f40619c205b40de55208",
+          "evaluation_material_hash": "269c4f1da51ee5d4f894f117b3f91cf7331d764dcc6a85cbd9e394bc50cda8a4",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.980330+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.804922+00:00",
+          "evaluation_reused": false
         },
         {
           "participant": "Michael Penix Jr.",
@@ -11047,8 +11746,6 @@
                 "distribution_model_probability": 21.61,
                 "normal_threshold_probability": 21.53
               },
-              "consistency": 97.56,
-              "sample_size": 9,
               "player_projection": {
                 "metric": "pass_completions",
                 "sample_size": 9,
@@ -11070,21 +11767,36 @@
                 "distance_sigma": -0.788,
                 "projected_side": "UNDER",
                 "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
-              }
+              },
+              "consistency": 97.56,
+              "sample_size": 9
             },
             "market": {
               "implied_probability": null,
               "source_count": 0
             },
             "context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-060df02cbdb730c8ae7bf96a",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
             },
             "provenance": {
               "snapshot_ids": [
@@ -11096,7 +11808,8 @@
               "market_only_prohibited": true,
               "correlated_windows_count_as_one_family": true,
               "independent_signal_families": [
-                "PERFORMANCE_HISTORY"
+                "PERFORMANCE_HISTORY",
+                "CURRENT_CONTEXT"
               ],
               "jinx_adjustment_cap_pp": 12
             }
@@ -11197,27 +11910,40 @@
               "projected_side": "UNDER",
               "forecast_policy": "L5-primary expected output; L10/full-history stabilize; exact offered threshold evaluated against one shared player-game forecast."
             },
+            "consistency": 97.56,
             "market_prior": null,
             "source_depth": 0,
             "jinx_context": {
-              "delta": 0.0,
-              "signals": [],
-              "context_id": null,
-              "context_type": null,
-              "status": null,
+              "delta": 1.0,
+              "signals": [
+                "availability_confirmed",
+                "attributable_matchup_context"
+              ],
+              "context_id": "ESPN-CTX-060df02cbdb730c8ae7bf96a",
+              "context_type": "INJURY_AVAILABILITY",
+              "status": "ACTIVE",
               "headline": null,
-              "source": null,
-              "matchup": null
-            },
-            "consistency": 97.56
+              "source": "ESPN_PUBLIC",
+              "matchup": {
+                "opponent": "",
+                "home_away": "",
+                "role": "QB",
+                "rest_travel": "",
+                "weather": "",
+                "season_phase": "",
+                "evidence_summary": "Active INJURY_STATUS_ACTIVE",
+                "reliability": "high",
+                "source": "ESPN_PUBLIC"
+              }
+            }
           },
           "evaluation_reason": "LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX reviews attributable role, availability, opponent/game context and tournament leverage without inventing unsupported statistical adjustments.",
           "evaluation_key": "dcf40d1aa125a839a741e3d4",
-          "evaluation_id": "lse-cb16ab4e8ce02614d2f2e38b",
-          "evaluation_material_hash": "48a14c3695e36f022b245b47374730df7dcc308462928edfeac39e34350b0b84",
+          "evaluation_id": "lse-0137134db99ad08a972b2e05",
+          "evaluation_material_hash": "eed5c775fdc2030a242be2eaf16c4fedd5ca93b5527e8d2f4988b8487df82b2f",
           "evaluation_version": "LEGZ_STATISTICAL_SPECTRUM_3",
-          "evaluated_at_utc": "2026-09-25T00:27:27.980724+00:00",
-          "evaluation_reused": true
+          "evaluated_at_utc": "2026-09-25T00:49:00.805599+00:00",
+          "evaluation_reused": false
         }
       ]
     }
