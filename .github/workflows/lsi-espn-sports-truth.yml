@@ -67,9 +67,10 @@ jobs:
         continue-on-error: true
         env:
           ESPN_PLAYER_ENRICHMENT_TTL_HOURS: '12'
-          ESPN_PLAYER_ENRICHMENT_MAX_PLAYERS: '80'
+          ESPN_PLAYER_ENRICHMENT_MAX_PLAYERS: '40'
+          ESPN_PLAYER_ENRICHMENT_MAX_WORKERS: '8'
           ESPN_PLAYER_ENRICHMENT_HTTP_TIMEOUT_SEC: '15'
-          ESPN_PLAYER_ENRICHMENT_HTTP_ATTEMPTS: '2'
+          ESPN_PLAYER_ENRICHMENT_HTTP_ATTEMPTS: '1'
         run: python scripts/espn_player_enrichment.py
 
       - name: Commit ESPN evidence independently of market publication
