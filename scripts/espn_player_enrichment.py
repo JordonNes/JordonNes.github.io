@@ -34,7 +34,9 @@ ATTEMPTS=max(1,int(os.getenv("ESPN_PLAYER_ENRICHMENT_HTTP_ATTEMPTS","2")))
 UA={"User-Agent":"LEGZ-JINX-LSI-ESPN-Player/1.0","Accept":"application/json,text/plain,*/*","Referer":"https://www.espn.com/"}
 
 def norm(v):
-    s=re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).strip()
+    raw=str(v or "").strip()
+    raw=re.sub(r"\s*\([A-Za-z0-9 .&'\\-]{1,24}\)\s*$","",raw)
+    s=re.sub(r"[^a-z0-9]+"," ",raw.lower()).strip()
     parts=s.split()
     if parts and parts[-1] in {"jr","sr","ii","iii","iv","v"}: parts=parts[:-1]
     return " ".join(parts)
@@ -86,12 +88,14 @@ def identity_index():
             for alias in aliases:
                 key=(league,norm(alias))
                 if key[1]:out[key]={"espn_id":str(espn),"name":name,"lsi_player_id":row.get("lsi_player_id")}
-    # Current roster registry closes the gap before completed-game history exists.
+    # ESPN's own current roster registry is authoritative for ESPN IDs. It
+    # intentionally overwrites stale/mislabeled provider IDs from older LSI rows.
     for row in load(ESPN_REG,{"players":[]}).get("players") or []:
         league=str(row.get("league") or "")
         name=row.get("name"); espn=row.get("espn_id")
         if league in ROUTES and name and espn:
-            out.setdefault((league,norm(name)),{"espn_id":str(espn),"name":name,"lsi_player_id":None})
+            prior=out.get((league,norm(name))) or {}
+            out[(league,norm(name))]={"espn_id":str(espn),"name":name,"lsi_player_id":prior.get("lsi_player_id")}
     return out
 
 def compact_splits(payload):
