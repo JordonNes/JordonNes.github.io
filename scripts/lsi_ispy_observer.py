@@ -18,6 +18,7 @@ their sample and uncertainty plainly disclosed.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import re
@@ -357,7 +358,9 @@ def candidate_for(current,history):
         f"variance/consistency, market depth, attributable context and numeric weather where available."
     )
     return {
-        "signal_id":"ISPY-"+str(current.get("evaluation_id") or current.get("_event_id") or "")[:36]+"-"+str(abs(hash((norm(current.get("participant")),norm(current.get("market")),str(current.get("threshold")),norm(current.get("side"))))))[:10],
+        "signal_id":"ISPY-"+str(current.get("evaluation_id") or current.get("_event_id") or "")[:36]+"-"+hashlib.sha1("|".join([
+            norm(current.get("participant")),norm(current.get("market")),str(current.get("threshold")),norm(current.get("side"))
+        ]).encode("utf-8")).hexdigest()[:10],
         "status":status,
         "direction":direction,
         "title":f"{current.get('participant')} • {current.get('market')} {str(current.get('side') or '').upper()}",
