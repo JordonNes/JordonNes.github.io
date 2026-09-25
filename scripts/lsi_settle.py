@@ -53,6 +53,13 @@ ESPN = {
     "NCAA_Basketball": ("basketball","mens-college-basketball"),
 }
 
+# Public ESPN scoreboards whose event shape differs from the standard team-game
+# schema. These are safe for explicit match/fight winner settlement only.
+ESPN_SPECIAL = {
+    "Tennis": [("tennis","atp"),("tennis","wta")],
+    "MMA": [("mma","ufc")],
+}
+
 TEAM_ALIASES = {
     "BAMA": {"ALA","ALABAMA"},
     "WF": {"WAKE","WAKEFOREST"},
@@ -203,13 +210,51 @@ def load_aliases():
 _SCOREBOARD_CACHE={}
 _SUMMARY_CACHE={}
 
+def _flatten_special_scoreboard(payload, league, source_slug):
+    """Normalize Tennis tournament groupings and MMA bout competitions as events."""
+    flat=[]
+    for event in payload.get("events") or []:
+        if league=="Tennis":
+            competitions=[]
+            for grouping in event.get("groupings") or []:
+                competitions.extend(grouping.get("competitions") or [])
+        else:
+            competitions=event.get("competitions") or []
+        for comp in competitions:
+            cid=str(comp.get("id") or "")
+            if not cid:
+                continue
+            flat.append({
+                "id":cid,
+                "uid":comp.get("uid"),
+                "date":comp.get("date") or comp.get("startDate") or event.get("date"),
+                "name":event.get("name") or event.get("shortName"),
+                "shortName":event.get("shortName") or event.get("name"),
+                "status":comp.get("status") or event.get("status") or {},
+                "notes":comp.get("notes") or [],
+                "competitions":[comp],
+                "_lsi_special_league":league,
+                "_lsi_source_slug":source_slug,
+            })
+    return flat
+
 def scoreboard(league, date):
     key=(league,date.strftime("%Y%m%d"))
     if key in _SCOREBOARD_CACHE:
         return _SCOREBOARD_CACHE[key]
-    sport, slug = ESPN[league]
     query = urllib.parse.urlencode({"dates": key[1], "limit": 500})
-    payload=get_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?{query}")
+    if league in ESPN_SPECIAL:
+        events=[]
+        for sport,slug in ESPN_SPECIAL[league]:
+            try:
+                payload=get_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?{query}")
+                events.extend(_flatten_special_scoreboard(payload,league,slug))
+            except Exception as exc:
+                print(f"WARN settlement special scoreboard {league}/{slug} {date}: {exc}")
+        payload={"events":events}
+    else:
+        sport, slug = ESPN[league]
+        payload=get_json(f"https://site.api.espn.com/apis/site/v2/sports/{sport}/{slug}/scoreboard?{query}")
     _SCOREBOARD_CACHE[key]=payload
     return payload
 
@@ -230,12 +275,16 @@ def custom_event_tokens(event_id):
 
 def team_tokens(competitor):
     team = competitor.get("team") or {}
+    athlete = competitor.get("athlete") or {}
     vals = {
         str(team.get("abbreviation") or "").upper(),
         re.sub(r"[^A-Z0-9]","", str(team.get("displayName") or "").upper()),
         re.sub(r"[^A-Z0-9]","", str(team.get("shortDisplayName") or "").upper()),
         re.sub(r"[^A-Z0-9]","", str(team.get("name") or "").upper()),
         re.sub(r"[^A-Z0-9]","", str(team.get("location") or "").upper()),
+        re.sub(r"[^A-Z0-9]","", str(athlete.get("displayName") or "").upper()),
+        re.sub(r"[^A-Z0-9]","", str(athlete.get("fullName") or "").upper()),
+        re.sub(r"[^A-Z0-9]","", str(athlete.get("shortName") or "").upper()),
     }
     return {x for x in vals if x}
 
@@ -319,7 +368,7 @@ def resolve_event(prediction, aliases, context_rows):
     if saved and saved.get("league") == league and saved.get("provider_event_id"):
         return saved.get("provider_event_id"), saved.get("confidence","CACHED"), saved
 
-    if league not in ESPN:
+    if league not in ESPN and league not in ESPN_SPECIAL:
         return None, "UNSUPPORTED_LEAGUE", None
 
     tokens = custom_event_tokens(eid)
@@ -346,14 +395,19 @@ def resolve_event(prediction, aliases, context_rows):
 
     best = scored[0]
     second = scored[1][0] if len(scored) > 1 else -1
-    # Require strong team/token evidence, or one token plus athlete confirmation.
-    confident = best[1] >= 2 or best[2] >= 2
-    if not confident and best[1] >= 1:
-        try:
-            s = summary(league, best[4].get("id"))
-            confident = player_appears(s, prediction.get("participant"))
-        except Exception:
-            confident = False
+    # Standard team sports require stronger token evidence. For Tennis/MMA the
+    # immutable away/home participant names are sufficient only when both match
+    # the same exact final competition/bout.
+    if league in ESPN_SPECIAL:
+        confident = best[2] >= 2
+    else:
+        confident = best[1] >= 2 or best[2] >= 2
+        if not confident and best[1] >= 1:
+            try:
+                s = summary(league, best[4].get("id"))
+                confident = player_appears(s, prediction.get("participant"))
+            except Exception:
+                confident = False
     if not confident or (second >= best[0] and best[0] < 20):
         return None, "AMBIGUOUS_EVENT", {
             "top_score": best[0], "second_score": second, "token_hits": best[1],
@@ -364,7 +418,7 @@ def resolve_event(prediction, aliases, context_rows):
     mapping = {
         "league": league,
         "lsi_event_id": eid,
-        "provider": "ESPN_PUBLIC",
+        "provider": "ESPN_PUBLIC_SPECIAL" if league in ESPN_SPECIAL else "ESPN_PUBLIC",
         "provider_event_id": provider_id,
         "provider_event_name": best[4].get("name"),
         "provider_event_start": best[4].get("date"),
@@ -497,7 +551,28 @@ def match_team(selection, scores):
             return name
     return None
 
+def _special_winner_actual(prediction,event):
+    comp=(event.get("competitions") or [{}])[0]
+    competitors=comp.get("competitors") or []
+    notes=" ".join(str(n.get("text") or "") for n in (event.get("notes") or comp.get("notes") or []))
+    if prediction.get("league")=="Tennis" and re.search(r"\b(retired|retirement|walkover|w/o|defaulted|default)\b",notes,re.I):
+        return None,"SPECIAL_SETTLEMENT_REQUIRED"
+    target=re.sub(r"[^a-z0-9]+","",str(prediction.get("selection") or prediction.get("participant") or "").lower())
+    matches=[]
+    for c in competitors:
+        tokens={re.sub(r"[^a-z0-9]+","",x.lower()) for x in team_tokens(c) if x}
+        if any(target==t or (len(target)>=4 and target in t) or (len(t)>=4 and t in target) for t in tokens):
+            matches.append(c)
+    if len(matches)!=1:
+        return None,"PARTICIPANT_UNRESOLVED"
+    winners=[c for c in competitors if c.get("winner") is True]
+    if len(winners)!=1:
+        return None,"SPECIAL_WINNER_UNRESOLVED"
+    return (1 if matches[0] is winners[0] else 0),"FINAL_WINNER_FLAG"
+
 def actual_game_market(prediction, event):
+    if prediction.get("league") in ESPN_SPECIAL and prediction.get("market_class")=="GAME_ML":
+        return _special_winner_actual(prediction,event)
     scores = final_scores(event)
     if len(scores) < 2:
         return None, "FINAL_SCORE_UNAVAILABLE"
@@ -622,10 +697,15 @@ def main():
             by_league[league]["already_settled"]+=1
             continue
 
-        if league not in ESPN:
+        if league not in ESPN and league not in ESPN_SPECIAL:
             reason="PROVIDER_PENDING"
             counts[reason]+=1; by_league[league][reason]+=1
             unresolved.append({"prediction_id":pid,"league":league,"reason":reason})
+            continue
+        if league in ESPN_SPECIAL and p.get("market_class")=="PLAYER_PROP":
+            reason="PLAYER_PROP_PROVIDER_PENDING"
+            counts[reason]+=1; by_league[league][reason]+=1
+            unresolved.append({"prediction_id":pid,"league":league,"market":p.get("market"),"reason":reason})
             continue
 
         provider_id, resolution, mapping = resolve_event(p, aliases, context_rows)
@@ -648,16 +728,15 @@ def main():
             unresolved.append({"prediction_id":pid,"league":league,"event_id":p.get("event_id"),"provider_event_id":provider_id,"reason":"PENDING_EVENT","state":state})
             continue
 
-        try:
-            s=summaries.get(cache_key)
-            if s is None:
-                s=summary(league,provider_id); summaries[cache_key]=s
-        except Exception as exc:
-            counts["SUMMARY_ERROR"]+=1; by_league[league]["SUMMARY_ERROR"]+=1
-            unresolved.append({"prediction_id":pid,"league":league,"reason":"SUMMARY_ERROR","detail":str(exc)[:240]})
-            continue
-
         if p.get("market_class")=="PLAYER_PROP":
+            try:
+                s=summaries.get(cache_key)
+                if s is None:
+                    s=summary(league,provider_id); summaries[cache_key]=s
+            except Exception as exc:
+                counts["SUMMARY_ERROR"]+=1; by_league[league]["SUMMARY_ERROR"]+=1
+                unresolved.append({"prediction_id":pid,"league":league,"reason":"SUMMARY_ERROR","detail":str(exc)[:240]})
+                continue
             actual, evidence=actual_player_market(p,s)
         else:
             actual, evidence=actual_game_market(p,event)
@@ -710,8 +789,10 @@ def main():
         "policy":"Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
         "providers":{
             "ESPN_PUBLIC":{"leagues":sorted(ESPN.keys()),"cost":"free/public"},
+            "ESPN_PUBLIC_SPECIAL":{"coverage":{"Tennis":"ATP/WTA GAME_ML finals","MMA":"UFC GAME_ML finals"},"cost":"free/public"},
             "VERIFIED_INBOX":{"pattern":"data/inbox/results_*.csv","accepted_rows":len(inbox)},
-            "pending_automatic_adapters":["Tennis","MMA","Boxing","FIBA_Men","FIBA_Women"]
+            "pending_automatic_adapters":["Boxing","FIBA_Men","FIBA_Women"],
+            "pending_player_prop_adapters":["Tennis","MMA","Boxing","FIBA_Men","FIBA_Women"]
         },
         "predictions_in_registry":len(registry_predictions),
         "website_suggestions_recorded":suggestion_total,
