@@ -43,6 +43,12 @@ def num(v):
 
 def clamp(v,lo,hi):return max(lo,min(hi,v))
 
+def event_start(event):
+    try:
+        return datetime.fromisoformat(str(event.get("commence_time") or event.get("event_start_pt") or "").replace("Z","+00:00")).astimezone(timezone.utc)
+    except Exception:
+        return None
+
 def digest(value):
     raw=json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,default=str)
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
@@ -275,23 +281,61 @@ def main():
                 evaluated_sides+=1
         evaluated_events+=1
         event["game_markets"].sort(key=lambda x:-(num(x.get("ljpc")) or -1))
+    # Final publication guard: Game Winner evaluation can take long enough for a
+    # previously future event to start. Revalidate every event immediately before
+    # rewriting the actionable board, including leagues not touched by this run.
+    write_now=datetime.now(timezone.utc)
+    payload_events=list(payload.get("events") or [])
+    kept_events=[]
+    pruned_ids=[]
+    for event in payload_events:
+        start=event_start(event)
+        if start is None or start<=write_now:
+            pruned_ids.append(str(event.get("source_event_id") or event.get("event_id") or "UNKNOWN"))
+            continue
+        kept_events.append(event)
+    payload["events"]=kept_events
     payload["game_winner_evaluation"]={
       "schema_version":"LSI-GAME-WINNER-SPECTRUM-1",
-      "generated_at_utc":NOW.isoformat(),
+      "generated_at_utc":write_now.isoformat(),
       "model":"LEGZ_GAME_SPECTRUM_2",
       "evaluated_events":evaluated_events,
       "evaluated_sides":evaluated_sides,
       "skipped_events_without_complete_independent_evidence":skipped_events,
-      "market_only_prohibited":True
+      "market_only_prohibited":True,
+      "started_events_pruned_before_write":len(pruned_ids),
+      "pruned_event_ids":pruned_ids[:50]
     }
-    payload["generated_at_utc"]=NOW.isoformat()
+    guard=dict(payload.get("publication_guard") or {})
+    guard.update({
+      "cutoff_utc":write_now.isoformat(),
+      "started_events_pruned":int(guard.get("started_events_pruned") or 0)+len(pruned_ids),
+      "last_writer":"lsi_game_winner_spectrum.py",
+      "policy":"An event must still be strictly pre-start at final artifact write time; any started/invalid event is removed before JSON/JS publication."
+    })
+    payload["publication_guard"]=guard
+    payload["generated_at_utc"]=write_now.isoformat()
     payload["actionable_policy"]="Only not-yet-started events may expose props or odds. PLAYER_PROP and GAME_ML LJPC require completed L&J evaluation. Market-only probability remains secondary provisional evidence and never becomes LJPC by itself."
-    BOARD.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    BOARD_JS.write_text("/* Generated rolling future market board; do not edit manually. */\nwindow.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n",encoding="utf-8")
+
+    json_text=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
+    js_text="/* Generated rolling future market board; do not edit manually. */\nwindow.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n"
+    tmp_json=BOARD.with_suffix(".json.tmp")
+    tmp_js=BOARD_JS.with_suffix(".js.tmp")
+    tmp_json.write_text(json_text,encoding="utf-8")
+    tmp_js.write_text(js_text,encoding="utf-8")
+    check=json.loads(tmp_json.read_text(encoding="utf-8"))
+    for event in check.get("events") or []:
+        start=event_start(event)
+        if start is None or start<=write_now:
+            raise SystemExit(f"Publication guard failed before Game Winner write: {event.get('source_event_id')}")
+    tmp_json.replace(BOARD)
+    tmp_js.replace(BOARD_JS)
+
     EVIDENCE.write_text(json.dumps({
-      "schema_version":"LSI-GAME-WINNER-EVIDENCE-1","generated_at_utc":NOW.isoformat(),
-      "espn_scoreboard_calls":calls,"errors":errors,"evaluations":evidence_rows
+      "schema_version":"LSI-GAME-WINNER-EVIDENCE-1","generated_at_utc":write_now.isoformat(),
+      "espn_scoreboard_calls":calls,"errors":errors,"evaluations":evidence_rows,
+      "started_events_pruned_before_write":len(pruned_ids),"pruned_event_ids":pruned_ids[:50]
     },indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"LEGZ Game Winner Spectrum: evaluated_events={evaluated_events} evaluated_sides={evaluated_sides} skipped={skipped_events} scoreboard_calls={calls} errors={len(errors)}")
+    print(f"LEGZ Game Winner Spectrum: evaluated_events={evaluated_events} evaluated_sides={evaluated_sides} skipped={skipped_events} scoreboard_calls={calls} errors={len(errors)} started_events_pruned={len(pruned_ids)}")
 
 if __name__=="__main__":main()
