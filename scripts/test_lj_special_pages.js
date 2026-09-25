@@ -1,0 +1,9 @@
+const fs=require('fs'),vm=require('vm');
+const context={window:{LJ_FUTURE_MARKET_BOARD:{events:[]}},document:{},console};context.window.window=context.window;
+vm.createContext(context);vm.runInContext(fs.readFileSync('lj_special_pages.js','utf8'),context);
+const t=context.window.LJSpecial._test;
+if(t.implied(-150).toFixed(1)!=='60.0')throw Error('American odds implied probability failed');
+if(t.pomType({pom_type:'SUPER_GOBLIN'})!=='TROLL')throw Error('Super Goblin/Troll classification failed');
+if(!t.qualifiedSignal({status:'VALIDATED',sample_size:25,observed_rate_pct:71,baseline_rate_pct:60,lift_pp:11,current_matches:['A @ B'],recommended_poms:[{participant:'QB'}],provenance:['LSI']}))throw Error('Qualified signal rejected');
+if(t.qualifiedSignal({status:'VALIDATED',sample_size:12,observed_rate_pct:90,baseline_rate_pct:60,lift_pp:30,current_matches:['A @ B'],recommended_poms:[{participant:'QB'}],provenance:['LSI']}))throw Error('Underpowered signal published');
+console.log('L&J special pages tests passed');

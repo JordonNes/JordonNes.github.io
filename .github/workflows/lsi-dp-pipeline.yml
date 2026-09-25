@@ -338,6 +338,9 @@ jobs:
       - name: Publish rolling 0-7 day L&J future market board
         if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/lsi_publish_future_board.py
+      - name: Publish qualified JINX I Spy signals
+        if: steps.league_schedule.outputs.has_work == 'true'
+        run: python scripts/lsi_publish_ispy.py
       - name: LEGZ Game Winner Spectrum — independent performance + market evidence
         if: steps.league_schedule.outputs.cycle_required == 'true'
         env:
@@ -452,7 +455,7 @@ jobs:
             data/team_roster_registry.json data/visual_asset_registry.json data/visual_asset_registry.js
             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json
             data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json data/game_winner_evidence.json
-            data/projection_gap_report.json
+            data/projection_gap_report.json data/lsi_ispy_signals.json data/lsi_ispy_signals.js
           )
           snapshot="$(mktemp -d)"
           for p in "${outputs[@]}"; do

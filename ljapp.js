@@ -145,8 +145,8 @@
   }
   function hero(kicker,title,description,chips=[],home=false){
     const actions = home
-      ? `<a class="action" href="Recap.html">📊 Yesterday's Recap</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a><a class="action" href="MLB.html">⚾ MLB</a><a class="action" href="NCAA_Football.html">🏈 CFB</a><a class="action" href="Boxing.html">🥊 Boxing</a>`
-      : `<a class="action" href="LJ_index.html">← Daily Home</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a>`;
+      ? `<a class="action" href="Recap.html">📊 Yesterday's Recap</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="Treasure_Troll.html">💎 Treasure Troll</a><a class="action" href="I_Spy.html">👁 I Spy</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a><a class="action" href="MLB.html">⚾ MLB</a><a class="action" href="NCAA_Football.html">🏈 CFB</a><a class="action" href="Boxing.html">🥊 Boxing</a>`
+      : `<a class="action" href="LJ_index.html">← Daily Home</a><a class="action" href="Quickie_Generator.html">Quickie Generator</a><a class="action" href="Treasure_Troll.html">💎 Treasure Troll</a><a class="action" href="I_Spy.html">👁 I Spy</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a>`;
     return `<section class="hero"><div class="kicker">${esc(kicker)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="chips">${chips.map(([t,c])=>`<span class="chip ${cls(c)}">${esc(t)}</span>`).join("")}</div><div class="actions">${actions}</div></section>`;
   }
   function nav(){

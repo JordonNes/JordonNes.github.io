@@ -7,6 +7,11 @@ on:
     paths:
       - 'LJ_index.html'
       - 'Quickie_Generator.html'
+      - 'Treasure_Troll.html'
+      - 'I_Spy.html'
+      - 'lj_special_pages.js'
+      - 'data/lsi_ispy_signals.js'
+      - 'scripts/test_lj_special_pages.js'
       - 'LSI_Status.html'
       - 'lsi_status.js'
       - 'NFL.html'
@@ -51,6 +56,7 @@ jobs:
       - name: JavaScript syntax
         run: |
           node --check ljapp.js
+          node --check lj_special_pages.js
           node --check lsi_registry_bridge.js
           node --check scripts/frontend_home_audit.js
           node --check scripts/qc_publication_audit.js
@@ -59,9 +65,11 @@ jobs:
           node --check data/fiba_competitions.js
           node --check scripts/fiba_hub_audit.js
           node --check scripts/fiba_scenario_test.js
+          node --check scripts/test_lj_special_pages.js
       - name: LJ_index + QC presentation audit
         run: |
           node scripts/frontend_home_audit.js
           node scripts/qc_publication_audit.js
           node scripts/fiba_hub_audit.js
           node scripts/fiba_scenario_test.js
+          node scripts/test_lj_special_pages.js
