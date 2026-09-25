@@ -42,6 +42,7 @@ on:
       - 'scripts/lsi_readiness_report.py'
       - 'scripts/lsi_visual_registry.py'
       - 'scripts/lsi_publish_future_board.py'
+      - 'scripts/test_lsi_future_board_guard.py'
       - 'scripts/lsi_game_winner_spectrum.py'
       - 'scripts/lsi_promote_learning.py'
       - 'data/learning_overlay.json'
@@ -150,6 +151,7 @@ jobs:
       - name: Verify event-aware scheduling rules
         run: |
           python scripts/test_lsi_checkpoint_clock.py
+          python scripts/test_lsi_future_board_guard.py
           python scripts/test_lsi_league_scheduler.py
           python scripts/test_legz_material_hash.py
       - name: Verify ESPN sports-truth adapter

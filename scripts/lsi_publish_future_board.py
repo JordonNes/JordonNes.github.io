@@ -251,6 +251,27 @@ def carry_forward_game_evaluations(event,rows,previous):
         carried+=1
     return carried
 
+def represented_game_ml_ids(events):
+    """Return every GAME_ML source ID actually represented in the public board.
+
+    A market row can be attached to a canonical event shell through team/time
+    reconciliation even when its provider event ID differs from source_event_id.
+    The loss guard must therefore count both the shell ID and each attached
+    GAME_ML row's own event_id.
+    """
+    represented=set()
+    for event in events:
+        if event.get("game_markets"):
+            shell_id=str(event.get("source_event_id") or "").strip()
+            if shell_id:
+                represented.add(shell_id)
+        for row in event.get("game_markets") or []:
+            row_id=str(row.get("event_id") or "").strip()
+            if row_id:
+                represented.add(row_id)
+    return represented
+
+
 def game_markets_for_event(event, by_event):
     """Resolve GAME_ML evidence even when source adapters use different event IDs."""
     event_id=str(event.get("source_event_id") or "").strip()
@@ -448,7 +469,7 @@ def main():
     ml_count=sum(len(e.get("game_markets") or []) for e in events)
     if live_rows:
         eligible_ids={str(r.get("event_id")) for r in live_rows if r.get("event_id")}
-        published_ids={str(e.get("source_event_id")) for e in events if e.get("game_markets")}
+        published_ids=represented_game_ml_ids(events)
         missing=sorted(eligible_ids-published_ids)
         if missing:
             raise SystemExit(
