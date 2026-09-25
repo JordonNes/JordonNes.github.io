@@ -402,10 +402,27 @@ def main():
           "game_markets":event_game_markets,
           "carried_game_winner_evaluations":carried_game_evals
         })
+    # Re-check the event clock immediately before publication. The pipeline can
+    # spend several minutes evaluating props/Game Winners after the initial NOW
+    # snapshot; an event that crossed its start time during that work must never
+    # remain on the actionable future board.
+    publish_now=datetime.now(timezone.utc)
+    before_guard=len(events)
+    events=[
+        e for e in events
+        if (parse(e.get("commence_time") or e.get("event_start_pt")) is not None)
+        and parse(e.get("commence_time") or e.get("event_start_pt"))>publish_now
+    ]
+    started_events_pruned=before_guard-len(events)
     events.sort(key=lambda x:(x.get("commence_time") or "",x.get("league") or "",x.get("away") or ""))
     payload={
       "schema_version":"LJ-FUTURE-MARKET-1",
-      "generated_at_utc":NOW.isoformat(),
+      "generated_at_utc":publish_now.isoformat(),
+      "publication_guard":{
+        "cutoff_utc":publish_now.isoformat(),
+        "started_events_pruned":started_events_pruned,
+        "policy":"An event must still be strictly pre-start at final artifact write time; initial collection eligibility is not sufficient."
+      },
       "default_horizon_days":7,
       "nfl_rollover_policy":"Tuesday-Monday publication week. Next-week inventory may stage Monday after 12:00 PT, but public NFL per-game QCs do not roll until Tuesday 00:00 PT.",
       "actionable_policy":"Only not-yet-started events may expose props or odds. Public PLAYER_PROP rows require exact-market verification plus completed L&J evaluation and LJPC. Pending market evidence remains internal. GAME_ML market probability remains secondary evidence until independently evaluated.",
@@ -419,7 +436,7 @@ def main():
                 row for row in (live_check.get("rows") or [])
                 if row.get("market_class")=="GAME_ML"
                 and parse(row.get("event_start_pt"))
-                and parse(row.get("event_start_pt"))>NOW
+                and parse(row.get("event_start_pt"))>publish_now
                 # The future board intentionally publishes only its league-specific
                 # horizon. A valid moneyline beyond that horizon is not "lost"; it
                 # simply is not yet eligible for this rolling board.
@@ -461,6 +478,6 @@ def main():
     tmp_json.replace(OUT)
     tmp_js.replace(OUTJS)
     carried_total=sum(int(e.get("carried_game_winner_evaluations") or 0) for e in events)
-    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {ml_count} GAME_ML side(s), carried_forward_game_evals={carried_total}.")
+    print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {ml_count} GAME_ML side(s), carried_forward_game_evals={carried_total}, started_events_pruned={started_events_pruned}.")
 
 if __name__=="__main__":main()
