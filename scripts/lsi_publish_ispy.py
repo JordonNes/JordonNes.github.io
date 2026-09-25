@@ -1,110 +1,89 @@
 #!/usr/bin/env python3
-"""Validate and publish evidence-backed JINX I Spy observations.
+"""Validate and publish JINX I Spy analog intelligence.
 
-I Spy intentionally has no fixed 25-result publication gate. The upstream
-observer measures condition magnitude and nearest-neighbor similarity. This
-publisher exposes only evidence-bearing EMERGING / DEVELOPING / VALIDATED
-observations with a current exact POM, transparent sample/uncertainty, and
-provenance. TRACKING rows remain internal until their measured effect becomes
-large enough to be decision-relevant.
+Discovery and exploitation are intentionally separate:
+- validated/emerging observations may publish without a current POM;
+- current POMs are attached only when an exact, already L&J-evaluated market exists;
+- persistent learned patterns come from the independent pattern library.
 
-Positive and negative associations are both allowed. JINX may support a current
-POM or challenge it. Neither direction is a causal claim.
+There is no fixed raw-observation minimum. Raw sample size is disclosed while
+publication quality is governed by effective sample size, analog similarity,
+lift versus baseline, stability across neighborhood depths, and provenance.
 """
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-DATA=ROOT/"data"
-SOURCE=DATA/"lsi_ispy_candidates.json"
-OUT=DATA/"lsi_ispy_signals.json"
-OUTJS=DATA/"lsi_ispy_signals.js"
-
-PUBLISHABLE={"EMERGING","DEVELOPING","VALIDATED"}
+DATA=ROOT/'data'
+SOURCE=DATA/'lsi_ispy_candidates.json'
+LIBRARY=DATA/'lsi_ispy_pattern_library.json'
+OUT=DATA/'lsi_ispy_signals.json'
+OUTJS=DATA/'lsi_ispy_signals.js'
 
 def number(value):
-    try:
-        return float(value)
-    except (TypeError,ValueError):
-        return None
+    try:return float(value)
+    except (TypeError,ValueError):return None
 
-def qualified(signal):
-    sample=number(signal.get("sample_size"))
-    effective=number(signal.get("effective_sample_size"))
-    observed=number(signal.get("observed_rate_pct"))
-    baseline=number(signal.get("baseline_rate_pct"))
-    lift=number(signal.get("lift_pp"))
+def qualifies(signal,status):
+    observed=number(signal.get('observed_rate_pct'));baseline=number(signal.get('baseline_rate_pct'))
+    lift=number(signal.get('lift_pp'));ess=number(signal.get('effective_sample_size'));sim=number(signal.get('mean_similarity_pct'))
+    stability=number(signal.get('stability_score'));sample=number(signal.get('sample_size'))
     if lift is None and observed is not None and baseline is not None:
-        lift=observed-baseline
-        signal["lift_pp"]=round(lift,2)
+        lift=observed-baseline;signal['lift_pp']=round(lift,2)
+    minimum_ess=7 if status=='VALIDATED' else 4
+    minimum_lift=7.5 if status=='VALIDATED' else 5.0
+    minimum_sim=58 if status=='VALIDATED' else 52
+    minimum_stability=.66 if status=='VALIDATED' else .50
     return (
-        str(signal.get("status","")).upper() in PUBLISHABLE
+        str(signal.get('status','')).upper()==status
         and sample is not None and sample>0
-        and effective is not None and effective>0
-        and observed is not None and baseline is not None
-        and lift is not None and abs(lift)>=5.0
-        and bool(signal.get("cohort_definition") or signal.get("conditions"))
-        and bool(signal.get("condition_profile"))
-        and bool(signal.get("outcome"))
-        and bool(signal.get("current_matches"))
-        and bool(signal.get("recommended_poms") or signal.get("affected_poms"))
-        and bool(signal.get("provenance"))
+        and observed is not None and baseline is not None and lift is not None
+        and ess is not None and ess>=minimum_ess
+        and sim is not None and sim>=minimum_sim
+        and stability is not None and stability>=minimum_stability
+        and lift>=minimum_lift
+        and bool(signal.get('current_matches'))
+        and bool(signal.get('provenance'))
+        and bool(signal.get('outcome'))
+        and bool(signal.get('conditions') or signal.get('cohort_definition'))
     )
 
 def main():
-    candidates=[]
-    source_meta={}
+    raw={}
     if SOURCE.exists():
-        raw=json.loads(SOURCE.read_text(encoding="utf-8"))
-        if isinstance(raw,dict):
-            candidates=raw.get("signals",[])
-            source_meta={
-                "settled_feature_rows":raw.get("settled_feature_rows",0),
-                "current_evaluated_poms":raw.get("current_evaluated_poms",0),
-                "methodology":raw.get("methodology") or {},
-            }
-        elif isinstance(raw,list):
-            candidates=raw
-    signals=[item for item in candidates if isinstance(item,dict) and qualified(item)]
-    status_rank={"VALIDATED":3,"DEVELOPING":2,"EMERGING":1}
-    signals.sort(
-        key=lambda item:(
-            status_rank.get(str(item.get("status") or "").upper(),0),
-            number(item.get("evidence_strength")) or 0,
-            abs(number(item.get("lift_pp")) or 0),
-            number(item.get("effective_sample_size")) or 0,
-        ),
-        reverse=True,
-    )
+        try:raw=json.loads(SOURCE.read_text(encoding='utf-8'))
+        except json.JSONDecodeError:raw={}
+    candidates=raw.get('signals',[]) if isinstance(raw,dict) else []
+    validated=[];emerging=[]
+    for item in candidates:
+        if not isinstance(item,dict):continue
+        copy=dict(item);status=str(copy.get('status','')).upper()
+        if status=='VALIDATED' and qualifies(copy,'VALIDATED'):validated.append(copy)
+        elif status=='EMERGING' and qualifies(copy,'EMERGING'):emerging.append(copy)
+    key=lambda item:(number(item.get('lift_pp')) or 0,number(item.get('mean_similarity_pct')) or 0,number(item.get('effective_sample_size')) or 0)
+    validated.sort(key=key,reverse=True);emerging.sort(key=key,reverse=True)
+    learned=[]
+    if LIBRARY.exists():
+        try:learned=json.loads(LIBRARY.read_text(encoding='utf-8')).get('patterns',[])
+        except (json.JSONDecodeError,AttributeError):learned=[]
     payload={
-        "schema_version":"LJ-ISPY-2",
-        "generated_at_utc":datetime.now(timezone.utc).isoformat(),
-        "publication_rules":{
-            "fixed_sample_size_gate":False,
-            "sample_size_disclosed":True,
-            "effective_sample_size_disclosed":True,
-            "minimum_absolute_lift_pp":5.0,
-            "statuses":["EMERGING","DEVELOPING","VALIDATED"],
-            "current_match_required":True,
-            "current_pom_required":True,
-            "condition_magnitude_required":True,
-            "provenance_required":True,
-            "support_and_challenge_allowed":True,
-            "causation_claimed":False,
-        },
-        **source_meta,
-        "candidate_count":len(candidates),
-        "signals":signals,
+      'schema_version':'LJ-ISPY-2',
+      'generated_at_utc':datetime.now(timezone.utc).isoformat(),
+      'engine':raw.get('engine') if isinstance(raw,dict) else None,
+      'publication_rules':{
+        'raw_sample_minimum':None,'sample_size_disclosed':True,'effective_sample_required':True,
+        'validated_min_effective_sample':7,'validated_min_mean_similarity_pct':58,'validated_min_lift_pp':7.5,'validated_min_stability':0.66,
+        'emerging_min_effective_sample':4,'emerging_min_mean_similarity_pct':52,'emerging_min_lift_pp':5.0,'emerging_min_stability':0.50,
+        'current_match_required':True,'current_pom_required':False,'provenance_required':True,
+        'discovery_separate_from_exploitation':True,'causality_claimed':False,
+      },
+      'coverage':raw.get('coverage') if isinstance(raw,dict) else {},
+      'candidate_count':len(candidates),'validated_count':len(validated),'emerging_count':len(emerging),
+      'signals':validated,'emerging_signals':emerging,'learned_patterns':learned,
     }
-    OUT.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    OUTJS.write_text(
-        "/* Generated I Spy signal registry. */\nwindow.LJ_ISPY_SIGNALS="
-        +json.dumps(payload,separators=(",",":"),ensure_ascii=False)
-        +";\n",
-        encoding="utf-8",
-    )
-    print(f"I Spy: published {len(signals)} of {len(candidates)} measured candidates")
+    OUT.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    OUTJS.write_text('/* Generated I Spy analog-intelligence registry. */\nwindow.LJ_ISPY_SIGNALS='+json.dumps(payload,separators=(',',':'),ensure_ascii=False)+';\n',encoding='utf-8')
+    print(f"I Spy: published validated={len(validated)} emerging={len(emerging)} learned={len(learned)} from {len(candidates)} candidates")
 
-if __name__=="__main__":
-    main()
+if __name__=='__main__':main()
