@@ -301,8 +301,9 @@ jobs:
           python scripts/legz_statistical_spectrum.py
           python - <<'PY'
           import json
+          from scripts.legz_statistical_spectrum import EVALUATION_VERSION
           d=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
-          assert d.get('evaluation_engine')=='LEGZ_STATISTICAL_SPECTRUM_3'
+          assert d.get('evaluation_engine')==EVALUATION_VERSION, f"Evaluation engine drift: board={d.get('evaluation_engine')} code={EVALUATION_VERSION}"
           props=[p for e in d.get('events',[]) for p in (e.get('props') or [])]
           evaluated=[p for p in props if p.get('evaluation_status')=='LJ_EVALUATED']
           waiting=[p for p in props if p.get('evaluation_status')=='AWAITING_LJ_EVALUATION']
