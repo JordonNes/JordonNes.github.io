@@ -18,6 +18,7 @@ HISTORY=DATA/"results.csv"
 PERF=DATA/"performance_history.csv"
 CONTEXT=DATA/"context_registry.json"
 PLAYER_CONTEXT=DATA/"player_context.csv"
+ESPN_CONTEXT=DATA/"espn_context.csv"
 CACHE=DATA/"lsi_spectrum_cache.json"
 EVAL_STATE=DATA/"lsi_evaluation_state.json"
 SYNTHETIC_BOOK=DATA/"legz_synthetic_book.json"
@@ -617,25 +618,30 @@ def context_index():
     return out
 
 def player_game_context_index():
-    out={}
-    if not PLAYER_CONTEXT.exists(): return out
-    try:
-        with PLAYER_CONTEXT.open(newline="",encoding="utf-8-sig") as fh:
-            for row in csv.DictReader(fh):
-                player=player_norm(row.get("participant"))
-                if not player: continue
-                key=(player,str(row.get("event_id") or ""))
-                prior=out.get(key)
-                if prior is None or str(row.get("collected_at_pt") or "")>=str(prior.get("collected_at_pt") or ""):
-                    out[key]=row
-                generic=(player,"")
-                prior=out.get(generic)
-                if prior is None or str(row.get("collected_at_pt") or "")>=str(prior.get("collected_at_pt") or ""):
-                    out[generic]=row
-    except (OSError,UnicodeDecodeError):
-        return {}
-    return out
+    """Merge attributable player/game context from manual/curated and ESPN evidence.
 
+    Each source remains provenance-tagged. Latest observation wins for the exact
+    player/event key and for the generic player fallback.
+    """
+    out={}
+    for path in (PLAYER_CONTEXT,ESPN_CONTEXT):
+        if not path.exists(): continue
+        try:
+            with path.open(newline="",encoding="utf-8-sig") as fh:
+                for row in csv.DictReader(fh):
+                    player=player_norm(row.get("participant"))
+                    if not player: continue
+                    key=(player,str(row.get("event_id") or ""))
+                    prior=out.get(key)
+                    if prior is None or str(row.get("collected_at_pt") or "")>=str(prior.get("collected_at_pt") or ""):
+                        out[key]=row
+                    generic=(player,"")
+                    prior=out.get(generic)
+                    if prior is None or str(row.get("collected_at_pt") or "")>=str(prior.get("collected_at_pt") or ""):
+                        out[generic]=row
+        except (OSError,UnicodeDecodeError):
+            continue
+    return out
 def load_fiba_scenarios():
     if not FIBA_SCENARIOS.exists(): return {}
     try:
