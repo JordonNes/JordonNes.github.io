@@ -1,5 +1,5 @@
 {
-  "schema_version": "LSI-SOURCES-3",
+  "schema_version": "LSI-SOURCES-4",
   "policy": "free-first, provenance-required, no fabricated observations",
   "prop_acquisition": {
     "level_a": "KALSHI public API + other public/connected market discovery",
@@ -180,13 +180,29 @@
         "schedule",
         "score",
         "status",
+        "roster_identity",
+        "athlete_identity",
         "injury_context",
+        "transaction_context",
+        "event_summary",
+        "game_odds_context",
+        "predictor_context",
+        "win_probability_context",
+        "broadcast_context",
+        "settlement_context",
         "reporting_context"
       ],
       "mode": "public_json_web",
       "base_url": "https://site.api.espn.com/apis/site/v2/sports",
       "secret_env": null,
-      "optional": false
+      "optional": false,
+      "domains": [
+        "site.api.espn.com",
+        "sports.core.api.espn.com",
+        "site.web.api.espn.com",
+        "cdn.espn.com"
+      ],
+      "note": "Primary free sports-truth/context layer. ESPN odds/predictor data may support analysis but never establishes executable player-prop availability and never becomes LJPC by itself."
     },
     {
       "id": "MLB_STATS",
