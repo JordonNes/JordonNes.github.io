@@ -135,7 +135,9 @@ def effective_threshold(prop,metric=None):
     if metric=="anytime_td" and any(x in market for x in ("2plus td","2 plus td","2 td","2 touchdowns")):
         return 1.5
     side=norm(prop.get("side"))
-    if metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and side in {"yes","over","more"}:
+    if metric in {"anytime_td","rush_tds","receiving_tds","pass_tds","home_runs","goals"} and side in {"yes","no","over","under","more","less"}:
+        # Binary occurrence markets often omit the numeric threshold. Both YES/OVER
+        # and NO/UNDER are evaluations around the same 0.5 event-count boundary.
         return 0.5
     return None
 
