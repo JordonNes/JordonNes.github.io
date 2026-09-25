@@ -51,6 +51,10 @@ def main():
     by_reason = Counter()
     by_league_reason = Counter()
     by_league_market = Counter()
+    by_league_history_n = Counter()
+    projected_history_policy = Counter()
+    continuity_rescues = Counter()
+    missing_players = defaultdict(set)
     samples = defaultdict(list)
     total = 0
     projected = 0
@@ -68,6 +72,11 @@ def main():
             projection = prop.get("player_projection") or (prop.get("spectrum") or {}).get("player_projection")
             if projection:
                 projected += 1
+                policy=str(projection.get("history_policy") or "UNSPECIFIED")
+                projected_history_policy[(league,policy)] += 1
+                prior_n=int(projection.get("prior_continuity_sample_size") or 0)
+                if prior_n>0:
+                    continuity_rescues[league] += 1
                 continue
 
             reason, metric, n, dist = classify(prop)
@@ -76,6 +85,10 @@ def main():
             by_reason[reason] += 1
             by_league_reason[(league, reason)] += 1
             by_league_market[(league, market)] += 1
+            by_league_history_n[(league,n)] += 1
+            participant=str(prop.get("participant") or "").strip()
+            if participant:
+                missing_players[league].add(participant)
 
             key = f"{league}|{reason}|{market}"
             if len(samples[key]) < MAX_SAMPLES_PER_GROUP:
@@ -117,6 +130,18 @@ def main():
             {"league": league, "market": market, "count": count}
             for (league, market), count in sorted(by_league_market.items(), key=lambda kv: (-kv[1], kv[0][0], kv[0][1]))
         ],
+        "missing_by_league_history_n": [
+            {"league":league,"history_n":n,"count":count}
+            for (league,n),count in sorted(by_league_history_n.items(),key=lambda kv:(kv[0][0],kv[0][1]))
+        ],
+        "missing_unique_players_by_league": {
+            league:len(players) for league,players in sorted(missing_players.items())
+        },
+        "projected_by_history_policy": [
+            {"league":league,"history_policy":policy,"count":count}
+            for (league,policy),count in sorted(projected_history_policy.items())
+        ],
+        "continuity_rescued_props_by_league": dict(sorted(continuity_rescues.items())),
         "samples": dict(sorted(samples.items())),
     }
     OUT.write_text(json.dumps(payload, separators=(",", ":"), ensure_ascii=False) + "\n", encoding="utf-8")
