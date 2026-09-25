@@ -167,8 +167,81 @@
     return `${statText?`<span class="lj-stat" title="Statistical / market baseline before the final L&J adjustment">${esc(statText)}</span><span class="lj-stat-sep"> | </span>`:""}<span class="ljpc-badge"><span class="lj-l lj-component"${lAttrs}>L</span><span class="lj-j lj-component"${jAttrs}>J</span><span class="lj-pc">PC</span> <span class="ljpc-value">${esc(lj)}</span></span>`;
   }
 
-  function hotTop(items,label="LEGZ HOT TOP"){
+  const POM_SPORT_LABEL={NCAA_Football:"CFB",NCAA_Basketball:"CBB",FIBA_Men:"FIBA",FIBA_Women:"FIBA"};
+  const pomSportLabel=v=>POM_SPORT_LABEL[String(v||"")]||String(v||"").replace(/_/g," ").toUpperCase();
+  const pomNum=(text,label)=>{
+    const m=String(text||"").match(new RegExp("\\b"+label+"\\s*(-?\\d+(?:\\.\\d+)?)","i"));
+    return m?m[1]:"";
+  };
+  const titlePropWords=value=>{
+    const keepUpper=new Set(["PRA","TD","TDS","RBI","HR","HRS","SOG","3PT","FGM","FGA","QB","RB","WR","TE","MLB","NFL","NBA","WNBA","NHL","FIBA"]);
+    return String(value||"").replace(/_/g," ").replace(/\\s+/g," ").trim().split(" ").map(w=>{
+      const bare=w.replace(/[^A-Za-z0-9]/g,"").toUpperCase();
+      if(keepUpper.has(bare)) return w.toUpperCase();
+      if(/^[+-]?\\d/.test(w)) return w;
+      return w ? w.charAt(0).toUpperCase()+w.slice(1).toLowerCase() : w;
+    }).join(" ");
+  };
+  function parsePlayerPom(raw,participantHint=""){
+    const text=String(raw||"").trim();
+    const coreRaw=text.split(/\\s+•\\s+/)[0].trim();
+    const sourcePrice=(coreRaw.match(/\\(([^)]+)\\)\\s*$/)||[])[1]||"";
+    let core=coreRaw.replace(/\\s*\\([^)]+\\)\\s*$/,"").trim()
+      .replace(/^\\s*(?:GOBLIN|DEMON|NORMAL|MARKET)\\s*[•:—-]?\\s*/i,"");
+    let sport="";
+    const sportPrefix=core.match(/^([A-Za-z_ ]{2,24})\\s*•\\s*(.+)$/);
+    if(sportPrefix && /^(?:NFL|MLB|NBA|WNBA|NHL|FIBA|CFB|CBB|NCAA(?: FOOTBALL| BASKETBALL)?|TENNIS|MMA|BOXING)$/i.test(sportPrefix[1].trim())){
+      sport=sportPrefix[1].trim();
+      core=sportPrefix[2].trim();
+    }
+    const hint=String(participantHint||"").trim();
+    let player=hint, prop=core;
+    if(hint){
+      const q=hint.replace(/[.*+?^$(){}|[\\]\\]/g,"\\  function hotTop(items,label="LEGZ HOT TOP"){
     return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list">${items.map((r,i)=>`<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4],r[5],r[6])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
+  }");
+      prop=core.replace(new RegExp("^"+q+"\\s*(?:—|-)?\\s*","i"),"").trim();
+    }else{
+      const split=core.match(/^(.+?)\\s+((?:OVER|UNDER|MORE|LESS)\\b.*)$/i);
+      if(split){player=split[1].trim();prop=split[2].trim();}
+      else{
+        const yesNo=core.match(/^(.+?)\\s+(.+?)\\s*[—-]\\s*(YES|NO)$/i);
+        if(yesNo){player=yesNo[1].trim();prop=`${yesNo[3]} ${yesNo[2]}`;}
+      }
+    }
+    prop=prop.replace(/^(OVER|UNDER|MORE|LESS|YES|NO)\\b/i,m=>m.charAt(0).toUpperCase()+m.slice(1).toLowerCase());
+    const side=prop.match(/^(Over|Under|More|Less|Yes|No)\\b/i);
+    if(side){
+      const rest=prop.slice(side[0].length).trim();
+      const line=rest.match(/^([+-]?\\d+(?:\\.\\d+)?)\\s*(.*)$/);
+      prop=line ? `${side[0]} ${line[1]}${line[2]?` ${titlePropWords(line[2])}`:""}` : `${side[0]} ${titlePropWords(rest)}`.trim();
+    }else prop=titlePropWords(prop);
+    return {
+      player,prop,sport,sourcePrice,
+      l5:pomNum(text,"L5 AVG"),
+      projection:pomNum(text,"L&J PROJ"),
+      pomValue:pomNum(text,"POM Value"),
+      ljpc:(text.match(/(?:LJPC|L&J)\\s*(\\d+(?:\\.\\d+)?)%/i)||[])[1]||"",
+      legz:(text.match(/⟦L=([^;]*);J=/)||[])[1]||"",
+      jinx:(text.match(/⟦L=[^;]*;J=([^⟧]*)⟧/)||[])[1]||""
+    };
+  }
+  function pomPlayerRow({index=0,sport="",player="",prop="",ljpc="",l5="",projection="",pomValue="",legz="",jinx="",tooltip=""}){
+    const league=pomSportLabel(sport||ACTIVE_SPORT_KEY);
+    const meta=[l5?`L5 AVG ${l5}`:"",projection?`L&J PROJ ${projection}`:"",pomValue?`POM Value ${pomValue}`:""].filter(Boolean);
+    const tip=tooltip?` title="${esc(tooltip)}"`:"";
+    return `<span class="pom-display"><span class="pom-primary">${index?`<span class="pom-rank">${index}.</span> `:""}${league?`<span class="pom-sport">${esc(league)}</span> <span class="pom-dot">•</span> `:""}<span class="qc-leg-player pom-player">${esc(player)}</span> <span class="pom-dash">—</span> <span class="qc-leg-prop pom-prop"${tip}>${esc(prop)}</span></span><span class="pom-secondary"><span class="qc-lj-score pom-ljpc">${ljpcBadge(ljpc?`${ljpc}%`:"—","",legz,jinx)}</span>${meta.length?`<span class="pom-metrics">${meta.map(esc).join(" • ")}</span>`:""}</span></span>`;
+  }
+
+  function hotTop(items,label="LEGZ HOT TOP"){
+    const render=(r,i)=>{
+      const detail=String((r||[])[3]||"");
+      const isPlayer=/PLAYER PROP|\\b(?:OVER|UNDER|MORE|LESS)\\b/i.test(String((r||[])[1]||"")+" "+detail) && !/\\bML\\b|MONEYLINE/i.test(String((r||[])[1]||""));
+      if(!isPlayer) return `<li class="${isWatch(r.join(" • "))?"qc-watch":""}"><span class="headliner-main">${i+1}. ${esc(r[0])} — ${esc(r[1])}</span><span class="headliner-sub">${ljpcBadge(r[2],r[4],r[5],r[6])}${r[3]?` <span class="headliner-detail">• ${esc(r[3])}</span>`:""}</span></li>`;
+      const parsed=parsePlayerPom(`${r[0]} ${r[1]} • ${detail}`,r[0]);
+      return `<li class="pom-row ${isWatch(r.join(" • "))?"qc-watch":""}">${pomPlayerRow({index:i+1,sport:r[7]||parsed.sport||ACTIVE_SPORT_KEY,player:r[0]||parsed.player,prop:parsed.prop||r[1],ljpc:String(r[2]||"").replace(/[^0-9.]/g,""),l5:parsed.l5,projection:parsed.projection,pomValue:parsed.pomValue,legz:r[5]??parsed.legz,jinx:r[6]??parsed.jinx,tooltip:parsed.sourcePrice})}</li>`;
+    };
+    return `<div class="headliner-card legz-hot-card"><div class="card-title black"><span>${esc(label)}</span><span>RANKED MARKET EXPRESSIONS</span></div>${items && items.length ? `<ul class="headliner-list pom-list">${items.map(render).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT L&amp;J PROP</b><p>No current verified player/participant prediction is published for this section.</p></div>`}</div>`;
   }
   function winners(items,label="JINX GAME WINNERS"){
     const mlOnly=(items||[]).filter(r=>/\bML\b|MONEYLINE/i.test(String((r||[])[1]||"")+" "+String((r||[])[3]||"")));
@@ -236,45 +309,22 @@
   function rules(){
     return `<div class="card qc-standard"><div class="card-title purple"><span>PER-GAME QUICKIE OPERATING RULE</span><span>EVENT STATE CONTROLS WHAT IS SHOWN</span></div><div class="qc-rules"><div class="qc-rule"><b>Pregame</b><span>Show team logos with the JINX moneyline winner and current per-game odds centered between them, plus the preset box-score shell, LEGZ Player Hot Top, and only populated parlay sections. Empty decision columns are omitted.</span></div><div class="qc-rule"><b>Game Started</b><span>Keep the frozen JINX predicted game odds/winner and team visuals at far left, the pregame-locked LEGZ Hot Top beside it, and move the activated live box score to the right. SNS1, SNS2, Normal and Aggressive/Demon are removed.</span></div><div class="qc-rule"><b>Final</b><span>Keep the pregame Hot Top as the prediction record and show FINAL status plus the ending box score. Remove JINX Game Winner, game odds and every ticket/parlay section.</span></div><div class="qc-rule"><b>Paused / Delayed</b><span>State the interruption clearly. Do not manufacture a replacement parlay while play is interrupted.</span></div><div class="qc-rule"><b>Rescheduled / Postponed</b><span>State the official status and remove stale executable parlay sections until the event returns to pregame status.</span></div><div class="qc-rule"><b>No Prediction</b><span>Do not render an empty parlay box. L&J never invents a leg merely to fill presentation space.</span></div></div><p class="qc-lock-note">Live and final views preserve only the locked pregame information permitted by the event-state rule; nothing is backfilled after the event starts. Live/final game state is refreshed from the configured public status feed when the page is called.</p></div>`;
   }
-  function renderQcLeg(value){
+  function renderQcLeg(value,index=0,sport=ACTIVE_SPORT_KEY){
     const raw=String(value??"").trim();
     const consensus=raw.match(/(?:CONDITIONAL LEAN\s*[—-]\s*)?MARKET CONSENSUS\s*(\d+(?:\.\d+)?)%/i);
-    const stat=raw.match(/\b(?:STAT|PROV)\s*(\d+(?:\.\d+)?)%/i);
-    const comp=raw.match(/⟦L=([^;]*);J=([^⟧]*)⟧/);
-    const legz=comp?String(comp[1]||"").trim():"";
-    const jinx=comp?String(comp[2]||"").trim():"";
-    const lj=raw.match(/(?:PROVISIONAL\s+)?(?:LJPC|L&J)\s*(\d+(?:\.\d+)?)%/i);
-    let main=raw
-      .replace(/\s*⟦L=[^;]*;J=[^⟧]*⟧/g,"")
-      .replace(/\s*•\s*CONDITIONAL LEAN\s*[—-]\s*MARKET CONSENSUS\s*\d+(?:\.\d+)?%/i,"")
-      .replace(/\s*•\s*MARKET CONSENSUS\s*\d+(?:\.\d+)?%/i,"")
-      .replace(/\s*•\s*LEGZ\s*\d+(?:\.\d+)?%\s*\+\s*JINX\s*[+-]?\s*\d+(?:\.\d+)?%\s*=\s*L&J\s*\d+(?:\.\d+)?%/i,"")
-      .replace(/\s*•\s*(?:STAT|PROV)\s*\d+(?:\.\d+)?%/i,"")
-      .replace(/\s*•\s*(?:PROVISIONAL\s+)?(?:LJPC|L&J)\s*\d+(?:\.\d+)?%/i,"")
-      .trim();
-    let book="";
-    const bookMatch=main.match(/\s*(\([+-]?\d+(?:\.\d+)?(?:\s+[^)]+)?\))\s*$/);
-    if(bookMatch){book=bookMatch[1];main=main.slice(0,bookMatch.index).trim();}
-    let player="",prop=main;
-    const sideSplit=main.match(/^(.+?)(\s+(?:OVER|UNDER|MORE|LESS)\b.*)$/i);
-    const typeSplit=!sideSplit?main.match(/^(.+?)(\s+(?:Player|Batter|Pitcher|Goalie)\b.*)$/i):null;
-    const split=sideSplit||typeSplit;
-    if(split){player=split[1].trim();prop=split[2].trim();}
-    const mainHtml=player
-      ? `<span class="qc-leg-player">${esc(player)}</span> <span class="qc-leg-prop">${esc(prop)}</span>`
-      : `<span class="qc-leg-prop">${esc(prop)}</span>`;
-    const bookHtml=book?` <span class="qc-leg-book">${esc(book)}</span>`:"";
-    const scoreHtml=consensus
-      ? ` <span class="qc-score-sep">•</span> <span class="qc-consensus" title="Conditional lean — market consensus">MARKET CONSENSUS ${esc(consensus[1])}%</span>`
-      : lj
-        ? ` <span class="qc-score-sep">•</span> <span class="qc-lj-score">${ljpcBadge(`${lj[1]}%`,stat?`${stat[1]}%`:"",legz,jinx)}</span>`
-        : "";
-    return `<span class="qc-leg-main">${mainHtml}${bookHtml}${scoreHtml}</span>`;
+    const parsed=parsePlayerPom(raw);
+    if(parsed.ljpc){
+      return `<span class="qc-leg-main">${pomPlayerRow({index,sport:parsed.sport||sport,player:parsed.player,prop:parsed.prop,ljpc:parsed.ljpc,l5:parsed.l5,projection:parsed.projection,pomValue:parsed.pomValue,legz:parsed.legz,jinx:parsed.jinx,tooltip:parsed.sourcePrice})}</span>`;
+    }
+    const main=raw.split(/\s+•\s+/)[0].replace(/\s*\([^)]+\)\s*$/,"").trim();
+    const fallback=parsePlayerPom(main);
+    const consensusHtml=consensus?`<span class="qc-consensus" title="Conditional lean — market consensus">MARKET CONSENSUS ${esc(consensus[1])}%</span>`:"";
+    return `<span class="qc-leg-main"><span class="pom-primary">${index?`<span class="pom-rank">${index}.</span> `:""}${sport?`<span class="pom-sport">${esc(pomSportLabel(sport))}</span> <span class="pom-dot">•</span> `:""}<span class="qc-leg-player pom-player">${esc(fallback.player)}</span> <span class="pom-dash">—</span> <span class="qc-leg-prop pom-prop">${esc(fallback.prop)}</span></span>${consensusHtml}</span>`;
   }
   function ticketList(items){
     const arr=cleanDecisionItems(items);
     if(!arr.length) return "";
-    return `<ul>${arr.map(x=>`<li class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</li>`).join("")}</ul>`;
+    return `<ul class="pom-list">${arr.map((x,i)=>`<li class="pom-row ${isWatch(x)?"qc-watch":""}">${renderQcLeg(x,i+1)}</li>`).join("")}</ul>`;
   }
   function qcTicketCell(label,kind,items,extraClass=""){
     const arr=cleanDecisionItems(items);
@@ -294,7 +344,7 @@
     const cells=[];
     const pregame=!qcStatusOnly(r);
     const placeholder=(label,kind,extraClass)=>`<div class="qc-cell qc-ticket ${extraClass} qc-pending"><div class="qc-ticket-h ${kind}">${esc(label)}</div><div class="qc-foot">No qualified executable POM parlay currently meets this mode's publication gate.</div></div>`;
-    if(hot.length) cells.push(`<div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map(x=>`<p class="${isWatch(x)?"qc-watch":""}">${renderQcLeg(x)}</p>`).join("")}</div></div>`);
+    if(hot.length) cells.push(`<div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map((x,i)=>`<p class="pom-row ${isWatch(x)?"qc-watch":""}">${renderQcLeg(x,i+1)}</p>`).join("")}</div></div>`);
     else if(pregame) cells.push(`<div class="qc-cell qc-hot qc-pending"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list"><p>Awaiting qualified evaluated POMs.</p></div></div>`);
     const s1=qcTicketCell("SNS / GOBLIN 1","sns sns1",sns1,"qc-sns1"); cells.push(s1||placeholder("SNS / GOBLIN 1","sns sns1","qc-sns1"));
     const s2=qcTicketCell("SNS / GOBLIN 2","sns sns2",sns2,"qc-sns2"); cells.push(s2||placeholder("SNS / GOBLIN 2","sns sns2","qc-sns2"));
@@ -355,7 +405,7 @@
     const game=`<div class="qc-cell qc-game"><div class="qc-time">${esc(r.time)}</div><div class="qc-teams">${teamNameHTML(r.away)}<span class="qc-vs">VS</span>${teamNameHTML(r.home)}</div>${market?`<div class="qc-market">${esc(market)}</div>`:''}${winner?`<div class="qc-winner"><div class="qc-label">JINX GAME WINNER</div><div class="qc-pick">${esc(winner)}${conf}</div></div>`:''}${cfbProjectionHTML(r)}<div class="qc-runtime-status" hidden></div></div>`;
     const joint=legs.length?Math.round(legs.reduce((p,x)=>p*Math.max(0,Math.min(1,qcConfidenceOf(x)/100)),1)*1000)/10:null;
     const hot=legs.length
-      ? `<div class="qc-cell qc-hot qc-cfb-saturday-hot"><h4>LEGZ HOT TOP — SATURDAY CFB • ${legs.length} LEGS</h4><div class="qc-hot-list">${legs.map((x,i)=>`<p>${i+1}. ${renderQcLeg(x)}</p>`).join('')}</div><div class="qc-foot">ONE PARLAY ONLY • NORMAL / DEMON POMs ONLY${joint!==null?` • independent-leg baseline ${joint}%`:''}</div></div>`
+      ? `<div class="qc-cell qc-hot qc-cfb-saturday-hot"><h4>LEGZ HOT TOP — SATURDAY CFB • ${legs.length} LEGS</h4><div class="qc-hot-list">${legs.map((x,i)=>`<p class="pom-row">${renderQcLeg(x,i+1)}</p>`).join('')}</div><div class="qc-foot">ONE PARLAY ONLY • NORMAL / DEMON POMs ONLY${joint!==null?` • independent-leg baseline ${joint}%`:''}</div></div>`
       : `<div class="qc-cell qc-hot qc-pending qc-cfb-saturday-hot"><h4>LEGZ HOT TOP — SATURDAY CFB</h4><div class="qc-hot-list"><p>Awaiting at least two qualified Normal/Demon POMs.</p></div></div>`;
     return `<div class="qc-row qc-cfb-saturday" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||'')}" style="grid-template-columns:minmax(250px,1fr) minmax(360px,1.55fr)">${game}${hot}</div>`;
   }
