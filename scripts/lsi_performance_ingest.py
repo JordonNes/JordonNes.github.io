@@ -40,6 +40,29 @@ def migrate_legacy_csv(path):
     print(f"Compressed legacy history shard: {legacy.relative_to(ROOT)} -> {path.relative_to(ROOT)}")
 
 def norm(v):return " ".join(re.sub(r"[^a-z0-9]+"," ",str(v or "").lower()).split())
+
+def team_keys(value):
+    raw=norm(value)
+    if not raw:return set()
+    out={raw}
+    tokens=raw.split()
+    if tokens: out.add(tokens[0])
+    initials="".join(t[0] for t in tokens if t)
+    if len(initials)>=2: out.add(initials)
+    return {x for x in out if x}
+
+def event_team_keys(event):
+    out=set()
+    for comp in event.get("competitions") or []:
+        for competitor in comp.get("competitors") or []:
+            team=competitor.get("team") or {}
+            for key in ("displayName","shortDisplayName","name","abbreviation","location"):
+                out.update(team_keys(team.get(key)))
+    return out
+
+def event_matches_team_filter(event,filters):
+    if not filters:return True
+    return bool(event_team_keys(event) & filters)
 def num(v):
     if v in (None,""):return None
     m=re.search(r"[-+]?\d+(?:\.\d+)?",str(v).replace(",",""))
@@ -211,10 +234,14 @@ def append(rows,path=OUT):
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--days-back",type=int,default=3); ap.add_argument("--league",action="append",choices=sorted(ESPN))
     ap.add_argument("--max-events",type=int,default=120)
+    ap.add_argument("--team",action="append",help="Optional team filter. Only matching ESPN event summaries are fetched.")
     ap.add_argument("--output",help="Optional output CSV path relative to repo; defaults to data/performance_history.csv")
     ap.add_argument("--date-from",help="Explicit inclusive YYYY-MM-DD start date")
     ap.add_argument("--date-to",help="Explicit inclusive YYYY-MM-DD end date")
     args=ap.parse_args(); leagues=args.league or list(ESPN); today=datetime.now(timezone.utc).date()
+    team_filter=set()
+    for value in args.team or []:
+        team_filter.update(team_keys(value))
     if bool(args.date_from) != bool(args.date_to):
         raise SystemExit("--date-from and --date-to must be supplied together")
     if args.date_from:
@@ -237,6 +264,8 @@ def main():
                 print(f"WARN history scoreboard {league} {day}: {exc}"); continue
             for event in payload.get("events") or []:
                 if not final(event):continue
+                if team_filter and league=="NCAA_Football" and not event_matches_team_filter(event,team_filter):
+                    continue
                 if checked>=args.max_events:break
                 checked+=1; events+=1
                 eid=str(event.get("id") or "")

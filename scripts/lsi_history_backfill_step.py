@@ -12,6 +12,23 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 STATE=ROOT/"data"/"history_backfill_state.json"
+BOARD=ROOT/"data"/"qc_prop_board.json"
+
+def active_ncaa_teams():
+    try:
+        payload=json.loads(BOARD.read_text(encoding="utf-8"))
+    except (FileNotFoundError,json.JSONDecodeError,OSError):
+        return []
+    teams=set()
+    for event in payload.get("events") or []:
+        if str(event.get("league") or "")!="NCAA_Football":
+            continue
+        if not (event.get("props") or []):
+            continue
+        for key in ("away","home"):
+            value=str(event.get(key) or "").strip()
+            if value:teams.add(value)
+    return sorted(teams)
 
 def main():
     state=json.loads(STATE.read_text(encoding="utf-8"))
@@ -43,6 +60,13 @@ def main():
     cmd=[sys.executable,str(ROOT/"scripts"/"lsi_performance_ingest.py"),
          "--league",item["league"],"--date-from",begin.isoformat(),"--date-to",end.isoformat(),
          "--max-events",str(max(1,int(item.get("max_events") or 100))),"--output",out]
+    # The NCAA prior season is a continuity reserve, not a full historical mirror.
+    # Fetch summaries only for teams that currently expose player props.
+    if item.get("league")=="NCAA_Football" and str(item.get("season"))=="2025":
+        teams=active_ncaa_teams()
+        for team in teams:
+            cmd.extend(["--team",team])
+        print(f"NCAA continuity team filter: {len(teams)} current team(s)")
     print("Backfill chunk:",item["league"],begin,"through",end,"->",out)
     subprocess.run(cmd,check=True,cwd=ROOT)
     shard=ROOT/out
