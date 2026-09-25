@@ -97,9 +97,9 @@ jobs:
         env:
           MANUAL_STAGE: ${{ inputs.stage }}
           SCHEDULE_EXPR: ${{ github.event.schedule }}
-          # TEMPORARY one-run force. Reverted to DISCOVERY after the fresh
-          # MASTER publication validates successfully.
-          PUSH_STAGE: MASTER_PUBLICATION
+          # Ordinary pushes are DISCOVERY; canonical publication identity comes
+          # only from the six scheduled PT checkpoints or an explicit manual stage.
+          PUSH_STAGE: DISCOVERY
         run: |
           python scripts/lsi_checkpoint_clock.py \
             --event-name "${{ github.event_name }}" \

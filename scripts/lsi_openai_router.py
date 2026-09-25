@@ -23,6 +23,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 REGISTRY = DATA / "prediction_registry.json"
+FUTURE_BOARD = DATA / "future_market_board.json"
 MARKETS = DATA / "market_history.csv"
 ROUTER_STATE = DATA / "openai_dry_run_router.json"
 USAGE_HISTORY = DATA / "openai_usage_estimates.csv"
@@ -125,12 +126,66 @@ def previous_fingerprints() -> dict[str, str]:
         return {}
 
 
-def build_event_packages() -> list[dict]:
-    if not REGISTRY.exists():
-        raise SystemExit("Missing data/prediction_registry.json")
+def current_workload_predictions() -> tuple[list[dict], str]:
+    """Return current actionable L&J output for OpenAI workload telemetry.
 
-    registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    predictions = registry.get("predictions", [])
+    The immutable Prediction Registry is an audit/publication authority, but it
+    can legitimately contain settled historical rows. Telemetry for a future AI
+    router must measure the live workload, so the rolling Future Board is primary.
+    """
+    now=datetime.now(timezone.utc)
+    if FUTURE_BOARD.exists():
+        try:
+            board=json.loads(FUTURE_BOARD.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            board={}
+        current=[]
+        for event in board.get("events") or []:
+            start=parse_dt(event.get("commence_time"))
+            if not start or start<=now:
+                continue
+            event_id=str(event.get("source_event_id") or event.get("event_id") or "UNSCOPED")
+            league=str(event.get("league") or "")
+            for p in event.get("props") or []:
+                if str(p.get("evaluation_status") or "").upper()!="LJ_EVALUATED" or p.get("ljpc") in (None,""):
+                    continue
+                current.append({
+                    "prediction_id":p.get("evaluation_id") or f"{event_id}|{p.get('participant')}|{p.get('market')}|{p.get('threshold')}|{p.get('side')}",
+                    "event_id":event_id,"league":league,"market_class":"PLAYER_PROP",
+                    "participant":p.get("participant"),"market":p.get("market"),"threshold":p.get("threshold"),
+                    "pick":" ".join(str(x) for x in [p.get("participant"),p.get("side"),p.get("threshold"),p.get("market")] if x not in (None,"")),
+                    "legz_confidence":p.get("legz_baseline"),"jinx_input":p.get("jinx_input"),
+                    "lj_confidence":p.get("ljpc"),"tier":p.get("pom_type") or p.get("pomType") or "NORMAL",
+                    "status":"ACTIVE","source_snapshot_ids":p.get("source_snapshot_ids") or [],
+                    "price":p.get("price") if p.get("price") not in (None,"") else p.get("best_price"),
+                    "book":p.get("book") or p.get("best_book"),
+                })
+            for p in event.get("game_markets") or []:
+                if str(p.get("evaluation_status") or "").upper()!="LJ_EVALUATED" or p.get("ljpc") in (None,""):
+                    continue
+                market_class=str(p.get("market_class") or "GAME_ML")
+                current.append({
+                    "prediction_id":p.get("evaluation_id") or f"{event_id}|{market_class}|{p.get('participant') or p.get('selection')}",
+                    "event_id":event_id,"league":league,"market_class":market_class,
+                    "participant":p.get("participant") or p.get("selection"),
+                    "market":p.get("market") or market_class,"threshold":p.get("threshold"),
+                    "pick":p.get("selection") or p.get("participant"),
+                    "legz_confidence":p.get("legz_baseline"),"jinx_input":p.get("jinx_input"),
+                    "lj_confidence":p.get("ljpc"),"tier":"NORMAL","status":"ACTIVE",
+                    "source_snapshot_ids":p.get("source_snapshot_ids") or [],
+                    "price":p.get("price"),"book":p.get("book"),
+                })
+        if current:
+            return current,"future_market_board"
+
+    if not REGISTRY.exists():
+        raise SystemExit("Missing both current future board workload and data/prediction_registry.json")
+    registry=json.loads(REGISTRY.read_text(encoding="utf-8"))
+    return registry.get("predictions",[]),"prediction_registry_fallback"
+
+
+def build_event_packages() -> tuple[list[dict], str]:
+    predictions, workload_source=current_workload_predictions()
     market_rows = read_csv(MARKETS)
 
     preds_by_event: dict[str, list[dict]] = defaultdict(list)
@@ -201,7 +256,7 @@ def build_event_packages() -> list[dict]:
             "recommended_model": model,
             "routing_reasons": reasons,
         })
-    return packages
+    return packages, workload_source
 
 
 def write_history(row: dict) -> None:
@@ -235,7 +290,7 @@ def main() -> None:
 
     now = datetime.now(timezone.utc).isoformat()
     prior = previous_fingerprints()
-    packages = build_event_packages()
+    packages, workload_source = build_event_packages()
 
     routes = []
     totals = defaultdict(int)
@@ -289,6 +344,7 @@ def main() -> None:
         "generated_at_utc": now,
         "mode": "DRY_RUN_NO_NETWORK",
         "telemetry_source": os.environ.get("GITHUB_EVENT_NAME", "local_manual"),
+        "workload_source": workload_source,
         "api_calls_made": 0,
         "openai_key_read": False,
         "pricing_as_of": PRICING_AS_OF,
@@ -298,6 +354,7 @@ def main() -> None:
             "token_estimator": "serialized_chars/3.6 + 350 system-overhead tokens",
             "dedupe_policy": "future API call only when event evidence fingerprint changes",
             "market_observations_capped_per_event": 40,
+            "workload_source": workload_source,
         },
         "summary": {
             "events_total": len(routes),

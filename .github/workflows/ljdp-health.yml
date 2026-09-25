@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: '25 */3 * * *'
   workflow_run:
-    workflows: ["pages build and deployment"]
+    workflows: ["LSI Daily Predictions Pipeline"]
     types: [completed]
 
 permissions:
@@ -54,26 +54,34 @@ jobs:
           PY
       - name: Verify deployed Pages endpoints
         run: |
-          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/LJ_index.html -o /tmp/ljdp.html
-          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/prediction_registry.json -o /tmp/registry.json
-          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/settlement_status.json -o /tmp/settlement.json
-          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/future_market_board.json -o /tmp/future.json
-          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/current_game_moneylines.json -o /tmp/moneylines.json
-          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/espn_event_intelligence.json -o /tmp/espn-events.json
-          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/data/future_market_board.js -o /tmp/future.js
-          curl --fail --silent --show-error --retry 4 --retry-delay 15 https://jordonnes.github.io/LJ_Methodology.html -o /tmp/methodology.html
+          set -euo pipefail
+          wait_for_file_match() {
+            local url="$1" local_path="$2" tmp_path="$3" label="$4"
+            for attempt in $(seq 1 15); do
+              if curl --fail --silent --show-error "$url?health_ts=$(date +%s)" -o "$tmp_path" && cmp --silent "$local_path" "$tmp_path"; then
+                echo "$label matches master on attempt $attempt"
+                return 0
+              fi
+              echo "Waiting for Pages propagation: $label attempt $attempt/15"
+              sleep 15
+            done
+            echo "::error::Pages $label does not match master after propagation window"
+            return 1
+          }
+          curl --fail --silent --show-error --retry 4 --retry-delay 10 https://jordonnes.github.io/LJ_index.html -o /tmp/ljdp.html
+          curl --fail --silent --show-error --retry 4 --retry-delay 10 https://jordonnes.github.io/LJ_Methodology.html -o /tmp/methodology.html
+          wait_for_file_match https://jordonnes.github.io/data/prediction_registry.json data/prediction_registry.json /tmp/registry.json "registry"
+          wait_for_file_match https://jordonnes.github.io/data/settlement_status.json data/settlement_status.json /tmp/settlement.json "settlement status"
+          wait_for_file_match https://jordonnes.github.io/data/future_market_board.json data/future_market_board.json /tmp/future.json "future market board"
+          wait_for_file_match https://jordonnes.github.io/data/future_market_board.js data/future_market_board.js /tmp/future.js "future market board JS"
+          wait_for_file_match https://jordonnes.github.io/data/current_game_moneylines.json data/current_game_moneylines.json /tmp/moneylines.json "GAME_ML artifact"
+          wait_for_file_match https://jordonnes.github.io/data/espn_event_intelligence.json data/espn_event_intelligence.json /tmp/espn-events.json "ESPN event intelligence"
           test -s /tmp/future.json && test -s /tmp/future.js && test -s /tmp/moneylines.json
           grep -q 'LEGZ &amp; JINX — Daily Predictions' /tmp/ljdp.html
           grep -q 'provenance_policy' /tmp/registry.json
           grep -q 'LJPC = HIT PROBABILITY' /tmp/methodology.html
           ! grep -q 'confidence:m?Number(m\[1\]):60' lsi_registry_bridge.js || { echo '::error::Shared 60% LJPC fallback reintroduced'; exit 1; }
           ! grep -q 'PROVISIONAL LJPC' lsi_registry_bridge.js || { echo '::error::Market baseline mislabeled as LJPC'; exit 1; }
-          cmp --silent data/prediction_registry.json /tmp/registry.json || { echo '::error::Pages registry does not match master'; exit 1; }
-          cmp --silent data/settlement_status.json /tmp/settlement.json || { echo '::error::Pages settlement status does not match master'; exit 1; }
-          cmp --silent data/future_market_board.json /tmp/future.json || { echo '::error::Pages future market board does not match master'; exit 1; }
-          cmp --silent data/future_market_board.js /tmp/future.js || { echo '::error::Pages future market board JS does not match master'; exit 1; }
-          cmp --silent data/current_game_moneylines.json /tmp/moneylines.json || { echo '::error::Pages GAME_ML artifact does not match master'; exit 1; }
-          cmp --silent data/espn_event_intelligence.json /tmp/espn-events.json || { echo '::error::Pages ESPN event intelligence does not match master'; exit 1; }
       - name: Validate deployed data semantics
         run: |
           python - <<'PY'
@@ -95,7 +103,13 @@ jobs:
           assert ml_age <= 8, f'GAME_ML artifact stale: {ml_age:.1f}h'
           usable_ml=[r for r in moneylines.get('rows',[]) if r.get('market_class')=='GAME_ML' and r.get('event_id') and r.get('participant') and r.get('price') not in (None,'')]
           assert usable_ml, 'No usable GAME_ML rows in deployed artifact'
-          future_ids={str(e.get('source_event_id')) for e in future.get('events',[]) if e.get('game_markets')}
+          future_ids=set()
+          for e in future.get('events',[]):
+              if e.get('game_markets') and e.get('source_event_id'):
+                  future_ids.add(str(e.get('source_event_id')))
+              for row in e.get('game_markets') or []:
+                  if row.get('event_id'):
+                      future_ids.add(str(row.get('event_id')))
           current_ids={
               str(e.get('source_event_id')) for e in moneylines.get('events',[])
               if e.get('source_event_id')
