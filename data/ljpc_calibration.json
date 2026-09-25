@@ -1,17 +1,17 @@
 {
   "schema_version": "LSI-LJPC-CALIBRATION-1",
-  "generated_at_utc": "2026-09-25T23:17:55.079513+00:00",
+  "generated_at_utc": "2026-09-25T23:37:18.897244+00:00",
   "policy": "Descriptive audit only. Calibration never changes live LJPC without the separate gated learning process.",
   "minimum_interpretation_sample": 30,
   "overall": {
-    "decisive": 405,
-    "hits": 265,
+    "decisive": 421,
+    "hits": 281,
     "misses": 140,
-    "hit_rate_pct": 65.43,
-    "avg_ljpc_pct": 69.39,
-    "calibration_error_pp": 3.96,
-    "calibration_bias": "OVERCONFIDENT",
-    "brier_score": 0.231001
+    "hit_rate_pct": 66.75,
+    "avg_ljpc_pct": 68.86,
+    "calibration_error_pp": 2.12,
+    "calibration_bias": "CALIBRATED_WITHIN_3PP",
+    "brier_score": 0.229721
   },
   "bands": [
     {
@@ -37,14 +37,14 @@
       "band": "50-54.9"
     },
     {
-      "decisive": 60,
-      "hits": 36,
+      "decisive": 76,
+      "hits": 52,
       "misses": 24,
-      "hit_rate_pct": 60.0,
-      "avg_ljpc_pct": 56.86,
-      "calibration_error_pp": -3.14,
+      "hit_rate_pct": 68.42,
+      "avg_ljpc_pct": 56.59,
+      "calibration_error_pp": -11.83,
       "calibration_bias": "UNDERCONFIDENT",
-      "brier_score": 0.234252,
+      "brier_score": 0.226476,
       "band": "55-59.9"
     },
     {
@@ -136,7 +136,7 @@
       "band": "95-99.9"
     }
   ],
-  "expected_calibration_error_pp": 9.16,
+  "expected_calibration_error_pp": 10.5,
   "maximum_calibration_error_pp": 67.05,
   "by_sport": {
     "MLB": {
@@ -176,29 +176,29 @@
       "maximum_calibration_error_pp": 10.06
     },
     "NCAA_Football": {
-      "decisive": 3,
-      "hits": 3,
+      "decisive": 19,
+      "hits": 19,
       "misses": 0,
       "hit_rate_pct": 100.0,
-      "avg_ljpc_pct": 57.43,
-      "calibration_error_pp": -42.57,
+      "avg_ljpc_pct": 55.87,
+      "calibration_error_pp": -44.13,
       "calibration_bias": "UNDERCONFIDENT",
-      "brier_score": 0.181193,
+      "brier_score": 0.194768,
       "bands": [
         {
-          "decisive": 3,
-          "hits": 3,
+          "decisive": 19,
+          "hits": 19,
           "misses": 0,
           "hit_rate_pct": 100.0,
-          "avg_ljpc_pct": 57.43,
-          "calibration_error_pp": -42.57,
+          "avg_ljpc_pct": 55.87,
+          "calibration_error_pp": -44.13,
           "calibration_bias": "UNDERCONFIDENT",
-          "brier_score": 0.181193,
+          "brier_score": 0.194768,
           "band": "55-59.9"
         }
       ],
-      "expected_calibration_error_pp": 42.57,
-      "maximum_calibration_error_pp": 42.57
+      "expected_calibration_error_pp": 44.13,
+      "maximum_calibration_error_pp": 44.13
     },
     "NFL": {
       "decisive": 48,
@@ -454,14 +454,14 @@
   },
   "by_market_class": {
     "GAME_ML": {
-      "decisive": 239,
-      "hits": 143,
+      "decisive": 255,
+      "hits": 159,
       "misses": 96,
-      "hit_rate_pct": 59.83,
-      "avg_ljpc_pct": 55.35,
-      "calibration_error_pp": -4.49,
+      "hit_rate_pct": 62.35,
+      "avg_ljpc_pct": 55.36,
+      "calibration_error_pp": -6.99,
       "calibration_bias": "UNDERCONFIDENT",
-      "brier_score": 0.240961,
+      "brier_score": 0.238223,
       "bands": [
         {
           "decisive": 3,
@@ -486,14 +486,14 @@
           "band": "50-54.9"
         },
         {
-          "decisive": 58,
-          "hits": 36,
+          "decisive": 74,
+          "hits": 52,
           "misses": 22,
-          "hit_rate_pct": 62.07,
-          "avg_ljpc_pct": 56.9,
-          "calibration_error_pp": -5.17,
+          "hit_rate_pct": 70.27,
+          "avg_ljpc_pct": 56.61,
+          "calibration_error_pp": -13.66,
           "calibration_bias": "UNDERCONFIDENT",
-          "brier_score": 0.231611,
+          "brier_score": 0.224195,
           "band": "55-59.9"
         },
         {
@@ -508,7 +508,7 @@
           "band": "60-64.9"
         }
       ],
-      "expected_calibration_error_pp": 4.85,
+      "expected_calibration_error_pp": 7.33,
       "maximum_calibration_error_pp": 14.53
     },
     "PLAYER_PROP": {
@@ -637,14 +637,14 @@
       "brier_score": 0.246984
     },
     "NCAA_Football|Moneyline": {
-      "decisive": 3,
-      "hits": 3,
+      "decisive": 19,
+      "hits": 19,
       "misses": 0,
       "hit_rate_pct": 100.0,
-      "avg_ljpc_pct": 57.43,
-      "calibration_error_pp": -42.57,
+      "avg_ljpc_pct": 55.87,
+      "calibration_error_pp": -44.13,
       "calibration_bias": "UNDERCONFIDENT",
-      "brier_score": 0.181193
+      "brier_score": 0.194768
     },
     "NFL|Moneyline": {
       "decisive": 8,
