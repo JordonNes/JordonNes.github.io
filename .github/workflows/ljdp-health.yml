@@ -13,7 +13,8 @@ permissions:
 
 jobs:
   health:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # Run the audit for every completed DP workflow. A failed DP run is useful
+    # health evidence too; the audit should diagnose state rather than disappear.
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
