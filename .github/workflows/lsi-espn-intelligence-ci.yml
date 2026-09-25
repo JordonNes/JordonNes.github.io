@@ -7,6 +7,8 @@ on:
     paths:
       - 'scripts/espn_intelligence_adapter.py'
       - 'scripts/test_espn_intelligence_adapter.py'
+      - 'scripts/espn_player_enrichment.py'
+      - 'scripts/test_espn_player_enrichment.py'
       - 'scripts/legz_statistical_spectrum.py'
       - 'scripts/lsi_history_warehouse.py'
       - 'config/lsi_sources.json'
@@ -27,10 +29,13 @@ jobs:
       - name: Compile ESPN-connected LSI modules
         run: |
           python -m py_compile scripts/espn_intelligence_adapter.py
+          python -m py_compile scripts/espn_player_enrichment.py
           python -m py_compile scripts/legz_statistical_spectrum.py
           python -m py_compile scripts/lsi_history_warehouse.py
       - name: Run ESPN adapter unit checks
         run: python scripts/test_espn_intelligence_adapter.py
+      - name: Run ESPN player enrichment unit checks
+        run: python scripts/test_espn_player_enrichment.py
       - name: Validate fail-soft zero-league execution
         env:
           ESPN_INTELLIGENCE_LEAGUES: NONE
