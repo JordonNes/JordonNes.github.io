@@ -133,6 +133,16 @@ Operational sequence:
 ### CFB operating principle
 Saturday is the main volume show, not an exclusivity rule. A Wednesday, Thursday, Friday, Sunday or other off-cycle CFB game that appears in the event inventory enters the same event-relative pipeline as any Saturday game. If a gate was missed because the event was discovered late or a prior run failed, the next successful hourly check catches every crossed, unacknowledged gate in one work cycle and then acknowledges them so they are not repeated unnecessarily.
 
+### NCAA Football history-temperature policy
+NCAA live forecasting is deliberately current-heavy. LSI does not load deep college history into every POM merely because it is available.
+
+- **HOT / live evidence:** current-season player games. Three completed observations are the minimum forecast gate; five current-role games are preferred.
+- **Continuity reserve:** one immediately prior NCAA season. It may rescue an exact two-game current-season sample with **one** prior-season observation only when same-team continuity is explicitly supported. It cannot rescue a one-game sample and cannot swamp current form.
+- **WARM / calibration:** approximately two to three seasons may be retained for model validation, market-specific calibration and questions such as L5 vs. L10 predictive value. These seasons are not automatically injected into routine live LJPC.
+- **COLD / archive:** older NCAA history is preserved only when useful for research/audit and is not part of the normal live-evaluation working set.
+
+Transfer/team changes fail closed for continuity unless identity/team evidence supports the join. Prior-season continuity increases forecast uncertainty and reduces LEGZ Value evidence strength; it never receives a market-price-derived confidence boost.
+
 ## Source policy
 No single preferred source failure is sufficient to declare props unavailable. Perform multi-source discovery. Market observations must retain source and timestamp. Social/news/context sources are evidence inputs, not automatically predictive. Public personal/legal/civil/political/relationship matters receive weight only when there is a defensible pathway to availability, role, preparation, coaching strategy, market behavior, or performance.
 

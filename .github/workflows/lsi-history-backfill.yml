@@ -7,6 +7,9 @@ on:
     paths:
       - 'scripts/lsi_history_backfill_step.py'
       - 'scripts/lsi_performance_ingest.py'
+      - 'scripts/lsi_history_warehouse.py'
+      - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/test_ncaa_history_continuity.py'
       - 'data/history_backfill_state.json'
       - '.github/workflows/lsi-history-backfill.yml'
   schedule:
@@ -28,6 +31,9 @@ jobs:
         with: {ref: master, fetch-depth: 0}
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
+
+      - name: Verify NCAA current-enough history policy
+        run: python scripts/test_ncaa_history_continuity.py
 
       - name: Advance bounded historical backfill
         run: |

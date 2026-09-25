@@ -65,6 +65,117 @@ def player_alias_keys(value):
         keys.append(f"{tokens[0]} {tokens[-1]}")
     return list(dict.fromkeys(keys))
 
+def participant_team_hint(prop):
+    """Best-effort explicit team hint; no fuzzy roster inference."""
+    for key in ("team","player_team","team_abbreviation","team_abbr"):
+        value=str(prop.get(key) or "").strip()
+        if value:
+            return value
+    raw=str(prop.get("participant") or "").strip()
+    match=re.search(r"\(([A-Za-z0-9 .&'\-]{2,24})\)\s*$",raw)
+    return match.group(1).strip() if match else ""
+
+
+def team_compatible(left,right):
+    """Conservative same-team check for abbreviations/display names."""
+    a=norm(left); b=norm(right)
+    if not a or not b:
+        return False
+    if a==b:
+        return True
+    at=a.split(); bt=b.split()
+    # "ARMY" ↔ "Army Black Knights", "USC" ↔ "USC Trojans".
+    if len(at)==1 and at[0] in bt:
+        return True
+    if len(bt)==1 and bt[0] in at:
+        return True
+    return False
+
+
+def event_year(value):
+    match=re.search(r"\b(20\d{2})\b",str(value or ""))
+    return int(match.group(1)) if match else None
+
+
+def select_ncaa_projection_values(prop,fallback_vals,metric_profile):
+    """Choose current-enough NCAA history without letting old seasons dominate.
+
+    Policy:
+    - current season is authoritative once >=3 completed observations exist;
+    - exactly two current-season observations may borrow ONE prior-season game,
+      but only with explicit same-team continuity;
+    - one or zero current observations remain fail-closed;
+    - prior-season evidence never expands the live minimum-rescue sample above 3.
+    """
+    league=str(prop.get("_league") or "")
+    fallback=[float(v) for v in (fallback_vals or []) if num(v) is not None]
+    if league!="NCAA_Football" or not metric_profile:
+        return fallback,{
+          "policy":"RECENT_HISTORY_DEFAULT","current_season_n":None,
+          "prior_continuity_n":0,"team_continuity":None
+        }
+
+    observations=[]
+    for raw in metric_profile.get("recent_observations") or []:
+        if not isinstance(raw,dict):
+            continue
+        value=num(raw.get("value"))
+        year=event_year(raw.get("event_start_utc") or raw.get("order"))
+        if value is None or year is None:
+            continue
+        observations.append({
+          "value":float(value),"year":year,"team":raw.get("team") or "",
+          "order":str(raw.get("event_start_utc") or raw.get("order") or ""),
+        })
+    if not observations:
+        return fallback,{
+          "policy":"RECENT_HISTORY_DEFAULT","current_season_n":None,
+          "prior_continuity_n":0,"team_continuity":None
+        }
+
+    target_year=event_year(prop.get("_event_start")) or datetime.now(timezone.utc).year
+    current=[x for x in observations if x["year"]==target_year]
+    current.sort(key=lambda x:x["order"])
+    if len(current)>=3:
+        return [x["value"] for x in current[-20:]],{
+          "policy":"NCAA_CURRENT_SEASON_ONLY","current_season_n":len(current),
+          "prior_continuity_n":0,"team_continuity":True
+        }
+
+    # A one-game sample is still a new/changed role for live forecasting purposes.
+    # Only a 2-game current sample is eligible for one prior-season continuity fact.
+    if len(current)!=2:
+        return [x["value"] for x in current] if current else fallback,{
+          "policy":"NCAA_CURRENT_SEASON_THIN_FAIL_CLOSED","current_season_n":len(current),
+          "prior_continuity_n":0,"team_continuity":None
+        }
+
+    current_team=participant_team_hint(prop) or str(metric_profile.get("current_team") or "")
+    if not current_team:
+        return [x["value"] for x in current],{
+          "policy":"NCAA_CURRENT_SEASON_THIN_NO_TEAM_CONTINUITY","current_season_n":2,
+          "prior_continuity_n":0,"team_continuity":None
+        }
+
+    prior=[
+      x for x in observations
+      if x["year"]==target_year-1 and team_compatible(x.get("team"),current_team)
+    ]
+    prior.sort(key=lambda x:x["order"])
+    if not prior:
+        return [x["value"] for x in current],{
+          "policy":"NCAA_CURRENT_SEASON_THIN_NO_PRIOR_SAME_TEAM","current_season_n":2,
+          "prior_continuity_n":0,"team_continuity":False
+        }
+
+    selected=[prior[-1]["value"],current[0]["value"],current[1]["value"]]
+    return selected,{
+      "policy":"NCAA_CURRENT_PLUS_ONE_PRIOR_SAME_TEAM_MINIMUM",
+      "current_season_n":2,"prior_continuity_n":1,"team_continuity":True,
+      "continuity_team":current_team,
+    }
+
+
 def observation_order(row,source_path=None):
     """Stable chronological key for shard-backed history, including nflverse week IDs."""
     import re
@@ -160,7 +271,7 @@ def implied(price):
 
 def clamp(x,lo=0,hi=100): return max(lo,min(hi,x))
 
-EVALUATION_VERSION="LEGZ_STATISTICAL_SPECTRUM_3"
+EVALUATION_VERSION="LEGZ_STATISTICAL_SPECTRUM_4"
 
 def stable_hash(value):
     raw=json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,default=str)
@@ -219,6 +330,7 @@ def evaluation_input_material(prop,event,history,contexts,game_contexts,cache,me
             if rec:
                 metric_profile=rec
                 break
+    vals,history_selection=select_ncaa_projection_values(prop,vals,metric_profile)
     context=(contexts or {}).get(player) or {}
     game_context=(game_contexts or {}).get((player,event_id)) or (game_contexts or {}).get((player,"")) or {}
 
@@ -248,6 +360,7 @@ def evaluation_input_material(prop,event,history,contexts,game_contexts,cache,me
       "market_role_availability":stable_material_view(market_material),
       "performance_history_hash":stable_hash(vals),
       "performance_history_n":len(vals),
+      "history_selection":stable_material_view(history_selection),
       "exact_threshold_cache_hash":stable_hash(stable_material_view(exact_cache)),
       "metric_cache_hash":stable_hash(stable_material_view(metric_profile)),
       "current_context_hash":stable_hash(stable_material_view(context)),
@@ -446,11 +559,19 @@ def distribution_features(prop, history, metric_cache=None):
             if v is not None: cached_vals.append(v)
     # Fast runtime may only have today's append-only performance file loaded. Prefer
     # the threshold-independent durable metric cache when it contains a deeper
-    # recent sequence from the permanent archive.
+    # recent sequence from the permanent archive, then apply league-specific
+    # current-enough selection. NCAA prior-season evidence is continuity reserve,
+    # never a substitute for a current-season sample.
     history_source="PERFORMANCE_HISTORY"
-    if len(cached_vals)>len(vals):
-        vals=cached_vals
+    candidate_vals=list(vals)
+    if len(cached_vals)>len(candidate_vals):
+        candidate_vals=cached_vals
         history_source="PERMANENT_METRIC_CACHE"
+    vals,history_selection=select_ncaa_projection_values(prop,candidate_vals,metric_profile)
+    if history_selection.get("policy")=="NCAA_CURRENT_SEASON_ONLY":
+        history_source="NCAA_CURRENT_SEASON"
+    elif int(history_selection.get("prior_continuity_n") or 0)>0:
+        history_source="NCAA_CURRENT_PLUS_PRIOR_SAME_TEAM"
     threshold=effective_threshold(prop,metric); side=norm(prop.get("side"))
     operator=norm(prop.get("threshold_operator"))
     if not vals: return {"n":0,"metric":metric,"history_source":history_source}
@@ -490,6 +611,10 @@ def distribution_features(prop, history, metric_cache=None):
     if recent_sd in (None,0): recent_sd=windows.get("L10",{}).get("stddev")
     if recent_sd in (None,0): recent_sd=sd
     sigma=max(float(recent_sd or 0),abs(projection)*0.035,0.75)
+    if int(history_selection.get("prior_continuity_n") or 0)>0:
+        # Thin early-season continuity samples should not produce razor-thin
+        # distributions merely because the three observed values happen to cluster.
+        sigma=max(sigma,abs(projection)*0.08,1.0)
 
     hit_count=None; raw_hit=None; smoothed=None; normal_prob=None
     if threshold is not None:
@@ -551,6 +676,10 @@ def distribution_features(prop, history, metric_cache=None):
       "sample_size":len(vals),
       "historical_sample_size":int(metric_profile.get("sample_n") or len(vals)) if metric_profile else len(vals),
       "history_source":history_source,
+      "history_policy":history_selection.get("policy"),
+      "current_season_sample_size":history_selection.get("current_season_n"),
+      "prior_continuity_sample_size":int(history_selection.get("prior_continuity_n") or 0),
+      "team_continuity":history_selection.get("team_continuity"),
       "market_player_name":prop.get("participant"),
       "resolved_history_player":resolved_player or prop.get("participant"),
       "identity_match":identity_match or ("EXACT" if vals else None),
@@ -574,7 +703,8 @@ def distribution_features(prop, history, metric_cache=None):
       "forecast_policy":"L5-primary expected output; L10 and full L15 stabilize; exact offered threshold evaluated against one shared player-game forecast. Provider market labels remain separate from LSI statistical line profile."
     } if projection_ready else None
     return {
-      "n":len(vals),"metric":metric,"history_source":history_source,"mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
+      "n":len(vals),"metric":metric,"history_source":history_source,"history_selection":history_selection,
+      "mean":round(mean,3),"median":round(median,3),"stddev":round(sd,3),
       "coefficient_of_variation":round(sd/abs(mean),3) if mean else None,
       "recent_windows":windows,
       "player_projection":player_projection,
@@ -876,6 +1006,9 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
     ljpc=round(clamp(L+j,1,99),1)
 
     evidence_depth=min(100.0,35+len(ordered)*14+min(source_count,5)*5+min(len(set(snapshots)),4)*4+min(len(set(evidence)),4)*3)
+    prior_continuity_n=int(((dist.get("history_selection") or {}).get("prior_continuity_n")) or 0)
+    if prior_continuity_n:
+        evidence_depth=max(0.0,evidence_depth-8.0)
     legz_value=round(clamp(evidence_depth*0.65+consistency*0.35),2)
     # Economics are separate from hit probability. A market can be easy but
     # unattractive, or difficult but economically interesting. Never change LJPC
@@ -932,6 +1065,7 @@ def main():
         for prop in event.get("props") or []:
             prop["_league"]=event.get("league") or ""
             prop["_event_id"]=event.get("event_id") or event.get("source_event_id") or ""
+            prop["_event_start"]=event.get("commence_time") or event.get("event_start_pt") or ""
             identity=evaluation_identity(prop)
             evaluation_key=stable_hash(identity)[:24]
             material=evaluation_input_material(
@@ -1014,7 +1148,7 @@ def main():
             records_by_id[evaluation_id]=state_record
             current_evaluation_ids.add(evaluation_id)
             latest[evaluation_key]={"evaluation_id":evaluation_id,"material_hash":material_hash,"evaluated_at_utc":evaluated_at}
-            prop.pop("_league",None); prop.pop("_event_id",None)
+            prop.pop("_league",None); prop.pop("_event_id",None); prop.pop("_event_start",None)
             prop.update(result)
             if result["evaluation_status"]=="LJ_EVALUATED": evaluated+=1
             else: waiting+=1

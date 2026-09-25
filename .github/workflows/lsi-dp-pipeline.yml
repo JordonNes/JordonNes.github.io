@@ -36,6 +36,7 @@ on:
       - 'scripts/test_lsi_league_scheduler.py'
       - 'scripts/test_legz_material_hash.py'
       - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/test_ncaa_history_continuity.py'
       - 'scripts/legz_prop_ladder_test.py'
       - 'scripts/legz_synthetic_book.py'
       - 'scripts/lsi_history_warehouse.py'
@@ -154,6 +155,7 @@ jobs:
       - name: Verify event-aware scheduling rules
         run: |
           python scripts/test_lsi_checkpoint_clock.py
+          python scripts/test_ncaa_history_continuity.py
           python scripts/test_lsi_future_board_guard.py
           python scripts/test_propline_bulk_catalog.py
           python scripts/test_parlayapi_retail_props.py

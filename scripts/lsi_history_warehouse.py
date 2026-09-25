@@ -220,6 +220,7 @@ def main():
 
     perf=defaultdict(lambda:defaultdict(dict))
     perf_order={}
+    perf_meta={}
     perf_files=[]
     if PERF.exists() and PERF.stat().st_size: perf_files.append(PERF)
     if HISTORY_ROOT.exists():
@@ -236,32 +237,48 @@ def main():
                     seen_facts.add(fact_id)
                     pid=player_id(league,name)
                     perf[(pid,event)][metric]=value
-                    perf_order[(pid,event)]=max(perf_order.get((pid,event),"0000"),observation_order(r,perf_path))
+                    order=observation_order(r,perf_path)
+                    perf_order[(pid,event)]=max(perf_order.get((pid,event),"0000"),order)
+                    meta=perf_meta.setdefault((pid,event),{})
+                    if r.get("event_start_utc"):
+                        meta["event_start_utc"]=str(r.get("event_start_utc"))
+                    if r.get("team"):
+                        meta["team"]=str(r.get("team"))
 
     # Build chronologically sorted series so L5/L10/L20 always mean the latest
     # performances, regardless of which shard/file supplied the fact.
     series=defaultdict(list)
+    observation_series=defaultdict(list)
     for (pid,event),stats in perf.items():
         order=perf_order.get((pid,event),"0000")
-        for metric,value in stats.items():
+        event_meta=perf_meta.get((pid,event)) or {}
+        def add_series(metric,value):
             series[(pid,metric)].append((order,event,value))
+            observation_series[(pid,metric)].append({
+                "order":order,"event":event,"event_start_utc":event_meta.get("event_start_utc") or order,
+                "team":event_meta.get("team") or "","value":value
+            })
+        for metric,value in stats.items():
+            add_series(metric,value)
         if "rush_tds" in stats or "receiving_tds" in stats:
-            series[(pid,"anytime_td")].append((order,event,(stats.get("rush_tds") or 0)+(stats.get("receiving_tds") or 0)))
+            add_series("anytime_td",(stats.get("rush_tds") or 0)+(stats.get("receiving_tds") or 0))
         # Canonical NHL market aliases: sportsbook/prediction-market "Points" is
         # goals + assists; "Assists" maps to hockey_assists from the boxscore feed.
         player_meta=players.get(pid,{})
         if (player_meta.get("league") or "")=="NHL" and "hockey_assists" in stats:
-            series[(pid,"assists")].append((order,event,stats["hockey_assists"]))
+            add_series("assists",stats["hockey_assists"])
         if (player_meta.get("league") or "")=="NHL" and "goals" in stats and "hockey_assists" in stats:
-            series[(pid,"points")].append((order,event,stats["goals"]+stats["hockey_assists"]))
+            add_series("points",stats["goals"]+stats["hockey_assists"])
         if all(k in stats for k in ("points","rebounds","assists")):
-            series[(pid,"pra")].append((order,event,stats["points"]+stats["rebounds"]+stats["assists"]))
-            series[(pid,"points_rebounds")].append((order,event,stats["points"]+stats["rebounds"]))
-            series[(pid,"points_assists")].append((order,event,stats["points"]+stats["assists"]))
-            series[(pid,"rebounds_assists")].append((order,event,stats["rebounds"]+stats["assists"]))
+            add_series("pra",stats["points"]+stats["rebounds"]+stats["assists"])
+            add_series("points_rebounds",stats["points"]+stats["rebounds"])
+            add_series("points_assists",stats["points"]+stats["assists"])
+            add_series("rebounds_assists",stats["rebounds"]+stats["assists"])
     for key,items in series.items():
         items.sort(key=lambda x:(x[0],x[1]))
         hist[key]=[v for _,_,v in items]
+    for key,items in observation_series.items():
+        items.sort(key=lambda x:(x.get("order") or "",x.get("event") or ""))
 
     # Player/metric summaries are threshold-independent. They allow fast runtime
     # evaluation to estimate one player-game output distribution and score any
@@ -277,14 +294,28 @@ def main():
         # observations. Derived averages are recomputed locally from recent_values;
         # omitting redundant summary fields keeps this durable cache well below
         # GitHub's 100 MiB hard file limit.
-        metric_profiles.append({
+        profile={
             "lsi_player_id":pid,
             "league":meta_player.get("league") or "",
             "player":meta_player.get("canonical_name") or "",
             "metric":metric,
             "sample_n":len(clean),
             "recent_values":[round(v,3) for v in recent],
-        })
+        }
+        # NCAA early-season continuity needs only compact recent event/team
+        # metadata; other leagues keep the smaller existing cache shape.
+        if profile["league"]=="NCAA_Football":
+            obs=(observation_series.get((pid,metric)) or [])[-10:]
+            profile["current_team"]=meta_player.get("current_team") or ""
+            profile["recent_observations"]=[
+                {
+                    "event_start_utc":x.get("event_start_utc"),
+                    "team":x.get("team") or "",
+                    "value":round(float(x.get("value")),3),
+                }
+                for x in obs
+            ]
+        metric_profiles.append(profile)
 
     profiles=[]
     # Build exact-current-threshold features so market evaluation is a local lookup.
@@ -325,7 +356,7 @@ def main():
         "generated_at_utc":stamp,
         "profiles":profiles,
         "metric_profiles":metric_profiles,
-        "policy":"Derived cache only; threshold-independent player/metric recent values support fast forecast-first evaluation. Historical facts are immutable evidence and market price is never performance history."
+        "policy":"Derived cache only; threshold-independent player/metric recent values support fast forecast-first evaluation. NCAA profiles additionally retain compact recent event/team metadata so current-season form can outrank prior-season continuity. Historical facts are immutable evidence and market price is never performance history."
     },separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
     print(f"LSI history warehouse: {len(players)} registered players; {len(metric_profiles)} metric profiles; {len(profiles)} exact-threshold cached profiles.")
 
