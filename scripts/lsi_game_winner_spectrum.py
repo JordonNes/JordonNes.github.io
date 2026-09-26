@@ -317,8 +317,11 @@ def main():
     payload["generated_at_utc"]=write_now.isoformat()
     payload["actionable_policy"]="Only not-yet-started events may expose props or odds. PLAYER_PROP and GAME_ML LJPC require completed L&J evaluation. Market-only probability remains secondary provisional evidence and never becomes LJPC by itself."
 
-    json_text=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
-    js_text="/* Generated rolling future market board; do not edit manually. */\nwindow.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n"
+    compact=json.dumps(payload,ensure_ascii=False,separators=(",",":"))
+    json_text=compact+"\n"
+    js_text="/* Generated rolling future market board; do not edit manually. */\nwindow.LJ_FUTURE_MARKET_BOARD="+compact+";\n"
+    if max(len(json_text.encode("utf-8")),len(js_text.encode("utf-8")))>=95*1024*1024:
+        raise SystemExit("Game Winner board exceeds 95 MiB safety limit; last-known-good artifacts preserved.")
     tmp_json=BOARD.with_suffix(".json.tmp")
     tmp_js=BOARD_JS.with_suffix(".js.tmp")
     tmp_json.write_text(json_text,encoding="utf-8")
