@@ -1,50 +1,50 @@
 {
   "schema_version": "LSI-LJPC-CALIBRATION-1",
-  "generated_at_utc": "2026-09-25T23:37:18.897244+00:00",
+  "generated_at_utc": "2026-09-26T01:28:43.453967+00:00",
   "policy": "Descriptive audit only. Calibration never changes live LJPC without the separate gated learning process.",
   "minimum_interpretation_sample": 30,
   "overall": {
-    "decisive": 421,
-    "hits": 281,
-    "misses": 140,
-    "hit_rate_pct": 66.75,
-    "avg_ljpc_pct": 68.86,
-    "calibration_error_pp": 2.12,
+    "decisive": 448,
+    "hits": 296,
+    "misses": 152,
+    "hit_rate_pct": 66.07,
+    "avg_ljpc_pct": 67.83,
+    "calibration_error_pp": 1.76,
     "calibration_bias": "CALIBRATED_WITHIN_3PP",
-    "brier_score": 0.229721
+    "brier_score": 0.23133
   },
   "bands": [
     {
-      "decisive": 3,
+      "decisive": 4,
       "hits": 1,
-      "misses": 2,
-      "hit_rate_pct": 33.33,
-      "avg_ljpc_pct": 47.87,
-      "calibration_error_pp": 14.53,
+      "misses": 3,
+      "hit_rate_pct": 25.0,
+      "avg_ljpc_pct": 48.33,
+      "calibration_error_pp": 23.33,
       "calibration_bias": "OVERCONFIDENT",
-      "brier_score": 0.262867,
+      "brier_score": 0.258902,
       "band": "45-49.9"
     },
     {
-      "decisive": 134,
-      "hits": 78,
-      "misses": 56,
-      "hit_rate_pct": 58.21,
-      "avg_ljpc_pct": 52.37,
-      "calibration_error_pp": -5.83,
+      "decisive": 159,
+      "hits": 92,
+      "misses": 67,
+      "hit_rate_pct": 57.86,
+      "avg_ljpc_pct": 52.25,
+      "calibration_error_pp": -5.61,
       "calibration_bias": "UNDERCONFIDENT",
-      "brier_score": 0.2491,
+      "brier_score": 0.250815,
       "band": "50-54.9"
     },
     {
-      "decisive": 76,
-      "hits": 52,
+      "decisive": 77,
+      "hits": 53,
       "misses": 24,
-      "hit_rate_pct": 68.42,
-      "avg_ljpc_pct": 56.59,
-      "calibration_error_pp": -11.83,
+      "hit_rate_pct": 68.83,
+      "avg_ljpc_pct": 56.61,
+      "calibration_error_pp": -12.22,
       "calibration_bias": "UNDERCONFIDENT",
-      "brier_score": 0.226476,
+      "brier_score": 0.225825,
       "band": "55-59.9"
     },
     {
@@ -136,44 +136,55 @@
       "band": "95-99.9"
     }
   ],
-  "expected_calibration_error_pp": 10.5,
+  "expected_calibration_error_pp": 10.32,
   "maximum_calibration_error_pp": 67.05,
   "by_sport": {
     "MLB": {
-      "decisive": 116,
-      "hits": 65,
-      "misses": 51,
-      "hit_rate_pct": 56.03,
-      "avg_ljpc_pct": 53.54,
-      "calibration_error_pp": -2.49,
+      "decisive": 143,
+      "hits": 80,
+      "misses": 63,
+      "hit_rate_pct": 55.94,
+      "avg_ljpc_pct": 53.2,
+      "calibration_error_pp": -2.74,
       "calibration_bias": "CALIBRATED_WITHIN_3PP",
-      "brier_score": 0.246984,
+      "brier_score": 0.248767,
       "bands": [
         {
-          "decisive": 89,
-          "hits": 47,
-          "misses": 42,
-          "hit_rate_pct": 52.81,
-          "avg_ljpc_pct": 52.61,
-          "calibration_error_pp": -0.2,
+          "decisive": 1,
+          "hits": 0,
+          "misses": 1,
+          "hit_rate_pct": 0.0,
+          "avg_ljpc_pct": 49.7,
+          "calibration_error_pp": 49.7,
+          "calibration_bias": "OVERCONFIDENT",
+          "brier_score": 0.247009,
+          "band": "45-49.9"
+        },
+        {
+          "decisive": 114,
+          "hits": 61,
+          "misses": 53,
+          "hit_rate_pct": 53.51,
+          "avg_ljpc_pct": 52.39,
+          "calibration_error_pp": -1.12,
           "calibration_bias": "CALIBRATED_WITHIN_3PP",
-          "brier_score": 0.253188,
+          "brier_score": 0.254684,
           "band": "50-54.9"
         },
         {
-          "decisive": 27,
-          "hits": 18,
+          "decisive": 28,
+          "hits": 19,
           "misses": 9,
-          "hit_rate_pct": 66.67,
-          "avg_ljpc_pct": 56.61,
-          "calibration_error_pp": -10.06,
+          "hit_rate_pct": 67.86,
+          "avg_ljpc_pct": 56.66,
+          "calibration_error_pp": -11.2,
           "calibration_bias": "UNDERCONFIDENT",
-          "brier_score": 0.226531,
+          "brier_score": 0.22474,
           "band": "55-59.9"
         }
       ],
-      "expected_calibration_error_pp": 2.5,
-      "maximum_calibration_error_pp": 10.06
+      "expected_calibration_error_pp": 3.43,
+      "maximum_calibration_error_pp": 49.7
     },
     "NCAA_Football": {
       "decisive": 19,
@@ -454,46 +465,46 @@
   },
   "by_market_class": {
     "GAME_ML": {
-      "decisive": 255,
-      "hits": 159,
-      "misses": 96,
-      "hit_rate_pct": 62.35,
-      "avg_ljpc_pct": 55.36,
-      "calibration_error_pp": -6.99,
+      "decisive": 282,
+      "hits": 174,
+      "misses": 108,
+      "hit_rate_pct": 61.7,
+      "avg_ljpc_pct": 55.02,
+      "calibration_error_pp": -6.68,
       "calibration_bias": "UNDERCONFIDENT",
-      "brier_score": 0.238223,
+      "brier_score": 0.239966,
       "bands": [
         {
-          "decisive": 3,
+          "decisive": 4,
           "hits": 1,
-          "misses": 2,
-          "hit_rate_pct": 33.33,
-          "avg_ljpc_pct": 47.87,
-          "calibration_error_pp": 14.53,
+          "misses": 3,
+          "hit_rate_pct": 25.0,
+          "avg_ljpc_pct": 48.33,
+          "calibration_error_pp": 23.33,
           "calibration_bias": "OVERCONFIDENT",
-          "brier_score": 0.262867,
+          "brier_score": 0.258902,
           "band": "45-49.9"
         },
         {
-          "decisive": 134,
-          "hits": 78,
-          "misses": 56,
-          "hit_rate_pct": 58.21,
-          "avg_ljpc_pct": 52.37,
-          "calibration_error_pp": -5.83,
+          "decisive": 159,
+          "hits": 92,
+          "misses": 67,
+          "hit_rate_pct": 57.86,
+          "avg_ljpc_pct": 52.25,
+          "calibration_error_pp": -5.61,
           "calibration_bias": "UNDERCONFIDENT",
-          "brier_score": 0.2491,
+          "brier_score": 0.250815,
           "band": "50-54.9"
         },
         {
-          "decisive": 74,
-          "hits": 52,
+          "decisive": 75,
+          "hits": 53,
           "misses": 22,
-          "hit_rate_pct": 70.27,
-          "avg_ljpc_pct": 56.61,
-          "calibration_error_pp": -13.66,
+          "hit_rate_pct": 70.67,
+          "avg_ljpc_pct": 56.63,
+          "calibration_error_pp": -14.03,
           "calibration_bias": "UNDERCONFIDENT",
-          "brier_score": 0.224195,
+          "brier_score": 0.223558,
           "band": "55-59.9"
         },
         {
@@ -508,8 +519,8 @@
           "band": "60-64.9"
         }
       ],
-      "expected_calibration_error_pp": 7.33,
-      "maximum_calibration_error_pp": 14.53
+      "expected_calibration_error_pp": 7.35,
+      "maximum_calibration_error_pp": 23.33
     },
     "PLAYER_PROP": {
       "decisive": 166,
@@ -627,14 +638,14 @@
   },
   "by_sport_market_min3": {
     "MLB|Moneyline": {
-      "decisive": 116,
-      "hits": 65,
-      "misses": 51,
-      "hit_rate_pct": 56.03,
-      "avg_ljpc_pct": 53.54,
-      "calibration_error_pp": -2.49,
+      "decisive": 143,
+      "hits": 80,
+      "misses": 63,
+      "hit_rate_pct": 55.94,
+      "avg_ljpc_pct": 53.2,
+      "calibration_error_pp": -2.74,
       "calibration_bias": "CALIBRATED_WITHIN_3PP",
-      "brier_score": 0.246984
+      "brier_score": 0.248767
     },
     "NCAA_Football|Moneyline": {
       "decisive": 19,
