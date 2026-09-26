@@ -58,6 +58,7 @@ on:
       - 'scripts/lsi_publish_ispy.py'
       - 'scripts/test_lsi_future_board_guard.py'
       - 'scripts/lsi_game_winner_spectrum.py'
+      - 'scripts/lsi_publication_hygiene.py'
       - 'scripts/lsi_promote_learning.py'
       - 'data/learning_overlay.json'
       - 'data/fiba_scenario_state.json'
@@ -430,7 +431,7 @@ jobs:
           grep -q 'LJ-FUTURE-MARKET-1' data/future_market_board.json
           grep -q 'GAME ODDS' lsi_registry_bridge.js
           python - <<'PY'
-          import json
+          import json, os
           payload=json.load(open('data/prediction_registry.json',encoding='utf-8'))
           assert payload.get('schema_version')=='LSI-PR-2', payload.get('schema_version')
           required=set(payload.get('player_prop_fields') or [])
@@ -447,6 +448,8 @@ jobs:
               assert any(p.get('learning_applied') for p in payload.get('predictions',[])), 'learning overlay enabled but no prediction received a gated adjustment'
           print(f"LSI-PR-2 invariant: {len(props)} PLAYER_PROP records; learning_enabled={payload.get('learning_overlay_enabled')}")
           board=json.load(open('data/future_market_board.json',encoding='utf-8'))
+          for path in ('data/future_market_board.json','data/future_market_board.js'):
+              assert os.path.getsize(path)<95*1024*1024, f'{path} exceeds GitHub publication safety limit'
           active=list(board.get('events') or [])
           actionable=[p for e in active for p in (e.get('props') or []) if p.get('evaluation_status')=='LJ_EVALUATED']
           assert all(p.get('market_verified') is True and p.get('market_verification')=='EXACT_MARKET_MATCH' for p in actionable), 'Actionable POM escaped exact-market verification gate'
