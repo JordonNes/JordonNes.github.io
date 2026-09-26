@@ -59,8 +59,11 @@ def main():
         payload=json.loads(BOARD.read_text(encoding="utf-8"))
         payload,removed=prune_payload(payload,now)
         if removed:
-            json_text=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
-            js_text="/* Generated rolling future market board; canonical JSON mirror is future_market_board.json. */\nwindow.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n"
+            compact=json.dumps(payload,ensure_ascii=False,separators=(",",":"))
+            json_text=compact+"\n"
+            js_text="/* Generated rolling future market board; canonical JSON mirror is future_market_board.json. */\nwindow.LJ_FUTURE_MARKET_BOARD="+compact+";\n"
+            if max(len(json_text.encode("utf-8")),len(js_text.encode("utf-8")))>=95*1024*1024:
+                raise SystemExit("Publication hygiene board exceeds 95 MiB safety limit; last-known-good artifacts preserved.")
             tmp=BOARD.with_suffix(".json.tmp"); tmp.write_text(json_text,encoding="utf-8"); tmp.replace(BOARD)
             tmpjs=BOARD_JS.with_suffix(".js.tmp"); tmpjs.write_text(js_text,encoding="utf-8"); tmpjs.replace(BOARD_JS)
             changed=True
