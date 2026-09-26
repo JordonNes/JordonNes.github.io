@@ -497,11 +497,17 @@ def main():
     if source_events and not events:
         raise SystemExit("Future-board candidate unexpectedly contains zero upcoming events; last-known-good future board preserved.")
 
-    json_text=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
+    # This artifact is committed to GitHub; indentation can push a valid board
+    # beyond GitHub's 100 MiB per-file limit without adding useful data.
+    compact=json.dumps(payload,ensure_ascii=False,separators=(",",":"))
+    json_text=compact+"\n"
     js_text=(
         "/* Generated rolling future market board; canonical JSON mirror is future_market_board.json. */\n"
-        "window.LJ_FUTURE_MARKET_BOARD="+json.dumps(payload,ensure_ascii=False,separators=(",",":"))+";\n"
+        "window.LJ_FUTURE_MARKET_BOARD="+compact+";\n"
     )
+    max_bytes=95*1024*1024
+    if max(len(json_text.encode("utf-8")),len(js_text.encode("utf-8")))>=max_bytes:
+        raise SystemExit("Future-board artifact exceeds 95 MiB safety limit; last-known-good artifacts preserved.")
     tmp_json=OUT.with_suffix(".json.tmp")
     tmp_js=OUTJS.with_suffix(".js.tmp")
     tmp_json.write_text(json_text,encoding="utf-8")
