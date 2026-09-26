@@ -350,7 +350,7 @@ jobs:
       - name: Observe and publish JINX I Spy signals
         if: steps.league_schedule.outputs.cycle_required == 'true'
         run: |
-          python scripts/test_lsi_ispy_discovery.py
+          python -m scripts.test_lsi_ispy_discovery
           python scripts/lsi_ispy_observer.py
           python scripts/lsi_ispy_discovery.py
           python scripts/lsi_publish_ispy.py
