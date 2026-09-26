@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-09-26T19:09:31.909371+00:00",
+  "checked_at_utc": "2026-09-26T19:59:55.112184+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -10,9 +10,9 @@
   "credit_cycle_started_at": "2026-09-26T02:05:39.509678+00:00",
   "league_last_success_utc": {
     "NFL": "2026-09-26T02:05:39.509678+00:00",
-    "NCAA_Football": "2026-09-26T02:05:39.509678+00:00",
-    "MLB": "2026-09-26T02:05:39.509678+00:00",
-    "NHL": "2026-09-26T09:17:26.278392+00:00"
+    "NCAA_Football": "2026-09-26T19:59:55.112184+00:00",
+    "MLB": "2026-09-26T19:59:55.112184+00:00",
+    "NHL": "2026-09-26T19:59:55.112184+00:00"
   },
   "zero_dollar_policy": {
     "monthly_credit_cap": 900,
@@ -21,25 +21,59 @@
     "min_refresh_minutes": 480,
     "max_sport_calls_per_run": 3
   },
-  "status": "ERROR",
-  "credits_estimated_this_cycle": 12,
-  "provider_reported_remaining": null,
+  "status": "OK",
+  "credits_estimated_this_cycle": 21,
+  "provider_reported_remaining": 847,
   "requested_leagues": [
-    "NFL",
     "NCAA_Football",
     "MLB",
     "NHL"
   ],
-  "refreshed_leagues": [],
-  "authoritative_complete_leagues": [],
-  "diagnostics": {},
-  "errors": {
-    "NFL": "HTTP 500: {\"error\":\"INTERNAL_SERVER_ERROR\",\"message\":\"An unexpected error occurred. The request_id below has been logged on the server; paste it in a support ticket for fastest resolution.\",\"request_id\":\"2d34f1eca79d193a\",\"docs_url\":\"/docs\",\"openapi_url\":\"/openapi.json\",\"hint\":\"If this persists, please email support@parlay-api.com with the request_id.\",\"path\":\"/v1/sports/americanfootball_nfl/props\",\"method\":\"GET\"}",
-    "NCAA_Football": "HTTP 500: {\"error\":\"INTERNAL_SERVER_ERROR\",\"message\":\"An unexpected error occurred. The request_id below has been logged on the server; paste it in a support ticket for fastest resolution.\",\"request_id\":\"a58522d571ad6882\",\"docs_url\":\"/docs\",\"openapi_url\":\"/openapi.json\",\"hint\":\"If this persists, please email support@parlay-api.com with the request_id.\",\"path\":\"/v1/sports/americanfootball_ncaaf/props\",\"method\":\"GET\"}",
-    "MLB": "HTTP 500: {\"error\":\"INTERNAL_SERVER_ERROR\",\"message\":\"An unexpected error occurred. The request_id below has been logged on the server; paste it in a support ticket for fastest resolution.\",\"request_id\":\"839efd526544e3d0\",\"docs_url\":\"/docs\",\"openapi_url\":\"/openapi.json\",\"hint\":\"If this persists, please email support@parlay-api.com with the request_id.\",\"path\":\"/v1/sports/baseball_mlb/props\",\"method\":\"GET\"}"
+  "refreshed_leagues": [
+    "MLB",
+    "NCAA_Football",
+    "NHL"
+  ],
+  "authoritative_complete_leagues": [
+    "MLB",
+    "NCAA_Football",
+    "NHL"
+  ],
+  "diagnostics": {
+    "NCAA_Football": {
+      "status": "OK",
+      "raw_rows": 1405,
+      "normalized_side_offers": 954,
+      "result_has_more": false,
+      "result_truncated": false,
+      "result_truncated_hint": null,
+      "result_degraded": null,
+      "provider_reported_remaining": 853
+    },
+    "MLB": {
+      "status": "OK",
+      "raw_rows": 1663,
+      "normalized_side_offers": 2879,
+      "result_has_more": false,
+      "result_truncated": false,
+      "result_truncated_hint": null,
+      "result_degraded": null,
+      "provider_reported_remaining": 850
+    },
+    "NHL": {
+      "status": "OK",
+      "raw_rows": 0,
+      "normalized_side_offers": 0,
+      "result_has_more": false,
+      "result_truncated": false,
+      "result_truncated_hint": null,
+      "result_degraded": null,
+      "provider_reported_remaining": 847
+    }
   },
-  "raw_side_offers": 0,
-  "consolidated_exact_poms": 0,
-  "market_history_rows_added": 0,
+  "errors": {},
+  "raw_side_offers": 3833,
+  "consolidated_exact_poms": 3169,
+  "market_history_rows_added": 3833,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }
