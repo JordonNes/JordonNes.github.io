@@ -1,17 +1,17 @@
 {
   "schema_version": "LSI-LEGZ-JINX-ACCOUNTABILITY-1",
-  "generated_at_utc": "2026-09-26T20:14:29.270978+00:00",
+  "generated_at_utc": "2026-09-26T22:42:59.416106+00:00",
   "policy": "Compare published LEGZ baseline probability with final LJPC on the same settled suggestion. A lower final Brier score means JINX/context improved probability accuracy for that sample.",
   "overall": {
-    "paired_decisive": 298,
-    "legz_brier": 0.287035,
-    "final_ljpc_brier": 0.287011,
-    "brier_delta_final_minus_legz": -2.4e-05,
+    "paired_decisive": 424,
+    "legz_brier": 0.253804,
+    "final_ljpc_brier": 0.253802,
+    "brier_delta_final_minus_legz": -3e-06,
     "jinx_effect": "IMPROVED",
     "jinx_improved": 13,
-    "jinx_worsened": 14,
-    "jinx_neutral": 271,
-    "jinx_improvement_rate_pct": 4.36
+    "jinx_worsened": 20,
+    "jinx_neutral": 391,
+    "jinx_improvement_rate_pct": 3.07
   },
   "by_sport": {
     "MLB": {
@@ -25,16 +25,27 @@
       "jinx_neutral": 15,
       "jinx_improvement_rate_pct": 32.14
     },
+    "MMA": {
+      "paired_decisive": 13,
+      "legz_brier": 0.159201,
+      "final_ljpc_brier": 0.159201,
+      "brier_delta_final_minus_legz": 0.0,
+      "jinx_effect": "NEUTRAL",
+      "jinx_improved": 0,
+      "jinx_worsened": 0,
+      "jinx_neutral": 13,
+      "jinx_improvement_rate_pct": 0.0
+    },
     "NCAA_Football": {
-      "paired_decisive": 208,
-      "legz_brier": 0.306737,
-      "final_ljpc_brier": 0.306742,
+      "paired_decisive": 234,
+      "legz_brier": 0.295897,
+      "final_ljpc_brier": 0.295901,
       "brier_delta_final_minus_legz": 5e-06,
       "jinx_effect": "WORSENED",
       "jinx_improved": 3,
       "jinx_worsened": 7,
-      "jinx_neutral": 198,
-      "jinx_improvement_rate_pct": 1.44
+      "jinx_neutral": 224,
+      "jinx_improvement_rate_pct": 1.28
     },
     "NFL": {
       "paired_decisive": 7,
@@ -48,15 +59,15 @@
       "jinx_improvement_rate_pct": 0.0
     },
     "NHL": {
-      "paired_decisive": 21,
-      "legz_brier": 0.213744,
-      "final_ljpc_brier": 0.213707,
-      "brier_delta_final_minus_legz": -3.7e-05,
-      "jinx_effect": "IMPROVED",
+      "paired_decisive": 108,
+      "legz_brier": 0.176455,
+      "final_ljpc_brier": 0.176502,
+      "brier_delta_final_minus_legz": 4.8e-05,
+      "jinx_effect": "WORSENED",
       "jinx_improved": 1,
-      "jinx_worsened": 0,
-      "jinx_neutral": 20,
-      "jinx_improvement_rate_pct": 4.76
+      "jinx_worsened": 6,
+      "jinx_neutral": 101,
+      "jinx_improvement_rate_pct": 0.93
     },
     "WNBA": {
       "paired_decisive": 34,
@@ -72,26 +83,26 @@
   },
   "by_market_class": {
     "GAME_ML": {
-      "paired_decisive": 103,
-      "legz_brier": 0.210595,
-      "final_ljpc_brier": 0.210497,
-      "brier_delta_final_minus_legz": -9.8e-05,
+      "paired_decisive": 202,
+      "legz_brier": 0.216144,
+      "final_ljpc_brier": 0.216123,
+      "brier_delta_final_minus_legz": -2.1e-05,
       "jinx_effect": "IMPROVED",
       "jinx_improved": 10,
-      "jinx_worsened": 4,
-      "jinx_neutral": 89,
-      "jinx_improvement_rate_pct": 9.71
+      "jinx_worsened": 10,
+      "jinx_neutral": 182,
+      "jinx_improvement_rate_pct": 4.95
     },
     "PLAYER_PROP": {
-      "paired_decisive": 195,
-      "legz_brier": 0.327411,
-      "final_ljpc_brier": 0.327427,
-      "brier_delta_final_minus_legz": 1.6e-05,
+      "paired_decisive": 222,
+      "legz_brier": 0.288072,
+      "final_ljpc_brier": 0.288086,
+      "brier_delta_final_minus_legz": 1.4e-05,
       "jinx_effect": "WORSENED",
       "jinx_improved": 3,
       "jinx_worsened": 10,
-      "jinx_neutral": 182,
-      "jinx_improvement_rate_pct": 1.54
+      "jinx_neutral": 209,
+      "jinx_improvement_rate_pct": 1.35
     }
   },
   "jinx_adjustment_direction": {
@@ -116,14 +127,14 @@
       "brier_score": null
     },
     "ZERO_OR_UNKNOWN": {
-      "decisive": 918,
-      "hits": 594,
-      "misses": 324,
-      "hit_rate_pct": 64.71,
-      "avg_ljpc_pct": 64.85,
-      "calibration_error_pp": 0.14,
+      "decisive": 1132,
+      "hits": 711,
+      "misses": 421,
+      "hit_rate_pct": 62.81,
+      "avg_ljpc_pct": 64.19,
+      "calibration_error_pp": 1.38,
       "calibration_bias": "CALIBRATED_WITHIN_3PP",
-      "brier_score": 0.247892
+      "brier_score": 0.23871
     }
   }
 }
