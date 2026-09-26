@@ -32,6 +32,8 @@ on:
       - 'scripts/test_propline_bulk_catalog.py'
       - 'scripts/oddspapi_history_adapter.py'
       - 'scripts/lsi_pipeline.py'
+      - 'scripts/lsi_openai_router.py'
+      - 'scripts/test_lsi_openai_router.py'
       - 'scripts/lsi_league_scheduler.py'
       - 'scripts/test_lsi_league_scheduler.py'
       - 'scripts/test_legz_material_hash.py'
@@ -370,7 +372,9 @@ jobs:
         run: node scripts/lsi_snapshot_suggestions.js
       - name: OpenAI LSI router — dry run and usage estimate
         if: steps.league_schedule.outputs.cycle_required == 'true'
-        run: python scripts/lsi_openai_router.py --dry-run
+        run: |
+          python scripts/test_lsi_openai_router.py
+          python scripts/lsi_openai_router.py --dry-run
       - name: Acknowledge completed league/event gates
         if: steps.league_schedule.outputs.has_work == 'true'
         run: python scripts/lsi_league_scheduler.py --ack data/lsi_league_schedule.json
