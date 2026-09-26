@@ -51,6 +51,19 @@ SYSTEM_OVERHEAD_TOKENS = 350
 PIPELINE_RUNS_PER_DAY = 6
 
 
+def parse_dt(value: object) -> datetime | None:
+    """Parse a board timestamp as UTC; invalid starts are not actionable."""
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
 def read_csv(path: Path) -> list[dict]:
     if not path.exists():
         return []
