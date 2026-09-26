@@ -1,13 +1,1168 @@
 {
-  "schema_version": "LJ-ISPY-1",
-  "generated_at_utc": "2026-09-25T20:06:40.348213+00:00",
+  "schema_version": "LJ-ISPY-2",
+  "generated_at_utc": "2026-09-26T02:08:24.098572+00:00",
+  "engine": "JINX_COMBINED_DISCOVERY_2",
   "publication_rules": {
-    "min_sample_size": 25,
-    "min_lift_pp": 7.5,
+    "raw_sample_minimum": null,
+    "sample_size_disclosed": true,
+    "effective_sample_required": true,
+    "validated_min_effective_sample": 7,
+    "validated_min_mean_similarity_pct": 58,
+    "validated_min_lift_pp": 7.5,
+    "validated_min_stability": 0.66,
+    "emerging_min_effective_sample": 4,
+    "emerging_min_mean_similarity_pct": 52,
+    "emerging_min_lift_pp": 5.0,
+    "emerging_min_stability": 0.5,
     "current_match_required": true,
-    "current_pom_required": true,
-    "provenance_required": true
+    "current_pom_required": false,
+    "provenance_required": true,
+    "discovery_separate_from_exploitation": true,
+    "causality_claimed": false
   },
-  "candidate_count": 0,
-  "signals": []
+  "coverage": {
+    "league": "NFL",
+    "historical_analog_rows": 3070,
+    "context_rows": 3808,
+    "lookback_seasons": 8,
+    "pom_analog_candidates": 0,
+    "game_state_candidates": 4,
+    "weather_note": "Historical NFL game-state analogs use measured temperature/wind. Open-Meteo adds richer current-event weather when available; precipitation is not used as a deep historical game-state similarity dimension until equivalent coverage exists."
+  },
+  "candidate_count": 4,
+  "validated_count": 4,
+  "emerging_count": 0,
+  "signals": [
+    {
+      "signal_id": "ISPY-FC8257757AAC22837E",
+      "pattern_key": "20dbf6a0c4f99866",
+      "status": "VALIDATED",
+      "league": "NFL",
+      "focus_team": "DAL",
+      "opponent": "BAL",
+      "title": "DAL — finishes at least 10% above its entering rushing-yard form",
+      "outcome_code": "RUSH_SURGE",
+      "outcome": "finishes at least 10% above its entering rushing-yard form",
+      "cohort_definition": "Games most similar to this measured state: passing efficiency 12.74, rushing efficiency -0.89, rush-defense allowance 173.50, team rushing form 67.5 yds.",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 12.7424643745926,
+          "display": "12.74"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": -0.88551050089882,
+          "display": "-0.89"
+        },
+        {
+          "feature": "focus_rush_allowed_l5",
+          "label": "rush-defense allowance",
+          "direction": "high",
+          "value": 173.5,
+          "display": "173.50"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "low",
+          "value": 67.5,
+          "display": "67.5 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 67.5,
+          "display": "67.5 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 227.0,
+          "display": "227.0 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 209.0,
+          "display": "209.00"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 155.0,
+          "display": "155.0 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 3.8499999999999996,
+          "display": "3.85"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 6.4,
+          "display": "6.40"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.45,
+      "mean_similarity_pct": 69.26,
+      "closest_similarity_pct": 76.19,
+      "observed_rate_pct": 65.91,
+      "baseline_rate_pct": 41.85,
+      "baseline_sample_size": 411,
+      "lift_pp": 24.06,
+      "stability_score": 1.0,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 100.0,
+          "lift_pp": 58.15,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 81.67,
+          "lift_pp": 39.83,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 65.91,
+          "lift_pp": 24.06,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 65.34,
+          "lift_pp": 23.49,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2025_06_LAC_MIA",
+          "label": "2025-10-12 MIA vs LAC",
+          "similarity_pct": 76.2,
+          "outcome_occurred": true,
+          "focus_score": 27.0,
+          "opp_score": 29.0,
+          "pass_yards": 213.0,
+          "rush_yards": 137.0
+        },
+        {
+          "game_id": "2024_05_GB_LA",
+          "label": "2024-10-06 LA vs GB",
+          "similarity_pct": 71.8,
+          "outcome_occurred": true,
+          "focus_score": 19.0,
+          "opp_score": 24.0,
+          "pass_yards": 260.0,
+          "rush_yards": 134.0
+        },
+        {
+          "game_id": "2025_09_LAC_TEN",
+          "label": "2025-11-02 TEN vs LAC",
+          "similarity_pct": 71.7,
+          "outcome_occurred": true,
+          "focus_score": 20.0,
+          "opp_score": 27.0,
+          "pass_yards": 145.0,
+          "rush_yards": 88.0
+        },
+        {
+          "game_id": "2025_05_DET_CIN",
+          "label": "2025-10-05 CIN vs DET",
+          "similarity_pct": 70.5,
+          "outcome_occurred": true,
+          "focus_score": 24.0,
+          "opp_score": 37.0,
+          "pass_yards": 251.0,
+          "rush_yards": 85.0
+        },
+        {
+          "game_id": "2024_05_DAL_PIT",
+          "label": "2024-10-06 DAL vs PIT",
+          "similarity_pct": 69.6,
+          "outcome_occurred": true,
+          "focus_score": 20.0,
+          "opp_score": 17.0,
+          "pass_yards": 352.0,
+          "rush_yards": 109.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_03_BAL_DAL",
+          "label": "Baltimore Ravens @ Dallas Cowboys",
+          "focus_team": "DAL",
+          "opponent": "BAL"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 65.9% of the time versus a 41.8% contextual baseline. The top-25 analog neighborhood averages 69.3% similarity with effective sample 24.4. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    },
+    {
+      "signal_id": "ISPY-4BFD287EA5C706AAD5",
+      "pattern_key": "cafebfc0eb4b2b7f",
+      "status": "VALIDATED",
+      "league": "NFL",
+      "focus_team": "BAL",
+      "opponent": "DAL",
+      "title": "BAL — finishes at least 10% below its entering passing-attempt form",
+      "outcome_code": "PASS_VOLUME_DROP",
+      "outcome": "finishes at least 10% below its entering passing-attempt form",
+      "cohort_definition": "Games most similar to this measured state: rushing efficiency 4.83, passing efficiency 6.83, opponent rush-defense allowance 173.50, team rushing form 155.0 yds.",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 4.8267519712708555,
+          "display": "4.83"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 6.830535001067515,
+          "display": "6.83"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "high",
+          "value": 173.5,
+          "display": "173.50"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "high",
+          "value": 155.0,
+          "display": "155.0 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 155.0,
+          "display": "155.0 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 279.5,
+          "display": "279.5 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 218.5,
+          "display": "218.50"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 67.5,
+          "display": "67.5 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 6.4,
+          "display": "6.40"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 3.8499999999999996,
+          "display": "3.85"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.77,
+      "mean_similarity_pct": 68.82,
+      "closest_similarity_pct": 71.26,
+      "observed_rate_pct": 57.42,
+      "baseline_rate_pct": 37.47,
+      "baseline_sample_size": 411,
+      "lift_pp": 19.95,
+      "stability_score": 1.0,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 60.77,
+          "lift_pp": 23.31,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 60.58,
+          "lift_pp": 23.11,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 57.42,
+          "lift_pp": 19.95,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 46.01,
+          "lift_pp": 8.54,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2024_05_GB_LA",
+          "label": "2024-10-06 GB vs LA",
+          "similarity_pct": 71.3,
+          "outcome_occurred": true,
+          "focus_score": 24.0,
+          "opp_score": 19.0,
+          "pass_yards": 224.0,
+          "rush_yards": 126.0
+        },
+        {
+          "game_id": "2025_05_DET_CIN",
+          "label": "2025-10-05 DET vs CIN",
+          "similarity_pct": 70.8,
+          "outcome_occurred": true,
+          "focus_score": 37.0,
+          "opp_score": 24.0,
+          "pass_yards": 261.0,
+          "rush_yards": 118.0
+        },
+        {
+          "game_id": "2025_06_LAC_MIA",
+          "label": "2025-10-12 LAC vs MIA",
+          "similarity_pct": 70.8,
+          "outcome_occurred": false,
+          "focus_score": 29.0,
+          "opp_score": 27.0,
+          "pass_yards": 264.0,
+          "rush_yards": 140.0
+        },
+        {
+          "game_id": "2024_08_DAL_SF",
+          "label": "2024-10-27 SF vs DAL",
+          "similarity_pct": 70.8,
+          "outcome_occurred": true,
+          "focus_score": 30.0,
+          "opp_score": 24.0,
+          "pass_yards": 260.0,
+          "rush_yards": 223.0
+        },
+        {
+          "game_id": "2024_05_DAL_PIT",
+          "label": "2024-10-06 PIT vs DAL",
+          "similarity_pct": 69.7,
+          "outcome_occurred": false,
+          "focus_score": 17.0,
+          "opp_score": 20.0,
+          "pass_yards": 150.0,
+          "rush_yards": 92.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_03_BAL_DAL",
+          "label": "Baltimore Ravens @ Dallas Cowboys",
+          "focus_team": "BAL",
+          "opponent": "DAL"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 57.4% of the time versus a 37.5% contextual baseline. The top-25 analog neighborhood averages 68.8% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    },
+    {
+      "signal_id": "ISPY-F294AC09471AAD3D57",
+      "pattern_key": "4ee8e8ccf21fd3d1",
+      "status": "VALIDATED",
+      "league": "NFL",
+      "focus_team": "BAL",
+      "opponent": "DAL",
+      "title": "BAL — wins the game",
+      "outcome_code": "WIN",
+      "outcome": "wins the game",
+      "cohort_definition": "Games most similar to this measured state: rushing efficiency 4.83, passing efficiency 6.83, opponent rush-defense allowance 173.50, team rushing form 155.0 yds.",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 4.8267519712708555,
+          "display": "4.83"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 6.830535001067515,
+          "display": "6.83"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "high",
+          "value": 173.5,
+          "display": "173.50"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "high",
+          "value": 155.0,
+          "display": "155.0 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 155.0,
+          "display": "155.0 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 279.5,
+          "display": "279.5 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 218.5,
+          "display": "218.50"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 67.5,
+          "display": "67.5 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 6.4,
+          "display": "6.40"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 3.8499999999999996,
+          "display": "3.85"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.77,
+      "mean_similarity_pct": 68.82,
+      "closest_similarity_pct": 71.26,
+      "observed_rate_pct": 68.36,
+      "baseline_rate_pct": 48.91,
+      "baseline_sample_size": 411,
+      "lift_pp": 19.45,
+      "stability_score": 1.0,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 81.36,
+          "lift_pp": 32.45,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 60.93,
+          "lift_pp": 12.02,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 68.36,
+          "lift_pp": 19.45,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 62.76,
+          "lift_pp": 13.86,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2024_05_GB_LA",
+          "label": "2024-10-06 GB vs LA",
+          "similarity_pct": 71.3,
+          "outcome_occurred": true,
+          "focus_score": 24.0,
+          "opp_score": 19.0,
+          "pass_yards": 224.0,
+          "rush_yards": 126.0
+        },
+        {
+          "game_id": "2025_05_DET_CIN",
+          "label": "2025-10-05 DET vs CIN",
+          "similarity_pct": 70.8,
+          "outcome_occurred": true,
+          "focus_score": 37.0,
+          "opp_score": 24.0,
+          "pass_yards": 261.0,
+          "rush_yards": 118.0
+        },
+        {
+          "game_id": "2025_06_LAC_MIA",
+          "label": "2025-10-12 LAC vs MIA",
+          "similarity_pct": 70.8,
+          "outcome_occurred": true,
+          "focus_score": 29.0,
+          "opp_score": 27.0,
+          "pass_yards": 264.0,
+          "rush_yards": 140.0
+        },
+        {
+          "game_id": "2024_08_DAL_SF",
+          "label": "2024-10-27 SF vs DAL",
+          "similarity_pct": 70.8,
+          "outcome_occurred": true,
+          "focus_score": 30.0,
+          "opp_score": 24.0,
+          "pass_yards": 260.0,
+          "rush_yards": 223.0
+        },
+        {
+          "game_id": "2024_05_DAL_PIT",
+          "label": "2024-10-06 PIT vs DAL",
+          "similarity_pct": 69.7,
+          "outcome_occurred": false,
+          "focus_score": 17.0,
+          "opp_score": 20.0,
+          "pass_yards": 150.0,
+          "rush_yards": 92.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_03_BAL_DAL",
+          "label": "Baltimore Ravens @ Dallas Cowboys",
+          "focus_team": "BAL",
+          "opponent": "DAL"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 68.4% of the time versus a 48.9% contextual baseline. The top-25 analog neighborhood averages 68.8% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    },
+    {
+      "signal_id": "ISPY-1E23C800D99DB40A8D",
+      "pattern_key": "02043d56eabba0d4",
+      "status": "VALIDATED",
+      "league": "NFL",
+      "focus_team": "DAL",
+      "opponent": "BAL",
+      "title": "DAL — finishes at least 10% above its entering rushing-attempt form",
+      "outcome_code": "RUSH_VOLUME_SURGE",
+      "outcome": "finishes at least 10% above its entering rushing-attempt form",
+      "cohort_definition": "Games most similar to this measured state: passing efficiency 12.74, rushing efficiency -0.89, rush-defense allowance 173.50, team rushing form 67.5 yds.",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 12.7424643745926,
+          "display": "12.74"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": -0.88551050089882,
+          "display": "-0.89"
+        },
+        {
+          "feature": "focus_rush_allowed_l5",
+          "label": "rush-defense allowance",
+          "direction": "high",
+          "value": 173.5,
+          "display": "173.50"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "low",
+          "value": 67.5,
+          "display": "67.5 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 67.5,
+          "display": "67.5 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 227.0,
+          "display": "227.0 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 209.0,
+          "display": "209.00"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 155.0,
+          "display": "155.0 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 3.8499999999999996,
+          "display": "3.85"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 6.4,
+          "display": "6.40"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.45,
+      "mean_similarity_pct": 69.26,
+      "closest_similarity_pct": 76.19,
+      "observed_rate_pct": 46.02,
+      "baseline_rate_pct": 38.44,
+      "baseline_sample_size": 411,
+      "lift_pp": 7.58,
+      "stability_score": 0.75,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 36.31,
+          "lift_pp": -2.13,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 46.62,
+          "lift_pp": 8.18,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 46.02,
+          "lift_pp": 7.58,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 45.12,
+          "lift_pp": 6.68,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2025_06_LAC_MIA",
+          "label": "2025-10-12 MIA vs LAC",
+          "similarity_pct": 76.2,
+          "outcome_occurred": false,
+          "focus_score": 27.0,
+          "opp_score": 29.0,
+          "pass_yards": 213.0,
+          "rush_yards": 137.0
+        },
+        {
+          "game_id": "2024_05_GB_LA",
+          "label": "2024-10-06 LA vs GB",
+          "similarity_pct": 71.8,
+          "outcome_occurred": true,
+          "focus_score": 19.0,
+          "opp_score": 24.0,
+          "pass_yards": 260.0,
+          "rush_yards": 134.0
+        },
+        {
+          "game_id": "2025_09_LAC_TEN",
+          "label": "2025-11-02 TEN vs LAC",
+          "similarity_pct": 71.7,
+          "outcome_occurred": false,
+          "focus_score": 20.0,
+          "opp_score": 27.0,
+          "pass_yards": 145.0,
+          "rush_yards": 88.0
+        },
+        {
+          "game_id": "2025_05_DET_CIN",
+          "label": "2025-10-05 CIN vs DET",
+          "similarity_pct": 70.5,
+          "outcome_occurred": false,
+          "focus_score": 24.0,
+          "opp_score": 37.0,
+          "pass_yards": 251.0,
+          "rush_yards": 85.0
+        },
+        {
+          "game_id": "2024_05_DAL_PIT",
+          "label": "2024-10-06 DAL vs PIT",
+          "similarity_pct": 69.6,
+          "outcome_occurred": true,
+          "focus_score": 20.0,
+          "opp_score": 17.0,
+          "pass_yards": 352.0,
+          "rush_yards": 109.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_03_BAL_DAL",
+          "label": "Baltimore Ravens @ Dallas Cowboys",
+          "focus_team": "DAL",
+          "opponent": "BAL"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 46.0% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 69.3% similarity with effective sample 24.4. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    }
+  ],
+  "emerging_signals": [],
+  "learned_patterns": [
+    {
+      "pattern_key": "20dbf6a0c4f99866",
+      "league": "NFL",
+      "title": "DAL — finishes at least 10% above its entering rushing-yard form",
+      "outcome": "finishes at least 10% above its entering rushing-yard form",
+      "outcome_code": "RUSH_SURGE",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 12.7424643745926,
+          "display": "12.74"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": -0.88551050089882,
+          "display": "-0.89"
+        },
+        {
+          "feature": "focus_rush_allowed_l5",
+          "label": "rush-defense allowance",
+          "direction": "high",
+          "value": 173.5,
+          "display": "173.50"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "low",
+          "value": 67.5,
+          "display": "67.5 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "last_seen_utc": "2026-09-26T02:08:19.686553+00:00",
+      "last_signal_id": "ISPY-FC8257757AAC22837E",
+      "last_evidence": {
+        "observed_rate_pct": 65.91,
+        "baseline_rate_pct": 41.85,
+        "lift_pp": 24.06,
+        "effective_sample_size": 24.45,
+        "mean_similarity_pct": 69.26,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 24.06,
+      "observed_event_ids": [
+        "2026_03_BAL_DAL"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "first_seen_utc": "2026-09-26T02:08:19.686553+00:00",
+      "times_observed": 1
+    },
+    {
+      "pattern_key": "cafebfc0eb4b2b7f",
+      "league": "NFL",
+      "title": "BAL — finishes at least 10% below its entering passing-attempt form",
+      "outcome": "finishes at least 10% below its entering passing-attempt form",
+      "outcome_code": "PASS_VOLUME_DROP",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 4.8267519712708555,
+          "display": "4.83"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 6.830535001067515,
+          "display": "6.83"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "high",
+          "value": 173.5,
+          "display": "173.50"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "high",
+          "value": 155.0,
+          "display": "155.0 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "last_seen_utc": "2026-09-26T02:08:19.686553+00:00",
+      "last_signal_id": "ISPY-4BFD287EA5C706AAD5",
+      "last_evidence": {
+        "observed_rate_pct": 57.42,
+        "baseline_rate_pct": 37.47,
+        "lift_pp": 19.95,
+        "effective_sample_size": 24.77,
+        "mean_similarity_pct": 68.82,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 19.95,
+      "observed_event_ids": [
+        "2026_03_BAL_DAL"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "first_seen_utc": "2026-09-26T02:08:19.686553+00:00",
+      "times_observed": 1
+    },
+    {
+      "pattern_key": "4ee8e8ccf21fd3d1",
+      "league": "NFL",
+      "title": "BAL — wins the game",
+      "outcome": "wins the game",
+      "outcome_code": "WIN",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 4.8267519712708555,
+          "display": "4.83"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 6.830535001067515,
+          "display": "6.83"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "high",
+          "value": 173.5,
+          "display": "173.50"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "high",
+          "value": 155.0,
+          "display": "155.0 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "last_seen_utc": "2026-09-26T02:08:19.686553+00:00",
+      "last_signal_id": "ISPY-F294AC09471AAD3D57",
+      "last_evidence": {
+        "observed_rate_pct": 68.36,
+        "baseline_rate_pct": 48.91,
+        "lift_pp": 19.45,
+        "effective_sample_size": 24.77,
+        "mean_similarity_pct": 68.82,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 19.45,
+      "observed_event_ids": [
+        "2026_03_BAL_DAL"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "first_seen_utc": "2026-09-26T02:08:19.686553+00:00",
+      "times_observed": 1
+    },
+    {
+      "pattern_key": "02043d56eabba0d4",
+      "league": "NFL",
+      "title": "DAL — finishes at least 10% above its entering rushing-attempt form",
+      "outcome": "finishes at least 10% above its entering rushing-attempt form",
+      "outcome_code": "RUSH_VOLUME_SURGE",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 12.7424643745926,
+          "display": "12.74"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": -0.88551050089882,
+          "display": "-0.89"
+        },
+        {
+          "feature": "focus_rush_allowed_l5",
+          "label": "rush-defense allowance",
+          "direction": "high",
+          "value": 173.5,
+          "display": "173.50"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "low",
+          "value": 67.5,
+          "display": "67.5 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.11764705882352941,
+          "display": "12%"
+        }
+      ],
+      "last_seen_utc": "2026-09-26T02:08:19.686553+00:00",
+      "last_signal_id": "ISPY-1E23C800D99DB40A8D",
+      "last_evidence": {
+        "observed_rate_pct": 46.02,
+        "baseline_rate_pct": 38.44,
+        "lift_pp": 7.58,
+        "effective_sample_size": 24.45,
+        "mean_similarity_pct": 69.26,
+        "stability_score": 0.75
+      },
+      "max_lift_pp": 7.58,
+      "observed_event_ids": [
+        "2026_03_BAL_DAL"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "first_seen_utc": "2026-09-26T02:08:19.686553+00:00",
+      "times_observed": 1
+    }
+  ]
 }

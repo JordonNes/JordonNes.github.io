@@ -1,16 +1,17 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-09-25T18:24:15.241374+00:00",
+  "checked_at_utc": "2026-09-26T02:03:09.914570+00:00",
   "status": "OK",
-  "raw_market_count": 9756,
-  "normalized_props": 839,
-  "history_rows_added": 834,
+  "raw_market_count": 9716,
+  "normalized_props": 820,
+  "history_rows_added": 818,
   "skip_reasons": {
-    "ambiguous_matchup": 265,
-    "ambiguous_participant_threshold": 2103,
-    "ok": 839,
-    "unknown_sport": 6049,
-    "unsupported_market": 500
+    "ambiguous_matchup": 207,
+    "ambiguous_participant_threshold": 2209,
+    "not_upcoming": 72,
+    "ok": 820,
+    "unknown_sport": 6047,
+    "unsupported_market": 361
   },
   "skip_samples": {
     "unknown_sport": {
@@ -64,58 +65,71 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
+    },
+    "not_upcoming": {
+      "ticker": "KXMLBRBI-26SEP251840PITDET-PITBLOWE5-1",
+      "event_ticker": "KXMLBRBI-26SEP251840PITDET",
+      "series_ticker": "KXMLBRBI",
+      "event_title": "Pittsburgh vs Detroit: RBIs",
+      "title": "Brandon Lowe: 1+ RBIs?",
+      "subtitle": null,
+      "yes_sub_title": "Brandon Lowe: 1+",
+      "primary_participant_key": "baseball_player",
+      "floor_strike": 0.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-09-26T01:40:00Z"
     }
   },
   "targeted_series": {
     "selected": [
-      "KXMLBTB",
-      "KXUFCWHITEHOUSE",
-      "KXNBA3PTALLGAMES",
-      "KXNCAAFTEAMRSHATT",
-      "KXNFLFFPTSSEASON",
+      "KXMLBHA",
+      "KXUFCOCCUR",
+      "KXNBASERIESREBLEADER",
+      "KXNCAAFTEAMFG",
+      "KXNFLRECYDSH2H",
       "KXNHLPTS",
+      "KXATPACES",
+      "KXWNBAH2HPTS",
+      "KXMLBOUTS",
+      "KXUFCWHITEHOUSE",
+      "KXNBAPTS",
+      "KXNCAAFTOTALFG",
+      "KXNFLTEAMTOTAL",
+      "KXNHLSERIESTOTALGOAL",
       "KXWTAACES",
       "KXWNBA3PTCONTEST",
-      "KXMLBHRDERBYLONGEST",
-      "KXUFCOCCUR",
-      "KXNBA3PTCONTEST",
-      "KXNCAAFTEAMTO",
-      "KXNFLESCALATORRECYDS",
-      "KXNHLSEASONPTS",
-      "KXATPACES",
-      "KXWNBAREB",
-      "KXMLBASGHIT",
-      "KXNBAPA",
-      "KXNCAAFTEAMTOTAL",
-      "KXNFLTEAMPTS",
-      "KXNHLAST",
-      "KXWNBA3PTROUND",
-      "KXMLBSEASONHR",
-      "KXNBAH2HTEAM3PT",
+      "KXMLBRBI",
+      "KXNBASERIESPTS",
       "KXNCAAFTEAMRECYDS",
-      "KXNFLESCALATORRSHYDS",
-      "KXNHLSAVES",
-      "KXWNBA3PT",
-      "KXMLBHRDERBY500",
-      "KXNBASUMMERPTS",
-      "KXNCAAFFIRSTTDTEAM",
-      "KXNFLLADDERRSHYDS",
-      "KXNHLPLAYOFFGOALS",
-      "KXWNBAPTS",
-      "KXMLBHIT",
-      "KXNBASTOCKS",
-      "KXNCAAF1HTEAMTOTAL",
-      "KXNFLWEEKMOSTRSHYDS",
+      "KXNFLFF40PTS",
+      "KXNHL4NATIONS",
+      "KXWNBAREB",
+      "KXMLBHRDERBYMATCHUP",
+      "KXNBASERIESPTSLEADER",
+      "KXNCAAFTEAMREC",
+      "KXNFLPASSATT",
+      "KXNHLSEASONGOALS",
+      "KXWNBA3PTROUND",
+      "KXMLBHR",
+      "KXNBASTL",
+      "KXNCAAFTEAMTOTAL",
+      "KXNFLPASSYDSH2H",
+      "KXNHLSEASONPTS",
+      "KXWNBA40PTS",
+      "KXMLBHRDERBYVELO",
+      "KXNBASERIES3PMLEADER",
+      "KXNCAAF2PT",
+      "KXNFLSEASONPASSTDS",
       "KXNHLSERIESTOTALGOALS",
-      "KXWNBAH2HPTS",
-      "KXMLBHRDERBYTOT",
-      "KXNBACELEBRITY3PT",
-      "KXNCAAFTOTALFG",
-      "KXNFLSEASONRSHYDS",
-      "KXNHLSAVE",
-      "KXWNBAAST",
-      "KXMLBHRDERBYOU",
-      "KXNBAH2HBENCHPTS"
+      "KXWNBAPTS",
+      "KXMLBTOTAL",
+      "KXNBA3PT",
+      "KXNCAAFTEAMRSHYDS",
+      "KXNFLFFPTS",
+      "KXNHLFIRSTGOAL",
+      "KXWNBA3PT",
+      "KXMLBHIT",
+      "KXNBAPTSALLGAMES"
     ],
     "by_league": {
       "MLB": 8,
@@ -129,7 +143,8 @@
     },
     "forced": [
       "KXNHLPTS"
-    ]
+    ],
+    "error": "HTTP Error 429: Too Many Requests"
   },
   "targeted_series_diagnostics": {
     "KXATPACES": {
@@ -138,162 +153,155 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBASGHIT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
+    "KXMLBHA": {
+      "raw": 75,
+      "normalized": 75,
+      "skip_reasons": {
+        "ok": 75
+      },
       "skip_samples": {}
     },
     "KXMLBHIT": {
-      "raw": 362,
-      "normalized": 362,
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBHR": {
+      "raw": 316,
+      "normalized": 281,
       "skip_reasons": {
-        "ok": 362
-      },
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBY500": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYLONGEST": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYOU": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYTOT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBSEASONHR": {
-      "raw": 143,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 143
+        "not_upcoming": 35,
+        "ok": 281
       },
       "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXMLBSEASONHR-26C20-TSODERSTROM21",
-          "event_ticker": "KXMLBSEASONHR-26C20",
-          "event_title": "Pro Baseball: 20+ Home Run Season",
-          "title": "Will Tyler Soderstrom record 20+ home runs during 2026 Pro Baseball regular season?",
+        "not_upcoming": {
+          "ticker": "KXMLBHR-26SEP251840PITDET-PITBLOWE5-1",
+          "event_ticker": "KXMLBHR-26SEP251840PITDET",
+          "event_title": "Pittsburgh vs Detroit: Home Runs",
+          "title": "Brandon Lowe: 1+ home runs?",
           "subtitle": null,
-          "yes_sub_title": "Tyler Soderstrom",
+          "yes_sub_title": "Brandon Lowe: 1+",
           "primary_participant_key": "baseball_player",
-          "floor_strike": 19.5,
+          "floor_strike": 0.5,
           "functional_strike": null,
-          "occurrence_datetime": null
+          "occurrence_datetime": "2026-09-26T01:40:00Z"
         }
       }
     },
-    "KXMLBTB": {
-      "raw": 449,
-      "normalized": 449,
+    "KXMLBHRDERBYMATCHUP": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBHRDERBYVELO": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBOUTS": {
+      "raw": 15,
+      "normalized": 15,
       "skip_reasons": {
-        "ok": 449
+        "ok": 15
       },
       "skip_samples": {}
     },
-    "KXNBA3PTALLGAMES": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBA3PTCONTEST": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBACELEBRITY3PT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBAH2HBENCHPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBAH2HTEAM3PT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBAPA": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASTOCKS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASUMMERPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAF1HTEAMTOTAL": {
-      "raw": 269,
-      "normalized": 0,
+    "KXMLBRBI": {
+      "raw": 340,
+      "normalized": 303,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 269
+        "not_upcoming": 37,
+        "ok": 303
       },
       "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAF1HTEAMTOTAL-26SEP25NWIND-IND9",
-          "event_ticker": "KXNCAAF1HTEAMTOTAL-26SEP25NWIND",
-          "event_title": "Northwestern vs Indiana: 1st Half Team Total",
-          "title": "Indiana scores over 8.5 1H points",
+        "not_upcoming": {
+          "ticker": "KXMLBRBI-26SEP251840PITDET-PITBLOWE5-1",
+          "event_ticker": "KXMLBRBI-26SEP251840PITDET",
+          "event_title": "Pittsburgh vs Detroit: RBIs",
+          "title": "Brandon Lowe: 1+ RBIs?",
           "subtitle": null,
-          "yes_sub_title": "Indiana over 8.5 1H points scored",
-          "primary_participant_key": null,
-          "floor_strike": 8.5,
+          "yes_sub_title": "Brandon Lowe: 1+",
+          "primary_participant_key": "baseball_player",
+          "floor_strike": 0.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-09-26T03:00:00Z"
+          "occurrence_datetime": "2026-09-26T01:40:00Z"
         }
       }
     },
-    "KXNCAAFFIRSTTDTEAM": {
-      "raw": 75,
+    "KXMLBTOTAL": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "unsupported_market": 75
-      },
-      "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXNCAAFFIRSTTDTEAM-26SEP25NWIND-IND",
-          "event_ticker": "KXNCAAFFIRSTTDTEAM-26SEP25NWIND",
-          "event_title": "Northwestern vs Indiana: First Team to Score a TD",
-          "title": "Indiana scores first TD",
-          "subtitle": null,
-          "yes_sub_title": "Indiana scores first TD",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-09-26T03:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBA3PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAPTSALLGAMES": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBASERIES3PMLEADER": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBASERIESPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBASERIESPTSLEADER": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBASERIESREBLEADER": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBASTL": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAF2PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAFTEAMFG": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAFTEAMREC": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNCAAFTEAMRECYDS": {
       "raw": 98,
@@ -317,36 +325,30 @@
         }
       }
     },
-    "KXNCAAFTEAMRSHATT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAFTEAMTO": {
+    "KXNCAAFTEAMRSHYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNCAAFTEAMTOTAL": {
-      "raw": 1410,
+      "raw": 1434,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1410
+        "ambiguous_participant_threshold": 1434
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTEAMTOTAL-26SEP25ARMYTEM-TEM10",
-          "event_ticker": "KXNCAAFTEAMTOTAL-26SEP25ARMYTEM",
-          "event_title": "Army vs Temple: Team Total",
-          "title": "Temple scores over 9.5 points",
+          "ticker": "KXNCAAFTEAMTOTAL-26SEP25HOWRUTG-HOW10",
+          "event_ticker": "KXNCAAFTEAMTOTAL-26SEP25HOWRUTG",
+          "event_title": "Howard vs Rutgers: Team Total",
+          "title": "Howard scores over 9.5 points",
           "subtitle": null,
-          "yes_sub_title": "Temple over 9.5 points scored",
+          "yes_sub_title": "Howard over 9.5 points scored",
           "primary_participant_key": null,
           "floor_strike": 9.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-09-25T23:00:00Z"
+          "occurrence_datetime": "2026-09-26T02:00:00Z"
         }
       }
     },
@@ -356,100 +358,88 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLESCALATORRECYDS": {
+    "KXNFLFF40PTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLESCALATORRSHYDS": {
+    "KXNFLFFPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLFFPTSSEASON": {
+    "KXNFLPASSATT": {
+      "raw": 90,
+      "normalized": 90,
+      "skip_reasons": {
+        "ok": 90
+      },
+      "skip_samples": {}
+    },
+    "KXNFLPASSYDSH2H": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLLADDERRSHYDS": {
+    "KXNFLRECYDSH2H": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLSEASONRSHYDS": {
-      "raw": 116,
+    "KXNFLSEASONPASSTDS": {
+      "raw": 115,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 116
+        "ambiguous_matchup": 115
       },
       "skip_samples": {
         "ambiguous_matchup": {
-          "ticker": "KXNFLSEASONRSHYDS-27C1000-BROBINSON7",
-          "event_ticker": "KXNFLSEASONRSHYDS-27C1000",
-          "event_title": "Pro Football: 1000+ Rushing Yards Season",
-          "title": "Will Bijan Robinson record 1000+ rushing yards during 2026-27 Pro Football regular season?",
-          "subtitle": "Bijan Robinson",
-          "yes_sub_title": "Bijan Robinson",
+          "ticker": "KXNFLSEASONPASSTDS-27C20-JBURROW9",
+          "event_ticker": "KXNFLSEASONPASSTDS-27C20",
+          "event_title": "Pro Football: 20+ Passing Touchdowns Season",
+          "title": "Will Joe Burrow record 20+ passing touchdowns during the 2026-27 Pro Football regular season?",
+          "subtitle": null,
+          "yes_sub_title": "Joe Burrow",
           "primary_participant_key": "football_player",
-          "floor_strike": 999.5,
+          "floor_strike": 19.5,
           "functional_strike": null,
           "occurrence_datetime": "2027-01-31T15:00:00Z"
         }
       }
     },
-    "KXNFLTEAMPTS": {
-      "raw": 64,
-      "normalized": 0,
+    "KXNFLTEAMTOTAL": {
+      "raw": 409,
+      "normalized": 28,
       "skip_reasons": {
-        "unsupported_market": 64
-      },
-      "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXNFLTEAMPTS-LEAST27-ARI",
-          "event_ticker": "KXNFLTEAMPTS-LEAST27",
-          "event_title": "Pro Football Lowest Scoring Team",
-          "title": "Will Arizona be the lowest scoring team?",
-          "subtitle": "Arizona",
-          "yes_sub_title": "Arizona",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-01-11T15:00:00Z"
-        }
-      }
-    },
-    "KXNFLWEEKMOSTRSHYDS": {
-      "raw": 30,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 30
+        "ambiguous_participant_threshold": 381,
+        "ok": 28
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNFLWEEKMOSTRSHYDS-26W3-GBMLLOYD32",
-          "event_ticker": "KXNFLWEEKMOSTRSHYDS-26W3",
-          "event_title": "Pro Football Week 3: Most Rushing Yards",
-          "title": "MarShawn Lloyd: most rushing yards in Pro Football Week 3",
+          "ticker": "KXNFLTEAMTOTAL-26SEP27CARCLE-CLE4",
+          "event_ticker": "KXNFLTEAMTOTAL-26SEP27CARCLE",
+          "event_title": "CAR Panthers vs CLE Browns: Team Total",
+          "title": "CLE Browns over 3.5 points scored",
           "subtitle": null,
-          "yes_sub_title": "MarShawn Lloyd",
-          "primary_participant_key": "football_player",
-          "floor_strike": null,
+          "yes_sub_title": "CLE Browns over 3.5 points scored",
+          "primary_participant_key": null,
+          "floor_strike": 3.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-09-29T00:15:00Z"
+          "occurrence_datetime": "2026-09-27T20:00:00Z"
         }
       }
     },
-    "KXNHLAST": {
+    "KXNHL4NATIONS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLPLAYOFFGOALS": {
+    "KXNHLFIRSTGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -461,17 +451,26 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLSAVE": {
-      "raw": 0,
+    "KXNHLSEASONGOALS": {
+      "raw": 86,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLSAVES": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_matchup": 86
+      },
+      "skip_samples": {
+        "ambiguous_matchup": {
+          "ticker": "KXNHLSEASONGOALS-27C20-PKANE88",
+          "event_ticker": "KXNHLSEASONGOALS-27C20",
+          "event_title": "NHL: 20+ Goals Season",
+          "title": "Patrick Kane: 20+ goals in 2026-27 NHL regular season?",
+          "subtitle": "Patrick Kane:: CHI Blackhawks",
+          "yes_sub_title": "Patrick Kane",
+          "primary_participant_key": "hockey_player",
+          "floor_strike": 19.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2027-04-11T14:00:00Z"
+        }
+      }
     },
     "KXNHLSEASONPTS": {
       "raw": 320,
@@ -493,6 +492,12 @@
           "occurrence_datetime": "2027-04-18T14:00:00Z"
         }
       }
+    },
+    "KXNHLSERIESTOTALGOAL": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNHLSERIESTOTALGOALS": {
       "raw": 0,
@@ -530,7 +535,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAAST": {
+    "KXWNBA40PTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -562,8 +567,9 @@
     }
   },
   "leagues": {
-    "MLB": 811,
-    "NCAA_Football": 28
+    "MLB": 674,
+    "NCAA_Football": 28,
+    "NFL": 118
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }

@@ -1,47 +1,41 @@
 {
   "schema_version": "LSI-READINESS-1",
-  "generated_at_utc": "2026-09-25T23:32:21.380259+00:00",
+  "generated_at_utc": "2026-09-26T02:07:59.477440+00:00",
   "ready_for_deterministic_operation": false,
   "full_history_program_complete": false,
   "current_ljpc": {
     "status": "SLA_BREACH",
-    "known_events_inside_t48": 370,
-    "acquired_props": 3602,
-    "evaluated_props": 3463,
-    "stale_props": 737,
-    "coverage_pct": 96.14,
+    "known_events_inside_t48": 382,
+    "acquired_props": 7060,
+    "evaluated_props": 6681,
+    "stale_props": 533,
+    "coverage_pct": 94.63,
     "blockers": {
-      "No reliable forecast-first player projection (minimum 3 completed observations) or no acquired performance evidence; market probability retained as evidence only.": 139
+      "No reliable forecast-first player projection (minimum 3 completed observations) or no acquired performance evidence; market probability retained as evidence only.": 379,
+      "MARKET_SWEEP_UNRESOLVED_INSIDE_T48": 1
     }
   },
   "qc_board": {
-    "generated_at_utc": "2026-09-25T23:21:59.076073+00:00",
-    "age_hours": 0.17,
-    "events": 362,
+    "generated_at_utc": "2026-09-26T02:05:39.509678+00:00",
+    "age_hours": 0.04,
+    "events": 479,
     "by_league": {
       "NCAA_Football": {
-        "events": 122,
-        "props": 430,
-        "evaluated": 323,
-        "awaiting": 107,
-        "coverage_pct": 75.12
+        "events": 143,
+        "props": 1603,
+        "evaluated": 1287,
+        "awaiting": 316,
+        "coverage_pct": 80.29
       },
       "MLB": {
-        "events": 29,
-        "props": 811,
-        "evaluated": 811,
-        "awaiting": 0,
-        "coverage_pct": 100.0
-      },
-      "NHL": {
-        "events": 32,
-        "props": 0,
-        "evaluated": 0,
-        "awaiting": 0,
-        "coverage_pct": 0.0
+        "events": 33,
+        "props": 2196,
+        "evaluated": 2107,
+        "awaiting": 89,
+        "coverage_pct": 95.95
       },
       "Tennis": {
-        "events": 84,
+        "events": 144,
         "props": 0,
         "evaluated": 0,
         "awaiting": 0,
@@ -54,19 +48,26 @@
         "awaiting": 0,
         "coverage_pct": 0.0
       },
+      "NHL": {
+        "events": 63,
+        "props": 0,
+        "evaluated": 0,
+        "awaiting": 0,
+        "coverage_pct": 0.0
+      },
       "MMA": {
         "events": 15,
-        "props": 11,
+        "props": 19,
         "evaluated": 0,
-        "awaiting": 11,
+        "awaiting": 19,
         "coverage_pct": 0.0
       },
       "NFL": {
-        "events": 29,
-        "props": 2907,
-        "evaluated": 2862,
-        "awaiting": 45,
-        "coverage_pct": 98.45
+        "events": 30,
+        "props": 4307,
+        "evaluated": 4245,
+        "awaiting": 62,
+        "coverage_pct": 98.56
       },
       "WNBA": {
         "events": 8,
@@ -78,9 +79,9 @@
     }
   },
   "future_board": {
-    "generated_at_utc": "2026-09-25T23:32:19.085770+00:00",
-    "age_hours": 0.0,
-    "events": 379
+    "generated_at_utc": "2026-09-26T02:00:30.371751+00:00",
+    "age_hours": 0.12,
+    "events": 436
   },
   "history_coverage": {
     "MLB": {
@@ -218,13 +219,13 @@
   },
   "market_source_health": {
     "propline": {
-      "tracked_events": 280,
-      "last_success_utc": "2026-09-25T18:24:42.532531+00:00",
-      "age_hours": 5.13,
-      "status": "RATE_LIMITED",
-      "checked_at_utc": "2026-09-25T23:21:59.076073+00:00",
-      "last_error": "HTTP Error 429: Too Many Requests",
-      "rate_limits": 1,
+      "tracked_events": 282,
+      "last_success_utc": "2026-09-26T02:03:28.735217+00:00",
+      "age_hours": 0.08,
+      "status": "DEGRADED",
+      "checked_at_utc": "2026-09-26T02:03:28.735217+00:00",
+      "last_error": "The read operation timed out",
+      "rate_limits": 0,
       "auth_errors": 0
     },
     "the_odds_api": {
@@ -232,7 +233,7 @@
       "last_success_utc": null,
       "age_hours": null,
       "status": "DISABLED",
-      "checked_at_utc": "2026-09-25T18:26:01.563306+00:00",
+      "checked_at_utc": "2026-09-26T02:06:11.675273+00:00",
       "last_error": null,
       "auth_errors": null,
       "rate_limits": null
@@ -249,13 +250,9 @@
     {
       "type": "T48_LJPC_SLA",
       "detail": {
-        "No reliable forecast-first player projection (minimum 3 completed observations) or no acquired performance evidence; market probability retained as evidence only.": 139
+        "No reliable forecast-first player projection (minimum 3 completed observations) or no acquired performance evidence; market probability retained as evidence only.": 379,
+        "MARKET_SWEEP_UNRESOLVED_INSIDE_T48": 1
       }
-    },
-    {
-      "type": "PROPLINE_RATE_LIMITED",
-      "note": "Durable last-known-good POMs remain available; reduce live calls or raise provider quota.",
-      "last_error": "HTTP Error 429: Too Many Requests"
     },
     {
       "type": "THE_ODDS_API_NO_SUCCESS_STATE",
