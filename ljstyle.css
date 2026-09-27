@@ -351,3 +351,38 @@ table th{color:#d6c7a0}tbody tr{transition:background .15s ease}tbody tr:hover{b
 .ispy-shell.emerging{border-color:#6d5b2e}.signal-evidence.six{grid-template-columns:repeat(6,minmax(0,1fr))}
 .ispy-state{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}.ispy-chip{display:inline-grid;gap:2px;padding:7px 9px;border:1px solid #2d3441;border-radius:999px;background:#0c0f14;color:#c8ced8;font-size:9px}.ispy-chip b{color:#efd680;font-size:8px;text-transform:uppercase;letter-spacing:.25px}.ispy-neighborhoods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}.ispy-analogs{margin-top:11px;border:1px solid #292e3a;border-radius:9px;overflow:hidden}.ispy-analogs>b{display:block;padding:8px 10px;background:#151820;color:#aeb5c2;font-size:8px;letter-spacing:.35px}.ispy-analog-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 10px;border-top:1px solid #222733;font-size:9px}.ispy-analog-row strong{color:#efd680}.ispy-analog-row em{color:#8ee1b2;font-style:normal}.ispy-no-pom{padding:16px 13px}.ispy-no-pom b{display:block;color:#c7b8ff;font-size:9px}.ispy-no-pom span{display:block;margin-top:6px;color:#9099a7;font-size:10px;line-height:1.45}
 @media(max-width:960px){.signal-evidence.six{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){.signal-evidence.six,.ispy-neighborhoods{grid-template-columns:1fr 1fr}.ispy-analog-row{grid-template-columns:1fr auto}.ispy-analog-row em{grid-column:1/-1}}
+
+
+/* SPECIAL INTELLIGENCE HERO ISOLATION — do not stack the legacy global L&J hero artwork */
+.hero.intel-hero{
+  min-height:clamp(300px,32vw,460px)!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+.hero.intel-hero:after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  background-image:none!important;
+  opacity:0!important;
+}
+.hero.intel-hero.troll{
+  background-image:
+    linear-gradient(180deg,rgba(5,5,7,.12) 0%,rgba(5,5,7,.30) 46%,rgba(5,5,7,.84) 100%),
+    url('assets/treasure_troll_header.webp')!important;
+}
+.hero.intel-hero.spy{
+  background-image:
+    linear-gradient(180deg,rgba(5,5,7,.12) 0%,rgba(5,5,7,.30) 46%,rgba(5,5,7,.86) 100%),
+    url('assets/ispy_header.webp')!important;
+}
+@media(max-width:620px){
+  .hero.intel-hero{
+    min-height:300px!important;
+    background-position:center top!important;
+  }
+}
+@media print{
+  .hero.intel-hero{background-image:none!important}
+}
