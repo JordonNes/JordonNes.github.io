@@ -353,12 +353,13 @@ table th{color:#d6c7a0}tbody tr{transition:background .15s ease}tbody tr:hover{b
 @media(max-width:960px){.signal-evidence.six{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){.signal-evidence.six,.ispy-neighborhoods{grid-template-columns:1fr 1fr}.ispy-analog-row{grid-template-columns:1fr auto}.ispy-analog-row em{grid-column:1/-1}}
 
 
-/* SPECIAL INTELLIGENCE HERO ISOLATION — do not stack the legacy global L&J hero artwork */
+/* SPECIAL INTELLIGENCE HERO ISOLATION — use the standard PD-page hero layout, with dedicated art */
 .hero.intel-hero{
-  min-height:clamp(300px,32vw,460px)!important;
-  background-size:cover!important;
+  min-height:clamp(420px,42.86vw,590px)!important;
+  padding:32px 34px 28px!important;
   background-position:center!important;
   background-repeat:no-repeat!important;
+  background-size:cover!important;
 }
 .hero.intel-hero:after{
   content:none!important;
@@ -369,18 +370,29 @@ table th{color:#d6c7a0}tbody tr{transition:background .15s ease}tbody tr:hover{b
 }
 .hero.intel-hero.troll{
   background-image:
-    linear-gradient(180deg,rgba(5,5,7,.12) 0%,rgba(5,5,7,.30) 46%,rgba(5,5,7,.84) 100%),
+    linear-gradient(90deg,rgba(7,7,9,.94) 0%,rgba(7,7,9,.78) 25%,rgba(7,7,9,.36) 48%,rgba(7,7,9,.12) 68%,rgba(7,7,9,.08) 100%),
+    linear-gradient(180deg,rgba(5,5,7,.06) 0%,rgba(5,5,7,.16) 60%,rgba(5,5,7,.54) 100%),
     url('assets/treasure_troll_header.webp')!important;
 }
 .hero.intel-hero.spy{
   background-image:
-    linear-gradient(180deg,rgba(5,5,7,.12) 0%,rgba(5,5,7,.30) 46%,rgba(5,5,7,.86) 100%),
+    linear-gradient(90deg,rgba(7,7,9,.94) 0%,rgba(7,7,9,.78) 25%,rgba(7,7,9,.36) 48%,rgba(7,7,9,.12) 68%,rgba(7,7,9,.08) 100%),
+    linear-gradient(180deg,rgba(5,5,7,.06) 0%,rgba(5,5,7,.16) 60%,rgba(5,5,7,.56) 100%),
     url('assets/ispy_header.webp')!important;
+}
+.hero.intel-hero .kicker,
+.hero.intel-hero h1,
+.hero.intel-hero p,
+.hero.intel-hero .chips,
+.hero.intel-hero .actions{
+  position:relative;
+  z-index:2;
 }
 @media(max-width:620px){
   .hero.intel-hero{
-    min-height:300px!important;
-    background-position:center top!important;
+    min-height:420px!important;
+    padding-right:34px!important;
+    background-position:center!important;
   }
 }
 @media print{
