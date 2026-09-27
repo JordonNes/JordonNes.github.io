@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-HISTORY-COVERAGE-2",
-  "generated_at_utc": "2026-09-27T14:07:14.064804+00:00",
+  "generated_at_utc": "2026-09-27T15:54:56.782335+00:00",
   "policy": "Incremental warehouse coverage only. Source-season horizon is tracked separately from event_start_utc date completeness; complete-history status requires league-specific validation.",
   "leagues": {
     "MLB": {
@@ -126,9 +126,9 @@
       "date_coverage_note": "event_start_utc substantially covers stored facts"
     },
     "NFL": {
-      "facts": 4813165,
-      "unique_players": 10677,
-      "unique_events": 6808,
+      "facts": 5180785,
+      "unique_players": 11331,
+      "unique_events": 7323,
       "metrics": [
         "extra_points_made",
         "pass_attempts",
@@ -146,6 +146,8 @@
         "targets"
       ],
       "source_files": [
+        "data/history/NFL/1999.csv.gz",
+        "data/history/NFL/2000.csv.gz",
         "data/history/NFL/2001.csv.gz",
         "data/history/NFL/2002.csv.gz",
         "data/history/NFL/2003.csv.gz",
@@ -175,6 +177,7 @@
         "data/performance_history.csv"
       ],
       "source_seasons": [
+        2000,
         2001,
         2002,
         2003,
@@ -202,9 +205,9 @@
         2025,
         2026
       ],
-      "earliest_source_season": 2001,
+      "earliest_source_season": 2000,
       "latest_source_season": 2026,
-      "event_date_coverage_pct": 0.04,
+      "event_date_coverage_pct": 0.03,
       "earliest_event_date": "2026-09-18",
       "latest_event_date": "2026-09-25",
       "date_coverage_note": "event_start_utc dates are partial; use source-season range for historical horizon"
