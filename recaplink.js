@@ -9,7 +9,9 @@
     NCAA_Football:"CFB", NCAA_Basketball:"CBB",
     MMA:"MMA", Boxing:"Boxing", Tennis:"Tennis",
     LJ_index:"All-Sports Daily Predictions",
-    Quickie_Generator:"LEGZ & JINX Quickie Generator"
+    Quickie_Generator:"LEGZ & JINX Quickie Generator",
+    Treasure_Troll:"LEGZ & JINX Treasure Troll",
+    I_Spy:"LEGZ & JINX I Spy"
   };
 
   /* Approved 2172×724 (3:1) full-resolution artwork. The version token forces
@@ -30,7 +32,9 @@
     Boxing:`assets/headers/dp-boxing.png?v=${v}`,
     Tennis:`assets/headers/dp-tennis-v2.png?v=${v}`,
     LJ_index:`assets/headers/lj-live-shared.png?v=20260917-headerstandard1`,
-    Quickie_Generator:`assets/headers/game-winners-divider.jpg?v=20260917-headerstandard1`
+    Quickie_Generator:`assets/headers/game-winners-divider.jpg?v=20260917-headerstandard1`,
+    Treasure_Troll:`assets/treasure_troll_header.webp?v=20260926-specialheader3`,
+    I_Spy:`assets/ispy_header.webp?v=20260926-specialheader3`
   };
 
   function installHeaderStyle(){
