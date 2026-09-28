@@ -30,6 +30,11 @@ else{
   if(!(twenty>=0&&status>twenty&&footer>status)) fail('CURRENT STATUS is not the last home content section before footer');
   if(!body.includes('setTimeout(loadMaterialAlerts,0)')) fail('material alerts are not loaded after home render');
 }
+if(!app.includes('function loadISpyHighlights')) fail('I Spy DP reporting is not wired into ljapp');
+if(!app.includes('JINX I SPY — WORTH REPORTING')) fail('I Spy DP worth-reporting section is missing');
+if(!app.includes('loadISpyHighlights(key)')) fail('sport pages do not request current I Spy highlights');
+if(!app.includes('loadISpyHighlights("")')) fail('home page does not request current I Spy highlights');
+if(!app.includes('data/lsi_ispy_signals.js?v=')) fail('I Spy DP feed is not cache-busted dynamically');
 for(const token of ['function renderQcLeg','qc-leg-player','qc-consensus','qc-lj-score','function hydrateGameStates','function boxScoreHTML','LEGZ PLAYER HOT TOP — PREGAME LOCKED','LEGZ PLAYER HOT TOP — FINAL RECORD','PREGAME LOCKED']) if(!app.includes(token)) fail('ljapp missing '+token);
 for(const token of ['.qc-leg-player','.qc-leg-prop','.qc-consensus','.qc-ticket-h.normal','.qc-hot h4','.qc-boxscore','.qc-live-row','.qc-final-row']) if(!css.includes(token)) fail('ljqc missing '+token);
 if(app.includes('WATCH — no current verified leg')) fail('QC renderer still contains the prohibited empty-parlay placeholder');
