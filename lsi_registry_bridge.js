@@ -983,16 +983,23 @@
     };
     const sameEvent=(a,b)=>{
       const A=eventIdentity(a), B=eventIdentity(b);
+      const aid=String(a?._propEventId||A.ev?.source_event_id||A.ev?.event_id||'').trim().toLowerCase();
+      const bid=String(b?._propEventId||B.ev?.source_event_id||B.ev?.event_id||'').trim().toLowerCase();
+      // Provider/canonical event identity is stronger than display orientation.
+      // Some sources reverse home/away or vary doubles-team ordering.
+      if(aid&&bid&&aid===bid) return true;
       const awayMatch=A.away.some(x=>aliasHit(x,B.away)) || B.away.some(x=>aliasHit(x,A.away));
       const homeMatch=A.home.some(x=>aliasHit(x,B.home)) || B.home.some(x=>aliasHit(x,A.home));
+      const crossMatch=(A.away.some(x=>aliasHit(x,B.home))||B.home.some(x=>aliasHit(x,A.away)))
+        && (A.home.some(x=>aliasHit(x,B.away))||B.away.some(x=>aliasHit(x,A.home)));
       const timed=Number.isFinite(A.time)&&Number.isFinite(B.time);
       if(timed){
         if(Math.abs(A.time-B.time)>6*3600000) return false;
-        // In a narrow game-time window, one matching team uniquely identifies the
-        // event; this safely resolves truncated/provider-specific opponent names.
-        return awayMatch||homeMatch;
+        // In a narrow game-time window, one direct team match or a complete
+        // home/away reversal uniquely identifies the event.
+        return awayMatch||homeMatch||crossMatch;
       }
-      return awayMatch&&homeMatch;
+      return (awayMatch&&homeMatch)||crossMatch;
     };
     const boardKeyForQc=q=>{
       const ev=findBoardEvent(league,q);
