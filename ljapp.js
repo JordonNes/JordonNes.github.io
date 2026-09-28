@@ -337,8 +337,22 @@
           ||(ispyNum(b.effective_sample_size)||0)-(ispyNum(a.effective_sample_size)||0);
       });
   }
+  function selectISpyHighlights(sportKey=""){
+    const ranked=currentISpySignals(sportKey),limit=sportKey?3:4,out=[],seenEvents=new Set();
+    for(const signal of ranked){
+      const eventId=String((signal.current_matches||[])[0]?.event_id||"");
+      if(eventId&&seenEvents.has(eventId))continue;
+      out.push(signal);if(eventId)seenEvents.add(eventId);
+      if(out.length>=limit)return out;
+    }
+    for(const signal of ranked){
+      if(out.includes(signal))continue;
+      out.push(signal);if(out.length>=limit)break;
+    }
+    return out;
+  }
   function ispyHighlightsHTML(sportKey=""){
-    const rows=currentISpySignals(sportKey).slice(0,sportKey?3:4);
+    const rows=selectISpyHighlights(sportKey);
     if(!rows.length)return "";
     const cards=rows.map((signal,i)=>{
       const lift=ispyNum(signal.lift_pp)||0;
