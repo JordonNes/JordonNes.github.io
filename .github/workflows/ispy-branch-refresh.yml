@@ -21,12 +21,13 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: fix-ispy-reporting-v2-20260928
-          fetch-depth: 0
+          fetch-depth: 1
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Validate code and discovery
         run: |
+          bash -n scripts/publish_ispy_artifacts.sh
           python -m py_compile scripts/lsi_ispy_discovery.py scripts/lsi_publish_ispy.py
           python scripts/test_lsi_ispy_discovery.py
           node --check ljapp.js
