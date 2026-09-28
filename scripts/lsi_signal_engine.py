@@ -410,7 +410,7 @@ def read_settled_suggestion_rows():
         event_id=str(row.get("event_id") or "")
         league=str(row.get("league") or "")
         participant=player_norm(row.get("participant"))
-        market=norm(row.get("market"))
+        market=market_metric(row.get("market")) or norm(row.get("market"))
         side=norm(row.get("side"))
         if not event_id or not league or not participant or not market or side not in {"over","under","more","less","yes","no"}:
             continue

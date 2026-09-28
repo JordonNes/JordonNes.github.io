@@ -166,7 +166,41 @@ function chooseTicket(pool,legCount,usedAcross,tier){
   return best?best.legs:[];
 }
 function depSide(x){const s=String(x.side||'').toUpperCase();return ['OVER','MORE','YES'].includes(s)?'OVER':['UNDER','LESS','NO'].includes(s)?'UNDER':''}
-function depNode(x){if(x.marketClass!=='PLAYER_PROP')return'';const m=normKey(x.marketFamily||'');const s=depSide(x);return m&&s?`${m}|${s}`:''}
+function dependencyMarketFamily(raw){
+  const m=normKey(raw);
+  const rules=[
+    [/(passing|pass) (yards|yds)/,'pass_yards'],
+    [/(passing|pass) attempts/,'pass_attempts'],
+    [/(passing|pass) completions|\bcompletions\b/,'pass_completions'],
+    [/(passing|pass) (touchdowns|tds)/,'pass_tds'],
+    [/(rushing|rush) (yards|yds)/,'rush_yards'],
+    [/(rushing|rush) attempts|\bcarries\b/,'rush_attempts'],
+    [/(receiving|reception) (yards|yds)/,'receiving_yards'],
+    [/\breceptions\b/,'receptions'],
+    [/\btargets\b/,'targets'],
+    [/points rebounds assists|\bpra\b/,'pra'],
+    [/points rebounds/,'points_rebounds'],
+    [/points assists/,'points_assists'],
+    [/rebounds assists/,'rebounds_assists'],
+    [/three pointers made|3 pointers made|threes made|3pm/,'threes_made'],
+    [/\brebounds\b/,'rebounds'],
+    [/\bassists\b/,'assists'],
+    [/\bpoints\b/,'points'],
+    [/pitcher.*strikeouts|\bstrikeouts\b/,'pitcher_strikeouts'],
+    [/outs recorded|pitching outs/,'pitching_outs'],
+    [/total bases/,'total_bases'],
+    [/home runs|home run/,'home_runs'],
+    [/\brbi\b/,'rbi'],
+    [/stolen bases/,'stolen_bases'],
+    [/\bhits\b/,'hits'],
+    [/shots on goal|\bshots\b/,'shots_on_goal'],
+    [/\bsaves\b/,'saves'],
+    [/\bgoals\b/,'goals']
+  ];
+  for(const [rx,key] of rules)if(rx.test(m))return key;
+  return m.replace(/ /g,'_');
+}
+function depNode(x){if(x.marketClass!=='PLAYER_PROP')return'';const m=dependencyMarketFamily(x.marketFamily||'');const s=depSide(x);return m&&s?`${m}|${s}`:''}
 function dependencyIndex(){
   const out=new Map(),g=window.LSI_CORRELATION_GRAPH||{};
   for(const e of(g.outcome_dependency_edges||[])){
