@@ -295,6 +295,84 @@
     return `<section class="section headliner-section"><div class="section-head"><h2>${home?"ALL-SPORTS L&J HEADLINERS":"L&J HEADLINERS"}</h2><span class="muted">LEGZ evidence/value + JINX contextual evaluation → LJPC</span></div><div class="headliner-grid">${hotTop(hot,hotLabel)}${winners(wins,winnerLabel)}</div></section>`;
   }
 
+  const ispyNum=v=>{const n=Number(v);return Number.isFinite(n)?n:null};
+  const ispyPct=v=>{const n=ispyNum(v);return n===null?"—":`${n.toFixed(Math.abs(n-Math.round(n))<.05?0:1)}%`};
+  function ispyDirection(signal){
+    const explicit=String(signal?.direction||"").toUpperCase();
+    if(explicit==="SUPPORT"||explicit==="CHALLENGE") return explicit;
+    const lift=ispyNum(signal?.lift_pp);
+    return lift!==null&&lift<0?"CHALLENGE":"SUPPORT";
+  }
+  function ispyConditionText(signal){
+    const rows=signal?.current_state||signal?.condition_profile||signal?.conditions||[];
+    return rows.slice(0,3).map(x=>{
+      const label=String(x?.label||x?.feature||x?.key||"condition");
+      const value=x?.display??(x?.value!==undefined&&x?.value!==null?`${x.value}${x.unit||""}`:x?.direction||"");
+      return value?`${label}: ${value}`:label;
+    }).join(" • ");
+  }
+  function ispyPomText(signal){
+    const p=(signal?.recommended_poms||signal?.affected_poms||[])[0];
+    if(!p) return "";
+    const threshold=p.threshold??p.display_threshold??"";
+    const side=String(p.side||"").toUpperCase();
+    const ljpc=p.ljpc??p.lj_confidence;
+    return [p.participant,`${side} ${threshold} ${p.market||""}`.trim(),ljpc!==undefined&&ljpc!==null?`LJPC ${ispyPct(ljpc)}`:"",p.book||""].filter(Boolean).join(" • ");
+  }
+  function currentISpySignals(sportKey=""){
+    const raw=window.LJ_ISPY_SIGNALS||{};
+    const validated=(raw.signals||[]).map(x=>({...x,_ispyStatus:"VALIDATED"}));
+    const emerging=(raw.emerging_signals||[]).map(x=>({...x,_ispyStatus:"EMERGING"}));
+    return [...validated,...emerging]
+      .filter(x=>Array.isArray(x.current_matches)&&x.current_matches.length)
+      .filter(x=>!sportKey||String(x.league||"")===sportKey)
+      .sort((a,b)=>{
+        const ar=a._ispyStatus==="VALIDATED"?2:1,br=b._ispyStatus==="VALIDATED"?2:1;
+        if(br!==ar)return br-ar;
+        const aa=Array.isArray(a.recommended_poms)&&a.recommended_poms.length?1:0;
+        const ba=Array.isArray(b.recommended_poms)&&b.recommended_poms.length?1:0;
+        if(ba!==aa)return ba-aa;
+        return Math.abs(ispyNum(b.lift_pp)||0)-Math.abs(ispyNum(a.lift_pp)||0)
+          ||(ispyNum(b.mean_similarity_pct)||0)-(ispyNum(a.mean_similarity_pct)||0)
+          ||(ispyNum(b.effective_sample_size)||0)-(ispyNum(a.effective_sample_size)||0);
+      });
+  }
+  function ispyHighlightsHTML(sportKey=""){
+    const rows=currentISpySignals(sportKey).slice(0,sportKey?3:4);
+    if(!rows.length)return "";
+    const cards=rows.map((signal,i)=>{
+      const lift=ispyNum(signal.lift_pp)||0;
+      const direction=ispyDirection(signal);
+      const matchup=(signal.current_matches||[]).map(x=>typeof x==="string"?x:(x.label||x.event||"current slate")).join(" • ");
+      const conditions=ispyConditionText(signal);
+      const pom=ispyPomText(signal);
+      const status=signal._ispyStatus||String(signal.status||"").toUpperCase();
+      return `<article class="dp-ispy-card ${direction.toLowerCase()}"><div class="dp-ispy-head"><b>#${i+1} ${esc(status)} • ${esc(direction)}</b><span>${esc(String(signal.league||"").replace(/_/g," "))}</span></div><h3>${esc(signal.title||signal.outcome||"Current I Spy observation")}</h3><div class="dp-ispy-match">${esc(matchup)}</div><div class="dp-ispy-metrics"><span><b>${ispyPct(signal.observed_rate_pct)}</b> analog rate</span><span><b>${ispyPct(signal.baseline_rate_pct)}</b> baseline</span><span><b>${lift>=0?"+":""}${lift.toFixed(1)} pp</b> ${direction==="CHALLENGE"?"drag":"lift"}</span><span><b>${ispyPct(signal.mean_similarity_pct)}</b> similarity</span><span><b>${ispyNum(signal.effective_sample_size)?.toFixed(1)??"—"}</b> eff. sample</span></div>${conditions?`<p class="dp-ispy-conditions"><b>JINX sees:</b> ${esc(conditions)}</p>`:""}${pom?`<p class="dp-ispy-pom"><b>Current expression:</b> ${esc(pom)}</p>`:""}<p class="dp-ispy-note">${esc(signal.interpretation||"Historical analog association; not a causal claim.")}</p></article>`;
+    }).join("");
+    return `<section class="section dp-ispy-section"><div class="section-head"><h2>JINX I SPY — WORTH REPORTING</h2><span class="muted">Current validated/emerging analog intelligence • support and challenge both surface</span></div><div class="dp-ispy-grid">${cards}</div><div class="dp-ispy-more"><a class="action" href="I_Spy.html">Open full I Spy evidence →</a></div></section>`;
+  }
+  function installISpyHighlights(sportKey=""){
+    document.querySelectorAll(".dp-ispy-section").forEach(n=>n.remove());
+    const html=ispyHighlightsHTML(sportKey);
+    if(!html)return;
+    const head=document.querySelector(".headliner-section");
+    if(head)head.insertAdjacentHTML("afterend",html);
+  }
+  function loadISpyHighlights(sportKey=""){
+    if(window.LJ_ISPY_SIGNALS){installISpyHighlights(sportKey);return}
+    let script=document.querySelector("script[data-lj-ispy-dp]");
+    if(script){
+      script.addEventListener("load",()=>installISpyHighlights(sportKey),{once:true});
+      return;
+    }
+    script=document.createElement("script");
+    script.dataset.ljIspyDp="1";
+    script.src=`data/lsi_ispy_signals.js?v=${Date.now()}`;
+    script.onload=()=>installISpyHighlights(sportKey);
+    script.onerror=()=>console.warn("JINX I Spy current intelligence could not be loaded.");
+    document.head.appendChild(script);
+  }
+
   function twenty(rows,note,home=false,sportKey=""){
     const groups=groupTwenty(rows);
     const totalProps=groups.reduce((n,g)=>n+g.props.length,0);
@@ -1131,7 +1209,7 @@
     // NFL follows the same publication architecture as every other DP page.
     const content=`${headliners}${twentyPiece}${quickies}`;
     document.getElementById("app").innerHTML = `<div class="page sport-page sport-${cls(key)}">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${lsiPipelinePanel(key)}${content}${footer("QC layout locked")}</div>`;
-    setTimeout(()=>{hydrateGameStates(key);loadLsiPipelineStatus(key);},0);
+    setTimeout(()=>{hydrateGameStates(key);loadLsiPipelineStatus(key);loadISpyHighlights(key);},0);
   };
   window.renderLJHome = () => {
     ACTIVE_SPORT_KEY="";
@@ -1139,6 +1217,6 @@
     document.title = "LEGZ & JINX — Daily Predictions";
     document.getElementById("app").innerHTML = `<div class="page lj-home">${topbar(h.meta,true)}${hero(h.kicker,h.title,h.description,h.chips,true)}${nav()}${headlineSection(h.hotTop,h.winners,true)}${twenty(h.twenty,h.twentyNote,true)}${allSportsQcs()}${statusGrid()}${footer("All-sports publication hub • QC layout locked")}</div>`;
     setTimeout(loadMaterialAlerts,0);
-    setTimeout(()=>loadLsiPipelineStatus(""),0);
+    setTimeout(()=>{loadLsiPipelineStatus("");loadISpyHighlights("");},0);
   };
 })();
