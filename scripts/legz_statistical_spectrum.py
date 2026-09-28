@@ -344,6 +344,8 @@ def evaluation_input_material(prop,event,history,contexts,game_contexts,analyst_
     prop_fields=(
       "participant","team","market","threshold","threshold_operator","side","price","best_price",
       "pom_type","market_source_count","market_live","market_suspended","steam_score","books_moved",
+      "sgo_fair_probability","sgo_consensus_probability","sgo_consensus_line","sgo_line_delta",
+      "sgo_book_line_stddev","sgo_market_source_count","sgo_best_price","sgo_best_book",
       "lineup_confirmed","player_status","role","expected_role","sharp_market_signal",
       "jinx_input","jinx_delta","L3_hit_rate","L5_hit_rate","L10_hit_rate","L20_hit_rate",
       "l3_hit_rate","l5_hit_rate","l10_hit_rate","l20_hit_rate",
@@ -1078,7 +1080,16 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
         v=((dist.get("recent_windows") or {}).get(label) or {}).get("hit_probability")
         if v is not None and 0<=v<=100: rate_map.setdefault(key,v)
     rates=list(rate_map.values())
-    market_prior=implied(prop.get("best_price") if prop.get("best_price") not in (None,"") else prop.get("price"))
+    native_market_prior=implied(prop.get("best_price") if prop.get("best_price") not in (None,"") else prop.get("price"))
+    sgo_fair_prior=num(prop.get("sgo_fair_probability"))
+    if sgo_fair_prior is not None and not (0<=sgo_fair_prior<=100):
+        sgo_fair_prior=None
+    # The canonical POM's executable price remains the first-choice market prior.
+    # For DFS/pick'em POMs with no native straight-bet price, an independently
+    # verified SportsGameOdds no-vig fair probability may serve as the bounded
+    # secondary market prior. It never creates LJPC without player-performance evidence.
+    market_prior=native_market_prior if native_market_prior is not None else sgo_fair_prior
+    market_prior_source=("POM_NATIVE_PRICE" if native_market_prior is not None else ("SPORTSGAMEODDS_FAIR_ODDS" if sgo_fair_prior is not None else None))
     source_count=0 if synthetic else max(1,int(num(prop.get("market_source_count")) or 1))
     snapshots=[x for x in (prop.get("source_snapshot_ids") or []) if x]
     evidence=[x for x in (prop.get("evidence_ids") or []) if x]
@@ -1101,7 +1112,18 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
     if (not rates and dist.get("distribution_model_probability") is None) or not dist.get("player_projection"):
         feature_state={
           "performance":{"recent_hit_rates":rate_map,"distribution":dist},
-          "market":{"implied_probability":round(market_prior,2) if market_prior is not None else None,"source_count":source_count},
+          "market":{
+            "implied_probability":round(market_prior,2) if market_prior is not None else None,
+            "prior_source":market_prior_source,
+            "native_implied_probability":round(native_market_prior,2) if native_market_prior is not None else None,
+            "fair_market_probability":round(sgo_fair_prior,2) if sgo_fair_prior is not None else None,
+            "book_consensus_probability":num(prop.get("sgo_consensus_probability")),
+            "consensus_line":num(prop.get("sgo_consensus_line")),
+            "line_delta_vs_consensus":num(prop.get("sgo_line_delta")),
+            "book_line_stddev":num(prop.get("sgo_book_line_stddev")),
+            "sgo_exact_book_count":int(num(prop.get("sgo_market_source_count")) or 0),
+            "source_count":source_count
+          },
           "context":ctx,"provenance":provenance,
           "safeguards":{"market_only_prohibited":True,"correlated_windows_count_as_one_family":True,
                         "independent_signal_families":signal_families,
@@ -1215,7 +1237,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
       "player_projection":dist.get("player_projection"),
       "spectrum":{"performance":ordered,"distribution":dist,"player_projection":dist.get("player_projection"),"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
       "feature_state":feature_state,
-      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, stabilized by L10/full-L15 evidence, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX challenges the forecast with attributable role, availability, opponent, injury, weather, game-plan and Analyst Desk evidence. JINX also applies a bounded anti-recency/mean-reversion caution when a pick simply extends a materially displaced L5 hot/cold streak; this is not a claim that a player is due. Narrative reporting never creates a directional adjustment without structured evidence. The LSI Signal Fabric may recognize sequence, correlation, conditional-recipe and regime-change patterns, but newly discovered recipe adjustments remain shadow-only until empirical learning-gate promotion authorizes live influence."
+      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, stabilized by L10/full-L15 evidence, then evaluates the exact offered threshold against that shared forecast distribution. Executable POM price is the preferred bounded market prior; when a DFS/pick’em POM has no native straight-bet price, independently verified SportsGameOdds no-vig fair probability may supply the secondary market prior. Cross-book consensus, exact-book confirmations and line disagreement remain market evidence and never mint LJPC without player-performance evidence. JINX challenges the forecast with attributable role, availability, opponent, injury, weather, game-plan and Analyst Desk evidence. JINX also applies a bounded anti-recency/mean-reversion caution when a pick simply extends a materially displaced L5 hot/cold streak; this is not a claim that a player is due. Narrative reporting never creates a directional adjustment without structured evidence. The LSI Signal Fabric may recognize sequence, correlation, conditional-recipe and regime-change patterns, but newly discovered recipe adjustments remain shadow-only until empirical learning-gate promotion authorizes live influence."
     }
 
 def main():
