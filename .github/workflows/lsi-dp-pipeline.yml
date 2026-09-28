@@ -176,7 +176,7 @@ jobs:
           python scripts/test_lsi_ispy_observer.py
           python scripts/test_propline_bulk_catalog.py
           python scripts/test_parlayapi_retail_props.py
-          python -m scripts.test_lsi_league_scheduler
+          PYTHONPATH="$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/scripts" python scripts/test_lsi_league_scheduler.py
           python scripts/test_legz_material_hash.py
           node --check lsi_registry_bridge.js
       - name: Verify ESPN sports-truth adapter
