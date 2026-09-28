@@ -1,0 +1,46 @@
+name: Restore HQ specialty header assets
+
+on:
+  push:
+    branches: [restore-special-header-hq-20260928]
+    paths:
+      - '_asset_chunks/special_headers/**'
+      - '.github/workflows/restore-special-header-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: restore-special-header-hq-20260928
+          fetch-depth: 0
+      - name: Reconstruct original-art high-resolution assets when all chunks exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          tcount=$(find _asset_chunks/special_headers/treasure -type f -name '*.b64' 2>/dev/null | wc -l)
+          icount=$(find _asset_chunks/special_headers/ispy -type f -name '*.b64' 2>/dev/null | wc -l)
+          echo "Treasure chunks: $tcount/13"
+          echo "I Spy chunks: $icount/13"
+          if [ "$tcount" -ne 13 ] || [ "$icount" -ne 13 ]; then
+            echo "Chunk set not complete yet; waiting for later push."
+            exit 0
+          fi
+          mkdir -p assets/headers
+          cat _asset_chunks/special_headers/treasure/*.b64 | tr -d '\n\r ' | base64 -d > assets/headers/treasure-troll-original-hq.avif
+          cat _asset_chunks/special_headers/ispy/*.b64 | tr -d '\n\r ' | base64 -d > assets/headers/i-spy-original-hq.avif
+          echo "d2db66ba8ff1b1ff95cdb8b15483efc2113120230810f2beb31c4d8bfbcce592  assets/headers/treasure-troll-original-hq.avif" | sha256sum -c -
+          echo "ad2e4cca0ee586dc9cd6e7feffae453833122c1a012959329e4e2fd9297a06dd  assets/headers/i-spy-original-hq.avif" | sha256sum -c -
+          git config user.name 'LEGZ-JINX Asset Restore'
+          git config user.email 'actions@users.noreply.github.com'
+          git add assets/headers/treasure-troll-original-hq.avif assets/headers/i-spy-original-hq.avif
+          if git diff --cached --quiet; then
+            echo "HQ assets already reconstructed."
+            exit 0
+          fi
+          git commit -m "Restore HQ Treasure Troll and I Spy source art"
+          git push origin HEAD:restore-special-header-hq-20260928
