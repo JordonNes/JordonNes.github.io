@@ -725,7 +725,7 @@
     const lockedNormal=durablePublished(q.normal);
     const lockedDemon=durablePublished(q.demon);
     const manual=lockedHot.map(manualCandidate).filter(Boolean);
-    const board=(event?.props||[]).map(boardCandidate).filter(Boolean);
+    const board=(event?.props||[]).map(p=>boardCandidate({...p,_league:league})).filter(Boolean);
     // Upcoming QC execution is rebuilt only from the CURRENT exact external board.
     // Previously published/manual legs remain historical evidence, but they may not
     // carry forward as executable picks unless the same offered threshold is reacquired.
