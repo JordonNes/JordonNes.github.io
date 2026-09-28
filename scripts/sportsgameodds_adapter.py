@@ -35,6 +35,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
@@ -45,6 +46,7 @@ STATE=DATA/"sportsgameodds_state.json"
 BASE="https://api.sportsgameodds.com/v2"
 KEY=(os.getenv("SPORTSGAMEODDS_API_KEY") or os.getenv("SPORTS_GAME_ODDS_API_KEY") or "").strip()
 NOW=datetime.now(timezone.utc)
+PT=ZoneInfo("America/Los_Angeles")
 
 MIN_REFRESH_MIN=max(60,min(1440,int(os.getenv("SGO_MIN_REFRESH_MINUTES","480"))))
 MAX_EVENTS=max(1,min(50,int(os.getenv("SGO_MAX_EVENTS_PER_RUN","20"))))
@@ -67,7 +69,7 @@ LEAGUE_MAP={
 # a notice; no paid capability is assumed.
 REQUESTED_BOOKS=[
     "draftkings","fanduel","betmgm","caesars","espnbet","bovada",
-    "unibet","pointsbet","williamhill","underdog","prizepicks",
+    "unibet","pointsbet","williamhill","underdog",
 ]
 
 MARKET_FIELDS=[
@@ -271,6 +273,8 @@ def team_token_set(values):
             parts=n.split()
             if parts:
                 out.add(parts[-1])
+                if len(parts[0])>=4 and parts[0] not in {"north","south","east","west"}:
+                    out.add(parts[0])
                 if len(parts)>=2:
                     out.add("".join(p[0] for p in parts))
     return out
@@ -533,23 +537,17 @@ def annotate_board(board,events,notice):
             prop["evidence_ids"]=evidence_ids
 
             prior=str(prop.get("evidence_summary") or "").strip()
-            summary=(
-                f"SportsGameOdds independently confirms this exact line at {len(exact_books)} book(s)"
-                + (f"; fair probability {sgo['fair_probability']:.1f}%" if sgo["fair_probability"] is not None else "")
-                + (f"; consensus line {consensus_line:g}" if consensus_line is not None else "")
-                + "."
-            )
-            prop["evidence_summary"]=(prior+" "+summary).strip()
+            summary="SportsGameOdds independent fair/consensus and cross-book market evidence attached."
+            if summary not in prior:
+                prop["evidence_summary"]=(prior+" "+summary).strip()
 
+            current_sgo_snapshots=[]
             for b in exact_books:
                 sid="SGO|"+sha(sgo_event.get("eventID"),primary.get("odd_id"),b.get("bookmaker_id"),threshold,b.get("price"),b.get("last_updated_at"))
-                snapshots=list(prop.get("source_snapshot_ids") or [])
-                if sid not in snapshots:
-                    snapshots.append(sid)
-                prop["source_snapshot_ids"]=snapshots
+                current_sgo_snapshots.append(sid)
                 historical.append({
                     "snapshot_id":sid,
-                    "collected_at_pt":NOW.isoformat(),
+                    "collected_at_pt":NOW.astimezone(PT).isoformat(),
                     "sport":board_event.get("league"),
                     "league":board_event.get("league"),
                     "event_id":board_event.get("source_event_id") or board_event.get("event_id"),
@@ -563,6 +561,11 @@ def annotate_board(board,events,notice):
                     "price":b.get("price"),
                     "status":"OPEN",
                 })
+            prior_snapshots=[
+                x for x in (prop.get("source_snapshot_ids") or [])
+                if x and not str(x).startswith("SGO|")
+            ]
+            prop["source_snapshot_ids"]=prior_snapshots+current_sgo_snapshots
 
     return {
         "matched_events":event_matches_count,
@@ -652,6 +655,7 @@ def main():
         "next_cursor_present":bool(payload.get("nextCursor")),
         "intentionally_not_autopaged":True,
         "notice":payload.get("notice"),
+        "capability_probe":"Underdog requested alongside the nine documented Amateur books; provider response/notice determines whether this key can see it.",
         "last_diagnostics":diagnostics,
         "market_history_rows_added":history_added,
         "usage_after":usage_after,
