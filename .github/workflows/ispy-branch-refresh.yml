@@ -14,6 +14,9 @@ on:
 permissions:
   contents: write
 
+env:
+  PYTHONPATH: ${{ github.workspace }}
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
