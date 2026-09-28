@@ -40,6 +40,8 @@ on:
       - 'scripts/test_lsi_league_scheduler.py'
       - 'scripts/test_legz_material_hash.py'
       - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/lsi_signal_engine.py'
+      - 'scripts/test_lsi_signal_engine.py'
       - 'scripts/test_ncaa_history_continuity.py'
       - 'scripts/legz_prop_ladder_test.py'
       - 'scripts/legz_synthetic_book.py'
@@ -312,6 +314,12 @@ jobs:
       - name: Validate forecast-first player-prop ladder
         if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/legz_prop_ladder_test.py
+      - name: LSI Signal Fabric — correlation, recipes, sequences and regimes
+        if: steps.league_schedule.outputs.cycle_required == 'true'
+        run: |
+          python -m scripts.test_lsi_signal_engine
+          python scripts/lsi_signal_engine.py
+
       - name: LEGZ Statistical Spectrum - evaluate collected POMs
         if: steps.league_schedule.outputs.cycle_required == 'true'
         env:
@@ -431,6 +439,11 @@ jobs:
           test -f data/lsi_ispy_candidates.json && test -f data/lsi_ispy_pattern_library.json && test -f data/lsi_ispy_signals.json
           test -f data/openai_dry_run_router.json && test -f data/openai_usage_estimates.csv && test -f data/openai_usage_summary.json
           test -f data/lsi_evaluation_state.json
+          test -f data/lsi_signal_state.json && test -f data/lsi_correlation_graph.json
+          test -f data/lsi_spectrum_view.json && test -f data/lsi_spectrum_view.js
+          grep -q 'LSI-SIGNAL-FABRIC-1' data/lsi_signal_state.json
+          grep -q 'LSI-CORRELATION-GRAPH-1' data/lsi_correlation_graph.json
+          grep -q 'LSI-SPECTRUM-VIEW-1' data/lsi_spectrum_view.json
           test -f data/jinx_analyst_context.json
           test -f data/legz_synthetic_book.json
           grep -q 'PLAYER_PROP' data/prediction_registry.json && grep -q 'GAME_ML' data/prediction_registry.json
@@ -487,6 +500,7 @@ jobs:
             data/jinx_analyst_context.json
             data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json data/game_winner_evidence.json
             data/projection_gap_report.json data/lsi_ispy_candidates.json data/lsi_ispy_signals.json data/lsi_ispy_signals.js
+            data/lsi_signal_state.json data/lsi_correlation_graph.json data/lsi_spectrum_view.json data/lsi_spectrum_view.js
           )
           snapshot="$(mktemp -d)"
           for p in "${outputs[@]}"; do

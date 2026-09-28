@@ -77,3 +77,18 @@ Settlement never infers a result from sportsbook payout behavior or reconstructs
 ## Front-end transparency
 
 `LSI_Status.html` and the Daily Predictions LSI Intelligence card expose read-only Memory, Settlement, Evaluation, and Learning status. They do not write to LSI and cannot activate an overlay.
+
+
+## Signal Fabric promotion gate
+
+The Signal Fabric may discover a conditional recipe and calculate a bounded candidate adjustment, but discovery is not authorization. Version 1 writes `authorized_probability_adjustment_pp = 0` for every newly discovered recipe.
+
+A future promotion requires:
+- settled outcome evidence for the exact feature/market family;
+- sufficient effective sample size rather than raw duplicated observations;
+- stable effect direction across time slices;
+- holdout improvement in Brier/calibration error;
+- no reliance on correlation as proof of causation;
+- an explicit versioned methodology change with rollback.
+
+This separates **recognition intelligence** from **probability authority**. LEGZ and JINX may surface a meaningful recipe immediately while LJPC remains protected from an unvalidated relationship.

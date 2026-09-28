@@ -170,3 +170,30 @@ The Open-Meteo archive supplies historical event-hour conditions for backtesting
 
 ## CFBD protocol
 CollegeFootballData is the NCAA football specialist adapter. CFBD schedules/results and player statistics support LAE baselines; advanced team metrics support opponent-strength, efficiency, explosiveness, field-position and garbage-time-adjusted features; CFBD lines provide market-history and movement validation for JCI. The free-tier key is server-side only. Freshness gates preserve the 1,000-request monthly allowance and source failures remain non-destructive.
+
+
+## LSI Signal Fabric / dependency intelligence (v1)
+
+LSI's player-prop intelligence is no longer defined only by a scalar probability. The Signal Fabric is the structured recognition layer connecting performance history, current context, statistical relationships and conditional analogs.
+
+The production flow is:
+
+`RAW EVIDENCE → SIGNAL FABRIC → CORRELATION GRAPH → SEQUENCE/PATTERN DETECTOR → REGIME DETECTOR → CONDITIONAL RECIPE ENGINE → LEGZ/JINX REVIEW → EXACT POM → LJPC`
+
+### Signal Fabric
+Every recognized condition receives a deterministic signal identifier and family. Current families include performance-sequence patterns, regime-change evidence, historical conditional analogs and correlation/dependency edges. Signal recognition is auditable and stored separately from probability influence.
+
+### Correlation Graph
+The first production graph calculates Pearson and Spearman relationships among recent aligned metric series for the same active player and aggregates those relationships by league/metric pair. Correlation is descriptive, never causal. Cross-player/teammate dependency requires event-aligned evidence and is never invented from roster names.
+
+### Pattern / Sequence Detector
+LSI tests recent performance sequences for directional trend, alternating high/low behavior, lag-2/3/4 periodicity, streak state and extreme-last-observation behavior. Sequence signals identify a recurring shape; they do not claim that a future event is "due."
+
+### Regime Detector
+LSI compares the current L5 level with the prior history center and combines that statistical shift with attributable availability, injury, role and tactical-change evidence. A detected regime change warns that older averages may have become stale.
+
+### Conditional Recipe Engine
+A recipe is a deterministic set of active sequence, regime, correlation and historical-analog conditions. When a comparable settled I Spy analog exists, the engine records observed lift, effective sample size and evidence strength. It calculates a bounded candidate probability adjustment for research, but v1 sets authorized adjustment to zero.
+
+### Live-influence gate
+Signal recognition is live immediately. New Signal Fabric adjustments remain shadow-only until a separate versioned learning-gate promotion validates out-of-sample lift, stability and calibration. A discovered association cannot silently rewrite LJPC.

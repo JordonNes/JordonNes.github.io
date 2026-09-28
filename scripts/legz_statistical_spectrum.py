@@ -24,6 +24,7 @@ EVAL_STATE=DATA/"lsi_evaluation_state.json"
 SYNTHETIC_BOOK=DATA/"legz_synthetic_book.json"
 FIBA_SCENARIOS=DATA/"fiba_scenario_state.json"
 ANALYST_CONTEXT=DATA/"jinx_analyst_context.json"
+SIGNAL_STATE=DATA/"lsi_signal_state.json"
 HISTORY_ROOT=DATA/"history"
 
 def csv_open(path):
@@ -276,7 +277,7 @@ def implied(price):
 
 def clamp(x,lo=0,hi=100): return max(lo,min(hi,x))
 
-EVALUATION_VERSION="LEGZ_STATISTICAL_SPECTRUM_5"
+EVALUATION_VERSION="LEGZ_STATISTICAL_SPECTRUM_6"
 
 def stable_hash(value):
     raw=json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,default=str)
@@ -313,7 +314,7 @@ def evaluation_identity(prop):
       "side":norm(prop.get("side")),
     }
 
-def evaluation_input_material(prop,event,history,contexts,game_contexts,analyst_contexts,cache,metric_cache,tournament_ctx=None):
+def evaluation_input_material(prop,event,history,contexts,game_contexts,analyst_contexts,cache,metric_cache,tournament_ctx=None,signal_index=None):
     """Cheap pre-evaluation fingerprint.
 
     It intentionally excludes retrieval timestamps and snapshot IDs. A new scrape of
@@ -373,6 +374,7 @@ def evaluation_input_material(prop,event,history,contexts,game_contexts,analyst_
       "game_context_hash":stable_hash(stable_material_view(game_context)),
       "analyst_context_hash":stable_hash(stable_material_view(analyst_context)),
       "tournament_context_hash":stable_hash(stable_material_view(tournament_ctx or {})),
+      "signal_fabric_hash":stable_hash(stable_material_view(signal_context_for(prop,signal_index))),
     }
     return material
 
@@ -889,7 +891,74 @@ def fiba_event_context(event, scenario_competitions):
                 }
     return None
 
-def jinx_context(prop, contexts, game_contexts=None, analyst_contexts=None):
+def signal_state_index():
+    """Compact current Signal Fabric rows keyed to the exact POM identity."""
+    payload={}
+    if SIGNAL_STATE.exists():
+        try:
+            payload=json.loads(SIGNAL_STATE.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError,OSError,AttributeError):
+            payload={}
+    out={}
+    for row in payload.get("records") or []:
+        league=str(row.get("league") or "")
+        event_id=str(row.get("event_id") or "")
+        player=player_norm(row.get("participant") or row.get("player_key"))
+        metric=str(row.get("metric") or "")
+        side=norm(row.get("side"))
+        threshold=num(row.get("threshold"))
+        if not league or not player or not metric:
+            continue
+        key=(league,event_id,player,metric,side,threshold)
+        compact={
+          "signal_key":row.get("signal_key"),
+          "recognized_signal_count":int(num(row.get("recognized_signal_count")) or 0),
+          "signal_ids":[x.get("signal_id") for x in (row.get("signals") or []) if x.get("signal_id")][:12],
+          "signal_families":sorted({str(x.get("family")) for x in (row.get("signals") or []) if x.get("family")}),
+          "sequence":{
+            "status":(row.get("sequence") or {}).get("status"),
+            "best_period":(row.get("sequence") or {}).get("best_period"),
+            "normalized_slope":(row.get("sequence") or {}).get("normalized_slope"),
+            "alternation_rate":(row.get("sequence") or {}).get("alternation_rate"),
+            "latest_z":(row.get("sequence") or {}).get("latest_z"),
+            "prop_direction":row.get("sequence_prop_direction"),
+          },
+          "regime":{
+            "state":(row.get("regime") or {}).get("state"),
+            "shift_z":(row.get("regime") or {}).get("shift_z"),
+            "factors":(row.get("regime") or {}).get("factors") or [],
+          },
+          "recipe":{
+            "recipe_id":(row.get("recipe") or {}).get("recipe_id"),
+            "status":(row.get("recipe") or {}).get("status"),
+            "conditions":(row.get("recipe") or {}).get("conditions") or [],
+            "historical_analog_lift_pp":(row.get("recipe") or {}).get("historical_analog_lift_pp"),
+            "effective_sample_size":(row.get("recipe") or {}).get("effective_sample_size"),
+            "evidence_strength":(row.get("recipe") or {}).get("evidence_strength"),
+            "empirically_mature":bool((row.get("recipe") or {}).get("empirically_mature")),
+            "candidate_adjustment_pp":(row.get("recipe") or {}).get("candidate_adjustment_pp"),
+            "authorized_adjustment_pp":0.0,
+            "live_influence_authorized":False,
+          },
+          "correlation_edges":(row.get("correlation_edges") or [])[:8],
+          "shadow_probability_adjustment_pp":row.get("shadow_probability_adjustment_pp"),
+          "authorized_probability_adjustment_pp":0.0,
+        }
+        out[key]=compact
+    return out
+
+
+def signal_context_for(prop,index):
+    league=str(prop.get("_league") or "")
+    event_id=str(prop.get("_event_id") or prop.get("event_id") or "")
+    player=player_norm(prop.get("participant"))
+    metric=market_metric(prop.get("market"))
+    side=norm(prop.get("side"))
+    threshold=effective_threshold(prop,metric)
+    return (index or {}).get((league,event_id,player,metric,side,threshold)) or {}
+
+
+def jinx_context(prop, contexts, game_contexts=None, analyst_contexts=None, signal_context=None):
     """Conservative, attributable context layer. No private inference."""
     player=player_norm(prop.get("participant"))
     row=contexts.get(player) or {}
@@ -956,12 +1025,21 @@ def jinx_context(prop, contexts, game_contexts=None, analyst_contexts=None):
       "topics":analyst.get("topics") or {},"contract_context":analyst.get("contract_context") or {},
       "articles":(analyst.get("articles") or [])[:5]
     } if analyst else None
-    return {"delta":round(clamp(delta,-12,12),2),"signals":signals,"directional_components":structured,
+    signal_fabric=signal_context or {}
+    if signal_fabric:
+        signals.append("signal_fabric_recognized")
+        for family in signal_fabric.get("signal_families") or []:
+            signals.append("signal_"+norm(family).replace(" ","_"))
+        if (signal_fabric.get("regime") or {}).get("state") not in (None,"STABLE"):
+            signals.append("regime_change_detected")
+        if (signal_fabric.get("recipe") or {}).get("conditions"):
+            signals.append("conditional_recipe_detected")
+    return {"delta":round(clamp(delta,-12,12),2),"signals":list(dict.fromkeys(signals)),"directional_components":structured,
             "context_id":row.get("context_id") or game_row.get("context_id"),"context_type":ctype or game_row.get("context_type") or None,
             "status":status or None,"headline":row.get("headline"),"source":row.get("source") or game_row.get("source"),
-            "matchup":matchup,"analyst_review":analyst_review}
+            "matchup":matchup,"analyst_review":analyst_review,"signal_fabric":signal_fabric}
 
-def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=None, analyst_contexts=None, metric_cache=None):
+def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=None, analyst_contexts=None, metric_cache=None, signal_index=None):
     rates=[]
     dist=distribution_features(prop,history,metric_cache)
     synthetic=bool(prop.get("synthetic") or prop.get("model_generated"))
@@ -1005,7 +1083,8 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
     snapshots=[x for x in (prop.get("source_snapshot_ids") or []) if x]
     evidence=[x for x in (prop.get("evidence_ids") or []) if x]
 
-    ctx=jinx_context(prop,contexts,game_contexts,analyst_contexts)
+    signal_context=signal_context_for(prop,signal_index)
+    ctx=jinx_context(prop,contexts,game_contexts,analyst_contexts,signal_context)
     if tournament_ctx:
         ctx["tournament"]=tournament_ctx
         ctx["signals"].append("fiba_tournament_leverage")
@@ -1015,6 +1094,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
     signal_families=["PERFORMANCE_HISTORY"] if (rates or dist.get("distribution_model_probability") is not None) else []
     if market_prior is not None: signal_families.append("MARKET_PRIOR")
     if ctx.get("signals"): signal_families.append("CURRENT_CONTEXT")
+    if signal_context: signal_families.append("SIGNAL_FABRIC_SHADOW")
 
     # A real statistical evaluation requires player-performance evidence.
     # Price/consensus/source count alone can never mint LJPC.
@@ -1024,7 +1104,10 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
           "market":{"implied_probability":round(market_prior,2) if market_prior is not None else None,"source_count":source_count},
           "context":ctx,"provenance":provenance,
           "safeguards":{"market_only_prohibited":True,"correlated_windows_count_as_one_family":True,
-                        "independent_signal_families":signal_families}
+                        "independent_signal_families":signal_families,
+                        "signal_fabric_recognition_live":bool(signal_context),
+                        "signal_fabric_live_probability_influence":False,
+                        "signal_fabric_authorized_adjustment_pp":0.0}
         }
         return {
           "evaluation_status":"AWAITING_LJ_EVALUATION","ljpc":None,"lj_confidence":None,
@@ -1119,7 +1202,11 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
       "context":ctx,"provenance":provenance,
       "safeguards":{"market_only_prohibited":True,"correlated_windows_count_as_one_family":True,
                     "independent_signal_families":signal_families,
-                    "jinx_adjustment_cap_pp":12}
+                    "jinx_adjustment_cap_pp":12,
+                    "signal_fabric_recognition_live":bool(signal_context),
+                    "signal_fabric_live_probability_influence":False,
+                    "signal_fabric_candidate_adjustment_pp":(signal_context.get("recipe") or {}).get("candidate_adjustment_pp") if signal_context else None,
+                    "signal_fabric_authorized_adjustment_pp":0.0}
     }
     return {
       "evaluation_status":"LJ_EVALUATED","ljpc":ljpc,"lj_confidence":ljpc,
@@ -1128,7 +1215,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
       "player_projection":dist.get("player_projection"),
       "spectrum":{"performance":ordered,"distribution":dist,"player_projection":dist.get("player_projection"),"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
       "feature_state":feature_state,
-      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, stabilized by L10/full-L15 evidence, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX challenges the forecast with attributable role, availability, opponent, injury, weather, game-plan and Analyst Desk evidence. JINX also applies a bounded anti-recency/mean-reversion caution when a pick simply extends a materially displaced L5 hot/cold streak; this is not a claim that a player is due. Narrative reporting never creates a directional adjustment without structured evidence."
+      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, stabilized by L10/full-L15 evidence, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX challenges the forecast with attributable role, availability, opponent, injury, weather, game-plan and Analyst Desk evidence. JINX also applies a bounded anti-recency/mean-reversion caution when a pick simply extends a materially displaced L5 hot/cold streak; this is not a claim that a player is due. Narrative reporting never creates a directional adjustment without structured evidence. The LSI Signal Fabric may recognize sequence, correlation, conditional-recipe and regime-change patterns, but newly discovered recipe adjustments remain shadow-only until empirical learning-gate promotion authorizes live influence."
     }
 
 def main():
@@ -1138,6 +1225,7 @@ def main():
     contexts=context_index()
     game_contexts=player_game_context_index()
     analyst_contexts=analyst_context_index()
+    signal_index=signal_state_index()
     fiba_scenarios=load_fiba_scenarios()
     cache=spectrum_cache_index()
     metric_cache=spectrum_metric_cache_index()
@@ -1156,7 +1244,7 @@ def main():
             identity=evaluation_identity(prop)
             evaluation_key=stable_hash(identity)[:24]
             material=evaluation_input_material(
-              prop,event,history,contexts,game_contexts,analyst_contexts,cache,metric_cache,tournament_ctx=tournament_ctx
+              prop,event,history,contexts,game_contexts,analyst_contexts,cache,metric_cache,tournament_ctx=tournament_ctx,signal_index=signal_index
             )
             material_hash=stable_hash(material)
             previous=latest.get(evaluation_key) or {}
@@ -1173,7 +1261,7 @@ def main():
                 evaluated_at=previous.get("evaluated_at_utc")
                 reused+=1
             else:
-                result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts,analyst_contexts=analyst_contexts,metric_cache=metric_cache)
+                result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts,analyst_contexts=analyst_contexts,metric_cache=metric_cache,signal_index=signal_index)
                 evaluation_id=f"lse-{stable_hash({'key':evaluation_key,'material_hash':material_hash})[:24]}"
                 evaluated_at=datetime.now(timezone.utc).isoformat()
                 recomputed+=1
@@ -1211,6 +1299,7 @@ def main():
               "game_context_hash":material.get("game_context_hash"),
               "analyst_context_hash":material.get("analyst_context_hash"),
               "tournament_context_hash":material.get("tournament_context_hash"),
+              "signal_fabric_hash":material.get("signal_fabric_hash"),
             }
             feature_for_state=result.get("feature_state") or {}
             if isinstance(feature_for_state,dict):
