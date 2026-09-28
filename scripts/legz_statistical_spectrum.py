@@ -830,7 +830,7 @@ def form_reversion_guard(prop,dist,analyst=None):
       "l5_average":round(l5,3),"long_center":round(long_center,3),
       "selected_side_follows_short_streak":bool(streak_following),
       "confidence_cap":cap,
-      "policy":"Mean-reversion caution only; no claim that a player is 'due'. Fresh matchup/news evidence must justify overriding the guard."
+      "policy":"Mean-reversion caution only; no claim that a player is 'due'. Fresh matchup/news evidence must justify overriding the guard. Missing analyst context never suppresses the POM; publication marks it with 🕵️."
     }
 
 def player_game_context_index():
@@ -944,8 +944,15 @@ def jinx_context(prop, contexts, game_contexts=None, analyst_contexts=None):
         signals.append("jinx_analyst_dossier")
         if analyst.get("review_required"): signals.append("analyst_review_required")
     analyst_review={
-      "priority_score":analyst.get("priority_score"),"review_required":bool(analyst.get("review_required")),
-      "fresh_context_count":analyst.get("fresh_context_count"),"flags":analyst.get("flags") or [],
+      "priority_score":analyst.get("priority_score"),"priority_tier":analyst.get("priority_tier"),
+      "review_required":bool(analyst.get("review_required")),"research_expected":bool(analyst.get("research_expected")),
+      "freshness_window_hours":analyst.get("freshness_window_hours"),
+      "fresh_context_count":analyst.get("fresh_context_count"),
+      "fresh_context_available":bool(analyst.get("fresh_context_available")),
+      "spy_context_pending":bool(analyst.get("spy_context_pending")),
+      "spy_marker":analyst.get("spy_marker") or "",
+      "research_policy":analyst.get("research_policy") or {},
+      "flags":analyst.get("flags") or [],
       "topics":analyst.get("topics") or {},"contract_context":analyst.get("contract_context") or {},
       "articles":(analyst.get("articles") or [])[:5]
     } if analyst else None
