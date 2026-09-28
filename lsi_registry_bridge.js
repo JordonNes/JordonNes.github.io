@@ -91,6 +91,21 @@
     if(!l5&&!proj) return '';
     return `${l5?`L5 AVG ${l5}`:''}${l5&&proj?' • ':''}${proj?`L&J PROJ ${proj}`:''}`;
   };
+  const ANALYST_CONTEXT_LEAGUES=new Set(['NFL','NBA','WNBA','Boxing','Tennis','MLB','NHL','NCAA_Football','NCAA_Basketball']);
+  const analystReviewOf=p=>p?.feature_state?.context?.analyst_review||p?.spectrum?.jinx_context?.analyst_review||null;
+  const analystContextPending=p=>{
+    const review=analystReviewOf(p);
+    if(review?.spy_context_pending===true) return true;
+    if(review?.research_expected===true && review?.fresh_context_available!==true) return true;
+    // A covered sport with an evaluated prop but no Analyst Desk payload is also
+    // explicitly "context sought", never silently treated as context-complete.
+    const league=String(p?.league||p?._league||p?._event?.league||'');
+    return ANALYST_CONTEXT_LEAGUES.has(league) && !review;
+  };
+  const withSpy=(p,text)=>{
+    const base=String(text??'').replace(/\s*🕵️\s*$/u,'').trim();
+    return base+(analystContextPending(p)?' 🕵️':'');
+  };
   const marketBaselineLj=p=>{
     const consensus=Number(p.consensus_confidence_pct);
     const implied=impliedProb(p.best_price);
@@ -352,7 +367,7 @@
       const price=priceLabel(p.price,p.book||'');
       pushHot([
         p.participant||p.pick,
-        p.pick,
+        withSpy(p,p.pick),
         pct(ljpcOf(p)),
         `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
@@ -368,7 +383,7 @@
       const pv=Number(p.pom_value||p.legz_value||p.ljpc);
       pushHot([
         p.participant,
-        scoutPick(p),
+        withSpy(p,scoutPick(p)),
         pct(Number(p.ljpc)),
         `${price} • PLAYER PROP POM${projectionLabel(p)?` • ${projectionLabel(p)}`:''} • POM Value ${pv.toFixed(1)} • Econ ${Number(p.economic_value??50).toFixed(1)} • ${Number(p.market_source_count||1)} SRC`,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
@@ -462,7 +477,7 @@
       const key=canonicalKey(p);
       pushTwenty([
         String(p.league||p.sport||'').replace(/_/g,' '),
-        p.participant||p.pick,p.pick,p.price||'price recheck',pct(ljpcOf(p)),
+        p.participant||p.pick,withSpy(p,p.pick),p.price||'price recheck',pct(ljpcOf(p)),
         `LJPC • POM VALUE ${pomValueOf(p).toFixed(1)} • ${quality(p)}`,risk(p),ljpcOf(p),
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
         legzComponent(p),jinxComponent(p)
@@ -480,7 +495,7 @@
       if(!(lj>0)) continue; // 20 Piece is formal LJPC only; never market-baseline/provisional.
       const pv=Number(p.pom_value||p.legz_value||lj);
       pushTwenty([
-        String(league).replace(/_/g,' '),p.participant,scoutPick(p),price,pct(lj),
+        String(league).replace(/_/g,' '),p.participant,withSpy(p,scoutPick(p)),price,pct(lj),
         `LJPC • ${projectionLabel(p)?projectionLabel(p)+' • ':''}POM VALUE ${Number.isFinite(pv)?pv.toFixed(1):lj.toFixed(1)} • ECON ${Number(p.economic_value??50).toFixed(1)} • LSI STATISTICAL SPECTRUM • ${Number(p.market_source_count||1)} SRC`,
         risk({ljpc:lj}),lj,
         Number.isFinite(Number(p.market_baseline_probability)) ? pct(Number(p.market_baseline_probability)) : '',
@@ -518,6 +533,7 @@
     legzConfidence:p.legz_confidence,legzValue:p.legz_value,jinxInput:p.jinx_input,
     ljpc:ljpcOf(p),ljProbability:ljpcOf(p),economicValue:Number(p.economic_value??50),pomValue:pomValueOf(p),
     sourceSnapshotIds:p.source_snapshot_ids,provenance:p.provenance,status:p.status,
+    analystContextPending:analystContextPending(p),analystMarker:analystContextPending(p)?'🕵️':'',
     sourceMode:'CANONICAL_PREDICTION_REGISTRY',modelVersion:p.model_version
   }));
   window.LJ_CANONICAL_REGISTRY=canonical;
@@ -616,8 +632,8 @@
     const pomText=Number.isFinite(pom)?` • POM Value ${pom.toFixed(1)}`:'';
     return {
       display:evaluated
-        ? `${core}${price} • ${tier}${proj?` • ${proj}`:''}${pomText} • STAT ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${componentToken(p)}${freshness}`
-        : `${core}${price} • ${tier}${proj?` • ${proj}`:''} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)${freshness}`,
+        ? withSpy(p,`${core}${price} • ${tier}${proj?` • ${proj}`:''}${pomText} • STAT ${baseline.toFixed(baseline%1?1:0)}% • LJPC ${conf.toFixed(conf%1?1:0)}%${componentToken(p)}${freshness}`)
+        : withSpy(p,`${core}${price} • ${tier}${proj?` • ${proj}`:''} • AWAITING L&J EVALUATION • MARKET BASELINE ${baseline.toFixed(baseline%1?1:0)}% (NOT LJPC)${freshness}`),
       confidence:conf,
       participant:n(p.participant),
       market:`${market}|${side}|${p.threshold??''}`,
