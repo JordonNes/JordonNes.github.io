@@ -23,6 +23,7 @@ CACHE=DATA/"lsi_spectrum_cache.json"
 EVAL_STATE=DATA/"lsi_evaluation_state.json"
 SYNTHETIC_BOOK=DATA/"legz_synthetic_book.json"
 FIBA_SCENARIOS=DATA/"fiba_scenario_state.json"
+ANALYST_CONTEXT=DATA/"jinx_analyst_context.json"
 HISTORY_ROOT=DATA/"history"
 
 def csv_open(path):
@@ -275,7 +276,7 @@ def implied(price):
 
 def clamp(x,lo=0,hi=100): return max(lo,min(hi,x))
 
-EVALUATION_VERSION="LEGZ_STATISTICAL_SPECTRUM_4"
+EVALUATION_VERSION="LEGZ_STATISTICAL_SPECTRUM_5"
 
 def stable_hash(value):
     raw=json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False,default=str)
@@ -312,7 +313,7 @@ def evaluation_identity(prop):
       "side":norm(prop.get("side")),
     }
 
-def evaluation_input_material(prop,event,history,contexts,game_contexts,cache,metric_cache,tournament_ctx=None):
+def evaluation_input_material(prop,event,history,contexts,game_contexts,analyst_contexts,cache,metric_cache,tournament_ctx=None):
     """Cheap pre-evaluation fingerprint.
 
     It intentionally excludes retrieval timestamps and snapshot IDs. A new scrape of
@@ -337,6 +338,7 @@ def evaluation_input_material(prop,event,history,contexts,game_contexts,cache,me
     vals,history_selection=select_ncaa_projection_values(prop,vals,metric_profile)
     context=(contexts or {}).get(player) or {}
     game_context=(game_contexts or {}).get((player,event_id)) or (game_contexts or {}).get((player,"")) or {}
+    analyst_context=(analyst_contexts or {}).get((str(prop.get("_league") or ""),player)) or {}
 
     prop_fields=(
       "participant","team","market","threshold","threshold_operator","side","price","best_price",
@@ -369,6 +371,7 @@ def evaluation_input_material(prop,event,history,contexts,game_contexts,cache,me
       "metric_cache_hash":stable_hash(stable_material_view(metric_profile)),
       "current_context_hash":stable_hash(stable_material_view(context)),
       "game_context_hash":stable_hash(stable_material_view(game_context)),
+      "analyst_context_hash":stable_hash(stable_material_view(analyst_context)),
       "tournament_context_hash":stable_hash(stable_material_view(tournament_ctx or {})),
     }
     return material
@@ -776,6 +779,60 @@ def context_index():
         if player and player not in out: out[player]=row
     return out
 
+def analyst_context_index():
+    """Current JINX Analyst Desk dossiers keyed by league + normalized player."""
+    payload={}
+    if ANALYST_CONTEXT.exists():
+        try: payload=json.loads(ANALYST_CONTEXT.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError,OSError,AttributeError): payload={}
+    out={}
+    for row in payload.get("dossiers") or []:
+        league=str(row.get("league") or "")
+        player=player_norm(row.get("player"))
+        if league and player:
+            out[(league,player)]=row
+    return out
+
+def form_reversion_guard(prop,dist,analyst=None):
+    """Caution against blindly extending a short hot/cold streak.
+
+    This is not a "due" bonus. When L5 is materially displaced from the more
+    stable L10/L15 center, JINX reduces confidence in a pick that simply follows
+    that short-term direction (UNDER after a cold patch; OVER after a hot patch).
+    Missing analyst context tightens the cap for high-priority players.
+    """
+    proj=(dist or {}).get("player_projection") or {}
+    l5=num(proj.get("l5_average")); l10=num(proj.get("l10_average")); l15=num(proj.get("l15_average"))
+    sigma=num(proj.get("forecast_sigma"))
+    long_parts=[x for x in (l10,l15) if x is not None]
+    if l5 is None or not long_parts or sigma in (None,0):
+        return {"state":None,"adjustment_pp":0.0,"divergence_z":None,"confidence_cap":None}
+    long_center=sum(long_parts)/len(long_parts)
+    z=(l5-long_center)/sigma
+    if abs(z)<0.65:
+        return {"state":"STABLE_RECENT_FORM","adjustment_pp":0.0,"divergence_z":round(z,3),"long_center":round(long_center,3),"confidence_cap":None}
+    side=norm(prop.get("side"))
+    if z<0:
+        state="REBOUND_WATCH"
+        streak_following=side in {"under","less","no"}
+    else:
+        state="REGRESSION_WATCH"
+        streak_following=side in {"over","more","yes"}
+    adjustment=0.0; cap=None
+    if streak_following:
+        adjustment=-min(2.5,0.75+max(0.0,abs(z)-0.65)*1.25)
+        review_required=bool((analyst or {}).get("review_required"))
+        fresh=int(num((analyst or {}).get("fresh_context_count")) or 0)
+        if review_required and fresh==0:
+            cap=72.5
+    return {
+      "state":state,"adjustment_pp":round(adjustment,2),"divergence_z":round(z,3),
+      "l5_average":round(l5,3),"long_center":round(long_center,3),
+      "selected_side_follows_short_streak":bool(streak_following),
+      "confidence_cap":cap,
+      "policy":"Mean-reversion caution only; no claim that a player is 'due'. Fresh matchup/news evidence must justify overriding the guard."
+    }
+
 def player_game_context_index():
     """Merge attributable player/game context from manual/curated and ESPN evidence.
 
@@ -832,12 +889,13 @@ def fiba_event_context(event, scenario_competitions):
                 }
     return None
 
-def jinx_context(prop, contexts, game_contexts=None):
+def jinx_context(prop, contexts, game_contexts=None, analyst_contexts=None):
     """Conservative, attributable context layer. No private inference."""
     player=player_norm(prop.get("participant"))
     row=contexts.get(player) or {}
     event_id=str(prop.get("_event_id") or prop.get("event_id") or "")
     game_row=(game_contexts or {}).get((player,event_id)) or (game_contexts or {}).get((player,"")) or {}
+    analyst=(analyst_contexts or {}).get((str(prop.get("_league") or ""),player)) or {}
     status=str(row.get("player_status") or game_row.get("availability") or "").upper()
     severity=str(row.get("context_severity") or "").upper()
     ctype=str(row.get("context_type") or "").upper()
@@ -882,12 +940,21 @@ def jinx_context(prop, contexts, game_contexts=None):
       "source":game_row.get("source")
     } if game_row else None
     if matchup: signals.append("attributable_matchup_context")
+    if analyst:
+        signals.append("jinx_analyst_dossier")
+        if analyst.get("review_required"): signals.append("analyst_review_required")
+    analyst_review={
+      "priority_score":analyst.get("priority_score"),"review_required":bool(analyst.get("review_required")),
+      "fresh_context_count":analyst.get("fresh_context_count"),"flags":analyst.get("flags") or [],
+      "topics":analyst.get("topics") or {},"contract_context":analyst.get("contract_context") or {},
+      "articles":(analyst.get("articles") or [])[:5]
+    } if analyst else None
     return {"delta":round(clamp(delta,-12,12),2),"signals":signals,"directional_components":structured,
             "context_id":row.get("context_id") or game_row.get("context_id"),"context_type":ctype or game_row.get("context_type") or None,
             "status":status or None,"headline":row.get("headline"),"source":row.get("source") or game_row.get("source"),
-            "matchup":matchup}
+            "matchup":matchup,"analyst_review":analyst_review}
 
-def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=None, metric_cache=None):
+def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=None, analyst_contexts=None, metric_cache=None):
     rates=[]
     dist=distribution_features(prop,history,metric_cache)
     synthetic=bool(prop.get("synthetic") or prop.get("model_generated"))
@@ -931,7 +998,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
     snapshots=[x for x in (prop.get("source_snapshot_ids") or []) if x]
     evidence=[x for x in (prop.get("evidence_ids") or []) if x]
 
-    ctx=jinx_context(prop,contexts,game_contexts)
+    ctx=jinx_context(prop,contexts,game_contexts,analyst_contexts)
     if tournament_ctx:
         ctx["tournament"]=tournament_ctx
         ctx["signals"].append("fiba_tournament_leverage")
@@ -1004,10 +1071,18 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
     depth_bonus=min(2.0,max(0,source_count-1)*0.35)
     L=clamp(L+depth_bonus,1,99)
 
-    # JINX interrogates attributable availability/role context; explicit human/model adjustment wins when present.
+    # JINX interrogates attributable availability/role context. It also applies a
+    # small anti-recency guard when an offered side merely extends a short hot/cold
+    # streak that is materially displaced from the L10/L15 center.
     explicit_j=num(prop.get("jinx_input") if prop.get("jinx_input") not in (None,"") else prop.get("jinx_delta"))
-    j=clamp(explicit_j if explicit_j is not None else ctx["delta"],-12,12)
+    guard=form_reversion_guard(prop,dist,ctx.get("analyst_review"))
+    ctx["form_reversion_guard"]=guard
+    base_j=explicit_j if explicit_j is not None else ctx["delta"]
+    j=clamp(base_j+float(guard.get("adjustment_pp") or 0),-12,12)
     ljpc=round(clamp(L+j,1,99),1)
+    if guard.get("confidence_cap") is not None:
+        ljpc=round(min(ljpc,float(guard["confidence_cap"])),1)
+        ctx["signals"].append("analyst_context_confidence_cap")
 
     evidence_depth=min(100.0,35+len(ordered)*14+min(source_count,5)*5+min(len(set(snapshots)),4)*4+min(len(set(evidence)),4)*3)
     prior_continuity_n=int(((dist.get("history_selection") or {}).get("prior_continuity_n")) or 0)
@@ -1046,7 +1121,7 @@ def spectrum(prop, history, contexts, cache, tournament_ctx=None, game_contexts=
       "player_projection":dist.get("player_projection"),
       "spectrum":{"performance":ordered,"distribution":dist,"player_projection":dist.get("player_projection"),"consistency":round(consistency,2),"market_prior":market_prior,"source_depth":source_count,"jinx_context":ctx},
       "feature_state":feature_state,
-      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, stabilized by L10/full-L15 evidence, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX challenges the forecast with attributable role, availability, opponent, injury, weather and game-plan evidence; directional adjustments require structured sourced evidence and are never invented from narrative prose."
+      "evaluation_reason":"LEGZ first estimates the player’s expected next-game output from an L5-primary statistical spectrum, stabilized by L10/full-L15 evidence, then evaluates the exact offered threshold against that shared forecast distribution. Market price is a bounded secondary prior. JINX challenges the forecast with attributable role, availability, opponent, injury, weather, game-plan and Analyst Desk evidence. JINX also applies a bounded anti-recency/mean-reversion caution when a pick simply extends a materially displaced L5 hot/cold streak; this is not a claim that a player is due. Narrative reporting never creates a directional adjustment without structured evidence."
     }
 
 def main():
@@ -1055,6 +1130,7 @@ def main():
     history=historical_results()
     contexts=context_index()
     game_contexts=player_game_context_index()
+    analyst_contexts=analyst_context_index()
     fiba_scenarios=load_fiba_scenarios()
     cache=spectrum_cache_index()
     metric_cache=spectrum_metric_cache_index()
@@ -1073,7 +1149,7 @@ def main():
             identity=evaluation_identity(prop)
             evaluation_key=stable_hash(identity)[:24]
             material=evaluation_input_material(
-              prop,event,history,contexts,game_contexts,cache,metric_cache,tournament_ctx=tournament_ctx
+              prop,event,history,contexts,game_contexts,analyst_contexts,cache,metric_cache,tournament_ctx=tournament_ctx
             )
             material_hash=stable_hash(material)
             previous=latest.get(evaluation_key) or {}
@@ -1090,7 +1166,7 @@ def main():
                 evaluated_at=previous.get("evaluated_at_utc")
                 reused+=1
             else:
-                result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts,metric_cache=metric_cache)
+                result=spectrum(prop,history,contexts,cache,tournament_ctx=tournament_ctx,game_contexts=game_contexts,analyst_contexts=analyst_contexts,metric_cache=metric_cache)
                 evaluation_id=f"lse-{stable_hash({'key':evaluation_key,'material_hash':material_hash})[:24]}"
                 evaluated_at=datetime.now(timezone.utc).isoformat()
                 recomputed+=1
@@ -1126,6 +1202,7 @@ def main():
               "market_role_availability_hash":stable_hash(material.get("market_role_availability")),
               "current_context_hash":material.get("current_context_hash"),
               "game_context_hash":material.get("game_context_hash"),
+              "analyst_context_hash":material.get("analyst_context_hash"),
               "tournament_context_hash":material.get("tournament_context_hash"),
             }
             feature_for_state=result.get("feature_state") or {}
