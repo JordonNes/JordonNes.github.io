@@ -1239,7 +1239,7 @@ def main():
         tournament_ctx=fiba_event_context(event,fiba_scenarios)
         for prop in event.get("props") or []:
             prop["_league"]=event.get("league") or ""
-            prop["_event_id"]=event.get("event_id") or event.get("source_event_id") or ""
+            prop["_event_id"]=event.get("source_event_id") or event.get("event_id") or ""
             prop["_event_start"]=event.get("commence_time") or event.get("event_start_pt") or ""
             identity=evaluation_identity(prop)
             evaluation_key=stable_hash(identity)[:24]
