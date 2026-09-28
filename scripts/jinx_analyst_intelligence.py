@@ -64,6 +64,12 @@ TOPIC_RULES={
  "COACHING_GAMEPLAN":("coach","game plan","gameplan","scheme","play-call","play call","offense","defense","coverage"),
  "DISCIPLINE_AVAILABILITY":("suspend","disciplin","inactive","personal conduct"),
  "PERFORMANCE_RESPONSE":("bounce back","respond","response","struggle","slump","improve","adjust","fix","turnaround"),
+ "ORGANIZATIONAL_CONTEXT":("front office","ownership","general manager","locker room","coaching change","trade request","dispute","controversy"),
+ "STAKES_PRESSURE":("playoff","postseason","elimination","seeding","must win","rivalry","standings"),
+ "SCHEDULE_FATIGUE":("back to back","back-to-back","travel","rest disadvantage","short week","layoff"),
+ "MATCHUP_OPPORTUNITY":("matchup","favorable matchup","coverage weakness","defensive weakness","pace","surface"),
+ "BOXING_CAMP_WEIGHT":("weigh in","weigh-in","weight cut","training camp","replacement opponent","southpaw","orthodox","reach advantage"),
+ "TENNIS_SURFACE_FITNESS":("hard court","clay","grass","surface change","medical timeout","retired","retirement","three setter","five setter"),
 }
 
 def clean(v):return re.sub(r"\s+"," ",str(v or "")).strip()
@@ -277,6 +283,12 @@ def priority(subject,articles,policy=None):
     if "TRANSACTION" in all_topics:score+=8;flags.append("TRANSACTION_CONTEXT")
     if "COACHING_GAMEPLAN" in all_topics:score+=8;flags.append("GAMEPLAN_CONTEXT")
     if "PERFORMANCE_RESPONSE" in all_topics:score+=8;flags.append("RESPONSE_CONTEXT")
+    if "ORGANIZATIONAL_CONTEXT" in all_topics:score+=5;flags.append("ORGANIZATIONAL_CONTEXT")
+    if "STAKES_PRESSURE" in all_topics:score+=6;flags.append("STAKES_PRESSURE")
+    if "SCHEDULE_FATIGUE" in all_topics:score+=5;flags.append("SCHEDULE_FATIGUE")
+    if "MATCHUP_OPPORTUNITY" in all_topics:score+=7;flags.append("MATCHUP_OPPORTUNITY")
+    if "BOXING_CAMP_WEIGHT" in all_topics:score+=8;flags.append("BOXING_CAMP_WEIGHT")
+    if "TENNIS_SURFACE_FITNESS" in all_topics:score+=8;flags.append("TENNIS_SURFACE_FITNESS")
     score=min(100,score)
     if policy.get("review_required") or score>=55:flags.append("ANALYST_REVIEW_REQUIRED")
     return score,list(dict.fromkeys(flags))
