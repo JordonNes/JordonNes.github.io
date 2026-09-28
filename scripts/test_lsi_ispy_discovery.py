@@ -21,6 +21,11 @@ def test_effective_sample_not_raw_n():
     assert d.effective_sample_size(weights)<5
     assert d.evidence_status(25,4.9,.70,12,.80)!="VALIDATED"
     assert d.evidence_status(10,7.2,.60,8,.75)=="VALIDATED"
+    assert d.evidence_status(10,7.2,.60,-8,.75)=="VALIDATED"
+    positive={"5":{"lift_pp":12},"10":{"lift_pp":9},"25":{"lift_pp":8},"50":{"lift_pp":4}}
+    negative={"5":{"lift_pp":-12},"10":{"lift_pp":-9},"25":{"lift_pp":-8},"50":{"lift_pp":-4}}
+    assert d.stability_score(positive,8)==1.0
+    assert d.stability_score(negative,-8)==1.0
 
 def test_missing_features_are_not_fabricated():
     a={"focus_pass_yards_l5":250,"focus_rush_yards_l5":120,"division_game":1}
