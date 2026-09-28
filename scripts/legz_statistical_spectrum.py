@@ -314,7 +314,7 @@ def evaluation_identity(prop):
       "side":norm(prop.get("side")),
     }
 
-def evaluation_input_material(prop,event,history,contexts,game_contexts,analyst_contexts,cache,metric_cache,tournament_ctx=None,signal_index=None):
+def evaluation_input_material(prop,event,history,contexts,game_contexts,analyst_contexts,cache,metric_cache=None,tournament_ctx=None,signal_index=None):
     """Cheap pre-evaluation fingerprint.
 
     It intentionally excludes retrieval timestamps and snapshot IDs. A new scrape of
