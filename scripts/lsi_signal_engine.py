@@ -398,7 +398,10 @@ def read_settled_suggestion_rows():
     by_outcome={}
     for row in ledger.get("suggestions") or []:
         sid=str(row.get("suggestion_id") or "")
-        if sid not in grades:
+        grade=grades.get(sid)
+        if grade is None:
+            grade=grades.get(f"WEB|{sid}")
+        if grade is None:
             continue
         if str(row.get("market_class") or "").upper()!="PLAYER_PROP":
             continue
@@ -418,7 +421,7 @@ def read_settled_suggestion_rows():
             by_outcome[outcome_key]=(stamp,{
               "league":league,"event_id":event_id,"participant":participant,
               "market":market,"side":"OVER" if side in {"over","more","yes"} else "UNDER",
-              "grade":grades[sid],
+              "grade":grade,
             })
     return [x[1] for x in by_outcome.values()]
 
