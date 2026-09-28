@@ -1,0 +1,25 @@
+name: SportsGameOdds Branch CI
+
+on:
+  push:
+    branches: [add-sgo-market-intel-v2-20260928]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Compile market intelligence code
+        run: |
+          python -m py_compile scripts/sportsgameodds_adapter.py
+          python -m py_compile scripts/legz_statistical_spectrum.py
+          python -m py_compile scripts/lsi_publish_future_board.py
+          python -m py_compile scripts/lsi_ispy_observer.py
+      - name: Run regression tests
+        run: |
+          python scripts/test_sportsgameodds_adapter.py
+          python scripts/test_lsi_ispy_observer.py
+          python scripts/legz_prop_ladder_test.py
