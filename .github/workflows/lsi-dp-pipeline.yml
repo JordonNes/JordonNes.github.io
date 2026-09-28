@@ -22,6 +22,8 @@ on:
       - 'scripts/espn_intelligence_adapter.py'
       - 'scripts/test_espn_intelligence_adapter.py'
       - 'scripts/espn_player_enrichment.py'
+      - 'scripts/jinx_analyst_intelligence.py'
+      - 'scripts/test_jinx_analyst_intelligence.py'
       - 'scripts/test_espn_player_enrichment.py'
       - 'config/lsi_sources.json'
       - 'scripts/odds_adapter.py'
@@ -168,6 +170,7 @@ jobs:
           python scripts/test_lsi_checkpoint_clock.py
           python scripts/test_ncaa_history_continuity.py
           python scripts/test_lsi_future_board_guard.py
+          python scripts/test_jinx_analyst_intelligence.py
           python scripts/test_lsi_ispy_observer.py
           python scripts/test_propline_bulk_catalog.py
           python scripts/test_parlayapi_retail_props.py
@@ -295,6 +298,10 @@ jobs:
         run: |
           python scripts/test_espn_player_enrichment.py
           python scripts/espn_player_enrichment.py
+      - name: Build JINX Analyst Desk dossiers
+        if: steps.league_schedule.outputs.cycle_required == 'true'
+        continue-on-error: true
+        run: python scripts/jinx_analyst_intelligence.py
       - name: Merge verified override evidence before Spectrum
         if: steps.league_schedule.outputs.cycle_required == 'true'
         run: python scripts/lsi_apply_verified_overrides.py
@@ -423,6 +430,7 @@ jobs:
           test -f data/lsi_ispy_candidates.json && test -f data/lsi_ispy_pattern_library.json && test -f data/lsi_ispy_signals.json
           test -f data/openai_dry_run_router.json && test -f data/openai_usage_estimates.csv && test -f data/openai_usage_summary.json
           test -f data/lsi_evaluation_state.json
+          test -f data/jinx_analyst_context.json
           test -f data/legz_synthetic_book.json
           grep -q 'PLAYER_PROP' data/prediction_registry.json && grep -q 'GAME_ML' data/prediction_registry.json
           grep -q 'DRY_RUN_NO_NETWORK' data/openai_dry_run_router.json
@@ -475,6 +483,7 @@ jobs:
             data/lsi_player_registry.json data/lsi_spectrum_cache.json data/season_schedule_registry.json
             data/team_roster_registry.json data/visual_asset_registry.json data/visual_asset_registry.js
             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json
+            data/jinx_analyst_context.json
             data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json data/game_winner_evidence.json
             data/projection_gap_report.json data/lsi_ispy_candidates.json data/lsi_ispy_signals.json data/lsi_ispy_signals.js
           )
