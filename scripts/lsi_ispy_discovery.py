@@ -388,14 +388,22 @@ def neighborhood_rates(analogs,code,baseline):
         out[str(depth)]={"rate_pct":round(rate,2) if rate is not None else None,"lift_pp":round(rate-baseline,2) if rate is not None and baseline is not None else None,"n":n}
     return out
 
-def stability_score(depths):
-    usable=[x.get("lift_pp") for x in depths.values() if x.get("lift_pp") is not None]
+def stability_score(depths,lift):
+    """Reward neighborhood stability in the observed direction.
+
+    A negative lift is a legitimate JINX challenge signal, not failed evidence.
+    The old positive-only stability rule silently discarded repeatable adverse
+    patterns even when their magnitude and similarity were strong.
+    """
+    usable=[number(x.get("lift_pp")) for x in depths.values() if number(x.get("lift_pp")) is not None]
     if not usable:return 0.0
-    return sum(1 for x in usable if x>=3.0)/len(usable)
+    sign=1 if (number(lift) or 0)>=0 else -1
+    return sum(1 for x in usable if sign*x>=3.0)/len(usable)
 
 def evidence_status(analog_count,ess,mean_sim,lift,stability):
-    if analog_count>=10 and ess>=7 and mean_sim>=0.58 and lift>=7.5 and stability>=0.66:return "VALIDATED"
-    if analog_count>=6 and ess>=4 and mean_sim>=0.52 and lift>=5.0 and stability>=0.50:return "EMERGING"
+    magnitude=abs(number(lift) or 0.0)
+    if analog_count>=10 and ess>=7 and mean_sim>=0.58 and magnitude>=7.5 and stability>=0.66:return "VALIDATED"
+    if analog_count>=6 and ess>=4 and mean_sim>=0.52 and magnitude>=5.0 and stability>=0.50:return "EMERGING"
     return "RESEARCH_ONLY"
 
 def feature_label(k):
@@ -502,7 +510,7 @@ def discover_for_state(current,history,event,player_teams):
         baseline,baseline_n=baseline_rate(history,current,code)
         if observed is None or baseline is None:continue
         lift=observed-baseline
-        depths=neighborhood_rates(analogs,code,baseline);stability=stability_score(depths)
+        depths=neighborhood_rates(analogs,code,baseline);stability=stability_score(depths,lift)
         status=evidence_status(n,ess,mean_sim,lift,stability)
         if status=="RESEARCH_ONLY":continue
         poms=pom_matches(code,current["focus_team"],event,player_teams)
@@ -517,7 +525,7 @@ def discover_for_state(current,history,event,player_teams):
                         f"The top-25 analog neighborhood averages {mean_sim*100:.1f}% similarity with effective sample {ess:.1f}. "
                         "This is an association in comparable game states, not proof that any single condition causes the outcome.")
         candidates.append({
-          "signal_id":signal_id,"pattern_key":pattern_key,"status":status,"league":"NFL","focus_team":current.get("focus_team"),"opponent":current.get("opponent"),
+          "signal_id":signal_id,"pattern_key":pattern_key,"status":status,"direction":"SUPPORT" if lift>=0 else "CHALLENGE","league":"NFL","focus_team":current.get("focus_team"),"opponent":current.get("opponent"),
           "title":f"{current.get('focus_team')} — {outcome_label}","outcome_code":code,"outcome":outcome_label,
           "cohort_definition":f"Games most similar to this measured state: {condition_text}.","conditions":conditions,
           "current_state":current_state_summary(current),"sample_size":n,"effective_sample_size":round(ess,2),"mean_similarity_pct":round(mean_sim*100,2),
@@ -528,7 +536,7 @@ def discover_for_state(current,history,event,player_teams):
           "provenance":[{"source":"NFLVERSE_SCHEDULES","detail":"scores, division, rest, roof, temperature, wind and market total"},{"source":"NFLVERSE_TEAM_WEEKLY","detail":"offense and defensive activity measurements"},{"source":"LSI_FUTURE_MARKET_BOARD","detail":"current event and evaluated offered POMs"}]+([{"source":"OPEN_METEO","detail":"current event-hour weather measurements"}] if current.get("weather_detail") else []),
           "method":{"similarity":"weighted mixed-feature Gower-like distance","neighborhood":"top 25 of top 50 historical analogs","raw_sample_gate":False,"effective_sample_required":True}
         })
-    candidates.sort(key=lambda x:(x["status"]=="VALIDATED",x["lift_pp"],x["mean_similarity_pct"]),reverse=True)
+    candidates.sort(key=lambda x:(x["status"]=="VALIDATED",abs(number(x["lift_pp"]) or 0),x["mean_similarity_pct"]),reverse=True)
     return candidates[:3]
 
 def merge_library(candidates):
@@ -544,7 +552,8 @@ def merge_library(candidates):
           "pattern_key":key,"league":c.get("league"),"title":c.get("title"),"outcome":c.get("outcome"),"outcome_code":c.get("outcome_code"),
           "conditions":c.get("conditions"),"last_seen_utc":now,"last_signal_id":c.get("signal_id"),
           "last_evidence":{k:c.get(k) for k in ("observed_rate_pct","baseline_rate_pct","lift_pp","effective_sample_size","mean_similarity_pct","stability_score")},
-          "max_lift_pp":max(number(p.get("max_lift_pp")) or -999,number(c.get("lift_pp")) or -999),"observed_event_ids":sorted(events),
+          "max_lift_pp":max(number(p.get("max_lift_pp")) or -999,number(c.get("lift_pp")) or -999),
+          "max_abs_lift_pp":max(number(p.get("max_abs_lift_pp")) or 0,abs(number(c.get("lift_pp")) or 0)),"observed_event_ids":sorted(events),
           "distinct_current_events":len(events),"provenance":c.get("provenance"),
         })
         p.setdefault("first_seen_utc",now)
@@ -552,7 +561,7 @@ def merge_library(candidates):
         by[key]=p
     payload={"schema_version":"LJ-ISPY-PATTERN-LIBRARY-2","generated_at_utc":now,
              "policy":"Validated recurring analog patterns persist independently of current sportsbook availability.",
-             "patterns":sorted(by.values(),key=lambda x:(number(x.get("max_lift_pp")) or 0,int(x.get("times_observed") or 0)),reverse=True)[:200]}
+             "patterns":sorted(by.values(),key=lambda x:(number(x.get("max_abs_lift_pp")) or abs(number((x.get("last_evidence") or {}).get("lift_pp")) or 0),int(x.get("times_observed") or 0)),reverse=True)[:200]}
     LIBRARY.write_text(json.dumps(payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     return payload
 
