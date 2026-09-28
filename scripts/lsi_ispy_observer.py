@@ -43,6 +43,8 @@ FEATURE_SPECS={
     "sample_size_log":(0.70,0.55),
     "market_implied_probability":(15.0,0.60),
     "market_source_count":(2.0,0.40),
+    "market_line_delta":(1.5,0.65),
+    "market_book_dispersion":(0.75,0.45),
     "context_delta_pp":(3.0,1.00),
     "availability_risk":(1.0,0.85),
     "opponent_adjustment_pp":(2.0,0.95),
@@ -157,6 +159,8 @@ def feature_vector(record):
         "sample_size_log":math.log1p(sample) if sample is not None and sample>=0 else None,
         "market_implied_probability":number(market.get("implied_probability") or record.get("market_baseline_probability")),
         "market_source_count":number(market.get("source_count") or record.get("market_source_count")),
+        "market_line_delta":number(market.get("line_delta_vs_consensus") if market.get("line_delta_vs_consensus") is not None else record.get("sgo_line_delta")),
+        "market_book_dispersion":number(market.get("book_line_stddev") if market.get("book_line_stddev") is not None else record.get("sgo_book_line_stddev")),
         "context_delta_pp":number(context.get("delta") if context.get("delta") is not None else record.get("jinx_input")),
         "availability_risk":STATUS_RISK.get(status) if status else None,
         "opponent_adjustment_pp":number(directional.get("opponent_adjustment_pp")),
@@ -212,6 +216,8 @@ def condition_profile(record):
         "consistency":("Performance consistency","/100"),
         "market_implied_probability":("Market implied probability","%"),
         "market_source_count":("Independent market sources",""),
+        "market_line_delta":("POM line vs market consensus",""),
+        "market_book_dispersion":("Cross-book line dispersion",""),
         "context_delta_pp":("JINX context delta","pp"),
         "availability_risk":("Availability risk intensity","/3"),
         "opponent_adjustment_pp":("Opponent matchup adjustment","pp"),
@@ -237,6 +243,7 @@ def condition_profile(record):
         "rain_in","precip_probability","wind_mph","wind_gust_mph","temperature_f",
         "sequence_slope","alternation_rate","periodicity_lag","regime_shift_z","regime_active",
         "consistency","market_implied_probability","market_source_count",
+        "market_line_delta","market_book_dispersion",
     ]
     out=[]
     for name in preferred:
