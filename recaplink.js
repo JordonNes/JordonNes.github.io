@@ -11,7 +11,8 @@
     LJ_index:"All-Sports Daily Predictions",
     Quickie_Generator:"LEGZ & JINX Quickie Generator",
     Treasure_Troll:"LEGZ & JINX Treasure Troll",
-    I_Spy:"LEGZ & JINX I Spy"
+    I_Spy:"LEGZ & JINX I Spy",
+    LJ_Spectrum:"LEGZ & JINX Statistical Spectrum"
   };
 
   /* Approved 2172×724 (3:1) full-resolution artwork. The version token forces
@@ -323,6 +324,14 @@
     }
 
     addMicroStatus(file);
+    const allActions=document.querySelector('.hero .actions');
+    if(allActions && !allActions.querySelector('.spectrum-link') && file!=='LJ_Spectrum'){
+      const spectrum=document.createElement('a');
+      spectrum.className='action spectrum-link';
+      spectrum.href='LJ_Spectrum.html';
+      spectrum.textContent='📈 Statistical Spectrum';
+      allActions.appendChild(spectrum);
+    }
     if (!sportPages.has(file)) return;
     const actions = document.querySelector('.hero .actions');
     if (!actions || actions.querySelector('.sport-recap-link')) return;
