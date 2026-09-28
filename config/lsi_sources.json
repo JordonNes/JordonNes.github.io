@@ -3,7 +3,7 @@
   "policy": "free-first, provenance-required, no fabricated observations",
   "prop_acquisition": {
     "level_a": "PARLAY_API_RETAIL (PrizePicks + Underdog + DraftKings) + KALSHI public API",
-    "level_b": "PROPLINE normalized sportsbook/exchange markets",
+    "level_b": "SPORTSGAMEODDS independent fair/consensus verification + PROPLINE normalized sportsbook/exchange markets",
     "level_c": "checked-in/manual researched snapshots",
     "rule": "Acquire externally offered POMs first, preserve exact participant/market/threshold/side/source/time, then evaluate. Synthetic/model-target thresholds remain internal and never fill public Hot Top, 20 Piece, QCs, or Quickie."
   },
@@ -61,6 +61,33 @@
       "priority": "PRIMARY_RETAIL_POM_FREE_TIER",
       "zero_dollar_policy": "Free tier only by default: 900-credit local ceiling, 100-credit reserve, 8-hour per-league refresh gate, maximum 3 sport calls/run.",
       "note": "One market-filtered /props call per sport collects PrizePicks, Underdog and DraftKings together. Provider Goblin/Demon/standard metadata is preserved. DFS normalized comparison prices are not treated as native sportsbook prices."
+    },
+    {
+      "id": "SPORTSGAMEODDS",
+      "sports": [
+        "NFL",
+        "NCAA_Football",
+        "MLB",
+        "NBA",
+        "NHL",
+        "NCAA_Basketball"
+      ],
+      "roles": [
+        "independent_market_verification",
+        "fair_odds",
+        "book_consensus",
+        "cross_book_line_comparison",
+        "alternate_lines",
+        "sportsbook_prices",
+        "market_movement"
+      ],
+      "mode": "authenticated_api",
+      "base_url": "https://api.sportsgameodds.com/v2",
+      "secret_env": "SPORTSGAMEODDS_API_KEY",
+      "optional": true,
+      "priority": "SECONDARY_MARKET_INTELLIGENCE_FREE_TIER",
+      "zero_dollar_policy": "Amateur tier only by default: check /account/usage every run; preserve a 300-object monthly reserve; 8-hour refresh gate; maximum 20 event objects/run; no automatic pagination.",
+      "note": "Secondary verifier only. It enriches exact POMs already acquired by LSI with fair odds, book consensus, exact-book confirmations and line disagreement. It never manufactures POMs or promotes synthetic lines. The adapter requests the nine documented Amateur books and also probes Underdog capability; restricted books are allowed to be filtered by the provider notice."
     },
     {
       "id": "PROPLINE",
