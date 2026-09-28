@@ -33,9 +33,10 @@
     Tennis:`assets/headers/dp-tennis-v2.png?v=${v}`,
     LJ_index:`assets/headers/lj-live-shared.png?v=20260917-headerstandard1`,
     Quickie_Generator:`assets/headers/game-winners-divider.jpg?v=20260917-headerstandard1`,
-    Treasure_Troll:`assets/treasure_troll_header.webp?v=20260926-specialheader3`,
-    I_Spy:`assets/ispy_header.webp?v=20260926-specialheader3`
+    Treasure_Troll:`assets/headers/treasure-troll-original-hq.webp?v=20260928-hqheader1`,
+    I_Spy:`assets/headers/i-spy-original-hq.webp?v=20260928-hqheader1`
   };
+  const highResolutionHeaders = new Set(['Treasure_Troll','I_Spy']);
 
   function installHeaderStyle(){
     if (document.getElementById('ljdp-character-header-style')) return;
@@ -61,6 +62,19 @@
         background-color:#08070b;
         border-bottom:1px solid rgba(197,158,69,.45);
         box-shadow:inset 0 -1px rgba(255,255,255,.03);
+      }
+      img.ljdp-sport-header-image{
+        width:100%!important;
+        max-width:2172px!important;
+        height:auto!important;
+        aspect-ratio:2172/724!important;
+        object-fit:contain!important;
+        object-position:center!important;
+        margin:0 auto!important;
+        background:none!important;
+        filter:none!important;
+        transform:none!important;
+        image-rendering:auto!important;
       }
       .hero.ljdp-sport-hero>.kicker,
       .hero.ljdp-sport-hero>h1,
@@ -285,13 +299,26 @@
     if (hero) {
       installHeaderStyle();
       hero.classList.add('ljdp-sport-hero');
-      hero.style.setProperty('--ljdp-header-image', `url('${headerImage[file]}')`);
       if (!hero.querySelector('.ljdp-sport-header-image')) {
-        const art = document.createElement('div');
-        art.className = 'ljdp-sport-header-image';
-        art.setAttribute('role','img');
-        art.setAttribute('aria-label', `${labels[file]} LEGZ & JINX character header artwork`);
-        hero.insertBefore(art, hero.firstChild);
+        if (highResolutionHeaders.has(file)) {
+          const art = document.createElement('img');
+          art.className = 'ljdp-sport-header-image';
+          art.src = headerImage[file];
+          art.alt = `${labels[file]} LEGZ & JINX character header artwork`;
+          art.width = 2172;
+          art.height = 724;
+          art.loading = 'eager';
+          art.decoding = 'async';
+          art.fetchPriority = 'high';
+          hero.insertBefore(art, hero.firstChild);
+        } else {
+          hero.style.setProperty('--ljdp-header-image', `url('${headerImage[file]}')`);
+          const art = document.createElement('div');
+          art.className = 'ljdp-sport-header-image';
+          art.setAttribute('role','img');
+          art.setAttribute('aria-label', `${labels[file]} LEGZ & JINX character header artwork`);
+          hero.insertBefore(art, hero.firstChild);
+        }
       }
     }
 

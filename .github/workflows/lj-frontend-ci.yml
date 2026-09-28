@@ -10,8 +10,12 @@ on:
       - 'Treasure_Troll.html'
       - 'I_Spy.html'
       - 'lj_special_pages.js'
+      - 'recaplink.js'
+      - 'assets/headers/treasure-troll-original-hq.webp'
+      - 'assets/headers/i-spy-original-hq.webp'
       - 'data/lsi_ispy_signals.js'
       - 'scripts/test_lj_special_pages.js'
+      - 'scripts/test_special_header_quality.js'
       - 'LSI_Status.html'
       - 'lsi_status.js'
       - 'NFL.html'
@@ -66,8 +70,11 @@ jobs:
           node --check scripts/fiba_hub_audit.js
           node --check scripts/fiba_scenario_test.js
           node --check scripts/test_lj_special_pages.js
+          node --check scripts/test_special_header_quality.js
       - name: Specialty intelligence regression tests
-        run: node scripts/test_lj_special_pages.js
+        run: |
+          node scripts/test_lj_special_pages.js
+          node scripts/test_special_header_quality.js
       - name: LJ_index + QC presentation audit
         run: |
           node scripts/frontend_home_audit.js
