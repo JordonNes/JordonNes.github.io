@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LEGZ & JINX — 2026 MLB Postseason Bracket</title>
+<link rel="stylesheet" href="ljstyle.css?v=20260928-mlbbracket1">
+<style>
+:root{--bg:#080808;--panel:#111318;--panel2:#0d0f14;--line:#2a2f3b;--gold:#d6ad46;--green:#70d9a0;--purple:#7b5be8;--cyan:#6ed4e6;--muted:#9ea5b2;--red:#ff8da8}
+.bracket-page{max-width:1540px}
+.bracket-page .hero{min-height:360px!important}
+.bracket-page .hero:after{opacity:.3!important}
+.bracket-shell{margin-top:22px;border:1px solid #2a2f3b;border-radius:16px;background:linear-gradient(180deg,#0e1015,#090a0d);overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.34)}
+.bracket-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:#252936;border-bottom:1px solid #252936}
+.bracket-meta div{background:#111318;padding:13px 15px}.bracket-meta b{display:block;font-size:14px;color:#f7f7f5}.bracket-meta span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.55px}
+.league-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;background:#151820;border-bottom:1px solid #252936}.league-head h2{margin:0;font-size:19px}.league-head span{color:var(--muted);font-size:10px}
+.bracket-track{display:grid;grid-template-columns:1.15fr 1.05fr .95fr;gap:18px;padding:18px;align-items:start}
+.round{display:grid;gap:12px}.round-title{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:#aab2c0;font-weight:900;padding:0 3px}
+.series-card{position:relative;border:1px solid #2b3140;background:#11141a;border-radius:11px;overflow:hidden;min-height:126px}
+.series-card.pick{border-color:#6853be;box-shadow:0 0 0 1px rgba(123,85,144,.12),0 8px 28px rgba(0,0,0,.22)}
+.series-card.champion{border-color:#9e7b24;box-shadow:0 0 28px rgba(214,173,70,.12)}
+.series-kicker{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;background:#181c25;border-bottom:1px solid #292f3d;font-size:8px;text-transform:uppercase;color:#9ca5b4;letter-spacing:.45px}
+.team-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid #202530}
+.team-row:last-of-type{border-bottom:0}.team-row.winner{background:linear-gradient(90deg,rgba(58,112,82,.16),transparent)}
+.seed{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#202532;border:1px solid #343b4c;font-size:9px;color:#d7dde8;font-weight:900}
+.team b{display:block;font-size:11px}.team span{display:block;font-size:8px;color:#8f98a8;margin-top:1px}.pick-tag{font-size:8px;font-weight:900;color:#8ee1b2;white-space:nowrap}
+.series-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;background:#0d0f14;font-size:8px;color:#aab2c0}.series-foot strong{color:#efd680}
+.bye{border-style:dashed}.bye .series-kicker{background:#111820;color:#88d9e7}
+.league-note{padding:0 18px 18px;color:#8f98a8;font-size:9px}
+.ws-wrap{padding:18px;border-top:1px solid #2a2f3b;background:radial-gradient(circle at 50% 0,rgba(111,81,200,.12),transparent 56%)}
+.ws-card{max-width:720px;margin:0 auto;border:1px solid #8a6a1c;border-radius:14px;background:linear-gradient(145deg,#17120a,#121219 55%,#17101d);overflow:hidden;box-shadow:0 16px 45px rgba(0,0,0,.38)}
+.ws-head{text-align:center;padding:14px;background:linear-gradient(90deg,#4a3711,#73571d,#432d59);font-size:11px;font-weight:900;letter-spacing:.7px}.ws-pick{text-align:center;padding:18px}.ws-pick h2{margin:0;color:#efd680;font-size:30px}.ws-pick p{margin:8px auto 0;max-width:560px;color:#c8cdd6;font-size:11px}
+.research-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.research-card{background:#111318;border:1px solid #252936;border-radius:12px;padding:14px}.research-card h3{margin:0 0 7px;font-size:13px}.research-card p{margin:0;color:#b4bbc7;font-size:10px}.research-card .edge{margin-top:10px;color:#8ee1b2;font-size:9px;font-weight:800}.research-card .risk{margin-top:5px;color:#ffb2c2;font-size:9px}
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.method-card{background:#0e1117;border:1px solid #252936;border-radius:12px;padding:14px}.method-card h3{margin:0 0 7px;font-size:12px}.method-card p{margin:0;color:#aeb5c2;font-size:10px}
+.source-list{display:grid;gap:7px}.source-list a{display:block;background:#0f1218;border:1px solid #252936;border-radius:8px;padding:9px 11px;font-size:9px;color:#cfd5df}.source-list a:hover{border-color:#6752b7}
+.lock{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:20px;background:#281d47;border:1px solid #4d3689;color:#d2c6ff;font-size:9px;font-weight:800}
+.uncertain{color:#ffd580}
+@media(max-width:980px){.bracket-track{grid-template-columns:1fr}.bracket-meta{grid-template-columns:1fr 1fr}.research-grid,.method-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.bracket-meta{grid-template-columns:1fr}.bracket-track{padding:12px}.league-head{align-items:flex-start;flex-direction:column}.ws-pick h2{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="page bracket-page">
+  <div class="topbar">
+    <a class="lj-mini" href="MLB.html">L&J</a>
+    <div class="meta">MLB POSTSEASON • RESEARCH LOCK SEP 28, 2026 • 1:46 PM PT</div>
+  </div>
+
+  <section class="hero">
+    <div class="kicker">⚾ L&J MLB POSTSEASON LAB</div>
+    <h1>2026 MLB Postseason Bracket</h1>
+    <p>LEGZ establishes the statistical series baseline. JINX challenges it with rotation health, bullpen leverage, recent form, matchup history, injuries, roster context and October-specific risk. Picks below are the L&J pre-postseason bracket lock.</p>
+    <div class="chips">
+      <span class="chip gold">12-TEAM FIELD LOCKED</span>
+      <span class="chip purple">NO RESEEDING</span>
+      <span class="chip green">LEGZ + JINX RESEARCHED</span>
+      <span class="chip cyan">UPDATED SEP 28</span>
+    </div>
+    <div class="actions">
+      <a class="action" href="MLB.html">← MLB Daily Predictions</a>
+      <a class="action" href="https://www.mlb.com/moments/experiences/postseason-bracket-challenge?affiliateID=psbc_mlb_digital_2026" target="_blank" rel="noopener">Official MLB Bracket Challenge ↗</a>
+      <a class="action" href="#research">Research Notes</a>
+    </div>
+  </section>
+
+  <section class="bracket-shell" aria-label="L&J 2026 MLB postseason bracket">
+    <div class="bracket-meta">
+      <div><span>Wild Card</span><b>Best of 3</b></div>
+      <div><span>Division Series</span><b>Best of 5</b></div>
+      <div><span>League Championship</span><b>Best of 7</b></div>
+      <div><span>World Series</span><b>Best of 7</b></div>
+    </div>
+
+    <div class="league-head"><h2>AMERICAN LEAGUE</h2><span>L&J projected AL champion: Tampa Bay Rays</span></div>
+    <div class="bracket-track">
+      <div class="round">
+        <div class="round-title">Wild Card Series</div>
+        <article class="series-card pick">
+          <div class="series-kicker"><span>AL 3/6</span><span>HOU 2–1</span></div>
+          <div class="team-row winner"><span class="seed">3</span><div class="team"><b>Houston Astros</b><span>81–81 • home series • won season series 5–2</span></div><span class="pick-tag">L&J PICK</span></div>
+          <div class="team-row"><span class="seed">6</span><div class="team"><b>Chicago White Sox</b><span>84–78 • +56 run diff • power-driven offense</span></div><span></span></div>
+          <div class="series-foot"><span>JINX: Alvarez + home/H2H offset poor rotation</span><strong>55%</strong></div>
+        </article>
+        <article class="series-card pick">
+          <div class="series-kicker"><span>AL 4/5</span><span>NYY 2–1</span></div>
+          <div class="team-row winner"><span class="seed">4</span><div class="team"><b>New York Yankees</b><span>93–68 • +138 run diff • MLB-best staff ERA</span></div><span class="pick-tag">L&J PICK</span></div>
+          <div class="team-row"><span class="seed">5</span><div class="team"><b>Boston Red Sox</b><span>87–75 • top-4 playoff pitching profile</span></div><span></span></div>
+          <div class="series-foot"><span>JINX: Judge availability keeps this volatile</span><strong>58%</strong></div>
+        </article>
+      </div>
+
+      <div class="round">
+        <div class="round-title">AL Division Series</div>
+        <article class="series-card pick bye">
+          <div class="series-kicker"><span>No. 1 BYE</span><span>TB 3–2</span></div>
+          <div class="team-row winner"><span class="seed">1</span><div class="team"><b>Tampa Bay Rays</b><span>98–64 • AL best record • 55–26 home</span></div><span class="pick-tag">L&J PICK</span></div>
+          <div class="team-row"><span class="seed">4</span><div class="team"><b>New York Yankees</b><span>Projected Wild Card winner</span></div><span></span></div>
+          <div class="series-foot"><span>Rays balance/home edge; Yankees arms force five</span><strong>57%</strong></div>
+        </article>
+        <article class="series-card pick bye">
+          <div class="series-kicker"><span>No. 2 BYE</span><span>CLE 3–2</span></div>
+          <div class="team-row winner"><span class="seed">2</span><div class="team"><b>Cleveland Guardians</b><span>85–77 • finished 8–2 over final 10</span></div><span class="pick-tag">L&J PICK</span></div>
+          <div class="team-row"><span class="seed">3</span><div class="team"><b>Houston Astros</b><span>Projected Wild Card winner</span></div><span></span></div>
+          <div class="series-foot"><span>Rest + pitching edge, but Cleveland offense is a risk</span><strong>59%</strong></div>
+        </article>
+      </div>
+
+      <div class="round">
+        <div class="round-title">AL Championship Series</div>
+        <article class="series-card pick">
+          <div class="series-kicker"><span>ALCS</span><span>TB 4–2</span></div>
+          <div class="team-row winner"><span class="seed">1</span><div class="team"><b>Tampa Bay Rays</b><span>Deeper offensive ceiling + stronger season profile</span></div><span class="pick-tag">AL CHAMP</span></div>
+          <div class="team-row"><span class="seed">2</span><div class="team"><b>Cleveland Guardians</b><span>Run prevention keeps series competitive</span></div><span></span></div>
+          <div class="series-foot"><span>JINX: Cleveland's low-output offense becomes decisive</span><strong>58%</strong></div>
+        </article>
+      </div>
+    </div>
+    <div class="league-note">AL path follows MLB's fixed bracket: No. 1 gets the 4/5 winner; No. 2 gets the 3/6 winner.</div>
+
+    <div class="league-head"><h2>NATIONAL LEAGUE</h2><span>L&J projected NL champion: Los Angeles Dodgers</span></div>
+    <div class="bracket-track">
+      <div class="round">
+        <div class="round-title">Wild Card Series</div>
+        <article class="series-card pick">
+          <div class="series-kicker"><span>NL 3/6</span><span>ATL 2–0</span></div>
+          <div class="team-row winner"><span class="seed">3</span><div class="team"><b>Atlanta Braves</b><span>94–68 • +116 run diff • won season series 9–4</span></div><span class="pick-tag">L&J PICK</span></div>
+          <div class="team-row"><span class="seed">6</span><div class="team"><b>Philadelphia Phillies</b><span>88–74 • pitching/rest complications</span></div><span></span></div>
+          <div class="series-foot"><span>Sale matchup + Phillies bullpen/rotation stress</span><strong>63%</strong></div>
+        </article>
+        <article class="series-card pick">
+          <div class="series-kicker"><span>NL 4/5</span><span>SD 2–1</span></div>
+          <div class="team-row winner"><span class="seed">4</span><div class="team"><b>San Diego Padres</b><span>91–71 • 8–2 final 10 • elite back-end bullpen</span></div><span class="pick-tag">L&J PICK</span></div>
+          <div class="team-row"><span class="seed">5</span><div class="team"><b>Chicago Cubs</b><span>89–73 • +143 run diff • MLB-best offense profile</span></div><span></span></div>
+          <div class="series-foot"><span>Most fragile L&J pick: Cubs won season series 5–1</span><strong>54%</strong></div>
+        </article>
+      </div>
+
+      <div class="round">
+        <div class="round-title">NL Division Series</div>
+        <article class="series-card pick bye">
+          <div class="series-kicker"><span>No. 1 BYE</span><span>MIL 3–1</span></div>
+          <div class="team-row winner"><span class="seed">1</span><div class="team"><b>Milwaukee Brewers</b><span>103–59 • +214 run diff • 8–2 L10 / W5</span></div><span class="pick-tag">L&J PICK</span></div>
+          <div class="team-row"><span class="seed">4</span><div class="team"><b>San Diego Padres</b><span>Projected Wild Card winner</span></div><span></span></div>
+          <div class="series-foot"><span>Elite run prevention + deepest season-long balance</span><strong>65%</strong></div>
+        </article>
+        <article class="series-card pick bye">
+          <div class="series-kicker"><span>No. 2 BYE</span><span>LAD 3–2</span></div>
+          <div class="team-row winner"><span class="seed">2</span><div class="team"><b>Los Angeles Dodgers</b><span>100–62 • +201 run diff • rotation ceiling unmatched</span></div><span class="pick-tag">L&J PICK</span></div>
+          <div class="team-row"><span class="seed">3</span><div class="team"><b>Atlanta Braves</b><span>Projected Wild Card winner • Chris Sale threat</span></div><span></span></div>
+          <div class="series-foot"><span>Dodgers depth survives Sale/Atlanta upset pressure</span><strong>62%</strong></div>
+        </article>
+      </div>
+
+      <div class="round">
+        <div class="round-title">NL Championship Series</div>
+        <article class="series-card pick">
+          <div class="series-kicker"><span>NLCS</span><span>LAD 4–3</span></div>
+          <div class="team-row winner"><span class="seed">2</span><div class="team"><b>Los Angeles Dodgers</b><span>Top-two offense + top-three pitching profile</span></div><span class="pick-tag">NL CHAMP</span></div>
+          <div class="team-row"><span class="seed">1</span><div class="team"><b>Milwaukee Brewers</b><span>103 wins • arguably the most balanced team</span></div><span></span></div>
+          <div class="series-foot"><span class="uncertain">Near coin flip: Dodgers' rotation ceiling breaks tie</span><strong>52%</strong></div>
+        </article>
+      </div>
+    </div>
+    <div class="league-note">NL path follows MLB's fixed bracket: No. 1 gets the 4/5 winner; No. 2 gets the 3/6 winner.</div>
+
+    <div class="ws-wrap">
+      <div class="ws-card">
+        <div class="ws-head">L&J 2026 WORLD SERIES LOCK</div>
+        <div class="team-row"><span class="seed">AL</span><div class="team"><b>Tampa Bay Rays</b><span>Projected AL champion</span></div><span></span></div>
+        <div class="team-row winner"><span class="seed">NL</span><div class="team"><b>Los Angeles Dodgers</b><span>Projected NL champion</span></div><span class="pick-tag">WORLD SERIES PICK</span></div>
+        <div class="ws-pick">
+          <h2>DODGERS IN 6</h2>
+          <p>L&J gives Los Angeles the final edge because a healthy October rotation built around Tarik Skubal, Yoshinobu Yamamoto, Blake Snell and Tyler Glasnow can shorten a seven-game series while the lineup retains multiple independent scoring paths. Tampa Bay is the AL team L&J trusts most to reach the Fall Classic, but the Dodgers carry the higher postseason ceiling.</p>
+          <div style="margin-top:12px"><span class="lock">L&J SERIES CONFIDENCE 61%</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="research">
+    <div class="section-head"><h2>L&J RESEARCH BOARD</h2><span class="muted">What moved the bracket beyond seed order</span></div>
+    <div class="research-grid">
+      <article class="research-card"><h3>HOU over CWS — narrow exception to season record</h3><p>Chicago owns the better record and run differential, but Houston won five of seven head-to-head games, hosts the entire best-of-three, and enters with Yordan Alvarez back in elite form. The Astros' thin rotation is why this stays a 55% lean rather than a strong pick.</p><div class="edge">EDGE: Alvarez • home field • 5–2 season series</div><div class="risk">RISK: Houston finished 24th in team ERA / weakest playoff pitching profile.</div></article>
+      <article class="research-card"><h3>NYY over BOS — pitching wins the tiebreak</h3><p>New York's 3.24 team ERA was MLB's best and the rotation has multiple playoff-ace options. Boston's staff is also strong, and Aaron Judge's calf status materially lowers L&J confidence. New York won the season series 7–6 and went 4–2 against Boston in the Bronx.</p><div class="edge">EDGE: rotation depth • home field • run differential</div><div class="risk">RISK: Judge availability / Boston's second-half improvement.</div></article>
+      <article class="research-card"><h3>ATL over PHI — strongest Wild Card mismatch signal</h3><p>Atlanta went 9–4 against Philadelphia. Chris Sale enters with a 2.16 ERA and has historically controlled Bryce Harper and Kyle Schwarber. Philadelphia reaches the round with Zack Wheeler off Game 162, Jesús Luzardo returning from a shoulder issue and a bullpen that posted a 5.79 ERA since Sept. 1.</p><div class="edge">EDGE: Sale • rest alignment • matchup history</div><div class="risk">RISK: Philadelphia's October experience and top-end rotation talent.</div></article>
+      <article class="research-card"><h3>SD over CHC — JINX context beats raw season matchup</h3><p>Chicago's offense is the best in this field and it went 5–1 against San Diego, so LEGZ does not like fading the Cubs. JINX moves the series narrowly to San Diego because the Padres finished hot, play all games at Petco, and can protect late leads with Adrian Morejon and Mason Miller.</p><div class="edge">EDGE: bullpen • late form • home series</div><div class="risk">RISK: Cubs offense and dominant 2026 head-to-head results.</div></article>
+      <article class="research-card"><h3>MIL is the bracket's strongest season-long profile</h3><p>The Brewers finished 103–59 with a +214 run differential, ranked near the top in both run creation and pitching, and ended 8–2 with five straight wins. Their main October concern is rotation depth behind Jacob Misiorowski and Logan Henderson.</p><div class="edge">EDGE: balance • run prevention • first-round bye</div><div class="risk">RISK: back-half rotation depth in a long series.</div></article>
+      <article class="research-card"><h3>LAD gets the championship nod on ceiling</h3><p>Milwaukee owns the best regular-season résumé, but Los Angeles pairs a top-two playoff offense with a top-three pitching staff and a potentially dominant four-man October rotation. Current championship markets also make the Dodgers the shortest-priced team, which L&J uses only as an external sanity check.</p><div class="edge">EDGE: rotation ceiling • lineup depth • multiple elite stars</div><div class="risk">RISK: bullpen volatility and health of key stars.</div></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>HOW LEGZ & JINX FILLED IT OUT</h2><span class="muted">Research first; confidence second</span></div>
+    <div class="method-grid">
+      <article class="method-card"><h3>LEGZ — structural baseball evidence</h3><p>Seed/record, run differential, run scoring, run prevention, home/road split, late-season form, season-series performance, starting-pitching depth, bullpen strength and market consensus are used to establish the initial series range.</p></article>
+      <article class="method-card"><h3>JINX — analyst challenge</h3><p>Injuries, expected roster availability, rotation rest, recent returns, bullpen leverage, opponent-specific matchup history, player form, postseason experience and unusual context are used to challenge LEGZ before the pick is locked.</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>RESEARCH SOURCES</h2><span class="muted">Snapshot used for the Sep. 28 pre-postseason bracket</span></div>
+    <div class="source-list">
+      <a href="https://www.mlb.com/news/mlb-playoff-picture-and-bracket-2026" target="_blank" rel="noopener">MLB — official 2026 postseason field, seeds and bracket</a>
+      <a href="https://www.mlb.com/standings/mlb" target="_blank" rel="noopener">MLB — final regular-season standings and run differentials</a>
+      <a href="https://www.mlb.com/news/mlb-2026-wild-card-series-matchups" target="_blank" rel="noopener">MLB — Wild Card matchup research, season series, injuries and rotation context</a>
+      <a href="https://www.cbssports.com/mlb/news/2026-mlb-playoffs-ranking-offenses/" target="_blank" rel="noopener">CBS Sports — postseason offense profiles</a>
+      <a href="https://www.cbssports.com/mlb/news/2026-mlb-playoffs-ranking-pitching-staffs/" target="_blank" rel="noopener">CBS Sports — postseason pitching profiles</a>
+      <a href="https://www.mlb.com/stories/2026-world-series-betting-odds" target="_blank" rel="noopener">MLB / BetMGM — championship market snapshot (sanity check only)</a>
+      <a href="https://www.thescore.com/mlb/news/3608099/mlb-playoff-predictions-who-will-win-2026-world-series" target="_blank" rel="noopener">theScore — multi-analyst round-by-round context check</a>
+    </div>
+  </section>
+
+  <div class="footer">LEGZ & JINX • 2026 MLB Postseason Bracket • predictions are probabilistic and will be graded against actual series results</div>
+</div>
+</body>
+</html>
