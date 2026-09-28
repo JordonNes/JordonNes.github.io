@@ -211,3 +211,38 @@ I Spy may either **SUPPORT** or **CHALLENGE** a current POM. A negative associat
 
 I Spy correlations are descriptive evidence, **not proof of causation**. An I Spy observation does not automatically change LJPC, LEGZ/JINX weights or a live prediction. Any future systematic model influence must pass the existing learning/calibration governance and methodology controls.
 
+## 14. Independent market verification — SportsGameOdds — effective September 28, 2026
+
+SportsGameOdds is a **Tier-2 market-intelligence source**, not a replacement for the canonical exact POM acquired from PrizePicks, Underdog, DraftKings, Kalshi, or another verified provider.
+
+For an existing exact player POM, LSI may use SportsGameOdds to attach:
+
+- no-vig **fair odds / fair probability**;
+- bookmaker consensus probability and consensus line;
+- independent exact-line confirmations across available books;
+- best sportsbook price for the same exact threshold and side;
+- cross-book line dispersion and the POM's distance from the broader consensus line; and
+- durable source/provenance IDs for the exact matching sportsbook observations.
+
+The original provider line remains canonical. SportsGameOdds never invents a player, threshold, side, or market and never converts a synthetic LEGZ threshold into a public external POM.
+
+When the canonical POM has an executable straight-bet price, that native price remains the preferred bounded market prior. When an exact DFS/pick'em POM has **no native straight-bet price**, an independently verified SportsGameOdds **fair probability** may supply the bounded secondary market prior. It remains market evidence only and cannot create LJPC without player-performance evidence.
+
+Exact-book confirmations may increase verified market-source depth only when the bookmaker is offering the **same participant + market + threshold + side**. A different line is useful as consensus/disagreement evidence but does not count as an exact confirmation.
+
+### Free-tier operating controls
+
+The Amateur integration is quota-governed:
+
+- check `/account/usage` before acquisition;
+- retain a monthly object reserve rather than consuming the full allowance;
+- default to an eight-hour refresh TTL;
+- cap each run at 20 returned event objects;
+- do not auto-page on the free plan;
+- query only leagues available to the Amateur key; and
+- treat provider `notice` messages as authoritative disclosure that leagues, bookmakers, or data have been filtered by plan access.
+
+The nine bookmakers documented for Amateur are DraftKings, FanDuel, BetMGM, Caesars, ESPN BET, Bovada, Unibet, PointsBet, and William Hill. LSI may also probe Underdog capability because SportsGameOdds separately documents free Underdog querying; the integration must accept a filtered response/notice rather than assuming that access exists.
+
+SportsGameOdds consensus or fair odds may inform **market context and economic value**, but they do not override LEGZ's player forecast or independently authorize a JINX directional adjustment.
+
