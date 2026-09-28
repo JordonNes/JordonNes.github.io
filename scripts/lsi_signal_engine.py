@@ -18,6 +18,7 @@ Outputs:
 """
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import math
@@ -35,11 +36,14 @@ CONTEXT=DATA/"context_registry.json"
 ANALYST=DATA/"jinx_analyst_context.json"
 ISPY=DATA/"lsi_ispy_candidates.json"
 HISTORY_COVERAGE=DATA/"history_coverage.json"
+SUGGESTIONS=DATA/"suggestion_ledger.json"
+RESULTS=DATA/"results.csv"
 
 SIGNAL_OUT=DATA/"lsi_signal_state.json"
 CORR_OUT=DATA/"lsi_correlation_graph.json"
 VIEW_OUT=DATA/"lsi_spectrum_view.json"
 VIEW_JS=DATA/"lsi_spectrum_view.js"
+CORR_JS=DATA/"lsi_correlation_graph.js"
 
 ENGINE_VERSION="LSI-SIGNAL-FABRIC-1"
 CORR_VERSION="LSI-CORRELATION-GRAPH-1"
@@ -374,6 +378,109 @@ def regime_detector(profile,context=None,analyst=None):
     }
 
 
+def read_settled_suggestion_rows():
+    """Unique immutable website POM outcomes joined to verified settlement results."""
+    if not SUGGESTIONS.exists() or not RESULTS.exists():
+        return []
+    ledger=load_json(SUGGESTIONS,{"suggestions":[]})
+    grades={}
+    try:
+        with RESULTS.open(newline="",encoding="utf-8-sig") as fh:
+            for row in csv.DictReader(fh):
+                pid=str(row.get("prediction_id") or "")
+                grade=str(row.get("grade") or "").upper()
+                if pid and grade in {"WIN","LOSS"}:
+                    grades[pid]=1 if grade=="WIN" else 0
+    except OSError:
+        return []
+
+    # De-duplicate pricing/LJPC versions of the same underlying outcome.
+    by_outcome={}
+    for row in ledger.get("suggestions") or []:
+        sid=str(row.get("suggestion_id") or "")
+        if sid not in grades:
+            continue
+        if str(row.get("market_class") or "").upper()!="PLAYER_PROP":
+            continue
+        if row.get("accuracy_eligible") is False or row.get("capture_validity") not in (None,"VALID"):
+            continue
+        event_id=str(row.get("event_id") or "")
+        league=str(row.get("league") or "")
+        participant=player_norm(row.get("participant"))
+        market=norm(row.get("market"))
+        side=norm(row.get("side"))
+        if not event_id or not league or not participant or not market or side not in {"over","under","more","less","yes","no"}:
+            continue
+        outcome_key=str(row.get("outcome_key") or stable_id("OUT-",league,event_id,participant,market,side,row.get("threshold")))
+        prior=by_outcome.get(outcome_key)
+        stamp=str(row.get("first_seen_at_utc") or "")
+        if prior is None or stamp<prior[0]:
+            by_outcome[outcome_key]=(stamp,{
+              "league":league,"event_id":event_id,"participant":participant,
+              "market":market,"side":"OVER" if side in {"over","more","yes"} else "UNDER",
+              "grade":grades[sid],
+            })
+    return [x[1] for x in by_outcome.values()]
+
+
+def settled_outcome_dependencies():
+    """Phi/Pearson dependencies between same-event POM outcome families.
+
+    This is directly relevant to parlay dependence: nodes are normalized prop
+    market+side families, and observations are unique settled outcomes from the
+    same event. Cross-player pairs are preferred; identical participant pairs are
+    skipped to avoid duplicate-threshold/self-dependence.
+    """
+    rows=read_settled_suggestion_rows()
+    by_event=defaultdict(list)
+    for row in rows:
+        by_event[(row["league"],row["event_id"])].append(row)
+
+    samples=defaultdict(list)
+    for (league,event_id),event_rows in by_event.items():
+        # Avoid pathological O(n²) events with repeated historical variants.
+        event_rows=event_rows[:80]
+        for i,a in enumerate(event_rows):
+            node_a=f"{a['market']}|{a['side']}"
+            for b in event_rows[i+1:]:
+                if a["participant"]==b["participant"]:
+                    continue
+                node_b=f"{b['market']}|{b['side']}"
+                if node_a==node_b and a["participant"]==b["participant"]:
+                    continue
+                left,right=sorted((node_a,node_b))
+                x,y=(a["grade"],b["grade"]) if left==node_a else (b["grade"],a["grade"])
+                samples[(league,left,right)].append((x,y))
+
+    edges=[]
+    for (league,a,b),pairs in samples.items():
+        if len(pairs)<8:
+            continue
+        xs=[x for x,_ in pairs]; ys=[y for _,y in pairs]
+        phi=pearson(xs,ys)
+        if phi is None or abs(phi)<0.12:
+            continue
+        both=sum(1 for x,y in pairs if x==1 and y==1)
+        a_rate=sum(xs)/len(xs); b_rate=sum(ys)/len(ys)
+        joint=both/len(pairs)
+        edges.append({
+          "edge_id":stable_id("OCOR-",league,a,b),
+          "league":league,"scope":"SAME_EVENT_SETTLED_POM_OUTCOMES",
+          "node_a":a,"node_b":b,"n":len(pairs),
+          "phi":round(phi,3),
+          "a_hit_rate":round(a_rate*100,2),"b_hit_rate":round(b_rate*100,2),
+          "joint_hit_rate":round(joint*100,2),
+          "independence_joint_rate":round(a_rate*b_rate*100,2),
+          "joint_lift_pp":round((joint-a_rate*b_rate)*100,2),
+          "strength":round(abs(phi),3),
+          "direction":"POSITIVE" if phi>0 else "NEGATIVE",
+          "causal":False,
+          "use":"TICKET_DEPENDENCY_EVIDENCE",
+        })
+    edges.sort(key=lambda x:(x["league"],-x["strength"],-x["n"]))
+    return edges[:1200],len(rows)
+
+
 def correlation_graph(active,by_player):
     active_players={(x["league"],x["player_key"]) for x in active}
     edges=[]
@@ -605,6 +712,7 @@ def main():
     by_eval,by_ispy_key=ispy_index()
 
     player_edges,league_edges=correlation_graph(active,by_player)
+    outcome_edges,settled_outcome_rows=settled_outcome_dependencies()
     edge_by_player=defaultdict(list)
     for edge in player_edges:
         edge_by_player[(edge["league"],edge["participant"])].append(edge)
@@ -635,8 +743,11 @@ def main():
         "limitations":"Recent-series alignment is descriptive. Cross-player teammate/event dependency requires event-aligned history and is not inferred from names or narratives."
       },
       "player_edges":player_edges,"league_edges":league_edges,
+      "outcome_dependency_edges":outcome_edges,
+      "settled_unique_pom_outcomes":settled_outcome_rows,
     }
     CORR_OUT.write_text(json.dumps(corr_payload,separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
+    CORR_JS.write_text("window.LSI_CORRELATION_GRAPH="+json.dumps(corr_payload,separators=(",",":"),ensure_ascii=False)+";\n",encoding="utf-8")
 
     signal_payload={
       "schema_version":ENGINE_VERSION,"generated_at_utc":now,
@@ -681,7 +792,7 @@ def main():
     print(
       f"LSI Signal Fabric: records={len(records)} signals={signal_payload['summary']['recognized_signals']} "
       f"sequence={signal_payload['summary']['sequence_detected']} regimes={signal_payload['summary']['regime_shifts']} "
-      f"corr_edges={len(player_edges)} spectrum_players={len(view_players)} live_influence=OFF"
+      f"corr_edges={len(player_edges)} outcome_edges={len(outcome_edges)} settled_outcomes={settled_outcome_rows} spectrum_players={len(view_players)} live_influence=OFF"
     )
 
 
