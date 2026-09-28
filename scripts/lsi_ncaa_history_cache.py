@@ -10,7 +10,7 @@ players; historical NCAA names are used only to resolve NCAA performance evidenc
 """
 from __future__ import annotations
 
-import csv, gzip, json, re
+import csv, gzip, json, re, statistics
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -195,6 +195,11 @@ def build_ncaa_profiles():
             "player":names.get(pid) or "",
             "metric":metric,
             "sample_n":len(vals),
+            "history_mean":round(sum(vals)/len(vals),3),
+            "history_median":round(statistics.median(vals),3),
+            "history_stddev":round(statistics.pstdev(vals),3) if len(vals)>=2 else 0.0,
+            "history_min":round(min(vals),3),
+            "history_max":round(max(vals),3),
             "recent_values":[round(float(v),3) for v in vals[-20:]],
             "current_team":current_team,
             "recent_observations":[

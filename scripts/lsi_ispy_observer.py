@@ -55,6 +55,11 @@ FEATURE_SPECS={
     "precip_probability":(30.0,0.45),
     "wind_mph":(10.0,0.70),
     "wind_gust_mph":(15.0,0.55),
+    "sequence_slope":(0.35,0.65),
+    "alternation_rate":(0.35,0.45),
+    "periodicity_lag":(1.5,0.25),
+    "regime_shift_z":(1.0,0.85),
+    "regime_active":(1.0,0.55),
 }
 
 STATUS_RISK={
@@ -129,6 +134,9 @@ def feature_vector(record):
     proj=player_projection(record)
     directional=dictish(context.get("directional_components"))
     matchup=dictish(context.get("matchup"))
+    signal=dictish(context.get("signal_fabric"))
+    sequence=dictish(signal.get("sequence"))
+    regime=dictish(signal.get("regime"))
 
     sigma=number(proj.get("forecast_sigma"))
     l5=number(proj.get("l5_average"))
@@ -156,6 +164,11 @@ def feature_vector(record):
         "role_adjustment_pp":number(directional.get("role_adjustment_pp")),
         "weather_adjustment_pp":number(directional.get("weather_adjustment_pp")),
         "gameplan_adjustment_pp":number(directional.get("gameplan_adjustment_pp")),
+        "sequence_slope":number(sequence.get("normalized_slope")),
+        "alternation_rate":number(sequence.get("alternation_rate")),
+        "periodicity_lag":number(sequence.get("best_period")),
+        "regime_shift_z":number(regime.get("shift_z")),
+        "regime_active":0.0 if not regime.get("state") or regime.get("state")=="STABLE" else 1.0,
     }
     values.update(weather_values(matchup.get("weather")))
 
@@ -211,12 +224,18 @@ def condition_profile(record):
         "precip_probability":("Precipitation probability","%"),
         "wind_mph":("Wind speed","mph"),
         "wind_gust_mph":("Wind gust","mph"),
+        "sequence_slope":("Sequence slope","σ/game"),
+        "alternation_rate":("Alternation tendency","/1"),
+        "periodicity_lag":("Detected cycle lag","games"),
+        "regime_shift_z":("Regime shift","σ"),
+        "regime_active":("Regime-change state","0/1"),
     }
     preferred=[
         "line_edge_sigma","recent_form_delta_sigma","context_delta_pp",
         "opponent_adjustment_pp","matchup_adjustment_pp","role_adjustment_pp",
         "weather_adjustment_pp","gameplan_adjustment_pp",
         "rain_in","precip_probability","wind_mph","wind_gust_mph","temperature_f",
+        "sequence_slope","alternation_rate","periodicity_lag","regime_shift_z","regime_active",
         "consistency","market_implied_probability","market_source_count",
     ]
     out=[]

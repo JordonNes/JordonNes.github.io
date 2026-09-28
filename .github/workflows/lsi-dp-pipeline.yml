@@ -373,6 +373,9 @@ jobs:
           python scripts/lsi_ispy_observer.py
           python scripts/lsi_ispy_discovery.py
           python scripts/lsi_publish_ispy.py
+      - name: Refresh Signal Fabric with current I Spy analogs
+        if: steps.league_schedule.outputs.cycle_required == 'true'
+        run: python scripts/lsi_signal_engine.py
       - name: LEGZ Game Winner Spectrum — independent performance + market evidence
         if: steps.league_schedule.outputs.cycle_required == 'true'
         env:
@@ -439,7 +442,7 @@ jobs:
           test -f data/lsi_ispy_candidates.json && test -f data/lsi_ispy_pattern_library.json && test -f data/lsi_ispy_signals.json
           test -f data/openai_dry_run_router.json && test -f data/openai_usage_estimates.csv && test -f data/openai_usage_summary.json
           test -f data/lsi_evaluation_state.json
-          test -f data/lsi_signal_state.json && test -f data/lsi_correlation_graph.json
+          test -f data/lsi_signal_state.json && test -f data/lsi_correlation_graph.json && test -f data/lsi_correlation_graph.js
           test -f data/lsi_spectrum_view.json && test -f data/lsi_spectrum_view.js
           grep -q 'LSI-SIGNAL-FABRIC-1' data/lsi_signal_state.json
           grep -q 'LSI-CORRELATION-GRAPH-1' data/lsi_correlation_graph.json
@@ -500,7 +503,7 @@ jobs:
             data/jinx_analyst_context.json
             data/ljpc_coverage.json data/history_coverage.json data/lsi_readiness.json data/game_winner_evidence.json
             data/projection_gap_report.json data/lsi_ispy_candidates.json data/lsi_ispy_signals.json data/lsi_ispy_signals.js
-            data/lsi_signal_state.json data/lsi_correlation_graph.json data/lsi_spectrum_view.json data/lsi_spectrum_view.js
+            data/lsi_signal_state.json data/lsi_correlation_graph.json data/lsi_correlation_graph.js data/lsi_spectrum_view.json data/lsi_spectrum_view.js
           )
           snapshot="$(mktemp -d)"
           for p in "${outputs[@]}"; do

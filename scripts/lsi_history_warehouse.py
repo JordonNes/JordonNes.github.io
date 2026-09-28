@@ -290,16 +290,20 @@ def main():
         if not clean: continue
         meta_player=player_by_id.get(pid,{})
         recent=clean[-20:]
-        # Fast Spectrum only needs identity, sample depth, and the most recent
-        # observations. Derived averages are recomputed locally from recent_values;
-        # omitting redundant summary fields keeps this durable cache well below
-        # GitHub's 100 MiB hard file limit.
+        # Keep compact full-history distribution summaries plus the latest 20 raw
+        # values. This lets the Spectrum page distinguish long-run shape from L5/L10
+        # without shipping the complete career series into the hot cache.
         profile={
             "lsi_player_id":pid,
             "league":meta_player.get("league") or "",
             "player":meta_player.get("canonical_name") or "",
             "metric":metric,
             "sample_n":len(clean),
+            "history_mean":round(sum(clean)/len(clean),3),
+            "history_median":round(statistics.median(clean),3),
+            "history_stddev":round(statistics.pstdev(clean),3) if len(clean)>=2 else 0.0,
+            "history_min":round(min(clean),3),
+            "history_max":round(max(clean),3),
             "recent_values":[round(v,3) for v in recent],
         }
         # NCAA early-season continuity needs only compact recent event/team

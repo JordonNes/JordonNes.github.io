@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>LEGZ & JINX — Quickie Generator</title>
-<link rel="stylesheet" href="ljstyle.css?v=20260928-qgrow1"><link rel="stylesheet" href="ljqc.css?v=20260923-qcgamecolumn2">
+<link rel="stylesheet" href="ljstyle.css?v=20260928-dependency1"><link rel="stylesheet" href="ljqc.css?v=20260923-qcgamecolumn2">
 <style>
 .quickie-shell{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px;align-items:start}.generator-stage{min-width:0}.filter-rail{position:sticky;top:12px;border:1px solid rgba(255,255,255,.13);border-radius:14px;background:rgba(15,15,20,.96);padding:14px}.filter-rail h3{margin:0 0 10px;font-size:.92rem;letter-spacing:.08em}.filter-group{border-top:1px solid rgba(255,255,255,.1);padding:11px 0}.filter-group:first-of-type{border-top:0}.filter-label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.08em;margin-bottom:7px;opacity:.78}.filter-row{display:flex;gap:7px;flex-wrap:wrap}.filter-row label,.sport-pick{font-size:.78rem;display:flex;align-items:center;gap:5px}.filter-rail select,.filter-rail button{width:100%;border-radius:9px;padding:9px;border:1px solid rgba(255,255,255,.16);background:#17171d;color:inherit}.filter-rail button{font-weight:900;cursor:pointer;background:#f4c542;color:#111;border:0}.sport-list{display:grid;grid-template-columns:1fr 1fr;gap:6px}.generator-note{font-size:.74rem;line-height:1.35;opacity:.72;margin-top:8px}.parlay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.parlay-card{border:1px solid rgba(255,255,255,.13);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.035)}.parlay-head{padding:12px 14px;font-weight:900;background:#f4c542;color:#111}.parlay-body{padding:12px 14px}.parlay-leg{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.09)}.parlay-leg:last-child{border-bottom:0}.leg-main{font-weight:800}.leg-main-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 6px;line-height:1.35}.leg-pick{color:#fff;font-weight:900;cursor:help}.leg-confidence{display:inline-flex;align-items:baseline;white-space:nowrap;font-weight:700}.leg-matchup{font-size:.86rem;color:#f2eef5;margin-top:2px;padding-left:20px;line-height:1.3}.leg-sub{font-size:.76rem;opacity:.8;margin-top:3px}.legz{color:#55d889;font-weight:900}.jinx{color:#bd78ff;font-weight:900}.delta{font-weight:900}.empty-state{padding:28px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;text-align:center}.pool-count{font-size:.78rem;opacity:.72;margin:0 0 12px}.ticket-summary{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.12);font-size:.8rem;line-height:1.4}.ticket-prob{font-weight:900}.ticket-note{opacity:.72;font-size:.72rem;margin-top:3px}@media(max-width:820px){.quickie-shell{grid-template-columns:1fr}.filter-rail{position:static;order:-1}.parlay-grid{grid-template-columns:1fr}.sport-list{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head><body><div id="app"></div>
-<script src="ljdata.js?v=20260923-qg3"></script><script src="data/future_market_board.js?v=20260923-qg4"></script><script src="data/prediction_registry.js?v=20260923-qg5"></script><script src="lsi_registry_bridge.js?v=20260923-qg5"></script>
+<script src="ljdata.js?v=20260923-qg3"></script><script src="data/future_market_board.js?v=20260923-qg4"></script><script src="data/prediction_registry.js?v=20260923-qg5"></script><script src="lsi_registry_bridge.js?v=20260923-qg5"></script><script src="data/lsi_correlation_graph.js?v=20260928-dependency1"></script>
 <script>
 (()=>{const D=window.LJ_DATA||{},app=document.getElementById('app');const sportOrder=['MLB','NFL','NBA','WNBA','NHL','FIBA','NCAA_Football','NCAA_Basketball','MMA','Boxing','Tennis'];const sportNames={FIBA:'FIBA',FIBA_Men:'FIBA MEN',FIBA_Women:'FIBA WOMEN',NCAA_Football:'CFB',NCAA_Basketball:'CBB'};const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));const pct=v=>Number(String(v||'').match(/\d+(?:\.\d+)?/)?.[0]||0);const fmtPrice=(v,book='')=>{const x=Number(v);if(!Number.isFinite(x)||x===0)return'';return `${x>0?'+':''}${x}${book?` ${String(book).replace(/^PROPLINE[:|]/i,'PROPLINE|')}`:''}`};const displayPrice=v=>{const x=Number(v);if(!Number.isFinite(x)||x===0)return'';return `${x>0?'+':''}${x}`};const sourceLabel=(...vals)=>vals.map(v=>String(v||'').trim()).filter(Boolean).map(v=>v.replace(/^PROPLINE[:|]/i,'PROPLINE|')).filter((v,i,a)=>a.indexOf(v)===i).join(' • ');const watch=v=>/WATCH|NO BET|^PASS\\b|CLOSED|STARTED|LIVE|UNSUPPORTED|VERIFY LIVE LINE|MARKET NOT|DATA-LIMITED/i.test(String(v||''));const propRx=/yards|points|rebounds|assists|strikeouts|\bks\b|hits|receptions|rush|passing|receiving|shots|saves|PRA|TD|touchdown|HR|RBI|threes|blocks|aces|games won|sets won/i;const teamRx=/spread|game total|team total|\bo\s?\d|\bu\s?\d|\+\d|-\d/i;
 function header(){return `<div class="page quickie-page"><div class="topbar"><a class="lj-mini" href="LJ_index.html">L&amp;J</a><div class="meta">${esc(D.updated||'LATEST DAILY PREDICTIONS COLLECTION')}</div></div><section class="hero"><div class="kicker">LEGZ &amp; JINX DAILY PREDICTIONS</div><h1>L&amp;J QUICKIE GENERATOR</h1><p>Build 1–2 parlays from L&amp;J-evaluated markets for upcoming events in the next 0–7 days. Filters use typed markets so a game winner can never be returned as a player prop.</p><div class="chips"><span class="chip green">ROLLING 0–7 DAY POOL</span><span class="chip gold">2–6 LEGS</span><span class="chip purple">JINX BEST BETS</span></div><div class="actions"><a class="action" href="LJ_index.html">← Daily Home</a><a class="action" href="Recap.html">📊 Yesterday's Recap</a><a class="action" href="Treasure_Troll.html">💎 Treasure Troll</a><a class="action" href="I_Spy.html">👁 I Spy</a><a class="action" href="LJ_Spectrum.html">📈 Statistical Spectrum</a><a class="action" href="LJ_Methodology.html">Methodology / Glossary</a></div></section><section class="section"><div class="section-head"><h2>QUICKIE BUILDER</h2><span class="muted">Spectrum v3 Future Board • L&amp;J-evaluated upcoming markets only — completed events are excluded</span></div><div class="quickie-shell"><main class="generator-stage"><p class="pool-count" id="poolCount"></p><div class="parlay-grid" id="results"></div></main>${filters()}</div></section></div>`}
@@ -165,16 +165,54 @@ function chooseTicket(pool,legCount,usedAcross,tier){
   const best=beam.find(x=>x.legs.length===legCount);
   return best?best.legs:[];
 }
-function ticketProbability(legs){
-  if(!legs.length)return {raw:0,adjusted:0,correlated:false};
-  const raw=legs.reduce((p,x)=>p*Math.max(0,Math.min(1,Number(x.ljpc||0)/100)),1);
-  const eventCounts=new Map();
-  legs.forEach(x=>{if(x.eventKey)eventCounts.set(x.eventKey,(eventCounts.get(x.eventKey)||0)+1)});
-  let penalty=1,correlated=false;
-  for(const n of eventCounts.values()){
-    if(n>1){correlated=true;penalty*=Math.pow(.90,n-1);}
+function depSide(x){const s=String(x.side||'').toUpperCase();return ['OVER','MORE','YES'].includes(s)?'OVER':['UNDER','LESS','NO'].includes(s)?'UNDER':''}
+function depNode(x){if(x.marketClass!=='PLAYER_PROP')return'';const m=normKey(x.marketFamily||'');const s=depSide(x);return m&&s?`${m}|${s}`:''}
+function dependencyIndex(){
+  const out=new Map(),g=window.LSI_CORRELATION_GRAPH||{};
+  for(const e of(g.outcome_dependency_edges||[])){
+    const a=String(e.node_a||''),b=String(e.node_b||'');
+    if(!a||!b)continue;
+    out.set(`${String(e.league||'')}|${[a,b].sort().join('||')}`,e);
   }
-  return {raw:raw*100,adjusted:raw*penalty*100,correlated};
+  return out;
+}
+function ticketProbability(legs){
+  if(!legs.length)return {raw:0,adjusted:0,correlated:false,measuredPairs:0,fallbackPairs:0,dependencyDetails:[]};
+  const probs=legs.map(x=>Math.max(.001,Math.min(.999,Number(x.ljpc||0)/100)));
+  const raw=probs.reduce((p,x)=>p*x,1);
+  const dep=dependencyIndex(),details=[];
+  let factor=1,measuredPairs=0,fallbackPairs=0,correlated=false;
+  for(let i=0;i<legs.length;i++){
+    for(let j=i+1;j<legs.length;j++){
+      const a=legs[i],b=legs[j];
+      if(!a.eventKey||a.eventKey!==b.eventKey)continue;
+      correlated=true;
+      const na=depNode(a),nb=depNode(b);
+      const league=String(a.sport||'');
+      const edge=(na&&nb)?dep.get(`${league}|${[na,nb].sort().join('||')}`):null;
+      if(edge&&Number.isFinite(Number(edge.phi))){
+        const p1=probs[i],p2=probs[j],phi=Number(edge.phi);
+        const variance=Math.sqrt(p1*(1-p1)*p2*(1-p2));
+        const lower=Math.max(0,p1+p2-1),upper=Math.min(p1,p2);
+        const p11=Math.max(lower,Math.min(upper,p1*p2+phi*variance));
+        const rawPair=Math.max(.0001,p1*p2);
+        // Pairwise dependence does not compose perfectly in 3+ leg tickets.
+        // Damp each measured pair contribution and cap it before multiplying.
+        const pairFactor=Math.max(.70,Math.min(1.30,p11/rawPair));
+        const damped=Math.sqrt(pairFactor);
+        factor*=damped;measuredPairs++;
+        details.push({type:'MEASURED',phi,n:edge.n,factor:damped,nodeA:na,nodeB:nb});
+      }else{
+        // Unknown same-event dependence remains conservative, but less blunt than
+        // the old blanket 10% penalty per extra leg.
+        factor*=.97;fallbackPairs++;
+        details.push({type:'FALLBACK',factor:.97,nodeA:na,nodeB:nb});
+      }
+    }
+  }
+  const minMarginal=Math.min(...probs);
+  const adjusted=Math.max(.000001,Math.min(minMarginal*.999,raw*factor));
+  return {raw:raw*100,adjusted:adjusted*100,correlated,measuredPairs,fallbackPairs,dependencyDetails:details};
 }
 function confHTML(x){const ljpc=Number(x.ljpc||0),hasStat=x.provisional!==null&&x.provisional!==undefined&&x.provisional!==''&&Number.isFinite(Number(x.provisional)),stat=hasStat?Number(x.provisional):null,statHtml=hasStat?`<span class="lj-stat" title="Statistical / market baseline before the final L&J adjustment">STAT ${stat.toFixed(stat%1?1:0)}%</span><span class="lj-stat-sep"> | </span>`:'';const legz=Number(x.legz),jinx=Number(x.jinxDelta),hasL=Number.isFinite(legz),hasJ=Number.isFinite(jinx),lText=hasL?`${legz.toFixed(Math.abs(legz-Math.round(legz))<.05?0:1)}%`:'',jText=hasJ?`${jinx>=0?'+':''}${jinx.toFixed(Math.abs(jinx-Math.round(jinx))<.05?0:1)} pp`:'';const lAttrs=hasL?` title="LEGZ baseline probability: ${lText}" aria-label="LEGZ baseline probability ${lText}"`:'',jAttrs=hasJ?` title="JINX contextual adjustment: ${jText}" aria-label="JINX contextual adjustment ${jText}"`:'';const ljpcHtml=`<span class="ljpc-badge"><span class="lj-l lj-component"${lAttrs}>L</span><span class="lj-j lj-component"${jAttrs}>J</span><span class="lj-pc">PC</span> <span class="ljpc-value">${ljpc.toFixed(ljpc%1?1:0)}%</span></span>`;return `${statHtml}${ljpcHtml}`}
 function legRowHTML(x,i){const label=esc(x.displayPick||x.pick),tip=esc(x.sourceTooltip||'');const tipAttrs=tip?` title="${tip}" aria-label="${label}. Source: ${tip}"`:` aria-label="${label}"`;const matchup=esc(x.matchup||'');return `<div class="parlay-leg"><div class="leg-main-row"><span class="leg-main">${i+1}. ${esc(sportNames[x.sport]||x.sport)} • </span><span class="leg-pick"${tipAttrs}>${label}</span><span class="leg-confidence">${confHTML(x)}</span></div>${matchup?`<div class="leg-matchup">${matchup}</div>`:''}</div>`;}
@@ -204,8 +242,8 @@ function generate(){
     const prob=ticketProbability(legs);
     const raw=prob.raw.toFixed(prob.raw<10?2:1),adj=prob.adjusted.toFixed(prob.adjusted<10?2:1);
     const probLine=prob.correlated
-      ? `<div class="ticket-summary"><span class="ticket-prob">Ticket LJPC / hit probability: ${adj}%</span><div class="ticket-note">Portfolio-optimized joint probability. Independent-leg baseline ${raw}%; conservative same-event correlation penalty applied.</div></div>`
-      : `<div class="ticket-summary"><span class="ticket-prob">Ticket LJPC / hit probability: ${raw}%</span><div class="ticket-note">Portfolio-optimized joint probability from published leg-level LJPCs; duplicate-player stacking is blocked and POM economics are secondary.</div></div>`;
+      ? `<div class="ticket-summary"><span class="ticket-prob">Ticket LJPC / hit probability: ${adj}%</span><div class="ticket-note">Independent-leg baseline ${raw}%. Dependency layer used ${prob.measuredPairs} measured same-event POM pair${prob.measuredPairs===1?'':'s'}${prob.fallbackPairs?` plus ${prob.fallbackPairs} conservative unresolved pair${prob.fallbackPairs===1?'':'s'}`:''}. Measured dependence is historical association, not causation.</div></div>`
+      : `<div class="ticket-summary"><span class="ticket-prob">Ticket LJPC / hit probability: ${raw}%</span><div class="ticket-note">Portfolio-optimized joint probability from published leg-level LJPCs; no same-event dependency adjustment was required.</div></div>`;
     cards.push(`<article class="parlay-card"><div class="parlay-head">${title} QUICKIE ${p+1} • ${lc} LEGS</div><div class="parlay-body">${legs.map(legRowHTML).join('')}${probLine}</div></article>`);
   }
   if(cards.length<pc){

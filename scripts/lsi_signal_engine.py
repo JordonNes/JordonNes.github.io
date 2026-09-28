@@ -676,8 +676,10 @@ def view_player(league,player,profiles,current_items,coverage):
         if not vals:
             continue
         l5=mean(vals[-5:]); l10=mean(vals[-10:])
-        hist=mean(vals)
-        sd=pstdev(vals) or 0.0
+        hist=num(row.get("history_mean"))
+        if hist is None: hist=mean(vals)
+        sd=num(row.get("history_stddev"))
+        if sd is None: sd=pstdev(vals) or 0.0
         current_proj=None
         for p in projections.get(metric) or []:
             current_proj=num(p.get("projected_output"))
@@ -698,7 +700,11 @@ def view_player(league,player,profiles,current_items,coverage):
     return {
       "player_id":stable_id("SV-",league,player),"league":league,"player":player,
       "history_scope":"LSI_WAREHOUSE_HISTORY",
-      "career_complete":bool((coverage.get("leagues") or {}).get(league,{}).get("complete_history")),
+      "career_complete":bool(
+          league=="NFL"
+          and int(num(((coverage.get("leagues") or {}).get(league,{}) or {}).get("earliest_source_season")) or 9999)<=2000
+          and int(num(((coverage.get("leagues") or {}).get(league,{}) or {}).get("latest_source_season")) or 0)>=datetime.now(timezone.utc).year
+      ),
       "metrics":selected,"primary_axes":[x["metric"] for x in axis],
       "current_market_count":len(current_items)
     }
@@ -738,6 +744,7 @@ def main():
       "methodology":{
         "player_edges":"Pearson + Spearman over aligned recent metric series for the same active player.",
         "league_edges":"Observation-weighted aggregate of active-player metric-pair edges.",
+        "outcome_dependency_edges":"Phi association across unique same-event settled website POM outcomes. Used as measured ticket-dependency evidence; not causation and not a multivariate copula.",
         "minimum_pair_observations":MIN_CORR_N,"minimum_absolute_association":MIN_CORR_ABS,
         "causation_claimed":False,
         "limitations":"Recent-series alignment is descriptive. Cross-player teammate/event dependency requires event-aligned history and is not inferred from names or narratives."
