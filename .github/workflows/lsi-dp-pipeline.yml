@@ -133,7 +133,7 @@ jobs:
     needs: clock
     if: needs.clock.outputs.run_allowed == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       PYTHONPATH: ${{ github.workspace }}
     steps:
@@ -573,6 +573,10 @@ jobs:
                 exit 1
               fi
             done
+            if [ -e data/market_history_delta.csv ] && [ "$(wc -c < data/market_history_delta.csv)" -ge 99614720 ]; then
+              echo "::error::Market history delta exceeds safe GitHub blob size after split."
+              exit 1
+            fi
             git commit -m "LSI ${{ needs.clock.outputs.stage }} ${{ needs.clock.outputs.date }} PT"
             LOCAL_SHA="$(git rev-parse HEAD)"
             if git push origin HEAD:master; then
