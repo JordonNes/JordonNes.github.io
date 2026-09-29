@@ -222,10 +222,16 @@ jobs:
           rm -f "$generated_market"
           git reset HEAD -- data/market_history.csv data/propline_intelligence.json data/suggestion_ledger.json 2>/dev/null || true
           git checkout HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
-          git add             data/lsi_league_schedule.json data/lsi_league_scheduler_state.json             data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js             data/future_market_board.json data/future_market_board.js data/market_history_delta.csv             data/current_game_moneylines.json data/game_winner_evidence.json             data/kalshi_state.json data/propline_state.json data/parlayapi_state.json data/sportsgameodds_state.json             data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json             data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json             data/lsi_readiness.json             data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json 2>/dev/null || true
+          # Stage only outputs present in this run; a missing optional path must
+          # not suppress every generated artifact.
+          for p in data/lsi_league_schedule.json data/lsi_league_scheduler_state.json data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js data/market_history_delta.csv data/current_game_moneylines.json data/game_winner_evidence.json data/kalshi_state.json data/propline_state.json data/parlayapi_state.json data/sportsgameodds_state.json data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/lsi_readiness.json data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json; do
+            if [ -e "$p" ]; then
+              git add -- "$p"
+            fi
+          done
           if git diff --cached --quiet; then
-            echo 'Due work produced no durable intelligence changes.'
-            exit 0
+            echo '::error::Due near-event work staged no durable intelligence changes.'
+            exit 1
           fi
           git commit -m "LSI gated near-event refresh"
           for attempt in 1 2 3 4 5; do
