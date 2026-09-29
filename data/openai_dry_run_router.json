@@ -1,8 +1,8 @@
 {
   "schema_version": "LSI-OAI-DRYRUN-1",
-  "generated_at_utc": "2026-09-28T11:12:53.949728+00:00",
+  "generated_at_utc": "2026-09-29T22:49:29.712784+00:00",
   "mode": "DRY_RUN_NO_NETWORK",
-  "telemetry_source": "schedule",
+  "telemetry_source": "push",
   "workload_source": "future_market_board",
   "api_calls_made": 0,
   "openai_key_read": false,
@@ -29,333 +29,397 @@
     "workload_source": "future_market_board"
   },
   "summary": {
-    "events_total": 123,
-    "changed_events": 117,
-    "unchanged_events": 6,
-    "would_call_if_enabled": 117,
+    "events_total": 176,
+    "changed_events": 174,
+    "unchanged_events": 2,
+    "would_call_if_enabled": 174,
     "route_counts": {
       "gpt-5.6-luna": 0,
-      "gpt-5.6-terra": 117,
+      "gpt-5.6-terra": 174,
       "gpt-5.6-sol": 0
     },
-    "estimated_input_tokens_for_changed_events": 94625,
-    "estimated_output_tokens_for_changed_events": 52650,
-    "estimated_cost_for_changed_events_usd": 0.82105,
+    "estimated_input_tokens_for_changed_events": 883418,
+    "estimated_output_tokens_for_changed_events": 78300,
+    "estimated_cost_for_changed_events_usd": 2.706436,
     "worst_case_if_every_event_changed_every_run": {
-      "calls_per_day": 738,
-      "estimated_cost_per_day_usd": 5.21568,
+      "calls_per_day": 1056,
+      "estimated_cost_per_day_usd": 16.321632,
       "note": "planning stress test, not expected usage"
     }
   },
   "routes": [
     {
-      "event_id": "KXNFLRSHYDS-26SEP28PHICHI",
-      "league": "NFL",
-      "evidence_fingerprint": "35d14cf8769f0b4cd758",
-      "evidence_changed": false,
-      "would_call_if_enabled": false,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 3809,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.013018,
-      "prediction_count": 34,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-202764",
+      "event_id": "2026020002",
       "league": "NHL",
-      "evidence_fingerprint": "7151b68d334d39deeda1",
+      "evidence_fingerprint": "500d46dee1ac4a3a331e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 694,
+      "estimated_input_tokens": 533,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006788,
-      "prediction_count": 4,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-202765",
-      "league": "NHL",
-      "evidence_fingerprint": "7a0745614e6906c556d4",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 691,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006782,
-      "prediction_count": 4,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-204763",
-      "league": "NHL",
-      "evidence_fingerprint": "e30342dd8dd62e8655e1",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 692,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006784,
-      "prediction_count": 4,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-204764",
-      "league": "NHL",
-      "evidence_fingerprint": "0711566f443625bfc143",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 612,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006624,
-      "prediction_count": 3,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-204765",
-      "league": "NHL",
-      "evidence_fingerprint": "0789f0e6d39f16dd50c1",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 691,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006782,
-      "prediction_count": 4,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-204766",
-      "league": "NHL",
-      "evidence_fingerprint": "9ed1a2d90f95efac2ba9",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 693,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006786,
-      "prediction_count": 4,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-204767",
-      "league": "NHL",
-      "evidence_fingerprint": "43b1694c4e34102a6f69",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 690,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00678,
-      "prediction_count": 4,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-204768",
-      "league": "NHL",
-      "evidence_fingerprint": "8a676e50e5061eafd2ae",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 694,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006788,
-      "prediction_count": 4,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-204769",
-      "league": "NHL",
-      "evidence_fingerprint": "e7725e688bbf91d5982e",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 690,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00678,
-      "prediction_count": 4,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-210419",
-      "league": "NHL",
-      "evidence_fingerprint": "9c042bdce7db5ab22e20",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 532,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006464,
+      "estimated_cost_usd": 0.006466,
       "prediction_count": 2,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-210421",
+      "event_id": "2026020003",
       "league": "NHL",
-      "evidence_fingerprint": "9ccdf9790ef946f68254",
+      "evidence_fingerprint": "18e031954b830c113ba5",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 693,
+      "estimated_input_tokens": 780,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006786,
+      "estimated_cost_usd": 0.00696,
+      "prediction_count": 5,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020004",
+      "league": "NHL",
+      "evidence_fingerprint": "43f268ad6a345db66abe",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 780,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00696,
+      "prediction_count": 5,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020005",
+      "league": "NHL",
+      "evidence_fingerprint": "3e99ae3563d2d2a87ab6",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 702,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006804,
       "prediction_count": 4,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-219054",
+      "event_id": "2026020006",
       "league": "NHL",
-      "evidence_fingerprint": "6cbd438f1e2969b0cbd8",
+      "evidence_fingerprint": "84cb46ea9ee88d79faca",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 950,
+      "estimated_input_tokens": 949,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.0073,
+      "estimated_cost_usd": 0.007298,
       "prediction_count": 7,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-227801",
-      "league": "NCAA_Football",
-      "evidence_fingerprint": "b4c431eb81005513a15a",
+      "event_id": "2026020007",
+      "league": "NHL",
+      "evidence_fingerprint": "56f71028694bb3d5bc15",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 807,
+      "estimated_input_tokens": 785,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007014,
+      "estimated_cost_usd": 0.00697,
       "prediction_count": 5,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-227802",
-      "league": "NCAA_Football",
-      "evidence_fingerprint": "be4f08be47050b8aa24c",
+      "event_id": "2026020008",
+      "league": "NHL",
+      "evidence_fingerprint": "e2fed7842d0b4a8bb273",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 802,
+      "estimated_input_tokens": 785,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007004,
+      "estimated_cost_usd": 0.00697,
       "prediction_count": 5,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-227830",
-      "league": "NCAA_Football",
-      "evidence_fingerprint": "c735d9f0779f2b658479",
+      "event_id": "2026020009",
+      "league": "NHL",
+      "evidence_fingerprint": "a349e280a98ce8f18048",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 807,
+      "estimated_input_tokens": 1025,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007014,
+      "estimated_cost_usd": 0.00745,
+      "prediction_count": 8,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020010",
+      "league": "NHL",
+      "evidence_fingerprint": "16efe843b5a1b3e843dc",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 786,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006972,
       "prediction_count": 5,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-229073",
-      "league": "NCAA_Football",
-      "evidence_fingerprint": "4850f390d378afad1656",
+      "event_id": "2026020011",
+      "league": "NHL",
+      "evidence_fingerprint": "be0e6a37c537d3b3d080",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 632,
+      "estimated_input_tokens": 948,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006664,
+      "estimated_cost_usd": 0.007296,
+      "prediction_count": 7,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020012",
+      "league": "NHL",
+      "evidence_fingerprint": "df028665346c04d38184",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 1022,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007444,
+      "prediction_count": 8,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020013",
+      "league": "NHL",
+      "evidence_fingerprint": "e437ea99143d7398e7a6",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 1021,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007442,
+      "prediction_count": 8,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020014",
+      "league": "NHL",
+      "evidence_fingerprint": "e5a681bc7e4538c60161",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 937,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007274,
+      "prediction_count": 7,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020015",
+      "league": "NHL",
+      "evidence_fingerprint": "5435d50be6364802c9c2",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 859,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007118,
+      "prediction_count": 6,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020016",
+      "league": "NHL",
+      "evidence_fingerprint": "26a71c4a12c07ce2f72b",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 862,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007124,
+      "prediction_count": 6,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020017",
+      "league": "NHL",
+      "evidence_fingerprint": "97dba87f15a6fc135020",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 784,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006968,
+      "prediction_count": 5,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020018",
+      "league": "NHL",
+      "evidence_fingerprint": "fde5b2cdbc1342c12557",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 694,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006788,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020019",
+      "league": "NHL",
+      "evidence_fingerprint": "8988812167cb93d1dc48",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 1013,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007426,
+      "prediction_count": 8,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020020",
+      "league": "NHL",
+      "evidence_fingerprint": "7894fd38bbe4371a3c25",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 1014,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007428,
+      "prediction_count": 8,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020021",
+      "league": "NHL",
+      "evidence_fingerprint": "85960f961b3ffa7220af",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 618,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006636,
       "prediction_count": 3,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-229689",
-      "league": "NCAA_Football",
-      "evidence_fingerprint": "8c985d4746d3541c3673",
+      "event_id": "2026020022",
+      "league": "NHL",
+      "evidence_fingerprint": "74dfb012de59cce1adae",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 634,
+      "estimated_input_tokens": 944,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006668,
-      "prediction_count": 3,
+      "estimated_cost_usd": 0.007288,
+      "prediction_count": 7,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-229691",
-      "league": "NCAA_Football",
-      "evidence_fingerprint": "a2ea533ef8a97b6554ba",
+      "event_id": "2026020023",
+      "league": "NHL",
+      "evidence_fingerprint": "32b4614bc96eeeece645",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 810,
+      "estimated_input_tokens": 452,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00702,
-      "prediction_count": 5,
+      "estimated_cost_usd": 0.006304,
+      "prediction_count": 1,
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-229735",
-      "league": "MMA",
-      "evidence_fingerprint": "c1af474ea38c83982d92",
+      "event_id": "2026020024",
+      "league": "NHL",
+      "evidence_fingerprint": "5442c228a7df9f46d880",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 1112,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007624,
+      "prediction_count": 9,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020025",
+      "league": "NHL",
+      "evidence_fingerprint": "ddeacd3c3f5bc66150d3",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -369,41 +433,934 @@
       "market_observation_count": 0
     },
     {
-      "event_id": "PL-229849",
-      "league": "NCAA_Football",
-      "evidence_fingerprint": "ae835e98c9cc394c8140",
+      "event_id": "2026020026",
+      "league": "NHL",
+      "evidence_fingerprint": "e9be6fae90af6e261308",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 630,
+      "estimated_input_tokens": 709,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00666,
+      "estimated_cost_usd": 0.006818,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020027",
+      "league": "NHL",
+      "evidence_fingerprint": "7d9e76380581591359b2",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 612,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006624,
       "prediction_count": 3,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020028",
+      "league": "NHL",
+      "evidence_fingerprint": "8f380ecd0542676fd1fe",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 536,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006472,
+      "prediction_count": 2,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020029",
+      "league": "NHL",
+      "evidence_fingerprint": "18dec16a914085eaee80",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 945,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00729,
+      "prediction_count": 7,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020030",
+      "league": "NHL",
+      "evidence_fingerprint": "65fd51bd8f97322c6e54",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 690,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00678,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020031",
+      "league": "NHL",
+      "evidence_fingerprint": "67428ea690296be68d38",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 1014,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007428,
+      "prediction_count": 8,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020032",
+      "league": "NHL",
+      "evidence_fingerprint": "8b4f3ce9b1321559a2a3",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 691,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006782,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020033",
+      "league": "NHL",
+      "evidence_fingerprint": "637c40d97a08ec3b9669",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 690,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00678,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020034",
+      "league": "NHL",
+      "evidence_fingerprint": "50805e8d14fd312689fe",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 537,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006474,
+      "prediction_count": 2,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020035",
+      "league": "NHL",
+      "evidence_fingerprint": "ee88e81a4373124e2b51",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 690,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00678,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020036",
+      "league": "NHL",
+      "evidence_fingerprint": "8fb2f00c40a0c05d740c",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 535,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00647,
+      "prediction_count": 2,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020037",
+      "league": "NHL",
+      "evidence_fingerprint": "edeed2600fdddb84f6b9",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 860,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00712,
+      "prediction_count": 6,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020038",
+      "league": "NHL",
+      "evidence_fingerprint": "be072d0f4d0d66e6ae91",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 937,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007274,
+      "prediction_count": 7,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020040",
+      "league": "NHL",
+      "evidence_fingerprint": "50a1c2291a2ab1515f1b",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 694,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006788,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020041",
+      "league": "NHL",
+      "evidence_fingerprint": "3a370e159ef81086de8f",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 689,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006778,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020042",
+      "league": "NHL",
+      "evidence_fingerprint": "f0715a40923c476ab7f4",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 691,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006782,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "2026020043",
+      "league": "NHL",
+      "evidence_fingerprint": "368c6108b7fa8bdf26b8",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 688,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006776,
+      "prediction_count": 4,
+      "market_observation_count": 0
+    },
+    {
+      "event_id": "KXMLBHRR-26SEP291700CWSHOU",
+      "league": "MLB",
+      "evidence_fingerprint": "902a451771e561f13791",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 11293,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.027986,
+      "prediction_count": 84,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
+      "league": "MLB",
+      "evidence_fingerprint": "8ee2904fec4c37165106",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 10708,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.026816,
+      "prediction_count": 78,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "KXMLBHRR-26SEP292200CHCSD",
+      "league": "MLB",
+      "evidence_fingerprint": "3a6109f9cf133cc5ceca",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 7131,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.019662,
+      "prediction_count": 40,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "KXMLBHRR-26SEP301400PHIATL",
+      "league": "MLB",
+      "evidence_fingerprint": "53017b5e75679aad58dd",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 7563,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.020526,
+      "prediction_count": 45,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "KXNHLPTS-26SEP29CHIVGK",
+      "league": "NHL",
+      "evidence_fingerprint": "c81e0e57f9c08308b4e8",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 5662,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.016724,
+      "prediction_count": 31,
+      "market_observation_count": 31
+    },
+    {
+      "event_id": "KXNHLPTS-26SEP29FLACAR",
+      "league": "NHL",
+      "evidence_fingerprint": "5a0eb75d13b4161ce41e",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "material JINX adjustment present"
+      ],
+      "estimated_input_tokens": 9383,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.024166,
+      "prediction_count": 62,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "KXNHLPTS-26SEP29MTLTOR",
+      "league": "NHL",
+      "evidence_fingerprint": "d0b46813e3d479b8f4ec",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 5827,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.017054,
+      "prediction_count": 31,
+      "market_observation_count": 33
+    },
+    {
+      "event_id": "KXNHLPTS-26SEP29NYRBOS",
+      "league": "NHL",
+      "evidence_fingerprint": "b3eebb8a43412ad45deb",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 7719,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.020838,
+      "prediction_count": 45,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "KXNHLPTS-26SEP29VANEDM",
+      "league": "NHL",
+      "evidence_fingerprint": "9ccf0847fdc0ada8e1b8",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 6022,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.017444,
+      "prediction_count": 33,
+      "market_observation_count": 33
+    },
+    {
+      "event_id": "KXWNBAPTS-26SEP29LVIND",
+      "league": "WNBA",
+      "evidence_fingerprint": "f61b447aeb85410a4634",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 5549,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.016498,
+      "prediction_count": 30,
+      "market_observation_count": 30
+    },
+    {
+      "event_id": "KXWNBAPTS-26SEP29MINNY",
+      "league": "WNBA",
+      "evidence_fingerprint": "301e3f17dc8f189ef741",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "material JINX adjustment present"
+      ],
+      "estimated_input_tokens": 5570,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.01654,
+      "prediction_count": 30,
+      "market_observation_count": 30
+    },
+    {
+      "event_id": "PAPI-451199a82447a240",
+      "league": "MLB",
+      "evidence_fingerprint": "7471cd40d12d9f131363",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 18386,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.042172,
+      "prediction_count": 153,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "PAPI-d7999a284eda72ce",
+      "league": "MLB",
+      "evidence_fingerprint": "9fc797fd1d09d44d91ae",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 3475,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.01235,
+      "prediction_count": 16,
+      "market_observation_count": 20
+    },
+    {
+      "event_id": "PAPI-ebac129559cf43cf",
+      "league": "MLB",
+      "evidence_fingerprint": "8e43de47a918a0c7d410",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 18024,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.041448,
+      "prediction_count": 149,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "PL-202764",
+      "league": "NHL",
+      "evidence_fingerprint": "1a29d7b092e6731e3169",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 1582,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.008564,
+      "prediction_count": 4,
+      "market_observation_count": 12
+    },
+    {
+      "event_id": "PL-202765",
+      "league": "NHL",
+      "evidence_fingerprint": "1090c49c450a1a70b805",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (3 sources)"
+      ],
+      "estimated_input_tokens": 2039,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.009478,
+      "prediction_count": 6,
+      "market_observation_count": 16
+    },
+    {
+      "event_id": "PL-204763",
+      "league": "NHL",
+      "evidence_fingerprint": "9272eabc0467a44bcae3",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 987,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007374,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-204764",
+      "league": "NHL",
+      "evidence_fingerprint": "3517f038feec285053f9",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 906,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007212,
+      "prediction_count": 3,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-204765",
+      "league": "NHL",
+      "evidence_fingerprint": "365d608155e21c7152e6",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 985,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00737,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-204766",
+      "league": "NHL",
+      "evidence_fingerprint": "612d53d6be47b4a36183",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 988,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007376,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-204767",
+      "league": "NHL",
+      "evidence_fingerprint": "0a596d326b5ec0d39a52",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 984,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007368,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-204768",
+      "league": "NHL",
+      "evidence_fingerprint": "b9f104dedb72b82c98fb",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 990,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00738,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-204769",
+      "league": "NHL",
+      "evidence_fingerprint": "6496993c4d6097aed82f",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 984,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007368,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-210419",
+      "league": "NHL",
+      "evidence_fingerprint": "10fdf62b269b3dcf407d",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 983,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007366,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-210421",
+      "league": "NHL",
+      "evidence_fingerprint": "731c4944753fe3a2ac9e",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 989,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007378,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-210422",
+      "league": "NHL",
+      "evidence_fingerprint": "48507dbd401100c282cc",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 990,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00738,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-210423",
+      "league": "NHL",
+      "evidence_fingerprint": "8bdf414792a09a0d2bfe",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 985,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00737,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-210424",
+      "league": "NHL",
+      "evidence_fingerprint": "7e91402b1043915436be",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 982,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007364,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-210425",
+      "league": "NHL",
+      "evidence_fingerprint": "5b55afac97d1de48ae93",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 980,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.00736,
+      "prediction_count": 4,
+      "market_observation_count": 4
+    },
+    {
+      "event_id": "PL-219054",
+      "league": "NHL",
+      "evidence_fingerprint": "4d253c47da4c1072437a",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (12 sources)"
+      ],
+      "estimated_input_tokens": 3966,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.013332,
+      "prediction_count": 7,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "PL-227801",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "715447f9f651d2c873b3",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (3 sources)"
+      ],
+      "estimated_input_tokens": 1994,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.009388,
+      "prediction_count": 5,
+      "market_observation_count": 16
+    },
+    {
+      "event_id": "PL-227802",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "eb527bce6cb91b4fc88b",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
+      ],
+      "estimated_input_tokens": 3797,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.012994,
+      "prediction_count": 5,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "PL-227830",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "91313233a99dc8e277fd",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (6 sources)"
+      ],
+      "estimated_input_tokens": 3117,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.011634,
+      "prediction_count": 4,
+      "market_observation_count": 32
+    },
+    {
+      "event_id": "PL-229073",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "d5d2cee9c1583ee75000",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
+      ],
+      "estimated_input_tokens": 1223,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007846,
+      "prediction_count": 3,
+      "market_observation_count": 8
+    },
+    {
+      "event_id": "PL-229689",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "94d5f4fc60ec3d25286b",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 868,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007136,
+      "prediction_count": 4,
+      "market_observation_count": 2
+    },
+    {
+      "event_id": "PL-229691",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "cec2bb9436632949ef6e",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (3 sources)"
+      ],
+      "estimated_input_tokens": 1262,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.007924,
+      "prediction_count": 5,
+      "market_observation_count": 6
+    },
+    {
+      "event_id": "PL-229735",
+      "league": "MMA",
+      "evidence_fingerprint": "885dacec93bc18024e8d",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (14 sources)"
+      ],
+      "estimated_input_tokens": 3636,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.012672,
+      "prediction_count": 3,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "PL-229849",
+      "league": "NCAA_Football",
+      "evidence_fingerprint": "7026e39971bc79bcecf9",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review"
+      ],
+      "estimated_input_tokens": 714,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.006828,
+      "prediction_count": 4,
       "market_observation_count": 0
     },
     {
       "event_id": "PL-230772",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "f486cbcce03ba14dd42e",
-      "evidence_changed": false,
-      "would_call_if_enabled": false,
+      "evidence_fingerprint": "1a46ef14570bb8a45b2b",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (5 sources)"
       ],
-      "estimated_input_tokens": 636,
+      "estimated_input_tokens": 2119,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006672,
+      "estimated_cost_usd": 0.009638,
       "prediction_count": 3,
-      "market_observation_count": 0
+      "market_observation_count": 20
     },
     {
       "event_id": "PL-231908",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "867de197c7af97911698",
+      "evidence_fingerprint": "2f52f5da107f4ecf6660",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -420,8 +1377,8 @@
       "event_id": "PL-231921",
       "league": "NCAA_Football",
       "evidence_fingerprint": "10cde97b1199f571d702",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
+      "evidence_changed": false,
+      "would_call_if_enabled": false,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
@@ -436,8 +1393,8 @@
       "event_id": "PL-231925",
       "league": "NCAA_Football",
       "evidence_fingerprint": "e12ae1868d4899d50f43",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
+      "evidence_changed": false,
+      "would_call_if_enabled": false,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
@@ -451,7 +1408,7 @@
     {
       "event_id": "PL-231926",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "8c08ec022af11e1d2e6d",
+      "evidence_fingerprint": "8afee2c3340e3edc5ca3",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -467,7 +1424,7 @@
     {
       "event_id": "PL-231928",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "c2796fd9a2c0b77229e1",
+      "evidence_fingerprint": "ccbca9f64f149700dbc9",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -483,247 +1440,259 @@
     {
       "event_id": "PL-232212",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "b81acc89aa5c1f0554cb",
+      "evidence_fingerprint": "afd5bac6b0dca05bfae8",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
       ],
-      "estimated_input_tokens": 724,
+      "estimated_input_tokens": 2801,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006848,
+      "estimated_cost_usd": 0.011002,
       "prediction_count": 4,
-      "market_observation_count": 0
+      "market_observation_count": 28
     },
     {
       "event_id": "PL-238043",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "830ed5bfb72aab50d2b6",
+      "evidence_fingerprint": "f5f5aa304fbdca6edc30",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (5 sources)"
       ],
-      "estimated_input_tokens": 731,
+      "estimated_input_tokens": 2227,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006862,
+      "estimated_cost_usd": 0.009854,
       "prediction_count": 4,
-      "market_observation_count": 0
+      "market_observation_count": 20
     },
     {
       "event_id": "PL-238198",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "58bc9bc67713dd492dd1",
+      "evidence_fingerprint": "a9e106129a6c3cc6dfd3",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 893,
+      "estimated_input_tokens": 1495,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007186,
+      "estimated_cost_usd": 0.00839,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-238208",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "1ef906f53b505374743e",
+      "evidence_fingerprint": "1695dbc266a2b2984e8c",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (3 sources)"
       ],
-      "estimated_input_tokens": 899,
+      "estimated_input_tokens": 1645,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007198,
+      "estimated_cost_usd": 0.00869,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 10
     },
     {
       "event_id": "PL-238457",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "ea9add1d086e01ec9864",
+      "evidence_fingerprint": "3c7060b72e9a7e413afe",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
       ],
-      "estimated_input_tokens": 885,
+      "estimated_input_tokens": 2959,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00717,
+      "estimated_cost_usd": 0.011318,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 28
     },
     {
       "event_id": "PL-238493",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "c84025dea42149a829cf",
+      "evidence_fingerprint": "370462a1c8bd46ab44ce",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 1067,
+      "estimated_input_tokens": 1662,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007534,
+      "estimated_cost_usd": 0.008724,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-238527",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "dfe0fe1c308b95a4e482",
+      "evidence_fingerprint": "e5e6c6ee3850ede35310",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
       ],
-      "estimated_input_tokens": 639,
+      "estimated_input_tokens": 2639,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006678,
-      "prediction_count": 3,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.010678,
+      "prediction_count": 2,
+      "market_observation_count": 28
     },
     {
       "event_id": "PL-238534",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "3828cdbbc2a27bd6d251",
+      "evidence_fingerprint": "2f0e2ecf126ce8955fb3",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 894,
+      "estimated_input_tokens": 1488,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007188,
+      "estimated_cost_usd": 0.008376,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-238619",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "584b5391653eeb8139da",
+      "evidence_fingerprint": "b04946d9b7fce3e57c1d",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 723,
+      "estimated_input_tokens": 1239,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006846,
-      "prediction_count": 4,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.007878,
+      "prediction_count": 3,
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-238798",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "6cda23153701ca229df0",
+      "evidence_fingerprint": "7fa781b3329a9bf246cb",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
       ],
-      "estimated_input_tokens": 1055,
+      "estimated_input_tokens": 3127,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00751,
+      "estimated_cost_usd": 0.011654,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 28
     },
     {
       "event_id": "PL-238917",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "d2559e3f2e35a3f911b4",
+      "evidence_fingerprint": "dbb492bace6c9a5fd18e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 1060,
+      "estimated_input_tokens": 1488,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00752,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.008376,
+      "prediction_count": 6,
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-238983",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "355d74756732b53f4b94",
+      "evidence_fingerprint": "0647f49fc1a72aeb55ca",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 1071,
+      "estimated_input_tokens": 1221,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007542,
+      "estimated_cost_usd": 0.007842,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 2
     },
     {
       "event_id": "PL-239017",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "a17c472f07c9d09ee9b5",
+      "evidence_fingerprint": "919867170e3e6436133a",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 722,
+      "estimated_input_tokens": 941,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006844,
-      "prediction_count": 4,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.007282,
+      "prediction_count": 3,
+      "market_observation_count": 4
     },
     {
       "event_id": "PL-239041",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "1d2523e1624fff2227ae",
+      "evidence_fingerprint": "d0ceceb44b721c33c651",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 724,
+      "estimated_input_tokens": 875,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006848,
+      "estimated_cost_usd": 0.00715,
       "prediction_count": 4,
-      "market_observation_count": 0
+      "market_observation_count": 2
     },
     {
       "event_id": "PL-239060",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "d448f11775434de498d5",
+      "evidence_fingerprint": "df5d693c47b2eb1bcd06",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 807,
+      "estimated_input_tokens": 1322,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007014,
-      "prediction_count": 5,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.008044,
+      "prediction_count": 4,
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-239061",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "e373cd6176778eee7abe",
+      "evidence_fingerprint": "5122f4d0f3c50a89368e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -739,7 +1708,7 @@
     {
       "event_id": "PL-239062",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "bf5d992e2bb065f5408b",
+      "evidence_fingerprint": "f714e24851a649e9e3b6",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -755,23 +1724,23 @@
     {
       "event_id": "PL-239063",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "a937600198f2c60966e6",
+      "evidence_fingerprint": "eae71252097e8e794cd4",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 545,
+      "estimated_input_tokens": 632,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00649,
-      "prediction_count": 2,
+      "estimated_cost_usd": 0.006664,
+      "prediction_count": 3,
       "market_observation_count": 0
     },
     {
       "event_id": "PL-239064",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "10638e3fad3cbf8e6830",
+      "evidence_fingerprint": "7b813d29059f68c57604",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -787,55 +1756,56 @@
     {
       "event_id": "PL-239077",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "3273eddbb252ba146223",
+      "evidence_fingerprint": "070706968e7b7a54fbbd",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (3 sources)"
       ],
-      "estimated_input_tokens": 713,
+      "estimated_input_tokens": 1254,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006826,
-      "prediction_count": 4,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.007908,
+      "prediction_count": 5,
+      "market_observation_count": 6
     },
     {
       "event_id": "PL-239078",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "b29a83b4a0e6e2634439",
+      "evidence_fingerprint": "278195e58520c6bc209f",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 810,
+      "estimated_input_tokens": 877,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00702,
-      "prediction_count": 5,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.007154,
+      "prediction_count": 4,
+      "market_observation_count": 2
     },
     {
       "event_id": "PL-239079",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "071e89cc98f0d883f10f",
+      "evidence_fingerprint": "6c987ed24ea7af7039ac",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 732,
+      "estimated_input_tokens": 824,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006864,
-      "prediction_count": 4,
+      "estimated_cost_usd": 0.007048,
+      "prediction_count": 5,
       "market_observation_count": 0
     },
     {
       "event_id": "PL-239080",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "11923ac0d5cefeab300a",
+      "evidence_fingerprint": "e064df5bcd63eb73ed9f",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -851,55 +1821,57 @@
     {
       "event_id": "PL-239113",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "032bf56b9d61543f87b0",
+      "evidence_fingerprint": "59a1fdaea74c0831c2c1",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 556,
+      "estimated_input_tokens": 1157,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006512,
+      "estimated_cost_usd": 0.007714,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-239114",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "3d42577bf94aa2e96242",
+      "evidence_fingerprint": "41a347a99111acc21daa",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 717,
+      "estimated_input_tokens": 1225,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006834,
-      "prediction_count": 4,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.00785,
+      "prediction_count": 3,
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-239115",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "4680f59061150502e314",
+      "evidence_fingerprint": "1654e8d92a4964b7b525",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 552,
+      "estimated_input_tokens": 703,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006504,
+      "estimated_cost_usd": 0.006806,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 2
     },
     {
       "event_id": "PL-239116",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "48da53fb591696006e4b",
+      "evidence_fingerprint": "8d2953b532ad607f799a",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -915,103 +1887,106 @@
     {
       "event_id": "PL-239128",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "56b28d5263999e4a01ef",
+      "evidence_fingerprint": "080d5486fe5fc699739c",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 552,
+      "estimated_input_tokens": 1153,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006504,
+      "estimated_cost_usd": 0.007706,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-239129",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "a5ae5c7eced59fbe7a07",
+      "evidence_fingerprint": "0cd7a33738f762036b72",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 718,
+      "estimated_input_tokens": 868,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006836,
+      "estimated_cost_usd": 0.007136,
       "prediction_count": 4,
-      "market_observation_count": 0
+      "market_observation_count": 2
     },
     {
       "event_id": "PL-239130",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "1e32036f240835d6c1f2",
+      "evidence_fingerprint": "28e8ff637b6c589aad49",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 977,
+      "estimated_input_tokens": 1232,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007354,
-      "prediction_count": 7,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.007864,
+      "prediction_count": 9,
+      "market_observation_count": 1
     },
     {
       "event_id": "PL-239511",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "fd72e376ec686c346328",
+      "evidence_fingerprint": "859124a5699250662aab",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (6 sources)"
       ],
-      "estimated_input_tokens": 983,
+      "estimated_input_tokens": 1964,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007366,
-      "prediction_count": 7,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.009328,
+      "prediction_count": 8,
+      "market_observation_count": 12
     },
     {
       "event_id": "PL-239558",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "d9726e65b2a105b17abc",
+      "evidence_fingerprint": "26407f07daacbc3d1b74",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 639,
+      "estimated_input_tokens": 1025,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006678,
-      "prediction_count": 3,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.00745,
+      "prediction_count": 4,
+      "market_observation_count": 4
     },
     {
       "event_id": "PL-239589",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "02d44980c8b18668a65c",
+      "evidence_fingerprint": "add4ed93b823f051ef68",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 728,
+      "estimated_input_tokens": 819,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006856,
-      "prediction_count": 4,
+      "estimated_cost_usd": 0.007038,
+      "prediction_count": 5,
       "market_observation_count": 0
     },
     {
       "event_id": "PL-239590",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "20eaa287ffdc1cb58cb1",
+      "evidence_fingerprint": "d9ecec4ceec1860fe988",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
@@ -1027,994 +2002,975 @@
     {
       "event_id": "PL-24886",
       "league": "NFL",
-      "evidence_fingerprint": "ae23c889cbdf2ef8a579",
+      "evidence_fingerprint": "4a7bc082d157f444b21b",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (28 sources)"
       ],
-      "estimated_input_tokens": 1031,
+      "estimated_input_tokens": 56121,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007462,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.117642,
+      "prediction_count": 396,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-263831",
       "league": "WNBA",
-      "evidence_fingerprint": "f1c307080a37c428bbb2",
+      "evidence_fingerprint": "7f4e296670926795eb49",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (23 sources)"
       ],
-      "estimated_input_tokens": 862,
+      "estimated_input_tokens": 56906,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007124,
-      "prediction_count": 6,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-267343",
-      "league": "WNBA",
-      "evidence_fingerprint": "597af745eb94bdc05665",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 1345,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00809,
-      "prediction_count": 12,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.119212,
+      "prediction_count": 360,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-270008",
       "league": "WNBA",
-      "evidence_fingerprint": "4a029417b51cee48db72",
+      "evidence_fingerprint": "e0633baa4d7df5904c42",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (18 sources)"
       ],
-      "estimated_input_tokens": 946,
+      "estimated_input_tokens": 3506,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007292,
-      "prediction_count": 7,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.012412,
+      "prediction_count": 5,
+      "market_observation_count": 36
     },
     {
       "event_id": "PL-273860",
       "league": "WNBA",
-      "evidence_fingerprint": "b5287f6518946c400805",
+      "evidence_fingerprint": "e32cb8f67fe743483ba9",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (18 sources)"
       ],
-      "estimated_input_tokens": 1361,
+      "estimated_input_tokens": 3520,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.008122,
-      "prediction_count": 12,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.01244,
+      "prediction_count": 5,
+      "market_observation_count": 36
     },
     {
       "event_id": "PL-274022",
       "league": "MLB",
-      "evidence_fingerprint": "da7ec0093fd8923c5a64",
+      "evidence_fingerprint": "c45d36b301c9f407ea7c",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (32 sources)"
       ],
-      "estimated_input_tokens": 858,
+      "estimated_input_tokens": 4056,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007116,
+      "estimated_cost_usd": 0.013512,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
-      "event_id": "PL-278286",
+      "event_id": "PL-278680",
       "league": "MMA",
-      "evidence_fingerprint": "4cbffe86221aab0ae34a",
+      "evidence_fingerprint": "15b5f9db4647f8618878",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (9 sources)"
       ],
-      "estimated_input_tokens": 538,
+      "estimated_input_tokens": 3673,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006476,
+      "estimated_cost_usd": 0.012746,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-282531",
       "league": "MLB",
-      "evidence_fingerprint": "0a396cb46829835d0084",
+      "evidence_fingerprint": "fcf0a9cd866bf1825901",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (3 sources)"
       ],
-      "estimated_input_tokens": 1024,
+      "estimated_input_tokens": 1070,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007448,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.00754,
+      "prediction_count": 3,
+      "market_observation_count": 6
     },
     {
       "event_id": "PL-285385",
       "league": "NHL",
-      "evidence_fingerprint": "2c8f86941ca7e778ab8e",
+      "evidence_fingerprint": "f19df10370790d20b614",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 537,
+      "estimated_input_tokens": 686,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006474,
+      "estimated_cost_usd": 0.006772,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 2
     },
     {
       "event_id": "PL-287855",
       "league": "MLB",
-      "evidence_fingerprint": "ec7292ae0468b0b66d26",
+      "evidence_fingerprint": "0eece9528abadfe1d59f",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (2 sources)"
       ],
-      "estimated_input_tokens": 539,
+      "estimated_input_tokens": 840,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006478,
+      "estimated_cost_usd": 0.00708,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 4
     },
     {
       "event_id": "PL-287863",
       "league": "MLB",
-      "evidence_fingerprint": "c7a09e483b2378a32f18",
+      "evidence_fingerprint": "5fa26d98cdb38c2744f7",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (32 sources)"
       ],
-      "estimated_input_tokens": 855,
+      "estimated_input_tokens": 4058,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00711,
+      "estimated_cost_usd": 0.013516,
       "prediction_count": 6,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-288661",
-      "league": "MLB",
-      "evidence_fingerprint": "77769cb5a84044c7f9df",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 864,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007128,
-      "prediction_count": 6,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-288688",
-      "league": "MLB",
-      "evidence_fingerprint": "9e41b0d31ba83e986ae2",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 780,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00696,
-      "prediction_count": 5,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-288787",
       "league": "MLB",
-      "evidence_fingerprint": "6613e6b3749411792ac7",
+      "evidence_fingerprint": "3a3c4f0712b5a8870111",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (22 sources)"
       ],
-      "estimated_input_tokens": 543,
+      "estimated_input_tokens": 18920,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006486,
-      "prediction_count": 2,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.04324,
+      "prediction_count": 153,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-288788",
       "league": "MLB",
-      "evidence_fingerprint": "ed997d9b5787bc086fec",
+      "evidence_fingerprint": "748afc58493c81a9dd8c",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (3 sources)"
       ],
-      "estimated_input_tokens": 540,
+      "estimated_input_tokens": 994,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00648,
+      "estimated_cost_usd": 0.007388,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 6
     },
     {
       "event_id": "PL-288824",
       "league": "MLB",
-      "evidence_fingerprint": "4d5628df27ffe572c2df",
+      "evidence_fingerprint": "3f070eca7e8a82491257",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 539,
+      "estimated_input_tokens": 690,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006478,
+      "estimated_cost_usd": 0.00678,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 2
     },
     {
       "event_id": "PL-290091",
       "league": "NHL",
-      "evidence_fingerprint": "86000fc479b2c97b1363",
+      "evidence_fingerprint": "e7ed9dc36094a73dfd9b",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 534,
+      "estimated_input_tokens": 682,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006468,
+      "estimated_cost_usd": 0.006764,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 2
     },
     {
       "event_id": "PL-290579",
       "league": "MLB",
-      "evidence_fingerprint": "2e42bceca8a261d86b18",
+      "evidence_fingerprint": "48e81cca5afa3ead9801",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 540,
+      "estimated_input_tokens": 692,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00648,
+      "estimated_cost_usd": 0.006784,
       "prediction_count": 2,
-      "market_observation_count": 0
+      "market_observation_count": 2
     },
     {
-      "event_id": "PL-290617",
+      "event_id": "PL-291945",
       "league": "WNBA",
-      "evidence_fingerprint": "002c1cac9ce33f6ab52b",
+      "evidence_fingerprint": "cead4c9811e5b3b52cec",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
         "sub-60 confidence requires review"
       ],
-      "estimated_input_tokens": 534,
+      "estimated_input_tokens": 4660,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006468,
-      "prediction_count": 2,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-290618",
-      "league": "WNBA",
-      "evidence_fingerprint": "4dac53d882e1b776483e",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 533,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006466,
-      "prediction_count": 2,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-32662",
-      "league": "NFL",
-      "evidence_fingerprint": "abf538bfab1818b218a9",
-      "evidence_changed": true,
-      "would_call_if_enabled": true,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 859,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007118,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.01472,
+      "prediction_count": 13,
+      "market_observation_count": 36
     },
     {
       "event_id": "PL-32663",
       "league": "NFL",
-      "evidence_fingerprint": "578c46ce424bab78cd41",
+      "evidence_fingerprint": "8134bda3f135fc1859a8",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (29 sources)"
       ],
-      "estimated_input_tokens": 864,
+      "estimated_input_tokens": 79622,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007128,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.164644,
+      "prediction_count": 501,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32664",
       "league": "NFL",
-      "evidence_fingerprint": "ecfb180939f72ae3377e",
+      "evidence_fingerprint": "80f752e291819c594b1d",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (23 sources)"
       ],
-      "estimated_input_tokens": 867,
+      "estimated_input_tokens": 7793,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007134,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.020986,
+      "prediction_count": 44,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32665",
       "league": "NFL",
-      "evidence_fingerprint": "ac720f20ecdeee22a8e2",
+      "evidence_fingerprint": "c9ac19c1d207844f322c",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 860,
+      "estimated_input_tokens": 9012,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00712,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.023424,
+      "prediction_count": 56,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32666",
       "league": "NFL",
-      "evidence_fingerprint": "0fbec68e5cf0247637f5",
+      "evidence_fingerprint": "f9f0e563750dc9b9a05e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 859,
+      "estimated_input_tokens": 16412,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007118,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.038224,
+      "prediction_count": 130,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32667",
       "league": "NFL",
-      "evidence_fingerprint": "c51603b5513577a04a19",
+      "evidence_fingerprint": "85f2a2e4998be5ed35c0",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (23 sources)"
       ],
-      "estimated_input_tokens": 852,
+      "estimated_input_tokens": 50071,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007104,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.105542,
+      "prediction_count": 454,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32668",
       "league": "NFL",
-      "evidence_fingerprint": "6ea95b285aea75172f40",
+      "evidence_fingerprint": "738e7f8ba8944d9e818e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (23 sources)"
       ],
-      "estimated_input_tokens": 862,
+      "estimated_input_tokens": 3891,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007124,
+      "estimated_cost_usd": 0.013182,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32669",
       "league": "NFL",
-      "evidence_fingerprint": "805bd1b78bc2beb0631e",
+      "evidence_fingerprint": "b907c93fa2cd3bdff200",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 861,
+      "estimated_input_tokens": 3892,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007122,
+      "estimated_cost_usd": 0.013184,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32670",
       "league": "NFL",
-      "evidence_fingerprint": "180b488845200685bc28",
+      "evidence_fingerprint": "c1b2fa3b48879f1c9909",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (28 sources)"
       ],
-      "estimated_input_tokens": 865,
+      "estimated_input_tokens": 36059,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00713,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.077518,
+      "prediction_count": 225,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32671",
       "league": "NFL",
-      "evidence_fingerprint": "3195d1df855edb0d9141",
+      "evidence_fingerprint": "7c7999f49831fb060692",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 859,
+      "estimated_input_tokens": 6051,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007118,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.017502,
+      "prediction_count": 27,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32672",
       "league": "NFL",
-      "evidence_fingerprint": "21bde504ca76598c8328",
+      "evidence_fingerprint": "7172ae55cdd69869f49e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 862,
+      "estimated_input_tokens": 5310,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007124,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.01602,
+      "prediction_count": 20,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32673",
       "league": "NFL",
-      "evidence_fingerprint": "76de1b6523765673d2a5",
+      "evidence_fingerprint": "cbc687bb3ca68b8a5c9e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 866,
+      "estimated_input_tokens": 8614,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007132,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.022628,
+      "prediction_count": 52,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32674",
       "league": "NFL",
-      "evidence_fingerprint": "1a2c6140e9308f931538",
+      "evidence_fingerprint": "8d65d7fdda0e63ffecce",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 860,
+      "estimated_input_tokens": 15145,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00712,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.03569,
+      "prediction_count": 116,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32675",
       "league": "NFL",
-      "evidence_fingerprint": "9a081435ded42ca71b6f",
+      "evidence_fingerprint": "02b1c396d514d1967f3f",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 1030,
+      "estimated_input_tokens": 5307,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00746,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.016014,
+      "prediction_count": 20,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-32676",
       "league": "NFL",
-      "evidence_fingerprint": "dd9d339f4d91dd01856b",
+      "evidence_fingerprint": "216a629b712910a3a49d",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 860,
+      "estimated_input_tokens": 9343,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00712,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.024086,
+      "prediction_count": 59,
+      "market_observation_count": 40
+    },
+    {
+      "event_id": "PL-32677",
+      "league": "NFL",
+      "evidence_fingerprint": "276f0f714489083df6d1",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
+      "recommended_model": "gpt-5.6-terra",
+      "routing_reasons": [
+        "sub-60 confidence requires review",
+        "multi-source market evidence (23 sources)"
+      ],
+      "estimated_input_tokens": 6219,
+      "estimated_output_tokens": 450,
+      "estimated_cost_usd": 0.017838,
+      "prediction_count": 29,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-37379",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "7846dc8359cf5684beb4",
+      "evidence_fingerprint": "d761c937d690cb76c59e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (3 sources)"
       ],
-      "estimated_input_tokens": 1073,
+      "estimated_input_tokens": 1795,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007546,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.00899,
+      "prediction_count": 6,
+      "market_observation_count": 12
     },
     {
       "event_id": "PL-37380",
       "league": "NCAA_Football",
-      "evidence_fingerprint": "8e6d8cdef4ac1631511f",
-      "evidence_changed": false,
-      "would_call_if_enabled": false,
-      "recommended_model": "gpt-5.6-terra",
-      "routing_reasons": [
-        "sub-60 confidence requires review"
-      ],
-      "estimated_input_tokens": 642,
-      "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006684,
-      "prediction_count": 3,
-      "market_observation_count": 0
-    },
-    {
-      "event_id": "PL-78381",
-      "league": "NHL",
-      "evidence_fingerprint": "c16c181966e3328cc8b8",
+      "evidence_fingerprint": "a0aca918ddd324b35546",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (6 sources)"
       ],
-      "estimated_input_tokens": 866,
+      "estimated_input_tokens": 2369,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007132,
-      "prediction_count": 6,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.010138,
+      "prediction_count": 2,
+      "market_observation_count": 24
     },
     {
       "event_id": "PL-78382",
       "league": "NHL",
-      "evidence_fingerprint": "1af11fe37b41c0498416",
+      "evidence_fingerprint": "2bf0fa5ec563b1d57345",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (26 sources)"
       ],
-      "estimated_input_tokens": 1030,
+      "estimated_input_tokens": 50658,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00746,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.106716,
+      "prediction_count": 356,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78383",
       "league": "NHL",
-      "evidence_fingerprint": "d98ab1548b21111b0a5c",
+      "evidence_fingerprint": "f0d7d9819f5405f0a18e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (24 sources)"
       ],
-      "estimated_input_tokens": 779,
+      "estimated_input_tokens": 56404,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006958,
-      "prediction_count": 5,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.118208,
+      "prediction_count": 385,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78384",
       "league": "NHL",
-      "evidence_fingerprint": "243c35b32d8814bc1945",
+      "evidence_fingerprint": "4de722ae68750395fced",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (21 sources)"
       ],
-      "estimated_input_tokens": 1021,
+      "estimated_input_tokens": 16314,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007442,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.038028,
+      "prediction_count": 131,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78385",
       "league": "NHL",
-      "evidence_fingerprint": "2fabc861b41603fb3135",
+      "evidence_fingerprint": "4ff2251c5f219047c710",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "material JINX adjustment present",
+        "multi-source market evidence (21 sources)"
       ],
-      "estimated_input_tokens": 1695,
+      "estimated_input_tokens": 16490,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00879,
-      "prediction_count": 16,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.03838,
+      "prediction_count": 132,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78386",
       "league": "NHL",
-      "evidence_fingerprint": "8865857ec20cca9c6b92",
+      "evidence_fingerprint": "b4425f4a6d9c987008e0",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (18 sources)"
       ],
-      "estimated_input_tokens": 1028,
+      "estimated_input_tokens": 13347,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007456,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.032094,
+      "prediction_count": 102,
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78387",
       "league": "NHL",
-      "evidence_fingerprint": "d00197ecfc76f08d1d5f",
+      "evidence_fingerprint": "699b8a3a2a411a2bd45d",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (16 sources)"
       ],
-      "estimated_input_tokens": 784,
+      "estimated_input_tokens": 3821,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006968,
+      "estimated_cost_usd": 0.013042,
       "prediction_count": 5,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78459",
       "league": "NHL",
-      "evidence_fingerprint": "d0d6c08a18e7d862095c",
+      "evidence_fingerprint": "144c28e239c44a751b73",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (11 sources)"
       ],
-      "estimated_input_tokens": 1021,
+      "estimated_input_tokens": 4006,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007442,
+      "estimated_cost_usd": 0.013412,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78460",
       "league": "NHL",
-      "evidence_fingerprint": "5fad41b74cceae807dd7",
+      "evidence_fingerprint": "1a11c501c3aac59a6fb8",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (10 sources)"
       ],
-      "estimated_input_tokens": 937,
+      "estimated_input_tokens": 3923,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007274,
+      "estimated_cost_usd": 0.013246,
       "prediction_count": 7,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78461",
       "league": "NHL",
-      "evidence_fingerprint": "7d178aaa24f09f752dc8",
+      "evidence_fingerprint": "668abe9046a6df84c7d6",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (11 sources)"
       ],
-      "estimated_input_tokens": 1022,
+      "estimated_input_tokens": 4010,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007444,
+      "estimated_cost_usd": 0.01342,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78462",
       "league": "NHL",
-      "evidence_fingerprint": "c85421effea650461419",
+      "evidence_fingerprint": "4dd32237d4237680ef1b",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (10 sources)"
       ],
-      "estimated_input_tokens": 948,
+      "estimated_input_tokens": 3968,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007296,
+      "estimated_cost_usd": 0.013336,
       "prediction_count": 7,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78463",
       "league": "NHL",
-      "evidence_fingerprint": "6a60ea2793d0032e339c",
+      "evidence_fingerprint": "5d7ffc77ebf3173e059b",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (11 sources)"
       ],
-      "estimated_input_tokens": 1024,
+      "estimated_input_tokens": 4022,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007448,
+      "estimated_cost_usd": 0.013444,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78464",
       "league": "NHL",
-      "evidence_fingerprint": "dadf48d48ff0796f2c1b",
+      "evidence_fingerprint": "81ea17bc42c2a18bee8e",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (9 sources)"
       ],
-      "estimated_input_tokens": 861,
+      "estimated_input_tokens": 3848,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007122,
+      "estimated_cost_usd": 0.013096,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78465",
       "league": "NHL",
-      "evidence_fingerprint": "94b33905147f106845c8",
-      "evidence_changed": false,
-      "would_call_if_enabled": false,
+      "evidence_fingerprint": "cef16f02e955fb0ab8b9",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (9 sources)"
       ],
-      "estimated_input_tokens": 785,
+      "estimated_input_tokens": 3796,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00697,
+      "estimated_cost_usd": 0.012992,
       "prediction_count": 5,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78466",
       "league": "NHL",
-      "evidence_fingerprint": "419ce1bcf64254786623",
+      "evidence_fingerprint": "fdf607193317011b0660",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (11 sources)"
       ],
-      "estimated_input_tokens": 1021,
+      "estimated_input_tokens": 4004,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007442,
+      "estimated_cost_usd": 0.013408,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78467",
       "league": "NHL",
-      "evidence_fingerprint": "8d18335e4ce901e3f3ea",
+      "evidence_fingerprint": "03e658da61b0273d7647",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (8 sources)"
       ],
-      "estimated_input_tokens": 784,
+      "estimated_input_tokens": 3807,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.006968,
+      "estimated_cost_usd": 0.013014,
       "prediction_count": 5,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-78468",
       "league": "NHL",
-      "evidence_fingerprint": "6cf708d741a5c9e4f77a",
-      "evidence_changed": false,
-      "would_call_if_enabled": false,
+      "evidence_fingerprint": "a6ec02df845961f80c3d",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (10 sources)"
       ],
-      "estimated_input_tokens": 1014,
+      "estimated_input_tokens": 3988,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007428,
+      "estimated_cost_usd": 0.013376,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 40
     },
     {
       "event_id": "PL-79656",
       "league": "NHL",
-      "evidence_fingerprint": "347f8ee78e8d636ff593",
+      "evidence_fingerprint": "aabb0d1973e25b1a976f",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
       ],
-      "estimated_input_tokens": 1029,
+      "estimated_input_tokens": 2307,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007458,
+      "estimated_cost_usd": 0.010014,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 17
     },
     {
       "event_id": "PL-79657",
       "league": "NHL",
-      "evidence_fingerprint": "20a2a4cb667636941574",
-      "evidence_changed": false,
-      "would_call_if_enabled": false,
+      "evidence_fingerprint": "ddc72405bba52dc279d2",
+      "evidence_changed": true,
+      "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
       ],
-      "estimated_input_tokens": 1029,
+      "estimated_input_tokens": 2389,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007458,
-      "prediction_count": 8,
-      "market_observation_count": 0
+      "estimated_cost_usd": 0.010178,
+      "prediction_count": 9,
+      "market_observation_count": 17
     },
     {
       "event_id": "PL-79658",
       "league": "NHL",
-      "evidence_fingerprint": "ae9a3099e0630b9a4ce6",
+      "evidence_fingerprint": "97d7bdd210d3976986fc",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
       ],
-      "estimated_input_tokens": 944,
+      "estimated_input_tokens": 2220,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007288,
+      "estimated_cost_usd": 0.00984,
       "prediction_count": 7,
-      "market_observation_count": 0
+      "market_observation_count": 17
     },
     {
       "event_id": "PL-79675",
       "league": "NHL",
-      "evidence_fingerprint": "c4f1b00c7657540baa23",
+      "evidence_fingerprint": "db71dc025adcb8d33715",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (4 sources)"
       ],
-      "estimated_input_tokens": 860,
+      "estimated_input_tokens": 1457,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.00712,
+      "estimated_cost_usd": 0.008314,
       "prediction_count": 6,
-      "market_observation_count": 0
+      "market_observation_count": 8
     },
     {
       "event_id": "PL-79676",
       "league": "NHL",
-      "evidence_fingerprint": "df2325c5c081022559e8",
+      "evidence_fingerprint": "925a4442caa4407b13b2",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (5 sources)"
       ],
-      "estimated_input_tokens": 937,
+      "estimated_input_tokens": 1682,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007274,
+      "estimated_cost_usd": 0.008764,
       "prediction_count": 7,
-      "market_observation_count": 0
+      "market_observation_count": 10
     },
     {
       "event_id": "PL-79720",
       "league": "NHL",
-      "evidence_fingerprint": "f289f8c5eadecdf90e68",
+      "evidence_fingerprint": "c82399bb7b75de90958f",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (8 sources)"
       ],
-      "estimated_input_tokens": 1014,
+      "estimated_input_tokens": 2419,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007428,
+      "estimated_cost_usd": 0.010238,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 19
     },
     {
       "event_id": "PL-79721",
       "league": "NHL",
-      "evidence_fingerprint": "cffb98cb9bf225fd8651",
+      "evidence_fingerprint": "71640ce27703470a419d",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (7 sources)"
       ],
-      "estimated_input_tokens": 943,
+      "estimated_input_tokens": 2215,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007286,
+      "estimated_cost_usd": 0.00983,
       "prediction_count": 7,
-      "market_observation_count": 0
+      "market_observation_count": 17
     },
     {
       "event_id": "PL-89080",
       "league": "NHL",
-      "evidence_fingerprint": "4024b982afe38203e517",
+      "evidence_fingerprint": "b303a70090244bf103ad",
       "evidence_changed": true,
       "would_call_if_enabled": true,
       "recommended_model": "gpt-5.6-terra",
       "routing_reasons": [
-        "sub-60 confidence requires review"
+        "sub-60 confidence requires review",
+        "multi-source market evidence (10 sources)"
       ],
-      "estimated_input_tokens": 1012,
+      "estimated_input_tokens": 3982,
       "estimated_output_tokens": 450,
-      "estimated_cost_usd": 0.007424,
+      "estimated_cost_usd": 0.013364,
       "prediction_count": 8,
-      "market_observation_count": 0
+      "market_observation_count": 40
     }
   ]
 }
