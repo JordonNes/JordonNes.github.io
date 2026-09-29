@@ -57,7 +57,7 @@ jobs:
             --github-output "$GITHUB_OUTPUT"
 
       - name: Compile and unit-check ESPN intelligence
-        if: steps.clock.outputs.run_allowed == 'true'
+        if: steps.clock.outputs.run_allowed == 'true' || github.event_name == 'schedule'
         run: |
           python -m py_compile scripts/espn_intelligence_adapter.py scripts/espn_player_enrichment.py scripts/lsi_checkpoint_clock.py
           python scripts/test_lsi_checkpoint_clock.py
@@ -65,7 +65,7 @@ jobs:
           python scripts/test_espn_player_enrichment.py
 
       - name: Refresh persistent ESPN sports truth
-        if: steps.clock.outputs.run_allowed == 'true'
+        if: steps.clock.outputs.run_allowed == 'true' || github.event_name == 'schedule'
         env:
           ESPN_INTELLIGENCE_LOOKAHEAD_HOURS: '96'
           ESPN_INTELLIGENCE_MAX_EVENTS_PER_LEAGUE: '24'
@@ -75,7 +75,7 @@ jobs:
         run: python scripts/espn_intelligence_adapter.py
 
       - name: Refresh stale active-player gamelog and split cache
-        if: steps.clock.outputs.run_allowed == 'true'
+        if: steps.clock.outputs.run_allowed == 'true' || github.event_name == 'schedule'
         continue-on-error: true
         env:
           ESPN_PLAYER_ENRICHMENT_TTL_HOURS: '12'
@@ -86,14 +86,18 @@ jobs:
         run: python scripts/espn_player_enrichment.py
 
       - name: Commit ESPN evidence independently of market publication
-        if: steps.clock.outputs.run_allowed == 'true'
+        if: steps.clock.outputs.run_allowed == 'true' || github.event_name == 'schedule'
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX LSI'
           git config user.email 'actions@users.noreply.github.com'
-          git add data/espn_event_intelligence.json data/espn_player_registry.json data/espn_context.csv data/espn_player_enrichment.json 2>/dev/null || true
+          for p in data/espn_event_intelligence.json data/espn_player_registry.json data/espn_context.csv data/espn_player_enrichment.json; do
+            test -f "$p" || { echo "::error::Missing ESPN output: $p"; exit 1; }
+            git add -- "$p"
+          done
           if git diff --cached --quiet; then
-            echo 'ESPN sports-truth evidence already current.'
+            echo '::error::ESPN refresh generated no changed evidence; inspect acquisition and staging.'
+            exit 1
           else
             git commit -m "LSI ESPN sports-truth refresh"
             for attempt in 1 2 3 4 5; do
@@ -105,7 +109,7 @@ jobs:
           fi
 
       - name: Validate live ESPN evidence coverage
-        if: steps.clock.outputs.run_allowed == 'true'
+        if: steps.clock.outputs.run_allowed == 'true' || github.event_name == 'schedule'
         run: |
           python - <<'PY'
           import json
