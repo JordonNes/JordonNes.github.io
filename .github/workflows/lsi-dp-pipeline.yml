@@ -509,7 +509,7 @@ jobs:
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
           outputs=(
             data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json data/lsi_league_scheduler_state.json
-            data/current_game_moneylines.json data/market_history_delta.csv data/event_inventory.csv
+            data/current_game_moneylines.json data/market_history_delta.csv data/market_history_delta_2.csv data/event_inventory.csv
             data/performance_history.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json
             data/rotowire_context.csv data/context_registry.json data/kalshi_state.json data/propline_intelligence.json
             data/propline_state.json data/parlayapi_state.json data/sportsgameodds_state.json data/oddspapi_history_features.csv data/oddspapi_state.json
@@ -547,6 +547,7 @@ jobs:
               python scripts/lsi_market_history_delta.py split "$snapshot/data/market_history.csv"
               mkdir -p "$snapshot/data"
               cp -a data/market_history_delta.csv "$snapshot/data/market_history_delta.csv"
+              if [ -e data/market_history_delta_2.csv ]; then cp -a data/market_history_delta_2.csv "$snapshot/data/market_history_delta_2.csv"; fi
             fi
             for p in "${outputs[@]}"; do
               if [ -e "$snapshot/$p" ]; then
