@@ -139,6 +139,21 @@ function selectLocation(id){
     renderMapEvaluation(state.selectedLocation.coordinates.lat,state.selectedLocation.coordinates.lng,state.selectedLocation);
   }
 }
+function locationFieldGuide(loc,o={}){
+  const targetNames=[...(loc.targets?.primary||[]),...(loc.targets?.secondary||[])];
+  const species=targetNames.map(resolveSpeciesId).map(catalogSpeciesFor).filter(Boolean);
+  const baits=[...new Set(species.flatMap(s=>s?.fishing?.suggested_baits||[]))].slice(0,8);
+  const tactics=[...new Set(species.flatMap(s=>s?.fishing?.patterns||[]))].slice(0,8);
+  const current=o.current?.speedKnots!=null?`${cleanNumber(o.current.speedKnots,2)} kt toward ${o.current.towardCardinal||o.current.towardDegreesTrue||'grid'}`:'No live current vector is bound to this location.';
+  const tide=o.tide?.trend?String(o.tide.trend).replace(/^./,x=>x.toUpperCase()):'Live tide movement unavailable';
+  return `<div class="location-field-guide">
+    <div><span class="eyebrow">WATER MOVEMENT</span><h4>${escapeHtml(tide)}</h4><p>${escapeHtml(current)}</p><small>Use current seams, protected edges and structure transitions rather than treating a tide turn alone as a bite guarantee.</small></div>
+    <div><span class="eyebrow">FISH IN THIS AREA</span><p>${targetNames.length?targetNames.map(escapeHtml).join(' · '):'No targets recorded yet.'}</p></div>
+    <div><span class="eyebrow">BAIT</span><p>${baits.length?baits.map(escapeHtml).join(' · '):'Match local forage; species-specific bait notes are not yet recorded.'}</p></div>
+    <div><span class="eyebrow">TACTICS</span><p>${tactics.length?tactics.map(escapeHtml).join(' · '):'Fish structure and moving water; detailed tactics are not yet recorded.'}</p></div>
+  </div>`;
+}
+
 function renderLocationDetail(){
   const loc=state.selectedLocation;
   if(!loc)return;
@@ -206,6 +221,7 @@ function renderLocationDetail(){
       <div class="info-card"><small>Verification</small><p>${escapeHtml(loc.verification?.label||'Unverified')}</p></div>
       <div class="info-card"><small>Community evidence</small><p>${escapeHtml(tierLabel(tier))}. ${evidence.length?`Based on ${evidence.length} registered record(s).`:'No community report is being used as a bite claim.'}</p></div>
     </div>
+    ${locationFieldGuide(loc,o)}
     <div class="ray-note"><b>${live?"RAY'S FILE · LIVE-WATER BOUND":"RAY'S FILE · NO LIVE CALL YET"}</b><br>“${escapeHtml(rayText)}”</div>
     <div class="why-panel">
       <span class="eyebrow">WHY RAY THINKS THIS</span>
@@ -1122,16 +1138,16 @@ function renderCalendarDetail(day){
       </div>
     </div>`:
     '<div class="species-plan-empty"><strong>No supported species/location plan.</strong><span>The selected combination is not yet supported by the RICHFISH location catalog. Change the target or location rather than treating missing evidence as a recommendation.</span></div>';
-  const alternatives=plans.slice(1,4).map((alt,i)=>`
+  const alternatives=plans.slice(1,5).map((alt,i)=>`
     <div class="species-alt">
-      <b>#${i+2} ${escapeHtml(alt.speciesName)}</b>
-      <span>${escapeHtml(alt.locationName)} · ${alt.legalGate?'verify regulations':alt.rating+'/6'} · ${alt.window?escapeHtml(alt.window.local):'timing unresolved'}</span>
+      <b>#${i+2} ${escapeHtml(alt.locationName)}</b>
+      <span>${escapeHtml(alt.speciesName)} · ${alt.legalGate?'verify regulations':alt.rating+'/6'} · ${alt.window?escapeHtml(alt.window.local):'timing unresolved'}</span>
     </div>`).join('');
   panel.innerHTML=`
     <span class="eyebrow">SPECIES-AWARE DAY PLAN · ${escapeHtml(station.name)}</span>
     <h3>${escapeHtml(formatCalendarDay(day.date))}</h3>
     ${speciesPlan}
-    ${alternatives?`<div class="calendar-detail-section"><span class="eyebrow">NEXT-BEST SUPPORTED PLANS</span><div class="species-alt-list">${alternatives}</div></div>`:''}
+    ${alternatives?`<div class="calendar-detail-section"><span class="eyebrow">SUGGESTED FISHING LOCATIONS FOR THIS DAY</span><div class="species-alt-list">${alternatives}</div></div>`:''}
 
     <div class="calendar-detail-section">
       <span class="eyebrow">TIDE / LUNAR BASELINE</span>
