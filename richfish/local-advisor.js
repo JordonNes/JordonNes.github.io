@@ -262,15 +262,23 @@ function communitySignal(location,register){
     newestAgeDays:round(Math.min(...weighted.map(item=>item.ageDays)),1)
   };
 }
+function locationMatchesWaterType(location,waterType){
+  const text=`${location?.habitat||''} ${location?.region||''} ${location?.subregion||''} ${location?.site_type||''}`.toLowerCase();
+  const salt=/pacific|ocean|outer coast|surf|marine|saltwater|jetty/.test(text);
+  if(waterType==='salt')return salt;
+  if(waterType==='fresh-brackish')return !salt;
+  return true;
+}
+
 function candidateSpecies(location,speciesCatalog,requestedSpeciesId){
   const allTargets=[...(location?.targets?.primary||[]),...(location?.targets?.secondary||[])];
   const ids=[...new Set(allTargets.map(resolveSpeciesId).filter(Boolean))];
   if(requestedSpeciesId)return ids.includes(requestedSpeciesId)?speciesCatalog.filter(s=>s.id===requestedSpeciesId):[];
   return speciesCatalog.filter(s=>ids.includes(s.id));
 }
-async function buildNearbyAdvice({lat,lng,speciesId=null,limit=5,locations=[],speciesCatalog=[],communityEvidence={records:[]},publicWater=null}){
+async function buildNearbyAdvice({lat,lng,speciesId=null,limit=5,maxDistanceKm=Infinity,waterType=null,locations=[],speciesCatalog=[],communityEvidence={records:[]},publicWater=null}){
   const month=new Date().getMonth()+1,moon=moonInfo();
-  const nearby=locations.filter(l=>l?.coordinates&&l?.access_gate?.status!=='closed').map(location=>({location,distanceKm:haversineKm(lat,lng,Number(location.coordinates.lat),Number(location.coordinates.lng))})).filter(r=>Number.isFinite(r.distanceKm)).sort((a,b)=>a.distanceKm-b.distanceKm).slice(0,14);
+  const nearby=locations.filter(l=>l?.coordinates&&l?.access_gate?.status!=='closed'&&locationMatchesWaterType(l,waterType)).map(location=>({location,distanceKm:haversineKm(lat,lng,Number(location.coordinates.lat),Number(location.coordinates.lng))})).filter(r=>Number.isFinite(r.distanceKm)&&r.distanceKm<=maxDistanceKm).sort((a,b)=>a.distanceKm-b.distanceKm).slice(0,24);
   const uniqueStations=new Map(),stationByLocation=new Map();
   for(const row of nearby){
     const s=nearestStation(Number(row.location.coordinates.lat),Number(row.location.coordinates.lng));
@@ -335,5 +343,5 @@ async function buildNearbyAdvice({lat,lng,speciesId=null,limit=5,locations=[],sp
   };
 }
 
-window.RichFishLocalAdvisor={buildNearbyAdvice,fetchTideCalendar,moonInfo,fishRating,nearestStation,deriveTide,STATIONS};
+window.RichFishLocalAdvisor={buildNearbyAdvice,fetchTideCalendar,moonInfo,fishRating,nearestStation,deriveTide,locationMatchesWaterType,STATIONS};
 })();
