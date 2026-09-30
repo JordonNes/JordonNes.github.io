@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-09-30T01:59:48.671582+00:00",
+  "generated_at_utc": "2026-09-30T06:48:40.545308+00:00",
   "source_registry_generated_at_utc": "2026-09-30T00:48:57.408219+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -49,26 +49,28 @@
   "website_suggestions_recorded": 14960,
   "website_suggestions_structured_for_settlement": 13273,
   "settlement_population_total": 13282,
-  "settled_predictions": 3889,
-  "settlement_rate_pct": 29.28,
+  "settled_predictions": 4266,
+  "settlement_rate_pct": 32.12,
   "run_counts": {
-    "already_settled": 3820,
-    "UNSUPPORTED_PLAYER_MARKET": 1507,
-    "PENDING_EVENT": 3038,
-    "PLAYER_NOT_IN_BOXSCORE": 4449,
+    "already_settled": 3888,
+    "UNSUPPORTED_PLAYER_MARKET": 1647,
+    "settled": 377,
+    "PLAYER_NOT_IN_BOXSCORE": 4633,
     "AMBIGUOUS_EVENT": 283,
-    "settled": 68,
     "TEAM_UNRESOLVED": 86,
-    "EVENT_NOT_FOUND": 31
+    "PENDING_EVENT": 2332,
+    "EVENT_NOT_FOUND": 35,
+    "UNGRADED_MARKET_RULE": 1
   },
   "by_league": {
     "MLB": {
       "already_settled": 548,
-      "PLAYER_NOT_IN_BOXSCORE": 2058,
-      "UNSUPPORTED_PLAYER_MARKET": 799,
+      "PLAYER_NOT_IN_BOXSCORE": 2129,
+      "UNSUPPORTED_PLAYER_MARKET": 864,
       "TEAM_UNRESOLVED": 9,
       "AMBIGUOUS_EVENT": 72,
-      "PENDING_EVENT": 357
+      "PENDING_EVENT": 174,
+      "settled": 47
     },
     "MMA": {
       "already_settled": 30,
@@ -90,12 +92,13 @@
       "PENDING_EVENT": 559
     },
     "NHL": {
-      "already_settled": 483,
-      "PENDING_EVENT": 943,
-      "settled": 68,
+      "already_settled": 551,
+      "settled": 178,
       "TEAM_UNRESOLVED": 30,
-      "UNSUPPORTED_PLAYER_MARKET": 48,
-      "PLAYER_NOT_IN_BOXSCORE": 45
+      "PENDING_EVENT": 605,
+      "UNSUPPORTED_PLAYER_MARKET": 119,
+      "PLAYER_NOT_IN_BOXSCORE": 133,
+      "UNGRADED_MARKET_RULE": 1
     },
     "Tennis": {
       "AMBIGUOUS_EVENT": 35,
@@ -103,464 +106,602 @@
     },
     "WNBA": {
       "already_settled": 286,
-      "PLAYER_NOT_IN_BOXSCORE": 92,
-      "UNSUPPORTED_PLAYER_MARKET": 5,
-      "PENDING_EVENT": 321
+      "PLAYER_NOT_IN_BOXSCORE": 117,
+      "UNSUPPORTED_PLAYER_MARKET": 9,
+      "settled": 152,
+      "PENDING_EVENT": 136,
+      "EVENT_NOT_FOUND": 4
     }
   },
   "recent_settlements": [
     {
-      "prediction_id": "SUG-359acdc7ad520ca92ab2ca99",
+      "prediction_id": "SUG-c342fefbdce9dd347f4abb01",
+      "league": "WNBA",
+      "selection": "Under 5.5 Player Rebounds",
+      "actual_result": "3",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-c679b7e72fd759abe7bd8dc5",
       "league": "NHL",
-      "selection": "Montreal Canadiens ML • -102",
+      "selection": "Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401891774",
+      "source": "ESPN_PUBLIC:401891774:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-c8887938f493c3f32b04de8b",
+      "league": "NHL",
+      "selection": "EDM Oilers ML • -305 PROPLINE:DraftKings",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401891804",
+      "source": "ESPN_PUBLIC:401891804:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-c9b7d3193e5a9a9e38d8308c",
+      "league": "NHL",
+      "selection": "Noah Laba UNDER 1.5 Player Shots On Goal (-230 DraftKings) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.3 • STAT 69.7% • LJPC 96.6% ⟦L=96.6;J=0⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401891774",
+      "source": "ESPN_PUBLIC:401891774:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-cc4989d90bc3e34d0981c68a",
+      "league": "NHL",
+      "selection": "Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401891774",
+      "source": "ESPN_PUBLIC:401891774:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-cd0e872dd122988866804843",
+      "league": "WNBA",
+      "selection": "Pauline Astier UNDER 19.549999237060547 Points • NORMAL • L5 AVG 10 • L&J PROJ 9.4 • POM Value 89.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-cf70efffdb2a188d5f9a88d8",
+      "league": "WNBA",
+      "selection": "Over 10.5 Player Points",
+      "actual_result": "18",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-cf9e164d490736496eaa4a8e",
+      "league": "NHL",
+      "selection": "Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401891774",
+      "source": "ESPN_PUBLIC:401891774:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d59a8fffec0fedd06654bb13",
+      "league": "NHL",
+      "selection": "Nikita Zadorov UNDER 0.5 Player Goals (+100 PrizePicks) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.3 • STAT 50% • LJPC 96% ⟦L=96;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401891774",
+      "source": "ESPN_PUBLIC:401891774:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d735d31b38389cd523426186",
+      "league": "WNBA",
+      "selection": "Napheesa Collier UNDER 7.5 Player Rebounds (-143 DraftKings) • NORMAL • L5 AVG 5.4 • L&J PROJ 5.8 • POM Value 89.6 • STAT 58.9% • LJPC 85.8% ⟦L=85.8;J=0⟧",
+      "actual_result": "7",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-dceb27bc2515258edd5922e1",
+      "league": "WNBA",
+      "selection": "Over 3.5 Player Assists",
+      "actual_result": "7",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-de190ea23ae82487e05fb340",
+      "league": "NHL",
+      "selection": "Gabe Perreault UNDER 2.5 Player Shots On Goal (-350 Hard Rock Bet) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 96.5 • STAT 77.8% • LJPC 97.3% ⟦L=97.3;J=0⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401891774",
+      "source": "ESPN_PUBLIC:401891774:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-df05287604eba31522c8b228",
+      "league": "WNBA",
+      "selection": "Sabrina Ionescu UNDER 19.5 Player Points (-270 Kalshi) • NORMAL • L5 AVG 11.6 • L&J PROJ 11.9 • POM Value 92.5 • STAT 73.0% • LJPC 94.2% ⟦L=94.2;J=0⟧",
+      "actual_result": "18",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e648c2b4c08ad01d29a31637",
+      "league": "NHL",
+      "selection": "Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401891774",
+      "source": "ESPN_PUBLIC:401891774:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e96b89c61e171fa5a78a6515",
+      "league": "NHL",
+      "selection": "Vegas Golden Knights ML • -240 PROPLINE:ProphetX",
       "actual_result": "1",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
+      "provider_event_id": "401891775",
+      "source": "ESPN_PUBLIC:401891775:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-38973124be3030a46b9913fa",
-      "league": "NHL",
-      "selection": "MTL Canadiens ML",
+      "prediction_id": "SUG-ea92b874404b59cb2ca65be4",
+      "league": "MLB",
+      "selection": "San Diego Padres ML • -102 PROPLINE:Polymarket",
       "actual_result": "1",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
+      "provider_event_id": "401907974",
+      "source": "ESPN_PUBLIC:401907974:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-bf918a3d3e3498361b880d37",
+      "prediction_id": "SUG-f4cadbe3c10a3320f97ba591",
       "league": "NHL",
-      "selection": "Canadiens ML",
+      "selection": "Will Cuylle UNDER 1.5 Player Shots On Goal (-135 DraftKings) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.3 • STAT 57.5% • LJPC 96.7% ⟦L=96.7;J=0⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401891774",
+      "source": "ESPN_PUBLIC:401891774:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f5792c9c3adc95576fcd9100",
+      "league": "WNBA",
+      "selection": "Kayla McBride UNDER 28.049999237060547 Points • NORMAL • L5 AVG 13.2 • L&J PROJ 14.1 • POM Value 87.8 • STAT 0% • LJPC 98.3% ⟦L=98.3;J=0⟧",
+      "actual_result": "14",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f917bfad35e10e0bb891144e",
+      "league": "WNBA",
+      "selection": "Over 4.5 Player Rebounds",
+      "actual_result": "5",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-1bce490d52b86c695de786a4",
+      "league": "NHL",
+      "selection": "Vegas Golden Knights ML • -245 PROPLINE:Novig",
       "actual_result": "1",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
+      "provider_event_id": "401891775",
+      "source": "ESPN_PUBLIC:401891775:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-b1c76a62e04a47fe499e63cc",
+      "prediction_id": "SUG-2024924bc926ef6fcc526459",
       "league": "NHL",
-      "selection": "Toronto Maple Leafs ML • -112 PROPLINE:BetOnline.ag",
+      "selection": "Edmonton Oilers ML • -280 PROPLINE:ProphetX",
       "actual_result": "0",
       "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
+      "provider_event_id": "401891804",
+      "source": "ESPN_PUBLIC:401891804:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-b6fb1cfc0a3ed68cc67d3a7d",
-      "league": "NHL",
-      "selection": "Toronto Maple Leafs ML • -112 PROPLINE:BetOnline.ag",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-f90ec892f940aace34e794fb",
-      "league": "NHL",
-      "selection": "Toronto Maple Leafs ML • -113 PROPLINE:Courtside",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-0edbd3a3b23fa4f6f07a1277",
-      "league": "NHL",
-      "selection": "Toronto Maple Leafs ML • -111 PROPLINE:Novig",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-7e2fbd07c586fc786689ab82",
-      "league": "NHL",
-      "selection": "Toronto Maple Leafs ML • -108 PROPLINE:Novig",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-1ad00fa3006144dda4c57706",
-      "league": "NHL",
-      "selection": "Toronto Maple Leafs ML • -108 PROPLINE:Novig",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-4fd58042ae9015374b7976dd",
-      "league": "NHL",
-      "selection": "Toronto Maple Leafs ML • -108 PROPLINE:Novig",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-c1f0e34dd35679ea5530adb9",
-      "league": "NHL",
-      "selection": "Toronto Maple Leafs ML • -102 PROPLINE:ProphetX",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-e6eda7b87c39bbd14cf44d26",
-      "league": "NHL",
-      "selection": "TOR Maple Leafs ML • -118 PROPLINE:DraftKings",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-44bfabe973f5a3a02e6a4973",
-      "league": "NHL",
-      "selection": "TOR Maple Leafs ML • -118 PROPLINE:DraftKings",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-a2b7d8fd97775e178f3b3133",
-      "league": "NHL",
-      "selection": "TOR Maple Leafs ML • -118 PROPLINE:DraftKings",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-37bf0f10b67381e20390009e",
-      "league": "NHL",
-      "selection": "TOR Maple Leafs ML • -118 PROPLINE:DraftKings",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-138cfd80c4501e1a8736dc9d",
-      "league": "NHL",
-      "selection": "TOR Maple Leafs ML • -118 PROPLINE:DraftKings",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-be4341aec734e352a201e842",
-      "league": "NHL",
-      "selection": "TOR Maple Leafs ML • -110 PROPLINE:Fliff",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-03c3ea67c05bb12af385fa1b",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-09c7b1a911dea0175bc66521",
-      "league": "NHL",
-      "selection": "John Tavares UNDER 2.5 Player Shots On Goal (-160 DraftKings) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.9 • STAT 61.5% • LJPC 97.7% ⟦L=97.7;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-10b7f5ec554ea270dc4a69f1",
-      "league": "NHL",
-      "selection": "William Nylander UNDER 2.5 Player Shots On Goal (-135 DraftKings) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.7 • STAT 57.5% • LJPC 97.3% ⟦L=97.3;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-1705a279a6b9158898ef2b7a",
-      "league": "NHL",
-      "selection": "Under 0.5 Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-19f41eb6187b5ceb653eb4f0",
-      "league": "NHL",
-      "selection": "Lane Hutson OVER 0.5 Shots on Goal • GOBLIN • L5 AVG 0 • L&J PROJ 0 • POM Value 34.6 • STAT 0% • LJPC 13.3% ⟦L=13.3;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-2d8291e7094288d85de4677f",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-34fbceed3da3d0ab9b14ee97",
-      "league": "NHL",
-      "selection": "Nick Suzuki UNDER 2.5 Player Shots On Goal (-160 DraftKings) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.9 • STAT 61.5% • LJPC 97.7% ⟦L=97.7;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-368b5eda51a222b2b264361c",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-3c36c717a13682ea2e311fc3",
-      "league": "NHL",
-      "selection": "TOR Maple Leafs ML • -115 PROPLINE:DraftKings",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-49b735eeb5e94f2c2f9734eb",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-4e9ba941859670b6db1eab7d",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-5c6889850b5c65f6a4fc8190",
-      "league": "NHL",
-      "selection": "Kirill Marchenko UNDER 2.5 Shots on Goal • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 89.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-62893fcad7af6540f3a3f26f",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-630800ded4f886f2734ed078",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
+      "prediction_id": "SUG-9a8b12430018a3c3d07ca36b",
+      "league": "MLB",
+      "selection": "New York Yankees ML • -120 PROPLINE:Polymarket",
       "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401907924",
+      "source": "ESPN_PUBLIC:401907924:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-d47c2538eedf8a0e0280f40d",
+      "league": "WNBA",
+      "selection": "MIN Lynx ML • -166 PROPLINE:DraftKings",
+      "actual_result": "0",
       "grade": "LOSS",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-704118777ae4a96614de64da",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-16de4ce0c966ba15ef3f813c",
+      "league": "WNBA",
+      "selection": "Yes 8+ Rebounds",
+      "actual_result": "13",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-73aa500c24bf7b0c470b555d",
-      "league": "NHL",
-      "selection": "Cole Caufield UNDER 3.5 Player Shots On Goal (-165 DraftKings) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.9 • STAT 62.3% • LJPC 97.7% ⟦L=97.7;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "prediction_id": "SUG-18c2b49ca64de06e9c843cbb",
+      "league": "WNBA",
+      "selection": "Yes 4+ Rebounds",
+      "actual_result": "2",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-83dad5fdd6c12121fb7153f9",
+      "prediction_id": "SUG-5402547322ad3236209a0010",
       "league": "NHL",
-      "selection": "Chris Kreider UNDER 2.5 Shots on Goal • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 89.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
+      "selection": "Vegas Golden Knights ML • -245 PROPLINE:Novig",
+      "actual_result": "1",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401891775",
+      "source": "ESPN_PUBLIC:401891775:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-8474df03ac123c66ab66c02b",
-      "league": "NHL",
-      "selection": "Nick Paul UNDER 0.5 Player Goals (-700 Hard Rock Bet) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 93.1 • STAT 87.5% • LJPC 98.7% ⟦L=98.7;J=0⟧",
-      "actual_result": "0",
+      "prediction_id": "SUG-5538bfc6037f008df718abc1",
+      "league": "WNBA",
+      "selection": "Yes 20+ Points",
+      "actual_result": "21",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-849641d277c7752829dad044",
-      "league": "NHL",
-      "selection": "Darren Raddysh UNDER 2.5 Player Shots On Goal (-140 DraftKings) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.8 • STAT 58.3% • LJPC 97.4% ⟦L=97.3;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "prediction_id": "SUG-56edafc5710174de32f4b3e1",
+      "league": "WNBA",
+      "selection": "Yes 10+ Points",
+      "actual_result": "4",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-9122875064f3a5dee25529f1",
+      "prediction_id": "SUG-8118f7a831bf0e1b17a6eee6",
       "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
+      "selection": "Edmonton Oilers ML • -280 PROPLINE:ProphetX",
       "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "grade": "LOSS",
+      "provider_event_id": "401891804",
+      "source": "ESPN_PUBLIC:401891804:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-a0107216299cf7b724307e11",
-      "league": "NHL",
-      "selection": "Ivan Demidov UNDER 2 Shots on Goal • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 89.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "prediction_id": "SUG-88757c5e0bb1b235b77b8434",
+      "league": "WNBA",
+      "selection": "Yes 15+ Points",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-a363f3a5c9b4d250d2980584",
-      "league": "NHL",
-      "selection": "Juraj Slafkovsky UNDER 2.5 Player Shots On Goal (-145 DraftKings) • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 98.8 • STAT 59.2% • LJPC 97.4% ⟦L=97.4;J=0⟧",
-      "actual_result": "0",
+      "prediction_id": "SUG-88c919f5766cd5d180771f97",
+      "league": "WNBA",
+      "selection": "Yes 6+ Assists",
+      "actual_result": "7",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-b63525cea6a665b62ce4bcb1",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "prediction_id": "SUG-90afd684ae3ef6f9787113ce",
+      "league": "WNBA",
+      "selection": "Yes 15+ Points",
+      "actual_result": "2",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-bbc9afedcf17d8cc415cb455",
-      "league": "NHL",
-      "selection": "John Tavares UNDER 2.5 Shots on Goal • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 89.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-a23bda2345b9f04a53f94635",
+      "league": "WNBA",
+      "selection": "Yes 2+ Rebounds",
+      "actual_result": "3",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-c69d6e11286670b6dced113b",
-      "league": "NHL",
-      "selection": "Lane Hutson UNDER 0.5 Shots on Goal • GOBLIN • L5 AVG 0 • L&J PROJ 0 • POM Value 77.4 • STAT 0% • LJPC 86.7% ⟦L=86.7;J=0⟧ 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-bf123db9178ae0d5ad846c76",
+      "league": "MLB",
+      "selection": "New York Yankees ML • -122 PROPLINE:Polymarket",
+      "actual_result": "1",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401907924",
+      "source": "ESPN_PUBLIC:401907924:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-cc3d6dca875df9edbaf1b1e2",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-c02ff09542fa7ed1e08168cf",
+      "league": "WNBA",
+      "selection": "Yes 10+ Points",
+      "actual_result": "18",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-cd5855becf250e1cf3cfe619",
-      "league": "NHL",
-      "selection": "Jack Roslovic UNDER 2.5 Shots on Goal • DEMON • L5 AVG 0 • L&J PROJ 0 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "prediction_id": "SUG-c0f158caa1d17b1c16224831",
+      "league": "WNBA",
+      "selection": "Yes 4+ Rebounds",
+      "actual_result": "3",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-d48f5db5680969aa6fbbd931",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "prediction_id": "SUG-d16a1d118dffd17568c85bab",
+      "league": "WNBA",
+      "selection": "Yes 10+ Points",
+      "actual_result": "2",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-d4c2adc12c6796a10928d1d4",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-d42f7ba4524efd43f6fbdac0",
+      "league": "WNBA",
+      "selection": "Yes 4+ Rebounds",
+      "actual_result": "5",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-dc34c61c46b38fa544e6499f",
-      "league": "NHL",
-      "selection": "Nick Suzuki UNDER 0.5 Goals • NORMAL • L5 AVG 0 • L&J PROJ 0 • POM Value 85.8 • STAT 0% • LJPC 98.3% ⟦L=98.3;J=0⟧ 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-d571609acb3b4f5664baa018",
+      "league": "WNBA",
+      "selection": "Yes 6+ Rebounds",
+      "actual_result": "7",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-df17fc481adf38dc4dc64a28",
-      "league": "NHL",
-      "selection": "Darren Raddysh UNDER 4.5 Shots on Goal • DEMON • L5 AVG 0 • L&J PROJ 0 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-dcd0a37447be013efea4cfec",
+      "league": "WNBA",
+      "selection": "Yes 3+ Assists",
+      "actual_result": "4",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-eab144864a841c240ea2d2a1",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-e0621844356b9927bd74cc88",
+      "league": "WNBA",
+      "selection": "Yes 4+ Rebounds",
+      "actual_result": "5",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-f7f9cd5e99eba7d6fc57f100",
-      "league": "NHL",
-      "selection": "Under 0.5 Player Goals 🕵️",
-      "actual_result": "0",
+      "prediction_id": "SUG-e1040dc2843afdcc533918f0",
+      "league": "WNBA",
+      "selection": "Yes 20+ Points",
+      "actual_result": "21",
       "grade": "WIN",
-      "provider_event_id": "401891827",
-      "source": "ESPN_PUBLIC:401891827:BOX_SCORE"
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f95e9c8143bbd968ebbc262d",
+      "league": "WNBA",
+      "selection": "Yes 10+ Points",
+      "actual_result": "2",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-fedebd41b3aae228671b7533",
+      "league": "WNBA",
+      "selection": "Yes 6+ Rebounds",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-1c6d2205f0aea2720df6ebe0",
+      "league": "WNBA",
+      "selection": "Yes 4+ Rebounds",
+      "actual_result": "3",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-255d2ed22b52cbeebf4acbf2",
+      "league": "WNBA",
+      "selection": "Yes 15+ Points",
+      "actual_result": "2",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-55ae8f71924b872ed8e83fe1",
+      "league": "WNBA",
+      "selection": "Yes 10+ Points",
+      "actual_result": "4",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-6a67e602a7195e52affc7555",
+      "league": "WNBA",
+      "selection": "Yes 3+ Assists",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a9b4417f98179f1e9e068771",
+      "league": "WNBA",
+      "selection": "Yes 10+ Points",
+      "actual_result": "8",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f10cd6901c7abe58d462582b",
+      "league": "WNBA",
+      "selection": "Yes 6+ Rebounds",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401918017",
+      "source": "ESPN_PUBLIC:401918017:BOX_SCORE"
     }
   ],
   "unresolved": [
+    {
+      "prediction_id": "SUG-96239948b124dfa715574e1b",
+      "league": "NFL",
+      "event_id": "PL-32665",
+      "provider_event_id": "401872973",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-96451ccc584f2e26bcbdba17",
+      "league": "MLB",
+      "market": "(71¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-973c31cbeb29292c1daad76c",
+      "league": "NFL",
+      "event_id": "PL-32665",
+      "provider_event_id": "401872973",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-992128c71366bcfcca92fab7",
+      "league": "NCAA_Football",
+      "event_id": "PL-227802",
+      "provider_event_id": "401858245",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-99aed6098f21e35809c0d874",
+      "league": "NCAA_Football",
+      "event_id": "PAPI-2ef51c12d014affa",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 18.0,
+        "second_score": 5.0,
+        "token_hits": 0,
+        "time_delta_hours": 0.0
+      }
+    },
+    {
+      "prediction_id": "SUG-99cdc808e5e7d0658eb30740",
+      "league": "NFL",
+      "event_id": "PL-32665",
+      "provider_event_id": "401872973",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9a31e8d7fc6c89db46b61b27",
+      "league": "NCAA_Football",
+      "event_id": "PL-227802",
+      "provider_event_id": "401858245",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9a40c2d1f1715003102554a6",
+      "league": "NFL",
+      "event_id": "PL-32664",
+      "provider_event_id": "401872968",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9d5e6dfe271bd2e87376704a",
+      "league": "NCAA_Football",
+      "event_id": "PAPI-6e07117b07a49505",
+      "provider_event_id": "401858250",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9de1fccae3bf120310a8822f",
+      "league": "NHL",
+      "market": "(95¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-9df2db6b922b88052d4038c4",
+      "league": "NCAA_Football",
+      "event_id": "PL-238798",
+      "provider_event_id": "401858473",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9e7ec1d2fe7dd09edd109318",
+      "league": "WNBA",
+      "market": "(92¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-9e810a37fb59d1f87ef86844",
+      "league": "NHL",
+      "event_id": "PL-210424",
+      "provider_event_id": "401892446",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9e9b646e00cf2cb914979c01",
+      "league": "NHL",
+      "market": "(44¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-9eb90322b0b73b6ce5de190e",
+      "league": "NHL",
+      "market": "(99¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-9f54869905b68454d843b444",
+      "league": "NCAA_Football",
+      "event_id": "PL-37379",
+      "provider_event_id": "401858249",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9f5c36537e89905b7706a218",
+      "league": "NFL",
+      "event_id": "PL-32665",
+      "provider_event_id": "401872973",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-9f9137aae8a13d6a7d6475f8",
+      "league": "NHL",
+      "market": "(40¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
     {
       "prediction_id": "SUG-9fe58cb58b047bfe92ed0fa8",
       "league": "NFL",
@@ -580,10 +721,8 @@
     {
       "prediction_id": "SUG-a03b3b68c64334b3c6bfe13d",
       "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(59¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-a049246253cc45eefe028c8b",
@@ -594,20 +733,10 @@
       "state": "STATUS_SCHEDULED"
     },
     {
-      "prediction_id": "SUG-a23bda2345b9f04a53f94635",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
       "prediction_id": "SUG-a2ab3c2c301a06000301371f",
       "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(72¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-a2da0afc706b6b43a70b954a",
@@ -620,10 +749,8 @@
     {
       "prediction_id": "SUG-a32d344a2f9fcc2211c0efc8",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29VANEDM",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "Points",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-a35eabada6019997efad3012",
@@ -710,10 +837,8 @@
     {
       "prediction_id": "SUG-a8fb71863ec4e4dfdd54b83d",
       "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(71¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-a920894d0787ee13039e65ef",
@@ -758,10 +883,8 @@
     {
       "prediction_id": "SUG-abb551f0131386efa8d190f8",
       "league": "NHL",
-      "event_id": "PL-78385",
-      "provider_event_id": "401891775",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(63¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-ac12a4ee07d84d6778606f4b",
@@ -798,10 +921,8 @@
     {
       "prediction_id": "SUG-ad9e75075a49b3d8e5e33b66",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29CHIVGK",
-      "provider_event_id": "401891775",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "Points",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-ae2beb21135e0ac203131844",
@@ -838,10 +959,8 @@
     {
       "prediction_id": "SUG-b43bbd50f100effa73055f0f",
       "league": "MLB",
-      "event_id": "PL-287863",
-      "provider_event_id": "401907974",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(78¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-b4bf08848ec3f6cb3c0b51ec",
@@ -922,10 +1041,8 @@
     {
       "prediction_id": "SUG-ba1ac7a0d2379ed36c77cc38",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29VANEDM",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "Points",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-ba223d1b93f7397e07ccfd4c",
@@ -992,28 +1109,12 @@
       "state": "STATUS_SCHEDULED"
     },
     {
-      "prediction_id": "SUG-bf123db9178ae0d5ad846c76",
-      "league": "MLB",
-      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
-      "provider_event_id": "401907924",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
       "prediction_id": "SUG-bf6d965fd1b620a95fd04758",
       "league": "NCAA_Football",
       "event_id": "PL-238337",
       "provider_event_id": "401856818",
       "reason": "PENDING_EVENT",
       "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-c02ff09542fa7ed1e08168cf",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-c04932cbc3f6e54428757f06",
@@ -1026,10 +1127,8 @@
     {
       "prediction_id": "SUG-c0589b96c605e43f6b0b99e4",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29VANEDM",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "Points",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-c0781408c7eb9d2c0981179a",
@@ -1046,26 +1145,14 @@
     {
       "prediction_id": "SUG-c08c56ddaeebd01b8e4cfe94",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29NYRBOS",
-      "provider_event_id": "401891774",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_END_PERIOD"
+      "market": "(50¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-c0c8461b2ebe9d8824b7f026",
       "league": "MLB",
-      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
-      "provider_event_id": "401907924",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-c0f158caa1d17b1c16224831",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(66¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-c10ef201b088c4043b79863b",
@@ -1110,10 +1197,8 @@
     {
       "prediction_id": "SUG-c519624f9db1ddc9d3d9bdf1",
       "league": "NHL",
-      "event_id": "PL-78385",
-      "provider_event_id": "401891775",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(67¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-c55a61b47b5c5e292a87ab10",
@@ -1158,26 +1243,20 @@
     {
       "prediction_id": "SUG-c8e94d06a20bffdd68b22787",
       "league": "MLB",
-      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
-      "provider_event_id": "401907924",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(66¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-c92ee4b7b7bd5e47dc026e8f",
       "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(62¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-c979c97a95beca957822acfb",
       "league": "MLB",
-      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
-      "provider_event_id": "401907924",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(88¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-ca80d7a010055e550eca2ed1",
@@ -1190,10 +1269,8 @@
     {
       "prediction_id": "SUG-cae1cb561eb55e4c4bd43c14",
       "league": "NHL",
-      "event_id": "PL-78384",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(84¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-cb2cf7fbe0160c2c000b21cc",
@@ -1214,10 +1291,8 @@
     {
       "prediction_id": "SUG-ccbe96ccb97bdb837636eab9",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29VANEDM",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "Points 🕵️",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-ccd100367486f8e49c7f45af",
@@ -1278,10 +1353,8 @@
     {
       "prediction_id": "SUG-d05d8e5706eaa4a416db35b4",
       "league": "MLB",
-      "event_id": "PL-287863",
-      "provider_event_id": "401907974",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(69¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-d0e0a6d8b9cfd4ac05ca7f25",
@@ -1292,20 +1365,10 @@
       "state": "STATUS_SCHEDULED"
     },
     {
-      "prediction_id": "SUG-d16a1d118dffd17568c85bab",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
       "prediction_id": "SUG-d19565fd5d45d36693561645",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29NYRBOS",
-      "provider_event_id": "401891774",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_END_PERIOD"
+      "market": "(99¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-d1a554b2fba0e58ced850350",
@@ -1334,10 +1397,8 @@
     {
       "prediction_id": "SUG-d2b7d01d48524e0df278629f",
       "league": "MLB",
-      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
-      "provider_event_id": "401907924",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(76¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-d2de094100e99b9d96889cf9",
@@ -1376,28 +1437,16 @@
       "state": "STATUS_SCHEDULED"
     },
     {
-      "prediction_id": "SUG-d42f7ba4524efd43f6fbdac0",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
       "prediction_id": "SUG-d43cc296fa20a5d7cc1f36e2",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29NYRBOS",
-      "provider_event_id": "401891774",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_END_PERIOD"
+      "market": "(68¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-d496fd7eba00e05d259835de",
       "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(86¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-d537c1728f4cc744a4ecb351",
@@ -1416,14 +1465,6 @@
       "state": "STATUS_SCHEDULED"
     },
     {
-      "prediction_id": "SUG-d571609acb3b4f5664baa018",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
       "prediction_id": "SUG-d5a557f4c1aee1f4427490e6",
       "league": "NCAA_Football",
       "event_id": "PL-225496",
@@ -1434,18 +1475,14 @@
     {
       "prediction_id": "SUG-d5b49f044b68056bba06bb33",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29NYRBOS",
-      "provider_event_id": "401891774",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_END_PERIOD"
+      "market": "Points",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-d8690e86ff4ea886e28e88ab",
       "league": "NHL",
-      "event_id": "PL-78384",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(54¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-d89132958edf5770c26743e3",
@@ -1490,10 +1527,8 @@
     {
       "prediction_id": "SUG-da551debfcbc1b51218ab16c",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29VANEDM",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "Points",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-dba3f8c68740462f02a8d010",
@@ -1504,18 +1539,8 @@
     {
       "prediction_id": "SUG-dc42bf3a29d534f678dffb49",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29CHIVGK",
-      "provider_event_id": "401891775",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-dcd0a37447be013efea4cfec",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "Points 🕵️",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-dd05073bd18c4fb865a0e20e",
@@ -1540,10 +1565,8 @@
     {
       "prediction_id": "SUG-deb2321816a5aa300a958134",
       "league": "MLB",
-      "event_id": "PL-287863",
-      "provider_event_id": "401907974",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(47¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-df7a3c04bb52826517e6dacc",
@@ -1562,20 +1585,10 @@
       "state": "STATUS_SCHEDULED"
     },
     {
-      "prediction_id": "SUG-e0621844356b9927bd74cc88",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
       "prediction_id": "SUG-e0cb44d85bb27cb718c74385",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29NYRBOS",
-      "provider_event_id": "401891774",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_END_PERIOD"
+      "market": "(63¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-e0db21541bc299660e49738c",
@@ -1584,14 +1597,6 @@
       "provider_event_id": "401858250",
       "reason": "PENDING_EVENT",
       "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-e1040dc2843afdcc533918f0",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-e16dc9d5680b2ec59ed19588",
@@ -1626,10 +1631,8 @@
     {
       "prediction_id": "SUG-e4f4ec1d99f59b9807c316a4",
       "league": "NHL",
-      "event_id": "PL-78385",
-      "provider_event_id": "401891775",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(50¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-e51043ad4ce160cfe7505718",
@@ -1650,10 +1653,8 @@
     {
       "prediction_id": "SUG-e60d2cb0b420caa21c4a544d",
       "league": "NHL",
-      "event_id": "PL-78384",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(43¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-e6159a67efef81758698e726",
@@ -1674,18 +1675,14 @@
     {
       "prediction_id": "SUG-e68a8a29ebf926f26ca63fe9",
       "league": "MLB",
-      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
-      "provider_event_id": "401907924",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(77¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-e7388bdf494038b56393ba2e",
       "league": "NHL",
-      "event_id": "PL-78385",
-      "provider_event_id": "401891775",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(18¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-e882de83d7292f764f88bc57",
@@ -1722,10 +1719,8 @@
     {
       "prediction_id": "SUG-e960400a374f0ef6fc72fd62",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29VANEDM",
-      "provider_event_id": "401891804",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "Points",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
       "prediction_id": "SUG-e9d346fd0f5adb0edf571783",
@@ -1818,10 +1813,8 @@
     {
       "prediction_id": "SUG-ed6c8e26fd15b6d0c56c0b26",
       "league": "MLB",
-      "event_id": "PL-287863",
-      "provider_event_id": "401907974",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(86¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-edba38798eb3e1ad7259b98f",
@@ -1882,10 +1875,8 @@
     {
       "prediction_id": "SUG-f02f7b39562e95cda8476056",
       "league": "MLB",
-      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
-      "provider_event_id": "401907924",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(57.0¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-f0f279d1ffcf1abfc1ae1bf5",
@@ -1898,10 +1889,8 @@
     {
       "prediction_id": "SUG-f1648f6ea7d61182b44c42ff",
       "league": "MLB",
-      "event_id": "PL-287863",
-      "provider_event_id": "401907974",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(47¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-f26234215c9f143d12c56939",
@@ -1922,10 +1911,8 @@
     {
       "prediction_id": "SUG-f4152075567144700749d585",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29NYRBOS",
-      "provider_event_id": "401891774",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_END_PERIOD"
+      "market": "(95¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-f47d16fcbdd799fa248db4b9",
@@ -1952,10 +1939,8 @@
     {
       "prediction_id": "SUG-f4b0d64aee7201ebd89f493b",
       "league": "MLB",
-      "event_id": "PL-287863",
-      "provider_event_id": "401907974",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "market": "(72¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-f4dd974b841fbb101586eec3",
@@ -1980,10 +1965,8 @@
     {
       "prediction_id": "SUG-f66564e376380c4a2b7075d7",
       "league": "NHL",
-      "event_id": "KXNHLPTS-26SEP29NYRBOS",
-      "provider_event_id": "401891774",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_END_PERIOD"
+      "market": "(65¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-f695feb73a199b456984d02d",
@@ -2008,14 +1991,6 @@
       "provider_event_id": "401858250",
       "reason": "PENDING_EVENT",
       "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f95e9c8143bbd968ebbc262d",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-f97932fce0c5082eb5970ec6",
@@ -2044,10 +2019,8 @@
     {
       "prediction_id": "SUG-fd759a550f62f8804c2c6103",
       "league": "MLB",
-      "event_id": "KXMLBHRR-26SEP292000BOSNYY",
-      "provider_event_id": "401907924",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "market": "(88¢ Kalshi)",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
       "prediction_id": "SUG-fd79721bc75cb3ec92d1f596",
@@ -2072,14 +2045,6 @@
       "provider_event_id": "401907897",
       "reason": "PENDING_EVENT",
       "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-fedebd41b3aae228671b7533",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-ff5e999173c4fcc4ec35b41d",
@@ -2112,54 +2077,6 @@
       "provider_event_id": "401907897",
       "reason": "PENDING_EVENT",
       "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-1c6d2205f0aea2720df6ebe0",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-255d2ed22b52cbeebf4acbf2",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-55ae8f71924b872ed8e83fe1",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-6a67e602a7195e52affc7555",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-a9b4417f98179f1e9e068771",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-f10cd6901c7abe58d462582b",
-      "league": "WNBA",
-      "event_id": "KXWNBAPTS-26SEP29MINNY",
-      "provider_event_id": "401918017",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     }
   ],
   "influence_effect": "NONE"
