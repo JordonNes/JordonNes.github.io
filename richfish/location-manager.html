@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RICHFISH Location Manager</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="styles.css">
+<style>
+.manager-shell{width:min(1280px,94vw);margin:100px auto 40px}.manager-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.manager-card{border:1px solid var(--line);border-radius:12px;background:#08262c;padding:16px}.manager-map{height:620px;border-radius:10px;overflow:hidden}.manager-form{display:grid;gap:10px}.manager-form label{font-size:10px;font-weight:900;text-transform:uppercase;color:var(--muted)}.manager-form input,.manager-form textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:7px;background:#061d22;color:white}.manager-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.manager-list{max-height:210px;overflow:auto;display:grid;gap:6px;margin:8px 0}.manager-list button{text-align:left;padding:8px;border:1px solid var(--line);background:#0b2a30;color:white;border-radius:7px}.manager-actions{display:flex;gap:8px;flex-wrap:wrap}.manager-note{font-size:11px;color:var(--muted)}@media(max-width:900px){.manager-grid{grid-template-columns:1fr}.manager-map{height:440px}}
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html"><span class="brand-mark">⚓</span><span><strong>RICHMOND RAY'S</strong><small>LOCATION MANAGER</small></span></a><nav><a href="index.html">Tavern</a><a href="calendar.html">Calendar</a><a href="data-lab.html">Data Lab</a></nav></header>
+<main class="manager-shell">
+<div class="section-heading"><div><span class="eyebrow">RAY'S LOCATION EDITOR</span><h2>Search the map. Add, title and update fishing locations.</h2></div><span class="sync" id="save-state">Browser working copy</span></div>
+<p class="manager-note">Click the map to place a new fishing location or select an existing location below. Edits are stored in this browser so you can build the working location inventory without losing your changes.</p>
+<div class="manager-grid">
+<section class="manager-card">
+<input id="map-search" placeholder="Search location, region or subregion">
+<div id="loc-list" class="manager-list"></div>
+<div id="manager-map" class="manager-map"></div>
+</section>
+<section class="manager-card">
+<form id="location-form" class="manager-form">
+<input type="hidden" id="loc-id">
+<label>Location title<input id="loc-name" required></label>
+<div class="manager-row"><label>Latitude<input id="loc-lat" type="number" step="any" required></label><label>Longitude<input id="loc-lng" type="number" step="any" required></label></div>
+<label>Region<input id="loc-region"></label>
+<label>Subregion<input id="loc-subregion"></label>
+<label>Site type<input id="loc-type" placeholder="Pier, shoreline, beach, bank, boat"></label>
+<label>Habitat<input id="loc-habitat" placeholder="Saltwater, brackish estuary, freshwater, surf"></label>
+<label>Primary targets<input id="loc-primary" placeholder="Striped bass, California halibut"></label>
+<label>Secondary targets<input id="loc-secondary"></label>
+<label>Best general window<textarea id="loc-window" rows="2"></textarea></label>
+<label>Tide / water movement notes<textarea id="loc-water" rows="3"></textarea></label>
+<label>Bait / forage notes<textarea id="loc-bait" rows="3"></textarea></label>
+<label>Fishing tactics<textarea id="loc-tactics" rows="3"></textarea></label>
+<label>Access / safety notes<textarea id="loc-access" rows="3"></textarea></label>
+<div class="manager-actions"><button class="btn primary" type="submit">Save location</button><button class="btn" id="new-location" type="button">New location</button><button class="btn" id="reset-working" type="button">Reset working copy</button></div>
+</form>
+</section>
+</div>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const STORE='richfish-location-manager-v1';let records=[],map,marker;
+const $=s=>document.querySelector(s);const csv=v=>String(v||'').split(',').map(x=>x.trim()).filter(Boolean);const slug=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function persist(){localStorage.setItem(STORE,JSON.stringify(records));$('#save-state').textContent='Saved locally · '+new Date().toLocaleTimeString()}
+function renderList(q=''){q=q.toLowerCase();$('#loc-list').innerHTML=records.filter(r=>(r.name+' '+(r.region||'')+' '+(r.subregion||'')).toLowerCase().includes(q)).slice(0,100).map(r=>'<button type="button" data-id="'+r.id+'"><b>'+r.name+'</b><br><small>'+(r.region||'')+'</small></button>').join('');document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>select(records.find(r=>r.id===b.dataset.id)))}
+function place(lat,lng){if(marker)marker.remove();marker=L.marker([lat,lng],{draggable:true}).addTo(map);marker.on('dragend',e=>{const p=e.target.getLatLng();$('#loc-lat').value=p.lat.toFixed(6);$('#loc-lng').value=p.lng.toFixed(6)})}
+function select(r){if(!r)return;$('#loc-id').value=r.id;$('#loc-name').value=r.name||'';$('#loc-lat').value=r.coordinates?.lat??'';$('#loc-lng').value=r.coordinates?.lng??'';$('#loc-region').value=r.region||'';$('#loc-subregion').value=r.subregion||'';$('#loc-type').value=r.site_type||'';$('#loc-habitat').value=r.habitat||'';$('#loc-primary').value=(r.targets?.primary||[]).join(', ');$('#loc-secondary').value=(r.targets?.secondary||[]).join(', ');$('#loc-window').value=r.ideal_general_window||'';$('#loc-water').value=r.supportive_info?.water_movement||'';$('#loc-bait').value=r.supportive_info?.bait||'';$('#loc-tactics').value=r.supportive_info?.tactics||'';$('#loc-access').value=r.access_status_note||'';if(r.coordinates){map.setView([r.coordinates.lat,r.coordinates.lng],14);place(r.coordinates.lat,r.coordinates.lng)}}
+function blank(lat='',lng=''){$('#location-form').reset();$('#loc-id').value='';$('#loc-lat').value=lat;$('#loc-lng').value=lng;if(lat&&lng)place(lat,lng)}
+(async()=>{const raw=await fetch('data/catalog/locations.json').then(r=>r.json());const base=Array.isArray(raw)?raw:(raw.locations||[]);try{records=JSON.parse(localStorage.getItem(STORE))||base}catch{records=base}map=L.map('manager-map').setView([37.94,-122.35],10);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);records.filter(r=>r.coordinates).forEach(r=>L.circleMarker([r.coordinates.lat,r.coordinates.lng],{radius:5}).addTo(map).bindTooltip(r.name).on('click',()=>select(r)));map.on('click',e=>blank(e.latlng.lat.toFixed(6),e.latlng.lng.toFixed(6)));renderList()})();
+$('#map-search').oninput=e=>renderList(e.target.value);$('#new-location').onclick=()=>blank();$('#reset-working').onclick=()=>{localStorage.removeItem(STORE);location.reload()};
+$('#location-form').onsubmit=e=>{e.preventDefault();const id=$('#loc-id').value||slug($('#loc-name').value)+'-'+Date.now().toString().slice(-5);const old=records.find(r=>r.id===id)||{};const rec={...old,id,name:$('#loc-name').value.trim(),coordinates:{lat:Number($('#loc-lat').value),lng:Number($('#loc-lng').value)},region:$('#loc-region').value.trim(),subregion:$('#loc-subregion').value.trim(),site_type:$('#loc-type').value.trim(),habitat:$('#loc-habitat').value.trim(),targets:{...(old.targets||{}),primary:csv($('#loc-primary').value),secondary:csv($('#loc-secondary').value)},ideal_general_window:$('#loc-window').value.trim(),access_status_note:$('#loc-access').value.trim(),supportive_info:{water_movement:$('#loc-water').value.trim(),bait:$('#loc-bait').value.trim(),tactics:$('#loc-tactics').value.trim()},updated_at:new Date().toISOString()};const i=records.findIndex(r=>r.id===id);if(i>=0)records[i]=rec;else records.push(rec);persist();renderList();select(rec)};
+</script>
+</body></html>
