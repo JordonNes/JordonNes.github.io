@@ -5,7 +5,7 @@ const q=(s,root=document)=>root.querySelector(s);
 const esc=(value)=>String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const fmtTime=(iso)=>iso?new Date(iso).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'—';
 const fmtDate=(iso)=>new Date(iso+'T12:00:00Z').toLocaleDateString([], {weekday:'short',month:'short',day:'numeric'});
-let datasets=null,lastPosition=null;
+let datasets=null,lastPosition=null,activeWaterType='salt';
 
 async function loadDatasets(){
   if(datasets)return datasets;
@@ -132,7 +132,7 @@ function tideSvg(series=[]){
     const sourceIndex=series.indexOf(r),p=pts[sourceIndex];
     return `<text x="${p[0]}" y="${height-5}" text-anchor="${i===0?'start':i===arr.length-1?'end':'middle'}">${new Date(r.time).toLocaleTimeString([], {hour:'numeric'})}</text>`;
   }).join('');
-  return `<svg class="tide-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="NOAA 36-hour tide prediction curve">
+  return `<svg class="tide-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="NOAA 24-hour tide prediction curve">
     <line x1="${padX}" y1="${height-padY}" x2="${width-padX}" y2="${height-padY}" />
     <path d="${path}" />
     <text x="${padX}" y="16" text-anchor="start">${max.toFixed(1)} ft</text>
@@ -149,6 +149,20 @@ function renderCalendar(calendar){
     <div class="tide-turns">${day.events.map(e=>`<span><b>${e.type==='high'?'HIGH':'LOW'}</b> ${esc(fmtTime(e.time))}<small>${Number(e.heightFt).toFixed(1)} ft</small></span>`).join('')}</div>
   </article>`).join('');
 }
+function renderWeatherForecast(weatherSpot,row){
+  const el=q('#rf-weather-forecast');if(!el)return;
+  const hours=(weatherSpot?.hourly||[]).slice(0,8);
+  if(hours.length){
+    el.innerHTML='<div class="rf-weather-heading"><span class="eyebrow">WEATHER FORECAST</span><strong>Next 24 hours</strong></div><div class="rf-weather-grid">'+hours.map(h=>{
+      const when=h.startTime?new Date(h.startTime).toLocaleTimeString([], {hour:'numeric'}):'—';
+      const temp=h.temperature!=null?`${h.temperature}°${h.temperatureUnit||'F'}`:'—';
+      return `<article><small>${esc(when)}</small><b>${esc(temp)}</b><span>${esc(h.shortForecast||'Forecast')}</span><em>${esc(h.windSpeed||'Wind n/a')} ${esc(h.windDirection||'')}</em></article>`;
+    }).join('')+'</div>';
+    return;
+  }
+  el.innerHTML=`<div class="rf-weather-heading"><span class="eyebrow">WEATHER FORECAST</span><strong>Current context</strong></div><div class="rf-weather-grid"><article><small>NOW</small><b>${esc(row?.weather?.temperatureF!=null?row.weather.temperatureF+'°F':'—')}</b><span>${esc(row?.weather?.shortForecast||'Forecast unavailable')}</span><em>${esc(row?.weather?.effectiveWindMph!=null?row.weather.effectiveWindMph+' mph wind':'Wind unavailable')}</em></article></div>`;
+}
+
 function renderTop(payload,calendar,context={}){
   const row=payload?.recommendations?.[0],panel=q('#rf-live-output'),meta=q('#rf-location-meta');
   if(!panel)return;
@@ -203,8 +217,9 @@ function renderTop(payload,calendar,context={}){
     </div>
     <div class="rf-method-note"><strong>How this works:</strong> ${esc(payload.methodology)} <span>${esc(payload.lunarPolicy||'')}</span></div>
   `;
-  const station=q('#rf-tide-station'); if(station)station.textContent=calendar?.station?`${calendar.station.name} · ${calendar.station.distanceKm} km from your position`:'Nearest NOAQ tide station';
-  const chart=q('#rf-tide-chart'); if(chart)chart.innerHTML=tideSvg(calendar?.series||[]);
+  const station=q('#rf-tide-station'); if(station)station.textContent=calendar?.station?`${calendar.station.name} · ${calendar.station.distanceKm} km from your position`:'Nearest NOAA tide station';
+  const chart=q('#rf-tide-chart'); if(chart)chart.innerHTML=tideSvg((calendar?.series||[]).slice(0,25));
+  renderWeatherForecast(weatherSpot,row);
   renderCalendar(calendar);
 }
 function setStatus(text,error=false){
@@ -214,11 +229,13 @@ function setStatus(text,error=false){
 async function runForPosition(pos){
   const lat=pos.coords.latitude,lng=pos.coords.longitude;
   lastPosition={latitude:lat,longitude:lng};
+  await refreshSpeciesForPosition();
   setStatus('Reading nearby water, tides, weather, season and local evidence…');
   try{
     const data=await loadDatasets(),speciesId=q('#rf-live-species')?.value||null;
+    const radiusMiles=Number(q('#rf-live-radius')?.value||30);
     const [payload,calendar]=await Promise.all([
-      window.RichFishLocalAdvisor.buildNearbyAdvice({lat,lng,speciesId,limit:5,locations:data.locations,speciesCatalog:data.species,communityEvidence:data.community,publicWater:data.publicWater}),
+      window.RichFishLocalAdvisor.buildNearbyAdvice({lat,lng,speciesId,limit:5,maxDistanceKm:radiusMiles*1.609344,waterType:activeWaterType,locations:data.locations,speciesCatalog:data.species,communityEvidence:data.community,publicWater:data.publicWater}),
       window.RichFishLocalAdvisor.fetchTideCalendar(lat,lng,7)
     ]);
     const top=payload?.recommendations?.[0]||null;
@@ -244,6 +261,29 @@ function requestLocation(){
     if(btn){btn.disabled=false;btn.textContent='Use my current location';}
   },{enableHighAccuracy:false,timeout:10000,maximumAge:300000});
 }
+async function refreshSpeciesForPosition(){
+  try{
+    const data=await loadDatasets(),select=q('#rf-live-species');
+    if(!select)return;
+    const radiusMiles=Number(q('#rf-live-radius')?.value||30),maxKm=radiusMiles*1.609344;
+    let locations=data.locations;
+    if(lastPosition){
+      locations=locations.filter(l=>l?.coordinates&&haversineKm(lastPosition.latitude,lastPosition.longitude,Number(l.coordinates.lat),Number(l.coordinates.lng))<=maxKm);
+    }
+    locations=locations.filter(l=>window.RichFishLocalAdvisor?.locationMatchesWaterType?window.RichFishLocalAdvisor.locationMatchesWaterType(l,activeWaterType):true);
+    const ids=new Set();
+    locations.forEach(l=>[...(l.targets?.primary||[]),...(l.targets?.secondary||[])].forEach(name=>{
+      const normalized=String(name||'').toLowerCase().trim();
+      const alias={'halibut':'california-halibut','california halibut':'california-halibut','striped bass':'striped-bass','starry flounder':'starry-flounder','flounder':'starry-flounder','white sturgeon':'white-sturgeon','sturgeon c&r':'white-sturgeon'}[normalized];
+      ids.add(alias||normalized.normalize('NFKD').replace(/[^\w\s-]/g,'').trim().replace(/[\s_]+/g,'-'));
+    }));
+    const rows=data.species.filter(s=>ids.has(s.id)).sort((a,b)=>String(a.common_name).localeCompare(String(b.common_name)));
+    const current=select.value;
+    select.innerHTML='<option value="">Best available target</option>'+rows.map(s=>`<option value="${esc(s.id)}">${esc(s.common_name)}</option>`).join('');
+    if(rows.some(s=>s.id===current))select.value=current;
+  }catch(error){console.warn('RICHFISH range-aware target selector unavailable',error);}
+}
+
 async function populateSpecies(){
   try{
     const data=await loadDatasets(),select=q('#rf-live-species');
@@ -264,6 +304,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   populateSpecies();
   q('#rf-use-location')?.addEventListener('click',requestLocation);
   q('#rf-live-species')?.addEventListener('change',()=>{if(lastPosition)runForPosition({coords:lastPosition});});
+  q('#rf-live-radius')?.addEventListener('change',async()=>{await refreshSpeciesForPosition();if(lastPosition)runForPosition({coords:lastPosition});});
+  document.querySelectorAll('[data-water-type]').forEach(button=>button.addEventListener('click',async()=>{
+    activeWaterType=button.dataset.waterType||'salt';
+    document.querySelectorAll('[data-water-type]').forEach(b=>b.classList.toggle('active',b===button));
+    await refreshSpeciesForPosition();if(lastPosition)runForPosition({coords:lastPosition});
+  }));
   autoIfGranted();
 });
 })();
