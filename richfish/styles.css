@@ -362,3 +362,57 @@ body{background:radial-gradient(circle at 68% 0,#18363a 0,transparent 30%),linea
   .species-alt{align-items:flex-start;flex-direction:column}
   .species-alt span{text-align:left}
 }
+
+
+/* RRT revision set — 2026-09-29 */
+.home-page #rooms,.home-page #calendar,.home-page #ask-ray,.home-page #sources{display:none}
+.home-page .hero{min-height:760px;display:grid;grid-template-columns:minmax(300px,.8fr) minmax(520px,1.2fr);gap:28px;align-items:center;padding:72px 3vw 96px;background:linear-gradient(90deg,#061619 0%,rgba(6,22,25,.96) 48%,rgba(6,22,25,.84) 100%)}
+.home-page .hero:before{opacity:.12;width:100%}
+.home-page .hero-content{max-width:560px}
+.home-page .hero h1{font-size:clamp(54px,6.6vw,104px)}
+.home-room-grid{position:relative;z-index:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.home-room-grid .room-card{min-height:205px;padding:18px}
+.home-room-grid .room-card h3{font-size:18px;margin:18px 0 8px}
+.home-room-grid .room-card p{font-size:12px;margin-bottom:16px}
+.home-page .hero-cards{display:none}
+
+.rf-live-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.rf-live-controls>label{font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.rf-live-controls .map-select{min-width:150px}
+.rf-water-switch{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#061d22}
+.rf-water-switch button{border:0;border-right:1px solid var(--line);padding:10px 12px;background:transparent;color:var(--muted);font-weight:800;cursor:pointer}
+.rf-water-switch button:last-child{border-right:0}
+.rf-water-switch button.active{background:var(--gold);color:#182020}
+.rf-weather-forecast{margin-top:10px;border:1px solid rgba(130,164,160,.18);border-radius:10px;padding:12px;background:#04171b}
+.rf-weather-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.rf-weather-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.rf-weather-grid article{display:grid;gap:4px;padding:10px;border:1px solid var(--line);border-radius:8px;background:#082329}
+.rf-weather-grid small,.rf-weather-grid span,.rf-weather-grid em{font-size:10px;color:var(--muted)}
+.rf-weather-grid b{font-size:18px}
+.rf-reference-line{font-size:11px;color:var(--muted);margin:10px 0}
+.rf-reference-line a{color:var(--gold2)}
+
+#spots .workspace,#finder .workspace{width:min(1180px,100%);margin:0 auto}
+#documents .document-grid,#guide .guide-layout{width:min(1120px,100%);margin-left:auto;margin-right:auto}
+.section-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.location-field-guide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.location-field-guide>div{border:1px solid var(--line);border-radius:10px;padding:15px;background:#08262c}
+.location-field-guide h4{margin:6px 0;font-size:20px;color:var(--gold2)}
+.location-field-guide p{margin:7px 0;color:#dce8e4}
+.location-field-guide small{color:var(--muted)}
+
+.focus-calendar main>section:not(#calendar),
+.focus-ask main>section:not(#ask-ray),
+.focus-sources main>section:not(#sources){display:none}
+.focus-calendar #calendar,.focus-ask #ask-ray,.focus-sources #sources{padding-top:110px;min-height:calc(100vh - 90px)}
+.focus-calendar .topbar a[href="calendar.html"],
+.focus-ask .topbar a[href="ask-ray.html"],
+.focus-sources .topbar a[href="data-lab.html"]{color:var(--gold2)}
+@media(max-width:1100px){
+  .home-page .hero{grid-template-columns:1fr;padding-top:100px}
+  .home-room-grid{grid-template-columns:repeat(2,1fr)}
+  .rf-weather-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:620px){
+  .home-room-grid,.rf-weather-grid,.location-field-guide{grid-template-columns:1fr}
+}
