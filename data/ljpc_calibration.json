@@ -1,17 +1,17 @@
 {
   "schema_version": "LSI-LJPC-CALIBRATION-1",
-  "generated_at_utc": "2026-10-01T06:13:25.322957+00:00",
+  "generated_at_utc": "2026-10-01T08:53:09.047895+00:00",
   "policy": "Descriptive audit only. Calibration never changes live LJPC without the separate gated learning process.",
   "minimum_interpretation_sample": 30,
   "overall": {
-    "decisive": 4972,
-    "hits": 3082,
+    "decisive": 4975,
+    "hits": 3085,
     "misses": 1890,
-    "hit_rate_pct": 61.99,
+    "hit_rate_pct": 62.01,
     "avg_ljpc_pct": 65.96,
-    "calibration_error_pp": 3.98,
+    "calibration_error_pp": 3.95,
     "calibration_bias": "OVERCONFIDENT",
-    "brier_score": 0.230978
+    "brier_score": 0.230909
   },
   "bands": [
     {
@@ -147,14 +147,14 @@
       "band": "60-64.9"
     },
     {
-      "decisive": 503,
-      "hits": 284,
+      "decisive": 506,
+      "hits": 287,
       "misses": 219,
-      "hit_rate_pct": 56.46,
-      "avg_ljpc_pct": 67.49,
-      "calibration_error_pp": 11.03,
+      "hit_rate_pct": 56.72,
+      "avg_ljpc_pct": 67.48,
+      "calibration_error_pp": 10.76,
       "calibration_bias": "OVERCONFIDENT",
-      "brier_score": 0.259507,
+      "brier_score": 0.258654,
       "band": "65-69.9"
     },
     {
@@ -224,7 +224,7 @@
       "band": "95-99.9"
     }
   ],
-  "expected_calibration_error_pp": 6.81,
+  "expected_calibration_error_pp": 6.79,
   "maximum_calibration_error_pp": 93.0,
   "by_sport": {
     "MLB": {
@@ -946,6 +946,31 @@
       "expected_calibration_error_pp": 7.28,
       "maximum_calibration_error_pp": 43.15
     },
+    "Tennis": {
+      "decisive": 3,
+      "hits": 3,
+      "misses": 0,
+      "hit_rate_pct": 100.0,
+      "avg_ljpc_pct": 66.0,
+      "calibration_error_pp": -34.0,
+      "calibration_bias": "UNDERCONFIDENT",
+      "brier_score": 0.1156,
+      "bands": [
+        {
+          "decisive": 3,
+          "hits": 3,
+          "misses": 0,
+          "hit_rate_pct": 100.0,
+          "avg_ljpc_pct": 66.0,
+          "calibration_error_pp": -34.0,
+          "calibration_bias": "UNDERCONFIDENT",
+          "brier_score": 0.1156,
+          "band": "65-69.9"
+        }
+      ],
+      "expected_calibration_error_pp": 34.0,
+      "maximum_calibration_error_pp": 34.0
+    },
     "WNBA": {
       "decisive": 744,
       "hits": 413,
@@ -1128,14 +1153,14 @@
   },
   "by_market_class": {
     "GAME_ML": {
-      "decisive": 2527,
-      "hits": 1485,
+      "decisive": 2530,
+      "hits": 1488,
       "misses": 1042,
-      "hit_rate_pct": 58.77,
-      "avg_ljpc_pct": 55.68,
-      "calibration_error_pp": -3.08,
+      "hit_rate_pct": 58.81,
+      "avg_ljpc_pct": 55.7,
+      "calibration_error_pp": -3.12,
       "calibration_bias": "UNDERCONFIDENT",
-      "brier_score": 0.238341,
+      "brier_score": 0.238195,
       "bands": [
         {
           "decisive": 2,
@@ -1215,14 +1240,14 @@
           "band": "60-64.9"
         },
         {
-          "decisive": 195,
-          "hits": 117,
+          "decisive": 198,
+          "hits": 120,
           "misses": 78,
-          "hit_rate_pct": 60.0,
-          "avg_ljpc_pct": 67.89,
-          "calibration_error_pp": 7.89,
+          "hit_rate_pct": 60.61,
+          "avg_ljpc_pct": 67.86,
+          "calibration_error_pp": 7.25,
           "calibration_bias": "OVERCONFIDENT",
-          "brier_score": 0.250381,
+          "brier_score": 0.248339,
           "band": "65-69.9"
         },
         {
@@ -1237,7 +1262,7 @@
           "band": "70-74.9"
         }
       ],
-      "expected_calibration_error_pp": 5.29,
+      "expected_calibration_error_pp": 5.24,
       "maximum_calibration_error_pp": 39.7
     },
     "PLAYER_PROP": {
@@ -1734,6 +1759,16 @@
       "calibration_error_pp": -1.37,
       "calibration_bias": "CALIBRATED_WITHIN_3PP",
       "brier_score": 0.000813
+    },
+    "Tennis|Moneyline": {
+      "decisive": 3,
+      "hits": 3,
+      "misses": 0,
+      "hit_rate_pct": 100.0,
+      "avg_ljpc_pct": 66.0,
+      "calibration_error_pp": -34.0,
+      "calibration_bias": "UNDERCONFIDENT",
+      "brier_score": 0.1156
     },
     "WNBA|Assists": {
       "decisive": 24,
