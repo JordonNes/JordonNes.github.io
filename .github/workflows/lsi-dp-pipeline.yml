@@ -77,6 +77,7 @@ on:
       - 'scripts/lsi_snapshot_tickets.js'
       - 'lsi_registry_bridge.js'
       - '.github/workflows/lsi-dp-pipeline.yml'
+      - '.github/workflows/lsi-extended-markets.yml'
   schedule:
     # Separate cron identities are intentional. The checkpoint resolver uses the
     # exact triggering cron, so GitHub runner delays cannot change the PT stage.
@@ -492,6 +493,17 @@ jobs:
               assert any(p.get('learning_applied') for p in payload.get('predictions',[])), 'learning overlay enabled but no prediction received a gated adjustment'
           print(f"LSI-PR-2 invariant: {len(props)} PLAYER_PROP records; learning_enabled={payload.get('learning_overlay_enabled')}")
           board=json.load(open('data/future_market_board.json',encoding='utf-8'))
+          qc=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
+          from datetime import datetime, timezone
+          def stamp(v):
+              return datetime.fromisoformat(str(v).replace('Z','+00:00')).astimezone(timezone.utc)
+          # Registry/QC/future artifacts must belong to the same publication cycle.
+          # A stale registry can silently suppress current evaluated POMs in DP/QG.
+          reg_ts=stamp(payload.get('generated_at_utc'))
+          qc_ts=stamp(qc.get('generated_at_utc'))
+          board_ts=stamp(board.get('generated_at_utc'))
+          assert reg_ts >= qc_ts, f'Prediction Registry stale vs QC board: registry={reg_ts.isoformat()} qc={qc_ts.isoformat()}'
+          assert board_ts >= qc_ts, f'Future board stale vs QC board: future={board_ts.isoformat()} qc={qc_ts.isoformat()}'
           for path in ('data/future_market_board.json','data/future_market_board.js'):
               assert os.path.getsize(path)<95*1024*1024, f'{path} exceeds GitHub publication safety limit'
           active=list(board.get('events') or [])
