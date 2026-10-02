@@ -44,9 +44,14 @@ jobs:
           python scripts/lsi_history_coverage.py
           python scripts/lsi_history_warehouse.py
           python scripts/legz_statistical_spectrum.py
+          python scripts/lsi_signal_engine.py
           python scripts/lsi_t48_coverage.py
-          python scripts/lsi_publish_future_board.py
+          # Keep the canonical registry synchronized with the newly evaluated board.
+          python scripts/lsi_pipeline.py
+          # Evaluate Game Winners before the final board write so both player props
+          # and GAME_ML intelligence land in one coherent publication snapshot.
           LSI_GAME_WINNER_LEAGUES='Tennis,MMA,Boxing' python scripts/lsi_game_winner_spectrum.py
+          python scripts/lsi_publish_future_board.py
           python scripts/lsi_readiness_report.py
 
       - name: Snapshot immutable website POM and Game Winner suggestions
@@ -64,7 +69,7 @@ jobs:
           rm -f "$generated_market"
           git reset HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
           git checkout HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
-          for p in data/qc_prop_board.json data/market_history_delta.csv data/market_history_delta_2.csv data/current_game_moneylines.json data/propline_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/ljpc_coverage.json data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/history_coverage.json data/lsi_readiness.json data/suggestion_ledger.json; do
+          for p in data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json data/lsi_signal_state.json data/lsi_correlation_graph.json data/lsi_correlation_graph.js data/lsi_spectrum_view.json data/lsi_spectrum_view.js data/market_history_delta.csv data/market_history_delta_2.csv data/current_game_moneylines.json data/propline_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/ljpc_coverage.json data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/history_coverage.json data/lsi_readiness.json data/suggestion_ledger.json; do
             if [ -e "$p" ]; then git add -- "$p"; fi
           done
           if git diff --cached --quiet; then
