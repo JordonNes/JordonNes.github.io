@@ -521,7 +521,7 @@ jobs:
           git config user.name 'LEGZ-JINX LSI'; git config user.email 'actions@users.noreply.github.com'
           outputs=(
             data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json data/lsi_league_scheduler_state.json
-            data/current_game_moneylines.json data/market_history_delta.csv data/market_history_delta_2.csv data/event_inventory.csv
+            data/current_game_moneylines.json data/event_inventory.csv
             data/performance_history.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json
             data/rotowire_context.csv data/context_registry.json data/kalshi_state.json data/propline_intelligence.json
             data/propline_state.json data/parlayapi_state.json data/sportsgameodds_state.json data/oddspapi_history_features.csv data/oddspapi_state.json
@@ -547,6 +547,11 @@ jobs:
             mkdir -p "$snapshot/data"
             cp -a data/market_history.csv "$snapshot/data/market_history.csv"
           fi
+          for p in data/market_history_delta*.csv; do
+            [ -e "$p" ] || continue
+            mkdir -p "$snapshot/data"
+            cp -a "$p" "$snapshot/data/$(basename "$p")"
+          done
           # Generated artifacts are authoritative for this run, while current master
           # is authoritative for code/UI. Overlay the generated snapshot on top of the
           # newest master instead of rebasing million-line generated JSON commits.
@@ -558,8 +563,11 @@ jobs:
             if [ -e "$snapshot/data/market_history.csv" ]; then
               python scripts/lsi_market_history_delta.py split "$snapshot/data/market_history.csv"
               mkdir -p "$snapshot/data"
-              cp -a data/market_history_delta.csv "$snapshot/data/market_history_delta.csv"
-              if [ -e data/market_history_delta_2.csv ]; then cp -a data/market_history_delta_2.csv "$snapshot/data/market_history_delta_2.csv"; fi
+              rm -f "$snapshot"/data/market_history_delta*.csv
+              for p in data/market_history_delta*.csv; do
+                [ -e "$p" ] || continue
+                cp -a "$p" "$snapshot/data/$(basename "$p")"
+              done
             fi
             for p in "${outputs[@]}"; do
               if [ -e "$snapshot/$p" ]; then
@@ -568,6 +576,11 @@ jobs:
                 cp -a "$snapshot/$p" "$p"
               fi
             done
+            rm -f data/market_history_delta*.csv
+            for p in "$snapshot"/data/market_history_delta*.csv; do
+              [ -e "$p" ] || continue
+              cp -a "$p" "data/$(basename "$p")"
+            done
             # Several outputs are optional. One absent path made the old bulk
             # git add fail, and the suppressed error silently discarded all outputs.
             for p in "${outputs[@]}"; do
@@ -575,6 +588,7 @@ jobs:
                 git add -- "$p"
               fi
             done
+            git add -A -- 'data/market_history_delta*.csv'
             if git diff --cached --quiet; then
               echo "::error::LSI produced a work cycle but staged no durable changes."
               exit 1
@@ -585,10 +599,13 @@ jobs:
                 exit 1
               fi
             done
-            if [ -e data/market_history_delta.csv ] && [ "$(wc -c < data/market_history_delta.csv)" -ge 99614720 ]; then
-              echo "::error::Market history delta exceeds safe GitHub blob size after split."
-              exit 1
-            fi
+            for p in data/market_history_delta*.csv; do
+              [ -e "$p" ] || continue
+              if [ "$(wc -c < "$p")" -ge 99614720 ]; then
+                echo "::error::Market history shard exceeds safe GitHub blob size after split: $p"
+                exit 1
+              fi
+            done
             git commit -m "LSI ${{ needs.clock.outputs.stage }} ${{ needs.clock.outputs.date }} PT"
             LOCAL_SHA="$(git rev-parse HEAD)"
             if git push origin HEAD:master; then
