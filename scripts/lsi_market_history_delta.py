@@ -3,7 +3,7 @@
 
 GitHub already contains a large legacy data/market_history.csv near/over the normal
 blob limit. Treat that file as an immutable base. New observations persist in
-market_history_delta.csv and market_history_delta_2.csv (each below 80 MiB). During runtime, merge base + deltas into market_history.csv
+numbered market_history_delta*.csv shards (each below 80 MiB). During runtime, merge base + deltas into market_history.csv
 locally so existing adapters/readers remain compatible.
 
 Commands:
@@ -20,9 +20,27 @@ ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
 BASE=DATA/"market_history.csv"
 DELTA=DATA/"market_history_delta.csv"
-DELTA_2=DATA/"market_history_delta_2.csv"
-DELTAS=(DELTA, DELTA_2)
 MAX_DELTA_BYTES=80*1024*1024
+
+
+def delta_path(part_number: int) -> Path:
+    return DELTA if part_number == 1 else DATA/f"market_history_delta_{part_number}.csv"
+
+
+def delta_paths():
+    """Return all persisted delta shards in numeric order."""
+    paths=[]
+    for p in DATA.glob("market_history_delta*.csv"):
+        if p.name=="market_history_delta.csv":
+            idx=1
+        else:
+            stem=p.stem
+            try:
+                idx=int(stem.rsplit("_",1)[1])
+            except (ValueError, IndexError):
+                continue
+        paths.append((idx,p))
+    return [p for _,p in sorted(paths)]
 
 def rows(path):
     if not path.exists() or path.stat().st_size==0:
@@ -37,7 +55,7 @@ def key(row):
     return tuple(sorted((k,str(v or "")) for k,v in row.items()))
 
 def merge():
-    existing=[p for p in DELTAS if p.exists() and p.stat().st_size]
+    existing=[p for p in delta_paths() if p.exists() and p.stat().st_size]
     if not existing:
         print("market history delta: nothing to merge")
         return
@@ -62,7 +80,8 @@ def merge():
 def split(generated_path):
     generated=Path(generated_path)
     fields, base_rows=rows(BASE)
-    delta_parts=[rows(p) for p in DELTAS]
+    existing_delta_paths=delta_paths()
+    delta_parts=[rows(p) for p in existing_delta_paths]
     gfields, gen_rows=rows(generated)
     fields=fields or next((f for f,_ in delta_parts if f), []) or gfields
     if not fields:
@@ -88,9 +107,8 @@ def split(generated_path):
         for r in out:
             if fh is None or fh.tell()>=MAX_DELTA_BYTES:
                 if fh is not None: fh.close()
-                if part>=len(DELTAS):
-                    raise SystemExit("Market history exceeds two bounded delta files; add another partition before publishing")
-                fh=DELTAS[part].open("w",newline="",encoding="utf-8")
+                target=delta_path(part+1)
+                fh=target.open("w",newline="",encoding="utf-8")
                 w=csv.DictWriter(fh,fieldnames=fields,extrasaction="ignore")
                 w.writeheader()
                 part+=1
@@ -100,9 +118,13 @@ def split(generated_path):
                 csv.DictWriter(empty,fieldnames=fields).writeheader()
     finally:
         if fh is not None: fh.close()
-    for stale in DELTAS[part:]:
-        if stale.exists(): stale.unlink()
-    for p in DELTAS:
+    for stale in existing_delta_paths:
+        try:
+            idx=1 if stale.name=="market_history_delta.csv" else int(stale.stem.rsplit("_",1)[1])
+        except (ValueError, IndexError):
+            continue
+        if idx>part and stale.exists(): stale.unlink()
+    for p in delta_paths():
         if p.exists() and p.stat().st_size>=95*1024*1024:
             raise SystemExit(f"Market history partition too large for safe GitHub publication: {p}")
     print(f"market history delta split: base_rows={len(base_rows)} prior_delta={prior_count} new={new} persisted_delta={len(out)} parts={part or 1}")
