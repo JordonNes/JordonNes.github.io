@@ -55,6 +55,8 @@ on:
       - 'scripts/lsi_readiness_report.py'
       - 'scripts/lsi_visual_registry.py'
       - 'scripts/lsi_publish_future_board.py'
+      - 'scripts/lsi_publish_dp_payloads.py'
+      - 'scripts/nhl_player_history.py'
       - 'scripts/lsi_ispy_observer.py'
       - 'scripts/lsi_ispy_discovery.py'
       - 'scripts/test_lsi_ispy_discovery.py'
@@ -251,7 +253,7 @@ jobs:
           PARLAYAPI_API_KEY: ${{ secrets.PARLAYAPI_API_KEY || vars.PARLAYAPI_API_KEY }}
           PARLAY_API_LEAGUES: ${{ steps.league_schedule.outputs.due_leagues }}
           PARLAY_API_MAX_SPORT_CALLS_PER_RUN: '3'
-          PARLAY_API_MIN_REFRESH_MINUTES: '480'
+          PARLAY_API_MIN_REFRESH_MINUTES: '180'
           PARLAY_API_MONTHLY_CREDIT_CAP: '900'
           PARLAY_API_CREDIT_RESERVE: '100'
           PARLAY_API_MAX_AGE_SEC: '900'
@@ -289,7 +291,10 @@ jobs:
         run: python scripts/oddspapi_history_adapter.py
       - name: NHL authoritative enrichment
         if: contains(steps.league_schedule.outputs.due_leagues, 'NHL')
-        run: python scripts/nhl_adapter.py
+        run: |
+          python scripts/nhl_adapter.py
+          python scripts/test_nhl_player_history.py
+          python scripts/nhl_player_history.py
       - name: Coverage-gap player-prop fallback — The Odds API
         if: steps.league_schedule.outputs.odds_api_leagues != ''
         continue-on-error: true
@@ -522,7 +527,7 @@ jobs:
           outputs=(
             data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json data/lsi_league_scheduler_state.json
             data/current_game_moneylines.json data/event_inventory.csv
-            data/performance_history.csv data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json
+            data/performance_history.csv data/nhl_player_history_state.json data/weather_history.csv data/venue_coordinates.json data/cfbd data/cfbd_state.json
             data/rotowire_context.csv data/context_registry.json data/kalshi_state.json data/propline_intelligence.json
             data/propline_state.json data/parlayapi_state.json data/sportsgameodds_state.json data/oddspapi_history_features.csv data/oddspapi_state.json
             data/oddspapi_market_lookup.json data/qc_prop_board.json data/legz_synthetic_book.json data/future_market_board.json
@@ -589,6 +594,8 @@ jobs:
               fi
             done
             git add -A -- 'data/market_history_delta*.csv'
+            python scripts/lsi_publish_dp_payloads.py
+            git add -- data/dp
             if git diff --cached --quiet; then
               echo "::error::LSI produced a work cycle but staged no durable changes."
               exit 1

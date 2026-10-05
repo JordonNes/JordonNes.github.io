@@ -594,6 +594,8 @@ def main():
         last=parse_dt(last_success.get(league))
         if FORCE or last is None or NOW-last>=timedelta(minutes=MIN_REFRESH_MIN):
             candidates.append(league)
+    # Do not let fixed league ordering repeatedly consume the bounded call budget.
+    candidates.sort(key=lambda league: parse_dt(last_success.get(league)) or datetime.min.replace(tzinfo=timezone.utc))
     candidates=candidates[:MAX_CALLS]
 
     offers=[]

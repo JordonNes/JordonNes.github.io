@@ -525,6 +525,8 @@ def main():
         raise SystemExit("Future-board candidate validation failed; last-known-good artifacts preserved.")
     tmp_json.replace(OUT)
     tmp_js.replace(OUTJS)
+    from lsi_publish_dp_payloads import main as publish_dp_payloads
+    publish_dp_payloads()
     carried_total=sum(int(e.get("carried_game_winner_evaluations") or 0) for e in events)
     print(f"Future market board: {len(events)} upcoming event(s), {sum(len(e['props']) for e in events)} L&J-evaluated props, {ml_count} GAME_ML side(s), carried_forward_game_evals={carried_total}, started_events_pruned={started_events_pruned}.")
 

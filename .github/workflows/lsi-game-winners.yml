@@ -87,6 +87,8 @@ jobs:
             python scripts/lsi_game_winner_spectrum.py
             node scripts/lsi_snapshot_suggestions.js
             git add data/current_game_moneylines.json data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/suggestion_ledger.json
+            python scripts/lsi_publish_dp_payloads.py
+            git add -- data/dp
             if git diff --cached --quiet; then
               echo 'Game Winner artifacts already current.'
               exit 0

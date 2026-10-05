@@ -333,6 +333,8 @@ def main():
             raise SystemExit(f"Publication guard failed before Game Winner write: {event.get('source_event_id')}")
     tmp_json.replace(BOARD)
     tmp_js.replace(BOARD_JS)
+    from lsi_publish_dp_payloads import main as publish_dp_payloads
+    publish_dp_payloads()
 
     EVIDENCE.write_text(json.dumps({
       "schema_version":"LSI-GAME-WINNER-EVIDENCE-1","generated_at_utc":write_now.isoformat(),

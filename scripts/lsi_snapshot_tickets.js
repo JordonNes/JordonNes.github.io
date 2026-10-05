@@ -28,7 +28,7 @@ function scriptsFor(html){
   const out=[];
   for(const m of html.matchAll(/<script[^>]+src=["']([^"']+)["'][^>]*><\/script>/gi)){
     const clean=m[1].split('?')[0].replace(/^\.\//,'');
-    if(SAFE.has(clean)) out.push(clean);
+    if((SAFE.has(clean) || /^data\/dp\/[A-Za-z_]+\.js$/.test(clean))) out.push(clean);
   }
   return out;
 }

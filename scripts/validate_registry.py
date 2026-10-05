@@ -40,7 +40,7 @@ for p in predictions:
     if p.get('market_class')=='PLAYER_PROP' and (not p.get('participant') or not p.get('market')):
         errors.append(f'{label}: player-prop participant/market missing')
 page=(root/'LJ_index.html').read_text(encoding='utf-8')
-for required in ('data/prediction_registry.js','lsi_registry_bridge.js'):
+for required in ('data/dp/ALL.js','lsi_registry_bridge.js'):
     if required not in page: errors.append(f'LJ_index.html missing {required}')
 if errors: raise SystemExit('\n'.join(errors))
 print(f'Registry validation passed: {len(predictions)} predictions with durable provenance and page wiring.')
