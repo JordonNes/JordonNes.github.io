@@ -176,30 +176,37 @@
     if(p.market_class==='GAME_ML') (gameByLeague[p.league]??=[]).push(p);
   });
   const eventStartMs=e=>Date.parse(e?.commence_time||e?.event_start_pt||"");
+  const horizonPtParts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",hour:"numeric",hour12:false}).formatToParts(new Date(nowMs));
+  const mondayRollover=horizonPtParts.find(x=>x.type==="weekday")?.value==="Mon" && Number(horizonPtParts.find(x=>x.type==="hour")?.value||0)>=12;
   const isUpcomingEvent=e=>{
     const t=eventStartMs(e);
     if(!Number.isFinite(t)||t<=nowMs) return false;
     let end=horizonMs;
     if(e?.league==="NFL"){
-      const local=new Date();
-      const pt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",hour:"numeric",hour12:false}).formatToParts(local);
-      const wd=pt.find(x=>x.type==="weekday")?.value, hr=Number(pt.find(x=>x.type==="hour")?.value||0);
-      if(wd==="Mon"&&hr>=12) end=nowMs+8*86400000;
+      if(mondayRollover) end=nowMs+8*86400000;
     }
     return t<=end;
   };
+  const calendarFormatter=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"});
+  const calendarSerialCache=new Map();
   const ptCalendarSerial=value=>{
     const d=value instanceof Date?value:new Date(value);
     if(!Number.isFinite(d.getTime())) return NaN;
-    const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d);
+    const stamp=d.getTime();
+    if(calendarSerialCache.has(stamp)) return calendarSerialCache.get(stamp);
+    const parts=calendarFormatter.formatToParts(d);
     const get=t=>Number(parts.find(x=>x.type===t)?.value||0);
-    return Date.UTC(get("year"),get("month")-1,get("day"));
+    const serial=Date.UTC(get("year"),get("month")-1,get("day"));
+    calendarSerialCache.set(stamp,serial);
+    return serial;
   };
+  let cachedNflWeekBounds;
   const nflWeekBounds=()=>{
+    if(cachedNflWeekBounds) return cachedNflWeekBounds;
     const today=ptCalendarSerial(new Date());
     const dow=new Date(today).getUTCDay();
     const start=today-((dow-2+7)%7)*86400000;
-    return {start,end:start+7*86400000};
+    return (cachedNflWeekBounds={start,end:start+7*86400000});
   };
   const isCurrentNflWeekEvent=e=>{
     if(e?.league!=="NFL") return true;
@@ -551,11 +558,20 @@
     });
   }
 
+  const boardCandidatesByLeague=new Map(),boardMatchCache=new Map();
   function findBoardEvent(league,q){
-    const candidates=[
+    const key=JSON.stringify([league,norm(q.away),norm(q.home)]);
+    if(boardMatchCache.has(key)) return boardMatchCache.get(key);
+    const result=findBoardEventUncached(league,q);
+    boardMatchCache.set(key,result);
+    return result;
+  }
+  function findBoardEventUncached(league,q){
+    let candidates=boardCandidatesByLeague.get(league);
+    if(!candidates){ candidates=[
       ...(B?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e) && isCurrentNflWeekEvent(e)).map(e=>({...e,_priority:0})),
       ...(RAW?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e)).map(e=>({...e,_priority:1}))
-    ];
+    ]; boardCandidatesByLeague.set(league,candidates); }
     if(!candidates.length) return null;
     const awayAliases=e=>[e?.away,...(e?.away_aliases||[])].filter(Boolean);
     const homeAliases=e=>[e?.home,...(e?.home_aliases||[])].filter(Boolean);

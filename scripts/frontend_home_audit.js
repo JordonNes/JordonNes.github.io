@@ -17,10 +17,10 @@ for(const src of srcs){
   if(/^https?:/i.test(src)) continue;
   if(!fs.existsSync(path.join(ROOT,src))) fail('LJ_index references missing script '+src);
 }
-const required=['ljdata.js','data/prediction_registry.js','lsi_registry_bridge.js','ljapp.js'];
+const required=['ljdata.js','data/dp/ALL.js','lsi_registry_bridge.js','ljapp.js'];
 for(const src of required) if(!srcs.includes(src)) fail('LJ_index missing required script '+src);
 const pos=Object.fromEntries(required.map(x=>[x,srcs.indexOf(x)]));
-if(!(pos['ljdata.js']<pos['data/prediction_registry.js']&&pos['data/prediction_registry.js']<pos['lsi_registry_bridge.js']&&pos['lsi_registry_bridge.js']<pos['ljapp.js'])) fail('LJ_index data/bridge/app script order is unsafe');
+if(!(pos['ljdata.js']<pos['data/dp/ALL.js']&&pos['data/dp/ALL.js']<pos['lsi_registry_bridge.js']&&pos['lsi_registry_bridge.js']<pos['ljapp.js'])) fail('LJ_index data/bridge/app script order is unsafe');
 
 const homeFn=app.match(/window\.renderLJHome\s*=\s*\(\)\s*=>\s*\{([\s\S]*?)\n\s*\};/);
 if(!homeFn) fail('renderLJHome not found');

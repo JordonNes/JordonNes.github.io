@@ -169,6 +169,8 @@ jobs:
               fi
             done
             git add "${outputs[@]}" 2>/dev/null || true
+            python scripts/lsi_publish_dp_payloads.py
+            git add -- data/dp
             if git diff --cached --quiet; then
               echo 'Spectrum v3 artifacts already current.'
               exit 0

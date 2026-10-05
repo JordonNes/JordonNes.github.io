@@ -39,6 +39,8 @@ jobs:
           python scripts/test_lsi_ispy_discovery.py
           python scripts/test_parlayapi_retail_props.py
           python scripts/test_sportsgameodds_adapter.py
+          python scripts/test_nhl_player_history.py
+          python scripts/test_kalshi_player_identity.py
 
       - name: Decide which leagues and events are actually due
         id: schedule
@@ -102,7 +104,7 @@ jobs:
           PARLAYAPI_API_KEY: ${{ secrets.PARLAYAPI_API_KEY || vars.PARLAYAPI_API_KEY }}
           PARLAY_API_LEAGUES: ${{ steps.schedule.outputs.due_leagues }}
           PARLAY_API_MAX_SPORT_CALLS_PER_RUN: '3'
-          PARLAY_API_MIN_REFRESH_MINUTES: '480'
+          PARLAY_API_MIN_REFRESH_MINUTES: '180'
           PARLAY_API_MONTHLY_CREDIT_CAP: '900'
           PARLAY_API_CREDIT_RESERVE: '100'
           PARLAY_API_MAX_AGE_SEC: '900'
@@ -149,6 +151,11 @@ jobs:
           python scripts/espn_intelligence_adapter.py
           python scripts/rotowire_adapter.py
           python scripts/lsi_visual_registry.py
+
+      - name: Warm offered NHL player game-log evidence
+        if: steps.schedule.outputs.has_work == 'true' && contains(steps.schedule.outputs.due_leagues, 'NHL')
+        continue-on-error: true
+        run: python scripts/nhl_player_history.py
 
       - name: Refresh persistent registry and local Spectrum cache
         if: steps.schedule.outputs.has_work == 'true'
@@ -224,11 +231,14 @@ jobs:
           git checkout HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
           # Stage only outputs present in this run; a missing optional path must
           # not suppress every generated artifact.
-          for p in data/lsi_league_schedule.json data/lsi_league_scheduler_state.json data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js data/market_history_delta.csv data/market_history_delta_2.csv data/current_game_moneylines.json data/game_winner_evidence.json data/kalshi_state.json data/propline_state.json data/parlayapi_state.json data/sportsgameodds_state.json data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/lsi_readiness.json data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json; do
+          for p in data/performance_history.csv data/nhl_player_history_state.json data/lsi_league_schedule.json data/lsi_league_scheduler_state.json data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js data/future_market_board.json data/future_market_board.js data/market_history_delta.csv data/market_history_delta_2.csv data/current_game_moneylines.json data/game_winner_evidence.json data/kalshi_state.json data/propline_state.json data/parlayapi_state.json data/sportsgameodds_state.json data/the_odds_api_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/visual_asset_registry.json data/visual_asset_registry.js data/ljpc_coverage.json data/lsi_readiness.json data/espn_player_registry.json data/espn_event_intelligence.json data/espn_context.csv data/espn_player_enrichment.json; do
             if [ -e "$p" ]; then
               git add -- "$p"
             fi
           done
+          git add -A -- 'data/market_history_delta*.csv'
+          python scripts/lsi_publish_dp_payloads.py
+          git add -- data/dp
           if git diff --cached --quiet; then
             echo '::error::Due near-event work staged no durable intelligence changes.'
             exit 1

@@ -105,6 +105,8 @@ jobs:
             [ -s "$f" ] && files+=("$f")
           done
           git add "${files[@]}"
+          python scripts/lsi_publish_dp_payloads.py
+          git add -- data/dp
           if git diff --cached --quiet; then
             echo 'NFL market artifacts already current.'
             exit 0

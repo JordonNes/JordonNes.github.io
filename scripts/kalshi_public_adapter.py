@@ -121,6 +121,8 @@ def valid_player_identity(value):
     raw=str(value or "").strip()
     n=norm(raw)
     if not raw:return False
+    # A proposition clause is not an athlete identity (e.g. NO Saints over 3.5 points).
+    if re.search(r"\b(?:over|under|more than|less than|at least|fewer than)\s+\d",raw,re.I):return False
     if n in {"baseball player","football player","basketball player","hockey player","player","pitcher","batter","quarterback","qb"}:return False
     if re.match(r"^(?:over|under|more|less|at least|fewer than)?\s*\d*(?:\.\d+)?\s*(?:points?|yards?|receptions?|attempts?|completions?|rebounds?|assists?|strikeouts?|hits?|bases?|runs?|saves?|goals?|aces?|takedowns?|knockdowns?)(?:\s+scored)?\b",raw,re.I):return False
     if re.search(r"\b(?:team|game)\s+total\b|\bpoints?\s+scored\b",raw,re.I):return False
