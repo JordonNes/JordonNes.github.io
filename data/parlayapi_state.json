@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-10-06T07:24:12.181729+00:00",
+  "checked_at_utc": "2026-10-06T10:38:01.609624+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -11,7 +11,7 @@
   "league_last_success_utc": {
     "NFL": "2026-10-06T02:06:48.846306+00:00",
     "NCAA_Football": "2026-10-06T00:44:02.051211+00:00",
-    "MLB": "2026-10-06T02:06:48.846306+00:00",
+    "MLB": "2026-10-06T10:38:01.609624+00:00",
     "NHL": "2026-10-06T02:06:48.846306+00:00",
     "WNBA": "2026-10-06T00:44:02.051211+00:00",
     "NBA": "2026-10-05T22:50:49.229813+00:00",
@@ -24,16 +24,33 @@
     "min_refresh_minutes": 180,
     "max_sport_calls_per_run": 3
   },
-  "status": "NO_REFRESH_DUE",
-  "credits_estimated_this_cycle": 126,
-  "provider_reported_remaining": null,
-  "requested_leagues": [],
-  "refreshed_leagues": [],
-  "authoritative_complete_leagues": [],
-  "diagnostics": {},
+  "status": "OK",
+  "credits_estimated_this_cycle": 129,
+  "provider_reported_remaining": 589,
+  "requested_leagues": [
+    "MLB"
+  ],
+  "refreshed_leagues": [
+    "MLB"
+  ],
+  "authoritative_complete_leagues": [
+    "MLB"
+  ],
+  "diagnostics": {
+    "MLB": {
+      "status": "OK",
+      "raw_rows": 1261,
+      "normalized_side_offers": 2287,
+      "result_has_more": false,
+      "result_truncated": false,
+      "result_truncated_hint": null,
+      "result_degraded": null,
+      "provider_reported_remaining": 589
+    }
+  },
   "errors": {},
-  "raw_side_offers": 0,
-  "consolidated_exact_poms": 0,
-  "market_history_rows_added": 0,
+  "raw_side_offers": 2287,
+  "consolidated_exact_poms": 1996,
+  "market_history_rows_added": 2287,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }
