@@ -30,6 +30,94 @@ const $=(q)=>document.querySelector(q);
 const escapeHtml=(value)=>String(value??'').replace(/[&<>'"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const DATA_ROOT='data';
 const RICHFISH_API='https://richfish-web-production.up.railway.app';
+const LOCATION_STORE='richfish-location-manager-v1';
+
+function managedLocationRecords(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(LOCATION_STORE)||'null');
+    return Array.isArray(parsed)?parsed:[];
+  }catch{return [];}
+}
+function mergeManagedLocations(base=[]){
+  const merged=new Map((base||[]).map(row=>[row.id,row]));
+  for(const row of managedLocationRecords()){
+    if(row?.id)merged.set(row.id,{...(merged.get(row.id)||{}),...row});
+  }
+  return [...merged.values()];
+}
+function locationDuplicate(lat,lng,title=''){
+  const key=slugify(title);
+  return state.locations.find(loc=>{
+    if(key&&slugify(loc?.name)===key)return true;
+    if(!loc?.coordinates)return false;
+    return haversineKm({lat:Number(lat),lng:Number(lng)},{lat:Number(loc.coordinates.lat),lng:Number(loc.coordinates.lng)})<=0.04;
+  })||null;
+}
+function persistManagedLocations(){
+  localStorage.setItem(LOCATION_STORE,JSON.stringify(state.locations));
+}
+function addLocationMarker(location){
+  if(!state.map||!state.mapLayers?.access||!location?.coordinates)return;
+  if(state.mapMarkers.some(row=>row.location?.id===location.id))return;
+  const marker=L.circleMarker([location.coordinates.lat,location.coordinates.lng],markerStyleForLocation(location));
+  marker.bindTooltip(location.name);
+  marker.on('click',()=>{
+    renderMapEvaluation(location.coordinates.lat,location.coordinates.lng,location);
+    renderLocationCaptureControls($('#frmap-report'),location.coordinates.lat,location.coordinates.lng,location);
+  });
+  marker.addTo(state.mapLayers.access);
+  state.mapMarkers.push({location,marker});
+}
+function renderLocationCaptureControls(panel,lat,lng,knownLocation=null){
+  if(!panel||!Number.isFinite(Number(lat))||!Number.isFinite(Number(lng)))return;
+  panel.querySelector('.frmap-save-location')?.remove();
+  const existing=knownLocation||locationDuplicate(lat,lng);
+  const box=document.createElement('div');
+  box.className='why-panel frmap-save-location';
+  if(existing){
+    box.innerHTML=`<span class="eyebrow">RICHFISH FISHING LOCATIONS</span><h3>Already saved: ${escapeHtml(existing.name)}</h3><p>This selected point is already in the Fishing Locations inventory.</p><p><a class="btn" href="location-manager.html">Open Location Manager</a></p>`;
+  }else{
+    box.innerHTML=`<span class="eyebrow">ADD TO RICHFISH FISHING LOCATIONS</span><h3>Save this Live Water point</h3><p>Title this fishing location, then add it to the same working inventory used by Location Manager.</p><div class="manager-actions"><input data-location-title aria-label="Fishing location title" placeholder="Location title" style="min-width:220px;flex:1;padding:10px;border:1px solid var(--line);border-radius:7px;background:#061d22;color:white"><button class="btn primary" type="button" data-save-map-location>Add location</button></div><small data-location-save-status>${Number(lat).toFixed(6)}, ${Number(lng).toFixed(6)}</small>`;
+    const input=box.querySelector('[data-location-title]');
+    const button=box.querySelector('[data-save-map-location]');
+    const status=box.querySelector('[data-location-save-status]');
+    const save=()=>{
+      const title=input.value.trim();
+      if(!title){status.textContent='Enter a location title before saving.';input.focus();return;}
+      const duplicate=locationDuplicate(lat,lng,title);
+      if(duplicate){
+        status.textContent=`Already saved as ${duplicate.name}.`;
+        renderLocationCaptureControls(panel,lat,lng,duplicate);
+        return;
+      }
+      const zone=spatialZone(Number(lat),Number(lng));
+      const rec={
+        id:`${slugify(title)||'fishing-location'}-${Date.now().toString().slice(-6)}`,
+        name:title,
+        coordinates:{lat:Number(lat),lng:Number(lng)},
+        region:zone?.label||'',
+        subregion:'',
+        site_type:'',
+        habitat:'',
+        targets:{primary:[],secondary:[]},
+        ideal_general_window:'',
+        access_status_note:'Verify legal access, current conditions and regulations before fishing.',
+        supportive_info:{water_movement:'',bait:'',tactics:''},
+        verification:{label:'User-added from Live Water',status:'working-copy'},
+        provenance:{source:'RRFT Live Water map selection'},
+        updated_at:new Date().toISOString()
+      };
+      state.locations.push(rec);
+      persistManagedLocations();
+      addLocationMarker(rec);
+      renderSpotList($('#spot-search')?.value||'');
+      renderLocationCaptureControls(panel,lat,lng,rec);
+    };
+    button.addEventListener('click',save);
+    input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();}});
+  }
+  panel.appendChild(box);
+}
 
 async function getJson(file){
   const response=await fetch(`${DATA_ROOT}/${file}`);
@@ -754,7 +842,10 @@ function initMap(){
   for(const loc of state.locations.filter(l=>l.coordinates)){
     const marker=L.circleMarker([loc.coordinates.lat,loc.coordinates.lng],markerStyleForLocation(loc));
     marker.bindTooltip(loc.name);
-    marker.on('click',()=>renderMapEvaluation(loc.coordinates.lat,loc.coordinates.lng,loc));
+    marker.on('click',()=>{
+      renderMapEvaluation(loc.coordinates.lat,loc.coordinates.lng,loc);
+      renderLocationCaptureControls($('#frmap-report'),loc.coordinates.lat,loc.coordinates.lng,loc);
+    });
     marker.addTo(access);
     state.mapMarkers.push({location:loc,marker});
     if(loc?.access_gate?.status==='closed'){
@@ -816,10 +907,18 @@ function initMap(){
     map.setView([38.03,-122.25],9);
     renderNearbyCoordinateIntelligence(38.03,-122.25);
   });
-  map.on('click',e=>renderMapEvaluation(e.latlng.lat,e.latlng.lng));
+  map.on('click',e=>{
+    renderMapEvaluation(e.latlng.lat,e.latlng.lng);
+    renderLocationCaptureControls($('#frmap-report'),e.latlng.lat,e.latlng.lng);
+  });
   const eckley=state.locations.find(l=>l.id==='eckley-pier');
-  if(eckley?.coordinates)renderMapEvaluation(eckley.coordinates.lat,eckley.coordinates.lng,eckley);
-  else renderNearbyCoordinateIntelligence(38.03,-122.25);
+  if(eckley?.coordinates){
+    renderMapEvaluation(eckley.coordinates.lat,eckley.coordinates.lng,eckley);
+    renderLocationCaptureControls($('#frmap-report'),eckley.coordinates.lat,eckley.coordinates.lng,eckley);
+  }else{
+    renderNearbyCoordinateIntelligence(38.03,-122.25);
+    renderLocationCaptureControls($('#frmap-report'),38.03,-122.25);
+  }
   setTimeout(()=>map.invalidateSize(),100);
 }
 
@@ -1614,6 +1713,7 @@ async function boot(){
       getJsonOptional('live/condition-engine.json')
     ]);
     state.locations=Array.isArray(state.locations)?state.locations:(state.locations?.locations||[]);
+    state.locations=mergeManagedLocations(state.locations);
     state.speciesCatalog=Array.isArray(state.speciesCatalog)?state.speciesCatalog:(state.speciesCatalog?.species||[]);
     state.selectedLocation=state.locations.find(l=>l.id==='eckley-pier')||state.locations[0];
     state.selectedSpecies=state.speciesCatalog.find(s=>s.id==='striped-bass')||state.speciesCatalog[0];
