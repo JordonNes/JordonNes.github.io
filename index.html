@@ -3,65 +3,92 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Choose a Jordon Nes digital project.">
-  <title>Jordon Nes — Digital Projects</title>
+  <meta name="description" content="JordonNes digital projects: LJDP, Rich Water Tavern, Kida's C&C Kitchen, and Damilola & Gavavi Markets.">
+  <title>JordonNes — Digital Projects</title>
   <style>
-    :root{color-scheme:dark;--ink:#f7f3ea;--muted:#aaa8ae;--line:rgba(255,255,255,.14);--gold:#e2b94e;--violet:#7e58f5}
+    :root{color-scheme:dark;--ink:#f7f3ea;--muted:#aaa8ae;--line:rgba(255,255,255,.14);--gold:#e2b94e;--cyan:#3ed9ee}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#27173e 0,transparent 34%),radial-gradient(circle at 88% 88%,#223d50 0,transparent 34%),#08080b;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    main{width:min(1120px,92vw);margin:auto;padding:clamp(44px,8vw,96px) 0}
-    header{text-align:center;margin-bottom:36px}
-    .eyebrow{color:var(--gold);font-size:.75rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
-    h1{font-size:clamp(2.1rem,5vw,4.4rem);line-height:1;margin:.45rem 0 .85rem;letter-spacing:-.045em}
-    header p{max-width:650px;margin:auto;color:var(--muted);font-size:clamp(.95rem,2vw,1.08rem)}
+    body{margin:0;min-height:100vh;background:radial-gradient(circle at 14% 8%,#27173e 0,transparent 34%),radial-gradient(circle at 86% 86%,#17384a 0,transparent 34%),#08080b;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    main{width:min(1180px,92vw);margin:auto;padding:clamp(44px,8vw,92px) 0}
+    header{text-align:center;margin-bottom:38px}
+    .eyebrow{color:var(--gold);font-size:.75rem;font-weight:900;letter-spacing:.19em;text-transform:uppercase}
+    h1{font-size:clamp(2.3rem,6vw,4.9rem);line-height:.96;margin:.5rem 0 .9rem;letter-spacing:-.05em}
+    header p{max-width:760px;margin:auto;color:var(--muted);font-size:clamp(.98rem,2vw,1.1rem);line-height:1.6}
     .projects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
-    .project{position:relative;min-height:390px;border:1px solid var(--line);border-radius:24px;overflow:hidden;color:inherit;text-decoration:none;background:#111117;box-shadow:0 24px 70px rgba(0,0,0,.34);isolation:isolate;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+    .project{position:relative;min-height:370px;border:1px solid var(--line);border-radius:24px;overflow:hidden;color:inherit;text-decoration:none;background:#111117;box-shadow:0 24px 70px rgba(0,0,0,.34);isolation:isolate;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
     .project:hover,.project:focus-visible{transform:translateY(-5px);border-color:rgba(255,255,255,.34);box-shadow:0 30px 80px rgba(0,0,0,.48);outline:none}
     .project:focus-visible{box-shadow:0 0 0 3px var(--gold),0 30px 80px rgba(0,0,0,.48)}
     .art{position:absolute;inset:0;z-index:-2;background-position:center;background-size:cover}
-    .project:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(4,4,7,.05) 15%,rgba(4,4,7,.9) 78%,#060608 100%)}
+    .project:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(4,4,7,.04) 10%,rgba(4,4,7,.82) 72%,#060608 100%)}
     .lj .art{background-image:url('assets/headers/lj-live-shared.png')}
-    .ray .art{display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#f9df72 0 10%,#ec9b37 11% 19%,transparent 20%),conic-gradient(from 7deg at 50% 42%,transparent 0 7deg,#e7b743 8deg 11deg,transparent 12deg 29deg,#e7b743 30deg 34deg,transparent 35deg 52deg,#e7b743 53deg 57deg,transparent 58deg 74deg,#e7b743 75deg 79deg,transparent 80deg 97deg,#e7b743 98deg 102deg,transparent 103deg 119deg,#e7b743 120deg 124deg,transparent 125deg 142deg,#e7b743 143deg 147deg,transparent 148deg 164deg,#e7b743 165deg 169deg,transparent 170deg 187deg,#e7b743 188deg 192deg,transparent 193deg 209deg,#e7b743 210deg 214deg,transparent 215deg 232deg,#e7b743 233deg 237deg,transparent 238deg 254deg,#e7b743 255deg 259deg,transparent 260deg 277deg,#e7b743 278deg 282deg,transparent 283deg 299deg,#e7b743 300deg 304deg,transparent 305deg 322deg,#e7b743 323deg 327deg,transparent 328deg 344deg,#e7b743 345deg 349deg,transparent 350deg),linear-gradient(145deg,#17394d,#20203a 58%,#55273d)}
+    .water .art{background:radial-gradient(circle at 72% 18%,rgba(255,203,88,.8),transparent 13%),linear-gradient(160deg,#0c586c 0,#102d43 44%,#131923 70%,#080a0c 100%)}
+    .water .art:after{content:"";position:absolute;left:-10%;right:-10%;bottom:28%;height:42%;background:repeating-radial-gradient(ellipse at 50% 110%,transparent 0 12px,rgba(95,222,235,.16) 13px 15px,transparent 16px 31px);transform:rotate(-3deg)}
+    .kida .art{background:linear-gradient(115deg,rgba(5,23,34,.1),rgba(5,23,34,.72)),url('assets/richfish-kida-canonical.jpg') center/cover no-repeat}
+    .markets .art{background:radial-gradient(circle at 72% 25%,rgba(226,185,78,.28),transparent 14%),linear-gradient(145deg,#34240d,#142a25 54%,#0b1010)}
+    .markets .art:after{content:"";position:absolute;inset:18% 10%;background:linear-gradient(120deg,transparent 0 42%,rgba(226,185,78,.18) 43% 45%,transparent 46% 55%,rgba(86,225,164,.12) 56% 58%,transparent 59%),repeating-linear-gradient(90deg,transparent 0 39px,rgba(255,255,255,.035) 40px),repeating-linear-gradient(0deg,transparent 0 39px,rgba(255,255,255,.035) 40px);border:1px solid rgba(255,255,255,.06)}
     .content{position:absolute;left:0;right:0;bottom:0;padding:28px}
-    .tag{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:rgba(8,8,11,.76);border:1px solid var(--line);font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .tag{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:rgba(8,8,11,.76);border:1px solid var(--line);font-size:.7rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
     .dot{width:7px;height:7px;border-radius:50%;background:#55db8b;box-shadow:0 0 12px #55db8b}
-    .soon .dot{background:var(--gold);box-shadow:0 0 12px var(--gold)}
-    h2{font-size:clamp(1.65rem,3vw,2.35rem);margin:14px 0 7px;letter-spacing:-.025em}
-    .content p{margin:0 0 17px;color:#d0ced4;max-width:470px}
-    .enter{font-weight:850;color:#fff}.enter span{display:inline-block;transition:transform .2s ease}.project:hover .enter span{transform:translateX(5px)}
-    footer{text-align:center;color:#777780;font-size:.78rem;margin-top:28px}
-    @media(max-width:720px){.projects{grid-template-columns:1fr}.project{min-height:340px}.lj .art{background-position:center}.content{padding:23px}}
+    .developing .dot{background:var(--gold);box-shadow:0 0 12px var(--gold)}
+    h2{font-size:clamp(1.65rem,3vw,2.4rem);margin:14px 0 7px;letter-spacing:-.03em}
+    .content p{margin:0 0 17px;color:#d0ced4;max-width:500px;line-height:1.5}
+    .enter{font-weight:900;color:#fff}.enter span{display:inline-block;transition:transform .2s ease}.project:hover .enter span{transform:translateX(5px)}
+    footer{text-align:center;color:#777780;font-size:.78rem;margin-top:30px}
+    @media(max-width:760px){.projects{grid-template-columns:1fr}.project{min-height:345px}.content{padding:23px}}
     @media(prefers-reduced-motion:reduce){.project,.enter span{transition:none}}
   </style>
 </head>
 <body>
   <main>
     <header>
-      <div class="eyebrow">Jordon Nes Digital Projects</div>
-      <h1>Choose your destination.</h1>
-      <p>Sports intelligence today. Richmond-centered civic storytelling next.</p>
+      <div class="eyebrow">JordonNes Digital Projects</div>
+      <h1>Four destinations. One project ecosystem.</h1>
+      <p>Independent digital properties spanning sports intelligence, Bay-to-Delta fishing, catch-and-cook culinary guidance, and developing markets intelligence.</p>
     </header>
-    <section class="projects" aria-label="Available digital projects">
-      <a class="project lj" href="LJ_index.html" aria-label="Open LEGZ and JINX Daily Predictions">
-        <div class="art" role="img" aria-label="LEGZ and JINX sports artwork"></div>
+
+    <section class="projects" aria-label="JordonNes digital projects">
+      <a class="project lj" href="LJ_index.html" aria-label="Open LJDP">
+        <div class="art" role="img" aria-label="LEGZ and JINX sports intelligence artwork"></div>
         <div class="content">
           <div class="tag"><span class="dot"></span>Live project</div>
-          <h2>LEGZ &amp; JINX Daily Predictions</h2>
-          <p>Daily sports intelligence, player-prop analysis, game winners and Quickie Cards.</p>
+          <h2>LJDP</h2>
+          <p>LEGZ &amp; JINX sports intelligence, player-prop analysis, game winners, LSI analytics and decision tools.</p>
           <div class="enter">Enter LJDP <span aria-hidden="true">→</span></div>
         </div>
       </a>
-      <a class="project ray" href="richfish/" aria-label="Open Richmond Ray Fishin' Tavern">
-        <div class="art" role="img" aria-label="Sun rays representing Richmond Ray"></div>
+
+      <a class="project water" href="richfish/" aria-label="Open Rich Water Tavern">
+        <div class="art" role="img" aria-label="Water and shoreline atmosphere representing Rich Water Tavern"></div>
         <div class="content">
           <div class="tag"><span class="dot"></span>Live project</div>
-          <h2>Richmond Ray’s Fishin’ Tavern</h2>
-          <p>RICHFISH fishing intelligence for Richmond, the Bay, Delta and nearby coast—spots, species, field guides, conditions and Richmond Ray.</p>
+          <h2>Rich Water Tavern</h2>
+          <p>Formerly Richmond Ray's Fishing Tavern. Bay-to-Delta fishing intelligence, live water, locations, species, conditions and field knowledge powered by Rich Fish.</p>
           <div class="enter">Enter the Tavern <span aria-hidden="true">→</span></div>
         </div>
       </a>
+
+      <a class="project kida" href="richfish/kida.html" aria-label="Open Kida's Catch and Cook Kitchen">
+        <div class="art" role="img" aria-label="Kida's catch and cook kitchen"></div>
+        <div class="content">
+          <div class="tag"><span class="dot"></span>Live project</div>
+          <h2>Kida's C&amp;C Kitchen</h2>
+          <p>Catch → Clean → Cook. Species-aware preparation, cooking methods, recipe intelligence and Kida's culinary matrix.</p>
+          <div class="enter">Enter the Kitchen <span aria-hidden="true">→</span></div>
+        </div>
+      </a>
+
+      <a class="project markets" href="damilola-gavavi/" aria-label="Open Damilola and Gavavi Markets">
+        <div class="art" role="img" aria-label="Abstract market intelligence visualization"></div>
+        <div class="content">
+          <div class="tag developing"><span class="dot"></span>In development</div>
+          <h2>Damilola &amp; Gavavi Markets</h2>
+          <p>A brothers-led markets, strategy and intelligence platform with its own identity and selective access to shared analytical infrastructure.</p>
+          <div class="enter">Enter Markets <span aria-hidden="true">→</span></div>
+        </div>
+      </a>
     </section>
-    <footer>Independent digital projects by Jordon Nes</footer>
+
+    <footer>Independent digital projects by Jordon Nes · Shared infrastructure, distinct brands.</footer>
   </main>
 </body>
 </html>
