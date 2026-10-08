@@ -41,3 +41,22 @@ nav a:hover{color:#f8cb78}
 .rwt-quicklinks .room-card b{color:#f0bc72}
 @media(max-width:900px){.rwt-quicklinks .home-room-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.rwt-quicklinks .home-room-grid{grid-template-columns:1fr}.home-page .hero{min-height:550px;padding:80px 6vw 60px}}
+
+/* Approved 8 October header composition: image first, navigation second. */
+.home-page{display:flex;flex-direction:column}
+.home-page main{display:contents}
+.home-page .hero{order:0!important;display:block!important;position:relative!important;min-height:0!important;height:auto!important;aspect-ratio:5.4/1;max-height:none!important;padding:0!important;margin:0!important;border:0!important;background: url('../assets/rwt-home-header.jpg') center center/100% 100% no-repeat,linear-gradient(100deg,#142333 0%,#ba6a35 48%,#0e1820 100%)!important;overflow:hidden}
+.home-page .hero .hero-content,.home-page .hero .hero-overlay,.home-page .hero .ray-portrait,.home-page .hero .hero-cards{display:none!important}
+.home-page .hero:after,.home-page .hero:before{display:none!important}
+.home-page .topbar{order:1!important;position:relative!important;top:auto!important;z-index:30!important;min-height:64px;display:flex;flex-wrap:nowrap;gap:14px;padding:8px clamp(14px,2vw,38px);background:#07121c!important;border-bottom:2px solid #77542f;backdrop-filter:none}
+.home-page .topbar>a:first-child{flex:0 0 auto}
+.home-page .topbar .brand{flex:0 0 auto;min-width:0;white-space:nowrap}
+.home-page .topbar .brand strong{font-size:clamp(.8rem,1.3vw,1.25rem);letter-spacing:.1em}
+.home-page .topbar .brand small{font-size:.48rem;letter-spacing:.12em}
+.home-page .topbar nav{flex:1 1 auto;min-width:0;display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:clamp(4px,.6vw,13px)}
+.home-page .topbar nav a{font-size:clamp(.62rem,.67vw,.8rem);white-space:nowrap;padding:5px 2px}
+.home-page .topbar nav a.phase{padding:7px 9px}
+.home-page .topbar .nav-toggle{display:none}
+.home-page .rwt-scene-banner,.home-page .rf-live-section,.home-page .section,.home-page footer{order:2}
+@media(max-width:1050px){.home-page .topbar{flex-wrap:wrap;justify-content:space-between}.home-page .topbar nav{flex-basis:100%;justify-content:center}}
+@media(max-width:760px){.home-page .hero{aspect-ratio:3.4/1;background-size:cover!important;background-position:center!important}.home-page .topbar .nav-toggle{display:block}.home-page .topbar nav{display:none}.home-page .topbar nav.open,.home-page .topbar nav.active{display:flex;flex-basis:100%;justify-content:flex-start}.home-page .topbar .brand strong{font-size:.86rem}}
