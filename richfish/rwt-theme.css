@@ -24,3 +24,20 @@ nav a:hover{color:#f8cb78}
 .rwt-scene-banner.rwt-kida:before{background-position:center 50%}
 .rwt-scene-banner.rwt-live:before{background-position:center 95%}
 @media(max-width:700px){.home-page .hero{min-height:640px;background-position:54% 10%}.rwt-scene-banner{min-height:230px;padding:25px}.rwt-scene-banner:before{background-size:auto 900px}}
+
+/* Homepage navigation: separate from cinematic masthead */
+.home-page .hero{display:flex;min-height:600px;padding:92px 7vw 85px;align-items:center}
+.home-page .hero-content{max-width:730px}
+.home-page .hero .home-room-grid{display:none}
+.rwt-quicklinks{padding:32px 0 65px}
+.rwt-quicklinks-heading{margin-bottom:20px}
+.rwt-quicklinks-heading span{font-size:.72rem;letter-spacing:.2em;font-weight:900;color:#edbb77}
+.rwt-quicklinks-heading h2{font-family:Georgia,serif;font-size:clamp(1.8rem,3vw,2.7rem);margin:5px 0;color:#ffedcf}
+.rwt-quicklinks .home-room-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.rwt-quicklinks .room-card{min-height:175px;padding:18px;border:1px solid rgba(229,172,98,.32);border-radius:12px;background:linear-gradient(130deg,#12313c,#0b222c);transition:transform .2s,border-color .2s}
+.rwt-quicklinks .room-card:hover{transform:translateY(-3px);border-color:#e5b271}
+.rwt-quicklinks .room-card h3{font-size:1.12rem;margin:12px 0 6px;color:#fce4bd}
+.rwt-quicklinks .room-card p{font-size:.83rem;color:#cbd1cc}
+.rwt-quicklinks .room-card b{color:#f0bc72}
+@media(max-width:900px){.rwt-quicklinks .home-room-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.rwt-quicklinks .home-room-grid{grid-template-columns:1fr}.home-page .hero{min-height:550px;padding:80px 6vw 60px}}
