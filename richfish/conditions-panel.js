@@ -5,7 +5,8 @@ const q=(s,root=document)=>root.querySelector(s);
 const esc=(value)=>String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const fmtTime=(iso)=>iso?new Date(iso).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'—';
 const fmtDate=(iso)=>new Date(iso+'T12:00:00Z').toLocaleDateString([], {weekday:'short',month:'short',day:'numeric'});
-let datasets=null,lastPosition=null,activeWaterType='salt';
+const DEFAULT_LOCATION={latitude:37.9147,longitude:-122.3534,label:'Richmond Inner Harbor'};
+let datasets=null,lastPosition=null,activeWaterType='salt',usingDefaultLocation=true;
 
 async function loadDatasets(){
   if(datasets)return datasets;
@@ -229,6 +230,9 @@ function setStatus(text,error=false){
 async function runForPosition(pos){
   const lat=pos.coords.latitude,lng=pos.coords.longitude;
   lastPosition={latitude:lat,longitude:lng};
+  usingDefaultLocation=Boolean(pos.isDefaultLocation);
+  const locationMeta=q('#rf-location-meta');
+  if(locationMeta)locationMeta.textContent=usingDefaultLocation?'Using Richmond Inner Harbor as the default reference point. Select “Use my current location” to personalize nearby fishing conditions.':'Using your browser location to rank nearby fishing options. Your precise coordinates remain in this browser.';
   await refreshSpeciesForPosition();
   setStatus('Reading nearby water, tides, weather, season and local evidence…');
   try{
@@ -244,7 +248,7 @@ async function runForPosition(pos){
     const weatherSpot=top?.coordinates?nearestPublicWeather(data.publicWater,top.coordinates.lat,top.coordinates.lng):null;
     const publicStation=top?.water?.station?.id?stationPublicWater(data.publicWater,top.water.station.id):null;
     renderTop(payload,calendar,{astronomy,weatherSpot,publicStation});
-    setStatus('Live recommendation ready.');
+    setStatus(usingDefaultLocation?'Richmond Inner Harbor · default location · live recommendation ready.':'Your location · live recommendation ready.');
   }catch(error){
     console.error('RICHFISH live panel failed',error);
     setStatus('Live public-data request failed. The rest of the Tavern remains available; no conditions were invented.',true);
@@ -255,9 +259,10 @@ async function runForPosition(pos){
 function requestLocation(){
   const btn=q('#rf-use-location');
   if(btn){btn.disabled=true;btn.textContent='Locating…';}
-  if(!navigator.geolocation){setStatus('Geolocation is unavailable in this browser.',true);return;}
-  navigator.geolocation.getCurrentPosition(runForPosition,error=>{
-    setStatus(error.message||'Location was not shared. You can still use the map manually.',true);
+  if(!navigator.geolocation){setStatus('Location unavailable; continuing with Richmond Inner Harbor.');runForPosition({coords:{latitude:DEFAULT_LOCATION.latitude,longitude:DEFAULT_LOCATION.longitude},isDefaultLocation:true});return;}
+  navigator.geolocation.getCurrentPosition(pos=>runForPosition(pos),error=>{
+    setStatus('Location not shared; using Richmond Inner Harbor instead.');
+    runForPosition({coords:{latitude:DEFAULT_LOCATION.latitude,longitude:DEFAULT_LOCATION.longitude},isDefaultLocation:true});
     if(btn){btn.disabled=false;btn.textContent='Use my current location';}
   },{enableHighAccuracy:false,timeout:10000,maximumAge:300000});
 }
@@ -310,6 +315,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.querySelectorAll('[data-water-type]').forEach(b=>b.classList.toggle('active',b===button));
     await refreshSpeciesForPosition();if(lastPosition)runForPosition({coords:lastPosition});
   }));
+  runForPosition({coords:{latitude:DEFAULT_LOCATION.latitude,longitude:DEFAULT_LOCATION.longitude},isDefaultLocation:true});
   autoIfGranted();
 });
 })();
