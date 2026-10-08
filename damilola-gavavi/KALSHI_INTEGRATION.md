@@ -5,6 +5,7 @@ Status: Approved source architecture; credentials not stored in the repository.
 ## User-provided documentation references
 - Kalshi API documentation: https://share.google/BeNYZZn21N7NqqB7L
 - Kalshi Perps API documentation: https://share.google/jdSVSVyRtpm2NLK05
+- Kalshi API Keys documentation: https://share.google/7Mz2jqNZcS8BnHtxW
 
 The share links should remain source references. Never place API secrets, private keys, account identifiers, access tokens, or signed requests in the public repository.
 
@@ -29,6 +30,19 @@ Treat perps as a separate source class from Kalshi prediction markets. Use for:
 - Volatility / funding / directional-market context
 
 Perps use separate margin-account concepts and may use separate credentials/hosts. Do not assume prediction-market credentials can be reused.
+
+## Authentication and API-key handling
+
+The API-key documentation is an approved implementation reference for authenticated Kalshi access.
+
+Security rules:
+- Never place Kalshi API keys, private keys, PEM material, signing secrets, access tokens, account identifiers, or signed request examples containing live credentials in GitHub Pages, client-side JavaScript, committed JSON, HTML, markdown, or public Actions logs.
+- Browser-side code may consume only public or already-sanitized data.
+- Authenticated Kalshi requests must execute from a protected server-side environment or CI/runtime with secret storage.
+- Keep demo and production credentials separate.
+- Rotate or revoke credentials immediately if they are ever exposed.
+- Do not print secret values in application logs, error messages, analytics, or debugging output.
+- Expose only the minimum required derived data to the public D&G site.
 
 ## Integration boundaries
 1. Read-only market-data ingestion first.
