@@ -19,9 +19,9 @@
     <button class="nav-toggle" aria-label="Open navigation">☰</button>
     <nav>
       <a href="#home">Tavern</a>
-      <a href="#rooms">Rooms</a>
+      <a href="#spots">Rooms</a>
       <a href="#spots">Fishing Spots</a>
-      <a href="#fish-now-live">Fish Now</a>
+      <a href="fish-now.html">Fish Now</a>
       <a href="calendar.html">Fishing Calendar</a>
       <a href="../kida/">Kida · Catch & Cook</a>
       <a href="#documents">Field Library</a>
@@ -54,42 +54,54 @@
 
     </section>
     <section class="rwt-scene-banner rwt-live" aria-label="Live Water shoreline fishing"><div><span class="eyebrow">RICHMOND SHORELINE · REAL-WORLD CONDITIONS</span><h2>Live Water</h2><p>From the rocks and piers to the Bay and Delta. Research the conditions before you cast.</p><a href="#fish-now-live">Explore live fishing intelligence →</a></div></section>
-    <section id="fish-now-live" class="section shell rf-live-section">
+
+
+
+
+
+    <section class="rwt-scene-banner rwt-kida" aria-label="Catch and Cook with Kida"><div><span class="eyebrow">CATCH · CLEAN · COOK</span><h2>Catch & Cook with Kida</h2><p>Bring the catch home and turn it into something worth sharing. Explore halibut and striped bass recipes.</p><a href="../kida/">Visit Kida’s Kitchen →</a></div></section>
+
+
+
+
+    <section id="frmap" class="section shell frmap-live">
       <div class="section-heading">
-        <div><span class="eyebrow">RAY'S CURRENT CALL · LOCATION AWARE</span><h2>Where should I fish right now?</h2></div>
-        <span class="sync">Season · NOAA tide/water · NWS weather · moon · community evidence</span>
+        <div><span class="eyebrow">FRmap · LIVE WATER</span><h2>Click the water. Read the evidence. Fish smarter.</h2></div>
+        <span class="sync">Evidence-gated map · no invented calls</span>
       </div>
-      <div class="rf-live-controls">
-        <button class="btn primary" id="rf-use-location" type="button">Use my current location</button>
-        <label for="rf-live-radius">Range</label>
-        <select id="rf-live-radius" class="map-select" aria-label="Fishing search range">
-          <option value="15">15 miles</option><option value="30" selected>30 miles</option><option value="60">60 miles</option>
-        </select>
-        <div class="rf-water-switch" role="group" aria-label="Water type">
-          <button type="button" class="active" data-water-type="salt">Salt water</button>
-          <button type="button" data-water-type="fresh-brackish">Freshwater / brackish</button>
-        </div>
-        <label for="rf-live-species">Target</label>
-        <select id="rf-live-species" class="map-select"><option value="">Best available target</option></select>
-        <span id="rf-live-status" class="rf-live-status">Default: Richmond Inner Harbor · loading nearby fishing conditions…</span>
-      </div>
-      <p id="rf-location-meta" class="rf-location-meta">Default reference: Richmond Inner Harbor. Use your browser location to personalize nearby fishing conditions.</p>
-      <div id="rf-live-output" class="rf-live-output">
-        <div class="rf-empty"><h3>Loading Richmond Inner Harbor fishing recommendations…</h3><p>RICHFISH will rank nearby fishing locations using season, current tide and water observations, wind/weather, distance, moderated community evidence, and a small conventional lunar factor.</p></div>
-      </div>
-      <div class="rf-tide-module">
-        <div class="rf-tide-heading">
-          <div><span class="eyebrow">TIDE + WEATHER</span><h3>24-hour tide chart and fishing weather forecast</h3></div>
-          <span id="rf-tide-station" class="sync">Nearest NOAA tide station</span>
-        </div>
-        <div id="rf-tide-chart" class="rf-tide-chart"><div class="tide-chart-empty">Loading the Richmond Inner Harbor tide reference…</div></div>
-        <div id="rf-weather-forecast" class="rf-weather-forecast"><div class="tide-chart-empty">Loading Richmond Inner Harbor weather…</div></div>
-        <p class="rf-reference-line">Planning reference: <a href="https://tides4fishing.com/us/california/richmond" target="_blank" rel="noopener">Tides4Fishing.com</a>. Numerical tide data remain NOAA CO-OPS sourced.</p>
-        <div id="rf-tide-calendar" class="rf-tide-calendar"></div>
-        <p class="notice">The 0–6 fish Activity Rating is RICHFISH's own planning index, not a copied third-party rating and not a catch probability. Lunar phase is intentionally a minor factor; season, tide/current, water, weather and verified local evidence carry more weight.</p>
+      <div class="map-workspace">
+        <aside class="map-controls">
+          <strong>Target species</strong>
+          <label class="map-field" for="frmap-species">Highlight the best supported water</label>
+          <select id="frmap-species" class="map-select" aria-label="FRmap target species">
+            <option value="">All modeled targets</option>
+          </select>
+          <div class="map-action-row">
+            <button class="btn map-btn" id="frmap-near-me" type="button">Use my location</button>
+            <button class="btn map-btn" id="frmap-reset" type="button">Reset Bay view</button>
+          </div>
+          <div id="frmap-selection-summary" class="map-selection-summary">Select a species or click the map.</div>
+
+          <strong>Visible layers</strong>
+          <label><input type="checkbox" data-map-layer="access" checked /> RICHFISH fishing locations</label>
+          <label><input type="checkbox" data-map-layer="currents" checked /> Bound current vectors</label>
+          <label><input type="checkbox" data-map-layer="gates" checked /> Access hard gates</label>
+          <label><input type="checkbox" data-map-layer="stations" checked /> NOAA CO-OPS stations</label>
+          <label><input type="checkbox" data-map-layer="buoys" checked /> NOAA NDBC coastal buoys</label>
+          <label><input type="checkbox" data-map-layer="bathymetry" /> NOAA ENC depth contours</label>
+          <div class="future-layer">NWS weather / hazards <small>Live context on bound fishing locations</small></div>
+          <div class="future-layer">MPAs / advisories / closures <small>Regulatory polygon hard-gates remain a separate data-ingestion task</small></div>
+          <p class="notice">Click anywhere for coordinate intelligence. When the exact point is not model-bound, FRmap reports the nearest evidence, stations and scored fishing options without pretending the nearby data were measured at your pin.</p>
+          <p class="map-source-note">NOAA ENC depth contours are chart-derived GIS context and are not certified for navigation.</p>
+        </aside>
+        <div id="frmap-canvas" class="frmap-canvas" aria-label="Interactive RICHFISH fishing map"></div>
+        <article id="frmap-report" class="map-report">
+          <span class="eyebrow">RAY'S CALL</span>
+          <h3>Select a mapped fishing location or click the water.</h3>
+          <p>RICHFISH will tell you what the evidence supports and what is still missing.</p>
+        </article>
       </div>
     </section>
-
     <section id="calendar" class="section shell fishing-calendar">
       <div class="section-heading">
         <div>
@@ -149,64 +161,6 @@
 
       <p class="notice">The 0–6 Calendar Rating is a general tide/lunar planning index, separate from the live Fish Now Activity Rating and not a catch probability. Weather, water conditions, species seasonality, community evidence, access, regulations and safety remain separate decision layers and can override a favorable calendar rating. Tides4Fishing is credited as a feature/workflow reference; numerical tide data come from NOAA CO-OPS.</p>
     </section>
-    <section id="frmap" class="section shell frmap-live">
-      <div class="section-heading">
-        <div><span class="eyebrow">FRmap · LIVE WATER</span><h2>Click the water. Read the evidence. Fish smarter.</h2></div>
-        <span class="sync">Evidence-gated map · no invented calls</span>
-      </div>
-      <div class="map-workspace">
-        <aside class="map-controls">
-          <strong>Target species</strong>
-          <label class="map-field" for="frmap-species">Highlight the best supported water</label>
-          <select id="frmap-species" class="map-select" aria-label="FRmap target species">
-            <option value="">All modeled targets</option>
-          </select>
-          <div class="map-action-row">
-            <button class="btn map-btn" id="frmap-near-me" type="button">Use my location</button>
-            <button class="btn map-btn" id="frmap-reset" type="button">Reset Bay view</button>
-          </div>
-          <div id="frmap-selection-summary" class="map-selection-summary">Select a species or click the map.</div>
-
-          <strong>Visible layers</strong>
-          <label><input type="checkbox" data-map-layer="access" checked /> RICHFISH fishing locations</label>
-          <label><input type="checkbox" data-map-layer="currents" checked /> Bound current vectors</label>
-          <label><input type="checkbox" data-map-layer="gates" checked /> Access hard gates</label>
-          <label><input type="checkbox" data-map-layer="stations" checked /> NOAA CO-OPS stations</label>
-          <label><input type="checkbox" data-map-layer="buoys" checked /> NOAA NDBC coastal buoys</label>
-          <label><input type="checkbox" data-map-layer="bathymetry" /> NOAA ENC depth contours</label>
-          <div class="future-layer">NWS weather / hazards <small>Live context on bound fishing locations</small></div>
-          <div class="future-layer">MPAs / advisories / closures <small>Regulatory polygon hard-gates remain a separate data-ingestion task</small></div>
-          <p class="notice">Click anywhere for coordinate intelligence. When the exact point is not model-bound, FRmap reports the nearest evidence, stations and scored fishing options without pretending the nearby data were measured at your pin.</p>
-          <p class="map-source-note">NOAA ENC depth contours are chart-derived GIS context and are not certified for navigation.</p>
-        </aside>
-        <div id="frmap-canvas" class="frmap-canvas" aria-label="Interactive RICHFISH fishing map"></div>
-        <article id="frmap-report" class="map-report">
-          <span class="eyebrow">RAY'S CALL</span>
-          <h3>Select a mapped fishing location or click the water.</h3>
-          <p>RICHFISH will tell you what the evidence supports and what is still missing.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="rwt-scene-banner rwt-kida" aria-label="Catch and Cook with Kida"><div><span class="eyebrow">CATCH · CLEAN · COOK</span><h2>Catch & Cook with Kida</h2><p>Bring the catch home and turn it into something worth sharing. Explore halibut and striped bass recipes.</p><a href="../kida/">Visit Kida’s Kitchen →</a></div></section>
-    <section id="rooms" class="section shell rooms">
-      <div class="section-heading">
-        <div><span class="eyebrow">THE TAVERN ROOMS</span><h2>Everything RICHFISH lives here.</h2></div>
-        <span class="sync">One fishing system · separate from LEGZ/JINX</span>
-      </div>
-      <div class="room-grid">
-        <a class="room-card featured" href="#fish-now-live"><span>01</span><h3>Fish Right Now</h3><p>Choose a target species and let RICHFISH combine site fit, live water conditions and source confidence into an explainable fishing recommendation.</p><b>Open Fish Finder →</b></a>
-        <a class="room-card" href="#spots"><span>02</span><h3>Where Should I Fish?</h3><p>Richmond Ray's spot profiles: access, target fish, bait, rigs, windows, cautions and current dataset conditions.</p><b>Explore Spots →</b></a>
-        <a class="room-card" href="#finder"><span>03</span><h3>Species Explorer</h3><p>The growing species intelligence layer connects fish behavior, bait, rigs and condition logic to fishing locations.</p><b>Browse Species →</b></a>
-        <a class="room-card" href="#guide"><span>04</span><h3>The Fishing Bible</h3><p>A web-native field manual covering water reading, Bay shoreline, Delta, piers, surf, species, bait, rigs and seasons.</p><b>Enter the Guide →</b></a>
-        <a class="room-card featured" href="bootcamp/"><span>05</span><h3>101 Bootcamp Library</h3><p>Dedicated visual guides for species, bait, rigs, methods, crabbing and frustrated anglers who need practical answers fast.</p><b>Open Bootcamp Library →</b></a>
-        <a class="room-card" href="#frmap"><span>06</span><h3>FRmap · Live Water</h3><p>Interactive fishing access, NOAA stations, coastal buoys and evidence-gated Richmond Ray location evaluation.</p><b>Open FRmap →</b></a>
-        <a class="room-card" href="data-lab.html"><span>07</span><h3>Rules, Safety & Sources</h3><p>Official-source hierarchy for regulations, consumption advisories, tides, weather, water data and access notices.</p><b>Inspect Data Lab →</b></a>
-        <a class="room-card featured" href="ask-ray.html"><span>08</span><h3>Ask Richmond Ray</h3><p>Ask a fishing question and Ray will reason from the RICHFISH knowledge system, selected location, selected species and live Condition Engine context.</p><b>Ask Ray now →</b></a>
-        <a class="room-card featured" href="../kida/"><span>09</span><h3>Kida · Catch, Clean & Cook</h3><p>Kida takes over when the fish hits the table: cleaning, storage, cooking intelligence and recipes organized by fish and method.</p><b>Enter Kida’s Kitchen →</b></a>
-      </div>
-    </section>
-
     <section id="spots" class="section shell">
       <div class="section-heading"><div><span class="eyebrow">RAY'S LOCATION FILES</span><h2>Full location inventory — not four demo records.</h2></div><div class="section-actions"><a class="btn" href="location-manager.html">Add / update fishing locations →</a><span class="sync">43 normalized master records</span></div></div>
       <div class="workspace">
@@ -214,7 +168,7 @@
         <article id="spot-detail" class="detail-panel loading">Loading spot intelligence…</article>
       </div>
     </section>
-
+    <a class="rwt-kida-banner-link" href="../kida/" aria-label="Visit Kida's Catch and Cook Kitchen"><span class="sr-only">Visit Kida's Catch and Cook Kitchen</span></a>
     <section id="finder" class="section shell alt">
       <div class="section-heading"><div><span class="eyebrow">SPECIES EXPLORER</span><h2>Browse the full 230-species RICHFISH catalog.</h2></div><span class="sync">Catalog evidence + condition-aware recommendations where supported</span></div>
       <div class="workspace">
@@ -290,7 +244,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js" defer></script>
   <script src="local-advisor.js" defer></script>
-  <script src="conditions-panel.js" defer></script>
+  
   <script src="app.js" defer></script>
 </body>
 </html>
