@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-10-09T02:24:10.146872+00:00",
+  "checked_at_utc": "2026-10-09T07:19:54.310573+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -28,7 +28,6 @@
   "credits_estimated_this_cycle": 171,
   "provider_reported_remaining": null,
   "requested_leagues": [
-    "NFL",
     "NCAA_Football",
     "NBA"
   ],
@@ -36,8 +35,7 @@
   "authoritative_complete_leagues": [],
   "diagnostics": {},
   "errors": {
-    "NBA": "The read operation timed out",
-    "NFL": "The read operation timed out",
+    "NBA": "HTTP 503: {\"error\":\"props_board_degraded\",\"detail\":\"This page is past the end of a props board that was built while reads from 1 source(s) failed: prizepicks. The rows behind this offset may exist; a failed deeper read can leave earlier rows available. This response would otherwise be an empty page that looks like the end of the result set. Retry in a few seconds, or narrow the query with ?markets= or ?bookmakers= so the whole result fits in one page.\",\"dropped_sources\":[\"prizepicks\"],\"refill_failed_sources\":[]}",
     "NCAA_Football": "The read operation timed out"
   },
   "raw_side_offers": 0,
