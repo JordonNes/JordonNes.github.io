@@ -1,0 +1,23 @@
+name: D&G Cloudflare Worker Deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'cloudflare/dg-market-api/**'
+      - '.github/workflows/dg-cloudflare-deploy.yml'
+permissions:
+  contents: read
+jobs:
+  deploy:
+    if: ${{ vars.DG_CLOUDFLARE_DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Worker (account-level token must be configured)
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare/dg-market-api
+          command: deploy
