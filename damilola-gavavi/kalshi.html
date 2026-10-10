@@ -6,25 +6,4 @@
 <header><div class="eyebrow">Damilola & Gavavi · Market Intelligence</div><h1>Kalshi Market Explorer</h1><p class="muted">Observable prediction-market contracts. Research only; no trades or recommendations.</p><nav><a href="./">← Damilola & Gavavi Home</a> · <a href="../LJ_index.html">LEGZ & JINX</a></nav></header>
 <main><p class="notice">Data is a scheduled snapshot, not a live order book. YES quotes are contract prices, not model-estimated hit probabilities. Availability and quotes can change.</p>
 <div class="toolbar"><input id="search" type="search" placeholder="Search event, contract or ticker" aria-label="Search markets"><select id="sort" aria-label="Sort contracts"><option value="volume">Volume: highest first</option><option value="close">Closing soonest</option><option value="title">Title A–Z</option></select></div><div class="status" id="status" role="status">Loading market snapshot…</div><div id="cards" class="cards"></div></main><footer>Kalshi public market data · Incomplete inventory, limited to initial API pages · Not financial advice</footer>
-<script>
-(() => {
-const status=document.getElementById('status'),list=document.getElementById('cards'),search=document.getElementById('search'),sort=document.getElementById('sort');
-let data=[],retrieved='';
-const money=v=>v===null||v===undefined||v===''?'—': Number.isFinite(Number(v))?'$'+Number(v).toFixed(2):'—';
-const value=v=>Number.isFinite(Number(v))?Number(v):0;
-function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n;}
-function render(){
-const query=search.value.trim().toLowerCase();
-let rows=data.filter(m=>[m.title,m.subtitle,m.ticker,m.event_ticker].some(v=>String(v||'').toLowerCase().includes(query)));
-if(sort.value==='title')rows.sort((a,b)=>a.title.localeCompare(b.title));
-else if(sort.value==='close')rows.sort((a,b)=>(Date.parse(a.close_time)||Infinity)-(Date.parse(b.close_time)||Infinity));
-else rows.sort((a,b)=>value(b.volume)-value(a.volume));
-rows=rows.slice(0,100);list.replaceChildren();
-for(const m of rows){const c=el('article','card');c.append(el('div','pill',m.status||'Market'),el('h2','',m.title||m.ticker));
-const p=el('div','prices');for(const [label,val] of [['YES bid',m.yes_bid_dollars],['YES ask',m.yes_ask_dollars],['Last',m.last_price_dollars]]){const x=el('div');x.append(el('span','',label),el('strong','',money(val)));p.append(x);}c.append(p,el('div','meta','Volume: '+(m.volume??'—')+' · Closes: '+(m.close_time||'—')),el('div','meta',m.ticker));list.append(c);}
-status.textContent=rows.length+' displayed · '+data.length+' retrieved · Snapshot: '+retrieved+(query?' · filtered':'');
-}
-fetch('../data/dg_kalshi_markets.json?cache='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Snapshot not yet published');return r.json()}).then(p=>{if(!Array.isArray(p.markets))throw Error('Invalid market snapshot');data=p.markets;retrieved=p.retrieved_at_utc||'unknown';render()}).catch(e=>{status.textContent='Market data currently unavailable: '+e.message+'. Check the GitHub Actions D&G Kalshi Public Market Feed workflow.'});
-search.addEventListener('input',render);sort.addEventListener('change',render);
-})();
-</script></body></html>
+<script src="kalshi-live.js" defer></script></body></html>
