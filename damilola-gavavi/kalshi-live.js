@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id),status=$("status"),list=$("cards"),searc
 const endpoint="https://external-api.kalshi.com/trade-api/v2/markets";
 const SNAP="../data/dg_kalshi_markets.json";
 const INTERVAL=20000;
-let data=[],lastUpdated=0,mode="snapshot",retrieved="",error="";
+let data=[],lastUpdated=0,mode="snapshot",retrieved="",error="",directCount=0;
 const n=v=>v===null||v===undefined||v===""?null:Number(v);
 const price=v=>{const x=n(v);return x!==null&&Number.isFinite(x)?"$"+x.toFixed(2):"—"};
 const number=v=>{const x=n(v);return x!==null&&Number.isFinite(x)?x:0};
@@ -30,7 +30,7 @@ function render(){
  const age=lastUpdated?Math.round((Date.now()-lastUpdated)/1000):null;
  const freshness=age===null?"not yet retrieved":age+" seconds old";
  const label=mode==="live"?"DIRECT REST · auto-refresh every 20s":"SAVED SNAPSHOT · not live";
- status.textContent=label+" · "+shown.length+" displayed · "+data.length+" loaded · "+freshness+" · "+retrieved+(error?" · "+error:"");
+ status.textContent=label+(mode==="live"?" · "+directCount+" contracts updated directly; others may be older":"")+" · "+shown.length+" displayed · "+data.length+" loaded · "+freshness+" · "+retrieved+(error?" · "+error:"");
  status.dataset.feedMode=mode;
 }
 async function loadSnapshot(){
@@ -52,7 +52,7 @@ async function loadDirect(){
   const payload=await response.json();
   if(!Array.isArray(payload.markets)||!payload.markets.length)throw Error("empty market response");
   // Direct REST represents only first page, not all Kalshi listings.
-  const updates=payload.markets.map(map);const prior=new Map(data.map(m=>[m.ticker,m]));for(const item of updates)prior.set(item.ticker,item);data=Array.from(prior.values());mode="live";retrieved=new Date().toISOString();lastUpdated=Date.now();error="";
+  const updates=payload.markets.map(map);directCount=updates.length;const prior=new Map(data.map(m=>[m.ticker,m]));for(const item of updates)prior.set(item.ticker,item);data=Array.from(prior.values());mode="live";retrieved=new Date().toISOString();lastUpdated=Date.now();error="";
   render();
  }catch(e){
   error="Direct feed unavailable ("+(e.name==="AbortError"?"timeout":"network/CORS/API")+"); displaying last available data";
