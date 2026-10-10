@@ -1,7 +1,7 @@
 /* D&G Kalshi live-REST enhancement: public data only, no credentials. */
 (()=>{"use strict";
 const $=id=>document.getElementById(id),status=$("status"),list=$("cards"),search=$("search"),sort=$("sort");
-const endpoint="https://external-api.kalshi.com/trade-api/v2/markets";
+const endpoint="https://dg-market-intelligence.jordonnes-markets.workers.dev/api/kalshi";
 const SNAP="../data/dg_kalshi_markets.json";
 const INTERVAL=20000;
 let data=[],lastUpdated=0,mode="snapshot",retrieved="",error="",directCount=0;
@@ -29,7 +29,7 @@ function render(){
  }
  const age=lastUpdated?Math.round((Date.now()-lastUpdated)/1000):null;
  const freshness=age===null?"not yet retrieved":age+" seconds old";
- const label=mode==="live"?"DIRECT REST · auto-refresh every 20s":"SAVED SNAPSHOT · not live";
+ const label=mode==="live"?"CLOUDFLARE API · polling every 20s (not streaming)":"SAVED SNAPSHOT · not live";
  status.textContent=label+(mode==="live"?" · "+directCount+" contracts updated directly; others may be older":"")+" · "+shown.length+" displayed · "+data.length+" loaded · "+freshness+" · "+retrieved+(error?" · "+error:"");
  status.dataset.feedMode=mode;
 }
@@ -44,7 +44,7 @@ async function loadDirect(){
  if(inFlight||document.hidden)return;
  inFlight=true;
  try{
-  const url=endpoint+"?status=open&limit=200";
+  const url=endpoint+"?limit=200";
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
   let response;
   try{response=await fetch(url,{cache:"no-store",signal:controller.signal});}finally{clearTimeout(timeout);}
@@ -52,16 +52,16 @@ async function loadDirect(){
   const payload=await response.json();
   if(!Array.isArray(payload.markets)||!payload.markets.length)throw Error("empty market response");
   // Direct REST represents only first page, not all Kalshi listings.
-  const updates=payload.markets.map(map);directCount=updates.length;const prior=new Map(data.map(m=>[m.ticker,m]));for(const item of updates)prior.set(item.ticker,item);data=Array.from(prior.values());mode="live";retrieved=new Date().toISOString();lastUpdated=Date.now();error="";
+  const updates=payload.markets.map(map);directCount=updates.length;const prior=new Map(data.map(m=>[m.ticker,m]));for(const item of updates)prior.set(item.ticker,item);data=Array.from(prior.values());mode="live";retrieved=payload.retrieved_at_utc||new Date().toISOString();lastUpdated=Date.parse(retrieved)||Date.now();error="";
   render();
  }catch(e){
-  error="Direct feed unavailable ("+(e.name==="AbortError"?"timeout":"network/CORS/API")+"); displaying last available data";
+  error="Cloudflare API unavailable ("+(e.name==="AbortError"?"timeout":"network/CORS/API")+"); displaying last available data";
   if(mode!=="live") {try{await loadSnapshot();}catch(_){}}
   render();
  }finally{inFlight=false}
 }
 search.addEventListener("input",render);sort.addEventListener("change",render);
-loadSnapshot().catch(()=>{status.textContent="Loading direct Kalshi API…"}).finally(loadDirect);
+loadSnapshot().catch(()=>{status.textContent="Loading Cloudflare market API…"}).finally(loadDirect);
 setInterval(()=>{loadDirect();if(data.length)render();},INTERVAL);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadDirect()});
 })();
