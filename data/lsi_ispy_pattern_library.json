@@ -1,6 +1,6 @@
 {
   "schema_version": "LJ-ISPY-PATTERN-LIBRARY-2",
-  "generated_at_utc": "2026-10-10T19:01:44.411087+00:00",
+  "generated_at_utc": "2026-10-10T20:10:40.173864+00:00",
   "policy": "Validated recurring analog patterns persist independently of current sportsbook availability.",
   "patterns": [
     {
@@ -274,15 +274,15 @@
           "display": "25%"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-96F63C9D87891819EF",
       "last_evidence": {
-        "observed_rate_pct": 60.66,
+        "observed_rate_pct": 61.34,
         "baseline_rate_pct": 50.63,
-        "lift_pp": 10.02,
-        "effective_sample_size": 24.78,
-        "mean_similarity_pct": 74.45,
-        "stability_score": 1.0
+        "lift_pp": 10.71,
+        "effective_sample_size": 24.75,
+        "mean_similarity_pct": 74.32,
+        "stability_score": 0.75
       },
       "max_lift_pp": 34.06,
       "max_abs_lift_pp": 34.06,
@@ -355,14 +355,14 @@
           "display": "-1.18"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-93BC105D070AC089BE",
       "last_evidence": {
-        "observed_rate_pct": 69.25,
+        "observed_rate_pct": 61.84,
         "baseline_rate_pct": 35.24,
-        "lift_pp": 34.01,
-        "effective_sample_size": 24.75,
-        "mean_similarity_pct": 75.4,
+        "lift_pp": 26.6,
+        "effective_sample_size": 24.74,
+        "mean_similarity_pct": 74.7,
         "stability_score": 1.0
       },
       "max_lift_pp": 34.01,
@@ -810,6 +810,86 @@
       "times_observed": 1
     },
     {
+      "pattern_key": "42c064433f1168dc",
+      "league": "NFL",
+      "title": "IND — holds the opponent at least 10% below its entering rushing-yard form",
+      "outcome": "holds the opponent at least 10% below its entering rushing-yard form",
+      "outcome_code": "OPP_RUSH_BELOW_FORM",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -5.988214852655165,
+          "display": "-5.99"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 3.238054162451495,
+          "display": "3.24"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 188.5,
+          "display": "188.5 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.23529411764705882,
+          "display": "24%"
+        },
+        {
+          "feature": "focus_pass_allowed_l5",
+          "label": "pass-defense allowance",
+          "direction": "near typical",
+          "value": 276.25,
+          "display": "276.25"
+        }
+      ],
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-409FA86376270EEDD7",
+      "last_evidence": {
+        "observed_rate_pct": 12.24,
+        "baseline_rate_pct": 43.17,
+        "lift_pp": -30.94,
+        "effective_sample_size": 24.73,
+        "mean_similarity_pct": 73.8,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": -15.29,
+      "max_abs_lift_pp": 30.94,
+      "observed_event_ids": [
+        "2026_05_IND_PIT"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-05T11:26:54.951657+00:00",
+      "times_observed": 1
+    },
+    {
       "pattern_key": "514779b4d98e7710",
       "league": "NFL",
       "title": "SEA — finishes at least 10% above its entering passing-yard form",
@@ -1176,18 +1256,18 @@
           "feature": "temperature_f",
           "label": "temperature",
           "direction": "high",
-          "value": 91.5,
-          "display": "92°F"
+          "value": 89.8,
+          "display": "90°F"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-562CD6A935BABC6569",
       "last_evidence": {
-        "observed_rate_pct": 12.68,
+        "observed_rate_pct": 12.58,
         "baseline_rate_pct": 37.14,
-        "lift_pp": -24.47,
+        "lift_pp": -24.56,
         "effective_sample_size": 24.74,
-        "mean_similarity_pct": 71.67,
+        "mean_similarity_pct": 71.8,
         "stability_score": 1.0
       },
       "max_lift_pp": -24.47,
@@ -1652,12 +1732,12 @@
           "display": "291.50"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-4EECEB529087F97383",
       "last_evidence": {
         "observed_rate_pct": 11.2,
         "baseline_rate_pct": 37.78,
-        "lift_pp": -26.58,
+        "lift_pp": -26.57,
         "effective_sample_size": 24.66,
         "mean_similarity_pct": 73.95,
         "stability_score": 1.0
@@ -1895,14 +1975,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-2511F61F821A2A7AC9",
       "last_evidence": {
-        "observed_rate_pct": 58.73,
+        "observed_rate_pct": 55.4,
         "baseline_rate_pct": 39.68,
-        "lift_pp": 19.05,
-        "effective_sample_size": 24.58,
-        "mean_similarity_pct": 70.25,
+        "lift_pp": 15.72,
+        "effective_sample_size": 24.57,
+        "mean_similarity_pct": 70.36,
         "stability_score": 1.0
       },
       "max_lift_pp": 26.43,
@@ -2229,14 +2309,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-522B2C51B3DBA9F868",
       "last_evidence": {
-        "observed_rate_pct": 64.37,
+        "observed_rate_pct": 64.31,
         "baseline_rate_pct": 42.06,
-        "lift_pp": 22.3,
-        "effective_sample_size": 24.61,
-        "mean_similarity_pct": 71.95,
+        "lift_pp": 22.25,
+        "effective_sample_size": 24.62,
+        "mean_similarity_pct": 71.97,
         "stability_score": 1.0
       },
       "max_lift_pp": 25.73,
@@ -2461,14 +2541,14 @@
           "display": "292.8 yds"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-8862D6A36769EEB9BB",
       "last_evidence": {
-        "observed_rate_pct": 59.42,
+        "observed_rate_pct": 55.78,
         "baseline_rate_pct": 37.78,
-        "lift_pp": 21.64,
+        "lift_pp": 18.0,
         "effective_sample_size": 24.78,
-        "mean_similarity_pct": 72.06,
+        "mean_similarity_pct": 72.13,
         "stability_score": 1.0
       },
       "max_lift_pp": 25.29,
@@ -2621,14 +2701,14 @@
           "display": "25%"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-7F3D310D6FB8F9A7B9",
       "last_evidence": {
-        "observed_rate_pct": 61.36,
+        "observed_rate_pct": 60.91,
         "baseline_rate_pct": 40.32,
-        "lift_pp": 21.04,
-        "effective_sample_size": 24.78,
-        "mean_similarity_pct": 74.45,
+        "lift_pp": 20.6,
+        "effective_sample_size": 24.75,
+        "mean_similarity_pct": 74.32,
         "stability_score": 1.0
       },
       "max_lift_pp": 25.05,
@@ -2788,12 +2868,12 @@
           "display": "291.50"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-73038500B99A396BBC",
       "last_evidence": {
-        "observed_rate_pct": 19.96,
+        "observed_rate_pct": 19.94,
         "baseline_rate_pct": 41.11,
-        "lift_pp": -21.15,
+        "lift_pp": -21.17,
         "effective_sample_size": 24.66,
         "mean_similarity_pct": 73.95,
         "stability_score": 1.0
@@ -2955,7 +3035,7 @@
           "display": "177.2 yds"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-93C5848666DF544127",
       "last_evidence": {
         "observed_rate_pct": 52.12,
@@ -3118,14 +3198,14 @@
           "display": "276.25"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-B68B231CD28EA729A4",
       "last_evidence": {
-        "observed_rate_pct": 23.62,
+        "observed_rate_pct": 22.97,
         "baseline_rate_pct": 40.32,
-        "lift_pp": -16.69,
-        "effective_sample_size": 24.79,
-        "mean_similarity_pct": 74.47,
+        "lift_pp": -17.35,
+        "effective_sample_size": 24.73,
+        "mean_similarity_pct": 73.8,
         "stability_score": 0.75
       },
       "max_lift_pp": -16.52,
@@ -3205,100 +3285,20 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-8920E30BF805BE1446",
       "last_evidence": {
-        "observed_rate_pct": 63.7,
+        "observed_rate_pct": 63.35,
         "baseline_rate_pct": 39.68,
-        "lift_pp": 24.02,
-        "effective_sample_size": 24.68,
-        "mean_similarity_pct": 72.56,
-        "stability_score": 1.0
+        "lift_pp": 23.67,
+        "effective_sample_size": 24.75,
+        "mean_similarity_pct": 72.87,
+        "stability_score": 0.75
       },
       "max_lift_pp": 24.22,
       "max_abs_lift_pp": 24.22,
       "observed_event_ids": [
         "2026_05_DEN_LAC"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-05T11:26:54.951657+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "42c064433f1168dc",
-      "league": "NFL",
-      "title": "IND — holds the opponent at least 10% below its entering rushing-yard form",
-      "outcome": "holds the opponent at least 10% below its entering rushing-yard form",
-      "outcome_code": "OPP_RUSH_BELOW_FORM",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -5.988214852655165,
-          "display": "-5.99"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "high",
-          "value": 3.238054162451495,
-          "display": "3.24"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "direction": "low",
-          "value": 188.5,
-          "display": "188.5 yds"
-        },
-        {
-          "feature": "season_progress",
-          "label": "season phase",
-          "direction": "low",
-          "value": 0.23529411764705882,
-          "display": "24%"
-        },
-        {
-          "feature": "focus_pass_allowed_l5",
-          "label": "pass-defense allowance",
-          "direction": "near typical",
-          "value": 276.25,
-          "display": "276.25"
-        }
-      ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
-      "last_signal_id": "ISPY-409FA86376270EEDD7",
-      "last_evidence": {
-        "observed_rate_pct": 20.18,
-        "baseline_rate_pct": 43.17,
-        "lift_pp": -22.99,
-        "effective_sample_size": 24.79,
-        "mean_similarity_pct": 74.47,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": -15.29,
-      "max_abs_lift_pp": 23.52,
-      "observed_event_ids": [
-        "2026_05_IND_PIT"
       ],
       "distinct_current_events": 1,
       "provenance": [
@@ -3851,18 +3851,18 @@
           "feature": "temperature_f",
           "label": "temperature",
           "direction": "high",
-          "value": 91.5,
-          "display": "92°F"
+          "value": 89.8,
+          "display": "90°F"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-6229F7AC433618C66D",
       "last_evidence": {
-        "observed_rate_pct": 16.6,
+        "observed_rate_pct": 16.56,
         "baseline_rate_pct": 35.24,
-        "lift_pp": -18.64,
+        "lift_pp": -18.68,
         "effective_sample_size": 24.74,
-        "mean_similarity_pct": 71.67,
+        "mean_similarity_pct": 71.8,
         "stability_score": 1.0
       },
       "max_lift_pp": -15.12,
@@ -4046,6 +4046,93 @@
         }
       ],
       "first_seen_utc": "2026-09-28T21:04:26.204612+00:00",
+      "times_observed": 1
+    },
+    {
+      "pattern_key": "56590b457a95419c",
+      "league": "NFL",
+      "title": "NYG — wins the game",
+      "outcome": "wins the game",
+      "outcome_code": "WIN",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -4.053792168659686,
+          "display": "-4.05"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": 0.5187501127959427,
+          "display": "0.52"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 182.25,
+          "display": "182.2 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "direction": "low",
+          "value": 2.5374999999999996,
+          "display": "2.54"
+        },
+        {
+          "feature": "focus_secondary_activity_l5",
+          "label": "secondary disruption proxy",
+          "direction": "high",
+          "value": 9.0,
+          "display": "9.00"
+        },
+        {
+          "feature": "division_game",
+          "label": "division game",
+          "direction": "yes",
+          "value": 1,
+          "display": "yes"
+        }
+      ],
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-729D2F7F7B2E09FCE9",
+      "last_evidence": {
+        "observed_rate_pct": 70.34,
+        "baseline_rate_pct": 47.3,
+        "lift_pp": 23.04,
+        "effective_sample_size": 24.44,
+        "mean_similarity_pct": 70.67,
+        "stability_score": 0.75
+      },
+      "max_lift_pp": 23.04,
+      "max_abs_lift_pp": 23.04,
+      "observed_event_ids": [
+        "2026_05_NYG_WAS"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-07T19:32:35.974702+00:00",
       "times_observed": 1
     },
     {
@@ -4903,7 +4990,7 @@
           "display": "177.2 yds"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-BBF565F8F032C31D0E",
       "last_evidence": {
         "observed_rate_pct": 19.44,
@@ -5059,7 +5146,7 @@
           "display": "8.25"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-B744552D58AE419E05",
       "last_evidence": {
         "observed_rate_pct": 15.8,
@@ -5469,14 +5556,14 @@
           "display": "75%"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-5BD0A7C133FC3CBE7B",
       "last_evidence": {
-        "observed_rate_pct": 31.49,
+        "observed_rate_pct": 31.46,
         "baseline_rate_pct": 52.54,
-        "lift_pp": -21.05,
+        "lift_pp": -21.08,
         "effective_sample_size": 24.79,
-        "mean_similarity_pct": 75.46,
+        "mean_similarity_pct": 75.41,
         "stability_score": 1.0
       },
       "max_lift_pp": -13.45,
@@ -5625,14 +5712,14 @@
           "display": "292.8 yds"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-B7449EA3299CD7215F",
       "last_evidence": {
-        "observed_rate_pct": 64.32,
+        "observed_rate_pct": 60.61,
         "baseline_rate_pct": 47.3,
-        "lift_pp": 17.01,
+        "lift_pp": 13.31,
         "effective_sample_size": 24.78,
-        "mean_similarity_pct": 72.06,
+        "mean_similarity_pct": 72.13,
         "stability_score": 1.0
       },
       "max_lift_pp": 21.02,
@@ -5861,14 +5948,14 @@
           "display": "291.50"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-5B1531E691B0A25329",
       "last_evidence": {
-        "observed_rate_pct": 73.19,
+        "observed_rate_pct": 73.14,
         "baseline_rate_pct": 52.54,
-        "lift_pp": 20.65,
-        "effective_sample_size": 24.76,
-        "mean_similarity_pct": 72.7,
+        "lift_pp": 20.6,
+        "effective_sample_size": 24.73,
+        "mean_similarity_pct": 72.71,
         "stability_score": 1.0
       },
       "max_lift_pp": 20.83,
@@ -6270,14 +6357,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-83E2D9F39464F5F250",
       "last_evidence": {
-        "observed_rate_pct": 58.69,
+        "observed_rate_pct": 55.4,
         "baseline_rate_pct": 42.06,
-        "lift_pp": 16.63,
-        "effective_sample_size": 24.69,
-        "mean_similarity_pct": 69.86,
+        "lift_pp": 13.33,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 69.5,
         "stability_score": 1.0
       },
       "max_lift_pp": 20.34,
@@ -6923,7 +7010,7 @@
           "display": "8.25"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-AED09145EF124E964C",
       "last_evidence": {
         "observed_rate_pct": 70.08,
@@ -7627,14 +7714,14 @@
           "display": "-1.18"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-1F26A53385A7652F3E",
       "last_evidence": {
-        "observed_rate_pct": 21.03,
+        "observed_rate_pct": 24.92,
         "baseline_rate_pct": 39.68,
-        "lift_pp": -18.65,
-        "effective_sample_size": 24.75,
-        "mean_similarity_pct": 75.4,
+        "lift_pp": -14.76,
+        "effective_sample_size": 24.74,
+        "mean_similarity_pct": 74.7,
         "stability_score": 0.75
       },
       "max_lift_pp": -14.68,
@@ -7794,14 +7881,14 @@
           "display": "17%"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-646968802D31AE1FC1",
       "last_evidence": {
-        "observed_rate_pct": 31.18,
+        "observed_rate_pct": 27.31,
         "baseline_rate_pct": 42.06,
-        "lift_pp": -10.88,
-        "effective_sample_size": 24.83,
-        "mean_similarity_pct": 74.44,
+        "lift_pp": -14.75,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 74.41,
         "stability_score": 1.0
       },
       "max_lift_pp": -10.88,
@@ -7829,6 +7916,93 @@
         }
       ],
       "first_seen_utc": "2026-10-05T11:26:54.951657+00:00",
+      "times_observed": 1
+    },
+    {
+      "pattern_key": "9fcf1e68476e1c13",
+      "league": "NFL",
+      "title": "NYG — finishes at least 10% below its entering passing-yard form",
+      "outcome": "finishes at least 10% below its entering passing-yard form",
+      "outcome_code": "PASS_BELOW_FORM",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -4.053792168659686,
+          "display": "-4.05"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": 0.5187501127959427,
+          "display": "0.52"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 182.25,
+          "display": "182.2 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "direction": "low",
+          "value": 2.5374999999999996,
+          "display": "2.54"
+        },
+        {
+          "feature": "focus_secondary_activity_l5",
+          "label": "secondary disruption proxy",
+          "direction": "high",
+          "value": 9.0,
+          "display": "9.00"
+        },
+        {
+          "feature": "division_game",
+          "label": "division game",
+          "direction": "yes",
+          "value": 1,
+          "display": "yes"
+        }
+      ],
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-5FBB5C669646DF3316",
+      "last_evidence": {
+        "observed_rate_pct": 22.56,
+        "baseline_rate_pct": 41.11,
+        "lift_pp": -18.55,
+        "effective_sample_size": 24.44,
+        "mean_similarity_pct": 70.67,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": -18.23,
+      "max_abs_lift_pp": 18.55,
+      "observed_event_ids": [
+        "2026_05_NYG_WAS"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-07T19:32:35.974702+00:00",
       "times_observed": 1
     },
     {
@@ -8033,14 +8207,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-0D82F24EE8187BD827",
       "last_evidence": {
-        "observed_rate_pct": 52.24,
+        "observed_rate_pct": 55.93,
         "baseline_rate_pct": 37.78,
-        "lift_pp": 14.47,
-        "effective_sample_size": 24.55,
-        "mean_similarity_pct": 69.92,
+        "lift_pp": 18.15,
+        "effective_sample_size": 24.6,
+        "mean_similarity_pct": 70.08,
         "stability_score": 1.0
       },
       "max_lift_pp": 18.37,
@@ -8144,93 +8318,6 @@
         }
       ],
       "first_seen_utc": "2026-09-28T21:04:26.204612+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "9fcf1e68476e1c13",
-      "league": "NFL",
-      "title": "NYG — finishes at least 10% below its entering passing-yard form",
-      "outcome": "finishes at least 10% below its entering passing-yard form",
-      "outcome_code": "PASS_BELOW_FORM",
-      "conditions": [
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -4.053792168659686,
-          "display": "-4.05"
-        },
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": 0.5187501127959427,
-          "display": "0.52"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "direction": "low",
-          "value": 182.25,
-          "display": "182.2 yds"
-        },
-        {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "direction": "low",
-          "value": 2.5374999999999996,
-          "display": "2.54"
-        },
-        {
-          "feature": "focus_secondary_activity_l5",
-          "label": "secondary disruption proxy",
-          "direction": "high",
-          "value": 9.0,
-          "display": "9.00"
-        },
-        {
-          "feature": "division_game",
-          "label": "division game",
-          "direction": "yes",
-          "value": 1,
-          "display": "yes"
-        }
-      ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
-      "last_signal_id": "ISPY-5FBB5C669646DF3316",
-      "last_evidence": {
-        "observed_rate_pct": 22.83,
-        "baseline_rate_pct": 41.11,
-        "lift_pp": -18.28,
-        "effective_sample_size": 24.47,
-        "mean_similarity_pct": 70.57,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": -18.23,
-      "max_abs_lift_pp": 18.32,
-      "observed_event_ids": [
-        "2026_05_NYG_WAS"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-07T19:32:35.974702+00:00",
       "times_observed": 1
     },
     {
@@ -8356,7 +8443,7 @@
           "display": "300.8 yds"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-E51A03C295AA5DB0A8",
       "last_evidence": {
         "observed_rate_pct": 34.3,
@@ -8512,7 +8599,7 @@
           "display": "303.5 yds"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-40E4A6426E60A1B17E",
       "last_evidence": {
         "observed_rate_pct": 19.13,
@@ -8668,14 +8755,14 @@
           "display": "75%"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-0676E6939E8A0B8DBB",
       "last_evidence": {
-        "observed_rate_pct": 26.47,
+        "observed_rate_pct": 26.4,
         "baseline_rate_pct": 40.48,
-        "lift_pp": -14.01,
+        "lift_pp": -14.08,
         "effective_sample_size": 24.79,
-        "mean_similarity_pct": 75.46,
+        "mean_similarity_pct": 75.41,
         "stability_score": 1.0
       },
       "max_lift_pp": -13.94,
@@ -9321,17 +9408,17 @@
           "display": "17%"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-E3C8228DD8112B5317",
       "last_evidence": {
-        "observed_rate_pct": 38.79,
+        "observed_rate_pct": 39.22,
         "baseline_rate_pct": 52.54,
-        "lift_pp": -13.75,
-        "effective_sample_size": 24.83,
-        "mean_similarity_pct": 74.44,
+        "lift_pp": -13.32,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 74.41,
         "stability_score": 1.0
       },
-      "max_lift_pp": -13.48,
+      "max_lift_pp": -13.32,
       "max_abs_lift_pp": 17.83,
       "observed_event_ids": [
         "2026_05_CLE_NYJ"
@@ -9356,6 +9443,86 @@
         }
       ],
       "first_seen_utc": "2026-10-05T11:26:54.951657+00:00",
+      "times_observed": 1
+    },
+    {
+      "pattern_key": "70a800be2a6c093f",
+      "league": "NFL",
+      "title": "IND — finishes at least 10% above its entering rushing-attempt form",
+      "outcome": "finishes at least 10% above its entering rushing-attempt form",
+      "outcome_code": "RUSH_VOLUME_SURGE",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -5.988214852655165,
+          "display": "-5.99"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 3.238054162451495,
+          "display": "3.24"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 188.5,
+          "display": "188.5 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.23529411764705882,
+          "display": "24%"
+        },
+        {
+          "feature": "focus_pass_allowed_l5",
+          "label": "pass-defense allowance",
+          "direction": "near typical",
+          "value": 276.25,
+          "display": "276.25"
+        }
+      ],
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-02413A102423753C83",
+      "last_evidence": {
+        "observed_rate_pct": 19.96,
+        "baseline_rate_pct": 37.78,
+        "lift_pp": -17.82,
+        "effective_sample_size": 24.73,
+        "mean_similarity_pct": 73.8,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": -17.82,
+      "max_abs_lift_pp": 17.82,
+      "observed_event_ids": [
+        "2026_05_IND_PIT"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "times_observed": 1
     },
     {
@@ -9717,17 +9884,17 @@
           "display": "-1.18"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-4CC6EDDB1911AB60EA",
       "last_evidence": {
-        "observed_rate_pct": 25.33,
+        "observed_rate_pct": 31.76,
         "baseline_rate_pct": 42.06,
-        "lift_pp": -16.73,
-        "effective_sample_size": 24.75,
-        "mean_similarity_pct": 75.4,
-        "stability_score": 0.75
+        "lift_pp": -10.3,
+        "effective_sample_size": 24.74,
+        "mean_similarity_pct": 74.7,
+        "stability_score": 1.0
       },
-      "max_lift_pp": -13.96,
+      "max_lift_pp": -10.3,
       "max_abs_lift_pp": 17.72,
       "observed_event_ids": [
         "2026_05_IND_PIT"
@@ -9836,6 +10003,86 @@
       "times_observed": 2
     },
     {
+      "pattern_key": "c73f74dc89c48316",
+      "league": "NFL",
+      "title": "MIA — finishes at least 10% above its entering passing-yard form",
+      "outcome": "finishes at least 10% above its entering passing-yard form",
+      "outcome_code": "PASS_SURGE",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -4.373726229028155,
+          "display": "-4.37"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -2.0708863166341627,
+          "display": "-2.07"
+        },
+        {
+          "feature": "focus_win_pct",
+          "label": "team win rate",
+          "direction": "low",
+          "value": 0.0,
+          "display": "0%"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 178.0,
+          "display": "178.0 yds"
+        },
+        {
+          "feature": "temperature_f",
+          "label": "temperature",
+          "direction": "high",
+          "value": 89.8,
+          "display": "90°F"
+        }
+      ],
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-8DB9CC47FE4B10C9B0",
+      "last_evidence": {
+        "observed_rate_pct": 57.34,
+        "baseline_rate_pct": 39.68,
+        "lift_pp": 17.65,
+        "effective_sample_size": 24.74,
+        "mean_similarity_pct": 71.8,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 17.65,
+      "max_abs_lift_pp": 17.65,
+      "observed_event_ids": [
+        "2026_05_CIN_MIA"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-05T11:26:54.951657+00:00",
+      "times_observed": 1
+    },
+    {
       "pattern_key": "5e14c072ceafb39a",
       "league": "NFL",
       "title": "DEN — holds the opponent at least 10% below its entering passing-yard form",
@@ -9885,100 +10132,20 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-07T09:00:26.364510+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-25ADE3E5F9880A0F74",
       "last_evidence": {
-        "observed_rate_pct": 19.78,
-        "baseline_rate_pct": 37.2,
-        "lift_pp": -17.42,
-        "effective_sample_size": 24.76,
-        "mean_similarity_pct": 73.04,
+        "observed_rate_pct": 27.4,
+        "baseline_rate_pct": 37.14,
+        "lift_pp": -9.75,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 73.13,
         "stability_score": 1.0
       },
-      "max_lift_pp": -13.77,
+      "max_lift_pp": -9.75,
       "max_abs_lift_pp": 17.54,
       "observed_event_ids": [
         "2026_05_DEN_LAC"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-05T11:26:54.951657+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "c73f74dc89c48316",
-      "league": "NFL",
-      "title": "MIA — finishes at least 10% above its entering passing-yard form",
-      "outcome": "finishes at least 10% above its entering passing-yard form",
-      "outcome_code": "PASS_SURGE",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -4.373726229028155,
-          "display": "-4.37"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -2.0708863166341627,
-          "display": "-2.07"
-        },
-        {
-          "feature": "focus_win_pct",
-          "label": "team win rate",
-          "direction": "low",
-          "value": 0.0,
-          "display": "0%"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "direction": "low",
-          "value": 178.0,
-          "display": "178.0 yds"
-        },
-        {
-          "feature": "temperature_f",
-          "label": "temperature",
-          "direction": "high",
-          "value": 91.5,
-          "display": "92°F"
-        }
-      ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
-      "last_signal_id": "ISPY-8DB9CC47FE4B10C9B0",
-      "last_evidence": {
-        "observed_rate_pct": 57.01,
-        "baseline_rate_pct": 39.68,
-        "lift_pp": 17.33,
-        "effective_sample_size": 24.74,
-        "mean_similarity_pct": 71.67,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": 17.51,
-      "max_abs_lift_pp": 17.51,
-      "observed_event_ids": [
-        "2026_05_CIN_MIA"
       ],
       "distinct_current_events": 1,
       "provenance": [
@@ -10443,14 +10610,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-09T11:25:35.382251+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-52E64165D0233DF8F3",
       "last_evidence": {
-        "observed_rate_pct": 27.8,
-        "baseline_rate_pct": 37.2,
-        "lift_pp": -9.4,
-        "effective_sample_size": 24.72,
-        "mean_similarity_pct": 69.93,
+        "observed_rate_pct": 27.08,
+        "baseline_rate_pct": 37.14,
+        "lift_pp": -10.06,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 69.5,
         "stability_score": 0.75
       },
       "max_lift_pp": -9.4,
@@ -10646,7 +10813,7 @@
     {
       "pattern_key": "01f9729642b046b4",
       "league": "NFL",
-      "title": "LV — wins the game",
+      "title": "CLE — wins the game",
       "outcome": "wins the game",
       "outcome_code": "WIN",
       "conditions": [
@@ -10654,15 +10821,15 @@
           "feature": "focus_rushing_epa_l5",
           "label": "rushing efficiency",
           "direction": "low",
-          "value": -7.316757977283878,
-          "display": "-7.32"
+          "value": -3.9502143663340035,
+          "display": "-3.95"
         },
         {
           "feature": "focus_passing_epa_l5",
           "label": "passing efficiency",
           "direction": "high",
-          "value": 6.281335473132112,
-          "display": "6.28"
+          "value": 4.033670384667342,
+          "display": "4.03"
         },
         {
           "feature": "season_progress",
@@ -10679,22 +10846,22 @@
           "display": "17%"
         },
         {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "direction": "high",
-          "value": 7.15,
-          "display": "7.15"
+          "feature": "opp_win_pct",
+          "label": "opponent win rate",
+          "direction": "low",
+          "value": 0.25,
+          "display": "25%"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
-      "last_signal_id": "ISPY-40CFB37D7AB5AC0F02",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-DB1F03976A2DFA224C",
       "last_evidence": {
-        "observed_rate_pct": 55.43,
+        "observed_rate_pct": 56.87,
         "baseline_rate_pct": 47.3,
-        "lift_pp": 8.13,
-        "effective_sample_size": 24.89,
-        "mean_similarity_pct": 74.78,
-        "stability_score": 0.75
+        "lift_pp": 9.57,
+        "effective_sample_size": 24.75,
+        "mean_similarity_pct": 74.32,
+        "stability_score": 1.0
       },
       "max_lift_pp": 17.25,
       "max_abs_lift_pp": 17.25,
@@ -10774,14 +10941,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-247B4F360525734439",
       "last_evidence": {
-        "observed_rate_pct": 23.0,
+        "observed_rate_pct": 23.12,
         "baseline_rate_pct": 37.14,
-        "lift_pp": -14.14,
-        "effective_sample_size": 24.55,
-        "mean_similarity_pct": 69.92,
+        "lift_pp": -14.03,
+        "effective_sample_size": 24.6,
+        "mean_similarity_pct": 70.08,
         "stability_score": 1.0
       },
       "max_lift_pp": -10.53,
@@ -10899,6 +11066,86 @@
       "times_observed": 1
     },
     {
+      "pattern_key": "6e35f84628a363f3",
+      "league": "NFL",
+      "title": "CIN — holds the opponent at least 10% below its entering passing-yard form",
+      "outcome": "holds the opponent at least 10% below its entering passing-yard form",
+      "outcome_code": "OPP_PASS_BELOW_FORM",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 4.716609270158409,
+          "display": "4.72"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -2.1226065665301466,
+          "display": "-2.12"
+        },
+        {
+          "feature": "opp_win_pct",
+          "label": "opponent win rate",
+          "direction": "low",
+          "value": 0.0,
+          "display": "0%"
+        },
+        {
+          "feature": "opp_pass_yards_l5",
+          "label": "opponent passing form",
+          "direction": "low",
+          "value": 178.0,
+          "display": "178.0 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "high",
+          "value": 292.75,
+          "display": "292.8 yds"
+        }
+      ],
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-8F2C215CCAECB7F450",
+      "last_evidence": {
+        "observed_rate_pct": 20.02,
+        "baseline_rate_pct": 37.14,
+        "lift_pp": -17.12,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 72.13,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": -16.67,
+      "max_abs_lift_pp": 17.12,
+      "observed_event_ids": [
+        "2026_05_CIN_MIA"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-05T21:27:30.475855+00:00",
+      "times_observed": 1
+    },
+    {
       "pattern_key": "7ca792461f187d3e",
       "league": "NFL",
       "title": "PHI — finishes at least 10% below its entering passing-yard form",
@@ -10976,86 +11223,6 @@
         }
       ],
       "first_seen_utc": "2026-10-04T17:36:48.799280+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "6e35f84628a363f3",
-      "league": "NFL",
-      "title": "CIN — holds the opponent at least 10% below its entering passing-yard form",
-      "outcome": "holds the opponent at least 10% below its entering passing-yard form",
-      "outcome_code": "OPP_PASS_BELOW_FORM",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "high",
-          "value": 4.716609270158409,
-          "display": "4.72"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -2.1226065665301466,
-          "display": "-2.12"
-        },
-        {
-          "feature": "opp_win_pct",
-          "label": "opponent win rate",
-          "direction": "low",
-          "value": 0.0,
-          "display": "0%"
-        },
-        {
-          "feature": "opp_pass_yards_l5",
-          "label": "opponent passing form",
-          "direction": "low",
-          "value": 178.0,
-          "display": "178.0 yds"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "direction": "high",
-          "value": 292.75,
-          "display": "292.8 yds"
-        }
-      ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
-      "last_signal_id": "ISPY-8F2C215CCAECB7F450",
-      "last_evidence": {
-        "observed_rate_pct": 20.19,
-        "baseline_rate_pct": 37.14,
-        "lift_pp": -16.96,
-        "effective_sample_size": 24.78,
-        "mean_similarity_pct": 72.06,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": -16.67,
-      "max_abs_lift_pp": 17.08,
-      "observed_event_ids": [
-        "2026_05_CIN_MIA"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-05T21:27:30.475855+00:00",
       "times_observed": 1
     },
     {
@@ -11303,6 +11470,93 @@
         }
       ],
       "first_seen_utc": "2026-10-04T17:36:48.799280+00:00",
+      "times_observed": 1
+    },
+    {
+      "pattern_key": "a03ac909fa5fc673",
+      "league": "NFL",
+      "title": "DEN — holds the opponent at least 10% below its entering rushing-yard form",
+      "outcome": "holds the opponent at least 10% below its entering rushing-yard form",
+      "outcome_code": "OPP_RUSH_BELOW_FORM",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -0.57640459900664,
+          "display": "-0.58"
+        },
+        {
+          "feature": "opp_win_pct",
+          "label": "opponent win rate",
+          "direction": "low",
+          "value": 0.0,
+          "display": "0%"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "low",
+          "value": 81.25,
+          "display": "81.2 yds"
+        },
+        {
+          "feature": "season_progress",
+          "label": "season phase",
+          "direction": "low",
+          "value": 0.23529411764705882,
+          "display": "24%"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "near typical",
+          "value": 204.75,
+          "display": "204.8 yds"
+        },
+        {
+          "feature": "division_game",
+          "label": "division game",
+          "direction": "yes",
+          "value": 1,
+          "display": "yes"
+        }
+      ],
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-062D3902EEC9942A8C",
+      "last_evidence": {
+        "observed_rate_pct": 60.08,
+        "baseline_rate_pct": 43.17,
+        "lift_pp": 16.91,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 73.13,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 16.91,
+      "max_abs_lift_pp": 16.91,
+      "observed_event_ids": [
+        "2026_05_DEN_LAC"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "times_observed": 1
     },
     {
@@ -12051,14 +12305,14 @@
           "display": "75%"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-55803A446D695C7D1A",
       "last_evidence": {
-        "observed_rate_pct": 18.78,
+        "observed_rate_pct": 18.77,
         "baseline_rate_pct": 35.24,
-        "lift_pp": -16.46,
+        "lift_pp": -16.47,
         "effective_sample_size": 24.79,
-        "mean_similarity_pct": 75.46,
+        "mean_similarity_pct": 75.41,
         "stability_score": 1.0
       },
       "max_lift_pp": -16.46,
@@ -12291,7 +12545,7 @@
           "display": "303.5 yds"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-C0D49EB242EBACED4F",
       "last_evidence": {
         "observed_rate_pct": 36.21,
@@ -12618,14 +12872,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-5B4249B88C931DFF82",
       "last_evidence": {
-        "observed_rate_pct": 24.94,
+        "observed_rate_pct": 25.13,
         "baseline_rate_pct": 41.11,
-        "lift_pp": -16.18,
-        "effective_sample_size": 24.72,
-        "mean_similarity_pct": 72.95,
+        "lift_pp": -15.98,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 73.13,
         "stability_score": 0.75
       },
       "max_lift_pp": -15.91,
@@ -12705,14 +12959,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-09T02:31:05.262410+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-017491045FC5F6B9C0",
       "last_evidence": {
-        "observed_rate_pct": 28.28,
-        "baseline_rate_pct": 37.68,
-        "lift_pp": -9.4,
+        "observed_rate_pct": 28.27,
+        "baseline_rate_pct": 37.78,
+        "lift_pp": -9.5,
         "effective_sample_size": 24.76,
-        "mean_similarity_pct": 68.34,
+        "mean_similarity_pct": 68.38,
         "stability_score": 0.75
       },
       "max_lift_pp": -9.4,
@@ -12872,7 +13126,7 @@
           "display": "291.50"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-896B32269D188337FC",
       "last_evidence": {
         "observed_rate_pct": 21.8,
@@ -13639,93 +13893,6 @@
       "times_observed": 1
     },
     {
-      "pattern_key": "56590b457a95419c",
-      "league": "NFL",
-      "title": "NYG — wins the game",
-      "outcome": "wins the game",
-      "outcome_code": "WIN",
-      "conditions": [
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -4.053792168659686,
-          "display": "-4.05"
-        },
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": 0.5187501127959427,
-          "display": "0.52"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "direction": "low",
-          "value": 182.25,
-          "display": "182.2 yds"
-        },
-        {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "direction": "low",
-          "value": 2.5374999999999996,
-          "display": "2.54"
-        },
-        {
-          "feature": "focus_secondary_activity_l5",
-          "label": "secondary disruption proxy",
-          "direction": "high",
-          "value": 9.0,
-          "display": "9.00"
-        },
-        {
-          "feature": "division_game",
-          "label": "division game",
-          "direction": "yes",
-          "value": 1,
-          "display": "yes"
-        }
-      ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
-      "last_signal_id": "ISPY-729D2F7F7B2E09FCE9",
-      "last_evidence": {
-        "observed_rate_pct": 62.78,
-        "baseline_rate_pct": 47.3,
-        "lift_pp": 15.48,
-        "effective_sample_size": 24.47,
-        "mean_similarity_pct": 70.57,
-        "stability_score": 0.75
-      },
-      "max_lift_pp": 15.59,
-      "max_abs_lift_pp": 15.59,
-      "observed_event_ids": [
-        "2026_05_NYG_WAS"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-07T19:32:35.974702+00:00",
-      "times_observed": 1
-    },
-    {
       "pattern_key": "5a0fe725e7424cfd",
       "league": "NFL",
       "title": "SEA — wins the game",
@@ -14192,17 +14359,17 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-107FB0D9FD8E40D740",
       "last_evidence": {
-        "observed_rate_pct": 20.06,
+        "observed_rate_pct": 23.55,
         "baseline_rate_pct": 35.24,
-        "lift_pp": -15.18,
-        "effective_sample_size": 24.58,
-        "mean_similarity_pct": 70.25,
-        "stability_score": 0.75
+        "lift_pp": -11.69,
+        "effective_sample_size": 24.57,
+        "mean_similarity_pct": 70.36,
+        "stability_score": 1.0
       },
-      "max_lift_pp": -12.16,
+      "max_lift_pp": -11.69,
       "max_abs_lift_pp": 15.3,
       "observed_event_ids": [
         "2026_05_HOU_TEN"
@@ -15035,6 +15202,93 @@
       "times_observed": 1
     },
     {
+      "pattern_key": "12bc95ac72ea2e55",
+      "league": "NFL",
+      "title": "NYG — finishes at least 10% above its entering passing-yard form",
+      "outcome": "finishes at least 10% above its entering passing-yard form",
+      "outcome_code": "PASS_SURGE",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -4.053792168659686,
+          "display": "-4.05"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": 0.5187501127959427,
+          "display": "0.52"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 182.25,
+          "display": "182.2 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "direction": "low",
+          "value": 2.5374999999999996,
+          "display": "2.54"
+        },
+        {
+          "feature": "focus_secondary_activity_l5",
+          "label": "secondary disruption proxy",
+          "direction": "high",
+          "value": 9.0,
+          "display": "9.00"
+        },
+        {
+          "feature": "division_game",
+          "label": "division game",
+          "direction": "yes",
+          "value": 1,
+          "display": "yes"
+        }
+      ],
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "last_signal_id": "ISPY-91DC963BC4C2C6954F",
+      "last_evidence": {
+        "observed_rate_pct": 49.77,
+        "baseline_rate_pct": 35.24,
+        "lift_pp": 14.53,
+        "effective_sample_size": 24.44,
+        "mean_similarity_pct": 70.67,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 14.53,
+      "max_abs_lift_pp": 14.53,
+      "observed_event_ids": [
+        "2026_05_NYG_WAS"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-10T20:10:40.173864+00:00",
+      "times_observed": 1
+    },
+    {
       "pattern_key": "45387b2a666e6aca",
       "league": "NFL",
       "title": "DET — finishes at least 10% above its entering rushing-attempt form",
@@ -15570,14 +15824,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-10T19:01:44.411087+00:00",
+      "last_seen_utc": "2026-10-10T20:10:40.173864+00:00",
       "last_signal_id": "ISPY-7352C82ADA125DB3F1",
       "last_evidence": {
-        "observed_rate_pct": 23.16,
+        "observed_rate_pct": 23.27,
         "baseline_rate_pct": 37.14,
-        "lift_pp": -13.99,
-        "effective_sample_size": 24.67,
-        "mean_similarity_pct": 71.29,
+        "lift_pp": -13.87,
+        "effective_sample_size": 24.66,
+        "mean_similarity_pct": 71.3,
         "stability_score": 0.75
       },
       "max_lift_pp": -10.23,
@@ -15940,253 +16194,6 @@
         }
       ],
       "first_seen_utc": "2026-10-02T06:59:09.827860+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "308fc8993c0e87c3",
-      "league": "NFL",
-      "title": "WAS — holds the opponent at least 10% below its entering rushing-yard form",
-      "outcome": "holds the opponent at least 10% below its entering rushing-yard form",
-      "outcome_code": "OPP_RUSH_BELOW_FORM",
-      "conditions": [
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -3.1771659543604427,
-          "display": "-3.18"
-        },
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": 1.0413200521501222,
-          "display": "1.04"
-        },
-        {
-          "feature": "opp_secondary_activity_l5",
-          "label": "opponent secondary disruption proxy",
-          "direction": "high",
-          "value": 9.25,
-          "display": "9.25"
-        },
-        {
-          "feature": "opp_front7_activity_l5",
-          "label": "opponent front-seven activity proxy",
-          "direction": "low",
-          "value": 2.4499999999999997,
-          "display": "2.45"
-        },
-        {
-          "feature": "opp_pass_yards_l5",
-          "label": "opponent passing form",
-          "direction": "low",
-          "value": 182.25,
-          "display": "182.2 yds"
-        },
-        {
-          "feature": "division_game",
-          "label": "division game",
-          "direction": "yes",
-          "value": 1,
-          "display": "yes"
-        }
-      ],
-      "last_seen_utc": "2026-10-07T16:52:23.611998+00:00",
-      "last_signal_id": "ISPY-1952570479FB140F0B",
-      "last_evidence": {
-        "observed_rate_pct": 52.72,
-        "baseline_rate_pct": 42.13,
-        "lift_pp": 10.58,
-        "effective_sample_size": 24.59,
-        "mean_similarity_pct": 70.89,
-        "stability_score": 0.75
-      },
-      "max_lift_pp": 14.03,
-      "max_abs_lift_pp": 14.03,
-      "observed_event_ids": [
-        "2026_05_NYG_WAS"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-05T11:26:54.951657+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "46e00eb378b0b853",
-      "league": "NFL",
-      "title": "PIT — finishes at least 10% above its entering rushing-attempt form",
-      "outcome": "finishes at least 10% above its entering rushing-attempt form",
-      "outcome_code": "RUSH_VOLUME_SURGE",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -5.140363071135377,
-          "display": "-5.14"
-        },
-        {
-          "feature": "opp_pass_yards_l5",
-          "label": "opponent passing form",
-          "direction": "low",
-          "value": 188.5,
-          "display": "188.5 yds"
-        },
-        {
-          "feature": "season_progress",
-          "label": "season phase",
-          "direction": "low",
-          "value": 0.23529411764705882,
-          "display": "24%"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "direction": "near typical",
-          "value": 276.25,
-          "display": "276.25"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -1.17770093650685,
-          "display": "-1.18"
-        }
-      ],
-      "last_seen_utc": "2026-10-06T00:48:47.488927+00:00",
-      "last_signal_id": "ISPY-E6544A0353DB4B764C",
-      "last_evidence": {
-        "observed_rate_pct": 51.43,
-        "baseline_rate_pct": 37.42,
-        "lift_pp": 14.01,
-        "effective_sample_size": 24.76,
-        "mean_similarity_pct": 75.29,
-        "stability_score": 0.75
-      },
-      "max_lift_pp": 14.01,
-      "max_abs_lift_pp": 14.01,
-      "observed_event_ids": [
-        "2026_05_IND_PIT"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-05T21:27:30.475855+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "2579b76847733307",
-      "league": "NFL",
-      "title": "LAC — finishes at least 10% above its entering rushing-yard form",
-      "outcome": "finishes at least 10% above its entering rushing-yard form",
-      "outcome_code": "RUSH_SURGE",
-      "conditions": [
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -6.885624098038016,
-          "display": "-6.89"
-        },
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -4.180136532062029,
-          "display": "-4.18"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "direction": "low",
-          "value": 152.0,
-          "display": "152.00"
-        },
-        {
-          "feature": "focus_win_pct",
-          "label": "team win rate",
-          "direction": "low",
-          "value": 0.0,
-          "display": "0%"
-        },
-        {
-          "feature": "postseason_pressure_proxy",
-          "label": "postseason-pressure proxy",
-          "direction": "low",
-          "value": 0.09705882352941178,
-          "display": "10%"
-        }
-      ],
-      "last_seen_utc": "2026-10-04T20:03:16.517323+00:00",
-      "last_signal_id": "ISPY-6A254D123176E738B2",
-      "last_evidence": {
-        "observed_rate_pct": 27.75,
-        "baseline_rate_pct": 41.67,
-        "lift_pp": -13.92,
-        "effective_sample_size": 24.63,
-        "mean_similarity_pct": 73.1,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": -13.92,
-      "max_abs_lift_pp": 13.92,
-      "observed_event_ids": [
-        "2026_04_LAC_SEA"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-04T19:29:08.593054+00:00",
       "times_observed": 1
     }
   ]
