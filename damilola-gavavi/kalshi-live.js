@@ -52,7 +52,7 @@ async function loadDirect(){
   const payload=await response.json();
   if(!Array.isArray(payload.markets)||!payload.markets.length)throw Error("empty market response");
   // Direct REST represents only first page, not all Kalshi listings.
-  data=payload.markets.map(map);mode="live";retrieved=new Date().toISOString();lastUpdated=Date.now();error="";
+  const updates=payload.markets.map(map);const prior=new Map(data.map(m=>[m.ticker,m]));for(const item of updates)prior.set(item.ticker,item);data=Array.from(prior.values());mode="live";retrieved=new Date().toISOString();lastUpdated=Date.now();error="";
   render();
  }catch(e){
   error="Direct feed unavailable ("+(e.name==="AbortError"?"timeout":"network/CORS/API")+"); displaying last available data";
