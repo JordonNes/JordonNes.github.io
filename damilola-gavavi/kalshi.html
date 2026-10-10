@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Damilola & Gavavi Kalshi public prediction market explorer"><title>Kalshi Market Explorer | Damilola & Gavavi</title>
+<style>
+:root{color-scheme:dark;--bg:#070a09;--surface:#111915;--gold:#ddb763;--text:#f7f1e2;--muted:#bac8bc}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}header,main,footer{max-width:1200px;margin:auto;padding:25px}header{border-bottom:1px solid #71613d}h1{font:clamp(2rem,5vw,3.5rem) Georgia,serif;color:var(--gold);margin:12px 0}a{color:var(--gold)}.eyebrow{letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-size:.8rem}.muted{color:var(--muted)}.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0}.toolbar input,.toolbar select{background:#18251e;color:var(--text);border:1px solid #6c684f;border-radius:7px;padding:13px;min-width:220px;flex:1}.status{padding:10px 0}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:14px}.card{padding:18px;border:1px solid #595038;background:var(--surface);border-radius:10px}.card h2{font-size:1.05rem;min-height:3em;margin:0 0 15px}.prices{display:flex;gap:20px}.prices span{display:block;color:var(--muted);font-size:.8rem}.prices strong{font-size:1.2rem;color:var(--gold)}.meta{font-size:.78rem;color:var(--muted);overflow-wrap:anywhere;margin-top:15px}.pill{font-size:.75rem;letter-spacing:.06em;color:var(--gold)}footer{border-top:1px solid #3b392f;font-size:.85rem;color:var(--muted)}.notice{border-left:3px solid var(--gold);padding-left:14px}
+</style></head><body>
+<header><div class="eyebrow">Damilola & Gavavi · Market Intelligence</div><h1>Kalshi Market Explorer</h1><p class="muted">Observable prediction-market contracts. Research only; no trades or recommendations.</p><nav><a href="./">← Damilola & Gavavi Home</a> · <a href="../LJ_index.html">LEGZ & JINX</a></nav></header>
+<main><p class="notice">Data is a scheduled snapshot, not a live order book. YES quotes are contract prices, not model-estimated hit probabilities. Availability and quotes can change.</p>
+<div class="toolbar"><input id="search" type="search" placeholder="Search event, contract or ticker" aria-label="Search markets"><select id="sort" aria-label="Sort contracts"><option value="volume">Volume: highest first</option><option value="close">Closing soonest</option><option value="title">Title A–Z</option></select></div><div class="status" id="status" role="status">Loading market snapshot…</div><div id="cards" class="cards"></div></main><footer>Kalshi public market data · Incomplete inventory, limited to initial API pages · Not financial advice</footer>
+<script>
+(() => {
+const status=document.getElementById('status'),list=document.getElementById('cards'),search=document.getElementById('search'),sort=document.getElementById('sort');
+let data=[],retrieved='';
+const money=v=>v===null||v===undefined||v===''?'—': Number.isFinite(Number(v))?'$'+Number(v).toFixed(2):'—';
+const value=v=>Number.isFinite(Number(v))?Number(v):0;
+function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n;}
+function render(){
+const query=search.value.trim().toLowerCase();
+let rows=data.filter(m=>[m.title,m.subtitle,m.ticker,m.event_ticker].some(v=>String(v||'').toLowerCase().includes(query)));
+if(sort.value==='title')rows.sort((a,b)=>a.title.localeCompare(b.title));
+else if(sort.value==='close')rows.sort((a,b)=>(Date.parse(a.close_time)||Infinity)-(Date.parse(b.close_time)||Infinity));
+else rows.sort((a,b)=>value(b.volume)-value(a.volume));
+rows=rows.slice(0,100);list.replaceChildren();
+for(const m of rows){const c=el('article','card');c.append(el('div','pill',m.status||'Market'),el('h2','',m.title||m.ticker));
+const p=el('div','prices');for(const [label,val] of [['YES bid',m.yes_bid_dollars],['YES ask',m.yes_ask_dollars],['Last',m.last_price_dollars]]){const x=el('div');x.append(el('span','',label),el('strong','',money(val)));p.append(x);}c.append(p,el('div','meta','Volume: '+(m.volume??'—')+' · Closes: '+(m.close_time||'—')),el('div','meta',m.ticker));list.append(c);}
+status.textContent=rows.length+' displayed · '+data.length+' retrieved · Snapshot: '+retrieved+(query?' · filtered':'');
+}
+fetch('../data/dg_kalshi_markets.json?cache='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Snapshot not yet published');return r.json()}).then(p=>{if(!Array.isArray(p.markets))throw Error('Invalid market snapshot');data=p.markets;retrieved=p.retrieved_at_utc||'unknown';render()}).catch(e=>{status.textContent='Market data currently unavailable: '+e.message+'. Check the GitHub Actions D&G Kalshi Public Market Feed workflow.'});
+search.addEventListener('input',render);sort.addEventListener('change',render);
+})();
+</script></body></html>
