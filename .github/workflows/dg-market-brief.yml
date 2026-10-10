@@ -1,0 +1,32 @@
+name: D&G Market Brief
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 14 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: dg-brief-publisher
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate provenance-controlled market brief
+        run: python scripts/dg_market_brief.py
+      - name: Publish brief
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/dg_market_brief.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: publish D&G market intelligence brief"
+            git pull --rebase origin master
+            git push origin HEAD:master
+          fi
