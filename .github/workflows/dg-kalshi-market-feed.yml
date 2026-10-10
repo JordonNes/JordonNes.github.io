@@ -1,0 +1,31 @@
+name: D&G Kalshi Public Market Feed
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: dg-kalshi-snapshot
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch public market data (no credentials required)
+        run: python scripts/dg_kalshi_snapshot.py
+      - name: Publish only sanitized market snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/dg_kalshi_markets.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: refresh D&G Kalshi public market snapshot"
+            git push origin HEAD:master
+          fi
