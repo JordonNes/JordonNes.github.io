@@ -80,6 +80,28 @@ export default {
     return result;
    }catch(e){return new Response(JSON.stringify({error:"kalshi_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}})}
   }
+  // Narrow independent spot-reference chart. Not Kalshi Perps prices or positions.
+  if(url.pathname==="/api/reference-candles"){
+   const sym=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
+   const gran=Number(url.searchParams.get("granularity")||300);
+   if(!["BTC-USD","ETH-USD","SOL-USD"].includes(sym)||![60,300,900,3600,21600,86400].includes(gran))
+    return new Response(JSON.stringify({error:"invalid_chart_parameters"}),{status:400,headers:{...JSON_HEADERS,...cors}});
+   const cache=caches.default,key=new Request(url.origin+"/api/reference-candles?symbol="+sym+"&granularity="+gran);
+   const hit=await cache.match(key);
+   if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
+   try{
+    const upstream="https://api.exchange.coinbase.com/products/"+encodeURIComponent(sym)+"/candles?granularity="+gran;
+    const res=await fetch(upstream,{headers:{"Accept":"application/json","User-Agent":"DGMarketsResearch/1.0"},cf:{cacheEverything:true,cacheTtl:60}});
+    if(!res.ok)return new Response(JSON.stringify({error:"reference_provider_unavailable",upstream_status:res.status}),{status:503,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+    const raw=await res.json();
+    if(!Array.isArray(raw))throw Error("invalid_candle_payload");
+    const candles=raw.filter(x=>Array.isArray(x)&&x.length>=6&&x.every(Number.isFinite)).map(x=>({time:x[0],low:x[1],high:x[2],open:x[3],close:x[4],volume:x[5]})).sort((a,b)=>a.time-b.time);
+    const body=JSON.stringify({source:"Coinbase Exchange public candles",instrument:"SPOT REFERENCE — NOT KALSHI PERPS",symbol:sym,granularity_seconds:gran,retrieved_at_utc:new Date().toISOString(),candles});
+    const out=new Response(body,{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}});
+    ctx.waitUntil(cache.put(key,out.clone()));
+    return out;
+   }catch(e){return new Response(JSON.stringify({error:"reference_candles_failed"}),{status:503,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}})}
+  }
   if(url.pathname==="/api/focus"){
    const category=(url.searchParams.get("category")||"crypto").toLowerCase();
    if(!["crypto","commodities","economics"].includes(category))return new Response(JSON.stringify({error:"unsupported_category"}),{status:400,headers:{...JSON_HEADERS,...cors}});
