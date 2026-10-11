@@ -60,12 +60,25 @@ export default {
     const now=Math.floor(Date.now()/1000);
     upstream="https://external-api.kalshi.com/trade-api/v2/series/"+encodeURIComponent(series)+"/markets/"+encodeURIComponent(ticker)+"/candlesticks?start_ts="+(now-p[0])+"&end_ts="+now+"&period_interval="+p[1];
    }
+   // Cache each contract or series across visitors; avoid a Kalshi request on every page load.
+   // Discovery uses a longer TTL because it is not an execution-grade feed.
+   const ttl=path==="/api/series-markets"?180:path==="/api/history"?300:45;
+   const cache=caches.default,cacheKey=new Request(url.toString(),{method:"GET"});
+   let cached=await cache.match(cacheKey);
+   if(cached)return new Response(cached.body,{status:cached.status,headers:{...Object.fromEntries(cached.headers),...cors,"X-DG-Cache":"HIT"}});
    try{
-    const res=await fetch(upstream,{headers:{"Accept":"application/json"},cf:{cacheEverything:true,cacheTtl:path==="/api/history"?60:20}});
-    if(!res.ok)return new Response(JSON.stringify({error:"kalshi_upstream_error",upstream_status:res.status}),{status:502,headers:{...JSON_HEADERS,...cors}});
+    const res=await fetch(upstream,{headers:{"Accept":"application/json"},cf:{cacheEverything:true,cacheTtl:ttl}});
+    if(res.status===429){
+     const retry=res.headers.get("retry-after")||"60";
+     return new Response(JSON.stringify({error:"kalshi_rate_limited",upstream_status:429,retry_after:retry,advice:"Wait before retrying; no unverified data is published."}),{status:503,headers:{...JSON_HEADERS,...cors,"Retry-After":retry,"Cache-Control":"no-store"}});
+    }
+    if(!res.ok)return new Response(JSON.stringify({error:"kalshi_upstream_error",upstream_status:res.status}),{status:502,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
     const data=await res.json();
-    return new Response(JSON.stringify({...data,retrieved_at_utc:new Date().toISOString(),source:"Kalshi public REST",read_only:true}),{headers:{...JSON_HEADERS,...cors}});
-   }catch(e){return new Response(JSON.stringify({error:"kalshi_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}})}
+    const body=JSON.stringify({...data,retrieved_at_utc:new Date().toISOString(),source:"Kalshi public REST",read_only:true});
+    const result=new Response(body,{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age="+ttl,"X-DG-Cache":"MISS"}});
+    ctx.waitUntil(cache.put(cacheKey,result.clone()));
+    return result;
+   }catch(e){return new Response(JSON.stringify({error:"kalshi_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}})}
   }
   if(url.pathname==="/api/focus"){
    const category=(url.searchParams.get("category")||"crypto").toLowerCase();
