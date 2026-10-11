@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-10-11T20:31:16.908872+00:00",
+  "checked_at_utc": "2026-10-11T22:55:11.274366+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -24,61 +24,24 @@
     "min_refresh_minutes": 180,
     "max_sport_calls_per_run": 3
   },
-  "status": "OK",
+  "status": "ERROR",
   "credits_estimated_this_cycle": 207,
-  "provider_reported_remaining": 154,
+  "provider_reported_remaining": null,
   "requested_leagues": [
     "NFL",
     "MLB",
     "NBA",
-    "NHL",
-    "NCAA_Basketball"
-  ],
-  "refreshed_leagues": [
-    "NCAA_Basketball",
-    "NFL",
     "NHL"
   ],
-  "authoritative_complete_leagues": [
-    "NCAA_Basketball",
-    "NFL",
-    "NHL"
-  ],
-  "diagnostics": {
-    "NCAA_Basketball": {
-      "status": "OK",
-      "raw_rows": 0,
-      "normalized_side_offers": 0,
-      "result_has_more": false,
-      "result_truncated": false,
-      "result_truncated_hint": null,
-      "result_degraded": null,
-      "provider_reported_remaining": 160
-    },
-    "NFL": {
-      "status": "OK",
-      "raw_rows": 1304,
-      "normalized_side_offers": 817,
-      "result_has_more": false,
-      "result_truncated": false,
-      "result_truncated_hint": null,
-      "result_degraded": null,
-      "provider_reported_remaining": 157
-    },
-    "NHL": {
-      "status": "OK",
-      "raw_rows": 794,
-      "normalized_side_offers": 1467,
-      "result_has_more": false,
-      "result_truncated": false,
-      "result_truncated_hint": null,
-      "result_degraded": null,
-      "provider_reported_remaining": 154
-    }
+  "refreshed_leagues": [],
+  "authoritative_complete_leagues": [],
+  "diagnostics": {},
+  "errors": {
+    "MLB": "HTTP 503: {\"error\":\"CREDIT_RESERVATION_UNAVAILABLE\",\"message\":\"Credit reservation is temporarily unavailable. Please retry in a few seconds.\",\"request_id\":\"5373dd3099878d35\",\"docs_url\":\"/docs\",\"openapi_url\":\"/openapi.json\"}",
+    "NBA": "HTTP 503: {\"error\":\"CREDIT_RESERVATION_UNAVAILABLE\",\"message\":\"Credit reservation is temporarily unavailable. Please retry in a few seconds.\",\"request_id\":\"4fe9063e691ae246\",\"docs_url\":\"/docs\",\"openapi_url\":\"/openapi.json\"}"
   },
-  "errors": {},
-  "raw_side_offers": 2284,
-  "consolidated_exact_poms": 1945,
-  "market_history_rows_added": 2284,
+  "raw_side_offers": 0,
+  "consolidated_exact_poms": 0,
+  "market_history_rows_added": 0,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }

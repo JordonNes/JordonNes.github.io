@@ -1,16 +1,17 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-10-11T20:29:40.226072+00:00",
+  "checked_at_utc": "2026-10-11T22:53:09.623039+00:00",
   "status": "OK",
-  "raw_market_count": 6465,
-  "normalized_props": 151,
-  "history_rows_added": 151,
+  "raw_market_count": 8594,
+  "normalized_props": 931,
+  "history_rows_added": 924,
   "skip_reasons": {
-    "ambiguous_matchup": 29,
-    "ambiguous_participant_threshold": 4,
-    "ok": 151,
-    "unknown_sport": 5942,
-    "unsupported_market": 339
+    "ambiguous_matchup": 39,
+    "ambiguous_participant_threshold": 1278,
+    "not_upcoming": 32,
+    "ok": 931,
+    "unknown_sport": 5948,
+    "unsupported_market": 366
   },
   "skip_samples": {
     "unknown_sport": {
@@ -64,58 +65,71 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
+    },
+    "not_upcoming": {
+      "ticker": "KXNFLRSHYDSPROT-26OCT11PHIJAC-PHIWSHIPLEY28-20",
+      "event_ticker": "KXNFLRSHYDSPROT-26OCT11PHIJAC",
+      "series_ticker": "KXNFLRSHYDSPROT",
+      "event_title": "Philadelphia vs Jacksonville: Rushing Yards (Protected)",
+      "title": "Will Shipley: 20+ rushing yards (Protected)",
+      "subtitle": null,
+      "yes_sub_title": "Will Shipley: 20+",
+      "primary_participant_key": "football_player",
+      "floor_strike": 19.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-10-11T16:30:00Z"
     }
   },
   "targeted_series": {
     "selected": [
-      "KXMLBHRDERBYFIN",
+      "KXMLBHRDERBYDISTANCE",
       "KXUFCOCCUR",
-      "KXNBAH2HTEAM3PT",
-      "KXNCAAF2PT",
-      "KXNFL2PTCONV",
+      "KXNBAAST",
+      "KXNCAAFTOTAL",
+      "KXNFLSEASONRUSHYDS",
       "KXNHLPTS",
       "KXATPACES",
-      "KXWNBAH2HPTS",
-      "KXMLBASGHIT",
-      "KXUFCWHITEHOUSE",
-      "KXNBAPTSLEADER",
-      "KXNCAAFTEAMRSHYDS",
-      "KXNFLCAREERPASSYDS",
-      "KXNHLSAVES",
-      "KXWTAACES",
-      "KXWNBAPTS",
-      "KXMLBASGHR",
-      "KXNBASERIESPTSLEADER",
-      "KXNCAAFTEAMREC",
-      "KXNFLRSHATT",
-      "KXNHLPLAYOFFGOALS",
       "KXWNBAREB",
-      "KXMLBHRDERBYFORECAST",
-      "KXNBAPLAYOFFPTS",
-      "KXNCAAFTOTALFG",
-      "KXNFLPASSTDS",
-      "KXNHLF10G",
-      "KXWNBAAST",
-      "KXMLBHRDERBY500",
-      "KXNBA3PT",
-      "KXNCAAFTEAMRSHATT",
-      "KXNFLSEASONRUSHYDS",
-      "KXNHLTOTAL",
-      "KXWNBA3PTROUND",
-      "KXMLBWALKOFFS",
-      "KXNBAPTSALLGAMES",
-      "KXNCAAFFIRSTTDTEAM",
-      "KXNFLSEASONRECYDS",
-      "KXNHLFIRSTGOAL",
-      "KXWNBA40PTS",
-      "KXMLBTB",
-      "KXNBA3PEAT",
-      "KXNCAAFTEAMTOTAL",
-      "KXNFLLONGFG",
-      "KXNHLPSEASONGOALS",
+      "KXMLBHR",
+      "KXUFCWHITEHOUSE",
+      "KXNBAH2HPTS",
+      "KXNCAAF1HTEAMTOTAL",
+      "KXNFLESCALATORREC",
+      "KXNHLSAVE",
+      "KXWTAACES",
       "KXWNBA3PTCONTEST",
-      "KXMLBSEASONHR",
-      "KXNBASTOCK"
+      "KXMLBHRDERBYFORECAST",
+      "KXNBASERIESREBLEADER",
+      "KXNCAAFTEAMRSHATT",
+      "KXNFLFIRSTTDTEAM",
+      "KXNHL4NATIONS",
+      "KXWNBA40PTS",
+      "KXMLBHRDERBYSEMI",
+      "KXNBABENCHPTS",
+      "KXNCAAFTEAMTO",
+      "KXNFL1HTOTAL",
+      "KXNHLANYGOAL",
+      "KXWNBAH2HPTS",
+      "KXMLBOUTS",
+      "KXNBA3PTALLGAMES",
+      "KXNCAAF2PT",
+      "KXNFLRSHYDSPROT",
+      "KXNHLTOTAL",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBPLAYOFFHRS",
+      "KXNBASTADIUM",
+      "KXNCAAFTEAMREC",
+      "KXNFLRECYDS",
+      "KXNHLF10G",
+      "KXWNBA3PTROUND",
+      "KXMLBTOTAL",
+      "KXNBA3PT",
+      "KXNCAAFTEAMFG",
+      "KXNFLRACE",
+      "KXNHLSERIESTOTALGOALS",
+      "KXWNBA3PT",
+      "KXMLBHRDERBYTOT",
+      "KXNBA3PTCONTEST"
     ],
     "by_league": {
       "MLB": 8,
@@ -129,8 +143,7 @@
     },
     "forced": [
       "KXNHLPTS"
-    ],
-    "error": "HTTP Error 429: Too Many Requests"
+    ]
   },
   "targeted_series_diagnostics": {
     "KXATPACES": {
@@ -139,25 +152,15 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBASGHIT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
+    "KXMLBHR": {
+      "raw": 44,
+      "normalized": 44,
+      "skip_reasons": {
+        "ok": 44
+      },
       "skip_samples": {}
     },
-    "KXMLBASGHR": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBY500": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYFIN": {
+    "KXMLBHRDERBYDISTANCE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -169,29 +172,67 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBSEASONHR": {
+    "KXMLBHRDERBYSEMI": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBTB": {
+    "KXMLBHRDERBYTOT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBWALKOFFS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
+    "KXMLBOUTS": {
+      "raw": 3,
+      "normalized": 3,
+      "skip_reasons": {
+        "ok": 3
+      },
       "skip_samples": {}
     },
-    "KXNBA3PEAT": {
-      "raw": 0,
+    "KXMLBPLAYOFFHRS": {
+      "raw": 10,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_matchup": 10
+      },
+      "skip_samples": {
+        "ambiguous_matchup": {
+          "ticker": "KXMLBPLAYOFFHRS-26-80",
+          "event_ticker": "KXMLBPLAYOFFHRS-26",
+          "event_title": "Pro Baseball: Total Home Runs in Playoffs",
+          "title": "Playoffs: 80+ home runs",
+          "subtitle": null,
+          "yes_sub_title": "80+ home runs",
+          "primary_participant_key": null,
+          "floor_strike": 80,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-12-01T15:00:00Z"
+        }
+      }
+    },
+    "KXMLBTOTAL": {
+      "raw": 21,
+      "normalized": 0,
+      "skip_reasons": {
+        "unsupported_market": 21
+      },
+      "skip_samples": {
+        "unsupported_market": {
+          "ticker": "KXMLBTOTAL-26OCT112000LADMIL-2",
+          "event_ticker": "KXMLBTOTAL-26OCT112000LADMIL",
+          "event_title": "Los Angeles D vs Milwaukee: Total Runs",
+          "title": "Over 1.5 runs scored",
+          "subtitle": null,
+          "yes_sub_title": "Over 1.5 runs scored",
+          "primary_participant_key": null,
+          "floor_strike": 1.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-12T03:00:00Z"
+        }
+      }
     },
     "KXNBA3PT": {
       "raw": 0,
@@ -199,37 +240,64 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAH2HTEAM3PT": {
+    "KXNBA3PTALLGAMES": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPLAYOFFPTS": {
+    "KXNBA3PTCONTEST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPTSALLGAMES": {
+    "KXNBAAST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPTSLEADER": {
+    "KXNBABENCHPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASERIESPTSLEADER": {
+    "KXNBAH2HPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASTOCK": {
+    "KXNBASERIESREBLEADER": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBASTADIUM": {
+      "raw": 1,
+      "normalized": 0,
+      "skip_reasons": {
+        "unsupported_market": 1
+      },
+      "skip_samples": {
+        "unsupported_market": {
+          "ticker": "KXNBASTADIUM-30MAY01PHI-Y",
+          "event_ticker": "KXNBASTADIUM-30MAY01PHI",
+          "event_title": "Will the new Flyers/Philadelphia Pro Basketball arena be completed before May 1, 2030?",
+          "title": "Will Harris Blitzer Sports & Entertainment and Comcast Spectacor complete the new Flyers/Philadelphia Pro Basketball arena in the South Philadelphia Sports Complex before May 1, 2030?",
+          "subtitle": null,
+          "yes_sub_title": "Before May 1, 2030",
+          "primary_participant_key": null,
+          "floor_strike": null,
+          "functional_strike": null,
+          "occurrence_datetime": "2030-05-01T14:00:00Z"
+        }
+      }
+    },
+    "KXNCAAF1HTEAMTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -241,7 +309,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFFIRSTTDTEAM": {
+    "KXNCAAFTEAMFG": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -259,74 +327,146 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMRSHYDS": {
+    "KXNCAAFTEAMTO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMTOTAL": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAFTOTALFG": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFL2PTCONV": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLCAREERPASSYDS": {
-      "raw": 13,
+    "KXNCAAFTOTAL": {
+      "raw": 969,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 13
+        "ambiguous_participant_threshold": 969
       },
       "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNFLCAREERPASSYDS-PMAHOMES-40000",
-          "event_ticker": "KXNFLCAREERPASSYDS-PMAHOMES",
-          "event_title": "Patrick Mahomes Career Regular Season Passing Yards",
-          "title": "Patrick Mahomes: 40,000+ Passing Yards",
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNCAAFTOTAL-26OCT13DELMTU-27",
+          "event_ticker": "KXNCAAFTOTAL-26OCT13DELMTU",
+          "event_title": "Delaware vs Middle Tennessee: Total Points",
+          "title": "Full Game: Over 26.5 points scored",
           "subtitle": null,
-          "yes_sub_title": "40,000+ passing yards",
+          "yes_sub_title": "Over 26.5 points",
           "primary_participant_key": null,
-          "floor_strike": 39999.5,
+          "floor_strike": 26.5,
           "functional_strike": null,
-          "occurrence_datetime": "2040-03-01T15:00:00Z"
+          "occurrence_datetime": "2026-10-14T02:00:00Z"
         }
       }
     },
-    "KXNFLLONGFG": {
-      "raw": 0,
+    "KXNFL1HTOTAL": {
+      "raw": 27,
       "normalized": 0,
-      "skip_reasons": {},
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 27
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNFL1HTOTAL-26OCT11BALATL-4",
+          "event_ticker": "KXNFL1HTOTAL-26OCT11BALATL",
+          "event_title": "BAL Ravens vs ATL Falcons: 1st Half Total",
+          "title": "Will there be over 3.5 1H points scored?",
+          "subtitle": null,
+          "yes_sub_title": "Over 3.5 points",
+          "primary_participant_key": null,
+          "floor_strike": 3.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-12T03:20:00Z"
+        }
+      }
+    },
+    "KXNFLESCALATORREC": {
+      "raw": 28,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 28
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNFLESCALATORREC-26OCT11DENLAC-LACOHAMPTON8",
+          "event_ticker": "KXNFLESCALATORREC-26OCT11DENLAC",
+          "event_title": "Denver vs Los Angeles C: Receptions Escalator",
+          "title": "Omarion Hampton Receptions Escalator",
+          "subtitle": null,
+          "yes_sub_title": "Omarion Hampton",
+          "primary_participant_key": "football_player",
+          "floor_strike": null,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-11T23:05:00Z"
+        }
+      }
+    },
+    "KXNFLFIRSTTDTEAM": {
+      "raw": 6,
+      "normalized": 0,
+      "skip_reasons": {
+        "unsupported_market": 6
+      },
+      "skip_samples": {
+        "unsupported_market": {
+          "ticker": "KXNFLFIRSTTDTEAM-26OCT11BALATL-ATL",
+          "event_ticker": "KXNFLFIRSTTDTEAM-26OCT11BALATL",
+          "event_title": "Baltimore vs Atlanta: First Team to Score a TD",
+          "title": "Atlanta scores first TD",
+          "subtitle": null,
+          "yes_sub_title": "Atlanta",
+          "primary_participant_key": null,
+          "floor_strike": null,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-12T03:20:00Z"
+        }
+      }
+    },
+    "KXNFLRACE": {
+      "raw": 45,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 45
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNFLRACE-26OCT11DENLAC-21-LAC",
+          "event_ticker": "KXNFLRACE-26OCT11DENLAC-21",
+          "event_title": "Denver vs Los Angeles C: Race to 21 Points",
+          "title": "Will Los Angeles C reach 21 points first?",
+          "subtitle": null,
+          "yes_sub_title": "Los Angeles C",
+          "primary_participant_key": null,
+          "floor_strike": null,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-11T23:05:00Z"
+        }
+      }
+    },
+    "KXNFLRECYDS": {
+      "raw": 476,
+      "normalized": 476,
+      "skip_reasons": {
+        "ok": 476
+      },
       "skip_samples": {}
     },
-    "KXNFLPASSTDS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLRSHATT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLSEASONRECYDS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+    "KXNFLRSHYDSPROT": {
+      "raw": 278,
+      "normalized": 246,
+      "skip_reasons": {
+        "not_upcoming": 32,
+        "ok": 246
+      },
+      "skip_samples": {
+        "not_upcoming": {
+          "ticker": "KXNFLRSHYDSPROT-26OCT11PHIJAC-PHIWSHIPLEY28-20",
+          "event_ticker": "KXNFLRSHYDSPROT-26OCT11PHIJAC",
+          "event_title": "Philadelphia vs Jacksonville: Rushing Yards (Protected)",
+          "title": "Will Shipley: 20+ rushing yards (Protected)",
+          "subtitle": null,
+          "yes_sub_title": "Will Shipley: 20+",
+          "primary_participant_key": "football_player",
+          "floor_strike": 19.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-11T16:30:00Z"
+        }
+      }
     },
     "KXNFLSEASONRUSHYDS": {
       "raw": 0,
@@ -334,49 +474,81 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
+    "KXNHL4NATIONS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLANYGOAL": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXNHLF10G": {
-      "raw": 0,
+      "raw": 5,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLFIRSTGOAL": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLPLAYOFFGOALS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLPSEASONGOALS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 5
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLF10G-26OCT11CARPHI-Y",
+          "event_ticker": "KXNHLF10G-26OCT11CARPHI",
+          "event_title": "Carolina vs Philadelphia: Goal in First 10 Minutes",
+          "title": "Either team to score in the first 10 minutes",
+          "subtitle": null,
+          "yes_sub_title": "Goal in first 10 min",
+          "primary_participant_key": null,
+          "floor_strike": 1,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-12T02:00:00Z"
+        }
+      }
     },
     "KXNHLPTS": {
-      "raw": 151,
-      "normalized": 151,
+      "raw": 156,
+      "normalized": 156,
       "skip_reasons": {
-        "ok": 151
+        "ok": 156
       },
       "skip_samples": {}
     },
-    "KXNHLSAVES": {
+    "KXNHLSAVE": {
+      "raw": 6,
+      "normalized": 6,
+      "skip_reasons": {
+        "ok": 6
+      },
+      "skip_samples": {}
+    },
+    "KXNHLSERIESTOTALGOALS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNHLTOTAL": {
-      "raw": 0,
+      "raw": 200,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 200
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLTOTAL-26OCT11SEAWSH-2",
+          "event_ticker": "KXNHLTOTAL-26OCT11SEAWSH",
+          "event_title": "Seattle vs Washington: Total Goals",
+          "title": "Full Game: Over 1.5 goals scored",
+          "subtitle": null,
+          "yes_sub_title": "Over 1.5 goals scored",
+          "primary_participant_key": null,
+          "floor_strike": 1.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-12T00:00:00Z"
+        }
+      }
     },
     "KXUFCOCCUR": {
       "raw": 0,
@@ -390,7 +562,19 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
+    "KXWNBA3PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXWNBA3PTCONTEST": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXWNBA3PTCONTESTOU": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -408,19 +592,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAAST": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
     "KXWNBAH2HPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXWNBAPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -440,7 +612,9 @@
     }
   },
   "leagues": {
-    "NHL": 151
+    "MLB": 47,
+    "NFL": 722,
+    "NHL": 162
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
