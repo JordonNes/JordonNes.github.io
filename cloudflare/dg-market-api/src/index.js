@@ -46,6 +46,27 @@ export default {
   if(origin && origin!==allow)return fail("origin_not_allowed",403);
   if(request.method!=="GET")return fail("method_not_allowed",405);
   const url=new URL(request.url);
+  if(["/api/series-markets","/api/contract","/api/history"].includes(url.pathname)){
+   const ticker=(url.searchParams.get("ticker")||"").toUpperCase(),series=(url.searchParams.get("series")||"").toUpperCase();
+   const valid=v=>/^[A-Z0-9-]{2,90}$/.test(v);
+   const path=url.pathname;
+   if(path==="/api/series-markets"&&!valid(series)||path!=="/api/series-markets"&&!valid(ticker))return new Response(JSON.stringify({error:"invalid_ticker"}),{status:400,headers:{...JSON_HEADERS,...cors}});
+   let upstream;
+   if(path==="/api/series-markets"){const limit=Math.min(100,Math.max(1,Number.parseInt(url.searchParams.get("limit")||"100",10)||100));upstream="https://external-api.kalshi.com/trade-api/v2/markets?status=open&series_ticker="+encodeURIComponent(series)+"&limit="+limit}
+   else if(path==="/api/contract")upstream="https://external-api.kalshi.com/trade-api/v2/markets/"+encodeURIComponent(ticker);
+   else{
+    const periods={"15 min":[7200,1],"Hourly":[172800,60],"Daily":[2592000,1440],"Weekly":[3888000,1440],"Monthly":[7776000,1440],"Annual":[31536000,1440]},p=periods[url.searchParams.get("period")||"15 min"];
+    if(!p||!valid(series)||!ticker.startsWith(series+"-"))return new Response(JSON.stringify({error:"invalid_history_parameters"}),{status:400,headers:{...JSON_HEADERS,...cors}});
+    const now=Math.floor(Date.now()/1000);
+    upstream="https://external-api.kalshi.com/trade-api/v2/series/"+encodeURIComponent(series)+"/markets/"+encodeURIComponent(ticker)+"/candlesticks?start_ts="+(now-p[0])+"&end_ts="+now+"&period_interval="+p[1];
+   }
+   try{
+    const res=await fetch(upstream,{headers:{"Accept":"application/json"},cf:{cacheEverything:true,cacheTtl:path==="/api/history"?60:20}});
+    if(!res.ok)return new Response(JSON.stringify({error:"kalshi_upstream_error",upstream_status:res.status}),{status:502,headers:{...JSON_HEADERS,...cors}});
+    const data=await res.json();
+    return new Response(JSON.stringify({...data,retrieved_at_utc:new Date().toISOString(),source:"Kalshi public REST",read_only:true}),{headers:{...JSON_HEADERS,...cors}});
+   }catch(e){return new Response(JSON.stringify({error:"kalshi_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}})}
+  }
   if(url.pathname==="/api/focus"){
    const category=(url.searchParams.get("category")||"crypto").toLowerCase();
    if(!["crypto","commodities","economics"].includes(category))return new Response(JSON.stringify({error:"unsupported_category"}),{status:400,headers:{...JSON_HEADERS,...cors}});
