@@ -22,6 +22,7 @@ ctx.strokeStyle='#45df98';ctx.lineWidth=2;ctx.beginPath();let count=0;
 for(const p of valid){const xx=x(p.time);if(xx<L||xx>R)continue;count++?ctx.lineTo(xx,y(p.price)):ctx.moveTo(xx,y(p.price))}
 ctx.stroke();const last=valid.at(-1);ctx.strokeStyle='#deb95e';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(L,y(last.price));ctx.lineTo(R,y(last.price));ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#deb95e';ctx.beginPath();ctx.arc(x(Math.min(last.time,now)),y(last.price),4,0,Math.PI*2);ctx.fill();
 $('referenceRange').textContent='Observed range '+money(mn)+'–'+money(mx)+' · '+valid.length+' observations · '+period+' window';
+document.dispatchEvent(new CustomEvent('dg:prices',{detail:{points:valid,source:'Coinbase spot candle + ticker observations'}}));
 }
 function tick(price,timestamp){if(!Number.isFinite(price)||price<=0)return;lastTick=Date.now();const t=Date.parse(timestamp)||lastTick;ticks.push({time:t,price});if(ticks.length>3000)ticks.splice(0,ticks.length-3000);$('referencePrice').textContent=money(price);$('referenceTimestamp').textContent='Market tick: '+new Date(t).toLocaleTimeString();status();line();}
 function disconnect(){clearTimeout(retry);if(socket){const old=socket;socket=null;old.onclose=old.onmessage=old.onerror=old.onopen=null;try{old.close()}catch{}}connected=false}
