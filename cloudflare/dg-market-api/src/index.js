@@ -358,26 +358,26 @@ export default {
   // Public Kalshi event strike discovery. Only explicit numeric crypto USD strike fields.
   if(url.pathname==="/api/crypto-event-targets"){
    const asset=(url.searchParams.get("asset")||"BTC").toUpperCase();
-   const cfg={BTC:["KXBTC15M","KXBTC"],ETH:["KXETH15M","KXETH"],SOL:["KXSOL15M","KXSOL"]};
+   const cfg={BTC:["KXBTC15M","KXBTC"],ETH:["KXETH15M","KXETH"],SOL:["KXSOL15M","KXSOL"],XRP:["KXXRP15M"],HYPE:["KXHYPE15M"]};
    if(!cfg[asset])return new Response(JSON.stringify({error:"unsupported_asset"}),{status:400,headers:{...JSON_HEADERS,...cors}});
-   const key=new Request(url.origin+"/api/crypto-event-targets?asset="+asset+"&v=1"),hit=await caches.default.match(key);
+   const key=new Request(url.origin+"/api/crypto-event-targets?asset="+asset+"&v=2"),hit=await caches.default.match(key);
    if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
    const checked=await Promise.all(cfg[asset].map(async series=>{
     try{
      const u="https://external-api.kalshi.com/trade-api/v2/markets?status=open&limit=100&series_ticker="+series;
      const r=await fetch(u,{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:30}});
      if(!r.ok)return {series,error:"HTTP_"+r.status,markets:[]};
-     const d=await r.json();return {series,markets:Array.isArray(d.markets)?d.markets:[],partial:!!d.cursor};
+     const d=await r.json();const sr=await fetch("https://external-api.kalshi.com/trade-api/v2/series/"+encodeURIComponent(series),{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:300}});const sm=sr.ok?(await sr.json()).series:null;return {series,markets:Array.isArray(d.markets)?d.markets:[],partial:!!d.cursor,settlement_sources:Array.isArray(sm?.settlement_sources)?sm.settlement_sources:[],contract_url:sm?.contract_url||null};
     }catch{return {series,error:"FETCH_FAILED",markets:[]}}
    }));
    const now=Date.now(),events=[];
    for(const block of checked)for(const m of block.markets){
-    const kind=String(m.strike_type||"").toLowerCase(),floor=Number(m.floor_strike),cap=Number(m.cap_strike);
+    const kind=String(m.strike_type||"").toLowerCase(),floor=m.floor_strike==null?NaN:Number(m.floor_strike),cap=m.cap_strike==null?NaN:Number(m.cap_strike);
     const close=m.close_time||m.expiration_time,until=Date.parse(close||"");
     if(!Number.isFinite(until)||until<=now||until>now+7*86400000||!["greater","greater_or_equal","less","less_or_equal","between"].includes(kind))continue;
     const strikes=kind==="between"?[floor,cap]:kind.startsWith("greater")?[floor]:[cap];
     if(strikes.some(x=>!Number.isFinite(x)||x<=0)||!strikes.length)continue;
-    events.push({ticker:m.ticker,series_ticker:block.series,title:m.title||"",strike_type:kind,strikes_usd:strikes,close_time:close,expected_expiration_time:m.expected_expiration_time||m.expiration_time||null,source:"Kalshi event market strike fields",quote_asset:asset,quote_currency:"USD",settlement_reference_matches_coinbase_spot:false});
+    events.push({ticker:m.ticker,series_ticker:block.series,title:m.title||"",strike_type:kind,strikes_usd:strikes,close_time:close,expected_expiration_time:m.expected_expiration_time||m.expiration_time||null,source:"Kalshi event market strike fields",quote_asset:asset,quote_currency:"USD",settlement_reference_matches_coinbase_spot:false,settlement_sources:block.settlement_sources.map(x=>({name:x.name||"",url:x.url||""})),contract_url:block.contract_url,settlement_source_verification:block.settlement_sources.length?"PUBLISHED_NOT_SPOT_EQUIVALENT":"MISSING_SERIES_SOURCE"});
    }
    events.sort((a,b)=>Date.parse(a.close_time)-Date.parse(b.close_time));
    const response=new Response(JSON.stringify({asset,checked_series:cfg[asset],events:events.slice(0,30),partial:checked.some(x=>x.partial||x.error),series_errors:checked.filter(x=>x.error).map(x=>x.series+":"+x.error),retrieved_at_utc:new Date().toISOString(),overlay_semantics:"USD strike versus Coinbase spot USD indicative reference; settlement oracle may differ",no_trading:true}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=30"}});
