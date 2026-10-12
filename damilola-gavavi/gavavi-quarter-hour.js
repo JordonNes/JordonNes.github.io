@@ -58,7 +58,8 @@ function sideBtn(m,side){const yes=side==="yes",raw=m[side+"_ask_dollars"],q=mat
  const currentBid=el("span","qh-gross","Sell BID now "+cents(q?.bid));
  const amount=q&&Number.isFinite(q.theoretical_net_profit_multiple_before_fees)?fmt(q.theoretical_net_profit_multiple_before_fees)+"× theoretical":"Unknown";
  const prof=el("span","qh-gross",tactic==="settlement"?"Winning profit: "+amount+" (pre-fees)":"Future cash-out profit: UNVERIFIED");
- b.append(detail,currentBid,prof);b.title="Public price snapshot, not an executable quote or recommendation";
+ const probabilityGate=el("span","qh-gross","Break-even win probability before fees: "+(Number.isFinite(q?.ask)?(q.ask*100).toFixed(1)+"%":"unavailable")+" · NOT a forecast");
+ b.append(detail,currentBid,prof,probabilityGate);b.title="Public price snapshot, not an executable quote or recommendation";
  b.addEventListener("click",()=>{$("qhSelection").textContent=(m.title||m.ticker)+" · "+dir+" observed ASK "+cents(q?.ask)+" · currently observed BID "+cents(q?.bid)+". "+(tactic==="settlement"?"Winning net-profit multiple before fees: "+amount+".":"Future early-exit bid and achievable cash-out multiple are not forecast.")+" No qualified entry signal; no trade placed."});return b}
 function card(m,symbol){
  const a=el("article","qh-card");const head=el("div","qh-card-head");const ident=el("div","qh-ident");ident.append(el("span","qh-asset",symbol||"◉"),el("div","qh-name",m.title||m.ticker));head.append(ident,el("span","qh-badge","WAIT · EVIDENCE"));a.append(head);
@@ -68,7 +69,10 @@ function card(m,symbol){
  a.append(el("div","qh-caption",m.yes_maps_to_up?"YES = UP / NO = DOWN, based on market text":"YES/NO mapping not verified; review market rules"));
  const buy=el("div","qh-directions");buy.append(sideBtn(m,"yes"),sideBtn(m,"no"));a.append(buy);
  const evals=math?.evaluate(m,{multiplier:multiplier(),tactic});
- a.append(el("div","qh-evidence","Gavavi: "+(tactic==="settlement"?"Hold-to-settlement":"Early cash-out")+" assessment — WAIT. "+(evals?.prerequisites||[]).join(" · ")));
+ a.append(el("div","qh-evidence","Damilola forecast: NOT VALIDATED · Gavavi: "+(tactic==="settlement"?"Hold-to-settlement":"Early cash-out")+" assessment — WAIT. "+(evals?.prerequisites||[]).join(" · ")));
+ const book=el("details","qh-detail");const bookSummary=el("summary","","Inspect YES/NO orderbook and liquidity");const bookOutput=el("p","","Select to retrieve observed Kalshi bid/ask depth. Quotes are not guaranteed fills.");book.append(bookSummary,bookOutput);let bookChecked=false;
+ book.addEventListener("toggle",async()=>{if(!book.open||bookChecked)return;bookChecked=true;bookOutput.textContent="Retrieving Kalshi public orderbook…";try{const ctrl=new AbortController(),kill=setTimeout(()=>ctrl.abort(),8500);let response;try{response=await fetch(API+"/api/quarter-hour-book?"+new URLSearchParams({series:m.series_ticker,ticker:m.ticker}),{cache:"no-store",signal:ctrl.signal})}finally{clearTimeout(kill)}if(!response.ok)throw Error("HTTP "+response.status);const data=await response.json();bookOutput.textContent="Book: "+data.state+" · YES bid "+cents(data.yes?.best_bid_dollars)+" / ask "+cents(data.yes?.best_ask_dollars)+" ("+(data.yes?.ask_visible_contracts??"—")+" displayed contracts) · NO bid "+cents(data.no?.best_bid_dollars)+" / ask "+cents(data.no?.best_ask_dollars)+" ("+(data.no?.ask_visible_contracts??"—")+" displayed contracts) · Fees and exchange timestamps unverified; NO GO."}catch(e){bookOutput.textContent="Orderbook unavailable: "+String(e.message||e)+". Signal remains WAIT."}});
+ a.append(book);
  const meta=el("details","qh-detail");const summary=el("summary","","Why WAIT? · Contract evidence");meta.append(summary,el("p","",m.rules_primary||"Settlement rules not returned by the source."),el("p","","Observed: "+(m.quote_observed_at_utc||"unknown")+" · "+(m.quote_state||"unverified")+". No authenticated execution timestamp. Fees, forecast calibration, and verified liquidity are not yet available."));a.append(meta);
  const link=el("a","qh-market-link","Find this contract on Kalshi ↗");link.href=m.event_ticker?"https://kalshi.com/markets/kx/m/"+encodeURIComponent(m.event_ticker.toLowerCase()):"https://kalshi.com/markets";link.target="_blank";link.rel="noopener noreferrer";a.append(link);
  return a
