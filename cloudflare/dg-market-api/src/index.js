@@ -50,6 +50,10 @@ export default {
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
+  // D&G intentionally serves only Kalshi quarter-hour outcome contracts.
+  // Retired broad discovery and Perps routes remain in history but cannot return market data.
+  const retiredScopeRoutes=new Set(["/api/focus","/api/kalshi","/api/perps-historical-backfill","/api/perps-readiness","/api/perps-focus","/api/perps-catalog","/api/perps-orderbook-probe","/api/perps-source-audit","/api/perps-price-marker","/api/perps-quote-quality"]);
+  if(retiredScopeRoutes.has(url.pathname))return new Response(JSON.stringify({error:"route_out_of_scope",message:"D&G serves only Kalshi 15-minute Up/Down outcome contracts.",use:"/api/quarter-hour"}),{status:410,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
   if(url.pathname==="/api/quarter-hour"){const result=await serveQuarterHour(request,env,ctx);const h=new Headers(result.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(result.body,{status:result.status,headers:h})}
   if(url.pathname==="/api/perps-historical-backfill"){const result=await servePerpsHistory(request);const h=new Headers(result.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(result.body,{status:result.status,headers:h})}
