@@ -5,3 +5,11 @@ workers_dev = true
 
 [vars]
 ALLOWED_ORIGIN = "https://jordonnes.github.io"
+
+[triggers]
+crons = ["*/15 * * * *"]
+
+# Provision a Workers KV namespace and add its binding before persistence activates:
+# [[kv_namespaces]]
+# binding = "DG_ARCHIVE"
+# id = "<YOUR_CLOUDFLARE_KV_NAMESPACE_ID>"
