@@ -13,7 +13,8 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function req(path){
  for(let a=0;a<3;a++){
   let r;try{r=await fetch(BASE+path,{signal:AbortSignal.timeout(15000),headers:{Accept:"application/json"}})}catch(e){if(a===2)throw e;await wait(2000);continue}
-  if(r.status===429||r.status>=500){if(a===2)throw Error("SOURCE_HTTP_"+r.status);await wait(2500*(a+1));continue}
+  if(r.status===429)throw Error("SOURCE_HTTP_429");
+  if(r.status>=500){if(a===2)throw Error("SOURCE_HTTP_"+r.status);await wait(2500*(a+1));continue}
   if(!r.ok)throw Error("SOURCE_HTTP_"+r.status);
   return r.json();
  }
