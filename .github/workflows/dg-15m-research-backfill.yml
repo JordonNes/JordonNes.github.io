@@ -59,6 +59,7 @@ jobs:
           echo "series=$PICK" >> "$GITHUB_OUTPUT"
           echo "limit=$COUNT" >> "$GITHUB_OUTPUT"
       - name: Collect sourced settled outcomes and pre-resolution prices
+        id: collection
         shell: bash
         env:
           DG_SERIES_SET: ${{ steps.choice.outputs.series }}
@@ -66,22 +67,28 @@ jobs:
         run: |
           IFS=',' read -ra TARGETS <<< "$DG_SERIES_SET"
           SUCCESS=0
+          RESULTS=""
           for TARGET in "${TARGETS[@]}"; do
             echo "::group::Collect $TARGET"
+            OUTCOME="failed"
             if DG_SERIES="$TARGET" DG_MAX_MARKETS="$LIMIT" node scripts/collect-dg-15m-history.mjs; then
               SUCCESS=$((SUCCESS+1))
+              OUTCOME="dataset_written"
             else
               echo "::warning title=Historical data collection failed::Series $TARGET did not yield a validated dataset; inspect preceding Kalshi API diagnostics"
             fi
+            RESULTS="${RESULTS}${RESULTS:+,}{\"series\":\"$TARGET\",\"status\":\"$OUTCOME\"}"
             echo "::endgroup::"
           done
-          if [[ "$SUCCESS" -eq 0 ]]; then echo "::error::No usable Kalshi 15-minute series datasets were written"; exit 1; fi
+          mkdir -p damilola-gavavi/data
+          printf '{\"checked_at_utc\":\"%s\",\"source\":\"GitHub Actions public Kalshi historical collection\",\"successful_series\":%s,\"series_results\":[%s],\"data_confirmed_only_by_dataset_files\":true}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$SUCCESS" "$RESULTS" > damilola-gavavi/data/collection-status.json
+          echo "success_count=$SUCCESS" >> "$GITHUB_OUTPUT"
       - name: Commit actual observations and validation metadata
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add damilola-gavavi/data/15m-*.json
+          git add damilola-gavavi/data/*.json
           if git diff --cached --quiet; then
             echo "No new validated samples."
             exit 0
@@ -89,3 +96,9 @@ jobs:
           git commit -m "Research: refresh verified Kalshi 15m quote/outcome evidence"
           git pull --rebase origin master
           git push origin HEAD:master
+
+      - name: Surface source failure after persisting diagnostics
+        if: ${{ steps.collection.outputs.success_count == '0' }}
+        run: |
+          echo "::error::No Kalshi 15-minute datasets passed the source validity checks. Review data/collection-status.json and preceding API errors."
+          exit 1
