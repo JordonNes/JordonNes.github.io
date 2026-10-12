@@ -86,7 +86,10 @@ econ.addEventListener("toggle",async()=>{
   const [bk,ff]=responses;if(!bk.ok||!ff.ok)throw Error("book "+bk.status+"; fees "+ff.status);
   const book=await bk.json(),meta=await ff.json(),capital=Number($("qhRiskCapital").value),contracts=Number($("qhContracts").value);
   let history=[];try{const raw=JSON.parse(localStorage.getItem("dg_15m_training_"+m.series_ticker+"_v1")||"null");history=Array.isArray(raw?.rows)?raw.rows:[]}catch{}
-  const forecast=window.DG15mCalibration?.forecastResearch(history,{seriesTicker:m.series_ticker,yesBid:book.yes?.best_bid_dollars,yesAsk:book.yes?.best_ask_dollars,atUtc:book.observed_at_utc});
+  const audit=window.DG15mAudit?.audit(history);
+  const remaining=(Date.parse(m.close_time||"")-Date.parse(book.observed_at_utc||""))/60000;
+  const comparable=Number.isFinite(remaining)&&remaining>=8&&remaining<=12;
+  const forecast=!comparable?{state:"HORIZON_MISMATCH_10_MINUTE_MODEL",probability:null,go_eligible:false}:audit?.holdout_pass!==true?{state:"NO_INDEPENDENT_HOLDOUT_EDGE",probability:null,go_eligible:false}:window.DG15mCalibration?.forecastResearch(history,{seriesTicker:m.series_ticker,yesBid:book.yes?.best_bid_dollars,yesAsk:book.yes?.best_ask_dollars,atUtc:book.observed_at_utc});
   const e=window.DG15mEconomics?.evaluate({yesAsk:book.yes?.best_ask_dollars,noAsk:book.no?.best_ask_dollars,yesBid:book.yes?.best_bid_dollars,noBid:book.no?.best_bid_dollars,contracts,target:multiplier(),yesProbability:forecast?.probability??null,feeMultiplier:meta.fee_multiplier,feeType:meta.fee_type,seriesFeeVerified:meta.effective_fee_verified===true,accountCapital:$("qhRiskCapital").value.trim()&&Number.isFinite(capital)&&capital>0?capital:null,bookVerified:book.state==="OBSERVED_TOP_OF_BOOK",visibleYes:book.yes?.ask_visible_contracts??0,visibleNo:book.no?.ask_visible_contracts??0,quoteTimestamp:book.observed_at_utc,probabilityVerified:false});
   econText.textContent="Damilola "+(forecast?.state||"FORECAST_UNAVAILABLE")+(Number.isFinite(forecast?.probability)?" · research YES probability "+(forecast.probability*100).toFixed(1)+"%":" · no validated directional probability")+". Gavavi fee economics · "+(e?.sides||[]).map(v=>v.side.toUpperCase()+": observed ask "+cents(v.ask)+"; fee estimate "+(v.fee_dollars===null?"unverified":"$"+v.fee_dollars.toFixed(2))+"; full-loss exposure "+(v.worst_case_loss_dollars===null?"unverified":"$"+v.worst_case_loss_dollars.toFixed(2))+"; breakeven probability "+(v.break_even_probability===null?"unverified":(v.break_even_probability*100).toFixed(1)+"%")+"; target "+(v.indicated_target_met===true?"possible if filled":v.indicated_target_met===false?"fails":"unverified")+"; research scenario net P&L "+(v.research_scenario_net_profit_dollars===null?"not available":"$"+v.research_scenario_net_profit_dollars.toFixed(2))+" (UNVERIFIED); blockers: "+v.missing.join(", ")).join(" | ")+" · No predictive probability or qualified GO. Reopen later for newer book data.";
  }catch(e){econText.textContent="Economics unavailable: "+String(e.message||e)+". No fabricated fees or expected profit; WAIT."}
@@ -138,9 +141,9 @@ async function auditAsOfQuarterHour(){
 $("qhAsOfAudit").addEventListener("click",auditAsOfQuarterHour);
 function datasetKey(s){return "dg_15m_training_"+s+"_v1"}
 function currentResearch(){const s=selection()[0];if(!s)return{series:null,rows:[],page:0};try{const obj=JSON.parse(localStorage.getItem(datasetKey(s))||"null");return {series:s,rows:Array.isArray(obj?.rows)?obj.rows:[],page:Number.isInteger(obj?.page)?obj.page:0}}catch{return{series:s,rows:[],page:0}}}
-const archiveChecked=new Set();
+const archiveChecked=new Map();
 async function hydrateResearchArchive(){
- const s=selection()[0];if(!s||archiveChecked.has(s))return;archiveChecked.add(s);
+ const s=selection()[0];if(!s||Date.now()-(archiveChecked.get(s)||0)<300000)return;archiveChecked.set(s,Date.now());
  try{
   let r;const file="data/15m-"+encodeURIComponent(s)+".json";
   try{r=await fetch(file,{cache:"no-store"});}catch{}
@@ -157,10 +160,12 @@ async function hydrateResearchArchive(){
  }catch{}
 }
 function showAcademy(){
- const d=currentResearch(),report=window.DG15mCalibration?.evaluate(d.rows),v=report?.valid_unique_asof_rows??0;
- $("qhAcademyStatus").textContent=(d.series||"No series selected")+" · "+v+" verified source quote/outcome pairs · "+(report?.walk_forward_tests??0)+"/"+(report?.required_test_samples??100)+" walk-forward tests · "+(report?.state||"MODEL_NOT_LOADED")+
- (Number.isFinite(report?.rolling_bucket_model?.brier)?" · Damilola Brier "+report.rolling_bucket_model.brier.toFixed(4)+" vs raw market "+report.raw_market_benchmark.brier.toFixed(4):"")+
- ". Research only: no independent forward-validation or qualified GO.";
+ const d=currentResearch(),report=window.DG15mCalibration?.evaluate(d.rows),holdout=window.DG15mAudit?.audit(d.rows),v=report?.valid_unique_asof_rows??0;
+ $("qhAcademyStatus").textContent=(d.series||"No series selected")+" · "+v+" sourced settlement/quote pairs · "+(report?.walk_forward_tests??0)+" chronological tests"+
+ (Number.isFinite(report?.rolling_bucket_model?.brier)?" · early Damilola Brier "+report.rolling_bucket_model.brier.toFixed(4)+" vs market "+report.raw_market_benchmark.brier.toFixed(4):"")+
+ " · Locked holdout: "+(holdout?.state||"AUDITOR_UNAVAILABLE")+
+ (Number.isFinite(holdout?.holdout_brier?.market)?" · "+holdout.holdout_samples+" unseen contracts · market Brier "+holdout.holdout_brier.market.toFixed(4)+" vs chosen "+holdout.selected_model+" "+holdout.holdout_brier[holdout.selected_model].toFixed(4):" · minimum 100 locked test outcomes required")+
+ ". Model edge NOT certified; no qualified GO.";
 }
 let collecting=false;
 async function collectTraining(){
@@ -188,6 +193,7 @@ $("qhReload").addEventListener("click",refresh);
 target.addEventListener("input",()=>{goal();render()});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
 setInterval(()=>{if(!document.hidden&&!$("qhPane").hidden)refresh()},15000);
+setInterval(()=>{if(!document.hidden)hydrateResearchArchive()},300000);
 setInterval(tick,1000);
 window.GavaviQuarterHourRefresh=refresh;
 seriesChooser();goal();updateTactic();showAcademy();hydrateResearchArchive();refresh();
