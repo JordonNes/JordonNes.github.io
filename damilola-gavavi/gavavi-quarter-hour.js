@@ -14,7 +14,7 @@ let active=new Set(["KXBTC15M","KXETH15M","KXSOL15M"]),tactic="settlement",busy=
 try{const saved=JSON.parse(localStorage.getItem(prefSeries)||"null");if(Array.isArray(saved))active=new Set(saved.filter(s=>validSeries.has(s)))}catch{}
 try{const v=localStorage.getItem(prefTactic);if(["settlement","wave","big-dip"].includes(v))tactic=v}catch{}
 const target=$("qhTarget"),targetLabel=$("qhTargetValue"),state=$("qhStatus"),grid=$("qhCards"),tacticPicker=$("qhTactic");
-try{const stored=Number(localStorage.getItem(prefSlider));target.value=Number.isInteger(stored)&&stored>=0&&stored<stages.length?String(stored):"3"}catch{target.value="3"}
+try{const raw=localStorage.getItem(prefSlider),stored=raw===null?3:Number(raw);target.value=Number.isInteger(stored)&&stored>=0&&stored<stages.length?String(stored):"3"}catch{target.value="3"}
 const multiplier=()=>stages[Number(target.value)]||1.5;
 const fmt=n=>Number.isFinite(n)?n.toLocaleString("en-US",{maximumFractionDigits:2}):"—";
 const cents=n=>Number.isFinite(n)?(n*100).toFixed(1)+"¢":"—";
