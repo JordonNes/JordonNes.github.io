@@ -55,6 +55,17 @@ export default {
   const retiredScopeRoutes=new Set(["/api/focus","/api/kalshi","/api/perps-historical-backfill","/api/perps-readiness","/api/perps-focus","/api/perps-catalog","/api/perps-orderbook-probe","/api/perps-source-audit","/api/perps-price-marker","/api/perps-quote-quality"]);
   if(retiredScopeRoutes.has(url.pathname))return new Response(JSON.stringify({error:"route_out_of_scope",message:"D&G serves only Kalshi 15-minute Up/Down outcome contracts.",use:"/api/quarter-hour"}),{status:410,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
+  if(url.pathname==="/api/quarter-hour-batch"){
+   const allowed=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M"]);
+   const requested=[...new Set((url.searchParams.get("series")||"").split(",").map(x=>x.trim().toUpperCase()).filter(Boolean))];
+   if(!requested.length||requested.some(x=>!allowed.has(x)))return new Response(JSON.stringify({error:"invalid_15_minute_series",supported:[...allowed]}),{status:400,headers:{...JSON_HEADERS,...cors}});
+   const results=await Promise.all(requested.map(async series=>{
+    const inner=new Request(url.origin+"/api/quarter-hour?series="+encodeURIComponent(series),{headers:{"Origin":allow}});
+    const response=await this.fetch(inner,env,ctx);
+    try{return [series,{http_status:response.status,payload:await response.json()}]}catch{return [series,{http_status:response.status,payload:{state:"UNAVAILABLE",markets:[]}}]}
+   }));
+   return new Response(JSON.stringify({kind:"QUARTER_HOUR_BATCH",retrieved_at_utc:new Date().toISOString(),shared_kv_configured:!!env.DG_ARCHIVE,results:Object.fromEntries(results)}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+  }
   if(url.pathname==="/api/quarter-hour"){const result=await serveQuarterHour(request,env,ctx);const h=new Headers(result.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(result.body,{status:result.status,headers:h})}
   if(url.pathname==="/api/perps-historical-backfill"){const result=await servePerpsHistory(request);const h=new Headers(result.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(result.body,{status:result.status,headers:h})}
   if(url.pathname==="/api/snapshot-history"){const answer=await serveSnapshot(request,env);const headers=new Headers(answer.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(answer.body,{status:answer.status,headers});}
