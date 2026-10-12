@@ -45,6 +45,7 @@ jobs:
           SPECIFIED: ${{ github.event.inputs.series }}
           LIMIT: ${{ github.event.inputs.max_markets }}
           EVENT: ${{ github.event_name }}
+          OWNER_REQUEST: ${{ github.event.issue.body }}
         shell: bash
         run: |
           ALL=(KXGOLD15M KXSILVER15M KXWTI15M KXCOPPER15M KXNATGAS15M KXPALLADIUM15M KXPLATINUM15M KXBTC15M KXETH15M KXSOL15M KXXRP15M KXHYPE15M KXEURUSD15M)
@@ -53,8 +54,12 @@ jobs:
             PICK="${ALL[$IDX]}"
             COUNT=40
           elif [[ "$EVENT" == "issues" ]]; then
+            REQUESTED="$(printf '%s\n' "$OWNER_REQUEST" | sed -n 's/^SERIES=\([A-Z0-9]*\)$/\1/p' | head -n1)"
             PICK="KXGOLD15M"
-            COUNT=100
+            for ITEM in "${ALL[@]}"; do
+              if [[ "$REQUESTED" == "$ITEM" ]]; then PICK="$ITEM"; break; fi
+            done
+            COUNT=140
           elif [[ "$EVENT" == "push" ]]; then
             PICK="KXGOLD15M,KXSILVER15M,KXBTC15M"
             COUNT=35
