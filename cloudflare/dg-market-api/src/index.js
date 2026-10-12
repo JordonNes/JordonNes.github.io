@@ -1,3 +1,4 @@
+import {scheduledSnapshot,serveSnapshot} from "./price-archive.js";
 // D&G public-market read-only gateway. No trading or private Kalshi API calls.
 const JSON_HEADERS = {"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=15"};
 const KALSHI="https://external-api.kalshi.com/trade-api/v2/markets";
@@ -46,6 +47,7 @@ export default {
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
+  if(url.pathname==="/api/snapshot-history"){const answer=await serveSnapshot(request,env);const headers=new Headers(answer.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(answer.body,{status:answer.status,headers});}
   if(["/api/series-markets","/api/contract","/api/history"].includes(url.pathname)){
    const ticker=(url.searchParams.get("ticker")||"").toUpperCase(),series=(url.searchParams.get("series")||"").toUpperCase();
    const valid=v=>/^[A-Z0-9-]{2,90}$/.test(v);
@@ -431,5 +433,6 @@ export default {
    }
    return new Response(JSON.stringify({source:"Coinbase public spot",retrieved_at_utc:new Date().toISOString(),symbol:data.data?.base+"-"+data.data?.currency,amount:data.data?.amount??null,quote_currency:data.data?.currency??null}),{headers:{...JSON_HEADERS,...cors}});
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
- }
+ },
+ async scheduled(event,env,ctx){return scheduledSnapshot(event,env,ctx)}
 };
