@@ -1,0 +1,8 @@
+/* D&G guarded quote schema inspector — no trade enablement. */
+(()=>{'use strict';const $=id=>document.getElementById(id);let busy=false,at=0;
+document.addEventListener('DOMContentLoaded',()=>{$('kpBookCheck')?.addEventListener('click',async()=>{if(busy||Date.now()-at<60000)return;busy=true;at=Date.now();$('kpBookCheck').disabled=true;$('kpBookStatus').textContent='CHECKING ONE ORDERBOOK · READ ONLY';
+try{const ticker=$('kpBookTicker').value;const controller=new AbortController(),kill=setTimeout(()=>controller.abort(),12000);let response;try{response=await fetch('https://dg-market-intelligence.jordonnes-markets.workers.dev/api/perps-orderbook-probe?ticker='+encodeURIComponent(ticker),{signal:controller.signal})}finally{clearTimeout(kill)}
+if(!response.ok)throw Error('Worker HTTP '+response.status);const d=await response.json();$('kpBookStatus').textContent='WAIT · '+String(d.state||'UNVERIFIED').replaceAll('_',' ');$('kpBookOutput').textContent=JSON.stringify({ticker:d.ticker,upstream_status:d.upstream_status,top_level_fields:d.top_level_fields,orderbook_fields:d.orderbook_fields,level_counts:d.level_counts,level_samples:d.level_samples,retrieved_at_utc:d.retrieved_at_utc},null,2);
+}catch(e){$('kpBookStatus').textContent='WAIT · PROBE UNAVAILABLE';$('kpBookOutput').textContent=String(e.message||e)+' · Check latest Cloudflare Worker deployment.'}finally{busy=false;setTimeout(()=>{$('kpBookCheck').disabled=false},60000)}
+})});
+})();
