@@ -1,0 +1,51 @@
+{
+  "checked_at_utc": "2026-10-12T18:50:27.380Z",
+  "source": "Read-only GitHub Actions network requests to deployed D&G Worker",
+  "worker_url": "https://dg-market-intelligence.jordonnes-markets.workers.dev",
+  "checks": {
+    "quote_batch": {
+      "http_status": 200,
+      "state": "QUARTER_HOUR_BATCH",
+      "markets": {
+        "KXGOLD15M": {
+          "source_http_status": 503,
+          "state": "RATE_LIMITED",
+          "open_contracts": 0
+        },
+        "KXSILVER15M": {
+          "source_http_status": 503,
+          "state": "RATE_LIMITED",
+          "open_contracts": 0
+        },
+        "KXBTC15M": {
+          "source_http_status": 503,
+          "state": "RATE_LIMITED",
+          "open_contracts": 0
+        }
+      },
+      "shared_kv_configured": true
+    },
+    "series_fee": {
+      "http_status": 503,
+      "state": "RATE_LIMITED",
+      "effective_fee_verified": false,
+      "event_fee_checked": false
+    },
+    "historical_training": {
+      "http_status": 200,
+      "state": "UPSTREAM_UNAVAILABLE",
+      "attempted": 0,
+      "asof_pairs": 0,
+      "source_statuses": [
+        429,
+        429
+      ]
+    },
+    "orderbook": {
+      "state": "NO_VERIFIED_OPEN_GOLD_CONTRACT"
+    }
+  },
+  "applicable_to": "Kalshi 15-minute binary contracts only",
+  "signals_verified": false,
+  "go_eligible": false
+}
