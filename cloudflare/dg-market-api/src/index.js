@@ -215,6 +215,36 @@ export default {
    const response=new Response(JSON.stringify(output),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=10"}});
    ctx.waitUntil(cache.put(key,response.clone()));return response;
   }
+  // Damilola historic quarter-hour comparison. UTC-aligned; research only, manual fetch.
+  if(url.pathname==="/api/pattern-history"){
+   const sym=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
+   if(!new Set(["BTC-USD","ETH-USD","SOL-USD"]).has(sym))return new Response(JSON.stringify({error:"unsupported_symbol"}),{status:400,headers:{...JSON_HEADERS,...cors}});
+   const cache=caches.default,key=new Request(url.origin+"/api/pattern-history?symbol="+sym+"&version=1");
+   const cached=await cache.match(key);if(cached)return new Response(cached.body,{status:cached.status,headers:{...Object.fromEntries(cached.headers),...cors,"X-DG-Cache":"HIT"}});
+   const now=new Date(),dayStart=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()),weekday=now.getUTCDay();
+   const dates=[],seen=new Set();
+   const add=(date,group)=>{if(!seen.has(date)){seen.add(date);dates.push({date,group})}};
+   for(let d=1,work=0;work<3&&d<10;d++){const day=dayStart-d*86400000,wd=new Date(day).getUTCDay();if(wd!==0&&wd!==6){add(day,"PREVIOUS_WORKDAY");work++}}
+   for(let w=1;w<=3;w++)add(dayStart-w*7*86400000,"SAME_WEEKDAY");
+   const hour=now.getUTCHours(),windowStart=hour*3600;
+   const results=await Promise.all(dates.map(async entry=>{
+    const begin=Math.floor(entry.date/1000)+windowStart-60,end=begin+65*60;
+    try{
+     const u="https://api.exchange.coinbase.com/products/"+sym+"/candles?granularity=60&start="+encodeURIComponent(new Date(begin*1000).toISOString())+"&end="+encodeURIComponent(new Date(end*1000).toISOString());
+     const resp=await fetch(u,{headers:{Accept:"application/json","User-Agent":"DGMarketsResearch/1.0"},cf:{cacheEverything:true,cacheTtl:3600}});
+     if(!resp.ok)return {day:new Date(entry.date).toISOString().slice(0,10),group:entry.group,error:"PROVIDER_HTTP_"+resp.status};
+     const raw=await resp.json(),bars=new Map((Array.isArray(raw)?raw:[]).filter(x=>Array.isArray(x)&&x.length>=6&&x.every(Number.isFinite)).map(x=>[x[0],x[4]]));
+     const observations=[0,15,30,45].map(minute=>{
+      const t=Math.floor(entry.date/1000)+windowStart+minute*60;
+      const start=bars.get(t),end=bars.get(t+900);
+      return {minute,has_pair:Number.isFinite(start)&&Number.isFinite(end)&&start>0,return_pct:Number.isFinite(start)&&Number.isFinite(end)&&start>0?100*(end/start-1):null};
+     });
+     return {day:new Date(entry.date).toISOString().slice(0,10),group:entry.group,observations};
+    }catch{return {day:new Date(entry.date).toISOString().slice(0,10),group:entry.group,error:"PROVIDER_UNAVAILABLE"}}
+   }));
+   const response=new Response(JSON.stringify({source:"Coinbase Exchange spot 1-minute candles",symbol:sym,retrieved_at_utc:new Date().toISOString(),timezone:"UTC",reference_hour_utc:hour,checkpoints:[0,15,30,45],sample_days:results,read_only:true,not_kalshi_perps:true,forecast_calibrated:false}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=900"}});
+   ctx.waitUntil(cache.put(key,response.clone()));return response;
+  }
   // Narrow independent spot-reference chart. Not Kalshi Perps prices or positions.
   if(url.pathname==="/api/reference-candles"){
    const sym=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
