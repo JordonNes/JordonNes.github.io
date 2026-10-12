@@ -26,7 +26,7 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 14
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,18 +48,34 @@ jobs:
           if [[ "$EVENT" == "schedule" ]]; then
             IDX=$(( $(date +%s)/3600 % ${#ALL[@]} ))
             PICK="${ALL[$IDX]}"
-            COUNT=30
+            COUNT=40
+          elif [[ "$EVENT" == "push" ]]; then
+            PICK="KXGOLD15M,KXSILVER15M,KXBTC15M"
+            COUNT=35
           else
             PICK="${SPECIFIED:-KXGOLD15M}"
             COUNT="${LIMIT:-80}"
           fi
           echo "series=$PICK" >> "$GITHUB_OUTPUT"
           echo "limit=$COUNT" >> "$GITHUB_OUTPUT"
-      - name: Collect sourced settled outcomes and pre-resolution quotes
+      - name: Collect sourced settled outcomes and pre-resolution prices
+        shell: bash
         env:
-          DG_SERIES: ${{ steps.choice.outputs.series }}
-          DG_MAX_MARKETS: ${{ steps.choice.outputs.limit }}
-        run: node scripts/collect-dg-15m-history.mjs
+          DG_SERIES_SET: ${{ steps.choice.outputs.series }}
+          LIMIT: ${{ steps.choice.outputs.limit }}
+        run: |
+          IFS=',' read -ra TARGETS <<< "$DG_SERIES_SET"
+          SUCCESS=0
+          for TARGET in "${TARGETS[@]}"; do
+            echo "::group::Collect $TARGET"
+            if DG_SERIES="$TARGET" DG_MAX_MARKETS="$LIMIT" node scripts/collect-dg-15m-history.mjs; then
+              SUCCESS=$((SUCCESS+1))
+            else
+              echo "::warning title=Historical data collection failed::Series $TARGET did not yield a validated dataset; inspect preceding Kalshi API diagnostics"
+            fi
+            echo "::endgroup::"
+          done
+          if [[ "$SUCCESS" -eq 0 ]]; then echo "::error::No usable Kalshi 15-minute series datasets were written"; exit 1; fi
       - name: Commit actual observations and validation metadata
         shell: bash
         run: |
