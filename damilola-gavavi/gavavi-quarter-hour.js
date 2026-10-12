@@ -169,7 +169,7 @@ const archiveChecked=new Set();
 async function hydrateResearchArchive(){
  const s=selection()[0];if(!s||archiveChecked.has(s))return;archiveChecked.add(s);
  try{
-  const r=await fetch("data/15m-"+encodeURIComponent(s)+".json",{cache:"no-store"});if(!r.ok)return;
+  let r;const file="data/15m-"+encodeURIComponent(s)+".json";try{r=await fetch(file,{cache:"no-store"});}catch{}if(!r?.ok){r=await fetch("https://raw.githubusercontent.com/JordonNes/JordonNes.github.io/master/damilola-gavavi/"+file,{cache:"no-store"});}if(!r?.ok)return;
   const data=await r.json();if(data.series_ticker!==s||!Array.isArray(data.examples)||data.eligible_for_go!==false)return;
   const valid=window.DG15mCalibration?.normalize(data.examples)||[];
   if(!valid.length)return;
