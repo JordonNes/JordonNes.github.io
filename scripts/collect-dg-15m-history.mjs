@@ -50,10 +50,10 @@ for(const m of chosen){
  const url=(m.archived?"/historical/markets/"+encodeURIComponent(m.ticker):"/series/"+encodeURIComponent(ticker)+"/markets/"+encodeURIComponent(m.ticker))+"/candlesticks?"+q;
  try{
   const d=await req(url);if(!Array.isArray(d.candlesticks)){rejected++;continue}
-  const arr=d.candlesticks.map(c=>({time:Number(c.end_period_ts)*1000,bid:candleClose(c.yes_bid),ask:candleClose(c.yes_ask)}))
-   .filter(x=>Number.isFinite(x.time)&&x.time>open&&x.time<=cutoff&&x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask).sort((a,b)=>a.time-b.time);
+  const arr=d.candlesticks.map(c=>({time:Number(c.end_period_ts)*1000,bid:candleClose(c.yes_bid),ask:candleClose(c.yes_ask),trade:candleClose(c.price)}))
+   .filter(x=>Number.isFinite(x.time)&&x.time>open&&x.time<=cutoff&&((x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask)||(x.trade!==null&&x.trade>0&&x.trade<1))).sort((a,b)=>a.time-b.time);
   const x=arr.at(-1);if(!x||cutoff-x.time>90000){rejected++;continue}
-  prior.push({ticker:m.ticker,series_ticker:ticker,observation_cutoff_utc:new Date(cutoff).toISOString(),candle_end_utc:new Date(x.time).toISOString(),market_close_utc:new Date(close).toISOString(),yes_bid_dollars:x.bid,yes_ask_dollars:x.ask,result:String(m.result).toLowerCase(),label_source:"Kalshi settled market result",quote_source:"Kalshi historical 1m bid/ask candle",price_snapshot_is_executable:false});
+  prior.push({ticker:m.ticker,series_ticker:ticker,observation_cutoff_utc:new Date(cutoff).toISOString(),candle_end_utc:new Date(x.time).toISOString(),market_close_utc:new Date(close).toISOString(),yes_bid_dollars:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?x.bid:null,yes_ask_dollars:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?x.ask:null,yes_reference_price_dollars:x.trade,reference_price_kind:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?"BID_ASK_WITH_TRADE_REFERENCE":"TRADE_CLOSE",result:String(m.result).toLowerCase(),label_source:"Kalshi settled market result",quote_source:"Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",price_snapshot_is_executable:false});
   accepted++;
  }catch(e){rejected++;process.stderr.write(m.ticker+": "+e.message+"\n");if(String(e.message).includes("429"))break}
  await wait(300);
