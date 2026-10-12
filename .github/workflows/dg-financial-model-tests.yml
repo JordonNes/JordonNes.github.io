@@ -1,0 +1,23 @@
+name: D&G Financial Model Tests
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'damilola-gavavi/dg-net-opportunity.js'
+      - 'damilola-gavavi/dg-net-opportunity.test.cjs'
+      - 'damilola-gavavi/dg-walk-forward.js'
+      - 'damilola-gavavi/dg-walk-forward.test.cjs'
+      - '.github/workflows/dg-financial-model-tests.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test financial calculations and historical walk-forward gates
+        run: node --test damilola-gavavi/dg-net-opportunity.test.cjs damilola-gavavi/dg-walk-forward.test.cjs
