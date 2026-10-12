@@ -4,7 +4,7 @@
  */
 (function(root,factory){const api=factory();if(typeof module==="object"&&module.exports)module.exports=api;else root.DG15mEconomics=api})(typeof globalThis!=="undefined"?globalThis:this,function(){"use strict";
 const good=x=>typeof x==="number"&&Number.isFinite(x);
-const money=x=>Math.ceil((x-1e-12)*100)/100;
+const money=x=>x<=1e-12?0:Math.ceil((x-1e-12)*100)/100;
 function fee({price,quantity=1,multiplier,makerMultiplier=null,feeType="quadratic",liquidity="taker"}={}){
  if(!good(price)||price<=0||price>=1||!Number.isInteger(quantity)||quantity<1||!good(multiplier)||multiplier<0||feeType!=="quadratic"||!["taker","maker"].includes(liquidity))return null;
  if(liquidity==="maker"&&(!good(makerMultiplier)||makerMultiplier<0))return null;
