@@ -277,6 +277,38 @@ export default {
    const response=new Response(JSON.stringify({source:"Coinbase Exchange spot 1-minute candles",archive_version:5,requested_day_count:dates.length,symbol:sym,retrieved_at_utc:new Date().toISOString(),timezone:"UTC",reference_hour_utc:hour,checkpoints:[0,15,30,45],sample_days:results,read_only:true,not_kalshi_perps:true,forecast_calibrated:false}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=900"}});
    ctx.waitUntil(cache.put(key,response.clone()));return response;
   }
+  // V7 rolling 15-minute historical spot archive: read-only; 40 days, bounded Coinbase requests.
+  if(url.pathname==="/api/forecast-archive"){
+   const symbol=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
+   if(!new Set(["BTC-USD","ETH-USD","SOL-USD"]).has(symbol))return new Response(JSON.stringify({error:"unsupported_symbol"}),{status:400,headers:{...JSON_HEADERS,...cors}});
+   const current=Math.floor(Date.now()/900000)*900; // seconds, last completed 15m intervals only
+   const endOfWindow=Math.floor(current/3600)*3600;
+   const cacheKey=new Request(url.origin+"/api/forecast-archive?symbol="+symbol+"&hour="+endOfWindow+"&v=7");
+   const cached=await caches.default.match(cacheKey);
+   if(cached)return new Response(cached.body,{status:cached.status,headers:{...Object.fromEntries(cached.headers),...cors,"X-DG-Cache":"HIT"}});
+   const DAY=86400,days=42,chunks=15; // 42 days / 3-day windows (max 288 Coinbase candles per request)
+   const windows=Array.from({length:chunks},(_,i)=>({start:endOfWindow-(i+1)*3*DAY,end:endOfWindow-i*3*DAY}));
+   const download=async w=>{
+    try{
+     const req="https://api.exchange.coinbase.com/products/"+symbol+"/candles?granularity=900&start="+encodeURIComponent(new Date(w.start*1000).toISOString())+"&end="+encodeURIComponent(new Date(w.end*1000).toISOString());
+     const r=await fetch(req,{headers:{Accept:"application/json","User-Agent":"DGMarketsResearch/1.0"},cf:{cacheEverything:true,cacheTtl:3600}});
+     if(!r.ok)return {ok:false,status:r.status,rows:[]};
+     const data=await r.json();
+     return {ok:true,rows:(Array.isArray(data)?data:[]).filter(x=>Array.isArray(x)&&x.length>=6&&x.every(Number.isFinite)).map(x=>({time:x[0],close:x[4]}))};
+    }catch{return {ok:false,rows:[]}}
+   };
+   const blocks=[];for(let i=0;i<windows.length;i+=3)blocks.push(...await Promise.all(windows.slice(i,i+3).map(download)));
+   const byTime=new Map();for(const block of blocks)for(const row of block.rows)if(row.time+900<=current&&row.close>0)byTime.set(row.time,row.close);
+   const hour=new Date(current*1000).getUTCHours(),dayNow=Math.floor(current/DAY)*DAY;
+   const samples=[];
+   for(let d=42;d>=1;d--){const day=dayNow-d*DAY;for(const minute of [0,15,30,45]){
+    const t=day+hour*3600+minute*60,start=byTime.get(t),next=byTime.get(t+900);
+    if(Number.isFinite(start)&&Number.isFinite(next)&&start>0)samples.push({time:t,minute,return_pct:100*(next/start-1)});
+   }}
+   const result={source:"Coinbase Exchange 15-minute spot candles",symbol,timezone:"UTC",reference_hour_utc:hour,requested_days:42,complete_chunks:blocks.filter(b=>b.ok).length,failed_chunks:blocks.length-blocks.filter(b=>b.ok).length,rows_received:byTime.size,retrieved_at_utc:new Date().toISOString(),samples,read_only:true,perps_forecast:false,calibrated:false};
+   const out=new Response(JSON.stringify(result),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=3600"}});
+   ctx.waitUntil(caches.default.put(cacheKey,out.clone()));return out;
+  }
   // Narrow independent spot-reference chart. Not Kalshi Perps prices or positions.
   if(url.pathname==="/api/reference-candles"){
    const sym=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
