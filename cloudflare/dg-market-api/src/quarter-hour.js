@@ -3,12 +3,12 @@
  */
 const ROOT="https://external-api.kalshi.com/trade-api/v2";
 const SUPPORTED=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M"]);
-function dollar(x){if(typeof x!=="string"&&!Number.isFinite(x))return null;const s=String(x);if(!/^\\d+(?:\\.\\d+)?$/.test(s))return null;const n=Number(s);return Number.isFinite(n)&&n>=0&&n<=1?n:null}
+function dollar(x){if(typeof x!=="string"&&!Number.isFinite(x))return null;const s=String(x);if(!/^\d+(?:\.\d+)?$/.test(s))return null;const n=Number(s);return Number.isFinite(n)&&n>=0&&n<=1?n:null}
 function normalize(m,series,time){
  const close=Date.parse(m.close_time||m.expected_expiration_time||m.expiration_time||"");
  const open=Date.parse(m.open_time||"");
  const s=String(m.title||"")+" "+String(m.yes_sub_title||"")+" "+String(m.rules_primary||"");
- const mapsYesUp=/price\\s+up\\b|\\bup\\s+in\\s+(?:the\\s+)?next\\s+15|\\bresolve[s]?\\s+yes\\s+if.*(?:at least|greater than|higher than)/i.test(s);
+ const mapsYesUp=/price\s+up\b|\bup\s+in\s+(?:the\s+)?next\s+15|\bresolve[s]?\s+yes\s+if.*(?:at least|greater than|higher than)/i.test(s);
  return {ticker:String(m.ticker||""),event_ticker:String(m.event_ticker||""),series_ticker:series,title:String(m.title||"").slice(0,180),market_type:String(m.market_type||""),status:String(m.status||""),yes_sub_title:m.yes_sub_title||null,no_sub_title:m.no_sub_title||null,open_time:Number.isFinite(open)?new Date(open).toISOString():null,close_time:Number.isFinite(close)?new Date(close).toISOString():null,seconds_left:Number.isFinite(close)?Math.max(0,Math.floor((close-Date.parse(time))/1000)):null,price_to_beat_usd:Number.isFinite(Number(m.floor_strike))&&Number(m.floor_strike)>0?Number(m.floor_strike):null,strike_type:m.strike_type||null,rules_primary:String(m.rules_primary||"").slice(0,1200),yes_maps_to_up:mapsYesUp?true:null,yes_bid_dollars:dollar(m.yes_bid_dollars),yes_ask_dollars:dollar(m.yes_ask_dollars),no_bid_dollars:dollar(m.no_bid_dollars),no_ask_dollars:dollar(m.no_ask_dollars),yes_ask_size_fp:m.yes_ask_size_fp??null,no_ask_size_fp:m.no_ask_size_fp??null,volume_fp:m.volume_fp??null,quote_observed_at_utc:time,exchange_quote_timestamp_verified:false,quote_state:"INDICATIVE_PUBLIC_SNAPSHOT"};
 }
 export async function serveQuarterHour(request,env,ctx){
