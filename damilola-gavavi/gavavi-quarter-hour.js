@@ -1,4 +1,4 @@
-/* GAM Quarter-Hour mode: public Kalshi binary outcome quotes and ending-equity multiple objectives.
+/* GAM 15-minute-only: public Kalshi binary outcome quotes and ending-equity multiple objectives.
  * No order routing. An observed ASK is not an executable fill or a model forecast.
  */
 (()=>{"use strict";
@@ -57,6 +57,19 @@ function render(){grid.replaceChildren();const responses=last.filter(r=>active.h
  tick();}
 function tick(){const now=Date.now();document.querySelectorAll(".qh-clock").forEach(x=>{const end=Date.parse(x.dataset.close||"");if(!Number.isFinite(end)){x.textContent="Unavailable";return}const sec=Math.max(0,Math.floor((end-now)/1000));x.textContent=Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");if(sec===0)x.closest(".qh-card")?.setAttribute("data-expired","true")});if(retrieved&&state)state.textContent="Read-only • "+last.length+" series checked • last observed "+Math.round((Date.now()-retrieved)/1000)+"s ago • 15s polling, NOT execution-grade live quotes";}
 async function refresh(){if(busy||document.hidden)return;busy=true;state.textContent="Checking open 15-minute outcome contracts…";try{const res=await Promise.allSettled([...active].map(fetchOne));last=[];let failed=0;for(const x of res){if(x.status==="fulfilled"&&Array.isArray(x.value.markets))last.push(x.value);else failed++}retrieved=Date.now();render();if(failed)state.textContent=failed+" selected series unavailable or rate-limited. Other market quotes may be present; all signals remain WAIT."}finally{busy=false}}
+async function audit15mOutcomes(){
+ const b=$("qhHistoryAudit"),report=$("qhHistoryStatus");b.disabled=true;report.textContent="Checking settled 15-minute results for selected series…";
+ try{
+  const selected=[...active];if(!selected.length){report.textContent="Select at least one 15-minute series.";return}
+  const results=await Promise.allSettled(selected.map(async seriesTicker=>{
+   const ac=new AbortController(),timer=setTimeout(()=>ac.abort(),14000);
+   try{const response=await fetch(API+"/api/quarter-hour-outcomes?"+new URLSearchParams({series:seriesTicker,pages:"2"}),{cache:"no-store",signal:ac.signal});if(!response.ok)throw Error("HTTP "+response.status);return await response.json()}finally{clearTimeout(timer)}
+  }));
+  const messages=results.map((r,i)=>{if(r.status!=="fulfilled")return selected[i]+": not available";const d=r.value;return selected[i]+": "+d.resolved_labels+" settled YES/NO outcomes, "+d.records_returned+" records"+(d.complete?"":" (partial)")});
+  report.textContent=messages.join(" · ")+" · Outcome labels only. No historical entry quotes, forecast validation or GO implied.";
+ }catch(e){report.textContent="Historical outcome audit unavailable: "+String(e.message||e)}finally{b.disabled=false}
+}
+$("qhHistoryAudit").addEventListener("click",audit15mOutcomes);
 $("qhReload").addEventListener("click",refresh);
 target.addEventListener("input",()=>{goal();render()});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
