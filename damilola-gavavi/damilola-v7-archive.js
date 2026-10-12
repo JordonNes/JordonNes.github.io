@@ -13,17 +13,19 @@ function inspect(rows,minute){
  }
  const tendencyUp=samples.filter(x=>x.return_pct>0).length,tendencyDown=samples.filter(x=>x.return_pct<0).length;
  const accuracy=tested?100*correct/tested:null,base=tested?100*baseCorrect/tested:null;
+ const z=1.96,p=tested?correct/tested:0,denom=1+z*z/Math.max(1,tested),center=(p+z*z/(2*Math.max(1,tested)))/denom,half=z*Math.sqrt((p*(1-p)+z*z/(4*Math.max(1,tested)))/Math.max(1,tested))/denom;
+ const ci=tested?{low:100*(center-half),high:100*(center+half)}:null;
  const isEnough=tested>=25&&samples.length>=38,beats=accuracy!==null&&base!==null&&(accuracy-base)>=5;
  // Transparent research gate: a provisional non-trading directional tendency, not forecast calibration.
  const status=!isEnough?'INSUFFICIENT OUT-OF-SAMPLE TESTS':beats?'PROVISIONAL PATTERN · NOT TRADE READY':'NO DEMONSTRATED BASELINE EDGE';
- return {minute,samples:samples.length,tested,abstained,correct,accuracy,base,tendencyUp,tendencyDown,status,provisional:isEnough&&beats};
+ return {minute,samples:samples.length,tested,abstained,correct,accuracy,base,ci,tendencyUp,tendencyDown,status,provisional:isEnough&&beats};
 }
 function show(data){
  const rows=Array.isArray(data.samples)?data.samples:[],box=$('v7Grid');box.replaceChildren();let strongest=null;
  for(const minute of [0,15,30,45]){
   const v=inspect(rows,minute),card=make('article','');card.style.cssText='background:#151c18;border:1px solid #334239;border-radius:11px;padding:14px;min-width:0';
   const header=make('h3',':'+String(minute).padStart(2,'0')+' UTC');header.style.margin='0 0 8px';card.append(header);
-  for(const [name,val] of [['Observed UP / DOWN',v.tendencyUp+' / '+v.tendencyDown],['Historical samples',v.samples],['Walk-forward decisions',v.tested],['Walk-forward accuracy',v.accuracy===null?'—':v.accuracy.toFixed(1)+'%'],['Always-UP baseline',v.base===null?'—':v.base.toFixed(1)+'%'],['Tied predictions skipped',v.abstained]]){
+  for(const [name,val] of [['Observed UP / DOWN',v.tendencyUp+' / '+v.tendencyDown],['Historical samples',v.samples],['Walk-forward decisions',v.tested],['Walk-forward accuracy',v.accuracy===null?'—':v.accuracy.toFixed(1)+'%'],['95% interval (Wilson)',v.ci?v.ci.low.toFixed(1)+'–'+v.ci.high.toFixed(1)+'%':'—'],['Always-UP baseline',v.base===null?'—':v.base.toFixed(1)+'%'],['Tied predictions skipped',v.abstained]]){
    const row=make('p',name+': '+val);row.style.margin='4px 0';card.append(row)
   }
   const state=make('p',v.status);state.style.cssText='color:#efce80;font-weight:700;margin-top:10px';card.append(state);box.append(card);
@@ -32,7 +34,7 @@ function show(data){
  const failures=Number(data.failed_chunks||0),coverage=Number(data.rows_received||0);
  $('v7Summary').textContent='Archive: '+data.requested_days+' requested UTC days · '+coverage+' unique 15-minute candles · '+failures+' incomplete provider windows · '+data.symbol;
  $('v7Status').textContent=strongest?'RESEARCH SIGNAL OBSERVED · EXECUTION STILL LOCKED':'DIRECTION FORECAST WITHHELD · NO VALIDATED EDGE';
- $('v7Caveat').textContent='Predictions use only earlier same-slot observations (12-example warmup). Evaluated against a fixed always-UP baseline. This small, single-period analysis is not calibration or independent production validation. No Kalshi Perps funding, spreads or trading fees are included. Updated '+(data.retrieved_at_utc||'unknown');
+ $('v7Caveat').textContent='Predictions use only earlier same-slot observations (12-example warmup). Evaluated against a fixed always-UP baseline. The Wilson interval reflects binomial sampling uncertainty only, not market-regime dependence. This small, single-period analysis is not calibration or independent production validation. No Kalshi Perps funding, spreads or trading fees are included. Updated '+(data.retrieved_at_utc||'unknown');
  const gate=$('dgEvidenceGate');if(gate)gate.textContent='DIRECTION STATUS · '+(strongest?'PROVISIONAL HISTORICAL SIGNAL ONLY':'NO VALIDATED FORECAST')+' · TRADE ENTRY LOCKED';
 }
 document.addEventListener('DOMContentLoaded',()=>{
