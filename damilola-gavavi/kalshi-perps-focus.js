@@ -1,0 +1,8 @@
+/* Targeted Kalshi Perps inventory; manual refresh, no trade/quote claims. */
+(()=>{'use strict';const $=id=>document.getElementById(id);
+document.addEventListener('DOMContentLoaded',()=>{const btn=$('kpFocusCheck');if(!btn)return;let waiting=false;btn.addEventListener('click',async()=>{if(waiting)return;waiting=true;btn.disabled=true;$('kpFocusStatus').textContent='CHECKING TARGET INSTRUMENTS';try{
+ const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),12000);let res;try{res=await fetch('https://dg-market-intelligence.jordonnes-markets.workers.dev/api/perps-focus',{signal:abort.signal})}finally{clearTimeout(timer)}
+ if(!res.ok)throw Error('Gateway HTTP '+res.status);const data=await res.json();$('kpFocusStatus').textContent='WAIT · '+String(data.state||'UNVERIFIED').replaceAll('_',' ');const box=$('kpFocusResults');box.replaceChildren();for(const x of data.instruments||[]){const line=document.createElement('div');line.className='lineitem';const name=document.createElement('strong');name.textContent=x.asset+' · '+x.ticker;line.append(name,document.createTextNode(' — '+x.status+' · '+(x.discovery||'UNVERIFIED')+' · NO VERIFIED QUOTE'));box.append(line)}
+ $('kpFocusMeta').textContent='Source: Kalshi margin market metadata · checked '+(data.retrieved_at_utc||'unknown')+' · '+(data.markets_scanned??0)+' instruments returned in a bounded request. No bid/ask or executable price; absence from the first page does not mean a market is closed.';
+ }catch(e){$('kpFocusStatus').textContent='WAIT · CONNECTION UNAVAILABLE';$('kpFocusMeta').textContent=String(e.message||e)+' · Deploy updated Cloudflare Worker if endpoint is missing.'}finally{waiting=false;btn.disabled=false}})});
+})();
