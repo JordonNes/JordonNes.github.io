@@ -10,7 +10,7 @@ function normalize(records){
  for(const a of records||[]){
   const cutoff=Date.parse(a.observation_cutoff_utc||""),close=Date.parse(a.market_close_utc||a.outcome_label?.market_close_utc||""),at=Date.parse(a.candle_end_utc||a.asof_features?.candle_end_utc||"");
   const bid=Number(a.yes_bid_dollars??a.asof_features?.yes_bid_dollars),ask=Number(a.yes_ask_dollars??a.asof_features?.yes_ask_dollars);
-  const label=String(a.result??a.outcome_label?.result||"").toLowerCase(),id=String(a.ticker||"");
+  const label=String(a.result??a.outcome_label?.result??"").toLowerCase(),id=String(a.ticker||"");
   if(!id||seen.has(id)||!finite(bid)||!finite(ask)||bid<=0||ask>=1||bid>ask||!finite(cutoff)||!finite(close)||!finite(at)||at>cutoff||cutoff>=close||at<cutoff-120000||!["yes","no"].includes(label))continue;
   seen.add(id);result.push({ticker:id,series_ticker:String(a.series_ticker||""),at,close,p:(bid+ask)/2,yes:label==="yes"?1:0,bid,ask});
  }
