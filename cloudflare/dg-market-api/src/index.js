@@ -376,11 +376,11 @@ export default {
   }
   if(url.pathname==="/api/crypto-event-targets"){
    const asset=(url.searchParams.get("asset")||"BTC").toUpperCase();
-   const cfg={BTC:["KXBTC15M","KXBTC"],ETH:["KXETH15M","KXETH"],SOL:["KXSOL15M","KXSOL"],XRP:["KXXRP15M"],HYPE:["KXHYPE15M"]};
+   const cfg={BTC:["KXBTC15M"],ETH:["KXETH15M"],SOL:["KXSOL15M"],XRP:["KXXRP15M"],HYPE:["KXHYPE15M"]};
    if(!cfg[asset])return new Response(JSON.stringify({error:"unsupported_asset"}),{status:400,headers:{...JSON_HEADERS,...cors}});
-   const key=new Request(url.origin+"/api/crypto-event-targets?asset="+asset+"&v=4"),hit=await caches.default.match(key);
+   const key=new Request(url.origin+"/api/crypto-event-targets?asset="+asset+"&v=5"),hit=await caches.default.match(key);
    if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
-   const kv=env.DG_ARCHIVE,cacheKey="dg:event-target:ok:"+asset,cooldownKey="dg:kalshi:cooldown:v1";
+   const kv=env.DG_ARCHIVE,cacheKey="dg:event-target:15m:ok:v1:"+asset,cooldownKey="dg:kalshi:cooldown:v1";
    let stale=null;
    if(kv){try{
     const previous=await kv.get(cacheKey,"json");
