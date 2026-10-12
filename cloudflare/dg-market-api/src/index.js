@@ -56,9 +56,9 @@ export default {
   if(retiredScopeRoutes.has(url.pathname))return new Response(JSON.stringify({error:"route_out_of_scope",message:"D&G serves only Kalshi 15-minute Up/Down outcome contracts.",use:"/api/quarter-hour"}),{status:410,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
   if(url.pathname==="/api/quarter-hour-batch"){
-   const allowed=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M"]);
+   const allowed=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M"]);
    const requested=[...new Set((url.searchParams.get("series")||"").split(",").map(x=>x.trim().toUpperCase()).filter(Boolean))];
-   if(!requested.length||requested.some(x=>!allowed.has(x)))return new Response(JSON.stringify({error:"invalid_15_minute_series",supported:[...allowed]}),{status:400,headers:{...JSON_HEADERS,...cors}});
+   if(!requested.length||requested.length>8||requested.some(x=>!allowed.has(x)))return new Response(JSON.stringify({error:"invalid_15_minute_series",supported:[...allowed]}),{status:400,headers:{...JSON_HEADERS,...cors}});
    const results=await Promise.all(requested.map(async series=>{
     const inner=new Request(url.origin+"/api/quarter-hour?series="+encodeURIComponent(series),{headers:{"Origin":allow}});
     const response=await this.fetch(inner,env,ctx);
