@@ -1,4 +1,4 @@
-/* GAM 15-minute primary: public Kalshi binary outcome quotes and ENDING-EQUITY multiple objectives.
+/* GAM 15-minute primary: public Kalshi binary outcome quotes and NET-PROFIT multiple objectives.
  * No order routing. An observed ASK is not an executable fill or a model forecast.
  */
 (()=>{"use strict";
@@ -22,10 +22,33 @@ try{const raw=localStorage.getItem(prefSlider),stored=raw===null?3:Number(raw);t
 const multiplier=()=>stages[Number(target.value)]||1.5;
 const fmt=n=>Number.isFinite(n)?n.toLocaleString("en-US",{maximumFractionDigits:2}):"—";
 const cents=n=>Number.isFinite(n)?(n*100).toFixed(1)+"¢":"—";
+const referenceSymbols={KXBTC15M:"BTC-USD",KXETH15M:"ETH-USD",KXSOL15M:"SOL-USD",KXXRP15M:"XRP-USD",KXHYPE15M:"HYPE-USD"};
+const referenceCache=new Map(),contractTrails=new Map();
+function assetCode(t){return ({KXBTC15M:"BTC",KXETH15M:"ETH",KXSOL15M:"SOL",KXXRP15M:"XRP",KXHYPE15M:"HYPE",KXGOLD15M:"GOLD",KXSILVER15M:"SILVER",KXPLATINUM15M:"PLATINUM",KXPALLADIUM15M:"PALLADIUM",KXCOPPER15M:"COPPER",KXWTI15M:"WTI",KXNATGAS15M:"NATGAS",KXEURUSD15M:"EURUSD"})[t]||"MARKET"}
+function refFormat(n,code){if(!Number.isFinite(n))return "—";const digits=["XRP","HYPE"].includes(code)?4:code==="EURUSD"?5:2;return "$"+n.toLocaleString("en-US",{minimumFractionDigits:digits>2?digits:2,maximumFractionDigits:digits})}
+function targetFormat(n,code){if(!Number.isFinite(n))return "UNVERIFIED";const digits=({SILVER:3,PLATINUM:3,PALLADIUM:3,COPPER:5,NATGAS:5,EURUSD:5})[code]??2;return (code==="EURUSD"?"":"$")+n.toLocaleString("en-US",{minimumFractionDigits:digits,maximumFractionDigits:digits})}
+async function loadReference(seriesTicker){
+ const symbol=referenceSymbols[seriesTicker];if(!symbol)return {unavailable:"Reference feed not connected for this instrument."};
+ const cached=referenceCache.get(seriesTicker);if(cached&&Date.now()-cached.at<60000)return cached.value;
+ const value=(async()=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);try{const response=await fetch(API+"/api/reference-candles?"+new URLSearchParams({symbol,granularity:"60"}),{signal:controller.signal,cache:"no-store"});if(!response.ok)throw Error("reference HTTP "+response.status);const data=await response.json(),rows=(data.candles||[]).map(c=>({time:Number(c.time)*1000,close:Number(c.close)})).filter(c=>Number.isFinite(c.time)&&Number.isFinite(c.close)&&c.close>0).sort((a,b)=>a.time-b.time);const latest=rows.at(-1);if(!latest||Date.now()-latest.time>180000)throw Error("stale reference candles");const prior=[...rows].reverse().find(c=>c.time<=latest.time-840000);return {price:latest.close,change:prior?(latest.close/prior.close-1)*100:null,source:data.source||"Coinbase spot",observed:latest.time,unit:symbol}}catch(e){return {unavailable:String(e.message||e)}}finally{clearTimeout(timer)}})();referenceCache.set(seriesTicker,{at:Date.now(),value});return value;
+}
+function addContractObservation(m){
+ const price=Number.isFinite(m.yes_ask_dollars)?m.yes_ask_dollars:m.yes_bid_dollars,stamp=Date.parse(m.quote_observed_at_utc)||Date.now();if(!Number.isFinite(price))return [];
+ const rows=contractTrails.get(m.ticker)||[],prior=rows.at(-1);if(prior?.time===stamp)prior.price=price;else rows.push({time:stamp,price});
+ const filtered=rows.filter(x=>x.time>=Date.now()-900000);contractTrails.set(m.ticker,filtered);return filtered;
+}
+function paintContractChart(canvas,rows){
+ const w=Math.max(220,Math.floor(canvas.getBoundingClientRect().width||280)),h=62,dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+ const c=canvas.getContext("2d");if(!c)return;c.scale(dpr,dpr);c.clearRect(0,0,w,h);c.strokeStyle="#eceee9";c.lineWidth=1;
+ for(let y=12;y<h-6;y+=18){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}
+ if(rows.length<2){c.fillStyle="#858d84";c.font="11px system-ui";c.fillText(rows.length?"Gathering next observed quote":"Contract price history unavailable",8,34);return}
+ const lo=Math.min(...rows.map(x=>x.price)),hi=Math.max(...rows.map(x=>x.price)),spread=Math.max(hi-lo,.005),first=rows[0].price,last=rows.at(-1).price;c.strokeStyle=last>=first?"#19885a":"#c8404a";c.lineWidth=2;c.beginPath();rows.forEach((x,i)=>{const px=8+i/(rows.length-1)*(w-16),py=h-8-(x.price-lo)/spread*(h-20);i?c.lineTo(px,py):c.moveTo(px,py)});c.stroke();
+}
+
 function goal(){
- const x=multiplier();targetLabel.textContent=x+"× TOTAL RETURN";
- const cap=math?.maximumAllInPriceForTotalReturn(x);
- $("qhPriceGate").textContent="Illustrative maximum all-in cost for a $1 winning contract: "+cents(cap)+". Actual fees must be included; probability and execution are not certified.";
+ const x=multiplier();targetLabel.textContent=x+"× NET PROFIT";
+ const cap=math?.maximumAllInPriceForNetProfit(x);
+ $("qhPriceGate").textContent="Illustrative maximum all-in cost for a $1 winning contract to meet the NET PROFIT target before fees: "+cents(cap)+". Actual fees must be included; probability and execution are not certified.";
  try{localStorage.setItem(prefSlider,target.value)}catch{}
 }
 const tmode={settlement:"Quarter-Hour Multiplier Hunter · Hold for settlement",wave:"Wave & Reversal Hunter · Early-exit research", "big-dip":"Big Money Dip · Size-sensitive early-exit research"};
@@ -51,16 +74,16 @@ $("qhSelectGroup").addEventListener("click",()=>{for(const t of categorySets[gro
 $("qhClearGroup").addEventListener("click",()=>{for(const t of categorySets[group])active.delete(t);persistSeries();seriesChooser();refresh()});
 
 async function fetchBatch(tickers){const c=new AbortController(),timer=setTimeout(()=>c.abort(),12000);try{const r=await fetch(API+"/api/quarter-hour-batch?series="+encodeURIComponent(tickers.join(",")),{cache:"no-store",signal:c.signal});if(!r.ok)throw Error("HTTP "+r.status);return await r.json()}finally{clearTimeout(timer)}}
-function sideBtn(m,side){const yes=side==="yes",raw=m[side+"_ask_dollars"],q=math?.evaluate(m,{multiplier:multiplier(),tactic})?.sides?.find(a=>a.side===side),mapped=m.yes_maps_to_up===true,dir=mapped?(yes?"UP":"DOWN"):(yes?"YES":"NO"),b=el("button","qh-side",dir);b.type="button";
- const available=q&&q.state!=="INVALID_INPUT";
- b.dataset.signal=!available?"stop":tactic==="settlement"?(q.indicative_quote_clears_target_before_fees?"wait":"stop"):"wait";
- const detail=el("span","qh-quote","Buy ASK "+cents(q?.ask));
- const currentBid=el("span","qh-gross","Sell BID now "+cents(q?.bid));
- const amount=q&&Number.isFinite(q.theoretical_total_return_multiple_before_fees)?fmt(q.theoretical_total_return_multiple_before_fees)+"× theoretical":"Unknown";
- const prof=el("span","qh-gross",tactic==="settlement"?"Winning total payout: "+amount+" (pre-fees)":"Future cash-out profit: UNVERIFIED");
- const probabilityGate=el("span","qh-gross","Break-even win probability before fees: "+(Number.isFinite(q?.ask)?(q.ask*100).toFixed(1)+"%":"unavailable")+" · NOT a forecast");
- b.append(detail,currentBid,prof,probabilityGate);b.title="Public price snapshot, not an executable quote or recommendation";
- b.addEventListener("click",()=>{$("qhSelection").textContent=(m.title||m.ticker)+" · "+dir+" observed ASK "+cents(q?.ask)+" · currently observed BID "+cents(q?.bid)+". "+(tactic==="settlement"?"Winning total-return multiple before fees: "+amount+".":"Future early-exit bid and achievable cash-out multiple are not forecast.")+" No qualified entry signal; no trade placed."});return b}
+function sideBtn(m,side){
+ const yes=side==="yes",q=math?.evaluate(m,{multiplier:multiplier(),tactic})?.sides?.find(a=>a.side===side),mapped=m.yes_maps_to_up===true;
+ const dir=mapped?(yes?"UP":"DOWN"):(yes?"YES":"NO"),b=el("button","qh-side",dir);b.type="button";
+ const available=q&&q.state!=="INVALID_INPUT",signal=!available?"stop":tactic==="settlement"?(q.indicative_quote_clears_target_before_fees?"wait":"stop"):"wait";
+ b.dataset.signal=signal;b.setAttribute("aria-label",dir+" outcome contract, observed ask "+cents(q?.ask)+", "+signal.toUpperCase());
+ b.append(el("span","qh-quote","ASK "+cents(q?.ask)),el("span","qh-signal",signal==="wait"?"WAIT · EVIDENCE":signal==="go"?"GO · QUALIFIED":"STOP / SKIP"));
+ b.title="Observed public Kalshi quote. No orders are placed.";
+ b.addEventListener("click",()=>{$("qhSelection").textContent=(m.title||m.ticker)+" · "+dir+" observed ASK "+cents(q?.ask)+" · observed BID "+cents(q?.bid)+". "+(tactic==="settlement"?"Theoretical winning NET PROFIT multiple before fees: "+(Number.isFinite(q?.theoretical_net_profit_multiple_before_fees)?fmt(q.theoretical_net_profit_multiple_before_fees)+"×":"unavailable")+".":"Future early-exit bid and net-profit are unverified.")+" No qualified entry signal; no trade placed."});
+ return b;
+}
 function card(m,symbol){
  const a=el("article","qh-card");const head=el("div","qh-card-head");const ident=el("div","qh-ident");ident.append(el("span","qh-asset",symbol||"◉"),el("div","qh-name",m.title||m.ticker));head.append(ident,el("span","qh-badge","WAIT · EVIDENCE"));a.append(head);
  const bar=el("div","qh-contract");bar.append(el("span","",m.ticker),el("span","","Quarter-hour close: "+(m.close_time?new Date(m.close_time).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit",timeZoneName:"short"}):"unknown")));a.append(bar);
