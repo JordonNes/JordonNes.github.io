@@ -36,7 +36,9 @@ function forecastResearch(records,{seriesTicker,yesBid,yesAsk,atUtc}={}){
  const now=Date.parse(atUtc||""),bid=Number(yesBid),ask=Number(yesAsk);
  if(!seriesTicker||!Number.isFinite(now)||!finite(bid)||!finite(ask)||bid<=0||ask>=1||bid>ask)return {state:"INVALID_LIVE_INPUT",go_eligible:false,probability:null};
  const marketProbability=(bid+ask)/2,rows=normalize(records).filter(r=>r.series_ticker===seriesTicker&&r.close<=now);
- const report=evaluate(rows);if(report.state!=="RESEARCH_EVALUATED")return {state:"INSUFFICIENT_INDEPENDENT_TESTS",go_eligible:false,probability:null,market_probability:marketProbability,tests:report.walk_forward_tests};
+ const eligibleIds=new Set(rows.map(r=>r.ticker));
+ const eligibleRaw=Array.isArray(records)?records.filter(r=>eligibleIds.has(String(r.ticker||""))):[];
+ const report=evaluate(eligibleRaw);if(report.state!=="RESEARCH_EVALUATED")return {state:"INSUFFICIENT_INDEPENDENT_TESTS",go_eligible:false,probability:null,market_probability:marketProbability,tests:report.walk_forward_tests};
  if(!report.beats_market_baseline_brier)return {state:"NO_INCREMENTAL_SKILL_OVER_MARKET",go_eligible:false,probability:null,market_probability:marketProbability,tests:report.walk_forward_tests};
  const latest=rows.at(-1);if(!latest||now-latest.close>14*86400000)return {state:"STALE_HISTORICAL_REGIME",go_eligible:false,probability:null,market_probability:marketProbability};
  const bin=Math.min(9,Math.floor(marketProbability*10)),neighbors=rows.filter(r=>Math.min(9,Math.floor(r.p*10))===bin),alpha=24;
