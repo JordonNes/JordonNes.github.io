@@ -14,10 +14,6 @@ on:
     branches: [master]
     paths:
       - 'scripts/collect-dg-15m-history.mjs'
-      - 'scripts/check-dg-worker.mjs'
-      - 'damilola-gavavi/dg-15m-calibration.js'
-      - 'damilola-gavavi/dg-15m-independent-audit.js'
-      - 'damilola-gavavi/dg-15m-independent-audit.test.cjs'
       - '.github/workflows/dg-15m-research-backfill.yml'
   schedule:
     - cron: '21 * * * *'
@@ -55,7 +51,7 @@ jobs:
           if [[ "$EVENT" == "schedule" ]]; then
             IDX=$(( $(date +%s)/3600 % ${#ALL[@]} ))
             PICK="${ALL[$IDX]}"
-            COUNT=40
+            COUNT=15
           elif [[ "$EVENT" == "issues" ]]; then
             REQUESTED="$(printf '%s\n' "$OWNER_REQUEST" | sed -n 's/^SERIES=\([A-Z0-9]*\)$/\1/p' | head -n1)"
             PICK="KXGOLD15M"
@@ -65,7 +61,7 @@ jobs:
             COUNT=140
           elif [[ "$EVENT" == "push" ]]; then
             PICK="KXGOLD15M,KXSILVER15M,KXBTC15M"
-            COUNT=35
+            COUNT=10
           else
             PICK="${SPECIFIED:-KXGOLD15M}"
             COUNT="${LIMIT:-80}"
