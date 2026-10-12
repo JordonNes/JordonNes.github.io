@@ -358,18 +358,39 @@ export default {
    ctx.waitUntil(caches.default.put(cacheKey,out.clone()));return out;
   }
   // Public Kalshi event strike discovery. Only explicit numeric crypto USD strike fields.
+  // One browser request, sequential server-side discovery, shared cooldown via DG_ARCHIVE KV.
+  if(url.pathname==="/api/crypto-event-targets-batch"){
+   const assets=["BTC","ETH","SOL","XRP","HYPE"],results={};
+   for(const asset of assets){
+    const inner=new Request(url.origin+"/api/crypto-event-targets?asset="+asset,{headers:{"Origin":allow}});
+    const response=await this.fetch(inner,env,ctx);
+    try{results[asset]=await response.json()}catch{results[asset]={asset,state:"UNAVAILABLE",events:[]}}
+   }
+   return new Response(JSON.stringify({source:"D&G centralized event target coordinator",retrieved_at_utc:new Date().toISOString(),shared_kv_configured:!!env.DG_ARCHIVE,assets:results}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}});
+  }
   if(url.pathname==="/api/crypto-event-targets"){
    const asset=(url.searchParams.get("asset")||"BTC").toUpperCase();
    const cfg={BTC:["KXBTC15M","KXBTC"],ETH:["KXETH15M","KXETH"],SOL:["KXSOL15M","KXSOL"],XRP:["KXXRP15M"],HYPE:["KXHYPE15M"]};
    if(!cfg[asset])return new Response(JSON.stringify({error:"unsupported_asset"}),{status:400,headers:{...JSON_HEADERS,...cors}});
-   const key=new Request(url.origin+"/api/crypto-event-targets?asset="+asset+"&v=3"),hit=await caches.default.match(key);
+   const key=new Request(url.origin+"/api/crypto-event-targets?asset="+asset+"&v=4"),hit=await caches.default.match(key);
    if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
+   const kv=env.DG_ARCHIVE,cacheKey="dg:event-target:ok:"+asset,cooldownKey="dg:kalshi:cooldown:v1";
+   let stale=null;
+   if(kv){try{
+    const previous=await kv.get(cacheKey,"json");
+    if(previous&&Array.isArray(previous.events)){stale=previous;
+     if(Date.now()-Date.parse(previous.retrieved_at_utc||"")<15*60000)return new Response(JSON.stringify({...previous,cache_status:"SHARED_FRESH"}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}})}
+    const cooldown=await kv.get(cooldownKey,"json");
+    if(cooldown&&Number(cooldown.until)>Date.now()){
+     return new Response(JSON.stringify(stale?{...stale,state:"STALE_DURING_RATE_LIMIT",cache_status:"SHARED_STALE",rate_limit_retry_at_utc:new Date(cooldown.until).toISOString()}:{asset,state:"RATE_LIMITED",events:[],partial:true,rate_limit_retry_at_utc:new Date(cooldown.until).toISOString(),series_errors:[]}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}})
+    }
+   }catch{}}
    const checked=[];for(const series of cfg[asset]){
     try{
      const u="https://external-api.kalshi.com/trade-api/v2/markets?status=open&limit=100&series_ticker="+series;
      const r=await fetch(u,{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:30}});
-     if(!r.ok){checked.push({series,error:"HTTP_"+r.status,markets:[]});continue}
-     const d=await r.json();const sr=await fetch("https://external-api.kalshi.com/trade-api/v2/series/"+encodeURIComponent(series),{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:300}});const sm=sr.ok?(await sr.json()).series:null;checked.push({series,markets:Array.isArray(d.markets)?d.markets:[],partial:!!d.cursor,settlement_sources:Array.isArray(sm?.settlement_sources)?sm.settlement_sources:[],contract_url:sm?.contract_url||null});
+     if(!r.ok){checked.push({series,error:"HTTP_"+r.status,markets:[]});if(r.status===429){if(kv)try{await kv.put(cooldownKey,JSON.stringify({until:Date.now()+5*60000,source:"HTTP_429"}),{expirationTtl:360})}catch{}break}continue}
+     const d=await r.json();const sr=await fetch("https://external-api.kalshi.com/trade-api/v2/series/"+encodeURIComponent(series),{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:300}});if(sr.status===429&&kv)try{await kv.put(cooldownKey,JSON.stringify({until:Date.now()+5*60000,source:"SERIES_HTTP_429"}),{expirationTtl:360})}catch{}const sm=sr.ok?(await sr.json()).series:null;checked.push({series,markets:Array.isArray(d.markets)?d.markets:[],partial:!!d.cursor,settlement_sources:Array.isArray(sm?.settlement_sources)?sm.settlement_sources:[],contract_url:sm?.contract_url||null});
     }catch{checked.push({series,error:"FETCH_FAILED",markets:[]})}
    }
    const now=Date.now(),events=[];
@@ -403,7 +424,11 @@ export default {
    }
    events.sort((a,b)=>Date.parse(a.close_time)-Date.parse(b.close_time));
    const response=new Response(JSON.stringify({asset,checked_series:cfg[asset],events:events.slice(0,30),state:checked.some(x=>x.error==="HTTP_429")?"RATE_LIMITED":checked.some(x=>x.partial||x.error)?"PARTIAL":events.length?"EVENTS_FOUND":"NO_MATCHING_EVENTS",partial:checked.some(x=>x.partial||x.error),series_errors:checked.filter(x=>x.error).map(x=>x.series+":"+x.error),retrieved_at_utc:new Date().toISOString(),overlay_semantics:"USD strike versus Coinbase spot USD indicative reference; settlement oracle may differ",no_trading:true}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=30"}});
-   if(!checked.some(x=>x.error==="HTTP_429"))ctx.waitUntil(caches.default.put(key,response.clone()));return response;
+   if(!checked.some(x=>x.error==="HTTP_429")){
+    ctx.waitUntil(caches.default.put(key,response.clone()));
+    if(kv&&checked.every(x=>!x.error&&!x.partial))ctx.waitUntil(kv.put(cacheKey,JSON.stringify(await response.clone().json()),{expirationTtl:86400}));
+   }
+   return response;
   }
   // Narrow independent spot-reference chart. Not Kalshi Perps prices or positions.
   if(url.pathname==="/api/reference-candles"){
