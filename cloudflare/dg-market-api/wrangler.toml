@@ -9,7 +9,7 @@ ALLOWED_ORIGIN = "https://jordonnes.github.io"
 [triggers]
 crons = ["*/15 * * * *"]
 
-# Provision a Workers KV namespace and add its binding for BOTH archive persistence\n# and the shared Kalshi metadata cache/cooldown. Until provisioned, cross-instance\n# cooldown coordination is not available (per-POP Cache API only).\n# In Cloudflare Dashboard: Storage & databases > KV > Create namespace,\n# then Workers & Pages > dg-market-intelligence > Settings > Bindings > Add KV,\n# variable name DG_ARCHIVE. Redeploy after adding the binding.
-# [[kv_namespaces]]
-# binding = "DG_ARCHIVE"
-# id = "<YOUR_CLOUDFLARE_KV_NAMESPACE_ID>"
+# Shared KV for archive persistence, event-target metadata, and global 429 cooldown.
+[[kv_namespaces]]
+binding = "DG_ARCHIVE"
+id = "d5aaa8e47ff140e081b0f1e01a921d74"
