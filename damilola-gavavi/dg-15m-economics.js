@@ -28,7 +28,7 @@ function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbabili
   const expected=cost!==null&&good(p)&&probabilityVerified?contracts*p-cost:null;
   const conservativeLoss=cost;
   const riskCap=good(accountCapital)&&accountCapital>0?accountCapital*riskFraction:null;
-  const targetMet=cost!==null&&contracts/cost>=target;
+  const targetMet=cost!==null&&(contracts-cost)/cost+1e-10>=target;
   if(riskCap!==null&&cost!==null&&cost>riskCap)missing.push("FULL_LOSS_EXCEEDS_RISK_BUDGET");
   if(targetMet===false)missing.push("TARGET_NOT_MET");
   if(expected!==null&&expected<=0)missing.push("NONPOSITIVE_EXPECTED_VALUE");
@@ -36,7 +36,7 @@ function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbabili
   return {side,ask:valid?ask:null,bid:good(bid)?bid:null,fee_dollars:fees,all_in_cost_dollars:cost,
    worst_case_loss_dollars:conservativeLoss,account_risk_budget_dollars:riskCap,break_even_probability:costPerShare,
    expected_net_profit_dollars:expected,expected_return_on_cost:cost&&expected!==null?expected/cost:null,
-   theoretical_winning_total_return_multiple:cost?contracts/cost:null,chosen_probability:probabilityVerified?p:null,
+   theoretical_winning_total_return_multiple:cost?contracts/cost:null,theoretical_winning_profit_multiple:cost?(contracts-cost)/cost:null,chosen_probability:probabilityVerified?p:null,
    indicated_target_met:targetMet,missing,go_eligible:false,decision:missing.length?"WAIT_OR_SKIP":"RESEARCH_ONLY"};
  })};
 }
