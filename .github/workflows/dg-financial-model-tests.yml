@@ -8,6 +8,9 @@ on:
       - 'damilola-gavavi/dg-net-opportunity.test.cjs'
       - 'damilola-gavavi/dg-walk-forward.js'
       - 'damilola-gavavi/dg-walk-forward.test.cjs'
+      - 'damilola-gavavi/dg-quarter-hour-math.js'
+      - 'damilola-gavavi/dg-quarter-hour-math.test.cjs'
+      - 'cloudflare/dg-market-api/src/quarter-hour.js'
       - '.github/workflows/dg-financial-model-tests.yml'
 permissions:
   contents: read
@@ -20,4 +23,4 @@ jobs:
         with:
           node-version: '22'
       - name: Test financial calculations and historical walk-forward gates
-        run: node --test damilola-gavavi/dg-net-opportunity.test.cjs damilola-gavavi/dg-walk-forward.test.cjs
+        run: node --test damilola-gavavi/dg-net-opportunity.test.cjs damilola-gavavi/dg-walk-forward.test.cjs damilola-gavavi/dg-quarter-hour-math.test.cjs
