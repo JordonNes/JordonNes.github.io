@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: '22'
       - name: Verify risk and historical calibration checks
-        run: node --test damilola-gavavi/dg-15m-calibration.test.cjs damilola-gavavi/dg-15m-economics.test.cjs
+        run: node --test damilola-gavavi/dg-15m-calibration.test.cjs damilola-gavavi/dg-15m-economics.test.cjs damilola-gavavi/dg-15m-kalshi-schema.test.cjs
       - name: Choose supported 15-minute series (rotate on hourly schedule)
         id: choice
         env:
