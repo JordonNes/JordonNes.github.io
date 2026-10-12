@@ -1,4 +1,4 @@
-/* Gavavi — 15-minute Kalshi binary outcome fee-aware research engine.
+/* Gavavi — 15-minute Kalshi binary outcome fee-aware research engine. The target is NET PROFIT / all-in entry cost.
  * Exact quote, series-specific fee schema, independent probability and size required.
  * The 2% plan is an unguaranteed risk budget: worst-case binary settlement loses all entry cost.
  */
@@ -19,7 +19,7 @@ function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbabili
   if(!bookVerified||!good(depth)||depth<contracts)missing.push("VERIFIED_AVAILABLE_DEPTH");
   if(!probabilityVerified||!good(p)||p<=0||p>=1)missing.push("INDEPENDENT_CALIBRATED_WIN_PROBABILITY");
   if(!good(accountCapital)||accountCapital<=0)missing.push("ACCOUNT_RISK_CAPITAL");
-  if(!good(target)||target<=1)missing.push("PROFIT_TARGET");
+  if(!good(target)||target<=0)missing.push("PROFIT_TARGET");
   if(!quoteTimestamp||!Number.isFinite(Date.parse(quoteTimestamp))||Date.now()-Date.parse(quoteTimestamp)>10000||Date.now()<Date.parse(quoteTimestamp))missing.push("FRESH_QUOTE");
   const amount=valid&&qty?ask*contracts:null;
   const fees=valid&&qty&&seriesFeeVerified?fee({price:ask,quantity:contracts,multiplier:feeMultiplier,feeType}):null;
@@ -28,7 +28,7 @@ function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbabili
   const expected=cost!==null&&good(p)&&probabilityVerified?contracts*p-cost:null;
   const conservativeLoss=cost;
   const riskCap=good(accountCapital)&&accountCapital>0?accountCapital*riskFraction:null;
-  const targetMet=cost!==null&&contracts/cost>=target;
+  const targetMet=cost!==null&&(contracts-cost)/cost+1e-10>=target;
   if(riskCap!==null&&cost!==null&&cost>riskCap)missing.push("FULL_LOSS_EXCEEDS_RISK_BUDGET");
   if(targetMet===false)missing.push("TARGET_NOT_MET");
   if(expected!==null&&expected<=0)missing.push("NONPOSITIVE_EXPECTED_VALUE");
