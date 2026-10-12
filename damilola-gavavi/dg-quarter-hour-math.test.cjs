@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict');const x=require('./dg-quarter-hour-math.js');
+test('3.5x PROFIT requires 4.5x total payout',()=>{assert.equal(x.maximumAllInPriceForNetProfit(3.5),1/4.5);const s=x.settlement({ask:'0.2000',multiplier:3.5});assert.equal(s.state,'FEES_UNVERIFIED');assert(Math.abs(s.theoretical_net_profit_multiple_before_fees-4)<1e-10);assert.equal(s.go_eligible,false)});
+test('fees properly reduce net profit multiple',()=>{const s=x.settlement({ask:0.2,multiplier:3.5,entryFeePerContract:0.01,feesVerified:true});assert(Math.abs(s.after_fees_multiple-(0.79/0.21))<1e-9);assert.equal(s.go_eligible,false)});
+test('rejects absent or zero contract prices',()=>{assert.equal(x.settlement({ask:null,multiplier:2}).state,'INVALID_INPUT');assert.equal(x.settlement({ask:0,multiplier:2}).state,'INVALID_INPUT')});
+test('cashout must not be inferred without exit fee/quote',()=>{assert.equal(x.earlyExit({ask:0.2,bid:0.3,multiplier:1.5}).state,'FEES_UNVERIFIED')});
+test('no positive edge based on multiplier alone',()=>{const a=x.evaluate({ticker:'example',market_type:'binary',yes_ask_dollars:'0.2000',no_ask_dollars:'0.8000'},{multiplier:3.5});assert.equal(a.go_eligible,false);assert(a.sides.every(x=>x.decision==='WAIT'))});
