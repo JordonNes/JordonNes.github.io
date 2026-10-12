@@ -1,0 +1,35 @@
+/* Read-only event contract target overlays. Public strikes and expiries from Kalshi. */
+(()=>{'use strict';const API='https://dg-market-intelligence.jordonnes-markets.workers.dev';const ASSETS=['BTC','ETH','SOL'];
+const fmt=n=>'$'+Number(n).toLocaleString(undefined,{maximumFractionDigits:4});
+const node=(tag,str)=>{const el=document.createElement(tag);el.textContent=str;return el};
+function draw(canvas,bars,events){const rect=canvas.getBoundingClientRect(),w=Math.max(300,Math.floor(rect.width||500)),h=155,px=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(w*px);canvas.height=Math.round(h*px);const c=canvas.getContext('2d');c.scale(px,px);
+ const data=bars.filter(x=>Number.isFinite(x.close)&&Number.isFinite(x.time)).sort((a,b)=>a.time-b.time).slice(-90);if(data.length<5){c.fillStyle='#afbdaf';c.fillText('Reference history unavailable',12,55);return}
+ const marks=[...new Set(events.flatMap(e=>e.strikes_usd))].filter(Number.isFinite),prices=data.map(x=>x.close);
+ const min=Math.min(...prices,...marks),max=Math.max(...prices,...marks),pad=Math.max((max-min)*.12,max*.00025),low=min-pad,high=max+pad,y=n=>130-(n-low)/(high-low)*110,x=i=>12+i*(w-24)/(data.length-1);
+ for(const t of [0,15,30,45]){const i=data.findIndex(b=>new Date(b.time*1000).getUTCMinutes()===t);if(i<0)continue;c.strokeStyle='#4f614c';c.setLineDash([2,4]);c.beginPath();c.moveTo(x(i),6);c.lineTo(x(i),132);c.stroke();c.setLineDash([])}
+ c.strokeStyle='#40d78c';c.lineWidth=2;c.beginPath();prices.forEach((p,i)=>i?c.lineTo(x(i),y(p)):c.moveTo(x(i),y(p)));c.stroke();
+ for(let j=0;j<marks.length;j++){const val=marks[j],yy=y(val);c.strokeStyle='#dfbd72';c.setLineDash([6,4]);c.beginPath();c.moveTo(12,yy);c.lineTo(w-12,yy);c.stroke();c.setLineDash([]);c.fillStyle='#dfbd72';c.font='10px system-ui';c.fillText('STRIKE '+fmt(val),14,Math.min(144,Math.max(10,yy-3)))}
+ c.fillStyle='#afbdaf';c.fillText('Coinbase spot reference · Kalshi event USD strike',12,151);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ const anchor=document.getElementById('instruments');if(!anchor)return;
+ const section=document.createElement('section');section.style.cssText='margin:16px 0;border:1px solid #655a3e;border-radius:12px;padding:14px;background:#111b15';
+ section.append(node('h2','Kalshi Event Targets · Automatic Strike Overlays'));
+ const caveat=node('p','Event markets only. Yellow lines use exchange-reported numeric strikes. Green lines are Coinbase spot reference prices, NOT the Kalshi settlement oracle; the contract-specific settlement index is not yet verified. No event target is inferred from a perpetual mark.');caveat.className='notice';section.append(caveat);
+ const status=node('p','Retrieving public Kalshi strike and expiry metadata…');status.className='notice';section.append(status);
+ const grid=document.createElement('div');grid.className='grid';section.append(grid);anchor.before(section);
+ const panels={};for(const a of ASSETS){const card=document.createElement('article');card.className='item';card.append(node('h2',a+' · event targets'));const desc=node('p','Waiting for Kalshi events…');desc.className='small';card.append(desc);const canvas=document.createElement('canvas');canvas.style.height='155px';canvas.setAttribute('aria-label',a+' spot reference and verified Kalshi event strike overlays');card.append(canvas);const listings=document.createElement('div');listings.className='small';card.append(listings);grid.append(card);panels[a]={card,desc,canvas,listings};}
+ async function refresh(){if(document.hidden)return;status.textContent='Refreshing public event targets…';let ok=0;
+ await Promise.all(ASSETS.map(async a=>{const p=panels[a];try{const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),16000);let responses;try{responses=await Promise.all([fetch(API+'/api/crypto-event-targets?asset='+a,{signal:ctrl.signal}),fetch(API+'/api/reference-candles?symbol='+a+'-USD&granularity=60',{signal:ctrl.signal})])}finally{clearTimeout(timeout)}
+ if(responses.some(r=>!r.ok))throw Error('API '+responses.map(r=>r.status).join('/'));const [m,c]=await Promise.all(responses.map(r=>r.json()));
+ const events=(m.events||[]).filter(e=>Array.isArray(e.strikes_usd)&&e.strikes_usd.length&&Date.parse(e.close_time)>Date.now()).slice(0,2);
+ p.listings.replaceChildren();if(!events.length){p.desc.textContent='No qualifying future Kalshi event strikes returned. '+(m.partial?'Search is partial.':'')+' No target line invented.';draw(p.canvas,c.candles||[],[]);return}
+ for(const e of events){const line=node('p',e.ticker+' · '+e.strike_type+' '+e.strikes_usd.map(fmt).join(' / ')+' · closes '+new Date(e.close_time).toLocaleString());p.listings.append(line)}
+ p.desc.textContent=events.length+' verified numeric strike record(s) · quotes in USD · settlement feed is not Coinbase spot';draw(p.canvas,c.candles||[],events);ok++;
+ }catch(e){p.desc.textContent='Target data unavailable: '+String(e.message||e);p.listings.replaceChildren();const ctx=p.canvas.getContext('2d');ctx?.clearRect(0,0,p.canvas.width,p.canvas.height)}
+ }));
+ status.textContent='Updated '+new Date().toLocaleTimeString()+' · '+ok+'/'+ASSETS.length+' assets with event targets · absent targets are not fabricated.';
+ }
+ refresh();setInterval(()=>{if(!document.hidden)refresh()},60000);
+});
+})();
