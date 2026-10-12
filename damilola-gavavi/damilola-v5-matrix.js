@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  const section=btn.closest('section');const h=section?.querySelector('h2');if(h)h.textContent='Historical Intelligence · Four-Checkpoint Matrix';
  btn.addEventListener('click',async()=>{
  if(busy)return;busy=true;btn.disabled=true;$('hpStatus').textContent='RETRIEVING HISTORICAL ANALOGS…';
- try{const symbol=$('hpAsset').value,ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);let response;try{response=await fetch('https://dg-market-intelligence.jordonnes-markets.workers.dev/api/pattern-history?symbol='+encodeURIComponent(symbol),{signal:ctrl.signal})}finally{clearTimeout(timer)}if(!response.ok)throw Error('HTTP '+response.status);const data=await response.json();render(data)}
+ try{const symbol=$('hpAsset').value,ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);let response;try{response=await fetch('https://dg-market-intelligence.jordonnes-markets.workers.dev/api/pattern-history?symbol='+encodeURIComponent(symbol),{signal:ctrl.signal})}finally{clearTimeout(timer)}if(!response.ok)throw Error('HTTP '+response.status);const data=await response.json();render(data);document.dispatchEvent(new CustomEvent('dg:historical-analogs',{detail:data}))}
  catch(e){$('hpStatus').textContent='HISTORY UNAVAILABLE · FORECAST WITHHELD';$('hpNotes').textContent=String(e.message||e)+' · Deploy updated Cloudflare Worker if necessary.'}
  finally{busy=false;btn.disabled=false}
  });
