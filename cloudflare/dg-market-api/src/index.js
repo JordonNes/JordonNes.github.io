@@ -4,7 +4,7 @@ import {serveQuarterHourFeeMetadata} from "./quarter-hour-fees.js";
 import {serveQuarterHourBook} from "./quarter-hour-book.js";
 import {serveAsOfQuarterHour} from "./quarter-hour-asof.js";
 import {serveQuarterHourOutcomes} from "./quarter-hour-history.js";
-import {scheduledSnapshot,serveSnapshot} from "./price-archive.js";
+import {serveSnapshot} from "./price-archive.js";
 import {servePerpsHistory} from "./perps-historical.js";
 // D&G public-market read-only gateway. No trading or private Kalshi API calls.
 const JSON_HEADERS = {"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=15"};
@@ -511,5 +511,5 @@ export default {
    return new Response(JSON.stringify({source:"Coinbase public spot",retrieved_at_utc:new Date().toISOString(),symbol:data.data?.base+"-"+data.data?.currency,amount:data.data?.amount??null,quote_currency:data.data?.currency??null}),{headers:{...JSON_HEADERS,...cors}});
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
- async scheduled(event,env,ctx){return scheduledSnapshot(event,env,ctx)}
+ async scheduled(){return undefined /* Legacy Perps archive deliberately paused. */}
 };
