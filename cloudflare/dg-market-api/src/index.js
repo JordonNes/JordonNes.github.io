@@ -137,6 +137,37 @@ export default {
    ctx.waitUntil(cache.put(key,response.clone()));
    return response;
   }
+  // Bounded, cached, read-only margin instrument directory. A failed or partial scan is explicit.
+  if(url.pathname==="/api/perps-catalog"){
+   const cache=caches.default,key=new Request(url.origin+"/api/perps-catalog?v=1");
+   const hit=await cache.match(key);
+   if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
+   const output={source:"Kalshi production margin instrument directory",retrieved_at_utc:new Date().toISOString(),read_only:true,quotes_verified:false,executable:false,complete:false,markets:[],state:"UNAVAILABLE",pages_scanned:0};
+   let cursor="",more=false;
+   try{
+    for(let page=0;page<3;page++){
+     const control=new AbortController(),kill=setTimeout(()=>control.abort(),7000);
+     let res;
+     try{res=await fetch("https://external-api.kalshi.com/trade-api/v2/margin/markets?limit=100"+(cursor?"&cursor="+encodeURIComponent(cursor):""),{headers:{Accept:"application/json"},signal:control.signal,cf:{cacheEverything:true,cacheTtl:300}})}finally{clearTimeout(kill)}
+     if(!res.ok){output.state=res.status===429?"RATE_LIMITED":res.status===401||res.status===403?"AUTH_REQUIRED":"UPSTREAM_UNAVAILABLE";output.upstream_status=res.status;break}
+     const raw=await res.json(),items=Array.isArray(raw.markets)?raw.markets:Array.isArray(raw.margin_markets)?raw.margin_markets:null;
+     if(!items){output.state="SCHEMA_UNVERIFIED";break}
+     for(const m of items){
+      const ticker=String(m.ticker||m.market_ticker||"").slice(0,100);
+      if(!/^[A-Za-z0-9_-]{2,100}$/.test(ticker))continue;
+      output.markets.push({ticker,title:String(m.title||m.subtitle||m.name||"").slice(0,180),status:String(m.status||"UNKNOWN").slice(0,30)});
+     }
+     output.pages_scanned++;cursor=typeof raw.cursor==="string"?raw.cursor:"";more=!!cursor;
+     output.state="METADATA_ONLY";
+     if(!cursor)break;
+    }
+    output.complete=output.state==="METADATA_ONLY"&&!more;
+    output.partial=!output.complete;
+    output.markets=Array.from(new Map(output.markets.map(m=>[m.ticker,m])).values());
+   }catch{output.state="UPSTREAM_UNAVAILABLE";output.partial=true}
+   const response=new Response(JSON.stringify(output),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=300"}});
+   ctx.waitUntil(cache.put(key,response.clone()));return response;
+  }
   // Perps orderbook schema probe: single allowlisted market, on demand, no quote derivation.
   if(url.pathname==="/api/perps-orderbook-probe"){
    const tickers=new Set(["KXBTCPERP","KXETHPERP","KXSOLPERP","KXXRPPERP","KXHYPEPERP"]);
