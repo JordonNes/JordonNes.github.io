@@ -2,7 +2,7 @@
  * Public Kalshi market quotes are indicative, cached, and NOT authenticated fills.
  */
 const ROOT="https://external-api.kalshi.com/trade-api/v2";
-const SUPPORTED=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M"]);
+const SUPPORTED=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M"]);
 function dollar(x){if(typeof x!=="string"&&!Number.isFinite(x))return null;const s=String(x);if(!/^\d+(?:\.\d+)?$/.test(s))return null;const n=Number(s);return Number.isFinite(n)&&n>=0&&n<=1?n:null}
 function normalize(m,series,time){
  const close=Date.parse(m.close_time||m.expected_expiration_time||m.expiration_time||"");
