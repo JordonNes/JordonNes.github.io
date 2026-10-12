@@ -209,6 +209,29 @@ export default {
    const result=new Response(JSON.stringify(output),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}});
    ctx.waitUntil(cache.put(key,result.clone()));return result;
   }
+  // Provenance-first source diagnostics. No guessed financial economics.
+  if(url.pathname==="/api/perps-source-audit"){
+   const ticker=String(url.searchParams.get("ticker")||"").toUpperCase();
+   if(!/^[A-Z0-9_-]{2,80}$/.test(ticker))return new Response(JSON.stringify({error:"invalid_ticker"}),{status:400,headers:{...JSON_HEADERS,...cors}});
+   const base="https://external-api.kalshi.com/trade-api/v2/margin";
+   const checks=[
+    {name:"contract_specification",path:"/markets/"+encodeURIComponent(ticker)},
+    {name:"funding_estimate",path:"/funding_rates/estimate?ticker="+encodeURIComponent(ticker)},
+    {name:"funding_history",path:"/funding_rates/historical?ticker="+encodeURIComponent(ticker)},
+    {name:"historical_candles",path:"/markets/"+encodeURIComponent(ticker)+"/candlesticks?period_interval=60&limit=10"},
+    {name:"fee_tiers",path:"/fee_tiers"}
+   ];
+   const audits=await Promise.all(checks.map(async item=>{
+    const control=new AbortController(),kill=setTimeout(()=>control.abort(),5000);
+    try{
+     const res=await fetch(base+item.path,{headers:{Accept:"application/json"},signal:control.signal,cf:{cacheEverything:true,cacheTtl:120}});
+     let parsed=null;if(res.ok){try{parsed=await res.json()}catch{}}
+     return {source:item.name,upstream_status:res.status,access:res.ok&&parsed&&typeof parsed==="object"?"RESPONSE_RECEIVED":res.status===401||res.status===403?"AUTH_REQUIRED":res.status===429?"RATE_LIMITED":"UNAVAILABLE_OR_UNVERIFIED",schema_verified:false,ready_for_scoring:false,field_names:parsed&&typeof parsed==="object"?Object.keys(parsed).slice(0,24):[]};
+    }catch{return {source:item.name,access:"TIMEOUT_OR_NETWORK_ERROR",schema_verified:false,ready_for_scoring:false}}
+    finally{clearTimeout(kill)}
+   }));
+   return new Response(JSON.stringify({ticker,retrieved_at_utc:new Date().toISOString(),source:"Kalshi production margin REST",read_only:true,scoring_ready:false,warning:"Response receipt does not validate units, source coverage, authentication-specific fees, funding direction or historical performance.",audits}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=120"}});
+  }
   // Gavavi V2 read-only quote qualification: bounded depth, no credentials or orders.
   if(url.pathname==="/api/perps-quote-quality"){
    // Dynamic ticker syntax validation; a successful exchange response is required for any quote.
