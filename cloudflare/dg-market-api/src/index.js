@@ -362,16 +362,16 @@ export default {
    const asset=(url.searchParams.get("asset")||"BTC").toUpperCase();
    const cfg={BTC:["KXBTC15M","KXBTC"],ETH:["KXETH15M","KXETH"],SOL:["KXSOL15M","KXSOL"],XRP:["KXXRP15M"],HYPE:["KXHYPE15M"]};
    if(!cfg[asset])return new Response(JSON.stringify({error:"unsupported_asset"}),{status:400,headers:{...JSON_HEADERS,...cors}});
-   const key=new Request(url.origin+"/api/crypto-event-targets?asset="+asset+"&v=2"),hit=await caches.default.match(key);
+   const key=new Request(url.origin+"/api/crypto-event-targets?asset="+asset+"&v=3"),hit=await caches.default.match(key);
    if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
-   const checked=await Promise.all(cfg[asset].map(async series=>{
+   const checked=[];for(const series of cfg[asset]){
     try{
      const u="https://external-api.kalshi.com/trade-api/v2/markets?status=open&limit=100&series_ticker="+series;
      const r=await fetch(u,{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:30}});
-     if(!r.ok)return {series,error:"HTTP_"+r.status,markets:[]};
-     const d=await r.json();const sr=await fetch("https://external-api.kalshi.com/trade-api/v2/series/"+encodeURIComponent(series),{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:300}});const sm=sr.ok?(await sr.json()).series:null;return {series,markets:Array.isArray(d.markets)?d.markets:[],partial:!!d.cursor,settlement_sources:Array.isArray(sm?.settlement_sources)?sm.settlement_sources:[],contract_url:sm?.contract_url||null};
-    }catch{return {series,error:"FETCH_FAILED",markets:[]}}
-   }));
+     if(!r.ok){checked.push({series,error:"HTTP_"+r.status,markets:[]});continue}
+     const d=await r.json();const sr=await fetch("https://external-api.kalshi.com/trade-api/v2/series/"+encodeURIComponent(series),{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:300}});const sm=sr.ok?(await sr.json()).series:null;checked.push({series,markets:Array.isArray(d.markets)?d.markets:[],partial:!!d.cursor,settlement_sources:Array.isArray(sm?.settlement_sources)?sm.settlement_sources:[],contract_url:sm?.contract_url||null});
+    }catch{checked.push({series,error:"FETCH_FAILED",markets:[]})}
+   }
    const now=Date.now(),events=[];
    for(const block of checked)for(const m of block.markets){
     const kind=String(m.strike_type||"").toLowerCase(),floor=m.floor_strike==null?NaN:Number(m.floor_strike),cap=m.cap_strike==null?NaN:Number(m.cap_strike);
@@ -385,14 +385,14 @@ export default {
    // Fetch a bounded set; absent provenance remains explicitly unverified.
    const candidates=events.slice(0,12);
    const eventIds=[...new Set(candidates.map(e=>String(e.event_ticker||"")).filter(Boolean))].slice(0,12);
-   const eventMeta=await Promise.all(eventIds.map(async id=>{
+   const eventMeta=await Promise.all(eventIds.slice(0,3).map(async id=>{
     try{const r=await fetch("https://external-api.kalshi.com/trade-api/v2/events/"+encodeURIComponent(id),{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:120}});
      if(!r.ok)return [id,null];const raw=await r.json();return [id,raw.event||null]
     }catch{return [id,null]}
    }));
    const byEvent=new Map(eventMeta);
    for(const e of candidates){
-    const eventId=String(e.ticker||"").split("-").slice(0,-1).join("-");
+    const eventId=String(e.event_ticker||"");
     const meta=byEvent.get(eventId);
     const sources=Array.isArray(meta?.settlement_sources)?meta.settlement_sources:[];
     if(sources.length){e.settlement_sources=sources.map(x=>({name:String(x.name||"").slice(0,120),url:String(x.url||"").slice(0,300)}));e.settlement_source_verification="PUBLISHED_EVENT_SOURCE_NOT_LIVE_VERIFIED"}
