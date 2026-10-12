@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict');const {audit}=require('./dg-walk-forward.js');const time=Date.parse('2026-01-01T00:00:00Z');const good=Array.from({length:170},(_,i)=>({mark_price_dollars:100+i*.05,mark_exchange_ts_ms:time+i*900000,observed_at_utc:new Date(time+i*900000+3000).toISOString()}));
+test('walk-forward baseline uses only prior observations and returns unpromoted status',()=>{const r=audit(good);assert.equal(r.state,'BASELINE_EVALUATED');assert.equal(r.eligible_for_trade_signals,false);assert(r.valid_samples>=100);assert(r.predictions.every(x=>Date.parse(x.predicted_at)<Date.parse(x.realized_at)))});
+test('insufficient samples cannot pass',()=>{const r=audit(good.slice(0,80));assert.equal(r.state,'INSUFFICIENT_OUT_OF_SAMPLE');assert.equal(r.eligible_for_trade_signals,false)});
+test('gaps are excluded rather than interpolated',()=>{const r=audit(good.filter((_,i)=>i!==100));assert(r.excluded_gaps>0)});
+test('timestamps must be verifiable, missing marks rejected',()=>{const r=audit(good.map((x,i)=>i%2===0?{...x,mark_exchange_ts_ms:null}:x));assert.equal(r.state,'INSUFFICIENT_OUT_OF_SAMPLE')});
