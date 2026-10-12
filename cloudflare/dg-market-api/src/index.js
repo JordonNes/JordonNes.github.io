@@ -1,3 +1,4 @@
+import {serveQuarterHour} from "./quarter-hour.js";
 import {scheduledSnapshot,serveSnapshot} from "./price-archive.js";
 import {servePerpsHistory} from "./perps-historical.js";
 // D&G public-market read-only gateway. No trading or private Kalshi API calls.
@@ -48,6 +49,7 @@ export default {
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
+  if(url.pathname==="/api/quarter-hour"){const result=await serveQuarterHour(request,env,ctx);const h=new Headers(result.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(result.body,{status:result.status,headers:h})}
   if(url.pathname==="/api/perps-historical-backfill"){const result=await servePerpsHistory(request);const h=new Headers(result.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(result.body,{status:result.status,headers:h})}
   if(url.pathname==="/api/snapshot-history"){const answer=await serveSnapshot(request,env);const headers=new Headers(answer.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(answer.body,{status:answer.status,headers});}
   if(["/api/series-markets","/api/contract","/api/history"].includes(url.pathname)){
