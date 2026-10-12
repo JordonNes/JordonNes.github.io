@@ -8,7 +8,8 @@
 function audit(input,options={}){
  const minTraining=options.minTraining??48,minimum=options.minimum??100,intervalMs=options.intervalMs??900000;
  if(!Array.isArray(input))throw new TypeError('Observations array required');
- const rows=input.map(x=>({price:Number(x.mark_price_dollars),observed:Date.parse(x.observed_at_utc),exchange:Number(x.mark_exchange_ts_ms)})).filter(x=>Number.isFinite(x.price)&&x.price>0&&Number.isFinite(x.observed)&&Number.isFinite(x.exchange)&&x.exchange>0&&x.exchange<=x.observed+30000).sort((a,b)=>a.exchange-b.exchange);
+ const retrievedAt=Date.parse(options.retrieved_at_utc||"");
+ const rows=input.map(x=>{const candle=Object.hasOwn(x,"close_price_dollars"),ex=Number(candle?x.exchange_ts_ms:x.mark_exchange_ts_ms);const price=Number(candle?x.close_price_dollars:x.mark_price_dollars);const observed=candle?retrievedAt:Date.parse(x.observed_at_utc);return{price,observed,exchange:ex}}).filter(x=>Number.isFinite(x.price)&&x.price>0&&Number.isFinite(x.observed)&&Number.isFinite(x.exchange)&&x.exchange>0&&x.exchange<=x.observed+30000).sort((a,b)=>a.exchange-b.exchange);
  const unique=[];for(const p of rows)if(!unique.length||p.exchange!==unique.at(-1).exchange)unique.push(p);
  const predictions=[];let gaps=0;
  for(let i=minTraining;i<unique.length-1;i++){
