@@ -51,7 +51,7 @@ export default {
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
   // D&G intentionally serves only Kalshi quarter-hour outcome contracts.
-  // Retired broad discovery and Perps routes remain in history but cannot return market data.
+  // Retired broad market discovery remains unavailable to the active monitor.
   const retiredScopeRoutes=new Set(["/api/focus","/api/kalshi"]);
   if(retiredScopeRoutes.has(url.pathname))return new Response(JSON.stringify({error:"route_out_of_scope",message:"D&G serves only Kalshi 15-minute Up/Down outcome contracts.",use:"/api/quarter-hour"}),{status:410,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
