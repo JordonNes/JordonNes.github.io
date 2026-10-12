@@ -4,7 +4,7 @@
  */
 (function(root,factory){const obj=factory();if(typeof module==="object"&&module.exports)module.exports=obj;else root.DGQuarterHourMath=obj})(typeof globalThis!=="undefined"?globalThis:this,function(){"use strict";
 const finite=x=>typeof x==="number"&&Number.isFinite(x);
-const quote=x=>{if(typeof x==="number")return Number.isFinite(x)?x:null;if(typeof x!=="string"||!/^\\d+(?:\\.\\d+)?$/.test(x))return null;const n=Number(x);return Number.isFinite(n)?n:null};
+const quote=x=>{if(typeof x==="number")return Number.isFinite(x)?x:null;if(typeof x!=="string"||!/^\d+(?:\.\d+)?$/.test(x))return null;const n=Number(x);return Number.isFinite(n)?n:null};
 function maximumAllInPriceForNetProfit(m){if(!finite(m)||m<=0)throw Error("invalid net-profit multiplier");return 1/(1+m)}
 function settlement({ask,multiplier,entryFeePerContract,feesVerified=false,marketType="binary"}){
  const price=quote(ask),target=Number(multiplier);
