@@ -1,5 +1,5 @@
 /* D&G Quarter-Hour Outcome-Contract Mathematics. No trades or predictions.
- * Multiplier is ENDING EQUITY / entry capital (e.g. 1.5x = $150 payout on $100 invested, $50 profit before fees).
+ * Multiplier is NET PROFIT / entry capital (e.g. 1.5x = $150 profit on $100 invested, $250 total on winning settlement).
  * Observed quote at ASK is indicative, not assured executable execution.
  */
 (function(root,factory){const obj=factory();if(typeof module==="object"&&module.exports)module.exports=obj;else root.DGQuarterHourMath=obj})(typeof globalThis!=="undefined"?globalThis:this,function(){"use strict";
@@ -11,13 +11,13 @@ function settlement({ask,multiplier,entryFeePerContract,feesVerified=false,marke
  const price=quote(ask),target=Number(multiplier);
  if(marketType!=="binary"||!finite(price)||price<=0||price>=1||!finite(target)||target<=1)return {state:"INVALID_INPUT",go_eligible:false};
  const theoretical=(1-price)/price;
- const cap=maximumAllInPriceForTotalReturn(target);
- const base={state:"FEES_UNVERIFIED",go_eligible:false,indicative_ask_dollars:price,desired_total_return_multiple:target,desired_net_profit_multiple:target-1,theoretical_total_return_multiple_before_fees:1/price,theoretical_net_profit_multiple_before_fees:theoretical,maximum_all_in_entry_dollars_for_target:cap,indicative_quote_clears_target_before_fees:1/price>=target,reason:"No verified fee tier or execution. Not a trading recommendation."};
+ const cap=maximumAllInPriceForNetProfit(target);
+ const base={state:"FEES_UNVERIFIED",go_eligible:false,indicative_ask_dollars:price,desired_total_return_multiple:target+1,desired_net_profit_multiple:target,theoretical_total_return_multiple_before_fees:1/price,theoretical_net_profit_multiple_before_fees:theoretical,maximum_all_in_entry_dollars_for_target:cap,indicative_quote_clears_target_before_fees:theoretical>=target,reason:"No verified fee tier or execution. Not a trading recommendation."};
  if(!feesVerified||!finite(entryFeePerContract)||entryFeePerContract<0)return base;
  const entry=price+entryFeePerContract;
  if(entry>=1)return {...base,state:"NONPOSITIVE_MAX_WIN_PROFIT",fees_verified:true,after_fees_multiple:(1-entry)/entry,after_fees_total_return_multiple:1/entry,target_met:false};
  const multiple=(1-entry)/entry;
- return {...base,state:"ARITHMETIC_ONLY",fees_verified:true,after_fees_multiple:multiple,after_fees_total_return_multiple:1/entry,target_met:1/entry+1e-10>=target,go_eligible:false,reason:"Hypothetical fill only; forecast probability, contract depth and settlement risk unverified."};
+ return {...base,state:"ARITHMETIC_ONLY",fees_verified:true,after_fees_multiple:multiple,after_fees_total_return_multiple:1/entry,target_met:multiple+1e-10>=target,go_eligible:false,reason:"Hypothetical fill only; forecast probability, contract depth and settlement risk unverified."};
 }
 function earlyExit({ask,bid,entryFeePerContract,exitFeePerContract,feesVerified=false,multiplier}){
  const a=quote(ask),b=quote(bid),m=Number(multiplier);
@@ -26,7 +26,7 @@ function earlyExit({ask,bid,entryFeePerContract,exitFeePerContract,feesVerified=
  const cost=a+entryFeePerContract;
  const proceeds=b-exitFeePerContract;
  const multiple=(proceeds-cost)/cost;
- return {state:"SCENARIO_ONLY",go_eligible:false,net_profit_multiple:multiple,total_return_multiple:proceeds/cost,target_met:proceeds/cost+1e-10>=m,reason:"Comparing the two observed quotes does not forecast a future sale price or fill."};
+ return {state:"SCENARIO_ONLY",go_eligible:false,net_profit_multiple:multiple,total_return_multiple:proceeds/cost,target_met:multiple+1e-10>=m,reason:"Comparing the two observed quotes does not forecast a future sale price or fill."};
 }
 function evaluate(m,opts={}){
  const mult=Number(opts.multiplier),tactic=opts.tactic||"settlement",fees=opts.fees||{};
