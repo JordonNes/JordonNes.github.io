@@ -37,7 +37,7 @@ const [recent,archived]=await Promise.all([list("/markets","recent"),list("/hist
 if(!recent.length&&!archived.length)throw Error("NO_KALSHI_MARKET_METADATA: do not publish empty research datasets");
 const chosen=[],seen=new Set(),filtered=[...recent,...archived].filter(m=>{
  const type=m.market_type==="binary",result=String(m.result||"").toLowerCase(),date=Date.parse(m.close_time||m.expiration_time||"");
- const verified=m.archived?Boolean(m.settlement_ts)&&Number.isFinite(Date.parse(m.settlement_ts)):["settled","finalized"].includes(String(m.status));
+ const verified=m.archived?(m.settlement_ts?Number.isFinite(Date.parse(m.settlement_ts)):Date.now()-date>3600000):["settled","finalized"].includes(String(m.status));
  if(!type||!m.ticker?.startsWith(ticker+"-")||!["yes","no"].includes(result)||!verified||!Number.isFinite(date)||date>Date.now()||existing.has(m.ticker)||seen.has(m.ticker))return false;
  seen.add(m.ticker);return true
 }).sort((a,b)=>Date.parse(b.close_time)-Date.parse(a.close_time));
