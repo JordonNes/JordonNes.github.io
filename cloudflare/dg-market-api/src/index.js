@@ -381,6 +381,26 @@ export default {
     if(strikes.some(x=>!Number.isFinite(x)||x<=0)||!strikes.length)continue;
     events.push({ticker:m.ticker,series_ticker:block.series,title:m.title||"",strike_type:kind,strikes_usd:strikes,close_time:close,expected_expiration_time:m.expected_expiration_time||m.expiration_time||null,source:"Kalshi event market strike fields",quote_asset:asset,quote_currency:"USD",settlement_reference_matches_coinbase_spot:false,settlement_sources:block.settlement_sources.map(x=>({name:x.name||"",url:x.url||""})),contract_url:block.contract_url,settlement_source_verification:block.settlement_sources.length?"PUBLISHED_NOT_SPOT_EQUIVALENT":"MISSING_SERIES_SOURCE"});
    }
+   // Market-specific event details can carry settlement sources and governing rules.
+   // Fetch a bounded set; absent provenance remains explicitly unverified.
+   const candidates=events.slice(0,12);
+   const eventIds=[...new Set(candidates.map(e=>String(e.ticker||"").split("-").slice(0,-1).join("-")).filter(Boolean))].slice(0,12);
+   const eventMeta=await Promise.all(eventIds.map(async id=>{
+    try{const r=await fetch("https://external-api.kalshi.com/trade-api/v2/events/"+encodeURIComponent(id),{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:120}});
+     if(!r.ok)return [id,null];const raw=await r.json();return [id,raw.event||null]
+    }catch{return [id,null]}
+   }));
+   const byEvent=new Map(eventMeta);
+   for(const e of candidates){
+    const eventId=String(e.ticker||"").split("-").slice(0,-1).join("-");
+    const meta=byEvent.get(eventId);
+    const sources=Array.isArray(meta?.settlement_sources)?meta.settlement_sources:[];
+    if(sources.length){e.settlement_sources=sources.map(x=>({name:String(x.name||"").slice(0,120),url:String(x.url||"").slice(0,300)}));e.settlement_source_verification="PUBLISHED_EVENT_SOURCE_NOT_LIVE_VERIFIED"}
+    e.rules_primary=String(meta?.rules_primary||"").slice(0,550)||null;
+    e.settlement_feed_status="NO_VERIFIED_LIVE_SETTLEMENT_FEED";
+    e.reference_overlay_only=true;
+    e.event_ticker=eventId;
+   }
    events.sort((a,b)=>Date.parse(a.close_time)-Date.parse(b.close_time));
    const response=new Response(JSON.stringify({asset,checked_series:cfg[asset],events:events.slice(0,30),partial:checked.some(x=>x.partial||x.error),series_errors:checked.filter(x=>x.error).map(x=>x.series+":"+x.error),retrieved_at_utc:new Date().toISOString(),overlay_semantics:"USD strike versus Coinbase spot USD indicative reference; settlement oracle may differ",no_trading:true}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=30"}});
    ctx.waitUntil(caches.default.put(key,response.clone()));return response;
