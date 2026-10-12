@@ -30,7 +30,7 @@ function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbabili
   const expected=probabilityVerified?researchScenario:null;
   const conservativeLoss=cost;
   const riskCap=good(accountCapital)&&accountCapital>0?accountCapital*riskFraction:null;
-  const targetMet=cost!==null&&(contracts-cost)/cost+1e-10>=target;
+  const targetMet=cost===null?null:(contracts-cost)/cost+1e-10>=target;
   if(riskCap!==null&&cost!==null&&cost>riskCap)missing.push("FULL_LOSS_EXCEEDS_RISK_BUDGET");
   if(targetMet===false)missing.push("TARGET_NOT_MET");
   if(expected!==null&&expected<=0)missing.push("NONPOSITIVE_EXPECTED_VALUE");
