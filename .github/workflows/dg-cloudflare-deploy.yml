@@ -43,12 +43,12 @@ jobs:
           if (sawRateLimit && expected.some((asset) => !["RATE_LIMITED", "STALE_DURING_RATE_LIMIT"].includes(repeatStates[asset]))) {
             throw new Error(`Shared 429 cooldown was not applied consistently: ${JSON.stringify(repeatStates)}`);
           }
-          const quoteEndpoint = "https://dg-market-intelligence.jordonnes-markets.workers.dev/api/quarter-hour-batch?series=KXBTC15M,KXETH15M";
+          const quoteEndpoint = "https://dg-market-intelligence.jordonnes-markets.workers.dev/api/quarter-hour-batch?series=KXGOLD15M,KXBTC15M,KXEURUSD15M";
           const quoteResponse = await fetch(quoteEndpoint, { headers: { Accept: "application/json" } });
           if (!quoteResponse.ok) throw new Error(`Quarter-hour batch returned HTTP ${quoteResponse.status}`);
           const quotePayload = await quoteResponse.json();
           if (quotePayload.shared_kv_configured !== true) throw new Error("Quarter-hour batch does not report the shared KV binding");
-          const expectedQuoteSeries = ["KXBTC15M", "KXETH15M"];
+          const expectedQuoteSeries = ["KXGOLD15M", "KXBTC15M", "KXEURUSD15M"];
           const missingQuoteSeries = expectedQuoteSeries.filter((series) => !quotePayload.results?.[series]);
           if (missingQuoteSeries.length) throw new Error(`Quarter-hour batch missing series: ${missingQuoteSeries.join(", ")}`);
           const retired = ["/api/kalshi", "/api/focus?category=commodities"];
