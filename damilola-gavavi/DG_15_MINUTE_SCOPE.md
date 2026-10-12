@@ -29,9 +29,11 @@ Every series and individual market must be confirmed from Kalshi before showing 
 **Gavavi economics:** Binary payoff is $1 on a win, $0 on a loss, less applicable transaction fees. Distinguish holding to settlement from early exit. Early exit requires prospective resale liquidity, orderbook depth and realistic bid/ask/fees. Neither margin-funding nor Perps contract multipliers belong in the active model.
 
 ## Multiplier semantic lock
-User default 1.5× means **total ending equity / dollars invested**; i.e., $100 invested targets $150 total return, $50 profit. (Not 150% profit on top of principal.) User can set 1.2× to 20×. In a $1 winning binary contract, the theoretical all-in cost ceiling for multiplier M is 1/M. E.g. M=1.5 => max $0.6667. Meeting this mathematical ceiling does NOT imply positive expected net value, adequate probability, favorable slippage, valid fills, or GO.
+The user confirmed that 1.5× means **NET PROFIT / invested capital**, not total ending equity. A $100 position targets $150 net profit and $250 total proceeds on a win, before costs. A 3.5× target means $350 net profit and $450 total proceeds on $100 invested.
 
-Expected value per share held to settlement: EV = p(win) * (1 - total_entry_cost) - (1 - p(win)) * total_entry_cost, with additional costs modeled precisely per contract and fee tier. Equivalently EV = p(win) - all-in paid cost for a $1 binary payout, *when* cost truly contains all relevant fees. Profit-to-cost target requires 1 / cost >= M; expected-positive-value additionally requires calibrated p(win) > cost, with uncertainty and risk gates.
+For a standard $1 binary outcome with no fees, the theoretical all-in entry ceiling for net-profit multiple M is **1/(1+M)**. Thus 1.5× is 40¢ and 3.5× is about 22.22¢. Actual fees lower that ceiling. Meeting the arithmetic target never establishes a fill, win probability, positive expected value, or GO.
+
+Expected value per share held to settlement is p(win) − actual all-in entry cost for a $1 binary payout, when that cost includes all applicable fees. Early-exit profit multiple is (future realized exit bid − exit fees − entry ask − entry fees) / (entry ask + entry fees). A current bid is not a forecast of a future bid.
 
 ## Current 15-minute research implementation (October 12, 2026)
 - `/api/quarter-hour-outcomes`: bounded settled-market YES/NO outcome labels, not predictive skill.
@@ -39,7 +41,7 @@ Expected value per share held to settlement: EV = p(win) * (1 - total_entry_cost
 - `/api/quarter-hour-book`: official Kalshi public orderbook; best YES/NO bid levels and opposing-bid-derived indicative asks with displayed sizes, never guaranteed fills.
 - GAM exposes **Audit prediction-time data**, **Inspect settled 15-minute history**, and per-card **Inspect YES/NO orderbook**. Break-even win probability is displayed from quote price BEFORE fees, never as a forecast.
 - Source availability, real-time production deployment and a statistically sufficient, independent walk-forward training dataset must be verified. Green GO remains disabled while probability, fees, liquidity, risk or market rules are unverified.
-- Multiplier is **ending equity / invested capital**. At 1.5×, an investment of $100 targets $150 returned and $50 profit before costs. Kalshi $1 winning binary-contract maximum all-in purchase price at this target is $1/1.5 = $0.6667 per contract. Price eligibility does not prove positive expected value.
+- Multiplier is **NET PROFIT / invested capital**. At 1.5×, $100 invested targets $150 net profit and $250 total proceeds on a win before fees. The theoretical $1 binary-contract price ceiling is $1/(1+1.5) = $0.40 before fees. Price eligibility does not prove positive expected value.
 
 ## Separate development cadence
 - Active NOW: 15-minute GAM forecast/economics evidence.
@@ -47,7 +49,7 @@ Expected value per share held to settlement: EV = p(win) * (1 - total_entry_cost
 - Next week: perpetual futures research desk, separate margin/funding/economics system.
 
 ## Risk mandate
-Balanced approach. Model intended maximum loss **2% of capital allocated to the position**; for all-or-nothing 15-minute contracts held to settlement, the entire entry cost can be lost. To keep portfolio risk meaningful, additionally define allocation and account-wide limits and reject positions where a loss of all invested contract cost violates the approved budget. Never claim a stop order guarantees a 2% cap in a rapidly settling contract.
+No mandatory 2% maximum-loss threshold has been approved for GAM. Any risk percentage shown in research code is a provisional input, not a user-approved policy. Before execution-grade recommendations, define tactic-specific loss limits, allocation and account-wide limits. A held-to-settlement binary contract can lose its full entry cost; no stop order guarantees a fixed cap during a rapidly settling market.
 
 ## Signal doctrine
 - UP / DOWN: user interface labels only if YES/NO correspondence is sourced from contract rules; otherwise show YES/NO.
