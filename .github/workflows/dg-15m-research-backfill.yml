@@ -81,7 +81,7 @@ jobs:
             echo "::endgroup::"
           done
           mkdir -p damilola-gavavi/data
-          printf '{\"checked_at_utc\":\"%s\",\"source\":\"GitHub Actions public Kalshi historical collection\",\"successful_series\":%s,\"series_results\":[%s],\"data_confirmed_only_by_dataset_files\":true}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$SUCCESS" "$RESULTS" > damilola-gavavi/data/collection-status.json
+          printf '{"checked_at_utc":"%s","source":"GitHub Actions public Kalshi historical collection","successful_series":%s,"series_results":[%s],"data_confirmed_only_by_dataset_files":true}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$SUCCESS" "$RESULTS" > damilola-gavavi/data/collection-status.json
           echo "success_count=$SUCCESS" >> "$GITHUB_OUTPUT"
       - name: Commit actual observations and validation metadata
         shell: bash
