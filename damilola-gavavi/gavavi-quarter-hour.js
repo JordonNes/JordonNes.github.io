@@ -91,6 +91,30 @@ async function audit15mOutcomes(){
   report.textContent=messages.join(" · ")+" · Outcome labels only. No historical entry quotes, forecast validation or GO implied.";
  }catch(e){report.textContent="Historical outcome audit unavailable: "+String(e.message||e)}finally{b.disabled=false}
 }
+async function auditAsOfQuarterHour(){
+ const button=$("qhAsOfAudit"),output=$("qhHistoryStatus");button.disabled=true;
+ try{
+  const chosen=selection()[0];if(!chosen){output.textContent="Choose a 15-minute market series first.";return}
+  output.textContent="Damilola: checking a settled "+chosen+" contract for historical quote evidence available 10 minutes before close…";
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),14000);
+  try{
+   const o=await fetch(API+"/api/quarter-hour-outcomes?"+new URLSearchParams({series:chosen,pages:"1"}),{signal:controller.signal});
+   if(!o.ok)throw Error("Outcome history HTTP "+o.status);
+   const history=await o.json(),candidate=(history.markets||[]).find(m=>m.resolved_result_verified===true&&m.ticker);
+   if(!candidate){output.textContent=chosen+": no verified settled outcome available from the bounded sample. No forecast made.";return}
+   const response=await fetch(API+"/api/quarter-hour-asof?"+new URLSearchParams({series:chosen,ticker:candidate.ticker}),{signal:controller.signal});
+   if(!response.ok)throw Error("As-of quote HTTP "+response.status);
+   const audit=await response.json(),quote=audit.asof_features||{};
+   output.textContent=chosen+" · "+candidate.ticker+" · historical as-of: "+audit.state+
+   " · YES bid "+cents(quote.yes_bid_dollars)+" / YES ask "+cents(quote.yes_ask_dollars)+
+   " · cutoff "+(audit.observation_cutoff_utc||"unavailable")+
+   " · later settlement label "+(audit.outcome_label?.result||"unverified")+
+   ". One observed example only; no calibrated UP/DOWN prediction or GO.";
+  }finally{clearTimeout(timer)}
+ }catch(e){output.textContent="As-of data audit unavailable: "+String(e.message||e)+". Check Cloudflare deployment and source availability."}
+ finally{button.disabled=false}
+}
+$("qhAsOfAudit").addEventListener("click",auditAsOfQuarterHour);
 $("qhHistoryAudit").addEventListener("click",audit15mOutcomes);
 $("qhReload").addEventListener("click",refresh);
 target.addEventListener("input",()=>{goal();render()});
