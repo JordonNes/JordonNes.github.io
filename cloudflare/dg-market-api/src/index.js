@@ -162,7 +162,16 @@ export default {
      const sides=["bid","ask","bids","asks","buy","sell"];
      output.level_counts=Object.fromEntries(sides.filter(k=>Array.isArray(book[k])).map(k=>[k,book[k].length]));
      output.level_samples=Object.fromEntries(sides.filter(k=>Array.isArray(book[k])).map(k=>[k,book[k].slice(0,2)]));
-     output.state="SCHEMA_INSPECTION_REQUIRED";
+     // The response arrays may be unsorted. Validate strings and sort numerically before best levels.
+     const parseSide=(rows,side)=>Array.isArray(rows)?rows.filter(x=>Array.isArray(x)&&x.length>=2&&/^\\d+(?:\\.\\d+)?$/.test(String(x[0]))&&/^\\d+(?:\\.\\d+)?$/.test(String(x[1]))).map(x=>({price:Number(x[0]),size:Number(x[1])})).filter(x=>Number.isFinite(x.price)&&Number.isFinite(x.size)&&x.price>0&&x.size>0).sort((a,b)=>side==="bid"?b.price-a.price:a.price-b.price):[];
+     const bids=parseSide(book.bids,"bid"),asks=parseSide(book.asks,"ask");
+     output.sorted_level_count={bids:bids.length,asks:asks.length};
+     if(bids.length&&asks.length){
+      const bid=bids[0],ask=asks[0],spread=ask.price-bid.price,mid=(ask.price+bid.price)/2;
+      output.book_snapshot={best_bid_per_contract_usd:bid.price,best_ask_per_contract_usd:ask.price,bid_size_contracts:bid.size,ask_size_contracts:ask.size,spread_per_contract_usd:spread,spread_bps_of_mid:mid>0?spread/mid*10000:null,mid_per_contract_usd:mid,crossed_or_locked:spread<=0,source_timestamp_present:Boolean(book.ts_ms||root.ts_ms||book.timestamp||root.timestamp)};
+      output.state=spread>0?"SNAPSHOT_UNTIMED":"INVALID_BOOK";
+     }else output.state="INVALID_BOOK";
+
     }
    }catch{output.state="UPSTREAM_UNAVAILABLE"}finally{clearTimeout(kill)}
    const result=new Response(JSON.stringify(output),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}});
