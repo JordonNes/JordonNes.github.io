@@ -379,12 +379,12 @@ export default {
     if(!Number.isFinite(until)||until<=now||until>now+7*86400000||!["greater","greater_or_equal","less","less_or_equal","between"].includes(kind))continue;
     const strikes=kind==="between"?[floor,cap]:kind.startsWith("greater")?[floor]:[cap];
     if(strikes.some(x=>!Number.isFinite(x)||x<=0)||!strikes.length)continue;
-    events.push({ticker:m.ticker,series_ticker:block.series,title:m.title||"",strike_type:kind,strikes_usd:strikes,close_time:close,expected_expiration_time:m.expected_expiration_time||m.expiration_time||null,source:"Kalshi event market strike fields",quote_asset:asset,quote_currency:"USD",settlement_reference_matches_coinbase_spot:false,settlement_sources:block.settlement_sources.map(x=>({name:x.name||"",url:x.url||""})),contract_url:block.contract_url,settlement_source_verification:block.settlement_sources.length?"PUBLISHED_NOT_SPOT_EQUIVALENT":"MISSING_SERIES_SOURCE"});
+    events.push({ticker:m.ticker,event_ticker:m.event_ticker||null,series_ticker:block.series,title:m.title||"",strike_type:kind,strikes_usd:strikes,close_time:close,expected_expiration_time:m.expected_expiration_time||m.expiration_time||null,source:"Kalshi event market strike fields",quote_asset:asset,quote_currency:"USD",settlement_reference_matches_coinbase_spot:false,settlement_sources:block.settlement_sources.map(x=>({name:x.name||"",url:x.url||""})),contract_url:block.contract_url,settlement_source_verification:block.settlement_sources.length?"PUBLISHED_NOT_SPOT_EQUIVALENT":"MISSING_SERIES_SOURCE"});
    }
    // Market-specific event details can carry settlement sources and governing rules.
    // Fetch a bounded set; absent provenance remains explicitly unverified.
    const candidates=events.slice(0,12);
-   const eventIds=[...new Set(candidates.map(e=>String(e.ticker||"").split("-").slice(0,-1).join("-")).filter(Boolean))].slice(0,12);
+   const eventIds=[...new Set(candidates.map(e=>String(e.event_ticker||"")).filter(Boolean))].slice(0,12);
    const eventMeta=await Promise.all(eventIds.map(async id=>{
     try{const r=await fetch("https://external-api.kalshi.com/trade-api/v2/events/"+encodeURIComponent(id),{headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:120}});
      if(!r.ok)return [id,null];const raw=await r.json();return [id,raw.event||null]
