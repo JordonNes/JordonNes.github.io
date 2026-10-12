@@ -59,7 +59,7 @@ export default {
   const retiredScopeRoutes=new Set(["/api/focus","/api/kalshi"]);
   if(retiredScopeRoutes.has(url.pathname))return new Response(JSON.stringify({error:"route_out_of_scope",message:"D&G serves only Kalshi 15-minute Up/Down outcome contracts.",use:"/api/quarter-hour"}),{status:410,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(url.pathname==="/api/quarter-hour-training"||url.pathname==="/api/quarter-hour-fees"){
-   const response=url.pathname==="/api/quarter-hour-training"?await serveQuarterHourTraining(request):await serveQuarterHourFeeMetadata(request);
+   const response=url.pathname==="/api/quarter-hour-training"?await serveQuarterHourTraining(request,env):await serveQuarterHourFeeMetadata(request,env);
    const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");
    return new Response(response.body,{status:response.status,headers});
   }
