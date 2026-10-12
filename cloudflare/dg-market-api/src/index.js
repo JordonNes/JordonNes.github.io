@@ -402,8 +402,8 @@ export default {
     e.event_ticker=eventId;
    }
    events.sort((a,b)=>Date.parse(a.close_time)-Date.parse(b.close_time));
-   const response=new Response(JSON.stringify({asset,checked_series:cfg[asset],events:events.slice(0,30),partial:checked.some(x=>x.partial||x.error),series_errors:checked.filter(x=>x.error).map(x=>x.series+":"+x.error),retrieved_at_utc:new Date().toISOString(),overlay_semantics:"USD strike versus Coinbase spot USD indicative reference; settlement oracle may differ",no_trading:true}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=30"}});
-   ctx.waitUntil(caches.default.put(key,response.clone()));return response;
+   const response=new Response(JSON.stringify({asset,checked_series:cfg[asset],events:events.slice(0,30),state:checked.some(x=>x.error==="HTTP_429")?"RATE_LIMITED":checked.some(x=>x.partial||x.error)?"PARTIAL":events.length?"EVENTS_FOUND":"NO_MATCHING_EVENTS",partial:checked.some(x=>x.partial||x.error),series_errors:checked.filter(x=>x.error).map(x=>x.series+":"+x.error),retrieved_at_utc:new Date().toISOString(),overlay_semantics:"USD strike versus Coinbase spot USD indicative reference; settlement oracle may differ",no_trading:true}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=30"}});
+   if(!checked.some(x=>x.error==="HTTP_429"))ctx.waitUntil(caches.default.put(key,response.clone()));return response;
   }
   // Narrow independent spot-reference chart. Not Kalshi Perps prices or positions.
   if(url.pathname==="/api/reference-candles"){
