@@ -1,4 +1,5 @@
 import {serveQuarterHour} from "./quarter-hour.js";
+import {serveAsOfQuarterHour} from "./quarter-hour-asof.js";
 import {serveQuarterHourOutcomes} from "./quarter-hour-history.js";
 import {scheduledSnapshot,serveSnapshot} from "./price-archive.js";
 import {servePerpsHistory} from "./perps-historical.js";
@@ -54,6 +55,7 @@ export default {
   // Retired broad market discovery remains unavailable to the active monitor.
   const retiredScopeRoutes=new Set(["/api/focus","/api/kalshi"]);
   if(retiredScopeRoutes.has(url.pathname))return new Response(JSON.stringify({error:"route_out_of_scope",message:"D&G serves only Kalshi 15-minute Up/Down outcome contracts.",use:"/api/quarter-hour"}),{status:410,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+  if(url.pathname==="/api/quarter-hour-asof"){const response=await serveAsOfQuarterHour(request);const h=new Headers(response.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(response.body,{status:response.status,headers:h})}
   if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
   if(url.pathname==="/api/quarter-hour-batch"){
    const allowed=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M"]);
