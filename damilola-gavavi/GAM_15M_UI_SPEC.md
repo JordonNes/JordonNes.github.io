@@ -10,8 +10,8 @@ Updated 2026-10-12
 ## Visual specification
 - White-marble/ivory surface, slate text, restrained brass accents, green evidence-qualified GO, yellow WAIT, and red STOP/SKIP.
 - Desktop: two-column market-card grid placed directly after the category/watchlist controls, with compact asset icon, instrument title, current reference row, official target, countdown, observed-quote sparkline, and prominent direction controls.
-- Keep a distinct, compact Perpetual Futures research box separate from the 15-minute contract cards. Keep history, forecast validation, Academy collection, and economics in expandable research details.
-- Mobile: one-column cards with stacked price context and full-width, touch-sized UP/DOWN controls; no horizontal scrolling.
+- Keep a distinct, bordered Perpetual Futures research box separate from the 15-minute contract cards. Keep history, forecast validation, Academy collection, and economics in expandable research details.
+- Mobile: one-column cards with stacked price context and full-width, touch-sized UP/DOWN controls; no horizontal scrolling. The Perps box stacks its heading, description, and link at narrow widths.
 - Use existing D&G typography and asset marks. Cards should resemble the approved Gold/Silver concept and Kalshi’s concise 15-minute contract cards.
 
 ## Card order
@@ -34,7 +34,7 @@ Updated 2026-10-12
 3. Refine `gavavi-live.html` and `gavavi-quarter-hour.js` without removing Academy, training collector, calibration, fee-aware economics, scheduled backfill, quote polling, audits, orderbook, watchlist, or tactics.
 4. Align `DG_15_MINUTE_SCOPE.md` and fee-aware economics with the user-confirmed net-profit meaning; state that the 2% screen is provisional.
 5. Run JavaScript syntax checks, quarter-hour math tests, economics tests, and HTML parsing. Inspect the desktop branch preview and exercise watchlist, multiplier, tactics, and refresh controls; review the mobile breakpoint rules.
-6. Open a draft pull request. Do not merge until narrow-viewport browser QA and live Worker data retrieval pass.
+6. Keep the review branch in a draft pull request. Do not merge until narrow-viewport browser QA and live Worker data retrieval pass.
 
 ## Known source limits
 - Existing `/api/reference-candles` supports Coinbase spot references for five crypto assets only; it is not the Kalshi settlement oracle.
@@ -42,4 +42,4 @@ Updated 2026-10-12
 - The desktop branch preview rendered and was visually inspected against the Kalshi 15-minute cards, Perps separation, and the supplied Gold/Silver concept. The multiplier control is horizontal and has a full-width touch target. Category and individual watchlist toggles, the 1.2×/1.5×/20× multiplier states, and both alternate tactics were exercised.
 - The browser branch preview runs on `raw.githack.com`. Worker source defaults `ALLOWED_ORIGIN` to `https://jordonnes.github.io`, so preview requests from the branch origin cannot validate Worker access unless the Worker is explicitly configured for that origin. Production also showed no verified selected-commodity snapshots during this check. Affected cards stay unavailable and no GO is emitted; no values are substituted.
 - Responsive one-column mobile rules are present, but this environment did not expose a device-width viewport for visual verification.
-- Market cards now render a labeled unavailable state with disabled UP/DOWN controls when the Worker provides no verified snapshot; charts and live figures remain absent until real quotes arrive.
+- Market cards render a compact unavailable state with disabled UP/DOWN controls when the Worker provides no verified snapshot. The reserved chart area uses neutral grid guides with no plotted price line until verified quotes arrive.
