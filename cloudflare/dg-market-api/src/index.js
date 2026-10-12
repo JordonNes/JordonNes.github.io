@@ -80,6 +80,33 @@ export default {
     return result;
    }catch(e){return new Response(JSON.stringify({error:"kalshi_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}})}
   }
+  // Read-only Kalshi MARGIN/PERPS discovery probe, separate from event contracts.
+  // No credentials, no orderbook inference, no retries on 429.
+  if(url.pathname==="/api/perps-readiness"){
+   const cache=caches.default,key=new Request(url.origin+"/api/perps-readiness?v=1");
+   const hit=await cache.match(key);
+   if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
+   const upstream="https://external-api.kalshi.com/trade-api/v2/margin/markets?limit=5";
+   let payload={source:"Kalshi production margin REST",source_url:"https://external-api.kalshi.com/trade-api/v2/margin/",product:"perpetual_futures",retrieved_at_utc:new Date().toISOString(),read_only:true,executable:false,quotes_verified:false,markets:[]};
+   try{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),7000);
+    let res;try{res=await fetch(upstream,{signal:controller.signal,headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:300}})}finally{clearTimeout(timer)}
+    payload.upstream_status=res.status;
+    if(res.status===429){payload.state="RATE_LIMITED";payload.message="Kalshi throttled this request. No automatic retries.";payload.retry_after=res.headers.get("retry-after")||null}
+    else if(res.status===401||res.status===403){payload.state="AUTH_REQUIRED";payload.message="Perps access is not available to this unauthenticated read-only probe."}
+    else if(!res.ok){payload.state="UNAVAILABLE";payload.message="Kalshi Perps discovery did not return a usable response."}
+    else{
+     const raw=await res.json();
+     const items=Array.isArray(raw.markets)?raw.markets:Array.isArray(raw.margin_markets)?raw.margin_markets:[];
+     payload.markets=items.slice(0,5).map(m=>({ticker:String(m.ticker||m.market_ticker||"").slice(0,100),status:m.status||null,title:String(m.title||m.subtitle||"").slice(0,160)})).filter(m=>m.ticker);
+     payload.state=payload.markets.length?"METADATA_ONLY":"SCHEMA_UNVERIFIED";
+     payload.message=payload.markets.length?"Perps metadata received. No orderbook or executable bid/ask is connected.":"Response received but market schema is not yet verified.";
+    }
+   }catch{payload.state="UNAVAILABLE";payload.message="Kalshi Perps read probe failed or timed out."}
+   const result=new Response(JSON.stringify(payload),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=300"}});
+   ctx.waitUntil(cache.put(key,result.clone()));
+   return result;
+  }
   // Narrow independent spot-reference chart. Not Kalshi Perps prices or positions.
   if(url.pathname==="/api/reference-candles"){
    const sym=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
