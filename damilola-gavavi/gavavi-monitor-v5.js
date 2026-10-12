@@ -52,7 +52,7 @@ async function evaluateVisible(){
   await Promise.all(chunk.map(async m=>{
    const data={ticker:m.ticker,checked_at:Date.now(),direction:null,summary:'WAIT · forecast, funding, fees and quote verification incomplete.'};
    try{
-    const archive=await get('/api/snapshot-history?'+new URLSearchParams({ticker:m.ticker,kind:'perps'}));
+    const archive=await archiveFor(m.ticker);
     const pts=(archive.points||[]).filter(p=>Number.isFinite(p.mark_price_dollars)&&p.mark_price_dollars>0&&Number.isFinite(Date.parse(p.observed_at_utc))).slice(-8);
     const latest=pts.at(-1),first=pts[0];
     if(pts.length>=3&&latest&&first&&Date.now()-Date.parse(latest.observed_at_utc)<30*60*1000){
