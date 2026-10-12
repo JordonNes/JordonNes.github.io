@@ -169,6 +169,7 @@ export default {
      if(bids.length&&asks.length){
       const bid=bids[0],ask=asks[0],spread=ask.price-bid.price,mid=(ask.price+bid.price)/2;
       output.book_snapshot={best_bid_per_contract_usd:bid.price,best_ask_per_contract_usd:ask.price,bid_size_contracts:bid.size,ask_size_contracts:ask.size,spread_per_contract_usd:spread,spread_bps_of_mid:mid>0?spread/mid*10000:null,mid_per_contract_usd:mid,crossed_or_locked:spread<=0,source_timestamp_present:Boolean(book.ts_ms||root.ts_ms||book.timestamp||root.timestamp)};
+      output.book_quality={received_at_utc:output.retrieved_at_utc,exchange_timestamp_verified:false,top_bid_contracts:bid.size,top_ask_contracts:ask.size,top_bid_notional_usd:bid.size*bid.price,top_ask_notional_usd:ask.size*ask.price,spread_nonnegative:spread>0,contract_units_verified:false,fee_schedule_verified:false,executable:false};
       output.state=spread>0?"SNAPSHOT_UNTIMED":"INVALID_BOOK";
      }else output.state="INVALID_BOOK";
 
