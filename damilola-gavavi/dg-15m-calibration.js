@@ -32,5 +32,17 @@ function evaluate(records,{minimumTraining=60,minimumTesting=100,bins=10}={}){
  const sufficient=samples.length>=minimumTesting,better=sufficient&&model.brier<benchmark.brier;
  return {state:sufficient?"RESEARCH_EVALUATED":"INSUFFICIENT_OUT_OF_SAMPLE",calibrated_for_signals:false,go_eligible:false,total_source_rows:Array.isArray(records)?records.length:0,valid_unique_asof_rows:rows.length,discarded_rows:drop,required_test_samples:minimumTesting,walk_forward_tests:samples.length,raw_market_benchmark:benchmark,rolling_bucket_model:model,beats_market_baseline_brier:better,method:"rolling prior-only probability bins with shrinkage; no future labels and same-series only",last_test_at_utc:samples.length?samples.at(-1).predicted_at_utc:null,sample_preview:samples.slice(-3),warning:"Research-only backtest. Independent final holdout, uncertainty, regime analysis, fee economics and real-time forward performance remain required."};
 }
-return {normalize,evaluate};
+function forecastResearch(records,{seriesTicker,yesBid,yesAsk,atUtc}={}){
+ const now=Date.parse(atUtc||""),bid=Number(yesBid),ask=Number(yesAsk);
+ if(!seriesTicker||!Number.isFinite(now)||!finite(bid)||!finite(ask)||bid<=0||ask>=1||bid>ask)return {state:"INVALID_LIVE_INPUT",go_eligible:false,probability:null};
+ const marketProbability=(bid+ask)/2,rows=normalize(records).filter(r=>r.series_ticker===seriesTicker&&r.close<=now);
+ const report=evaluate(rows);if(report.state!=="RESEARCH_EVALUATED")return {state:"INSUFFICIENT_INDEPENDENT_TESTS",go_eligible:false,probability:null,market_probability:marketProbability,tests:report.walk_forward_tests};
+ if(!report.beats_market_baseline_brier)return {state:"NO_INCREMENTAL_SKILL_OVER_MARKET",go_eligible:false,probability:null,market_probability:marketProbability,tests:report.walk_forward_tests};
+ const latest=rows.at(-1);if(!latest||now-latest.close>14*86400000)return {state:"STALE_HISTORICAL_REGIME",go_eligible:false,probability:null,market_probability:marketProbability};
+ const bin=Math.min(9,Math.floor(marketProbability*10)),neighbors=rows.filter(r=>Math.min(9,Math.floor(r.p*10))===bin),alpha=24;
+ if(neighbors.length<15)return{state:"SPARSE_MATCHED_PRICE_BIN",go_eligible:false,probability:null,market_probability:marketProbability,bin_count:neighbors.length};
+ const researchProbability=Math.max(.001,Math.min(.999,(neighbors.reduce((n,r)=>n+r.yes,0)+alpha*marketProbability)/(neighbors.length+alpha)));
+ return{state:"RESEARCH_FORECAST_UNCERTIFIED",probability:researchProbability,market_probability:marketProbability,used_historical_pairs:rows.length,matched_bin_pairs:neighbors.length,out_of_sample_tests:report.walk_forward_tests,model_brier:report.rolling_bucket_model.brier,market_brier:report.raw_market_benchmark.brier,observation_utc:new Date(now).toISOString(),go_eligible:false,executable:false,note:"This is a statistical research estimate based on prior settled market outcomes. No independent forward validation, confidence bound or execution-grade signal has been established."};
+}
+return {normalize,evaluate,forecastResearch};
 });
