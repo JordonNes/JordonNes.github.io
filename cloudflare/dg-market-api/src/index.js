@@ -163,7 +163,7 @@ export default {
      output.level_counts=Object.fromEntries(sides.filter(k=>Array.isArray(book[k])).map(k=>[k,book[k].length]));
      output.level_samples=Object.fromEntries(sides.filter(k=>Array.isArray(book[k])).map(k=>[k,book[k].slice(0,2)]));
      // The response arrays may be unsorted. Validate strings and sort numerically before best levels.
-     const parseSide=(rows,side)=>Array.isArray(rows)?rows.filter(x=>Array.isArray(x)&&x.length>=2&&/^\\d+(?:\\.\\d+)?$/.test(String(x[0]))&&/^\\d+(?:\\.\\d+)?$/.test(String(x[1]))).map(x=>({price:Number(x[0]),size:Number(x[1])})).filter(x=>Number.isFinite(x.price)&&Number.isFinite(x.size)&&x.price>0&&x.size>0).sort((a,b)=>side==="bid"?b.price-a.price:a.price-b.price):[];
+     const parseSide=(rows,side)=>Array.isArray(rows)?rows.filter(x=>Array.isArray(x)&&x.length>=2&&x.slice(0,2).every(v=>v!==null&&v!==""&&Number.isFinite(Number(v)))).map(x=>({price:Number(x[0]),size:Number(x[1])})).filter(x=>x.price>0&&x.size>0).sort((a,b)=>side==="bid"?b.price-a.price:a.price-b.price):[];
      const bids=parseSide(book.bids,"bid"),asks=parseSide(book.asks,"ask");
      output.sorted_level_count={bids:bids.length,asks:asks.length};
      if(bids.length&&asks.length){
