@@ -29,25 +29,14 @@ Every series and individual market must be confirmed from Kalshi before showing 
 **Gavavi economics:** Binary payoff is $1 on a win, $0 on a loss, less applicable transaction fees. Distinguish holding to settlement from early exit. Early exit requires prospective resale liquidity, orderbook depth and realistic bid/ask/fees. Neither margin-funding nor Perps contract multipliers belong in the active model.
 
 ## Multiplier semantic lock
-User default 1.5× means **total ending equity / dollars invested**; i.e., $100 invested targets $150 total return, $50 profit. (Not 150% profit on top of principal.) User can set 1.2× to 20×. In a $1 winning binary contract, the theoretical all-in cost ceiling for multiplier M is 1/M. E.g. M=1.5 => max $0.6667. Meeting this mathematical ceiling does NOT imply positive expected net value, adequate probability, favorable slippage, valid fills, or GO.
+The user's default 1.5× is **NET PROFIT relative to invested capital**, not total ending equity. A $100 position targets $150 in net profit and $250 total proceeds if successful, before any execution details not included in the model. A 3.5× net-profit target means $350 profit plus return of the $100 principal, or $450 total proceeds, if successful.
 
-Expected value per share held to settlement: EV = p(win) * (1 - total_entry_cost) - (1 - p(win)) * total_entry_cost, with additional costs modeled precisely per contract and fee tier. Equivalently EV = p(win) - all-in paid cost for a $1 binary payout, *when* cost truly contains all relevant fees. Profit-to-cost target requires 1 / cost >= M; expected-positive-value additionally requires calibrated p(win) > cost, with uncertainty and risk gates.
+For a standard $1 binary outcome contract with no fees, the theoretical all-in entry ceiling is **1 / (1 + M)**. At 1.5×, the ceiling is 40¢; at 3.5×, it is about 22.22¢. This ceiling is arithmetic only. Fees and slippage lower it; it does not imply a fill, win probability, positive expected value, or GO.
 
-## Current 15-minute research implementation (October 12, 2026)
-- `/api/quarter-hour-outcomes`: bounded settled-market YES/NO outcome labels, not predictive skill.
-- `/api/quarter-hour-asof`: for a single settled 15-minute market, attempts to reconstruct observed one-minute YES bid/ask candle closes strictly at or before **10 minutes before exchange close**. The later realized YES/NO settlement result remains a separate label. This establishes an auditable single-window feature/label pair if exchange history is available; it does NOT establish a predictive model.
-- `/api/quarter-hour-book`: official Kalshi public orderbook; best YES/NO bid levels and opposing-bid-derived indicative asks with displayed sizes, never guaranteed fills.
-- GAM exposes **Audit prediction-time data**, **Inspect settled 15-minute history**, and per-card **Inspect YES/NO orderbook**. Break-even win probability is displayed from quote price BEFORE fees, never as a forecast.
-- Source availability, real-time production deployment and a statistically sufficient, independent walk-forward training dataset must be verified. Green GO remains disabled while probability, fees, liquidity, risk or market rules are unverified.
-- Multiplier is **ending equity / invested capital**. At 1.5×, an investment of $100 targets $150 returned and $50 profit before costs. Kalshi $1 winning binary-contract maximum all-in purchase price at this target is $1/1.5 = $0.6667 per contract. Price eligibility does not prove positive expected value.
-
-## Separate development cadence
-- Active NOW: 15-minute GAM forecast/economics evidence.
-- Later this evening: hourly, daily and weekly **separate** outcome desks (planned; no unattended execution).
-- Next week: perpetual futures research desk, separate margin/funding/economics system.
+Expected value must use calibrated direction-specific probability and actual all-in entry cost. For a $1 binary payout where cost includes every applicable entry fee, EV per contract is p(win) − cost. Early-exit economics use realized sale proceeds less both entry and exit costs. A current bid is not a forecast of a future bid.
 
 ## Risk mandate
-Balanced approach. Model intended maximum loss **2% of capital allocated to the position**; for all-or-nothing 15-minute contracts held to settlement, the entire entry cost can be lost. To keep portfolio risk meaningful, additionally define allocation and account-wide limits and reject positions where a loss of all invested contract cost violates the approved budget. Never claim a stop order guarantees a 2% cap in a rapidly settling contract.
+No 2% position-loss threshold has been approved as a mandatory GAM policy. Tactic-specific loss limits, user-approved allocation limits, and account-wide limits remain to be defined before any execution-grade recommendation. A held-to-settlement binary contract can lose its full entry cost; no stop control guarantees a 2% cap during a rapidly settling market.
 
 ## Signal doctrine
 - UP / DOWN: user interface labels only if YES/NO correspondence is sourced from contract rules; otherwise show YES/NO.
