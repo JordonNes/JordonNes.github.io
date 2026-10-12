@@ -29,9 +29,7 @@ Every series and individual market must be confirmed from Kalshi before showing 
 **Gavavi economics:** Binary payoff is $1 on a win, $0 on a loss, less applicable transaction fees. Distinguish holding to settlement from early exit. Early exit requires prospective resale liquidity, orderbook depth and realistic bid/ask/fees. Neither margin-funding nor Perps contract multipliers belong in the active model.
 
 ## Multiplier semantic lock
-User default 1.5× means **total ending equity / dollars invested**; i.e., $100 invested targets $150 total return, $50 profit. (Not 150% profit on top of principal.) User can set 1.2× to 20×. In a $1 winning binary contract, the theoretical all-in cost ceiling for multiplier M is 1/M. E.g. M=1.5 => max $0.6667. Meeting this mathematical ceiling does NOT imply positive expected net value, adequate probability, favorable slippage, valid fills, or GO.
-
-Expected value per share held to settlement: EV = p(win) * (1 - total_entry_cost) - (1 - p(win)) * total_entry_cost, with additional costs modeled precisely per contract and fee tier. Equivalently EV = p(win) - all-in paid cost for a $1 binary payout, *when* cost truly contains all relevant fees. Profit-to-cost target requires 1 / cost >= M; expected-positive-value additionally requires calibrated p(win) > cost, with uncertainty and risk gates.
+The user explicitly specified **profit, NOT total return**. The GAM multiplier is therefore **NET PROFIT / invested entry amount**. At 1.5× profit, $100 invested targets $150 net gain ($250 total received on success). At a $1 winning binary payout, a pre-fee target of M requires an indicative all-in entry ceiling of 1/(1+M); M=1.5 => $0.40, excluding any fees. To actually net 1.5× after fees, the all-in paid amount must be at most $0.40. Meeting this arithmetic ceiling does not prove a positive expected net value or likely settlement win.
 
 ## Current 15-minute research implementation (October 12, 2026)
 - `/api/quarter-hour-outcomes`: bounded settled-market YES/NO outcome labels, not predictive skill.
@@ -39,7 +37,7 @@ Expected value per share held to settlement: EV = p(win) * (1 - total_entry_cost
 - `/api/quarter-hour-book`: official Kalshi public orderbook; best YES/NO bid levels and opposing-bid-derived indicative asks with displayed sizes, never guaranteed fills.
 - GAM exposes **Audit prediction-time data**, **Inspect settled 15-minute history**, and per-card **Inspect YES/NO orderbook**. Break-even win probability is displayed from quote price BEFORE fees, never as a forecast.
 - Source availability, real-time production deployment and a statistically sufficient, independent walk-forward training dataset must be verified. Green GO remains disabled while probability, fees, liquidity, risk or market rules are unverified.
-- Multiplier is **ending equity / invested capital**. At 1.5×, an investment of $100 targets $150 returned and $50 profit before costs. Kalshi $1 winning binary-contract maximum all-in purchase price at this target is $1/1.5 = $0.6667 per contract. Price eligibility does not prove positive expected value.
+- Multiplier is **NET PROFIT / invested capital**. At 1.5×, $100 invested targets $150 profit and $250 received on success before costs. The theoretical $1 binary winning-contract maximum all-in entry price at this target is $1/(1+1.5) = $0.40 per contract. Price eligibility does not prove positive expected value.
 
 ## Separate development cadence
 - Active NOW: 15-minute GAM forecast/economics evidence.
