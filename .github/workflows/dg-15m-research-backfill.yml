@@ -14,6 +14,7 @@ on:
     branches: [master]
     paths:
       - 'scripts/collect-dg-15m-history.mjs'
+      - 'scripts/check-dg-worker.mjs'
       - 'damilola-gavavi/dg-15m-calibration.js'
       - 'damilola-gavavi/dg-15m-independent-audit.js'
       - 'damilola-gavavi/dg-15m-independent-audit.test.cjs'
@@ -96,6 +97,8 @@ jobs:
           mkdir -p damilola-gavavi/data
           printf '{"checked_at_utc":"%s","source":"GitHub Actions public Kalshi historical collection","successful_series":%s,"series_results":[%s],"data_confirmed_only_by_dataset_files":true}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$SUCCESS" "$RESULTS" > damilola-gavavi/data/collection-status.json
           echo "success_count=$SUCCESS" >> "$GITHUB_OUTPUT"
+      - name: Verify deployed Worker 15-minute production endpoints
+        run: node scripts/check-dg-worker.mjs
       - name: Commit actual observations and validation metadata
         shell: bash
         run: |
