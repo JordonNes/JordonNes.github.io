@@ -3,3 +3,5 @@ test('walk-forward baseline uses only prior observations and returns unpromoted 
 test('insufficient samples cannot pass',()=>{const r=audit(good.slice(0,80));assert.equal(r.state,'INSUFFICIENT_OUT_OF_SAMPLE');assert.equal(r.eligible_for_trade_signals,false)});
 test('gaps are excluded rather than interpolated',()=>{const r=audit(good.filter((_,i)=>i!==100));assert(r.excluded_gaps>0)});
 test('timestamps must be verifiable, missing marks rejected',()=>{const r=audit(good.map((x,i)=>i%2===0?{...x,mark_exchange_ts_ms:null}:x));assert.equal(r.state,'INSUFFICIENT_OUT_OF_SAMPLE')});
+
+test('historical trade-close candles are evaluated using their source ingestion timestamp, without converting them to marks',()=>{const ingested=new Date(time+180*900000).toISOString();const points=good.map(x=>({close_price_dollars:x.mark_price_dollars,exchange_ts_ms:x.mark_exchange_ts_ms}));const r=audit(points,{retrieved_at_utc:ingested,intervalMs:900000});assert.equal(r.state,'BASELINE_EVALUATED');assert.equal(r.eligible_for_trade_signals,false);assert(r.valid_samples>=100)});
