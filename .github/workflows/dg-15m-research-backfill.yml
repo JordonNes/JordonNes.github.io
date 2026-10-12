@@ -15,6 +15,8 @@ on:
     paths:
       - 'scripts/collect-dg-15m-history.mjs'
       - 'damilola-gavavi/dg-15m-calibration.js'
+      - 'damilola-gavavi/dg-15m-independent-audit.js'
+      - 'damilola-gavavi/dg-15m-independent-audit.test.cjs'
       - '.github/workflows/dg-15m-research-backfill.yml'
   schedule:
     - cron: '21 * * * *'
@@ -38,7 +40,7 @@ jobs:
         with:
           node-version: '22'
       - name: Verify risk and historical calibration checks
-        run: node --test damilola-gavavi/dg-15m-fee-metadata.test.cjs damilola-gavavi/dg-15m-calibration.test.cjs damilola-gavavi/dg-15m-economics.test.cjs damilola-gavavi/dg-15m-kalshi-schema.test.cjs
+        run: node --test damilola-gavavi/dg-15m-independent-audit.test.cjs damilola-gavavi/dg-15m-fee-metadata.test.cjs damilola-gavavi/dg-15m-calibration.test.cjs damilola-gavavi/dg-15m-economics.test.cjs damilola-gavavi/dg-15m-kalshi-schema.test.cjs
       - name: Choose supported 15-minute series (rotate on hourly schedule)
         id: choice
         env:
