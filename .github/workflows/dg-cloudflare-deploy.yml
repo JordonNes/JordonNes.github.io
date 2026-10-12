@@ -10,10 +10,19 @@ permissions:
   contents: read
 jobs:
   deploy:
-    if: ${{ vars.DG_CLOUDFLARE_DEPLOY_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Confirm Cloudflare deployment credentials
+        env:
+          CF_DEPLOY_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_DEPLOY_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          if [[ -z "$CF_DEPLOY_TOKEN" || -z "$CF_DEPLOY_ACCOUNT" ]]; then
+            echo "::error title=Cloudflare credentials missing::Set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in repository Actions secrets so D&G Worker can deploy automatically."
+            exit 1
+          fi
       - name: Deploy Worker (account-level token must be configured)
         uses: cloudflare/wrangler-action@v4
         with:
