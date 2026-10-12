@@ -51,7 +51,7 @@ jobs:
           const expectedQuoteSeries = ["KXBTC15M", "KXETH15M"];
           const missingQuoteSeries = expectedQuoteSeries.filter((series) => !quotePayload.results?.[series]);
           if (missingQuoteSeries.length) throw new Error(`Quarter-hour batch missing series: ${missingQuoteSeries.join(", ")}`);
-          const retired = ["/api/kalshi", "/api/focus?category=commodities", "/api/perps-focus"];
+          const retired = ["/api/kalshi", "/api/focus?category=commodities"];
           for (const route of retired) {
             const response = await fetch("https://dg-market-intelligence.jordonnes-markets.workers.dev" + route, { headers: { Accept: "application/json" } });
             const body = await response.json();
