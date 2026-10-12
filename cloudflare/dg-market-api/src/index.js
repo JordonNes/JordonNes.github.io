@@ -359,7 +359,7 @@ export default {
   if(url.pathname==="/api/reference-candles"){
    const sym=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
    const gran=Number(url.searchParams.get("granularity")||300);
-   if(!["BTC-USD","ETH-USD","SOL-USD"].includes(sym)||![60,300,900,3600,21600,86400].includes(gran))
+   if(!["BTC-USD","ETH-USD","SOL-USD","XRP-USD","HYPE-USD"].includes(sym)||![60,300,900,3600,21600,86400].includes(gran))
     return new Response(JSON.stringify({error:"invalid_chart_parameters"}),{status:400,headers:{...JSON_HEADERS,...cors}});
    const cache=caches.default,key=new Request(url.origin+"/api/reference-candles?symbol="+sym+"&granularity="+gran);
    const hit=await cache.match(key);
