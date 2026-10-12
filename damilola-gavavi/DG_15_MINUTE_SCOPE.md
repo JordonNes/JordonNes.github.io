@@ -33,6 +33,19 @@ User default 1.5× means **total ending equity / dollars invested**; i.e., $100 
 
 Expected value per share held to settlement: EV = p(win) * (1 - total_entry_cost) - (1 - p(win)) * total_entry_cost, with additional costs modeled precisely per contract and fee tier. Equivalently EV = p(win) - all-in paid cost for a $1 binary payout, *when* cost truly contains all relevant fees. Profit-to-cost target requires 1 / cost >= M; expected-positive-value additionally requires calibrated p(win) > cost, with uncertainty and risk gates.
 
+## Current 15-minute research implementation (October 12, 2026)
+- `/api/quarter-hour-outcomes`: bounded settled-market YES/NO outcome labels, not predictive skill.
+- `/api/quarter-hour-asof`: for a single settled 15-minute market, attempts to reconstruct observed one-minute YES bid/ask candle closes strictly at or before **10 minutes before exchange close**. The later realized YES/NO settlement result remains a separate label. This establishes an auditable single-window feature/label pair if exchange history is available; it does NOT establish a predictive model.
+- `/api/quarter-hour-book`: official Kalshi public orderbook; best YES/NO bid levels and opposing-bid-derived indicative asks with displayed sizes, never guaranteed fills.
+- GAM exposes **Audit prediction-time data**, **Inspect settled 15-minute history**, and per-card **Inspect YES/NO orderbook**. Break-even win probability is displayed from quote price BEFORE fees, never as a forecast.
+- Source availability, real-time production deployment and a statistically sufficient, independent walk-forward training dataset must be verified. Green GO remains disabled while probability, fees, liquidity, risk or market rules are unverified.
+- Multiplier is **ending equity / invested capital**. At 1.5×, an investment of $100 targets $150 returned and $50 profit before costs. Kalshi $1 winning binary-contract maximum all-in purchase price at this target is $1/1.5 = $0.6667 per contract. Price eligibility does not prove positive expected value.
+
+## Separate development cadence
+- Active NOW: 15-minute GAM forecast/economics evidence.
+- Later this evening: hourly, daily and weekly **separate** outcome desks (planned; no unattended execution).
+- Next week: perpetual futures research desk, separate margin/funding/economics system.
+
 ## Risk mandate
 Balanced approach. Model intended maximum loss **2% of capital allocated to the position**; for all-or-nothing 15-minute contracts held to settlement, the entire entry cost can be lost. To keep portfolio risk meaningful, additionally define allocation and account-wide limits and reject positions where a loss of all invested contract cost violates the approved budget. Never claim a stop order guarantees a 2% cap in a rapidly settling contract.
 
