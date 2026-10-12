@@ -6,3 +6,19 @@ test('independent probability is mandatory for a net profit assertion',()=>{cons
 
 test('no maker fee can be assumed from taker series multiplier',()=>{assert.equal(e.fee({price:.5,quantity:100,multiplier:1,liquidity:'maker'}),null);assert.equal(e.fee({price:.5,quantity:100,multiplier:1,makerMultiplier:1,liquidity:'maker'}),.44)});
 test('1.5x net profit target must exceed after-fee payout multiple',()=>{const r=e.evaluate({yesAsk:.4,noAsk:.6,contracts:10,feeMultiplier:1,seriesFeeVerified:true,accountCapital:10000,bookVerified:true,visibleYes:10,visibleNo:10,quoteTimestamp:new Date().toISOString(),target:1.5});assert.equal(r.sides[0].indicated_target_met,false);assert.equal(r.sides[0].go_eligible,false)});
+
+test('a bounded binary position cannot risk more than 2 percent of account capital',()=>{
+ const cap=e.maxRiskContracts({ask:.4,visibleContracts:100,accountCapital:100,riskFraction:.02,feeMultiplier:1,feesVerified:true,bookVerified:true});
+ assert.equal(cap,4);
+ const r=e.evaluate({yesAsk:.4,noAsk:.6,contracts:10,target:1.5,feeMultiplier:1,seriesFeeVerified:true,bookVerified:true,accountCapital:100,visibleYes:100,visibleNo:100,quoteTimestamp:new Date().toISOString()});
+ assert.equal(r.sides[0].max_contracts_within_full_loss_budget,4);
+ assert(r.sides[0].missing.includes('FULL_LOSS_EXCEEDS_RISK_BUDGET'));
+ assert.equal(r.sides[0].go_eligible,false);
+});
+test('missing fees, missing visible book and non-2% risk policy block sizing instead of inventing a quantity',()=>{
+ const base={ask:.4,visibleContracts:100,accountCapital:100,feeMultiplier:1,feesVerified:true,bookVerified:true};
+ assert.equal(e.maxRiskContracts({...base,feesVerified:false}),null);
+ assert.equal(e.maxRiskContracts({...base,bookVerified:false}),null);
+ assert.equal(e.maxRiskContracts({...base,riskFraction:.05}),null);
+ assert.equal(e.maxRiskContracts({...base,visibleContracts:2}),2);
+});
