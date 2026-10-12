@@ -45,7 +45,7 @@ function seriesChooser(){
 }
 document.querySelectorAll("[data-qh-group]").forEach(b=>b.addEventListener("click",()=>{
  group=b.dataset.qhGroup;try{localStorage.setItem(prefGroup,group)}catch{}
- seriesChooser();showAcademy();refresh()
+ seriesChooser();showAcademy();hydrateResearchArchive();refresh()
 }));
 $("qhSelectGroup").addEventListener("click",()=>{for(const t of categorySets[group])active.add(t);persistSeries();seriesChooser();refresh()});
 $("qhClearGroup").addEventListener("click",()=>{for(const t of categorySets[group])active.delete(t);persistSeries();seriesChooser();refresh()});
@@ -136,6 +136,21 @@ async function auditAsOfQuarterHour(){
 $("qhAsOfAudit").addEventListener("click",auditAsOfQuarterHour);
 function datasetKey(s){return "dg_15m_training_"+s+"_v1"}
 function currentResearch(){const s=selection()[0];if(!s)return{series:null,rows:[],page:0};try{const obj=JSON.parse(localStorage.getItem(datasetKey(s))||"null");return {series:s,rows:Array.isArray(obj?.rows)?obj.rows:[],page:Number.isInteger(obj?.page)?obj.page:0}}catch{return{series:s,rows:[],page:0}}}
+const archiveChecked=new Set();
+async function hydrateResearchArchive(){
+ const s=selection()[0];if(!s||archiveChecked.has(s))return;archiveChecked.add(s);
+ try{
+  const r=await fetch("data/15m-"+encodeURIComponent(s)+".json",{cache:"no-store"});if(!r.ok)return;
+  const data=await r.json();if(data.series_ticker!==s||!Array.isArray(data.examples)||data.eligible_for_go!==false)return;
+  const valid=window.DG15mCalibration?.normalize(data.examples)||[];
+  if(!valid.length)return;
+  const names=new Set(valid.map(x=>x.ticker)),d=currentResearch();
+  const imported=data.examples.filter(x=>names.has(x.ticker)&&x.series_ticker===s);
+  d.rows=[...new Map([...d.rows,...imported].map(x=>[x.ticker,x])).values()];
+  try{localStorage.setItem(datasetKey(s),JSON.stringify({rows:d.rows,page:d.page}))}catch{}
+  showAcademy();
+ }catch{}
+}
 function showAcademy(){
  const d=currentResearch(),report=window.DG15mCalibration?.evaluate(d.rows),v=report?.valid_unique_asof_rows??0;
  $("qhAcademyStatus").textContent=(d.series||"No series selected")+" · "+v+" verified source quote/outcome pairs · "+(report?.walk_forward_tests??0)+"/"+(report?.required_test_samples??100)+" walk-forward tests · "+(report?.state||"MODEL_NOT_LOADED")+
@@ -170,5 +185,5 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()}
 setInterval(()=>{if(!document.hidden&&!$("qhPane").hidden)refresh()},15000);
 setInterval(tick,1000);
 window.GavaviQuarterHourRefresh=refresh;
-seriesChooser();goal();updateTactic();showAcademy();refresh();
+seriesChooser();goal();updateTactic();showAcademy();hydrateResearchArchive();refresh();
 })();
