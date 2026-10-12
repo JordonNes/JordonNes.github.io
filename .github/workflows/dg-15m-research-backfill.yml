@@ -52,7 +52,10 @@ jobs:
             IDX=$(( $(date +%s)/3600 % ${#ALL[@]} ))
             PICK="${ALL[$IDX]}"
             COUNT=40
-          elif [[ "$EVENT" == "push" || "$EVENT" == "issues" ]]; then
+          elif [[ "$EVENT" == "issues" ]]; then
+            PICK="KXGOLD15M"
+            COUNT=100
+          elif [[ "$EVENT" == "push" ]]; then
             PICK="KXGOLD15M,KXSILVER15M,KXBTC15M"
             COUNT=35
           else
