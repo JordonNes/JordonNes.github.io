@@ -16,7 +16,9 @@ export async function serveQuarterHour(request,env,ctx){
  if(!SUPPORTED.has(series))return new Response(JSON.stringify({error:"unsupported_15_minute_series",supported:[...SUPPORTED]}),{status:400,headers:{"Content-Type":"application/json"}});
  const cache=caches.default,key=new Request(u.origin+"/api/quarter-hour?series="+series+"&v=2"),hit=await cache.match(key);
  if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),"X-DG-Cache":"HIT"}});
- const kv=env.DG_ARCHIVE,cooldown=kv?await kv.get("dg:kalshi:cooldown:v1"):null;
+ const kv=env.DG_ARCHIVE,sharedKey="dg:q15:series:v2:"+series;
+ if(kv)try{const existing=await kv.get(sharedKey,"json");const age=Date.now()-Date.parse(existing?.retrieved_at_utc||"");if(existing?.kind==="QUARTER_HOUR_BINARY_OUTCOME"&&existing?.series_ticker===series&&age>=0&&age<=8000){return new Response(JSON.stringify(existing),{headers:{"Content-Type":"application/json","Cache-Control":"public, max-age=2","X-DG-Cache":"SHARED_KV_HIT"}})}}catch{}
+ const cooldown=kv?await kv.get("dg:kalshi:cooldown:v1"):null;
  if(cooldown&&Date.parse(cooldown)>Date.now())return new Response(JSON.stringify({state:"RATE_LIMITED",retry_at_utc:cooldown,markets:[]}),{status:503,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}});
  const control=new AbortController(),timeout=setTimeout(()=>control.abort(),7500);
  try{
@@ -28,7 +30,7 @@ export async function serveQuarterHour(request,env,ctx){
   const filtered=data.markets.filter(m=>m.market_type==="binary"&&String(m.ticker||"").startsWith(series+"-")&&m.status==="active"||m.market_type==="binary"&&String(m.ticker||"").startsWith(series+"-")&&m.status==="open");
   const result={kind:"QUARTER_HOUR_BINARY_OUTCOME",source:"Kalshi public REST /markets",series_ticker:series,retrieved_at_utc:time,market_list_complete:!data.cursor,state:filtered.length?"OBSERVATIONAL":"NO_OPEN_CONTRACTS",markets:filtered.map(m=>normalize(m,series,time)).filter(m=>m.seconds_left!==null&&m.seconds_left>0).sort((a,b)=>a.seconds_left-b.seconds_left),notes:"UP/DOWN contract quotes are YES/NO outcome prices, not Perps futures marks; settlement benchmark may differ from spot reference.",no_trading:true};
   const response=new Response(JSON.stringify(result),{headers:{"Content-Type":"application/json","Cache-Control":"public, max-age=8"}});
-  ctx.waitUntil(cache.put(key,response.clone()));return response;
+  ctx.waitUntil(cache.put(key,response.clone()));if(kv)ctx.waitUntil(kv.put(sharedKey,JSON.stringify(result),{expirationTtl:60}));return response;
  }catch(e){return new Response(JSON.stringify({state:"FETCH_FAILED",series,markets:[],reason:"exchange request failed"}),{status:502,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}})}
  finally{clearTimeout(timeout)}
 }
