@@ -1,4 +1,4 @@
-/* GAM 15-minute-only: public Kalshi binary outcome quotes and ending-equity multiple objectives.
+/* GAM 15-minute primary: public Kalshi binary outcome quotes and NET PROFIT multiple objectives.
  * No order routing. An observed ASK is not an executable fill or a model forecast.
  */
 (()=>{"use strict";
@@ -19,13 +19,13 @@ const multiplier=()=>stages[Number(target.value)]||1.5;
 const fmt=n=>Number.isFinite(n)?n.toLocaleString("en-US",{maximumFractionDigits:2}):"—";
 const cents=n=>Number.isFinite(n)?(n*100).toFixed(1)+"¢":"—";
 function goal(){
- const x=multiplier();targetLabel.textContent=x+"× TOTAL RETURN";
- const cap=math?.maximumAllInPriceForTotalReturn(x);
+ const x=multiplier();targetLabel.textContent=x+"× NET PROFIT";
+ const cap=math?.maximumAllInPriceForNetProfit(x);
  $("qhPriceGate").textContent="Illustrative maximum all-in cost for a $1 winning contract: "+cents(cap)+". Actual fees must be included; probability and execution are not certified.";
  try{localStorage.setItem(prefSlider,target.value)}catch{}
 }
 const tmode={settlement:"Quarter-Hour Multiplier Hunter · Hold for settlement",wave:"Wave & Reversal Hunter · Early-exit research", "big-dip":"Big Money Dip · Size-sensitive early-exit research"};
-function updateTactic(){tactic=tacticPicker.value;try{localStorage.setItem(prefTactic,tactic)}catch{}$("qhTacticExplanation").textContent=tactic==="settlement"?"Find contract prices capable of your ending-equity target if the contract wins. A winning probability estimate is still mandatory for a GO.":tactic==="wave"?"Early cash-out requires a defensible future resale bid, timing model, fill probability, and entry/exit fees.": "Large-position exit strategy: no wager amount is required to observe markets; a size-specific liquidity and worst-case risk check is mandatory before any actionable signal.";render()}
+function updateTactic(){tactic=tacticPicker.value;try{localStorage.setItem(prefTactic,tactic)}catch{}$("qhTacticExplanation").textContent=tactic==="settlement"?"Find contract prices capable of your net-profit target if the contract wins. A winning probability estimate is still mandatory for a GO.":tactic==="wave"?"Early cash-out requires a defensible future resale bid, timing model, fill probability, and entry/exit fees.": "Large-position exit strategy: no wager amount is required to observe markets; a size-specific liquidity and worst-case risk check is mandatory before any actionable signal.";render()}
 tacticPicker.value=tactic;tacticPicker.addEventListener("change",updateTactic);
 function seriesChooser(){const wrapper=$("qhSeries");wrapper.replaceChildren();for(const [ticker,sym,name] of series){const btn=el("button","qh-symbol",sym+" "+name);btn.type="button";btn.setAttribute("aria-pressed",String(active.has(ticker)));btn.addEventListener("click",()=>{active.has(ticker)?active.delete(ticker):active.add(ticker);try{localStorage.setItem(prefSeries,JSON.stringify([...active]))}catch{}seriesChooser();refresh()});wrapper.append(btn)}}
 async function fetchOne(ticker){const c=new AbortController(),timer=setTimeout(()=>c.abort(),10000);try{const r=await fetch(API+"/api/quarter-hour?series="+encodeURIComponent(ticker),{cache:"no-store",signal:c.signal});if(!r.ok)throw Error("HTTP "+r.status);return await r.json()}finally{clearTimeout(timer)}}
@@ -34,7 +34,7 @@ function sideBtn(m,side){const yes=side==="yes",raw=m[side+"_ask_dollars"],q=mat
  b.dataset.signal=!available?"stop":tactic==="settlement"?(q.indicative_quote_clears_target_before_fees?"wait":"stop"):"wait";
  const detail=el("span","qh-quote","Buy ASK "+cents(q?.ask));
  const currentBid=el("span","qh-gross","Sell BID now "+cents(q?.bid));
- const amount=q&&Number.isFinite(q.theoretical_total_return_multiple_before_fees)?fmt(q.theoretical_net_profit_multiple_before_fees)+"× theoretical":"Unknown";
+ const amount=q&&Number.isFinite(q.theoretical_net_profit_multiple_before_fees)?fmt(q.theoretical_net_profit_multiple_before_fees)+"× theoretical":"Unknown";
  const prof=el("span","qh-gross",tactic==="settlement"?"Winning profit: "+amount+" (pre-fees)":"Future cash-out profit: UNVERIFIED");
  b.append(detail,currentBid,prof);b.title="Public price snapshot, not an executable quote or recommendation";
  b.addEventListener("click",()=>{$("qhSelection").textContent=(m.title||m.ticker)+" · "+dir+" observed ASK "+cents(q?.ask)+" · currently observed BID "+cents(q?.bid)+". "+(tactic==="settlement"?"Winning net-profit multiple before fees: "+amount+".":"Future early-exit bid and achievable cash-out multiple are not forecast.")+" No qualified entry signal; no trade placed."});return b}
