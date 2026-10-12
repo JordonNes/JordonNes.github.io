@@ -32,11 +32,12 @@ Updated 2026-10-12
 2. Correct active quarter-hour multiplier calculations and tests to NET PROFIT; retain legacy total-return helper only for callers explicitly requesting total return.
 3. Refine `gavavi-live.html` and `gavavi-quarter-hour.js` without removing Academy, training collector, calibration, fee-aware economics, scheduled backfill, quote polling, audits, orderbook, watchlist, or tactics.
 4. Align `DG_15_MINUTE_SCOPE.md` and fee-aware economics with the user-confirmed net-profit meaning; state that the 2% screen is provisional.
-5. Run JavaScript syntax checks, quarter-hour math tests, economics tests, and HTML parsing. Inspect desktop/mobile branch preview and exercise interactions when preview is available.
-6. Open a draft pull request. Do not merge until browser visual QA and live Worker data retrieval pass.
+5. Run JavaScript syntax checks, quarter-hour math tests, economics tests, and HTML parsing. Inspect the desktop branch preview and exercise watchlist, multiplier, tactics, and refresh controls; review the mobile breakpoint rules.
+6. Open a draft pull request. Do not merge until narrow-viewport browser QA and live Worker data retrieval pass.
 
 ## Known source limits
 - Existing `/api/reference-candles` supports Coinbase spot references for five crypto assets only; it is not the Kalshi settlement oracle.
 - Existing Worker has no verified current reference-price feed for metals, energy, or EUR/USD. The UI must show unavailable instead of guessing.
-- Production was observed returning unavailable/rate-limited for all seven selected commodity series. Every affected signal stays WAIT or STOP until a current valid quote is available.
-- The branch preview runner is blocked in this environment by its `bwrap` process-mount restriction; visual validation remains required before merge.
+- The desktop branch preview rendered and was visually inspected against the Kalshi 15-minute cards, Perps separation, and the supplied Gold/Silver concept. The multiplier control is horizontal and has a full-width touch target. Category and individual watchlist toggles, the 1.2×/1.5×/20× multiplier states, and both alternate tactics were exercised.
+- The browser preview returned no current 15-minute Worker contract snapshots after load and manual refresh. Production also showed no verified selected-commodity snapshots during this check. Affected cards stay unavailable and no GO is emitted; no values are substituted.
+- Responsive one-column mobile rules are present, but this environment did not expose a device-width viewport for visual verification.
