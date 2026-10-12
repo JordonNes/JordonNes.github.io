@@ -3,7 +3,7 @@
  * Bounded paging, no assumptions that archived or older markets are returned.
  */
 const ROOT="https://external-api.kalshi.com/trade-api/v2";
-const SERIES=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M"]);
+const SERIES=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M"]);
 const hdr={"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=180"};
 function saneDate(x){const ms=Date.parse(x||"");return Number.isFinite(ms)?new Date(ms).toISOString():null}
 function observed(m,s){
