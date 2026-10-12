@@ -5,6 +5,7 @@
 import fs from "node:fs/promises";
 import {createRequire} from "node:module";
 const require=createRequire(import.meta.url),{evaluate,normalize}=require("../damilola-gavavi/dg-15m-calibration.js");
+const {audit:independentAudit}=require("../damilola-gavavi/dg-15m-independent-audit.js");
 const BASE="https://external-api.kalshi.com/trade-api/v2";
 const supported=["KXGOLD15M","KXSILVER15M","KXWTI15M","KXCOPPER15M","KXNATGAS15M","KXPALLADIUM15M","KXPLATINUM15M","KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXEURUSD15M"];
 const ticker=String(process.env.DG_SERIES||"KXGOLD15M").toUpperCase(),max=Math.min(150,Math.max(1,Number(process.env.DG_MAX_MARKETS||"80")));
@@ -60,8 +61,8 @@ for(const m of chosen){
  await wait(300);
 }
 const cleaned=normalize(prior);const allowed=new Set(cleaned.map(x=>x.ticker));prior=[...new Map(prior.filter(x=>allowed.has(x.ticker)).map(x=>[x.ticker,x])).values()].sort((a,b)=>Date.parse(a.candle_end_utc)-Date.parse(b.candle_end_utc));
-const report=evaluate(prior);
+const report=evaluate(prior),independent=independentAudit(prior);
 if(!prior.length)throw Error("ZERO_VALIDATED_QUOTE_OUTCOME_PAIRS: source schema or actual liquidity needs inspection");
-const output={series_ticker:ticker,state:"RESEARCH_ONLY",source:"Kalshi official public historical and recent markets + 1-minute candle",collected_at_utc:new Date().toISOString(),archive_partial:true,actual_fills_verified:false,fee_and_execution_verified:false,eligible_for_go:false,latest_batch:{attempted:chosen.length,accepted,rejected},validation:{...report,sample_preview:[]},examples:prior};
+const output={series_ticker:ticker,state:"RESEARCH_ONLY",source:"Kalshi official public historical and recent markets + 1-minute candle",collected_at_utc:new Date().toISOString(),archive_partial:true,actual_fills_verified:false,fee_and_execution_verified:false,eligible_for_go:false,latest_batch:{attempted:chosen.length,accepted,rejected},validation:{...report,sample_preview:[]},independent_audit:independent,examples:prior};
 await fs.mkdir("damilola-gavavi/data",{recursive:true});await fs.writeFile(file,JSON.stringify(output,null,2)+"\n");
-process.stdout.write(JSON.stringify({file,prior:existing.size,attempted:chosen.length,accepted,rejected,valid:report.valid_unique_asof_rows,walk_forward_tests:report.walk_forward_tests,state:report.state})+"\n");
+process.stdout.write(JSON.stringify({file,prior:existing.size,attempted:chosen.length,accepted,rejected,valid:report.valid_unique_asof_rows,walk_forward_tests:report.walk_forward_tests,state:report.state,independent_state:independent.state,independent_holdout:independent.holdout_samples,independent_selected_model:independent.selected_model})+"\n");
