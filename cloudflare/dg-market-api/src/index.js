@@ -232,6 +232,29 @@ export default {
    }));
    return new Response(JSON.stringify({ticker,retrieved_at_utc:new Date().toISOString(),source:"Kalshi production margin REST",read_only:true,scoring_ready:false,warning:"Response receipt does not validate units, source coverage, authentication-specific fees, funding direction or historical performance.",audits}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=120"}});
   }
+  // Authenticated-by-source public mark/reference price snapshot; no guessed price units.
+  if(url.pathname==="/api/perps-price-marker"){
+   const ticker=String(url.searchParams.get("ticker")||"").toUpperCase();
+   if(!/^[A-Z0-9_-]{2,80}$/.test(ticker))return new Response(JSON.stringify({error:"invalid_ticker"}),{status:400,headers:{...JSON_HEADERS,...cors}});
+   const cache=caches.default,key=new Request(url.origin+"/api/perps-price-marker?ticker="+ticker+"&v=1");
+   const hit=await cache.match(key);if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
+   const out={ticker,source:"Kalshi margin market REST",retrieved_at_utc:new Date().toISOString(),state:"UNAVAILABLE",mark:null,reference:null};
+   const control=new AbortController(),kill=setTimeout(()=>control.abort(),7000);
+   try{
+    const r=await fetch("https://external-api.kalshi.com/trade-api/v2/margin/markets/"+encodeURIComponent(ticker),{headers:{Accept:"application/json"},signal:control.signal,cf:{cacheEverything:true,cacheTtl:10}});
+    out.upstream_status=r.status;
+    if(r.ok){
+     const raw=await r.json(),m=raw.market||raw.margin_market||raw;
+     const parse=(entry)=>{if(!entry||typeof entry!=="object")return null;const str=String(entry.price??"");if(!/^[0-9]+(?:\\.[0-9]+)?$/.test(str))return null;const p=Number(str),ms=Number(entry.ts_ms);if(!Number.isFinite(p)||p<=0||!Number.isSafeInteger(ms)||ms<=0)return null;return {price_usd:p,exchange_ts_ms:ms,age_seconds:Math.round((Date.now()-ms)/1000)}};
+     out.mark=parse(m.settlement_mark_price);
+     out.reference=parse(m.reference_price);
+     out.liquidation_mark=parse(m.liquidation_mark_price);
+     out.state=out.mark&&out.mark.age_seconds>=0&&out.mark.age_seconds<=90?"MARK_AVAILABLE":"MARK_STALE_OR_MISSING";
+     out.price_semantics="settlement_mark_price USD / ticker price, not executable best bid or ask";
+    }else out.state=r.status===401||r.status===403?"AUTH_REQUIRED":r.status===429?"RATE_LIMITED":"UPSTREAM_UNAVAILABLE";
+   }catch{out.state="FETCH_FAILED"}finally{clearTimeout(kill)}
+   const response=new Response(JSON.stringify(out),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=10"}});ctx.waitUntil(cache.put(key,response.clone()));return response;
+  }
   // Gavavi V2 read-only quote qualification: bounded depth, no credentials or orders.
   if(url.pathname==="/api/perps-quote-quality"){
    // Dynamic ticker syntax validation; a successful exchange response is required for any quote.
