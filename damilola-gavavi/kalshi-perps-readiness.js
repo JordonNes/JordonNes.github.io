@@ -1,0 +1,11 @@
+/* Read-only Kalshi margin readiness probe: one click, no periodic polling. */
+(()=>{'use strict';const $=id=>document.getElementById(id);let pending=false,lastCheck=0;
+document.addEventListener('DOMContentLoaded',()=>{const button=$('kpCheck');if(!button)return;button.addEventListener('click',async()=>{
+ if(pending||Date.now()-lastCheck<300000){$('kpStatus').textContent='WAIT · Next check permitted after five minutes';return}
+ pending=true;lastCheck=Date.now();button.disabled=true;$('kpStatus').textContent='CHECKING · KALSHI MARGIN REST';$('kpDetails').textContent='Only a limited public metadata query is requested. No authentication or order submission.';
+ try{const c=new AbortController(),timer=setTimeout(()=>c.abort(),10000);let res;try{res=await fetch('https://dg-market-intelligence.jordonnes-markets.workers.dev/api/perps-readiness',{signal:c.signal,cache:'no-store'})}finally{clearTimeout(timer)}
+ if(!res.ok)throw Error('Gateway HTTP '+res.status);const d=await res.json();const allowed=['RATE_LIMITED','AUTH_REQUIRED','UNAVAILABLE','METADATA_ONLY','SCHEMA_UNVERIFIED'];const state=allowed.includes(d.state)?d.state:'SCHEMA_UNVERIFIED';$('kpStatus').textContent='WAIT · '+state.replaceAll('_',' ');$('kpDetails').textContent=(d.message||'Readiness unavailable')+' · Server checked: '+(d.retrieved_at_utc||'unknown')+' · Exchange HTTP: '+(d.upstream_status??'unknown');const list=$('kpMarkets');list.replaceChildren();for(const m of (d.markets||[]).slice(0,5)){const row=document.createElement('div');row.className='lineitem';row.textContent=m.ticker+' · '+(m.status||'status unverified')+' · '+(m.title||'');list.append(row)}if(!d.markets?.length)list.textContent='No verified Perps market inventory available.';
+ }catch(e){$('kpStatus').textContent='WAIT · ADAPTER NOT DEPLOYED OR UNAVAILABLE';$('kpDetails').textContent=String(e.message||e)+' · Cloudflare Worker deployment may still be required.'}
+ finally{pending=false;setTimeout(()=>{button.disabled=false},300000)}
+})});
+})();
