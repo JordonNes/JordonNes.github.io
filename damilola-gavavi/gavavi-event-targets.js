@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  const candleResp=await fetch(API+'/api/reference-candles?symbol='+a+'-USD&granularity=60');if(candleResp.ok){const candle=await candleResp.json();draw(p.canvas,candle.candles||[],events)}ok++;
  }catch(e){p.desc.textContent='Target data unavailable: '+String(e.message||e);p.listings.replaceChildren();const ctx=p.canvas.getContext('2d');ctx?.clearRect(0,0,p.canvas.width,p.canvas.height)}
  }));
- status.textContent='Updated '+new Date().toLocaleTimeString()+' · '+ok+'/'+ASSETS.length+' assets with event targets · 15-minute refresh limit · ${bundle.shared_kv_configured?"shared KV connected":"KV not connected"} .';busy=false;
+ status.textContent='Updated '+new Date().toLocaleTimeString()+' · '+ok+'/'+ASSETS.length+' assets with event targets · 15-minute refresh limit · '+(bundle.shared_kv_configured?'shared KV connected':'KV not connected')+'.';busy=false;
  }
  const manual=node('button','Refresh event targets');manual.type='button';manual.addEventListener('click',()=>refresh(true));section.insertBefore(manual,grid);
  refresh();setInterval(()=>{if(!document.hidden)refresh()},900000);
