@@ -137,6 +137,37 @@ export default {
    ctx.waitUntil(cache.put(key,response.clone()));
    return response;
   }
+  // Perps orderbook schema probe: single allowlisted market, on demand, no quote derivation.
+  if(url.pathname==="/api/perps-orderbook-probe"){
+   const tickers=new Set(["KXBTCPERP","KXETHPERP","KXSOLPERP","KXXRPPERP","KXHYPEPERP"]);
+   const ticker=(url.searchParams.get("ticker")||"").toUpperCase();
+   if(!tickers.has(ticker))return new Response(JSON.stringify({error:"unsupported_perps_ticker"}),{status:400,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+   const cache=caches.default,key=new Request(url.origin+"/api/perps-orderbook-probe?ticker="+ticker+"&v=1");
+   const cached=await cache.match(key);
+   if(cached)return new Response(cached.body,{status:cached.status,headers:{...Object.fromEntries(cached.headers),...cors,"X-DG-Cache":"HIT"}});
+   const output={ticker,source:"Kalshi Perps REST orderbook",retrieved_at_utc:new Date().toISOString(),read_only:true,quotes_verified:false,executable:false,state:"UNAVAILABLE"};
+   const control=new AbortController(),kill=setTimeout(()=>control.abort(),8000);
+   try{
+    const response=await fetch("https://external-api.kalshi.com/trade-api/v2/margin/markets/"+ticker+"/orderbook?depth=5",{signal:control.signal,headers:{Accept:"application/json"},cf:{cacheEverything:true,cacheTtl:60}});
+    output.upstream_status=response.status;
+    if(response.status===429){output.state="RATE_LIMITED";output.retry_after=response.headers.get("retry-after")||null}
+    else if(response.status===401||response.status===403)output.state="AUTH_REQUIRED";
+    else if(!response.ok)output.state="UPSTREAM_UNAVAILABLE";
+    else{
+     const raw=await response.json();
+     const root=raw&&typeof raw==="object"?raw:{};
+     const book=root.orderbook&&typeof root.orderbook==="object"?root.orderbook:{};
+     output.top_level_fields=Object.keys(root).slice(0,25);output.orderbook_fields=Object.keys(book).slice(0,25);
+     // Preserve only a small diagnostic sample; do not infer price scale, lot size or executability.
+     const sides=["bid","ask","bids","asks","buy","sell"];
+     output.level_counts=Object.fromEntries(sides.filter(k=>Array.isArray(book[k])).map(k=>[k,book[k].length]));
+     output.level_samples=Object.fromEntries(sides.filter(k=>Array.isArray(book[k])).map(k=>[k,book[k].slice(0,2)]));
+     output.state="SCHEMA_INSPECTION_REQUIRED";
+    }
+   }catch{output.state="UPSTREAM_UNAVAILABLE"}finally{clearTimeout(kill)}
+   const result=new Response(JSON.stringify(output),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}});
+   ctx.waitUntil(cache.put(key,result.clone()));return result;
+  }
   // Narrow independent spot-reference chart. Not Kalshi Perps prices or positions.
   if(url.pathname==="/api/reference-candles"){
    const sym=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
