@@ -211,11 +211,11 @@ export default {
   }
   // Gavavi V2 read-only quote qualification: bounded depth, no credentials or orders.
   if(url.pathname==="/api/perps-quote-quality"){
-   const allowed=new Set(["KXBTCPERP","KXETHPERP","KXSOLPERP","KXXRPPERP","KXHYPEPERP"]);
+   // Dynamic ticker syntax validation; a successful exchange response is required for any quote.
    const ticker=(url.searchParams.get("ticker")||"").toUpperCase();
    const size=Number(url.searchParams.get("contracts")||"1");
    const side=(url.searchParams.get("side")||"buy").toLowerCase();
-   if(!allowed.has(ticker)||!Number.isInteger(size)||size<1||size>10000||!["buy","sell"].includes(side))return new Response(JSON.stringify({error:"invalid_quote_request"}),{status:400,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+   if(!/^KX[A-Z0-9]{2,35}PERP$/.test(ticker)||!Number.isInteger(size)||size<1||size>10000||!["buy","sell"].includes(side))return new Response(JSON.stringify({error:"invalid_quote_request"}),{status:400,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
    const cache=caches.default,key=new Request(url.origin+"/api/perps-quote-quality?ticker="+ticker+"&contracts="+size+"&side="+side+"&v=1");
    const hit=await cache.match(key);
    if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
