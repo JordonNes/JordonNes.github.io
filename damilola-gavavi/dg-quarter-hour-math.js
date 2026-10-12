@@ -17,7 +17,7 @@ function settlement({ask,multiplier,entryFeePerContract,feesVerified=false,marke
  const entry=price+entryFeePerContract;
  if(entry>=1)return {...base,state:"NONPOSITIVE_MAX_WIN_PROFIT",fees_verified:true,after_fees_multiple:(1-entry)/entry,after_fees_total_return_multiple:1/entry,target_met:false};
  const multiple=(1-entry)/entry;
- return {...base,state:"ARITHMETIC_ONLY",fees_verified:true,after_fees_multiple:multiple,after_fees_total_return_multiple:1/entry,target_met:1/entry>=target,go_eligible:false,reason:"Hypothetical fill only; forecast probability, contract depth and settlement risk unverified."};
+ return {...base,state:"ARITHMETIC_ONLY",fees_verified:true,after_fees_multiple:multiple,after_fees_total_return_multiple:1/entry,target_met:1/entry+1e-10>=target,go_eligible:false,reason:"Hypothetical fill only; forecast probability, contract depth and settlement risk unverified."};
 }
 function earlyExit({ask,bid,entryFeePerContract,exitFeePerContract,feesVerified=false,multiplier}){
  const a=quote(ask),b=quote(bid),m=Number(multiplier);
@@ -26,7 +26,7 @@ function earlyExit({ask,bid,entryFeePerContract,exitFeePerContract,feesVerified=
  const cost=a+entryFeePerContract;
  const proceeds=b-exitFeePerContract;
  const multiple=(proceeds-cost)/cost;
- return {state:"SCENARIO_ONLY",go_eligible:false,net_profit_multiple:multiple,total_return_multiple:proceeds/cost,target_met:proceeds/cost>=m,reason:"Comparing the two observed quotes does not forecast a future sale price or fill."};
+ return {state:"SCENARIO_ONLY",go_eligible:false,net_profit_multiple:multiple,total_return_multiple:proceeds/cost,target_met:proceeds/cost+1e-10>=m,reason:"Comparing the two observed quotes does not forecast a future sale price or fill."};
 }
 function evaluate(m,opts={}){
  const mult=Number(opts.multiplier),tactic=opts.tactic||"settlement",fees=opts.fees||{};
