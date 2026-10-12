@@ -51,6 +51,16 @@ jobs:
           const expectedQuoteSeries = ["KXGOLD15M", "KXBTC15M", "KXEURUSD15M"];
           const missingQuoteSeries = expectedQuoteSeries.filter((series) => !quotePayload.results?.[series]);
           if (missingQuoteSeries.length) throw new Error(`Quarter-hour batch missing series: ${missingQuoteSeries.join(", ")}`);
+          const trainingEndpoint = "https://dg-market-intelligence.jordonnes-markets.workers.dev/api/quarter-hour-training?series=KXBTC15M&page=0&size=1";
+          const trainingResponse = await fetch(trainingEndpoint, { headers: { Accept: "application/json" } });
+          if (!trainingResponse.ok) throw new Error(`15-minute historical training endpoint returned HTTP ${trainingResponse.status}`);
+          const trainingPayload = await trainingResponse.json();
+          if (!["RESEARCH_DATA_PAGE", "UPSTREAM_UNAVAILABLE"].includes(trainingPayload.state) ||
+              !Array.isArray(trainingPayload.examples) ||
+              typeof trainingPayload.asof_pairs !== "number" ||
+              typeof trainingPayload.rejected_count !== "number") {
+            throw new Error("15-minute historical training endpoint returned an unexpected schema");
+          }
           const retired = ["/api/kalshi", "/api/focus?category=commodities"];
           for (const route of retired) {
             const response = await fetch("https://dg-market-intelligence.jordonnes-markets.workers.dev" + route, { headers: { Accept: "application/json" } });
