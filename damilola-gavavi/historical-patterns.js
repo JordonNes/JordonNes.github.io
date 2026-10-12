@@ -1,0 +1,16 @@
+/* Damilola quarterly-hour historical analog research: separate from Perps trading. */
+(()=>{'use strict';const $=id=>document.getElementById(id);let busy=false;
+function line(parent,label,value){const d=document.createElement('div');d.className='lineitem';const b=document.createElement('strong');b.textContent=value;d.append(document.createTextNode(label+': '),b);parent.append(d)}
+document.addEventListener('DOMContentLoaded',()=>{$('hpFetch')?.addEventListener('click',async()=>{if(busy)return;busy=true;$('hpFetch').disabled=true;$('hpStatus').textContent='Fetching recent matching market history…';
+try{
+ const symbol=$('hpAsset').value;const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),20000);let r;try{r=await fetch('https://dg-market-intelligence.jordonnes-markets.workers.dev/api/pattern-history?symbol='+encodeURIComponent(symbol),{signal:abort.signal})}finally{clearTimeout(timer)}
+ if(!r.ok)throw Error('Worker HTTP '+r.status);const data=await r.json(),days=Array.isArray(data.sample_days)?data.sample_days:[];const box=$('hpResults');box.replaceChildren();
+ const h=document.createElement('p');h.className='sub';h.textContent=symbol+' · Historical UTC hour '+String(data.reference_hour_utc).padStart(2,'0')+':00 · '+days.length+' selected days · Spot research, NOT Kalshi Perps';box.append(h);
+ for(const minute of [0,15,30,45]){const paired=days.map(d=>({group:d.group,day:d.day,observation:(d.observations||[]).find(o=>o.minute===minute)})).filter(x=>x.observation?.has_pair&&Number.isFinite(x.observation.return_pct));const returns=paired.map(x=>x.observation.return_pct);const up=returns.filter(x=>x>0).length,down=returns.filter(x=>x<0).length,flat=returns.length-up-down;const average=returns.length?returns.reduce((a,b)=>a+b,0)/returns.length:null;
+ const section=document.createElement('div');section.style.cssText='border:1px solid #334239;border-radius:9px;padding:12px;margin:10px 0';const heading=document.createElement('h3');heading.textContent=':'+String(minute).padStart(2,'0')+' UTC checkpoint';section.append(heading);
+ line(section,'Historical pairs',paired.length+' / '+days.length);line(section,'Next 15-minute outcomes',up+' UP · '+down+' DOWN · '+flat+' FLAT');line(section,'Average subsequent return',average===null?'Unavailable':(average>=0?'+':'')+average.toFixed(3)+'%');
+ line(section,'Observed tendency',paired.length>=6?'Exploratory only · validation required':'INSUFFICIENT SAMPLE — NO DIRECTIONAL FORECAST');box.append(section)}
+ const failures=days.filter(d=>d.error).map(d=>d.day+': '+d.error);$('hpStatus').textContent='HISTORICAL RESEARCH · NOT PREDICTIVE VALIDATION';$('hpNotes').textContent='Data '+(data.retrieved_at_utc||'unknown')+' · Data source: Coinbase spot · UTC-based matching · Past price tendencies do not establish future edge. '+(failures.length?'Missing: '+failures.join(', '):'All requested day windows returned.');
+}catch(e){$('hpStatus').textContent='HISTORY UNAVAILABLE';$('hpNotes').textContent=String(e.message||e)+' · Updated Cloudflare Worker deployment may be required.'}finally{busy=false;$('hpFetch').disabled=false}
+})});
+})();
