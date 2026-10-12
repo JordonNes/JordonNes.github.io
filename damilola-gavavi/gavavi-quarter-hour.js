@@ -33,9 +33,13 @@ function seriesChooser(){const wrapper=$("qhSeries");wrapper.replaceChildren();f
 async function fetchOne(ticker){const c=new AbortController(),timer=setTimeout(()=>c.abort(),10000);try{const r=await fetch(API+"/api/quarter-hour?series="+encodeURIComponent(ticker),{cache:"no-store",signal:c.signal});if(!r.ok)throw Error("HTTP "+r.status);return await r.json()}finally{clearTimeout(timer)}}
 function sideBtn(m,side){const yes=side==="yes",raw=m[side+"_ask_dollars"],q=math?.evaluate(m,{multiplier:multiplier(),tactic})?.sides?.find(a=>a.side===side),mapped=m.yes_maps_to_up===true,dir=mapped?(yes?"UP":"DOWN"):(yes?"YES":"NO"),b=el("button","qh-side",dir);b.type="button";
  const available=q&&q.state!=="INVALID_INPUT";
- b.dataset.signal=!available?"stop":q.indicative_quote_clears_target_before_fees?"wait":"stop";
- const detail=el("span","qh-quote","Buy "+cents(q?.ask));const prof=el("span","qh-gross",q&&Number.isFinite(q.theoretical_net_profit_multiple_before_fees)?fmt(q.theoretical_net_profit_multiple_before_fees)+"× max profit*":"No valid quote");
- b.append(detail,prof);b.title="Hypothetical entry only; not a recommendation";b.addEventListener("click",()=>{$("qhSelection").textContent=(m.title||m.ticker)+" · "+dir+" observed ask "+cents(q?.ask)+" · theoretical winning profit "+(q&&Number.isFinite(q.theoretical_net_profit_multiple_before_fees)?fmt(q.theoretical_net_profit_multiple_before_fees)+"×":"unknown")+". No qualified entry signal, no expected-profit forecast, and no trade placed."});return b}
+ b.dataset.signal=!available?"stop":tactic==="settlement"?(q.indicative_quote_clears_target_before_fees?"wait":"stop"):"wait";
+ const detail=el("span","qh-quote","Buy ASK "+cents(q?.ask));
+ const currentBid=el("span","qh-gross","Sell BID now "+cents(q?.bid));
+ const amount=q&&Number.isFinite(q.theoretical_net_profit_multiple_before_fees)?fmt(q.theoretical_net_profit_multiple_before_fees)+"× theoretical":"Unknown";
+ const prof=el("span","qh-gross",tactic==="settlement"?"Winning profit: "+amount+" (pre-fees)":"Future cash-out profit: UNVERIFIED");
+ b.append(detail,currentBid,prof);b.title="Public price snapshot, not an executable quote or recommendation";
+ b.addEventListener("click",()=>{$("qhSelection").textContent=(m.title||m.ticker)+" · "+dir+" observed ASK "+cents(q?.ask)+" · currently observed BID "+cents(q?.bid)+". "+(tactic==="settlement"?"Winning net-profit multiple before fees: "+amount+".":"Future early-exit bid and achievable cash-out multiple are not forecast.")+" No qualified entry signal; no trade placed."});return b}
 function card(m,symbol){
  const a=el("article","qh-card");const head=el("div","qh-card-head");const ident=el("div","qh-ident");ident.append(el("span","qh-asset",symbol||"◉"),el("div","qh-name",m.title||m.ticker));head.append(ident,el("span","qh-badge","WAIT · EVIDENCE"));a.append(head);
  const bar=el("div","qh-contract");bar.append(el("span","",m.ticker),el("span","","Quarter-hour close: "+(m.close_time?new Date(m.close_time).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit",timeZoneName:"short"}):"unknown")));a.append(bar);
