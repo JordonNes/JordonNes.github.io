@@ -5,12 +5,16 @@
 const API="https://dg-market-intelligence.jordonnes-markets.workers.dev";
 const $=id=>document.getElementById(id);
 const series=[["KXBTC15M","₿","BTC"],["KXETH15M","Ξ","ETH"],["KXSOL15M","S","SOL"],["KXXRP15M","X","XRP"],["KXHYPE15M","H","HYPE"],["KXGOLD15M","Au","Gold"],["KXSILVER15M","Ag","Silver"],["KXPLATINUM15M","Pt","Platinum"],["KXPALLADIUM15M","Pd","Palladium"],["KXCOPPER15M","Cu","Copper"],["KXWTI15M","◉","WTI Oil"],["KXNATGAS15M","NG","Natural Gas"],["KXEURUSD15M","€","EUR/USD"]];
+const commodityTickers=["KXGOLD15M","KXSILVER15M","KXWTI15M","KXCOPPER15M","KXNATGAS15M","KXPALLADIUM15M","KXPLATINUM15M"];
+const categorySets={Commodities:new Set(commodityTickers),Crypto:new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M"]),FX:new Set(["KXEURUSD15M"])};
+const prefGroup="dg_qh_market_group_v1";let group="Commodities",rerun=false;
+try{const saved=localStorage.getItem(prefGroup);if(categorySets[saved])group=saved}catch{}
 const stages=[...Array.from({length:39},(_,i)=>Number((1.2+i*.1).toFixed(1))),...Array.from({length:15},(_,i)=>i+6)];
 const prefSeries="dg_qh_series_v1",prefTactic="dg_qh_tactic_v1",prefSlider="dg_gavavi_multiplier_v1";
 const math=window.DGQuarterHourMath;
 const el=(tag,cls,content)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(content!==undefined)e.textContent=content;return e};
 const validSeries=new Set(series.map(x=>x[0]));
-let active=new Set(["KXBTC15M","KXETH15M","KXSOL15M"]),tactic="settlement",busy=false,last=[],retrieved=0;
+let active=new Set(commodityTickers),tactic="settlement",busy=false,last=[],retrieved=0;
 try{const saved=JSON.parse(localStorage.getItem(prefSeries)||"null");if(Array.isArray(saved))active=new Set(saved.filter(s=>validSeries.has(s)))}catch{}
 try{const v=localStorage.getItem(prefTactic);if(["settlement","wave","big-dip"].includes(v))tactic=v}catch{}
 const target=$("qhTarget"),targetLabel=$("qhTargetValue"),state=$("qhStatus"),grid=$("qhCards"),tacticPicker=$("qhTactic");
@@ -27,7 +31,25 @@ function goal(){
 const tmode={settlement:"Quarter-Hour Multiplier Hunter · Hold for settlement",wave:"Wave & Reversal Hunter · Early-exit research", "big-dip":"Big Money Dip · Size-sensitive early-exit research"};
 function updateTactic(){tactic=tacticPicker.value;try{localStorage.setItem(prefTactic,tactic)}catch{}$("qhTacticExplanation").textContent=tactic==="settlement"?"Find contract prices capable of your net-profit target if the contract wins. A winning probability estimate is still mandatory for a GO.":tactic==="wave"?"Early cash-out requires a defensible future resale bid, timing model, fill probability, and entry/exit fees.": "Large-position exit strategy: no wager amount is required to observe markets; a size-specific liquidity and worst-case risk check is mandatory before any actionable signal.";render()}
 tacticPicker.value=tactic;tacticPicker.addEventListener("change",updateTactic);
-function seriesChooser(){const wrapper=$("qhSeries");wrapper.replaceChildren();for(const [ticker,sym,name] of series){const btn=el("button","qh-symbol",sym+" "+name);btn.type="button";btn.setAttribute("aria-pressed",String(active.has(ticker)));btn.addEventListener("click",()=>{active.has(ticker)?active.delete(ticker):active.add(ticker);try{localStorage.setItem(prefSeries,JSON.stringify([...active]))}catch{}seriesChooser();refresh()});wrapper.append(btn)}}
+const selection=()=>[...active].filter(ticker=>categorySets[group].has(ticker));
+function persistSeries(){try{localStorage.setItem(prefSeries,JSON.stringify([...active]))}catch{}}
+function seriesChooser(){
+ const wrapper=$("qhSeries");wrapper.replaceChildren();
+ for(const [ticker,sym,name] of series.filter(x=>categorySets[group].has(x[0]))){
+  const btn=el("button","qh-symbol",sym+" "+name);btn.type="button";btn.setAttribute("aria-pressed",String(active.has(ticker)));
+  btn.addEventListener("click",()=>{active.has(ticker)?active.delete(ticker):active.add(ticker);persistSeries();seriesChooser();refresh()});wrapper.append(btn);
+ }
+ document.querySelectorAll("[data-qh-group]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.qhGroup===group)));
+ $("qhGroupLabel").textContent=group+" · "+selection().length+" selected · 15-minute outcome contracts only";
+ document.querySelector(".qh-source-link").hidden=group!=="Commodities";
+}
+document.querySelectorAll("[data-qh-group]").forEach(b=>b.addEventListener("click",()=>{
+ group=b.dataset.qhGroup;try{localStorage.setItem(prefGroup,group)}catch{}
+ seriesChooser();refresh()
+}));
+$("qhSelectGroup").addEventListener("click",()=>{for(const t of categorySets[group])active.add(t);persistSeries();seriesChooser();refresh()});
+$("qhClearGroup").addEventListener("click",()=>{for(const t of categorySets[group])active.delete(t);persistSeries();seriesChooser();refresh()});
+
 async function fetchBatch(tickers){const c=new AbortController(),timer=setTimeout(()=>c.abort(),12000);try{const r=await fetch(API+"/api/quarter-hour-batch?series="+encodeURIComponent(tickers.join(",")),{cache:"no-store",signal:c.signal});if(!r.ok)throw Error("HTTP "+r.status);return await r.json()}finally{clearTimeout(timer)}}
 function sideBtn(m,side){const yes=side==="yes",raw=m[side+"_ask_dollars"],q=math?.evaluate(m,{multiplier:multiplier(),tactic})?.sides?.find(a=>a.side===side),mapped=m.yes_maps_to_up===true,dir=mapped?(yes?"UP":"DOWN"):(yes?"YES":"NO"),b=el("button","qh-side",dir);b.type="button";
  const available=q&&q.state!=="INVALID_INPUT";
@@ -51,16 +73,16 @@ function card(m,symbol){
  const link=el("a","qh-market-link","Find this contract on Kalshi ↗");link.href=m.event_ticker?"https://kalshi.com/markets/kx/m/"+encodeURIComponent(m.event_ticker.toLowerCase()):"https://kalshi.com/markets";link.target="_blank";link.rel="noopener noreferrer";a.append(link);
  return a
 }
-function render(){grid.replaceChildren();const responses=last.filter(r=>active.has(r.series_ticker));for(const r of responses){const symbol=(series.find(x=>x[0]===r.series_ticker)||[])[1]||"◉";if(!r.markets?.length){const box=el("article","qh-card");box.append(el("strong","","No open 15-minute contract for "+r.series_ticker),el("p","",r.state||"Source returned no matching contracts"));grid.append(box);continue}for(const m of r.markets.slice(0,2))grid.append(card(m,symbol))}
- if(!active.size)grid.append(el("p","qh-empty","Select one or more 15-minute series above."));
- if(active.size&&!responses.length)grid.append(el("p","qh-empty","No verified market snapshots yet; retry or verify Worker deployment."));
+function render(){grid.replaceChildren();const responses=last.filter(r=>active.has(r.series_ticker)&&categorySets[group].has(r.series_ticker));for(const r of responses){const symbol=(series.find(x=>x[0]===r.series_ticker)||[])[1]||"◉";if(!r.markets?.length){const box=el("article","qh-card");box.append(el("strong","","No open 15-minute contract for "+r.series_ticker),el("p","",r.state||"Source returned no matching contracts"));grid.append(box);continue}for(const m of r.markets.slice(0,2))grid.append(card(m,symbol))}
+ if(!selection().length)grid.append(el("p","qh-empty","No "+group+" series selected. Choose instruments above or select this category."));
+ if(selection().length&&!responses.length)grid.append(el("p","qh-empty","No verified "+group+" 15-minute market snapshots yet; retry or verify Worker deployment."));
  tick();}
-function tick(){const now=Date.now();document.querySelectorAll(".qh-clock").forEach(x=>{const end=Date.parse(x.dataset.close||"");if(!Number.isFinite(end)){x.textContent="Unavailable";return}const sec=Math.max(0,Math.floor((end-now)/1000));x.textContent=Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");if(sec===0)x.closest(".qh-card")?.setAttribute("data-expired","true")});if(retrieved&&state)state.textContent="Read-only • "+last.length+" series checked • last observed "+Math.round((Date.now()-retrieved)/1000)+"s ago • 15s polling, NOT execution-grade live quotes";}
-async function refresh(){if(busy||document.hidden)return;busy=true;state.textContent="Checking open 15-minute outcome contracts…";try{const selected=[...active],batch=await fetchBatch(selected);last=selected.map(ticker=>batch.results?.[ticker]?.payload||{series_ticker:ticker,state:"UNAVAILABLE",markets:[]});const failed=selected.filter(ticker=>{const item=batch.results?.[ticker];return !item||item.http_status>=400||!Array.isArray(item.payload?.markets)}).length;retrieved=Date.now();render();if(failed)state.textContent=failed+" selected series unavailable or rate-limited. Available quotes remain indicative; all signals remain WAIT."}catch{last=[...active].map(ticker=>({series_ticker:ticker,state:"UNAVAILABLE",markets:[]}));retrieved=Date.now();render();state.textContent="The consolidated 15-minute quote request is unavailable. No market signal is issued."}finally{busy=false}}
+function tick(){const now=Date.now();document.querySelectorAll(".qh-clock").forEach(x=>{const end=Date.parse(x.dataset.close||"");if(!Number.isFinite(end)){x.textContent="Unavailable";return}const sec=Math.max(0,Math.floor((end-now)/1000));x.textContent=Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");if(sec===0)x.closest(".qh-card")?.setAttribute("data-expired","true")});if(retrieved&&state)state.textContent=group+" 15 min • read-only • "+last.length+" series checked • last observed "+Math.round((Date.now()-retrieved)/1000)+"s ago • 15s polling, NOT execution-grade live quotes";}
+async function refresh(){if(document.hidden)return;if(busy){rerun=true;return}busy=true;const selected=selection();if(!selected.length){last=[];retrieved=0;busy=false;render();state.textContent="No "+group+" series selected.";return}state.textContent="Checking open "+group+" 15-minute outcome contracts…";try{const batch=await fetchBatch(selected);last=selected.map(ticker=>batch.results?.[ticker]?.payload||{series_ticker:ticker,state:"UNAVAILABLE",markets:[]});const failed=selected.filter(ticker=>{const item=batch.results?.[ticker];return !item||item.http_status>=400||!Array.isArray(item.payload?.markets)}).length;retrieved=Date.now();render();if(failed)state.textContent=failed+" selected series unavailable or rate-limited. Available quotes remain indicative; all signals remain WAIT."}catch{last=selected.map(ticker=>({series_ticker:ticker,state:"UNAVAILABLE",markets:[]}));retrieved=Date.now();render();state.textContent="The consolidated 15-minute quote request is unavailable. No market signal is issued."}finally{busy=false;if(rerun){rerun=false;refresh()}}}
 async function audit15mOutcomes(){
  const b=$("qhHistoryAudit"),report=$("qhHistoryStatus");b.disabled=true;report.textContent="Checking settled 15-minute results for selected series…";
  try{
-  const selected=[...active];if(!selected.length){report.textContent="Select at least one 15-minute series.";return}
+  const selected=selection();if(!selected.length){report.textContent="Select at least one 15-minute series.";return}
   const results=await Promise.allSettled(selected.map(async seriesTicker=>{
    const ac=new AbortController(),timer=setTimeout(()=>ac.abort(),14000);
    try{const response=await fetch(API+"/api/quarter-hour-outcomes?"+new URLSearchParams({series:seriesTicker,pages:"2"}),{cache:"no-store",signal:ac.signal});if(!response.ok)throw Error("HTTP "+response.status);return await response.json()}finally{clearTimeout(timer)}
