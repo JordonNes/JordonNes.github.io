@@ -4,7 +4,7 @@
 (()=>{"use strict";
 const API="https://dg-market-intelligence.jordonnes-markets.workers.dev";
 const $=id=>document.getElementById(id);
-const series=[["KXBTC15M","₿","BTC"],["KXETH15M","Ξ","ETH"],["KXSOL15M","S","SOL"],["KXXRP15M","X","XRP"],["KXHYPE15M","H","HYPE"]];
+const series=[["KXBTC15M","₿","BTC"],["KXETH15M","Ξ","ETH"],["KXSOL15M","S","SOL"],["KXXRP15M","X","XRP"],["KXHYPE15M","H","HYPE"],["KXGOLD15M","Au","Gold"],["KXSILVER15M","Ag","Silver"],["KXPLATINUM15M","Pt","Platinum"],["KXPALLADIUM15M","Pd","Palladium"],["KXCOPPER15M","Cu","Copper"],["KXWTI15M","◉","WTI Oil"],["KXNATGAS15M","NG","Natural Gas"],["KXEURUSD15M","€","EUR/USD"]];
 const stages=[...Array.from({length:39},(_,i)=>Number((1.2+i*.1).toFixed(1))),...Array.from({length:15},(_,i)=>i+6)];
 const prefSeries="dg_qh_series_v1",prefTactic="dg_qh_tactic_v1",prefSlider="dg_gavavi_multiplier_v1";
 const math=window.DGQuarterHourMath;
