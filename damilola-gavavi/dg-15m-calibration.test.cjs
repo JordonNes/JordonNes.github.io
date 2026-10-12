@@ -1,0 +1,7 @@
+const test=require('node:test'),assert=require('node:assert/strict');const c=require('./dg-15m-calibration.js');
+const t=Date.parse('2026-01-01T00:00:00Z');
+const rows=Array.from({length:190},(_,i)=>({ticker:'KXBTC15M-'+i,series_ticker:'KXBTC15M',observation_cutoff_utc:new Date(t+i*900000+300000).toISOString(),candle_end_utc:new Date(t+i*900000+240000).toISOString(),market_close_utc:new Date(t+(i+1)*900000).toISOString(),yes_bid_dollars:.4,yes_ask_dollars:.5,result:i%2?'no':'yes'}));
+test('reproducible walk-forward evaluation returns no actionable signal',()=>{const a=c.evaluate(rows);assert.equal(a.state,'RESEARCH_EVALUATED');assert(a.walk_forward_tests>=100);assert.equal(a.calibrated_for_signals,false);assert.equal(a.go_eligible,false);assert(a.rolling_bucket_model.brier!==null)});
+test('future candle and future labels cannot enter historical features',()=>{const dirty=[...rows.slice(0,130),{...rows[130],candle_end_utc:new Date(t+500*900000).toISOString()}];const r=c.evaluate(dirty);assert(r.discarded_rows>=1);assert.equal(r.go_eligible,false)});
+test('one series is independently trained and only on realized prior results',()=>{const r=c.evaluate(rows.slice(0,100));assert.equal(r.state,'INSUFFICIENT_OUT_OF_SAMPLE');assert.equal(r.go_eligible,false)});
+test('duplicate market ticker does not increase sample count',()=>{const r=c.evaluate([...rows,...rows]);assert.equal(r.valid_unique_asof_rows,rows.length);assert.equal(r.go_eligible,false)});
