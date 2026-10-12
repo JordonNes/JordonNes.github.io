@@ -48,7 +48,7 @@ function card(m,symbol){
  const evals=math?.evaluate(m,{multiplier:multiplier(),tactic});
  a.append(el("div","qh-evidence","Gavavi: "+(tactic==="settlement"?"Hold-to-settlement":"Early cash-out")+" assessment — WAIT. "+(evals?.prerequisites||[]).join(" · ")));
  const meta=el("details","qh-detail");const summary=el("summary","","Why WAIT? · Contract evidence");meta.append(summary,el("p","",m.rules_primary||"Settlement rules not returned by the source."),el("p","","Observed: "+(m.quote_observed_at_utc||"unknown")+" · "+(m.quote_state||"unverified")+". No authenticated execution timestamp. Fees, forecast calibration, and verified liquidity are not yet available."));a.append(meta);
- const link=el("a","qh-market-link","Find this contract on Kalshi ↗");link.href="https://kalshi.com/markets/"+encodeURIComponent((m.series_ticker||"").toLowerCase())+"/"+encodeURIComponent((m.event_ticker||"").toLowerCase());link.target="_blank";link.rel="noopener noreferrer";a.append(link);
+ const link=el("a","qh-market-link","Find this contract on Kalshi ↗");link.href=m.event_ticker?"https://kalshi.com/markets/kx/m/"+encodeURIComponent(m.event_ticker.toLowerCase()):"https://kalshi.com/markets";link.target="_blank";link.rel="noopener noreferrer";a.append(link);
  return a
 }
 function render(){grid.replaceChildren();const responses=last.filter(r=>active.has(r.series_ticker));for(const r of responses){const symbol=(series.find(x=>x[0]===r.series_ticker)||[])[1]||"◉";if(!r.markets?.length){const box=el("article","qh-card");box.append(el("strong","","No open 15-minute contract for "+r.series_ticker),el("p","",r.state||"Source returned no matching contracts"));grid.append(box);continue}for(const m of r.markets.slice(0,2))grid.append(card(m,symbol))}
