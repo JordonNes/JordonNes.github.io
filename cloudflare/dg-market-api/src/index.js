@@ -178,6 +178,43 @@ export default {
    const result=new Response(JSON.stringify(output),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}});
    ctx.waitUntil(cache.put(key,result.clone()));return result;
   }
+  // Gavavi V2 read-only quote qualification: bounded depth, no credentials or orders.
+  if(url.pathname==="/api/perps-quote-quality"){
+   const allowed=new Set(["KXBTCPERP","KXETHPERP","KXSOLPERP","KXXRPPERP","KXHYPEPERP"]);
+   const ticker=(url.searchParams.get("ticker")||"").toUpperCase();
+   const size=Number(url.searchParams.get("contracts")||"1");
+   const side=(url.searchParams.get("side")||"buy").toLowerCase();
+   if(!allowed.has(ticker)||!Number.isInteger(size)||size<1||size>10000||!["buy","sell"].includes(side))return new Response(JSON.stringify({error:"invalid_quote_request"}),{status:400,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+   const cache=caches.default,key=new Request(url.origin+"/api/perps-quote-quality?ticker="+ticker+"&contracts="+size+"&side="+side+"&v=1");
+   const hit=await cache.match(key);
+   if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),...cors,"X-DG-Cache":"HIT"}});
+   const output={ticker,contracts:size,side,source:"Kalshi margin orderbook",retrieved_at_utc:new Date().toISOString(),exchange_timestamp_verified:false,fees_verified:false,funding_verified:false,contract_specifications_verified:false,executable:false,status:"WAIT",reasons:[]};
+   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
+   try{
+    const res=await fetch("https://external-api.kalshi.com/trade-api/v2/margin/markets/"+ticker+"/orderbook?depth=5",{headers:{Accept:"application/json"},signal:ctrl.signal,cf:{cacheEverything:true,cacheTtl:10}});
+    output.upstream_status=res.status;
+    if(!res.ok){output.status=res.status===429?"RATE_LIMITED":res.status===401||res.status===403?"AUTH_REQUIRED":"UPSTREAM_UNAVAILABLE";output.reasons.push("Kalshi quote unavailable");}
+    else{
+     const raw=await res.json(),book=raw.orderbook||{};
+     const norm=(arr,desc)=>Array.isArray(arr)?arr.filter(x=>Array.isArray(x)&&x.length>=2&&x.slice(0,2).every(v=>v!==null&&String(v).trim()!==""&&Number.isFinite(Number(v)))).map(x=>({price:Number(x[0]),quantity:Number(x[1])})).filter(x=>x.price>0&&x.quantity>0).sort((a,b)=>desc?b.price-a.price:a.price-b.price):[];
+     const bids=norm(book.bids,true),asks=norm(book.asks,false);
+     if(!bids.length||!asks.length||asks[0].price<=bids[0].price){output.status="INVALID_BOOK";output.reasons.push("Empty or crossed orderbook");}
+     else{
+      const levels=side==="buy"?asks:bids;
+      let remaining=size,gross=0,filled=0,used=0;
+      for(const l of levels){const take=Math.min(remaining,l.quantity);if(take<=0)continue;gross+=take*l.price;filled+=take;remaining-=take;used++;if(remaining<=1e-9)break}
+      const mid=(bids[0].price+asks[0].price)/2,spread=asks[0].price-bids[0].price;
+      output.book={best_bid:bids[0].price,best_ask:asks[0].price,spread,spread_bps:spread/mid*10000,top_bid_quantity:bids[0].quantity,top_ask_quantity:asks[0].quantity,levels_checked:5,levels_used:used,filled_contracts:filled,requested_contracts:size,sufficient_visible_depth:remaining<1e-9,average_fill_price:remaining<1e-9?gross/filled:null,estimated_gross_value:remaining<1e-9?gross:null,reference_midpoint:mid,slippage_vs_best_bps:remaining<1e-9?(side==="buy"?(gross/filled/asks[0].price-1):(1-gross/filled/bids[0].price))*10000:null};
+      if(remaining>1e-9){output.status="SKIP";output.reasons.push("Insufficient displayed quantity in the first five book levels");}
+      else{output.status="WAIT";output.reasons.push("Orderbook has no verified exchange timestamp");}
+      output.reasons.push("Exchange fees, funding and contract specifications are not yet validated for position economics");
+      output.reasons.push("Snapshot is indicative; not a reservation of liquidity");
+     }
+    }
+   }catch{output.status="UNAVAILABLE";output.reasons.push("Kalshi orderbook request failed or timed out")}finally{clearTimeout(timer)}
+   const response=new Response(JSON.stringify(output),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=10"}});
+   ctx.waitUntil(cache.put(key,response.clone()));return response;
+  }
   // Narrow independent spot-reference chart. Not Kalshi Perps prices or positions.
   if(url.pathname==="/api/reference-candles"){
    const sym=(url.searchParams.get("symbol")||"BTC-USD").toUpperCase();
