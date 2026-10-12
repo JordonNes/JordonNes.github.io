@@ -6,6 +6,9 @@ function update(){
  const entry=Number(v.gvEntry),stop=Number(v.gvStop),target=Number(v.gvTarget),notional=Number(v.gvNotional),leverage=Number(v.gvLeverage);
  const spread=Number(v.gvSpread),fee=Number(v.gvFee),slip=Number(v.gvSlippage),fund=Number(v.gvFunding);
  const costs=[spread,fee,slip,fund];let issues=[];
+ if(fields.slice(1).some(k=>String(v[k]??'').trim()===''))issues.push('Complete every price, exposure and cost field; blanks cannot be treated as zero.');
+ if(leverage>20)issues.push('Leverage above the 20× research cap.');
+ if([spread,fee,slip,fund].some(x=>x>10000))issues.push('Estimated cost exceeds 100% and requires correction.');
  if(![entry,stop,target,notional,leverage,...costs].every(Number.isFinite))issues.push('All numeric inputs must be valid.');
  if(!(entry>0&&stop>0&&target>0&&notional>0&&leverage>=1))issues.push('Entry, stop, target and notional must be positive; leverage must be ≥ 1.');
  if(costs.some(x=>x<0))issues.push('Trading cost estimates cannot be negative.');
