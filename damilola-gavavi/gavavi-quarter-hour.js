@@ -45,7 +45,7 @@ function seriesChooser(){
 }
 document.querySelectorAll("[data-qh-group]").forEach(b=>b.addEventListener("click",()=>{
  group=b.dataset.qhGroup;try{localStorage.setItem(prefGroup,group)}catch{}
- seriesChooser();refresh()
+ seriesChooser();showAcademy();refresh()
 }));
 $("qhSelectGroup").addEventListener("click",()=>{for(const t of categorySets[group])active.add(t);persistSeries();seriesChooser();refresh()});
 $("qhClearGroup").addEventListener("click",()=>{for(const t of categorySets[group])active.delete(t);persistSeries();seriesChooser();refresh()});
@@ -74,7 +74,22 @@ function card(m,symbol){
  book.addEventListener("toggle",async()=>{if(!book.open||bookChecked)return;bookChecked=true;bookOutput.textContent="Retrieving Kalshi public orderbook…";try{const ctrl=new AbortController(),kill=setTimeout(()=>ctrl.abort(),8500);let response;try{response=await fetch(API+"/api/quarter-hour-book?"+new URLSearchParams({series:m.series_ticker,ticker:m.ticker}),{cache:"no-store",signal:ctrl.signal})}finally{clearTimeout(kill)}if(!response.ok)throw Error("HTTP "+response.status);const data=await response.json();bookOutput.textContent="Book: "+data.state+" · YES bid "+cents(data.yes?.best_bid_dollars)+" / ask "+cents(data.yes?.best_ask_dollars)+" ("+(data.yes?.ask_visible_contracts??"—")+" displayed contracts) · NO bid "+cents(data.no?.best_bid_dollars)+" / ask "+cents(data.no?.best_ask_dollars)+" ("+(data.no?.ask_visible_contracts??"—")+" displayed contracts) · Fees and exchange timestamps unverified; NO GO."}catch(e){bookOutput.textContent="Orderbook unavailable: "+String(e.message||e)+". Signal remains WAIT."}});
  a.append(book);
  const meta=el("details","qh-detail");const summary=el("summary","","Why WAIT? · Contract evidence");meta.append(summary,el("p","",m.rules_primary||"Settlement rules not returned by the source."),el("p","","Observed: "+(m.quote_observed_at_utc||"unknown")+" · "+(m.quote_state||"unverified")+". No authenticated execution timestamp. Fees, forecast calibration, and verified liquidity are not yet available."));a.append(meta);
- const link=el("a","qh-market-link","Find this contract on Kalshi ↗");link.href=m.event_ticker?"https://kalshi.com/markets/kx/m/"+encodeURIComponent(m.event_ticker.toLowerCase()):"https://kalshi.com/markets";link.target="_blank";link.rel="noopener noreferrer";a.append(link);
+ const econ=el("details","qh-detail"),econTitle=el("summary","","Gavavi · fee-aware YES/NO economics"),econText=el("p","","Expand to inspect actual series fee metadata, orderbook depth and 2% loss-budget compatibility. Forecast probability remains unverified.");
+econ.append(econTitle,econText);a.append(econ);
+econ.addEventListener("toggle",async()=>{
+ if(!econ.open)return;econText.textContent="Fetching Kalshi orderbook and fee metadata…";
+ try{const c=new AbortController(),timeout=setTimeout(()=>c.abort(),10500);let responses;
+  try{responses=await Promise.all([
+   fetch(API+"/api/quarter-hour-book?"+new URLSearchParams({series:m.series_ticker,ticker:m.ticker}),{signal:c.signal,cache:"no-store"}),
+   fetch(API+"/api/quarter-hour-fees?series="+encodeURIComponent(m.series_ticker),{signal:c.signal})
+  ])}finally{clearTimeout(timeout)}
+  const [bk,ff]=responses;if(!bk.ok||!ff.ok)throw Error("book "+bk.status+"; fees "+ff.status);
+  const book=await bk.json(),meta=await ff.json(),capital=Number($("qhRiskCapital").value),contracts=Number($("qhContracts").value);
+  const e=window.DG15mEconomics?.evaluate({yesAsk:book.yes?.best_ask_dollars,noAsk:book.no?.best_ask_dollars,yesBid:book.yes?.best_bid_dollars,noBid:book.no?.best_bid_dollars,contracts,target:multiplier(),feeMultiplier:meta.fee_multiplier,feeType:meta.fee_type,seriesFeeVerified:meta.state==="SERIES_FEE_FIELDS_OBSERVED",accountCapital:$("qhRiskCapital").value.trim()&&Number.isFinite(capital)&&capital>0?capital:null,bookVerified:book.state==="OBSERVED_TOP_OF_BOOK",visibleYes:book.yes?.ask_visible_contracts??0,visibleNo:book.no?.ask_visible_contracts??0,quoteTimestamp:book.observed_at_utc,probabilityVerified:false});
+  econText.textContent=(e?.sides||[]).map(v=>v.side.toUpperCase()+": observed ask "+cents(v.ask)+"; fee estimate "+(v.fee_dollars===null?"unverified":"$"+v.fee_dollars.toFixed(2))+"; full-loss exposure "+(v.worst_case_loss_dollars===null?"unverified":"$"+v.worst_case_loss_dollars.toFixed(2))+"; breakeven probability "+(v.break_even_probability===null?"unverified":(v.break_even_probability*100).toFixed(1)+"%")+"; target "+(v.indicated_target_met===true?"possible if filled":v.indicated_target_met===false?"fails":"unverified")+"; blockers: "+v.missing.join(", ")).join(" | ")+" · No predictive probability or qualified GO. Reopen later for newer book data.";
+ }catch(e){econText.textContent="Economics unavailable: "+String(e.message||e)+". No fabricated fees or expected profit; WAIT."}
+});
+const link=el("a","qh-market-link","Find this contract on Kalshi ↗");link.href=m.event_ticker?"https://kalshi.com/markets/kx/m/"+encodeURIComponent(m.event_ticker.toLowerCase()):"https://kalshi.com/markets";link.target="_blank";link.rel="noopener noreferrer";a.append(link);
  return a
 }
 function render(){grid.replaceChildren();const responses=last.filter(r=>active.has(r.series_ticker)&&categorySets[group].has(r.series_ticker));for(const r of responses){const symbol=(series.find(x=>x[0]===r.series_ticker)||[])[1]||"◉";if(!r.markets?.length){const box=el("article","qh-card");box.append(el("strong","","No open 15-minute contract for "+r.series_ticker),el("p","",r.state||"Source returned no matching contracts"));grid.append(box);continue}for(const m of r.markets.slice(0,2))grid.append(card(m,symbol))}
@@ -119,6 +134,35 @@ async function auditAsOfQuarterHour(){
  finally{button.disabled=false}
 }
 $("qhAsOfAudit").addEventListener("click",auditAsOfQuarterHour);
+function datasetKey(s){return "dg_15m_training_"+s+"_v1"}
+function currentResearch(){const s=selection()[0];if(!s)return{series:null,rows:[],page:0};try{const obj=JSON.parse(localStorage.getItem(datasetKey(s))||"null");return {series:s,rows:Array.isArray(obj?.rows)?obj.rows:[],page:Number.isInteger(obj?.page)?obj.page:0}}catch{return{series:s,rows:[],page:0}}}
+function showAcademy(){
+ const d=currentResearch(),report=window.DG15mCalibration?.evaluate(d.rows),v=report?.valid_unique_asof_rows??0;
+ $("qhAcademyStatus").textContent=(d.series||"No series selected")+" · "+v+" verified source quote/outcome pairs · "+(report?.walk_forward_tests??0)+"/"+(report?.required_test_samples??100)+" walk-forward tests · "+(report?.state||"MODEL_NOT_LOADED")+
+ (Number.isFinite(report?.rolling_bucket_model?.brier)?" · Damilola Brier "+report.rolling_bucket_model.brier.toFixed(4)+" vs raw market "+report.raw_market_benchmark.brier.toFixed(4):"")+
+ ". Research only: no independent forward-validation or qualified GO.";
+}
+let collecting=false;
+async function collectTraining(){
+ if(collecting)return;const d=currentResearch(),status=$("qhAcademyStatus"),button=$("qhCollectTraining");if(!d.series){status.textContent="Select at least one 15-minute series.";return}
+ collecting=true;button.disabled=true;
+ try{
+  for(let i=0;i<6;i++){
+   status.textContent="Damilola · "+d.series+" · retrieving genuine Kalshi historical quote/outcome pairs, source page "+(d.page+1)+" of this session…";
+   const c=new AbortController(),timer=setTimeout(()=>c.abort(),20000);let response;
+   try{response=await fetch(API+"/api/quarter-hour-training?"+new URLSearchParams({series:d.series,page:String(d.page),size:"8"}),{signal:c.signal,cache:"no-store"})}finally{clearTimeout(timer)}
+   if(!response.ok)throw Error("Kalshi training batch HTTP "+response.status);
+   const p=await response.json();
+   if(p.state!=="RESEARCH_DATA_PAGE")throw Error("historical source unavailable ("+p.state+")");
+   d.rows.push(...(p.examples||[]));d.rows=[...new Map(d.rows.map(x=>[x.ticker,x])).values()];
+   d.page++;try{localStorage.setItem(datasetKey(d.series),JSON.stringify({rows:d.rows,page:d.page}))}catch{throw Error("browser storage unavailable; cannot preserve verified training set")}
+   showAcademy();
+   if(!p.more_pages||p.attempted===0||d.page>=50)break;
+  }
+ }catch(e){status.textContent="Training backfill paused: "+String(e.message||e)+". Saved valid samples remain; retry later. No invented forecasts."}
+ finally{collecting=false;button.disabled=false;const txt=status.textContent;if(!txt.startsWith("Training backfill paused:"))showAcademy()}
+}
+$("qhCollectTraining").addEventListener("click",collectTraining);
 $("qhHistoryAudit").addEventListener("click",audit15mOutcomes);
 $("qhReload").addEventListener("click",refresh);
 target.addEventListener("input",()=>{goal();render()});
@@ -126,5 +170,5 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()}
 setInterval(()=>{if(!document.hidden&&!$("qhPane").hidden)refresh()},15000);
 setInterval(tick,1000);
 window.GavaviQuarterHourRefresh=refresh;
-seriesChooser();goal();updateTactic();refresh();
+seriesChooser();goal();updateTactic();showAcademy();refresh();
 })();
