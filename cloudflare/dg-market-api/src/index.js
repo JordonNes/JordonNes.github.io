@@ -43,8 +43,8 @@ export default {
   const allow=env.ALLOWED_ORIGIN||"https://jordonnes.github.io";
   const cors={"Access-Control-Allow-Origin":allow,"Vary":"Origin","Access-Control-Allow-Methods":"GET, OPTIONS","Access-Control-Allow-Headers":"Content-Type"};
   if(request.method==="OPTIONS")return new Response(null,{status:204,headers:cors});
-  if(origin && origin!==allow)return fail("origin_not_allowed",403);
-  if(request.method!=="GET")return fail("method_not_allowed",405);
+  if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+  if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
   if(["/api/series-markets","/api/contract","/api/history"].includes(url.pathname)){
    const ticker=(url.searchParams.get("ticker")||"").toUpperCase(),series=(url.searchParams.get("series")||"").toUpperCase();
