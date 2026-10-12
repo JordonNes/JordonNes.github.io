@@ -19,17 +19,19 @@ document.addEventListener('DOMContentLoaded',()=>{
  const status=node('p','Retrieving public Kalshi strike and expiry metadata…');status.className='notice';section.append(status);
  const grid=document.createElement('div');grid.className='grid';section.append(grid);anchor.before(section);
  const panels={};for(const a of ASSETS){const card=document.createElement('article');card.className='item';card.append(node('h2',a+' · event targets'));const desc=node('p','Waiting for Kalshi events…');desc.className='small';card.append(desc);const canvas=document.createElement('canvas');canvas.style.height='155px';canvas.setAttribute('aria-label',a+' spot reference and verified Kalshi event strike overlays');card.append(canvas);const listings=document.createElement('div');listings.className='small';card.append(listings);grid.append(card);panels[a]={card,desc,canvas,listings};}
- async function refresh(){if(document.hidden)return;status.textContent='Refreshing public event targets…';let ok=0;
- await Promise.all(ASSETS.map(async a=>{const p=panels[a];try{const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),16000);let responses;try{responses=await Promise.all([fetch(API+'/api/crypto-event-targets?asset='+a,{signal:ctrl.signal}),fetch(API+'/api/reference-candles?symbol='+a+'-USD&granularity=60',{signal:ctrl.signal})])}finally{clearTimeout(timeout)}
- if(responses.some(r=>!r.ok))throw Error('API '+responses.map(r=>r.status).join('/'));const [m,c]=await Promise.all(responses.map(r=>r.json()));
+ let busy=false,lastRefresh=0;async function refresh(force=false){if(document.hidden||busy||(!force&&Date.now()-lastRefresh<900000))return;busy=true;lastRefresh=Date.now();status.textContent='Checking cached event targets…';let ok=0;
+ await Promise.all(ASSETS.map(async a=>{const p=panels[a];try{const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),16000);let response;try{response=await fetch(API+'/api/crypto-event-targets?asset='+a,{signal:ctrl.signal})}finally{clearTimeout(timeout)}
+ if(!response.ok)throw Error('Target API '+response.status);const m=await response.json();
  if(m.state==='RATE_LIMITED'){p.desc.textContent='Kalshi rate limit (HTTP 429). Retry later; no claim that events are unavailable.';p.listings.replaceChildren();return}const events=(m.events||[]).filter(e=>Array.isArray(e.strikes_usd)&&e.strikes_usd.length&&e.strikes_usd.every(n=>Number.isFinite(n)&&n>0)&&Date.parse(e.close_time)>Date.now()).slice(0,2);
- p.listings.replaceChildren();if(!events.length){p.desc.textContent='No qualifying future Kalshi event strikes returned. '+(m.partial?'Search is partial.':'')+' No target line invented.';draw(p.canvas,c.candles||[],[]);return}
+ p.listings.replaceChildren();if(!events.length){p.desc.textContent='No qualifying future Kalshi event strikes returned. '+(m.partial?'Search is partial.':'')+' No target line invented.';return}
  for(const e of events){const line=node('p',e.ticker+' · '+e.strike_type+' '+e.strikes_usd.map(fmt).join(' / ')+' · closes '+new Date(e.close_time).toLocaleString()+' · Settlement source: '+(e.settlement_sources||[]).map(x=>x.name).filter(Boolean).join(', ').slice(0,100)+(e.settlement_source_verification==='MISSING_SERIES_SOURCE'?' [UNVERIFIED]':' [Kalshi series metadata]'));p.listings.append(line);const method=node('p','Settlement feed: '+(e.settlement_feed_status||'NOT VERIFIED')+' · '+(e.rules_primary?'Published rule excerpt: '+e.rules_primary:'Market-specific rules not returned'));method.className='small';p.listings.append(method)}
- p.desc.textContent=events.length+' exchange numeric strike record(s) · settlement metadata attached where available · Coinbase spot NOT verified for settlement';draw(p.canvas,c.candles||[],events);ok++;
+ p.desc.textContent=events.length+' exchange numeric strike record(s) · settlement metadata attached where available · Coinbase spot NOT verified for settlement';
+ const candleResp=await fetch(API+'/api/reference-candles?symbol='+a+'-USD&granularity=60',{signal:ctrl.signal});if(candleResp.ok){const candle=await candleResp.json();draw(p.canvas,candle.candles||[],events)}ok++;
  }catch(e){p.desc.textContent='Target data unavailable: '+String(e.message||e);p.listings.replaceChildren();const ctx=p.canvas.getContext('2d');ctx?.clearRect(0,0,p.canvas.width,p.canvas.height)}
  }));
- status.textContent='Updated '+new Date().toLocaleTimeString()+' · '+ok+'/'+ASSETS.length+' assets with event targets · absent targets are not fabricated.';
+ status.textContent='Updated '+new Date().toLocaleTimeString()+' · '+ok+'/'+ASSETS.length+' assets with event targets · 15-minute refresh limit.';busy=false;
  }
- refresh();setInterval(()=>{if(!document.hidden)refresh()},60000);
+ const manual=node('button','Refresh event targets');manual.type='button';manual.addEventListener('click',()=>refresh(true));section.insertBefore(manual,grid);
+ refresh();setInterval(()=>{if(!document.hidden)refresh()},900000);
 });
 })();
