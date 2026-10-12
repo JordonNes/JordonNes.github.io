@@ -1,4 +1,6 @@
 import {serveQuarterHour} from "./quarter-hour.js";
+import {serveQuarterHourTraining} from "./quarter-hour-training.js";
+import {serveQuarterHourFeeMetadata} from "./quarter-hour-fees.js";
 import {serveQuarterHourBook} from "./quarter-hour-book.js";
 import {serveAsOfQuarterHour} from "./quarter-hour-asof.js";
 import {serveQuarterHourOutcomes} from "./quarter-hour-history.js";
@@ -56,6 +58,11 @@ export default {
   // Retired broad market discovery remains unavailable to the active monitor.
   const retiredScopeRoutes=new Set(["/api/focus","/api/kalshi"]);
   if(retiredScopeRoutes.has(url.pathname))return new Response(JSON.stringify({error:"route_out_of_scope",message:"D&G serves only Kalshi 15-minute Up/Down outcome contracts.",use:"/api/quarter-hour"}),{status:410,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+  if(url.pathname==="/api/quarter-hour-training"||url.pathname==="/api/quarter-hour-fees"){
+   const response=url.pathname==="/api/quarter-hour-training"?await serveQuarterHourTraining(request):await serveQuarterHourFeeMetadata(request);
+   const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");
+   return new Response(response.body,{status:response.status,headers});
+  }
   if(url.pathname==="/api/quarter-hour-book"){const answer=await serveQuarterHourBook(request);const h=new Headers(answer.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(answer.body,{status:answer.status,headers:h})}
   if(url.pathname==="/api/quarter-hour-asof"){const response=await serveAsOfQuarterHour(request);const h=new Headers(response.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(response.body,{status:response.status,headers:h})}
   if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
