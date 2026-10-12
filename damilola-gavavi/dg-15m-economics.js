@@ -5,9 +5,10 @@
 (function(root,factory){const api=factory();if(typeof module==="object"&&module.exports)module.exports=api;else root.DG15mEconomics=api})(typeof globalThis!=="undefined"?globalThis:this,function(){"use strict";
 const good=x=>typeof x==="number"&&Number.isFinite(x);
 const money=x=>Math.ceil((x-1e-12)*100)/100;
-function fee({price,quantity=1,multiplier,feeType="quadratic",liquidity="taker"}={}){
+function fee({price,quantity=1,multiplier,makerMultiplier=null,feeType="quadratic",liquidity="taker"}={}){
  if(!good(price)||price<=0||price>=1||!Number.isInteger(quantity)||quantity<1||!good(multiplier)||multiplier<0||feeType!=="quadratic"||!["taker","maker"].includes(liquidity))return null;
- return money((liquidity==="taker"?.07:.0175)*multiplier*quantity*price*(1-price));
+ if(liquidity==="maker"&&(!good(makerMultiplier)||makerMultiplier<0))return null;
+ return money((liquidity==="taker"?.07*multiplier:.0175*makerMultiplier)*quantity*price*(1-price));
 }
 function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbability=null,probabilityVerified=false,feeMultiplier=null,feeType="quadratic",seriesFeeVerified=false,accountCapital=null,riskFraction=.02,bookVerified=false,visibleYes=0,visibleNo=0,quoteTimestamp=null}={}){
  const both=[["yes",yesAsk,yesBid,yesProbability,visibleYes],["no",noAsk,noBid,good(yesProbability)?1-yesProbability:null,visibleNo]];
