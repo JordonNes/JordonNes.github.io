@@ -2,7 +2,7 @@
 Updated 2026-10-12
 
 ## Active universe (mandatory)
-Damilola and Gavavi **currently** evaluate **Kalshi binary outcome contracts that belong to confirmed 15-minute Up/Down series only**. Hourly, daily, weekly and Perps are separate product workspaces planned for next week, not part of the present GAM signal universe.
+Damilola and Gavavi **currently** evaluate **Kalshi binary outcome contracts that belong to confirmed 15-minute Up/Down series only**. Hourly, daily and weekly are separate product workspaces planned for later this evening; Perps remains scheduled for next week, not part of the present GAM signal universe.
 
 Allowed research series are vetted candidates, not guaranteed currently active listings:
 - Crypto: KXBTC15M, KXETH15M, KXSOL15M, KXXRP15M, KXHYPE15M
@@ -13,9 +13,9 @@ Every series and individual market must be confirmed from Kalshi before showing 
 
 ## Market workspace separation (implemented)
 - `gavavi-live.html`: the active **15-minute GAM**, with separate commodity, crypto and FX filters; commodities are the default focus.
-- `hourly.html`: planned hourly market research, not live.
-- `daily.html`: planned daily market research, not live.
-- `weekly.html`: planned weekly market research, not live.
+- `hourly.html`: hourly research planned for later this evening, not live.
+- `daily.html`: daily research planned for later this evening, not live.
+- `weekly.html`: weekly research planned for later this evening, not live.
 - `perps.html`: planned perpetual futures research, not live.
 - `gavavi-perps-legacy.html`: preserved prior Perps code for archival research only, not trading signals.
 - The Worker `/api/quarter-hour-batch` allows documented candidate series across all three 15-minute categories but rejects requests larger than eight ticker IDs. Candidate series are verified by response, not assumed active.
