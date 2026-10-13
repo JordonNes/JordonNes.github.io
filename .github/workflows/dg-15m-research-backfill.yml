@@ -106,8 +106,19 @@ jobs:
             exit 0
           fi
           git commit -m "Research: refresh verified Kalshi 15m quote/outcome evidence"
-          git pull --rebase origin master
-          git push origin HEAD:master
+          for attempt in {1..6}; do
+            git fetch origin master
+            git rebase origin/master
+            if git push origin HEAD:master; then
+              exit 0
+            fi
+            if [[ "$attempt" -lt 6 ]]; then
+              echo "::warning::master advanced during historical publication; retrying push ($attempt/6)"
+              sleep "$((attempt * 2))"
+            fi
+          done
+          echo "::error::Could not publish historical evidence after six concurrent-push retries."
+          exit 1
 
       - name: Surface source failure after persisting diagnostics
         if: ${{ steps.collection.outputs.success_count == '0' }}
