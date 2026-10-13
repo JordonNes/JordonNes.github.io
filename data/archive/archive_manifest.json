@@ -2,16 +2,16 @@
   "archive_branch": "lsi-archive",
   "archive_files": {
     "context_history": {
-      "bytes": 16158444,
+      "bytes": 16376644,
       "files": 1,
-      "max_file_bytes": 16158444,
-      "records": 12446
+      "max_file_bytes": 16376644,
+      "records": 12613
     },
     "evaluation_state_history": {
-      "bytes": 1523425063,
+      "bytes": 1536704099,
       "files": 64,
       "max_file_bytes": 28682221,
-      "records": 205012
+      "records": 206285
     },
     "evaluation_state_history_legacy": {
       "bytes": 79685259,
@@ -20,16 +20,16 @@
       "records": 34135
     },
     "event_history": {
-      "bytes": 8082701,
+      "bytes": 8253627,
       "files": 1,
-      "max_file_bytes": 8082701,
-      "records": 8974
+      "max_file_bytes": 8253627,
+      "records": 9157
     },
     "market_history": {
-      "bytes": 1351054323,
+      "bytes": 1351061354,
       "files": 160,
       "max_file_bytes": 16977489,
-      "records": 1190344
+      "records": 1190350
     },
     "prediction_history": {
       "bytes": 175273,
@@ -38,10 +38,10 @@
       "records": 77
     },
     "publication_history": {
-      "bytes": 3658943212,
+      "bytes": 3696345942,
       "files": 64,
       "max_file_bytes": 94252385,
-      "records": 45264
+      "records": 46480
     },
     "publication_history_legacy": {
       "bytes": 99924802,
@@ -50,35 +50,35 @@
       "records": 2456
     },
     "result_history": {
-      "bytes": 14657596,
+      "bytes": 14970935,
       "files": 1,
-      "max_file_bytes": 14657596,
-      "records": 17596
+      "max_file_bytes": 14970935,
+      "records": 17971
     },
     "settlement_history": {
-      "bytes": 26344461,
+      "bytes": 26757987,
       "files": 1,
-      "max_file_bytes": 26344461,
-      "records": 279
+      "max_file_bytes": 26757987,
+      "records": 281
     }
   },
   "counts": {
-    "context_history": 12446,
-    "evaluation_state_history": 205012,
+    "context_history": 12613,
+    "evaluation_state_history": 206285,
     "evaluation_state_history_legacy": 34135,
-    "event_history": 8974,
-    "market_history": 1190344,
+    "event_history": 9157,
+    "market_history": 1190350,
     "prediction_history": 77,
-    "publication_history": 45264,
+    "publication_history": 46480,
     "publication_history_legacy": 2456,
-    "result_history": 17596,
-    "settlement_history": 279
+    "result_history": 17971,
+    "settlement_history": 281
   },
   "entity_counts": {
     "books": 34,
-    "events": 854,
+    "events": 872,
     "markets": 218,
-    "participants": 6199
+    "participants": 6202
   },
   "evaluation_state_sharding": {
     "hash_buckets": 32,
@@ -86,27 +86,27 @@
     "legacy_file": "evaluation_state_history.jsonl remains read-only historical data",
     "reason": "Preserve immutable evaluation history without allowing one archive file to exceed GitHub limits."
   },
-  "generated_at_utc": "2026-10-13T03:29:34.281978+00:00",
+  "generated_at_utc": "2026-10-13T07:46:00.183197+00:00",
   "market_sharding": {
     "hash_buckets": 32,
     "layout": "market_history/YYYY-MM/<dataset>-<00..31>.jsonl",
     "reason": "Keep high-volume immutable history below repository file-size limits."
   },
   "new_records": {
-    "context_registry": 11,
-    "evaluation_state": 2770,
-    "event_inventory": 226,
+    "context_registry": 10,
+    "evaluation_state": 1273,
+    "event_inventory": 183,
     "lsi_market": 0,
     "oddspapi_market": 0,
     "prediction_registry": 0,
     "prediction_source": 0,
-    "propline_intelligence": 10231,
-    "qc_prop_board": 1046,
-    "results": 43,
-    "rotowire_context": 11,
-    "settlement_aliases": 0,
+    "propline_intelligence": 6,
+    "qc_prop_board": 1216,
+    "results": 375,
+    "rotowire_context": 10,
+    "settlement_aliases": 1,
     "settlement_status": 1,
-    "weather_history": 92
+    "weather_history": 147
   },
   "phase": "MEMORY_ONLY",
   "publication_state_sharding": {
@@ -116,5 +116,5 @@
     "reason": "Preserve immutable publication snapshots without allowing one archive file to exceed GitHub limits."
   },
   "schema_version": "LSI-ARCHIVE-MANIFEST-1",
-  "source_commit": "f0968229c703ae3981fd95a16336db7b8d6bcbbe"
+  "source_commit": "09392892a31d93850d2f93101e932c0ea4fa351c"
 }
