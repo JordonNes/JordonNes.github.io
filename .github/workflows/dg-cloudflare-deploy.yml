@@ -49,6 +49,9 @@ jobs:
           const td=await check("/api/twelvedata-reference?symbol=EUR%2FUSD");
           if(td.status!==403 && td.status!==503 && td.status!==200)throw Error("Unexpected Twelve Data response "+td.status);
           if(td.status===403&&td.body.state!=="DISPLAY_LICENSE_NOT_VERIFIED")throw Error("Unexpected Twelve Data access denial");
+          const taapi=await check("/api/taapi-status");
+          if(taapi.status!==200||!Array.isArray(taapi.body.feeds)||taapi.body.feeds.length!==6||typeof taapi.body.kv_configured!=="boolean")throw Error("TAAPI audit route unavailable or invalid schema");
+          console.log(JSON.stringify({taapi_audit_route:true,last_taapi_run:taapi.body.last_run?.state||"unverified",r2_configured:taapi.body.r2_configured}));
           const retired=await check("/api/kalshi");
           if(retired.status!==410||retired.body.error!=="route_out_of_scope")throw Error("Retired route inadvertently reenabled");
           console.log(JSON.stringify({quarter_hour:batch.body.kind,shared_kv:true,kraken_status:kraken.status,kraken_state:kraken.body.state,twelvedata_status:td.status,twelvedata_state:td.body.state,retired_route:retired.status}));
