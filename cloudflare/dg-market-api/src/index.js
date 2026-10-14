@@ -497,7 +497,29 @@ export default {
     const raw=await res.json();
     if(!Array.isArray(raw))throw Error("invalid_candle_payload");
     const candles=raw.filter(x=>Array.isArray(x)&&x.length>=6&&x.every(Number.isFinite)).map(x=>({time:x[0],low:x[1],high:x[2],open:x[3],close:x[4],volume:x[5]})).sort((a,b)=>a.time-b.time);
-    const body=JSON.stringify({source:"Coinbase Exchange public candles",instrument:"SPOT REFERENCE — NOT KALSHI PERPS",symbol:sym,granularity_seconds:gran,retrieved_at_utc:new Date().toISOString(),candles});
+    // Diagnostics are metadata only; preserve existing candles and GAM response compatibility.
+    const timestamps=candles.map(x=>x.time);
+    const unique=new Set(timestamps);
+    const duplicate_count=timestamps.length-unique.size;
+    const last_complete_start=Math.floor(Date.now()/1000/gran)*gran-gran;
+    const completed=candles.filter(x=>x.time<=last_complete_start);
+    let missing_intervals=0;
+    for(let i=1;i<completed.length;i++){
+      const delta=completed[i].time-completed[i-1].time;
+      if(delta>gran)missing_intervals+=Math.max(0,Math.floor(delta/gran)-1);
+    }
+    const invalid_ohlc=candles.filter(x=>x.time<=0||x.low>x.high||x.open<x.low||x.open>x.high||x.close<x.low||x.close>x.high||x.volume<0).length;
+    const last=completed.at(-1)||null;
+    const quality={
+      source_is_settlement_oracle:false,
+      complete_candles:completed.length,latest_completed_candle_utc:last?new Date(last.time*1000).toISOString():null,
+      latest_complete_age_seconds:last?Math.max(0,Math.floor(Date.now()/1000)-last.time-gran):null,
+      missing_intervals,duplicate_count,invalid_ohlc,
+      current_incomplete_count:candles.length-completed.length,
+      usable_for_research:completed.length>0&&duplicate_count===0&&invalid_ohlc===0,
+      note:"Exchange candles can have genuine no-trade gaps. Do not interpolate missing timestamps or treat a current forming candle as historical ground truth."
+    };
+    const body=JSON.stringify({source:"Coinbase Exchange public candles",instrument:"SPOT REFERENCE — NOT KALSHI PERPS",symbol:sym,granularity_seconds:gran,retrieved_at_utc:new Date().toISOString(),candles,quality});
     const out=new Response(body,{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}});
     ctx.waitUntil(cache.put(key,out.clone()));
     return out;
