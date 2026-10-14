@@ -61,6 +61,14 @@ export async function ingestTaapiRsi(env, scheduledAt=Date.now()){
       // TAAPI exchange-data candles are NOT Kalshi contract settlements or oracle data.
       observations
     }));
+    // Optional durable mirror when an R2 bucket is provisioned and bound as DG_RESEARCH_R2.
+    // Never export API keys. This is a full, deduplicated daily snapshot, not a trade signal.
+    if(env.DG_RESEARCH_R2){
+      await env.DG_RESEARCH_R2.put("indicators/taapi/rsi/v1/"+s.asset+"/"+s.timeframe+"/period14/"+day+".json",
+        JSON.stringify({source:"TAAPI v2",indicator:"rsi",period:14,exchange:"binance",symbol:s.symbol,
+          asset:s.asset,timeframe:s.timeframe,day,observations}),
+        {httpMetadata:{contentType:"application/json"}});
+    }
     saved+=rows.length;
   }
   await env.DG_ARCHIVE.put(root+":status",JSON.stringify({
