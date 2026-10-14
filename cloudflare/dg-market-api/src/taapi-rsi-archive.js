@@ -1,12 +1,12 @@
 // TAAPI RSI research ingestion: separate from Kalshi outcome, orderbook and GAM paths.
 // Only scheduled invocation. No public endpoint and no trading actions.
 const SERIES = [
-  { asset:"BTC",symbol:"BTC/USDT",timeframe:"1m" },
-  { asset:"ETH",symbol:"ETH/USDT",timeframe:"1m" },
-  { asset:"SOL",symbol:"SOL/USDT",timeframe:"1m" },
-  { asset:"BTC",symbol:"BTC/USDT",timeframe:"15m" },
-  { asset:"ETH",symbol:"ETH/USDT",timeframe:"15m" },
-  { asset:"SOL",symbol:"SOL/USDT",timeframe:"15m" }
+  { asset:"BTC",symbol:"BTCUSDT",timeframe:"1m" },
+  { asset:"ETH",symbol:"ETHUSDT",timeframe:"1m" },
+  { asset:"SOL",symbol:"SOLUSDT",timeframe:"1m" },
+  { asset:"BTC",symbol:"BTCUSDT",timeframe:"15m" },
+  { asset:"ETH",symbol:"ETHUSDT",timeframe:"15m" },
+  { asset:"SOL",symbol:"SOLUSDT",timeframe:"15m" }
 ];
 const PREFIX="taapi:rsi:v1";
 function keyFor(s){return [PREFIX,s.asset,s.timeframe,"p14"].join(":")}
