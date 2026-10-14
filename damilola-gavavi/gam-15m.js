@@ -15,9 +15,16 @@ const MARKETS=[
  ["KXEURUSD15M","EUR/USD","€","FX"],["KXGBPUSD15M","GBP/USD","£","FX"],
  ["KXUSDJPY15M","USD/JPY","¥","FX"],["KXAUDUSD15M","AUD/USD","A$","FX"],["KXUSDCAD15M","USD/CAD","C$","FX"]
 ].map(([ticker,name,symbol,group])=>({ticker,name,symbol,group}));
+const MARKET_SLUGS={
+ KXGOLD15M:"gold-15minute",KXSILVER15M:"silver-15minute",KXWTI15M:"wti-15minute",KXCOPPER15M:"copper-15minute",
+ KXNATGAS15M:"natural-gas-15minute",KXPALLADIUM15M:"palladium-15minute",KXPLATINUM15M:"platinum-15minute",
+ KXBTC15M:"bitcoin-price-up-down",KXETH15M:"eth-15m-price-up-down",KXSOL15M:"solana-15-minutes",KXXRP15M:"xrp-15-minute",
+ KXDOGE15M:"dogecoin-15-minute",KXBNB15M:"bnb-15-minute",KXHYPE15M:"hype-15-min",KXNEAR15M:"near-15m",KXZEC15M:"zcash-15min",
+ KXEURUSD15M:"15minute-eurusd",KXGBPUSD15M:"15minute-gbpusd",KXUSDJPY15M:"fifteenmin-usdjpy",KXAUDUSD15M:"15minute-audusd",KXUSDCAD15M:"15minute-usdcad"
+};
 const $=x=>document.getElementById(x),quotes=new Map(),refreshing={active:false,started:0},tabCounts={All:MARKETS.length,Commodities:7,Crypto:9,FX:5};
 let activeTab="All",query="",lastRefresh=null,lastFailure=null,nextAllowedFetch=0,pollTimer=null;
-const money=n=>typeof n==="number"&&Number.isFinite(n)?"$"+n.toLocaleString("en-US",{maximumFractionDigits:n<10?5:2}):"—";
+const money=n=>typeof n==="number"&&Number.isFinite(n)?"$"+n.toLocaleString("en-US",{maximumFractionDigits:n<1?8:n<10?5:n<100?3:2}):"—";
 const cents=n=>typeof n==="number"&&Number.isFinite(n)&&n>=0&&n<=1?(n*100).toFixed(+(n*100%1!==0))+"¢":"—";
 const timeLeft=date=>{const left=Math.floor((Date.parse(date)-Date.now())/1000);if(!Number.isFinite(left)||left<=0)return "Closing";return Math.floor(left/60)+":"+String(left%60).padStart(2,"0")};
 const hasQuote=(q,side)=>typeof q?.[side]==="number"&&q[side]>0&&q[side]<1;
@@ -50,14 +57,14 @@ function makeCard(def){
  if(ok){clock.dataset.closes=record.market.close_time;clock.setAttribute("aria-label","Time until market close")}
  details.append(strike,clock);
  const sides=el("div","sides");
- const binaryLabel=ok&&record.market.yes_maps_to_up!==true;
+ const binaryLabel=ok&&record.market.yes_maps_to_up===false;
  for(const [side,price] of [["up",ok?record.up:null],["down",ok?record.down:null]]){
   const b=el("div","side "+side+(hasQuote({[side]:price},side)?"":" noquote"));
   const title=el("span","",binaryLabel?(side==="up"?"YES":"NO"):(side==="up"?"Up":"Down"));
   const cost=el("span","quote",cents(price));b.append(title,cost);sides.append(b);
  }
  const bottom=el("div","bottom"),detail=el("span","",ok?"Observed market quote":"Quote unavailable"),link=el("a","","Kalshi ↗");
- link.href=SOURCES[def.group];link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","View "+def.name+" 15-minute markets on Kalshi");
+ link.href=ok&&MARKET_SLUGS[def.ticker]?("https://kalshi.com/markets/"+def.ticker.toLowerCase()+"/"+MARKET_SLUGS[def.ticker]+"/"+encodeURIComponent(record.market.ticker.toLowerCase())):SOURCES[def.group];link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","View "+def.name+" 15-minute markets on Kalshi");
  bottom.append(detail,link);item.append(top,details,sides,bottom);
  if(!ok&&record?.state==="RATE_LIMITED")detail.textContent="Source rate-limited";
  else if(!ok&&record?.state==="STALE_QUOTE")detail.textContent="Awaiting fresh quote";
@@ -73,7 +80,7 @@ function draw(){
  const observed=MARKETS.filter(x=>quotes.get(x.ticker)?.state==="OBSERVED").length;
  $("observedCount").textContent=observed+" / "+MARKETS.length;
  $("visibleCount").textContent=filtered.length+" markets";
- const state=refreshing.active?"Checking exchange quotes…":lastFailure&&observed===0?"Exchange data temporarily unavailable":observed?"Market snapshots received":"Awaiting market data";
+ const state=refreshing.active?"Checking exchange quotes…":nextAllowedFetch>Date.now()?"Kalshi rate limit — retrying later":lastFailure&&observed===0?"Exchange data temporarily unavailable":observed?"Market snapshots received":"Awaiting market data";
  $("feedState").textContent=state;
  $("feedDot").classList.toggle("ok",observed>0&&!refreshing.active);
  $("updated").textContent=lastRefresh?"Last check "+new Date(lastRefresh).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"Updates pending";
@@ -127,7 +134,7 @@ function tick(){
 }
 document.querySelectorAll("[data-group]").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.group)));
 $("search").addEventListener("input",e=>{query=String(e.target.value||"").trim().toLowerCase();draw()});
-$("refresh").addEventListener("click",()=>{nextAllowedFetch=Math.min(nextAllowedFetch,Date.now());reload(true)});
+$("refresh").addEventListener("click",()=>reload(true));
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()-(lastRefresh||0)>70000)reload()});
 setInterval(tick,1000);draw();reload();
 })();
