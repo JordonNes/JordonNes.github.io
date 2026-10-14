@@ -127,10 +127,14 @@ async function reload(manual=false){
 }
 function tick(){
  for(const x of document.querySelectorAll("[data-closes]"))x.textContent=timeLeft(x.dataset.closes);
- if(MARKETS.some(x=>{const r=quotes.get(x.ticker);return r?.state==="OBSERVED"&&Date.parse(r.market?.close_time||"")<=Date.now()})){
-  for(const x of MARKETS){const r=quotes.get(x.ticker);if(r?.state==="OBSERVED"&&Date.parse(r.market.close_time)<=Date.now())quotes.set(x.ticker,{state:"NO_OPEN_CONTRACT",market:null})}
-  draw();if(!refreshing.active&&Date.now()>=nextAllowedFetch)reload();
+ let changed=false,closed=false;
+ for(const x of MARKETS){
+  const r=quotes.get(x.ticker);if(r?.state!=="OBSERVED")continue;
+  if(Date.parse(r.market?.close_time||"")<=Date.now()){quotes.set(x.ticker,{state:"NO_OPEN_CONTRACT",market:null});changed=true;closed=true}
+  else if(Date.now()-(r.observed||0)>90000){quotes.set(x.ticker,{state:"STALE_QUOTE",market:null});changed=true}
  }
+ if(changed)draw();
+ if(closed&&!refreshing.active&&Date.now()>=nextAllowedFetch)reload();
 }
 document.querySelectorAll("[data-group]").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.group)));
 $("search").addEventListener("input",e=>{query=String(e.target.value||"").trim().toLowerCase();draw()});
