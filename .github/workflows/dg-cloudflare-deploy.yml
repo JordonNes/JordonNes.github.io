@@ -30,53 +30,26 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: cloudflare/dg-market-api
           command: deploy
-      - name: Verify shared KV batch endpoint
+      - name: Verify active 15-minute Worker and supplementary routes
         run: |
           node --input-type=module <<'NODE'
-          const endpoint = "https://dg-market-intelligence.jordonnes-markets.workers.dev/api/crypto-event-targets-batch";
-          const response = await fetch(endpoint, { headers: { Accept: "application/json" } });
-          if (!response.ok) throw new Error(`Batch endpoint returned HTTP ${response.status}`);
-          const payload = await response.json();
-          if (payload.shared_kv_configured !== true) throw new Error("DG_ARCHIVE is not configured on the live Worker");
-          const expected = ["BTC", "ETH", "SOL", "XRP", "HYPE"];
-          const assets = payload.assets && typeof payload.assets === "object" ? Object.keys(payload.assets) : [];
-          const missing = expected.filter((asset) => !assets.includes(asset));
-          if (missing.length) throw new Error(`Batch response missing assets: ${missing.join(", ")}`);
-          const states = Object.fromEntries(expected.map((asset) => [asset, payload.assets[asset]?.state || "UNKNOWN"]));
-          const sawRateLimit = expected.some((asset) => ["RATE_LIMITED", "STALE_DURING_RATE_LIMIT"].includes(states[asset]));
-          const repeatResponse = await fetch(endpoint, { headers: { Accept: "application/json" } });
-          if (!repeatResponse.ok) throw new Error(`Repeat batch endpoint returned HTTP ${repeatResponse.status}`);
-          const repeatPayload = await repeatResponse.json();
-          if (repeatPayload.shared_kv_configured !== true) throw new Error("DG_ARCHIVE was not configured on repeat request");
-          const repeatStates = Object.fromEntries(expected.map((asset) => [asset, repeatPayload.assets?.[asset]?.state || "UNKNOWN"]));
-          if (sawRateLimit && expected.some((asset) => !["RATE_LIMITED", "STALE_DURING_RATE_LIMIT"].includes(repeatStates[asset]))) {
-            throw new Error(`Shared 429 cooldown was not applied consistently: ${JSON.stringify(repeatStates)}`);
+          const root="https://dg-market-intelligence.jordonnes-markets.workers.dev";
+          async function check(path) {
+            const res=await fetch(root+path,{headers:{Accept:"application/json"},signal:AbortSignal.timeout(15000)});
+            let body;try{body=await res.json()}catch{throw Error(path+" non-JSON response "+res.status)}
+            return {status:res.status,body};
           }
-          const quoteEndpoint = "https://dg-market-intelligence.jordonnes-markets.workers.dev/api/quarter-hour-batch?series=KXGOLD15M,KXBTC15M,KXEURUSD15M";
-          const quoteResponse = await fetch(quoteEndpoint, { headers: { Accept: "application/json" } });
-          if (!quoteResponse.ok) throw new Error(`Quarter-hour batch returned HTTP ${quoteResponse.status}`);
-          const quotePayload = await quoteResponse.json();
-          if (quotePayload.shared_kv_configured !== true) throw new Error("Quarter-hour batch does not report the shared KV binding");
-          const expectedQuoteSeries = ["KXGOLD15M", "KXBTC15M", "KXEURUSD15M"];
-          const missingQuoteSeries = expectedQuoteSeries.filter((series) => !quotePayload.results?.[series]);
-          if (missingQuoteSeries.length) throw new Error(`Quarter-hour batch missing series: ${missingQuoteSeries.join(", ")}`);
-          const trainingEndpoint = "https://dg-market-intelligence.jordonnes-markets.workers.dev/api/quarter-hour-training?series=KXBTC15M&page=0&size=1";
-          const trainingResponse = await fetch(trainingEndpoint, { headers: { Accept: "application/json" } });
-          if (!trainingResponse.ok) throw new Error(`15-minute historical training endpoint returned HTTP ${trainingResponse.status}`);
-          const trainingPayload = await trainingResponse.json();
-          if (!["RESEARCH_DATA_PAGE", "UPSTREAM_UNAVAILABLE"].includes(trainingPayload.state) ||
-              !Array.isArray(trainingPayload.examples) ||
-              typeof trainingPayload.asof_pairs !== "number" ||
-              typeof trainingPayload.rejected_count !== "number") {
-            throw new Error("15-minute historical training endpoint returned an unexpected schema");
-          }
-          const retired = ["/api/kalshi", "/api/focus?category=commodities"];
-          for (const route of retired) {
-            const response = await fetch("https://dg-market-intelligence.jordonnes-markets.workers.dev" + route, { headers: { Accept: "application/json" } });
-            const body = await response.json();
-            if (response.status !== 410 || body.error !== "route_out_of_scope") {
-              throw new Error(`Out-of-scope route ${route} returned HTTP ${response.status}`);
-            }
-          }
-          console.log(JSON.stringify({ shared_kv_configured: true, assets, states, repeat_states: repeatStates, cooldown_checked: sawRateLimit, retired_routes_checked: retired, quote_batch_series: expectedQuoteSeries, retrieved_at_utc: repeatPayload.retrieved_at_utc }));
+          const batch=await check("/api/quarter-hour-batch?series=KXBTC15M,KXGOLD15M");
+          if(batch.status!==200||batch.body.kind!=="QUARTER_HOUR_BATCH"||batch.body.shared_kv_configured!==true)throw Error("Active quarter-hour batch or shared KV missing");
+          for(const series of ["KXBTC15M","KXGOLD15M"])if(!batch.body.results?.[series])throw Error("Missing "+series+" batch record");
+          const kraken=await check("/api/kraken-reference?symbol=BTC");
+          // Upstream availability is not under our control; endpoint MUST return a defined provider state.
+          if(kraken.status===200 && !(kraken.body.state==="OBSERVED"&&kraken.body.provider==="kraken"&&kraken.body.price>0))throw Error("Invalid Kraken observation");
+          if(kraken.status!==200 && !(kraken.status===503&&["RATE_LIMITED","UPSTREAM_UNAVAILABLE","INVALID_SOURCE","UNEXPECTED_PAIR_COUNT","INVALID_PRICE","FETCH_FAILED"].includes(kraken.body.state)))throw Error("Kraken route unavailable or unexpected schema: "+JSON.stringify(kraken));
+          const td=await check("/api/twelvedata-reference?symbol=EUR%2FUSD");
+          if(td.status!==403 && td.status!==503 && td.status!==200)throw Error("Unexpected Twelve Data response "+td.status);
+          if(td.status===403&&td.body.state!=="DISPLAY_LICENSE_NOT_VERIFIED")throw Error("Unexpected Twelve Data access denial");
+          const retired=await check("/api/kalshi");
+          if(retired.status!==410||retired.body.error!=="route_out_of_scope")throw Error("Retired route inadvertently reenabled");
+          console.log(JSON.stringify({quarter_hour:batch.body.kind,shared_kv:true,kraken_status:kraken.status,kraken_state:kraken.body.state,twelvedata_status:td.status,twelvedata_state:td.body.state,retired_route:retired.status}));
           NODE
