@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-10-14T07:53:32.264930+00:00",
+  "checked_at_utc": "2026-10-14T09:33:07.148585+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -10,7 +10,7 @@
   "credit_cycle_started_at": "2026-09-26T02:05:39.509678+00:00",
   "league_last_success_utc": {
     "NFL": "2026-10-14T06:04:09.543913+00:00",
-    "NCAA_Football": "2026-10-13T01:17:20.292869+00:00",
+    "NCAA_Football": "2026-10-14T09:33:07.148585+00:00",
     "MLB": "2026-10-13T02:57:55.789592+00:00",
     "NHL": "2026-10-12T11:55:04.178440+00:00",
     "WNBA": "2026-10-14T01:28:41.255171+00:00",
@@ -24,16 +24,33 @@
     "min_refresh_minutes": 180,
     "max_sport_calls_per_run": 3
   },
-  "status": "NO_REFRESH_DUE",
-  "credits_estimated_this_cycle": 249,
-  "provider_reported_remaining": null,
-  "requested_leagues": [],
-  "refreshed_leagues": [],
-  "authoritative_complete_leagues": [],
-  "diagnostics": {},
+  "status": "OK",
+  "credits_estimated_this_cycle": 252,
+  "provider_reported_remaining": 58,
+  "requested_leagues": [
+    "NCAA_Football"
+  ],
+  "refreshed_leagues": [
+    "NCAA_Football"
+  ],
+  "authoritative_complete_leagues": [
+    "NCAA_Football"
+  ],
+  "diagnostics": {
+    "NCAA_Football": {
+      "status": "OK",
+      "raw_rows": 3034,
+      "normalized_side_offers": 2778,
+      "result_has_more": false,
+      "result_truncated": false,
+      "result_truncated_hint": null,
+      "result_degraded": null,
+      "provider_reported_remaining": 58
+    }
+  },
   "errors": {},
-  "raw_side_offers": 0,
-  "consolidated_exact_poms": 0,
-  "market_history_rows_added": 0,
+  "raw_side_offers": 2778,
+  "consolidated_exact_poms": 2778,
+  "market_history_rows_added": 2778,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }
