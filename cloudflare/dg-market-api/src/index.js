@@ -1,3 +1,4 @@
+import {ingestTaapiRsi} from "./taapi-rsi-archive.js";
 import {serveQuarterHour} from "./quarter-hour.js";
 import {serveQuarterHourTraining} from "./quarter-hour-training.js";
 import {serveQuarterHourFeeMetadata} from "./quarter-hour-fees.js";
@@ -511,5 +512,5 @@ export default {
    return new Response(JSON.stringify({source:"Coinbase public spot",retrieved_at_utc:new Date().toISOString(),symbol:data.data?.base+"-"+data.data?.currency,amount:data.data?.amount??null,quote_currency:data.data?.currency??null}),{headers:{...JSON_HEADERS,...cors}});
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
- async scheduled(){return undefined /* Legacy Perps archive deliberately paused. */}
+ async scheduled(event,env,ctx){ctx.waitUntil(ingestTaapiRsi(env,event.scheduledTime));}
 };
