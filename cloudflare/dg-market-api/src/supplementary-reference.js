@@ -12,6 +12,7 @@ export async function serveSupplementaryMarketData(request,env,ctx){
  if(!provider)return json({error:"unsupported_provider"},404);
  const symbol=String(u.searchParams.get("symbol")||"").toUpperCase();
  if(provider==="kraken"&&!KRAKEN_PAIRS[symbol]||provider==="twelvedata"&&!FX_PAIRS.has(symbol))return json({error:"unsupported_symbol"},400);
+ if(provider==="twelvedata"&&env.DG_TWELVEDATA_PUBLIC_DISPLAY_ALLOWED!=="true")return json({state:"DISPLAY_LICENSE_NOT_VERIFIED",provider,message:"Twelve Data free-plan feed disabled for public endpoint until display permission is verified."},403);
  if(provider==="twelvedata"&&!env.TWELVEDATA_API_KEY)return json({state:"NOT_CONFIGURED",provider,secret_name:"TWELVEDATA_API_KEY"},503);
  const ttl=provider==="kraken"?25:900;
  const key=new Request(u.origin+u.pathname+"?symbol="+encodeURIComponent(symbol)+"&v=1");
@@ -30,7 +31,7 @@ export async function serveSupplementaryMarketData(request,env,ctx){
  try{
   const r=await fetch(upstream,{signal:ctl.signal,headers:{Accept:"application/json"},cf:{cacheEverything:false}});
   if(r.status===429){
-   if(kv)ctx.waitUntil(kv.put("dg:td:cooldown:v1",new Date(Date.now()+60000).toISOString(),{expirationTtl:90}));
+   if(kv&&provider==="twelvedata")ctx.waitUntil(kv.put("dg:td:cooldown:v1",new Date(Date.now()+60000).toISOString(),{expirationTtl:90}));
    return json({state:"RATE_LIMITED",provider},503);
   }
   if(!r.ok)return json({state:"UPSTREAM_UNAVAILABLE",provider,http_status:r.status},503);
