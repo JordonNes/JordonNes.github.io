@@ -7,7 +7,7 @@ workers_dev = true
 ALLOWED_ORIGIN = "https://jordonnes.github.io"
 
 [triggers]
-crons = [] # Paused legacy Perps archive; 15-minute outcome research uses GitHub Actions, not Worker cron
+crons = ["*/15 * * * *"] # TAAPI RSI research only; legacy Perps archive remains paused
 
 # Shared KV for archive persistence, event-target metadata, and global 429 cooldown.
 [[kv_namespaces]]
