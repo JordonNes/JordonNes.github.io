@@ -67,7 +67,7 @@ export default {
   if(url.pathname==="/api/quarter-hour-asof"){const response=await serveAsOfQuarterHour(request);const h=new Headers(response.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(response.body,{status:response.status,headers:h})}
   if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
   if(url.pathname==="/api/quarter-hour-batch"){
-   const allowed=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M"]);
+   const allowed=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M","KXDOGE15M","KXBNB15M","KXNEAR15M","KXZEC15M","KXGBPUSD15M","KXUSDJPY15M","KXAUDUSD15M","KXUSDCAD15M"]);
    const requested=[...new Set((url.searchParams.get("series")||"").split(",").map(x=>x.trim().toUpperCase()).filter(Boolean))];
    if(!requested.length||requested.length>8||requested.some(x=>!allowed.has(x)))return new Response(JSON.stringify({error:"invalid_15_minute_series",supported:[...allowed]}),{status:400,headers:{...JSON_HEADERS,...cors}});
    const results=await Promise.all(requested.map(async series=>{
