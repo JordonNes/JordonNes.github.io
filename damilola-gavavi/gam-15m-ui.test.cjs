@@ -1,0 +1,12 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const page=fs.readFileSync('damilola-gavavi/index.html','utf8'),mirror=fs.readFileSync('damilola-gavavi/gavavi-live.html','utf8');
+const script=fs.readFileSync('damilola-gavavi/gam-15m.js','utf8'),css=fs.readFileSync('damilola-gavavi/gam-15m.css','utf8');
+const api=fs.readFileSync('cloudflare/dg-market-api/src/quarter-hour.js','utf8');
+const worker=fs.readFileSync('cloudflare/dg-market-api/src/index.js','utf8');
+const marketChunk=script.split('const MARKETS=[')[1]?.split('].map(')[0]||'';
+const series=[...marketChunk.matchAll(/\["(KX[A-Z0-9]+15M)"/g)].map(x=>x[1]);
+test('the D&G homepage and the GAM link are identical single-purpose dashboards',()=>{assert.equal(page,mirror);assert.match(page,/gam-15m\.js/);assert.match(page,/gam-15m\.css/);assert.doesNotMatch(page,/qhAcademy|qhCollectTraining|id="perpsPane"|Data Laboratory|Hourly · Planned/)});
+test('all 21 documented 15-minute binary market series are present exactly once',()=>{assert.equal(series.length,21);assert.equal(new Set(series).size,21);assert.equal(series.filter(x=>/KX(?:GOLD|SILVER|WTI|COPPER|NATGAS|PALLADIUM|PLATINUM)15M/.test(x)).length,7);assert.equal(series.filter(x=>/KX(?:BTC|ETH|SOL|XRP|DOGE|BNB|HYPE|NEAR|ZEC)15M/.test(x)).length,9);assert.equal(series.filter(x=>/KX(?:EURUSD|GBPUSD|USDJPY|AUDUSD|USDCAD)15M/.test(x)).length,5)});
+test('every advertised series has a matching quote gateway allowlist',()=>{for(const s of series){assert(api.includes('"'+s+'"'),s+" missing in per-series route");assert(worker.includes('"'+s+'"'),s+" missing in batch route")}});
+test('only actual exchange quotes can populate cards; no synthetic fallback',()=>{assert.match(script,/kind==="QUARTER_HOUR_BINARY_OUTCOME"/);assert.match(script,/quote_observed_at_utc/);assert.match(script,/15-minute/);assert.match(script,/Quote unavailable/);assert.doesNotMatch(script,/Math\.random|fakeQuote|generatedPrice/);assert.match(script,/rate limit/i)});
+test('responsive mobile cards and verified Kalshi market URLs exist',()=>{assert.match(css,/@media\(max-width:660px\)/);assert.match(css,/\.cards\{grid-template-columns:1fr/);for(const s of series)assert(script.includes(s+':"'),s+" has no reviewed Kalshi URL slug")});
