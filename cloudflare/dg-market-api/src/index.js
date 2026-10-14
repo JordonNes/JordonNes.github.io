@@ -58,6 +58,7 @@ export default {
   const url=new URL(request.url);
   // Read-only ingestion heartbeat: no secrets, manual triggering, or upstream API calls.
   if(url.pathname==="/api/taapi-status"){
+   const lastRun=env.DG_ARCHIVE?await env.DG_ARCHIVE.get("taapi:rsi:v1:last-run","json").catch(()=>null):null;
    const keys=["BTC:1m","ETH:1m","SOL:1m","BTC:15m","ETH:15m","SOL:15m"];
    const feeds=await Promise.all(keys.map(async name=>{
     const [asset,timeframe]=name.split(":");
@@ -65,7 +66,7 @@ export default {
     const status=env.DG_ARCHIVE?await env.DG_ARCHIVE.get(key,"json").catch(()=>null):null;
     return {asset,timeframe,state:status?.state||"not_yet_verified",last_success_utc:status?.at_utc||null,received:status?.received??0,earliest_utc:status?.earliest_utc||null,latest_utc:status?.latest_utc||null};
    }));
-   return new Response(JSON.stringify({source:"TAAPI RSI research archive",secret_configured:!!env.TAAPI_API_KEY,kv_configured:!!env.DG_ARCHIVE,checked_at_utc:new Date().toISOString(),feeds}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+   return new Response(JSON.stringify({source:"TAAPI RSI research archive",secret_configured:!!env.TAAPI_API_KEY,kv_configured:!!env.DG_ARCHIVE,r2_configured:!!env.DG_RESEARCH_R2,last_run:lastRun,checked_at_utc:new Date().toISOString(),feeds}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   }
   // D&G intentionally serves only Kalshi quarter-hour outcome contracts.
   // Retired broad market discovery remains unavailable to the active monitor.
