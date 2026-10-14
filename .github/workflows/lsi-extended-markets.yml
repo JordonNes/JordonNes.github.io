@@ -69,12 +69,26 @@ jobs:
           rm -f "$generated_market"
           git reset HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
           git checkout HEAD -- data/market_history.csv data/propline_intelligence.json 2>/dev/null || true
-          for p in data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json data/lsi_signal_state.json data/lsi_correlation_graph.json data/lsi_correlation_graph.js data/lsi_spectrum_view.json data/lsi_spectrum_view.js data/market_history_delta.csv data/market_history_delta_2.csv data/current_game_moneylines.json data/propline_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/ljpc_coverage.json data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/history_coverage.json data/lsi_readiness.json data/suggestion_ledger.json; do
+          for p in data/qc_prop_board.json data/prediction_registry.json data/prediction_registry.js data/lsi_evaluation_state.json data/lsi_signal_state.json data/lsi_correlation_graph.json data/lsi_correlation_graph.js data/lsi_spectrum_view.json data/lsi_spectrum_view.js data/market_history_delta.csv data/market_history_delta_2.csv data/current_game_moneylines.json data/propline_state.json data/lsi_player_registry.json data/lsi_spectrum_cache.json data/ljpc_coverage.json data/future_market_board.json data/future_market_board.js data/game_winner_evidence.json data/history_coverage.json data/lsi_readiness.json; do
             if [ -e "$p" ]; then git add -- "$p"; fi
           done
           git add -A -- 'data/market_history_delta*.csv'
+          # Suggestion history is a durable research archive, not an active site asset.
+          # Prevent >100 MiB ledger blobs from rejecting the entire refresh.
+          git reset -- data/suggestion_ledger.json 2>/dev/null || true
           python scripts/lsi_publish_dp_payloads.py
           git add -- data/dp
+          # Never attempt to publish files exceeding GitHub's 100 MiB blob limit.
+          python - <<'PY'
+          import subprocess
+          from pathlib import Path
+          staged=subprocess.check_output(['git','diff','--cached','--name-only','-z']).decode().split('\0')
+          for name in filter(None,staged):
+              path=Path(name)
+              if path.is_file() and path.stat().st_size>=95*1024*1024:
+                  print(f'::warning::Skipping oversized publication artifact: {name} ({path.stat().st_size} bytes)')
+                  subprocess.run(['git','reset','--',name],check=True)
+          PY
           if git diff --cached --quiet; then
             echo 'No extended market changes.'
             exit 0
