@@ -1,3 +1,4 @@
+import {migrateTaapiKvToR2} from "./taapi-kv-r2-migration.js";
 import {serveSupplementaryMarketData} from "./supplementary-reference.js";
 import {ingestTaapiRsi} from "./taapi-rsi-archive.js";
 import {serveQuarterHour} from "./quarter-hour.js";
@@ -59,6 +60,7 @@ export default {
   // Read-only ingestion heartbeat: no secrets, manual triggering, or upstream API calls.
   if(url.pathname==="/api/taapi-status"){
    const lastRun=env.DG_ARCHIVE?await env.DG_ARCHIVE.get("taapi:rsi:v1:last-run","json").catch(()=>null):null;
+   const migration=env.DG_ARCHIVE?await env.DG_ARCHIVE.get("taapi:rsi:v1:migration","json").catch(()=>null):null;
    const keys=["BTC:1m","ETH:1m","SOL:1m","BTC:15m","ETH:15m","SOL:15m"];
    const feeds=await Promise.all(keys.map(async name=>{
     const [asset,timeframe]=name.split(":");
@@ -66,7 +68,7 @@ export default {
     const status=env.DG_ARCHIVE?await env.DG_ARCHIVE.get(key,"json").catch(()=>null):null;
     return {asset,timeframe,state:status?.state||"not_yet_verified",last_success_utc:status?.at_utc||null,received:status?.received??0,earliest_utc:status?.earliest_utc||null,latest_utc:status?.latest_utc||null};
    }));
-   return new Response(JSON.stringify({source:"TAAPI RSI research archive",secret_configured:!!env.TAAPI_API_KEY,kv_configured:!!env.DG_ARCHIVE,r2_configured:!!env.DG_RESEARCH_R2,last_run:lastRun,checked_at_utc:new Date().toISOString(),feeds}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+   return new Response(JSON.stringify({source:"TAAPI RSI research archive",secret_configured:!!env.TAAPI_API_KEY,kv_configured:!!env.DG_ARCHIVE,r2_configured:!!env.DG_RESEARCH_R2,last_run:lastRun,migration,checked_at_utc:new Date().toISOString(),feeds}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   }
   // D&G intentionally serves only Kalshi quarter-hour outcome contracts.
   // Retired broad market discovery remains unavailable to the active monitor.
@@ -552,5 +554,16 @@ export default {
    return new Response(JSON.stringify({source:"Coinbase public spot",retrieved_at_utc:new Date().toISOString(),symbol:data.data?.base+"-"+data.data?.currency,amount:data.data?.amount??null,quote_currency:data.data?.currency??null}),{headers:{...JSON_HEADERS,...cors}});
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
- async scheduled(event,env,ctx){ctx.waitUntil(ingestTaapiRsi(env,event.scheduledTime));}
+ async scheduled(event,env,ctx){
+  ctx.waitUntil((async()=>{
+   // Always preserve the normal RSI collection schedule. Migration runs after
+   // collection to avoid concurrent writes to the same R2 daily partition.
+   try{await ingestTaapiRsi(env,event.scheduledTime)}catch(e){
+    if(env.DG_ARCHIVE)await env.DG_ARCHIVE.put("taapi:rsi:v1:scheduled-error",JSON.stringify({at_utc:new Date().toISOString(),reason:String(e?.message||e)}));
+   }
+   try{await migrateTaapiKvToR2(env)}catch(e){
+    if(env.DG_ARCHIVE)await env.DG_ARCHIVE.put("taapi:rsi:v1:migration-error",JSON.stringify({at_utc:new Date().toISOString(),reason:String(e?.message||e)}));
+   }
+  })());
+ }
 };
