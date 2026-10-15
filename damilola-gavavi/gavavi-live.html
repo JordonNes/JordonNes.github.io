@@ -3,12 +3,12 @@
 <meta name="theme-color" content="#ffffff"><meta name="description" content="Damilola & Gavavi Action Monitor — all supported Kalshi 15-minute Up/Down markets in one clean read-only market dashboard.">
 <title>D&G | 15-Minute Action Monitor</title>
 <link rel="stylesheet" href="gam-15m.css?v=20261014-kraken1">
-</head><body>
+<style>.market-clock{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";white-space:nowrap;color:#334d40;font-size:12px;font-weight:700;letter-spacing:.025em;padding:6px 0}</style></head><body>
 <header class="sitehead"><div class="headinner">
 <a class="brand" href="./" aria-label="Damilola and Gavavi Home">
 <span class="monogram" aria-hidden="true">D·G</span>
 <span class="brandtype"><strong>Damilola &amp; Gavavi</strong><small>Market intelligence</small></span></a>
-<div class="headright"><span class="status"><i class="live-dot" id="feedDot"></i><span id="feedState">Connecting to Kalshi…</span></span><button id="refresh" class="refresh" type="button" aria-label="Refresh Kalshi market quotes">↻ Refresh</button></div>
+<div class="headright"><span class="status"><i class="live-dot" id="feedDot"></i><span id="feedState">Connecting to Kalshi…</span></span><time id="marketClock" class="market-clock" aria-label="Current Pacific time" title="Current Pacific time">--:--:--</time><button id="refresh" class="refresh" type="button" aria-label="Refresh Kalshi market quotes">↻ Refresh</button></div>
 </div></header>
 <main class="container">
 <section class="hero">
@@ -26,4 +26,7 @@
 <footer class="foot"><span>Read-only market monitor. Quotes are indicative, delayed by retrieval, and not executable offers. No orders are placed here.</span><span><a href="https://kalshi.com/category/commodities/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Kalshi Commodities ↗</a> · <a href="https://kalshi.com/category/crypto/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Crypto ↗</a> · <a href="https://kalshi.com/category/financials/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">FX ↗</a></span></footer>
 </main>
 <script defer src="gam-15m.js?v=20261014-kraken1"></script>
+<script>
+(()=>{const el=document.getElementById("marketClock");const fmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});function tick(){el.textContent=fmt.format(new Date());}tick();setInterval(tick,1000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});})();
+</script>
 </body></html>
