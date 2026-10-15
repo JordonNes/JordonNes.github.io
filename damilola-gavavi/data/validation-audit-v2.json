@@ -1,0 +1,290 @@
+{
+  "checked_at_utc": "2026-10-15T01:15:40.288Z",
+  "method": "Frozen final 100 contract holdout; prior resolved labels only; no live qualification",
+  "limitation": "Legacy datasets omit actual settlement timestamps; historical training availability uses close time. Exact label availability and prospective holdout remain unverified.",
+  "go_eligible": false,
+  "reports": [
+    {
+      "series": "KXBTC15M",
+      "source_rows": 225,
+      "audit": {
+        "state": "NO_STATISTICALLY_SUPPORTED_EDGE",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXBTC15M",
+        "source_samples": 225,
+        "evaluable_forecasts": 165,
+        "earliest_asof_utc": "2026-10-10T20:35:00.000Z",
+        "latest_asof_utc": "2026-10-14T17:05:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 65,
+        "holdout_samples": 100,
+        "selected_model": "market",
+        "tuning_brier": {
+          "market": 0.15344,
+          "bucket": 0.154425,
+          "shrink85": 0.160296
+        },
+        "holdout_brier": {
+          "market": 0.187059,
+          "bucket": 0.185161,
+          "shrink85": 0.188216
+        },
+        "holdout_improvement_brier": 0,
+        "improvement_95pct_block_interval": [
+          0,
+          0
+        ],
+        "block_size": 8,
+        "selection_policy": "model chosen on prior resolved tuning only; no selecting best test model; holdout never trains or selects",
+        "warning": "Even a historical positive locked holdout is not sufficient for live signals: forward tests, fees, liquidity, regime consistency, and risk policy remain unverified."
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    },
+    {
+      "series": "KXCOPPER15M",
+      "source_rows": 15,
+      "audit": {
+        "state": "INSUFFICIENT_EVALUATIONS",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXCOPPER15M",
+        "source_samples": 15,
+        "evaluable_forecasts": 0,
+        "earliest_asof_utc": "2026-10-13T19:20:00.000Z",
+        "latest_asof_utc": "2026-10-14T00:05:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 0,
+        "holdout_samples": 0
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    },
+    {
+      "series": "KXEURUSD15M",
+      "source_rows": 15,
+      "audit": {
+        "state": "INSUFFICIENT_EVALUATIONS",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXEURUSD15M",
+        "source_samples": 15,
+        "evaluable_forecasts": 0,
+        "earliest_asof_utc": "2026-10-13T17:05:00.000Z",
+        "latest_asof_utc": "2026-10-13T20:35:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 0,
+        "holdout_samples": 0
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    },
+    {
+      "series": "KXGOLD15M",
+      "source_rows": 455,
+      "audit": {
+        "state": "NO_STATISTICALLY_SUPPORTED_EDGE",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXGOLD15M",
+        "source_samples": 455,
+        "evaluable_forecasts": 395,
+        "earliest_asof_utc": "2026-10-05T20:35:00.000Z",
+        "latest_asof_utc": "2026-10-13T02:05:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 295,
+        "holdout_samples": 100,
+        "selected_model": "market",
+        "tuning_brier": {
+          "market": 0.187761,
+          "bucket": 0.189658,
+          "shrink85": 0.189944
+        },
+        "holdout_brier": {
+          "market": 0.182505,
+          "bucket": 0.177538,
+          "shrink85": 0.186926
+        },
+        "holdout_improvement_brier": 0,
+        "improvement_95pct_block_interval": [
+          0,
+          0
+        ],
+        "block_size": 8,
+        "selection_policy": "model chosen on prior resolved tuning only; no selecting best test model; holdout never trains or selects",
+        "warning": "Even a historical positive locked holdout is not sufficient for live signals: forward tests, fees, liquidity, regime consistency, and risk policy remain unverified."
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    },
+    {
+      "series": "KXHYPE15M",
+      "source_rows": 30,
+      "audit": {
+        "state": "INSUFFICIENT_EVALUATIONS",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXHYPE15M",
+        "source_samples": 30,
+        "evaluable_forecasts": 0,
+        "earliest_asof_utc": "2026-10-13T03:05:00.000Z",
+        "latest_asof_utc": "2026-10-14T21:35:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 0,
+        "holdout_samples": 0
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    },
+    {
+      "series": "KXNATGAS15M",
+      "source_rows": 15,
+      "audit": {
+        "state": "INSUFFICIENT_EVALUATIONS",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXNATGAS15M",
+        "source_samples": 15,
+        "evaluable_forecasts": 0,
+        "earliest_asof_utc": "2026-10-12T19:50:00.000Z",
+        "latest_asof_utc": "2026-10-12T23:20:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 0,
+        "holdout_samples": 0
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    },
+    {
+      "series": "KXSILVER15M",
+      "source_rows": 210,
+      "audit": {
+        "state": "NO_STATISTICALLY_SUPPORTED_EDGE",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXSILVER15M",
+        "source_samples": 210,
+        "evaluable_forecasts": 150,
+        "earliest_asof_utc": "2026-10-08T18:05:00.000Z",
+        "latest_asof_utc": "2026-10-15T00:20:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 50,
+        "holdout_samples": 100,
+        "selected_model": "market",
+        "tuning_brier": {
+          "market": 0.20781,
+          "bucket": 0.21444,
+          "shrink85": 0.207871
+        },
+        "holdout_brier": {
+          "market": 0.203679,
+          "bucket": 0.206653,
+          "shrink85": 0.204136
+        },
+        "holdout_improvement_brier": 0,
+        "improvement_95pct_block_interval": [
+          0,
+          0
+        ],
+        "block_size": 8,
+        "selection_policy": "model chosen on prior resolved tuning only; no selecting best test model; holdout never trains or selects",
+        "warning": "Even a historical positive locked holdout is not sufficient for live signals: forward tests, fees, liquidity, regime consistency, and risk policy remain unverified."
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    },
+    {
+      "series": "KXSOL15M",
+      "source_rows": 15,
+      "audit": {
+        "state": "INSUFFICIENT_EVALUATIONS",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXSOL15M",
+        "source_samples": 15,
+        "evaluable_forecasts": 0,
+        "earliest_asof_utc": "2026-10-14T02:35:00.000Z",
+        "latest_asof_utc": "2026-10-14T06:05:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 0,
+        "holdout_samples": 0
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    },
+    {
+      "series": "KXWTI15M",
+      "source_rows": 15,
+      "audit": {
+        "state": "INSUFFICIENT_EVALUATIONS",
+        "go_eligible": false,
+        "signal_certified": false,
+        "holdout_pass": false,
+        "method": "predeclared market benchmark vs bucket/shrinkage, tuned before locked chronological 100-window holdout",
+        "training_minimum": 60,
+        "holdout_required": 100,
+        "audit_version": 2,
+        "holdout_training_frozen": true,
+        "series_ticker": "KXWTI15M",
+        "source_samples": 15,
+        "evaluable_forecasts": 0,
+        "earliest_asof_utc": "2026-10-14T08:20:00.000Z",
+        "latest_asof_utc": "2026-10-14T11:50:00.000Z",
+        "historical_source_observations_only": true,
+        "tuning_samples": 0,
+        "holdout_samples": 0
+      },
+      "settlement_timestamp_rows": 0,
+      "executable_historical_fills": false
+    }
+  ]
+}
