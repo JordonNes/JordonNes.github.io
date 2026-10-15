@@ -72,7 +72,7 @@ export default {
   // Retired broad market discovery remains unavailable to the active monitor.
   const retiredScopeRoutes=new Set(["/api/focus","/api/kalshi"]);
   if(retiredScopeRoutes.has(url.pathname))return new Response(JSON.stringify({error:"route_out_of_scope",message:"D&G serves only Kalshi 15-minute Up/Down outcome contracts.",use:"/api/quarter-hour"}),{status:410,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
-  if(url.pathname==="/api/kraken-reference"||url.pathname==="/api/twelvedata-reference"){
+  if(url.pathname==="/api/kraken-reference"||url.pathname==="/api/kraken-candles"||url.pathname==="/api/twelvedata-reference"){
    const response=await serveSupplementaryMarketData(request,env,ctx);
    const h=new Headers(response.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
    return new Response(response.body,{status:response.status,headers:h});
