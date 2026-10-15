@@ -17,17 +17,17 @@ function audit(records,options={}){
  // Freeze all candidate training before the first of the final 100 contracts.
  const holdoutStart=rows.length>=200?rows[rows.length-100].at:Infinity;
  for(let i=warmup;i<rows.length;i++){
-  const now=rows[i],prior=rows.slice(0,i).filter(x=>x.series_ticker===series&&x.close<=Math.min(now.at,holdoutStart)&&x.at<holdoutStart);
+  const now=rows[i],prior=rows.slice(0,i).filter(x=>x.series_ticker===series&&x.settled<=Math.min(now.at,holdoutStart)&&x.at<holdoutStart);
   if(prior.length<warmup)continue;
   const bucket=p=>Math.min(9,Math.floor(p*10));
   const similar=prior.filter(x=>bucket(x.p)===bucket(now.p));
   const pBucket=clip(similar.length?(similar.reduce((n,x)=>n+x.yes,0)+24*now.p)/(similar.length+24):now.p);
   const pShrink=clip(.85*now.p+.075);
-  forecasts.push({ticker:now.ticker,predicted_at:now.at,settled_at:now.close,label:now.yes,
+  forecasts.push({ticker:now.ticker,predicted_at:now.at,settled_at:now.settled,label:now.yes,
    candidates:{market:now.p,bucket:pBucket,shrink85:pShrink},calibration_bin_count:similar.length});
  }
  const n=forecasts.length;
- const common={...base,audit_version:2,holdout_training_frozen:true,series_ticker:series,source_samples:rows.length,evaluable_forecasts:n,earliest_asof_utc:new Date(rows[0].at).toISOString(),latest_asof_utc:new Date(rows.at(-1).at).toISOString(),historical_source_observations_only:true};
+ const common={...base,audit_version:2,holdout_training_frozen:true,series_ticker:series,source_samples:rows.length,verified_settlement_timestamp_rows:rows.filter(x=>x.settlement_verified).length,label_availability_fully_verified:rows.every(x=>x.settlement_verified),evaluable_forecasts:n,earliest_asof_utc:new Date(rows[0].at).toISOString(),latest_asof_utc:new Date(rows.at(-1).at).toISOString(),historical_source_observations_only:true};
  if(n<140)return {...common,state:"INSUFFICIENT_EVALUATIONS",tuning_samples:Math.max(0,n-100),holdout_samples:Math.min(n,100)};
  // 100 strictly held out; all tuning labels must have settled before first holdout prediction
  const cutoffIndex=n-100,firstHoldoutAt=forecasts[cutoffIndex].predicted_at;

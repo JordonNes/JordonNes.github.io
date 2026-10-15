@@ -13,9 +13,10 @@ function normalize(records){
   const bidAskAvailable=a.yes_bid_dollars!=null&&a.yes_ask_dollars!=null&&finite(bid)&&finite(ask)&&bid>0&&ask<1&&bid<=ask;
   const traded=Number(a.yes_reference_price_dollars),tradeAvailable=a.reference_price_kind==="TRADE_CLOSE"&&a.yes_reference_price_dollars!=null&&finite(traded)&&traded>0&&traded<1;
   const probability=bidAskAvailable?(bid+ask)/2:tradeAvailable?traded:null;
+  const settled=Date.parse(a.market_settled_at_utc||a.outcome_label?.market_settled_at_utc||a.market_close_utc||a.outcome_label?.market_close_utc||""),settlementVerified=!!(a.market_settled_at_utc||a.outcome_label?.market_settled_at_utc);
   const label=String(a.result??a.outcome_label?.result??"").toLowerCase(),id=String(a.ticker||"");
-  if(!id||seen.has(id)||!finite(probability)||!finite(cutoff)||!finite(close)||!finite(at)||at>cutoff||cutoff>=close||at<cutoff-120000||!["yes","no"].includes(label))continue;
-  seen.add(id);result.push({ticker:id,series_ticker:String(a.series_ticker||""),at,close,p:probability,yes:label==="yes"?1:0,bid:bidAskAvailable?bid:null,ask:bidAskAvailable?ask:null,reference_kind:bidAskAvailable?"BID_ASK_MIDPOINT":"TRADE_CLOSE"});
+  if(!id||seen.has(id)||!finite(probability)||!finite(cutoff)||!finite(close)||!finite(at)||!finite(settled)||settled<close||settled>Date.now()||close>Date.now()||at>cutoff||cutoff>=close||at<cutoff-120000||!["yes","no"].includes(label))continue;
+  seen.add(id);result.push({ticker:id,series_ticker:String(a.series_ticker||""),at,close,settled,settlement_verified:settlementVerified,p:probability,yes:label==="yes"?1:0,bid:bidAskAvailable?bid:null,ask:bidAskAvailable?ask:null,reference_kind:bidAskAvailable?"BID_ASK_MIDPOINT":"TRADE_CLOSE"});
  }
  return result.sort((x,y)=>x.at-y.at||x.ticker.localeCompare(y.ticker));
 }
@@ -24,7 +25,7 @@ function evaluate(records,{minimumTraining=60,minimumTesting=100,bins=10}={}){
  const rows=normalize(records),samples=[],drop=Array.isArray(records)?records.length-rows.length:0;
  if(!Number.isInteger(minimumTraining)||minimumTraining<30||!Number.isInteger(minimumTesting)||minimumTesting<100)throw Error("unsafe validation thresholds");
  for(let i=minimumTraining;i<rows.length;i++){
-  const now=rows[i],prior=rows.slice(0,i).filter(x=>x.close<=now.at&&x.series_ticker===now.series_ticker);
+  const now=rows[i],prior=rows.slice(0,i).filter(x=>x.settled<=now.at&&x.series_ticker===now.series_ticker);
   if(prior.length<minimumTraining)continue;
   const bucket=Math.min(bins-1,Math.floor(now.p*bins)),similar=prior.filter(x=>Math.min(bins-1,Math.floor(x.p*bins))===bucket);
   const alpha=24;const avg=similar.length?(similar.reduce((n,x)=>n+x.yes,0)+alpha*now.p)/(similar.length+alpha):now.p;
@@ -38,7 +39,7 @@ function evaluate(records,{minimumTraining=60,minimumTesting=100,bins=10}={}){
 function forecastResearch(records,{seriesTicker,yesBid,yesAsk,atUtc}={}){
  const now=Date.parse(atUtc||""),bid=Number(yesBid),ask=Number(yesAsk);
  if(!seriesTicker||!Number.isFinite(now)||!finite(bid)||!finite(ask)||bid<=0||ask>=1||bid>ask)return {state:"INVALID_LIVE_INPUT",go_eligible:false,probability:null};
- const marketProbability=(bid+ask)/2,rows=normalize(records).filter(r=>r.series_ticker===seriesTicker&&r.close<=now);
+ const marketProbability=(bid+ask)/2,rows=normalize(records).filter(r=>r.series_ticker===seriesTicker&&r.settled<=now);
  const eligibleIds=new Set(rows.map(r=>r.ticker));
  const eligibleRaw=Array.isArray(records)?records.filter(r=>eligibleIds.has(String(r.ticker||""))):[];
  const report=evaluate(eligibleRaw);if(report.state!=="RESEARCH_EVALUATED")return {state:"INSUFFICIENT_INDEPENDENT_TESTS",go_eligible:false,probability:null,market_probability:marketProbability,tests:report.walk_forward_tests};
