@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-10-15T01:22:55.488428+00:00",
+  "checked_at_utc": "2026-10-15T11:52:24.772969+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -9,7 +9,7 @@
   ],
   "credit_cycle_started_at": "2026-09-26T02:05:39.509678+00:00",
   "league_last_success_utc": {
-    "NFL": "2026-10-14T06:04:09.543913+00:00",
+    "NFL": "2026-10-15T11:52:24.772969+00:00",
     "NCAA_Football": "2026-10-14T22:36:56.321752+00:00",
     "MLB": "2026-10-14T18:07:16.845997+00:00",
     "NHL": "2026-10-15T01:22:55.488428+00:00",
@@ -25,38 +25,44 @@
     "max_sport_calls_per_run": 3
   },
   "status": "OK",
-  "credits_estimated_this_cycle": 276,
-  "provider_reported_remaining": 34,
+  "credits_estimated_this_cycle": 279,
+  "provider_reported_remaining": 22,
   "requested_leagues": [
+    "NFL",
     "NCAA_Football",
+    "MLB",
     "NBA",
     "NHL"
   ],
   "refreshed_leagues": [
-    "NHL"
+    "NFL"
   ],
   "authoritative_complete_leagues": [
-    "NHL"
+    "NFL"
   ],
   "diagnostics": {
-    "NHL": {
+    "NFL": {
       "status": "OK",
-      "raw_rows": 1020,
-      "normalized_side_offers": 2040,
+      "raw_rows": 2525,
+      "normalized_side_offers": 3285,
       "result_has_more": false,
       "result_truncated": false,
       "result_truncated_hint": null,
       "result_degraded": null,
-      "provider_reported_remaining": 34
+      "provider_reported_remaining": 22
+    },
+    "MLB": {
+      "status": "SKIPPED_PROVIDER_CREDIT_RESERVE",
+      "reported_remaining": 22
     },
     "NBA": {
       "status": "SKIPPED_PROVIDER_CREDIT_RESERVE",
-      "reported_remaining": 34
+      "reported_remaining": 22
     }
   },
   "errors": {},
-  "raw_side_offers": 2040,
-  "consolidated_exact_poms": 2040,
-  "market_history_rows_added": 2040,
+  "raw_side_offers": 3285,
+  "consolidated_exact_poms": 2549,
+  "market_history_rows_added": 3285,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }
