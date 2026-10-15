@@ -8,9 +8,29 @@ const FX_PAIRS=new Set(["EUR/USD","GBP/USD","USD/JPY","AUD/USD","USD/CAD"]);
 const num=v=>v===null||v===undefined||v===""?null:Number.isFinite(Number(v))?Number(v):null;
 const json=(data,status=200,ttl=0)=>new Response(JSON.stringify(data),{status,headers:{...HEAD,"Cache-Control":ttl?"public, max-age="+ttl:"no-store"}});
 export async function serveSupplementaryMarketData(request,env,ctx){
- const u=new URL(request.url),provider=u.pathname==="/api/kraken-reference"?"kraken":u.pathname==="/api/twelvedata-reference"?"twelvedata":null;
+ const u=new URL(request.url),provider=["/api/kraken-reference","/api/kraken-candles"].includes(u.pathname)?"kraken":u.pathname==="/api/twelvedata-reference"?"twelvedata":null;
  if(!provider)return json({error:"unsupported_provider"},404);
  const symbol=String(u.searchParams.get("symbol")||"").toUpperCase();
+ if(u.pathname==="/api/kraken-candles"){
+  if(!KRAKEN_PAIRS[symbol])return json({error:"unsupported_symbol"},400);
+  const cache=caches.default,key=new Request(u.origin+"/api/kraken-candles?symbol="+symbol+"&v=1");
+  const hit=await cache.match(key);if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),"X-DG-Cache":"HIT"}});
+  const ctl=new AbortController(),timeout=setTimeout(()=>ctl.abort(),7000);
+  try{
+   const r=await fetch("https://api.kraken.com/0/public/OHLC?pair="+encodeURIComponent(KRAKEN_PAIRS[symbol])+"&interval=1",{signal:ctl.signal,headers:{Accept:"application/json"}});
+   if(!r.ok)return json({state:"UPSTREAM_UNAVAILABLE",provider:"kraken",http_status:r.status},503);
+   const raw=await r.json();if(!Array.isArray(raw.error)||raw.error.length||!raw.result)return json({state:"INVALID_SOURCE",provider:"kraken"},503);
+   const pair=Object.keys(raw.result).filter(k=>k!=="last");if(pair.length!==1||!Array.isArray(raw.result[pair[0]]))return json({state:"INVALID_CANDLES",provider:"kraken"},503);
+   const now=Math.floor(Date.now()/1000);
+   const candles=raw.result[pair[0]].map(c=>({time:Number(c[0]),open:num(c[1]),high:num(c[2]),low:num(c[3]),close:num(c[4])}))
+    .filter(c=>Number.isInteger(c.time)&&c.time>now-3600&&c.time+60<=now&&[c.open,c.high,c.low,c.close].every(v=>v!==null&&v>0)&&c.high>=c.low&&c.close<=c.high&&c.close>=c.low)
+    .sort((a,b)=>a.time-b.time).slice(-30);
+   if(candles.length<2)return json({state:"INSUFFICIENT_CANDLES",provider:"kraken"},503);
+   const response=json({state:"OBSERVED",provider:"kraken",instrument:"SPOT_REFERENCE_NOT_KALSHI_SETTLEMENT",symbol,provider_pair:pair[0],granularity_seconds:60,candles,source_timestamp_verified:true,retrieved_at_utc:new Date().toISOString(),no_trading:true},200,60);
+   ctx.waitUntil(cache.put(key,response.clone()));return response;
+  }catch{return json({state:"FETCH_FAILED",provider:"kraken"},503)}finally{clearTimeout(timeout)}
+ }
+
  if(provider==="kraken"&&!KRAKEN_PAIRS[symbol]||provider==="twelvedata"&&!FX_PAIRS.has(symbol))return json({error:"unsupported_symbol"},400);
  if(provider==="twelvedata"&&env.DG_TWELVEDATA_PUBLIC_DISPLAY_ALLOWED!=="true")return json({state:"DISPLAY_LICENSE_NOT_VERIFIED",provider,message:"Twelve Data free-plan feed disabled for public endpoint until display permission is verified."},403);
  if(provider==="twelvedata"&&!env.TWELVEDATA_API_KEY)return json({state:"NOT_CONFIGURED",provider,secret_name:"TWELVEDATA_API_KEY"},503);
