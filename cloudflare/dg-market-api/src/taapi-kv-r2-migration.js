@@ -15,7 +15,7 @@ export async function migrateTaapiKvToR2(env){
   // Incremental key listing; every run traverses until exhaustion, then restarts
   // to pick up newly created daily partitions without deleting old archives.
   let listing;
-  try{listing=await env.DG_ARCHIVE.list({prefix:PREFIX,cursor:previous?.cursor||undefined,limit:100});}
+  try{listing=await env.DG_ARCHIVE.list({prefix:PREFIX,cursor:previous?.cursor||undefined,limit:10});}
   catch(e){return {state:"list_failed",error:String(e?.name||"unknown")};}
   let examined=0,copied=0,verified=0,failed=0,conflicts=0;
   for(const key of listing.keys){
