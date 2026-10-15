@@ -1,3 +1,4 @@
+import {kalshiReadHeaders} from "./kalshi-read-auth.js";
 /* Read-only Kalshi GET coordinator. Coalesce misses, pace requests, and share
  * bounded cooldowns across routes. Never retry a 429 inside the same request. */
 const ORIGIN="https://external-api.kalshi.com/trade-api/v2";
@@ -27,7 +28,8 @@ export async function fetchKalshiPublic(path,env,ttlSeconds=300,timeoutMs=10000)
   await delay(Math.max(0,s.nextAt-Date.now()));
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
   try{
-   const resp=await fetch(ORIGIN+path,{headers:{Accept:"application/json"},signal:controller.signal,cf:{cacheEverything:true,cacheTtlByStatus:{"200-299":Math.max(1,Math.min(3600,ttlSeconds)),"400-599":-1}}});
+   let headers;try{headers=await kalshiReadHeaders(path,env)}catch{return {ok:false,status:503,state:"READ_AUTH_CONFIGURATION_ERROR"}}
+   const resp=await fetch(ORIGIN+path,{method:"GET",headers,signal:controller.signal,cf:{cacheEverything:true,cacheTtlByStatus:{"200-299":Math.max(1,Math.min(3600,ttlSeconds)),"400-599":-1}}});
    s.nextAt=Date.now()+300;
    if(resp.status===429){
     let saved=null;if(kv)try{saved=await kv.get(BACKOFF,"json")}catch{}

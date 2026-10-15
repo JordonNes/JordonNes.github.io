@@ -18,3 +18,18 @@ This is *near-real-time HTTP*, not an always-on WebSocket service. Do not use th
 The Worker uses `ALLOWED_ORIGIN=https://jordonnes.github.io`. This is a browser CORS policy, **not an authentication boundary**, so all output must remain safe for public access.
 
 Free tier is subject to Workers request/CPU limits, provider rate limits, usage restrictions and change. No automated order placement. The market-brief GitHub workflow publishes source-attributed observations and marks forecasts as awaiting validated datasets rather than inventing predictions. Alerts require longitudinal histories and defined statistical trigger criteria before activation.
+
+## Optional authenticated market-data reads
+
+If anonymous Kalshi requests remain throttled after backoff, configure the existing
+Worker's encrypted secrets `KALSHI_API_KEY_ID` and `KALSHI_PRIVATE_KEY` through the
+Cloudflare dashboard. Use the existing Kalshi key's ID and its PEM private key;
+never put either value into source code, chat, browser JavaScript, or logs.
+RSA PKCS#1/PKCS#8 and Ed25519 PKCS#8 are supported. Both secrets are required.
+
+The coordinator signs only GET requests to public market/series/event/history
+routes. It cannot place orders or call portfolio endpoints. Authentication does
+not certify quotes or guarantee that upstream rate limits will disappear.
+`/api/kalshi-status` reports only configuration booleans and backoff state, never
+credential values. After configuring, wait for `retry_at_utc`, then verify an
+actual `/api/quarter-hour?series=KXBTC15M` response before claiming live recovery.

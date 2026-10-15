@@ -68,7 +68,7 @@ export default {
    const kv=env.DG_ARCHIVE;
    const until=kv?cooldownUntil(await kv.get("dg:kalshi:cooldown:v1").catch(()=>null)):0;
    const backoff=kv?await kv.get("dg:kalshi:backoff:v2","json").catch(()=>null):null;
-   return new Response(JSON.stringify({read_only:true,shared_kv_configured:!!kv,cooldown_active:until>Date.now(),retry_at_utc:until>Date.now()?new Date(until).toISOString():null,consecutive_rate_limits:backoff?.count??0,checked_at_utc:new Date().toISOString()}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+   return new Response(JSON.stringify({read_only:true,authenticated_read_configured:!!env.KALSHI_API_KEY_ID&&!!env.KALSHI_PRIVATE_KEY,credential_pair_complete:!!env.KALSHI_API_KEY_ID===!!env.KALSHI_PRIVATE_KEY,shared_kv_configured:!!kv,cooldown_active:until>Date.now(),retry_at_utc:until>Date.now()?new Date(until).toISOString():null,consecutive_rate_limits:backoff?.count??0,checked_at_utc:new Date().toISOString()}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   }
   // Read-only ingestion heartbeat: no secrets, manual triggering, or upstream API calls.
   if(url.pathname==="/api/taapi-status"){

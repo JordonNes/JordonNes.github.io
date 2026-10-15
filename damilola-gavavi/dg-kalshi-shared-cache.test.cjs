@@ -61,3 +61,19 @@ test('actual GAM batch performs one upstream request when Kalshi throttles and k
  global.caches={default:{match:async()=>null,put:async()=>{}}};global.fetch=async()=>{calls++;return new Response('{}',{status:429})};
  try{const r=await worker.fetch(new Request('https://worker/api/quarter-hour-batch?series=KXBTC15M,KXETH15M,KXSOL15M,KXGOLD15M,KXSILVER15M,KXXRP15M'),{DG_ARCHIVE:db},{waitUntil:()=>{}});const p=await r.json();assert.equal(r.status,200);assert.equal(calls,1);assert.equal(Object.keys(p.results).length,6);for(const x of Object.values(p.results)){assert.equal(x.http_status,503);assert.equal(x.payload.state,'RATE_LIMITED');assert(x.payload.retry_at_utc)}}finally{global.fetch=old;global.caches=cache}
 });
+test('optional RSA and Ed25519 authentication signs only the GET path, never the query or an order',async()=>{
+ const {kalshiReadHeaders}=await import('../cloudflare/dg-market-api/src/kalshi-read-auth.js'),c=require('node:crypto');
+ for(const type of ['rsa','ed25519']){
+  const pair=c.generateKeyPairSync(type,type==='rsa'?{modulusLength:2048}:{});
+  for(const format of type==='rsa'?['pkcs1','pkcs8']:['pkcs8']){
+   const env={KALSHI_API_KEY_ID:'fixture-id',KALSHI_PRIVATE_KEY:pair.privateKey.export({type:format,format:'pem'})};
+   const h=await kalshiReadHeaders('/markets?limit=30',env),message=Buffer.from(h['KALSHI-ACCESS-TIMESTAMP']+'GET/trade-api/v2/markets');
+   const options=type==='rsa'?{key:pair.publicKey,padding:c.constants.RSA_PKCS1_PSS_PADDING,saltLength:32}:pair.publicKey;
+   assert(c.verify(type==='rsa'?'sha256':null,message,options,Buffer.from(h['KALSHI-ACCESS-SIGNATURE'],'base64')));
+   assert.equal(h['KALSHI-ACCESS-KEY'],'fixture-id');
+  }
+ }
+ await assert.rejects(()=>kalshiReadHeaders('/portfolio/orders',{}),/READ_PATH/);
+ await assert.rejects(()=>kalshiReadHeaders('/markets',{KALSHI_API_KEY_ID:'missing-private'}),/INCOMPLETE/);
+ assert.deepEqual(await kalshiReadHeaders('/markets',{}),{Accept:'application/json'});
+});
