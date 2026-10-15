@@ -54,7 +54,6 @@ export async function ingestTaapiRsi(env, scheduledAt=Date.now()){
   }
   if(!grouped.size)return audit({state:"empty_history",asset:s.asset,timeframe:s.timeframe});
   let saved=0;
-  let r2Verified=0;
   for(const [day,rows] of grouped){
     const k=root+":"+day;
     const old=await env.DG_ARCHIVE.get(k,"json").catch(()=>null);
@@ -69,23 +68,16 @@ export async function ingestTaapiRsi(env, scheduledAt=Date.now()){
     }));
     // Optional durable mirror when an R2 bucket is provisioned and bound as DG_RESEARCH_R2.
     // Never export API keys. This is a full, deduplicated daily snapshot, not a trade signal.
-    if(env.DG_RESEARCH_R2){
-      const r2Key="indicators/taapi/rsi/v1/"+s.asset+"/"+s.timeframe+"/period14/"+day+".json";
-      await env.DG_RESEARCH_R2.put(r2Key,
-        JSON.stringify({source:"TAAPI v2",indicator:"rsi",period:14,exchange:"binance",symbol:s.symbol,
-          asset:s.asset,timeframe:s.timeframe,day,observations}),
-        {httpMetadata:{contentType:"application/json"}});
-      const head=await env.DG_RESEARCH_R2.head(r2Key);
-      if(!head||!head.size)throw Error("R2_WRITE_NOT_VERIFIED");
-      r2Verified++;
-    }
+    // Archive synchronization happens in the bounded, readback-verified
+    // KV-to-R2 migration stage after ingestion. Avoid competing writes to
+    // the same date partition, and never truncate an existing R2 object.
     saved+=rows.length;
   }
   await env.DG_ARCHIVE.put(root+":status",JSON.stringify({
     state:"ok",at_utc:new Date().toISOString(),days:grouped.size,received:payload.value.length,
-    saved_observations_in_batch:saved,r2_days_verified:r2Verified,earliest_utc:payload.timestamp.length?new Date(Math.min(...payload.timestamp)*1000).toISOString():null,
+    saved_observations_in_batch:saved,r2_days_verified:0,earliest_utc:payload.timestamp.length?new Date(Math.min(...payload.timestamp)*1000).toISOString():null,
     latest_utc:payload.timestamp.length?new Date(Math.max(...payload.timestamp)*1000).toISOString():null,
     note:"Research-only; backfilled historical values cannot be treated as contemporaneously available."
   }));
-  return audit({state:"ok",asset:s.asset,timeframe:s.timeframe,days:grouped.size,observations:saved,r2_days_verified:r2Verified});
+  return audit({state:"ok",asset:s.asset,timeframe:s.timeframe,days:grouped.size,observations:saved,r2_days_verified:0});
 }
