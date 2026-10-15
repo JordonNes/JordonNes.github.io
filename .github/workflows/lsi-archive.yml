@@ -81,7 +81,10 @@ jobs:
           import json
           from pathlib import Path
           root=Path("archive/data/archive")
+          print(f"Archive root: {root}; exists={root.exists()}")
+          print("Archive top-level inventory:", [p.name for p in sorted(root.iterdir())] if root.exists() else [])
           health=json.loads((root/"archive_health.json").read_text(encoding="utf-8"))
+          print("Archive health status:", health.get("status"), "source:", health.get("source_commit"))
           boundary=health["authority_boundary"]
           assert boundary["can_modify_live_predictions"] is False
           assert boundary["can_modify_live_pages"] is False
@@ -97,6 +100,7 @@ jobs:
           market_root=root/"market_history"
           assert market_root.exists(), "market_history directory missing"
           shards=list(market_root.rglob("*.jsonl"))
+          print(f"Market shard count: {len(shards)}")
           assert shards, "market_history has no shards"
           oversize=[str(p) for p in shards if p.stat().st_size >= 90*1024*1024]
           assert not oversize, f"market shard(s) approaching GitHub size limit: {oversize}"

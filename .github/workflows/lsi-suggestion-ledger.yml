@@ -105,9 +105,12 @@ jobs:
         shell: bash
         run: |
           git config user.name 'LEGZ-JINX Publication Ledger'
+          git config advice.skippedCherryPicks false
+          echo "Ledger commit branch=$(git branch --show-current) starting_sha=$(git rev-parse --short HEAD)"
           git config user.email 'actions@users.noreply.github.com'
           for attempt in 1 2 3 4 5; do
             git fetch origin master
+            echo "Ledger attempt ${attempt}: remote=$(git rev-parse --short origin/master) local=$(git rev-parse --short HEAD)"
             if [ "$attempt" -gt 1 ]; then
               git reset --hard origin/master
               node scripts/lsi_snapshot_suggestions.js
@@ -119,8 +122,9 @@ jobs:
               exit 0
             fi
             git commit -m "LSI immutable publication suggestion ledger"
-            if git push origin master; then exit 0; fi
+            if git push origin HEAD:master; then exit 0; fi
             echo "Publication-ledger push race; retrying ${attempt}/5"
             sleep 3
           done
+          echo "::error::Ledger publication exhausted five commit/push attempts; see each attempted remote SHA and GitHub rejection above."
           exit 1
