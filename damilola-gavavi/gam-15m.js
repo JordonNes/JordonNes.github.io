@@ -22,6 +22,7 @@ const MARKET_SLUGS={
  KXDOGE15M:"dogecoin-15-minute",KXBNB15M:"bnb-15-minute",KXHYPE15M:"hype-15-min",KXNEAR15M:"near-15m",KXZEC15M:"zcash-15min",
  KXEURUSD15M:"15minute-eurusd",KXGBPUSD15M:"15minute-gbpusd",KXUSDJPY15M:"fifteenmin-usdjpy",KXAUDUSD15M:"15minute-audusd",KXUSDCAD15M:"15minute-usdcad"
 };
+const krakenCharts=new Map(),krakenSymbols={KXBTC15M:"BTC",KXETH15M:"ETH",KXSOL15M:"SOL",KXXRP15M:"XRP"};
 const $=x=>document.getElementById(x),quotes=new Map(),refreshing={active:false,started:0},tabCounts={All:MARKETS.length,Commodities:7,Crypto:9,FX:5};
 let activeTab="All",query="",lastRefresh=null,lastFailure=null,nextAllowedFetch=0,pollTimer=null;
 const money=n=>typeof n==="number"&&Number.isFinite(n)?"$"+n.toLocaleString("en-US",{maximumFractionDigits:n<1?8:n<10?5:n<100?3:2}):"—";
@@ -45,6 +46,29 @@ function normalized(ticker,raw,record){
   down:Number.isFinite(na)&&na>0&&na<1?na:null};
 }
 const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
+function smallChart(def){
+ const symbol=krakenSymbols[def.ticker];if(!symbol)return null;
+ const wrapper=el("div","reference-chart");
+ const title=el("div","reference-chart-caption","Kraken spot · last 30 completed 1m candles · not Kalshi settlement");
+ wrapper.append(title);
+ const data=krakenCharts.get(symbol);
+ if(!data?.candles?.length){wrapper.append(el("div","reference-chart-empty","Spot chart unavailable"));return wrapper}
+ const vals=data.candles.map(x=>x.close),low=Math.min(...vals),high=Math.max(...vals),range=high-low||1;
+ const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 300 52");svg.setAttribute("preserveAspectRatio","none");svg.setAttribute("role","img");svg.setAttribute("aria-label",symbol+" Kraken spot price over recent completed one-minute candles");
+ const line=document.createElementNS("http://www.w3.org/2000/svg","polyline");
+ line.setAttribute("points",vals.map((v,i)=>(i*300/(vals.length-1)).toFixed(1)+","+(47-(v-low)/range*42).toFixed(1)).join(" "));
+ line.setAttribute("fill","none");line.setAttribute("stroke","currentColor");line.setAttribute("stroke-width","2");line.setAttribute("vector-effect","non-scaling-stroke");svg.append(line);wrapper.append(svg);return wrapper;
+}
+async function loadKrakenCharts(){
+ await Promise.all(Object.values(krakenSymbols).map(async symbol=>{
+  try{const res=await fetch(API+"/api/kraken-candles?symbol="+symbol,{signal:AbortSignal.timeout(10000)});
+   if(!res.ok)return;const body=await res.json();
+   if(body.state==="OBSERVED"&&body.symbol===symbol&&body.instrument==="SPOT_REFERENCE_NOT_KALSHI_SETTLEMENT"&&Array.isArray(body.candles)&&body.candles.length>=2
+    &&body.candles.every(c=>Number.isFinite(c.close)&&c.close>0&&Number.isInteger(c.time)))krakenCharts.set(symbol,body);
+  }catch{}
+ }));
+ draw();
+}
 function makeCard(def){
  const record=quotes.get(def.ticker),ok=record?.state==="OBSERVED"&&record.market&&Date.parse(record.market.close_time)>Date.now()&&Date.now()-record.observed<90000;
  const item=el("article","market");item.setAttribute("aria-label",def.name+" 15-minute market");
@@ -56,6 +80,7 @@ function makeCard(def){
  strike.append(value);const clock=el("div","timer"+(ok&&Date.parse(record.market.close_time)-Date.now()<120000?" urgent":""),ok?timeLeft(record.market.close_time):"15-minute");
  if(ok){clock.dataset.closes=record.market.close_time;clock.setAttribute("aria-label","Time until market close")}
  details.append(strike,clock);
+ const chart=smallChart(def);
  const sides=el("div","sides");
  const binaryLabel=ok&&record.market.yes_maps_to_up===false;
  for(const [side,price] of [["up",ok?record.up:null],["down",ok?record.down:null]]){
@@ -65,7 +90,7 @@ function makeCard(def){
  }
  const bottom=el("div","bottom"),detail=el("span","",ok?"Observed market quote":"Quote unavailable"),link=el("a","","Kalshi ↗");
  link.href=ok&&MARKET_SLUGS[def.ticker]?("https://kalshi.com/markets/"+def.ticker.toLowerCase()+"/"+MARKET_SLUGS[def.ticker]+"/"+encodeURIComponent(record.market.ticker.toLowerCase())):SOURCES[def.group];link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","View "+def.name+" 15-minute markets on Kalshi");
- bottom.append(detail,link);item.append(top,details,sides,bottom);
+ bottom.append(detail,link);item.append(top,details);if(chart)item.append(chart);item.append(sides,bottom);
  if(!ok&&record?.state==="RATE_LIMITED")detail.textContent="Source rate-limited";
  else if(!ok&&record?.state==="STALE_QUOTE")detail.textContent="Awaiting fresh quote";
  else if(!ok&&record?.state==="NO_OPEN_CONTRACT")detail.textContent="No open contract confirmed";
@@ -140,5 +165,5 @@ document.querySelectorAll("[data-group]").forEach(b=>b.addEventListener("click",
 $("search").addEventListener("input",e=>{query=String(e.target.value||"").trim().toLowerCase();draw()});
 $("refresh").addEventListener("click",()=>reload(true));
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()-(lastRefresh||0)>70000)reload()});
-setInterval(tick,1000);draw();reload();
+setInterval(tick,1000);draw();reload();loadKrakenCharts();setInterval(()=>{if(!document.hidden)loadKrakenCharts()},60000);
 })();
