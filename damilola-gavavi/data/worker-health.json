@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-10-15T20:26:29.220Z",
+  "checked_at_utc": "2026-10-15T23:45:09.476Z",
   "source": "Read-only GitHub Actions network requests to deployed D&G Worker",
   "worker_url": "https://dg-market-intelligence.jordonnes-markets.workers.dev",
   "checks": {
@@ -8,37 +8,37 @@
       "state": "QUARTER_HOUR_BATCH",
       "markets": {
         "KXGOLD15M": {
-          "source_http_status": 503,
-          "state": "RATE_LIMITED",
+          "source_http_status": 200,
+          "state": "NO_OPEN_CONTRACTS",
           "open_contracts": 0
         },
         "KXSILVER15M": {
-          "source_http_status": 503,
-          "state": "RATE_LIMITED",
+          "source_http_status": 200,
+          "state": "NO_OPEN_CONTRACTS",
           "open_contracts": 0
         },
         "KXBTC15M": {
-          "source_http_status": 503,
-          "state": "RATE_LIMITED",
-          "open_contracts": 0
+          "source_http_status": 200,
+          "state": "OBSERVATIONAL",
+          "open_contracts": 1
         }
       },
       "shared_kv_configured": true
     },
     "series_fee": {
-      "http_status": 503,
-      "state": "RATE_LIMITED",
-      "effective_fee_verified": false,
+      "http_status": 200,
+      "state": "EFFECTIVE_FEE_METADATA_OBSERVED",
+      "effective_fee_verified": true,
       "event_fee_checked": false
     },
     "historical_training": {
-      "http_status": 503,
-      "state": "UPSTREAM_UNAVAILABLE",
-      "attempted": 0,
-      "asof_pairs": 0,
+      "http_status": 200,
+      "state": "RESEARCH_DATA_PAGE",
+      "attempted": 1,
+      "asof_pairs": 1,
       "source_statuses": [
-        429,
-        429
+        200,
+        200
       ]
     },
     "orderbook": {
