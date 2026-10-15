@@ -46,9 +46,14 @@ jobs:
             if(second.cache!=="HIT")throw Error("Coinbase cache not verified: "+symbol+" "+second.cache);
             console.log(JSON.stringify({cache:second.cache,coinbase_symbol:symbol,price_usd:second.body.price_usd,retrieved_at_utc:second.body.retrieved_at_utc,read_only:true}));
           }
+          const status=await check("/api/kalshi-status");
+          if(status.status!==200||status.body.read_only!==true||typeof status.body.cooldown_active!=="boolean")throw Error("Kalshi diagnostics unavailable");
+          const alias=await check("/api/coinbase-advanced-reference?symbol=BTC");
+          if(alias.status!==200||alias.body.symbol!=="BTC-USD")throw Error("Coinbase shorthand failed");
           const batch=await check("/api/quarter-hour-batch?series=KXBTC15M,KXGOLD15M");
           if(batch.status!==200||batch.body.kind!=="QUARTER_HOUR_BATCH"||batch.body.shared_kv_configured!==true)throw Error("Active quarter-hour batch or shared KV missing");
           for(const series of ["KXBTC15M","KXGOLD15M"])if(!batch.body.results?.[series])throw Error("Missing "+series+" batch record");
+          console.log(JSON.stringify({kalshi_status:status.body,kalshi_markets:Object.fromEntries(Object.entries(batch.body.results).map(([k,v])=>[k,{http_status:v.http_status,state:v.payload?.state,retry_at_utc:v.payload?.retry_at_utc??null,markets:v.payload?.markets?.length??0}]))}));
           const kraken=await check("/api/kraken-reference?symbol=BTC");
           // Upstream availability is not under our control; endpoint MUST return a defined provider state.
           if(kraken.status===200 && !(kraken.body.state==="OBSERVED"&&kraken.body.provider==="kraken"&&kraken.body.price>0))throw Error("Invalid Kraken observation");

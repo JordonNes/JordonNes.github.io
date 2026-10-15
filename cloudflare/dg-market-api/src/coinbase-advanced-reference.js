@@ -4,8 +4,9 @@ const ALLOWED = new Set(['BTC-USD', 'ETH-USD', 'SOL-USD']);
 const HEADERS = {'Content-Type':'application/json; charset=utf-8','Cache-Control':'public, max-age=30'};
 export async function serveCoinbaseAdvancedReference(request, ctx) {
   const url = new URL(request.url);
-  const symbol = (url.searchParams.get('symbol') || 'BTC-USD').toUpperCase();
-  if (!ALLOWED.has(symbol)) return new Response(JSON.stringify({error:'unsupported_symbol'}), {status:400, headers:HEADERS});
+  const input = (url.searchParams.get('symbol') || 'BTC-USD').trim().toUpperCase();
+  const symbol = ['BTC','ETH','SOL'].includes(input) ? input+'-USD' : input;
+  if (!ALLOWED.has(symbol)) return new Response(JSON.stringify({error:'unsupported_symbol',supported:[...ALLOWED]}), {status:400, headers:{...HEADERS,'Cache-Control':'no-store'}});
   const cache = caches.default;
   const cacheKey = new Request(url.origin + '/api/coinbase-advanced-reference?symbol=' + symbol + '&v=1');
   const hit = await cache.match(cacheKey);

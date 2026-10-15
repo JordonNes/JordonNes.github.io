@@ -1,3 +1,4 @@
+import {cooldownUntil} from "./kalshi-public-cache.js";
 import {serveCoinbaseAdvancedReference} from "./coinbase-advanced-reference.js";
 import {migrateTaapiKvToR2} from "./taapi-kv-r2-migration.js";
 import {serveSupplementaryMarketData} from "./supplementary-reference.js";
@@ -63,6 +64,12 @@ export default {
    const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
    return new Response(r.body,{status:r.status,headers:h});
   }
+  if(url.pathname==="/api/kalshi-status"){
+   const kv=env.DG_ARCHIVE;
+   const until=kv?cooldownUntil(await kv.get("dg:kalshi:cooldown:v1").catch(()=>null)):0;
+   const backoff=kv?await kv.get("dg:kalshi:backoff:v2","json").catch(()=>null):null;
+   return new Response(JSON.stringify({read_only:true,shared_kv_configured:!!kv,cooldown_active:until>Date.now(),retry_at_utc:until>Date.now()?new Date(until).toISOString():null,consecutive_rate_limits:backoff?.count??0,checked_at_utc:new Date().toISOString()}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+  }
   // Read-only ingestion heartbeat: no secrets, manual triggering, or upstream API calls.
   if(url.pathname==="/api/taapi-status"){
    const lastRun=env.DG_ARCHIVE?await env.DG_ARCHIVE.get("taapi:rsi:v1:last-run","json").catch(()=>null):null;
@@ -90,18 +97,19 @@ export default {
    const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");
    return new Response(response.body,{status:response.status,headers});
   }
-  if(url.pathname==="/api/quarter-hour-book"){const answer=await serveQuarterHourBook(request);const h=new Headers(answer.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(answer.body,{status:answer.status,headers:h})}
-  if(url.pathname==="/api/quarter-hour-asof"){const response=await serveAsOfQuarterHour(request);const h=new Headers(response.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(response.body,{status:response.status,headers:h})}
-  if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
+  if(url.pathname==="/api/quarter-hour-book"){const answer=await serveQuarterHourBook(request,env);const h=new Headers(answer.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(answer.body,{status:answer.status,headers:h})}
+  if(url.pathname==="/api/quarter-hour-asof"){const response=await serveAsOfQuarterHour(request,env);const h=new Headers(response.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(response.body,{status:response.status,headers:h})}
+  if(url.pathname==="/api/quarter-hour-outcomes"){const response=await serveQuarterHourOutcomes(request,env);const headers=new Headers(response.headers);headers.set("Access-Control-Allow-Origin",allow);headers.set("Vary","Origin");return new Response(response.body,{status:response.status,headers})}
   if(url.pathname==="/api/quarter-hour-batch"){
    const allowed=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M","KXDOGE15M","KXBNB15M","KXNEAR15M","KXZEC15M","KXGBPUSD15M","KXUSDJPY15M","KXAUDUSD15M","KXUSDCAD15M"]);
    const requested=[...new Set((url.searchParams.get("series")||"").split(",").map(x=>x.trim().toUpperCase()).filter(Boolean))];
    if(!requested.length||requested.length>8||requested.some(x=>!allowed.has(x)))return new Response(JSON.stringify({error:"invalid_15_minute_series",supported:[...allowed]}),{status:400,headers:{...JSON_HEADERS,...cors}});
-   const results=await Promise.all(requested.map(async series=>{
+   const results=[];
+   for(const series of requested){
     const inner=new Request(url.origin+"/api/quarter-hour?series="+encodeURIComponent(series),{headers:{"Origin":allow}});
     const response=await this.fetch(inner,env,ctx);
-    try{return [series,{http_status:response.status,payload:await response.json()}]}catch{return [series,{http_status:response.status,payload:{state:"UNAVAILABLE",markets:[]}}]}
-   }));
+    try{results.push([series,{http_status:response.status,payload:await response.json()}])}catch{results.push([series,{http_status:response.status,payload:{state:"UNAVAILABLE",markets:[]}}])}
+   }
    return new Response(JSON.stringify({kind:"QUARTER_HOUR_BATCH",retrieved_at_utc:new Date().toISOString(),shared_kv_configured:!!env.DG_ARCHIVE,results:Object.fromEntries(results)}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   }
   if(url.pathname==="/api/quarter-hour"){const result=await serveQuarterHour(request,env,ctx);const h=new Headers(result.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(result.body,{status:result.status,headers:h})}
@@ -439,9 +447,9 @@ export default {
     const previous=await kv.get(cacheKey,"json");
     if(previous&&Array.isArray(previous.events)){stale=previous;
      if(Date.now()-Date.parse(previous.retrieved_at_utc||"")<15*60000)return new Response(JSON.stringify({...previous,cache_status:"SHARED_FRESH"}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"public, max-age=60"}})}
-    const cooldown=await kv.get(cooldownKey,"json");
-    if(cooldown&&Number(cooldown.until)>Date.now()){
-     return new Response(JSON.stringify(stale?{...stale,state:"STALE_DURING_RATE_LIMIT",cache_status:"SHARED_STALE",rate_limit_retry_at_utc:new Date(cooldown.until).toISOString()}:{asset,state:"RATE_LIMITED",events:[],partial:true,rate_limit_retry_at_utc:new Date(cooldown.until).toISOString(),series_errors:[]}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}})
+    const cooldown=cooldownUntil(await kv.get(cooldownKey));
+    if(cooldown>Date.now()){
+     return new Response(JSON.stringify(stale?{...stale,state:"STALE_DURING_RATE_LIMIT",cache_status:"SHARED_STALE",rate_limit_retry_at_utc:new Date(cooldown).toISOString()}:{asset,state:"RATE_LIMITED",events:[],partial:true,rate_limit_retry_at_utc:new Date(cooldown).toISOString(),series_errors:[]}),{headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}})
     }
    }catch{}}
    const checked=[];for(const series of cfg[asset]){

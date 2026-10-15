@@ -1,3 +1,4 @@
+import {fetchKalshiPublic} from "./kalshi-public-cache.js";
 /* Quarter-hour prediction contract reader; intentionally separate from margin/Perps.
  * Public Kalshi market quotes are indicative, cached, and NOT authenticated fills.
  */
@@ -15,22 +16,18 @@ export async function serveQuarterHour(request,env,ctx){
  const u=new URL(request.url),series=String(u.searchParams.get("series")||"KXBTC15M").toUpperCase();
  if(!SUPPORTED.has(series))return new Response(JSON.stringify({error:"unsupported_15_minute_series",supported:[...SUPPORTED]}),{status:400,headers:{"Content-Type":"application/json"}});
  const cache=caches.default,key=new Request(u.origin+"/api/quarter-hour?series="+series+"&v=2"),hit=await cache.match(key);
- if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),"X-DG-Cache":"HIT"}});
+ if(hit){const h=new Headers(hit.headers);h.set("X-DG-Cache","HIT");return new Response(hit.body,{status:hit.status,headers:h})}
  const kv=env.DG_ARCHIVE,sharedKey="dg:q15:series:v2:"+series;
  if(kv)try{const existing=await kv.get(sharedKey,"json");const age=Date.now()-Date.parse(existing?.retrieved_at_utc||"");if(existing?.kind==="QUARTER_HOUR_BINARY_OUTCOME"&&existing?.series_ticker===series&&age>=0&&age<=8000){return new Response(JSON.stringify(existing),{headers:{"Content-Type":"application/json","Cache-Control":"public, max-age=2","X-DG-Cache":"SHARED_KV_HIT"}})}}catch{}
- const cooldown=kv?await kv.get("dg:kalshi:cooldown:v1"):null;
- if(cooldown&&Date.parse(cooldown)>Date.now())return new Response(JSON.stringify({state:"RATE_LIMITED",retry_at_utc:cooldown,markets:[]}),{status:503,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}});
- const control=new AbortController(),timeout=setTimeout(()=>control.abort(),7500);
  try{
-  const res=await fetch(ROOT+"/markets?series_ticker="+encodeURIComponent(series)+"&status=open&limit=30",{headers:{Accept:"application/json"},signal:control.signal,cf:{cacheEverything:true,cacheTtl:8}});
-  if(res.status===429){const secs=Math.min(120,Math.max(15,Number(res.headers.get("retry-after"))||30));if(kv)ctx.waitUntil(kv.put("dg:kalshi:cooldown:v1",new Date(Date.now()+secs*1000).toISOString(),{expirationTtl:secs+10}));return new Response(JSON.stringify({state:"RATE_LIMITED",series,markets:[],retry_after_seconds:secs}),{status:503,headers:{"Content-Type":"application/json","Retry-After":String(secs),"Cache-Control":"no-store"}})}
-  if(!res.ok)return new Response(JSON.stringify({state:"UPSTREAM_UNAVAILABLE",series,upstream_status:res.status,markets:[]}),{status:502,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}});
-  const data=await res.json(),time=new Date().toISOString();
-  if(!Array.isArray(data.markets))return new Response(JSON.stringify({state:"SCHEMA_UNVERIFIED",series,markets:[]}),{status:502,headers:{"Content-Type":"application/json"}});
+  const res=await fetchKalshiPublic("/markets?series_ticker="+encodeURIComponent(series)+"&status=open&limit=30",env,8,7500);
+  if(!res.ok){const limited=res.status===429;return new Response(JSON.stringify({state:limited?"RATE_LIMITED":res.state,series,upstream_status:res.status,markets:[],retry_at_utc:res.retry_at_utc??null,retry_after_seconds:res.retry_after_seconds??null}),{status:limited?503:502,headers:{"Content-Type":"application/json","Cache-Control":"no-store",...(limited?{"Retry-After":String(res.retry_after_seconds||60)}:{})}})}
+  const data=res.data,time=res.retrieved_at_utc;
+  if(!Array.isArray(data.markets))return new Response(JSON.stringify({state:"SCHEMA_UNVERIFIED",series,markets:[]}),{status:502,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}});
   const filtered=data.markets.filter(m=>m.market_type==="binary"&&String(m.ticker||"").startsWith(series+"-")&&m.status==="active"||m.market_type==="binary"&&String(m.ticker||"").startsWith(series+"-")&&m.status==="open");
   const result={kind:"QUARTER_HOUR_BINARY_OUTCOME",source:"Kalshi public REST /markets",series_ticker:series,retrieved_at_utc:time,market_list_complete:!data.cursor,state:filtered.length?"OBSERVATIONAL":"NO_OPEN_CONTRACTS",markets:filtered.map(m=>normalize(m,series,time)).filter(m=>m.seconds_left!==null&&m.seconds_left>0).sort((a,b)=>a.seconds_left-b.seconds_left),notes:"UP/DOWN contract quotes are YES/NO outcome prices, not Perps futures marks; settlement benchmark may differ from spot reference.",no_trading:true};
   const response=new Response(JSON.stringify(result),{headers:{"Content-Type":"application/json","Cache-Control":"public, max-age=8"}});
   ctx.waitUntil(cache.put(key,response.clone()));if(kv)ctx.waitUntil(kv.put(sharedKey,JSON.stringify(result),{expirationTtl:60}));return response;
  }catch(e){return new Response(JSON.stringify({state:"FETCH_FAILED",series,markets:[],reason:"exchange request failed"}),{status:502,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}})}
- finally{clearTimeout(timeout)}
+
 }

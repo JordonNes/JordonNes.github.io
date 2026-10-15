@@ -25,3 +25,39 @@ test('cache must not return unrelated series metadata',async()=>{
  assert.equal(calls,2);assert(s.data.lookup.includes('KXGOLD15M'))}
  finally{globalThis.fetch=original}
 });
+test('parallel visitors coalesce an identical cache miss',async()=>{
+ const {fetchKalshiPublic}=await import('../cloudflare/dg-market-api/src/kalshi-public-cache.js');
+ const db=kv(),old=global.fetch;let calls=0;global.fetch=async()=>{calls++;await new Promise(r=>setTimeout(r,10));return Response.json({markets:[]})};
+ try{const r=await Promise.all(Array.from({length:10},()=>fetchKalshiPublic('/markets?series_ticker=KXBTC15M',{DG_ARCHIVE:db},8)));assert(r.every(x=>x.ok));assert.equal(calls,1)}finally{global.fetch=old}
+});
+test('queued different routes stop after the first 429 even before KV is readable',async()=>{
+ const {fetchKalshiPublic}=await import('../cloudflare/dg-market-api/src/kalshi-public-cache.js');
+ const db=kv(),old=global.fetch;let calls=0;global.fetch=async()=>{calls++;return new Response('{}',{status:429})};
+ try{const r=await Promise.all(['/markets?series_ticker=KXBTC15M','/series/KXGOLD15M','/historical/markets?series_ticker=KXETH15M'].map(p=>fetchKalshiPublic(p,{DG_ARCHIVE:db},8)));assert.equal(calls,1);assert.equal(r[0].state,'RATE_LIMITED');assert.equal(r[1].state,'SHARED_KALSHI_COOLDOWN');assert(r.every(x=>x.retry_at_utc))}finally{global.fetch=old}
+});
+test('legacy object cooldowns and expired quote caches are handled safely',async()=>{
+ const {fetchKalshiPublic,cooldownUntil}=await import('../cloudflare/dg-market-api/src/kalshi-public-cache.js');
+ assert.equal(cooldownUntil(JSON.stringify({until:Date.now()+60000}))>Date.now(),true);
+ const db=kv(),old=global.fetch;let calls=0;global.fetch=async()=>{calls++;return Response.json({markets:[]})};
+ const path='/markets?series_ticker=KXBTC15M';
+ await db.put('dg:kalshi:public:v2:'+path,JSON.stringify({source_status:200,data:{markets:[{stale:true}]},retrieved_at_utc:new Date(Date.now()-20000).toISOString()}));
+ try{const r=await fetchKalshiPublic(path,{DG_ARCHIVE:db},8);assert.equal(calls,1);assert.deepEqual(r.data.markets,[])}finally{global.fetch=old}
+});
+test('repeated 429s use exponential backoff without hidden retries',async()=>{
+ const {fetchKalshiPublic}=await import('../cloudflare/dg-market-api/src/kalshi-public-cache.js');const db=kv(),old=global.fetch;let calls=0;
+ await db.put('dg:kalshi:backoff:v2',JSON.stringify({count:2}));global.fetch=async()=>{calls++;return new Response('{}',{status:429})};
+ try{const r=await fetchKalshiPublic('/series/KXBTC15M',{DG_ARCHIVE:db},8);assert.equal(r.retry_after_seconds,120);assert.equal(calls,1)}finally{global.fetch=old}
+});
+test('all 21 GAM series are accepted by fee, book, training and history allowlists',async()=>{
+ const fs=require('fs'),source=fs.readFileSync('damilola-gavavi/gam-15m.js','utf8'),chunk=source.split('const MARKETS=[')[1].split('].map(')[0];
+ const series=[...chunk.matchAll(/\["(KX[A-Z0-9]+15M)"/g)].map(x=>x[1]);assert.equal(series.length,21);
+ for(const name of ['quarter-hour-book.js','quarter-hour-history.js','quarter-hour-fees.js','quarter-hour-training.js','quarter-hour-asof.js']){const s=fs.readFileSync('cloudflare/dg-market-api/src/'+name,'utf8');for(const x of series)assert(s.includes('"'+x+'"'),name+': '+x)}
+ const {serveQuarterHourFeeMetadata}=await import('../cloudflare/dg-market-api/src/quarter-hour-fees.js'),old=global.fetch;
+ global.fetch=async u=>Response.json({series:{ticker:String(u).split('/').at(-1),fee_type:'quadratic',fee_multiplier:1}});
+ try{for(const s of series){const r=await serveQuarterHourFeeMetadata(new Request('https://worker/api/quarter-hour-fees?series='+s),{});assert.equal(r.status,200,s);assert.equal((await r.json()).effective_fee_verified,true,s)}}finally{global.fetch=old}
+});
+test('actual GAM batch performs one upstream request when Kalshi throttles and keeps every card state',async()=>{
+ const worker=(await import('../cloudflare/dg-market-api/src/index.js')).default,old=global.fetch,cache=global.caches,db=kv();let calls=0;
+ global.caches={default:{match:async()=>null,put:async()=>{}}};global.fetch=async()=>{calls++;return new Response('{}',{status:429})};
+ try{const r=await worker.fetch(new Request('https://worker/api/quarter-hour-batch?series=KXBTC15M,KXETH15M,KXSOL15M,KXGOLD15M,KXSILVER15M,KXXRP15M'),{DG_ARCHIVE:db},{waitUntil:()=>{}});const p=await r.json();assert.equal(r.status,200);assert.equal(calls,1);assert.equal(Object.keys(p.results).length,6);for(const x of Object.values(p.results)){assert.equal(x.http_status,503);assert.equal(x.payload.state,'RATE_LIMITED');assert(x.payload.retry_at_utc)}}finally{global.fetch=old;global.caches=cache}
+});

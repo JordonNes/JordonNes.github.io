@@ -12,6 +12,8 @@ test('public BTC/ETH/SOL references cache observations and reject invalid/upstre
    const second=await serve(req,{});assert.equal(second.headers.get('X-DG-Cache'),'HIT');assert.deepEqual(await second.json(),p);
   }
   assert.equal(calls,3);
+  for(const symbol of ["BTC","ETH","SOL"]){const r=await serve(new Request("https://worker/api/coinbase-advanced-reference?symbol="+symbol));assert.equal(r.status,200);assert.equal((await r.json()).symbol,symbol+"-USD")}
+  assert.equal(calls,3);
   assert.equal((await serve(new Request('https://worker/api/coinbase-advanced-reference?symbol=BAD'))).status,400);
   cache.clear();global.fetch=async()=>Response.json({product_id:'ETH-USD',price:'1'});
   const failed=await serve(new Request('https://worker/api/coinbase-advanced-reference?symbol=BTC-USD'));

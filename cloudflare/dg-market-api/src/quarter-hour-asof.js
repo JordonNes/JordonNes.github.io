@@ -1,14 +1,16 @@
+import {fetchKalshiPublic} from "./kalshi-public-cache.js";
 /* D&G audit for ONE settled Kalshi 15-minute YES/NO contract.
  * Read-only. Strict as-of feature cutoff: 10 minutes before exchange close.
  * Settled label is NEVER returned as an as-of feature or a real-time forecast.
  */
 const ROOT="https://external-api.kalshi.com/trade-api/v2";
-const ALLOWED=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M"]);
+const ALLOWED=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M","KXDOGE15M","KXBNB15M","KXNEAR15M","KXZEC15M","KXGBPUSD15M","KXUSDJPY15M","KXAUDUSD15M","KXUSDCAD15M"]);
 const H={"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=600"};
 const validPrice=v=>{if(v===null||v===undefined||v==="")return null;const n=Number(v);return Number.isFinite(n)&&n>=0&&n<=1?n:null};
 const closeFrom=part=>validPrice(part?.close_dollars??part?.close);
-async function read(path){const ctrl=new AbortController(),t=setTimeout(()=>ctrl.abort(),9000);try{const r=await fetch(ROOT+path,{headers:{Accept:"application/json"},signal:ctrl.signal,cf:{cacheEverything:true,cacheTtl:600}});if(!r.ok)return {error:"HTTP_"+r.status,code:r.status};return {body:await r.json()}}catch(e){return {error:e?.name==="AbortError"?"TIMEOUT":"UPSTREAM_ERROR"}}finally{clearTimeout(t)}}
-export async function serveAsOfQuarterHour(req){
+async function readWithEnv(path,env){const r=await fetchKalshiPublic(path,env,600,9000);return r.ok?{body:r.data}:{error:r.state,code:r.status}}
+export async function serveAsOfQuarterHour(req,env){
+ const read=path=>readWithEnv(path,env);
  const u=new URL(req.url),series=(u.searchParams.get("series")||"").toUpperCase(),ticker=(u.searchParams.get("ticker")||"").toUpperCase();
  if(!ALLOWED.has(series)||!ticker.startsWith(series+"-")||!/^[A-Z0-9-]{7,100}$/.test(ticker))return new Response(JSON.stringify({state:"INVALID_MARKET"}),{status:400,headers:H});
  let source="recent",got=await read("/markets/"+encodeURIComponent(ticker));

@@ -120,14 +120,15 @@ async function checkBatch(defs){
   const response=await fetch(API+"/api/quarter-hour-batch?series="+encodeURIComponent(symbols.join(",")),{signal:c.signal,cache:"no-store"});
   if(!response.ok)throw new Error("D&G gateway HTTP "+response.status);
   const body=await response.json();if(body.kind!=="QUARTER_HOUR_BATCH"||!body.results)throw Error("Unexpected data format");
-  let ratelimited=0;
+  let ratelimited=0,retryAt=0;
   for(const x of defs){
    const r=body.results[x.ticker];
    const found=normalized(x.ticker,r?.payload,r);
    quotes.set(x.ticker,found);
+   const serverRetry=Date.parse(r?.payload?.retry_at_utc||"");if(Number.isFinite(serverRetry))retryAt=Math.max(retryAt,serverRetry);
    if(["RATE_LIMITED","SHARED_KALSHI_COOLDOWN"].includes(found.state)||r?.http_status===429||r?.http_status===503&&found.state==="RATE_LIMITED")ratelimited++;
   }
-  if(ratelimited)nextAllowedFetch=Math.max(nextAllowedFetch,Date.now()+60000);
+  if(ratelimited)nextAllowedFetch=Math.max(nextAllowedFetch,retryAt||Date.now()+60000);
   lastRefresh=Date.now();lastFailure=null;draw();
  }catch(e){lastFailure=String(e?.message||e);for(const x of defs)if(!quotes.has(x.ticker))quotes.set(x.ticker,{state:"UNAVAILABLE",market:null});draw()}
  finally{clearTimeout(timeout)}

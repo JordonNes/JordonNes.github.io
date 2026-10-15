@@ -2,7 +2,7 @@ import {fetchKalshiPublic} from "./kalshi-public-cache.js";
 /* Kalshi 15-minute series trading fee fields, read-only.
  * This is NOT a private account ticket/fill quote; current fee schedule and order type still matter.
  */
-const ALLOWED=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M"]);
+const ALLOWED=new Set(["KXBTC15M","KXETH15M","KXSOL15M","KXXRP15M","KXHYPE15M","KXGOLD15M","KXSILVER15M","KXPLATINUM15M","KXPALLADIUM15M","KXCOPPER15M","KXWTI15M","KXNATGAS15M","KXEURUSD15M","KXDOGE15M","KXBNB15M","KXNEAR15M","KXZEC15M","KXGBPUSD15M","KXUSDJPY15M","KXAUDUSD15M","KXUSDCAD15M"]);
 const H={"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=3600"};
 export async function serveQuarterHourFeeMetadata(req,env){
  const u=new URL(req.url),ticker=String(u.searchParams.get("series")||"").toUpperCase(),event=String(u.searchParams.get("event")||"").toUpperCase();
