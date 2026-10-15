@@ -10,17 +10,17 @@ function fee({price,quantity=1,multiplier,makerMultiplier=null,feeType="quadrati
  if(liquidity==="maker"&&(!good(makerMultiplier)||makerMultiplier<0))return null;
  return money((liquidity==="taker"?.07*multiplier:.0175*makerMultiplier)*quantity*price*(1-price));
 }
-function maxRiskContracts({ask,visibleContracts,accountCapital,riskFraction=.02,feeMultiplier,feeType="quadratic",feesVerified=false,bookVerified=false}={}){
- if(!good(ask)||ask<=0||ask>=1||!good(visibleContracts)||visibleContracts<1||!good(accountCapital)||accountCapital<=0||riskFraction!==.02||!bookVerified||!feesVerified||!good(feeMultiplier)||feeMultiplier<0||feeType!=="quadratic")return null;
- const budget=accountCapital*riskFraction,top=Math.min(100000,Math.floor(visibleContracts),Math.floor(budget/ask));
+function maxRiskContracts({ask,visibleContracts,accountCapital,riskFraction=.02,feeMultiplier,feeType="quadratic",feesVerified=false,bookVerified=false,slippagePerContract=0}={}){
+ if(!good(slippagePerContract)||slippagePerContract<0||!good(ask)||ask<=0||ask>=1||!good(visibleContracts)||visibleContracts<1||!good(accountCapital)||accountCapital<=0||riskFraction!==.02||!bookVerified||!feesVerified||!good(feeMultiplier)||feeMultiplier<0||feeType!=="quadratic")return null;
+ const budget=accountCapital*riskFraction,top=Math.min(100000,Math.floor(visibleContracts),Math.floor(budget/(ask+slippagePerContract)));
  let lo=0,hi=top;
  while(lo<hi){
   const mid=Math.floor((lo+hi+1)/2),f=fee({price:ask,quantity:mid,multiplier:feeMultiplier,feeType});
-  if(f!==null&&mid*ask+f<=budget+1e-10)lo=mid;else hi=mid-1;
+  if(f!==null&&mid*(ask+slippagePerContract)+f<=budget+1e-10)lo=mid;else hi=mid-1;
  }
  return lo;
 }
-function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbability=null,probabilityVerified=false,feeMultiplier=null,feeType="quadratic",seriesFeeVerified=false,accountCapital=null,riskFraction=.02,bookVerified=false,visibleYes=0,visibleNo=0,quoteTimestamp=null}={}){
+function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbability=null,probabilityVerified=false,feeMultiplier=null,feeType="quadratic",seriesFeeVerified=false,accountCapital=null,riskFraction=.02,bookVerified=false,visibleYes=0,visibleNo=0,quoteTimestamp=null,slippagePerContract=null,slippageVerified=false}={}){
  const both=[["yes",yesAsk,yesBid,yesProbability,visibleYes],["no",noAsk,noBid,good(yesProbability)?1-yesProbability:null,visibleNo]];
  return {state:"RESEARCH_ONLY",entry_allowed:false,contracts,target,risks_use_entire_binary_entry:true,
  sides:both.map(([side,ask,bid,p,depth])=>{
@@ -33,21 +33,24 @@ function evaluate({yesAsk,noAsk,yesBid,noBid,contracts=1,target=1.5,yesProbabili
   if(riskFraction!==.02)missing.push("TWO_PERCENT_POLICY_MISMATCH");
   if(!good(target)||target<=1)missing.push("PROFIT_TARGET");
   if(!quoteTimestamp||!Number.isFinite(Date.parse(quoteTimestamp))||Date.now()-Date.parse(quoteTimestamp)>10000||Date.now()<Date.parse(quoteTimestamp))missing.push("FRESH_QUOTE");
+  const slippageKnown=slippageVerified&&good(slippagePerContract)&&slippagePerContract>=0;
+  if(!slippageKnown)missing.push("VERIFIED_SLIPPAGE_ALLOWANCE");
+  const slippage=qty&&slippageKnown?contracts*slippagePerContract:null;
   const amount=valid&&qty?ask*contracts:null;
   const fees=valid&&qty&&seriesFeeVerified?fee({price:ask,quantity:contracts,multiplier:feeMultiplier,feeType}):null;
-  const cost=amount!==null&&fees!==null?amount+fees:null;
+  const cost=amount!==null&&fees!==null?amount+fees+(slippage??0):null;
   const costPerShare=cost!==null?cost/contracts:null;
   const researchScenario=cost!==null&&good(p)&&p>=0&&p<=1?contracts*p-cost:null;
-  const expected=probabilityVerified?researchScenario:null;
+  const expected=probabilityVerified&&slippageKnown&&seriesFeeVerified&&bookVerified&&good(depth)&&depth>=contracts&&!missing.includes("FRESH_QUOTE")?researchScenario:null;
   const conservativeLoss=cost;
   const riskCap=good(accountCapital)&&accountCapital>0?accountCapital*riskFraction:null;
   const targetMet=cost===null?null:(contracts-cost)/cost+1e-10>=target;
-  const maxContracts=maxRiskContracts({ask,visibleContracts:depth,accountCapital,riskFraction,feeMultiplier,feeType,feesVerified:seriesFeeVerified,bookVerified});
+  const maxContracts=slippageKnown?maxRiskContracts({ask,slippagePerContract,visibleContracts:depth,accountCapital,riskFraction,feeMultiplier,feeType,feesVerified:seriesFeeVerified,bookVerified}):null;
   if(riskCap!==null&&cost!==null&&cost>riskCap)missing.push("FULL_LOSS_EXCEEDS_RISK_BUDGET");
   if(targetMet===false)missing.push("TARGET_NOT_MET");
   if(expected!==null&&expected<=0)missing.push("NONPOSITIVE_EXPECTED_VALUE");
   // Policy: research only, even with a positive arithmetic result, until holdout & forward audit.
-  return {side,ask:valid?ask:null,bid:good(bid)?bid:null,fee_dollars:fees,all_in_cost_dollars:cost,
+  return {side,slippage_allowance_dollars:slippage,execution_costs_verified:slippageKnown&&seriesFeeVerified&&bookVerified,ask:valid?ask:null,bid:good(bid)?bid:null,fee_dollars:fees,all_in_cost_dollars:cost,
    worst_case_loss_dollars:conservativeLoss,account_risk_budget_dollars:riskCap,max_contracts_within_full_loss_budget:maxContracts,maximum_size_is_research_only:true,break_even_probability:costPerShare,
    expected_net_profit_dollars:expected,research_scenario_net_profit_dollars:researchScenario,expected_return_on_cost:cost&&expected!==null?expected/cost:null,
    theoretical_winning_total_return_multiple:cost?contracts/cost:null,theoretical_winning_profit_multiple:cost?(contracts-cost)/cost:null,chosen_probability:probabilityVerified?p:null,

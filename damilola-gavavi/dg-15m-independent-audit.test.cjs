@@ -32,3 +32,10 @@ test('future-dated evidence cannot inflate evaluation count',()=>{
  const rows=make(250);rows[180].candle_end_utc=new Date(t+400*900000).toISOString();
  const r=audit(rows);assert.equal(r.source_samples,249);assert.equal(r.go_eligible,false);
 });
+test('changing holdout labels cannot change ANY holdout prediction',()=>{
+ const rows=make(250),before=audit(rows,{includeForecasts:true});
+ const changed=rows.map((r,i)=>i>=150?{...r,result:r.result==='yes'?'no':'yes'}:r);
+ const after=audit(changed,{includeForecasts:true});
+ assert.equal(before.holdout_training_frozen,true);
+ assert.deepEqual(after.holdout_forecasts,before.holdout_forecasts);
+});

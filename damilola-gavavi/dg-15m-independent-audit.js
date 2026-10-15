@@ -14,8 +14,10 @@ function audit(records,options={}){
  if(types.size!==1||!rows.length)return {...base,state:"INVALID_OR_MIXED_SERIES",source_samples:rows.length};
  const series=rows[0].series_ticker,warmup=60;
  const forecasts=[];
+ // Freeze all candidate training before the first of the final 100 contracts.
+ const holdoutStart=rows.length>=200?rows[rows.length-100].at:Infinity;
  for(let i=warmup;i<rows.length;i++){
-  const now=rows[i],prior=rows.slice(0,i).filter(x=>x.series_ticker===series&&x.close<=now.at);
+  const now=rows[i],prior=rows.slice(0,i).filter(x=>x.series_ticker===series&&x.close<=Math.min(now.at,holdoutStart)&&x.at<holdoutStart);
   if(prior.length<warmup)continue;
   const bucket=p=>Math.min(9,Math.floor(p*10));
   const similar=prior.filter(x=>bucket(x.p)===bucket(now.p));
@@ -25,7 +27,7 @@ function audit(records,options={}){
    candidates:{market:now.p,bucket:pBucket,shrink85:pShrink},calibration_bin_count:similar.length});
  }
  const n=forecasts.length;
- const common={...base,series_ticker:series,source_samples:rows.length,evaluable_forecasts:n,earliest_asof_utc:new Date(rows[0].at).toISOString(),latest_asof_utc:new Date(rows.at(-1).at).toISOString(),historical_source_observations_only:true};
+ const common={...base,audit_version:2,holdout_training_frozen:true,series_ticker:series,source_samples:rows.length,evaluable_forecasts:n,earliest_asof_utc:new Date(rows[0].at).toISOString(),latest_asof_utc:new Date(rows.at(-1).at).toISOString(),historical_source_observations_only:true};
  if(n<140)return {...common,state:"INSUFFICIENT_EVALUATIONS",tuning_samples:Math.max(0,n-100),holdout_samples:Math.min(n,100)};
  // 100 strictly held out; all tuning labels must have settled before first holdout prediction
  const cutoffIndex=n-100,firstHoldoutAt=forecasts[cutoffIndex].predicted_at;
@@ -49,6 +51,7 @@ function audit(records,options={}){
  const lower=boot[Math.floor(boot.length*.025)],upper=boot[Math.floor(boot.length*.975)];
  const beats=selected!=="market"&&delta>0&&lower>0;
  return {...common,state:beats?"LOCKED_HOLDOUT_EDGE_CANDIDATE":"NO_STATISTICALLY_SUPPORTED_EDGE",
+  ...(options.includeForecasts?{holdout_forecasts:holdout.map(x=>({ticker:x.ticker,candidates:x.candidates}))}:{}),
   tuning_samples:tuning.length,holdout_samples:holdout.length,selected_model:selected,
   tuning_brier:Object.fromEntries(Object.entries(tuningScores).map(([k,v])=>[k,round(v)])),
   holdout_brier:Object.fromEntries(Object.entries(holdoutScores).map(([k,v])=>[k,round(v)])),

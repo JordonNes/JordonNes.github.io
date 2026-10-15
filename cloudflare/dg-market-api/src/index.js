@@ -1,3 +1,4 @@
+import {serveCoinbaseAdvancedReference} from "./coinbase-advanced-reference.js";
 import {migrateTaapiKvToR2} from "./taapi-kv-r2-migration.js";
 import {serveSupplementaryMarketData} from "./supplementary-reference.js";
 import {ingestTaapiRsi} from "./taapi-rsi-archive.js";
@@ -57,6 +58,11 @@ export default {
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
+  if(url.pathname==="/api/coinbase-advanced-reference"){
+   const r=await serveCoinbaseAdvancedReference(request,ctx);
+   const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
+   return new Response(r.body,{status:r.status,headers:h});
+  }
   // Read-only ingestion heartbeat: no secrets, manual triggering, or upstream API calls.
   if(url.pathname==="/api/taapi-status"){
    const lastRun=env.DG_ARCHIVE?await env.DG_ARCHIVE.get("taapi:rsi:v1:last-run","json").catch(()=>null):null;

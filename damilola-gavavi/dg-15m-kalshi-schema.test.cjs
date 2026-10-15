@@ -27,3 +27,7 @@ test('future price candles are rejected',async()=>{
  const candle={end_period_ts:Math.floor((cutoff+120000)/1000),yes_bid:{close:'0.3600'},yes_ask:{close:'0.4200'}};
  const r=await run(candle);assert.equal(r.data.asof_pairs,0);assert.equal(r.data.rejected_count,1);
 });
+test('historical source failure returns 503 with no cacheable empty success',async()=>{
+ const old=global.fetch;global.fetch=async()=>new Response('{}',{status:429});
+ try{const {serveQuarterHourTraining}=await import('../cloudflare/dg-market-api/src/quarter-hour-training.js');const r=await serveQuarterHourTraining(new Request('https://worker/api/quarter-hour-training?series=KXBTC15M&size=1'));assert.equal(r.status,503);assert.equal(r.headers.get('Cache-Control'),'no-store');assert.equal((await r.json()).state,'UPSTREAM_UNAVAILABLE');}finally{global.fetch=old}
+});
