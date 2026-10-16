@@ -23,6 +23,50 @@ const MARKET_SLUGS={
  KXEURUSD15M:"15minute-eurusd",KXGBPUSD15M:"15minute-gbpusd",KXUSDJPY15M:"fifteenmin-usdjpy",KXAUDUSD15M:"15minute-audusd",KXUSDCAD15M:"15minute-usdcad"
 };
 const evidenceOpen=new Set(),amounts=new Map(),cardHistory=new Map();
+/* Browser-local checkpoint: first ELIGIBLE suggestion observed for a specific contract.
+ * Not a historical settlement, calibrated forecast, server archive, or order.
+ * Changes are recorded only on newer source snapshots; WAIT never becomes a direction. */
+const SIGNAL_STORAGE_KEY="dg-gam-signal-checkpoints-v1",signalMemory=new Map();
+try{
+ const saved=JSON.parse(localStorage.getItem(SIGNAL_STORAGE_KEY)||"[]");
+ if(Array.isArray(saved))for(const item of saved){
+  if(!item||typeof item.series!=="string"||typeof item.contract!=="string"||
+    !["UP","DOWN"].includes(item.first)||!["UP","DOWN"].includes(item.latest)||
+    !Number.isFinite(Date.parse(item.close_at))||Date.parse(item.close_at)<Date.now()-3600000||
+    !Number.isFinite(Date.parse(item.last_source_at)))continue;
+  signalMemory.set(item.series+"|"+item.contract,item);
+ }
+}catch{/* Storage disabled: live changes still work until navigation. */}
+function saveCheckpoints(){
+ try{const recent=[...signalMemory.values()].filter(x=>Date.parse(x.close_at)>Date.now()-3600000).slice(-300);
+  localStorage.setItem(SIGNAL_STORAGE_KEY,JSON.stringify(recent));
+ }catch{/* Do not interrupt live UI when browser storage is unavailable. */}
+}
+function checkpointFor(def,record,suggestion){
+ const market=record?.market;
+ if(!market?.ticker)return null;
+ const key=def.ticker+"|"+market.ticker;
+ let checkpoint=signalMemory.get(key)||null;
+ if(!suggestion)return checkpoint;
+ const source=cardHistory.get(def.ticker),observed=Date.parse(source?.retrieved_at_utc),side=suggestion.suggested_side;
+ if(!Number.isFinite(observed)||observed>Date.now()+5000||Date.now()-observed>90000||
+    !["UP","DOWN"].includes(side))return checkpoint;
+ if(!checkpoint){
+  checkpoint={series:def.ticker,contract:market.ticker,close_at:market.close_time,
+   first:side,first_source_at:new Date(observed).toISOString(),latest:side,
+   last_source_at:new Date(observed).toISOString(),changes:0,last_change:null};
+  signalMemory.set(key,checkpoint);saveCheckpoints();
+ }else if(observed>Date.parse(checkpoint.last_source_at)){
+  if(checkpoint.latest!==side){
+   checkpoint.last_change={from:checkpoint.latest,to:side,at:new Date(observed).toISOString()};
+   checkpoint.changes=(Number(checkpoint.changes)||0)+1;
+  }
+  checkpoint.latest=side;checkpoint.last_source_at=new Date(observed).toISOString();
+  signalMemory.set(key,checkpoint);saveCheckpoints();
+ }
+ return checkpoint;
+}
+function pacificSignalTime(value){const at=Date.parse(value);return Number.isFinite(at)?new Date(at).toLocaleTimeString("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit"})+" PT":"—"}
 let historyLoading=false;
 const krakenCharts=new Map(),krakenSymbols={KXBTC15M:"BTC",KXETH15M:"ETH",KXSOL15M:"SOL",KXXRP15M:"XRP"};
 const $=x=>document.getElementById(x),quotes=new Map(),refreshing={active:false,started:0},tabCounts={All:MARKETS.length,Commodities:7,Crypto:9,FX:5};
@@ -85,7 +129,7 @@ async function loadCardHistory(){
  if(historyLoading||document.hidden||Date.now()<nextAllowedFetch)return;historyLoading=true;
  try{for(const group of chunk(MARKETS,3)){
   if(document.hidden||Date.now()<nextAllowedFetch)break;
-  await Promise.all(group.map(async def=>{try{const response=await fetch(API+"/api/card-history?series="+def.ticker,{signal:AbortSignal.timeout(20000)}),body=await response.json();if(body.series_ticker===def.ticker)cardHistory.set(def.ticker,body);if(!response.ok&&body.retry_at_utc)nextAllowedFetch=Math.max(nextAllowedFetch,Date.parse(body.retry_at_utc)||0)}catch{cardHistory.delete(def.ticker)}}));draw();
+  await Promise.all(group.map(async def=>{try{const response=await fetch(API+"/api/card-history?series="+def.ticker,{signal:AbortSignal.timeout(20000),cache:"no-store"}),body=await response.json();if(body.series_ticker===def.ticker)cardHistory.set(def.ticker,body);if(!response.ok&&body.retry_at_utc)nextAllowedFetch=Math.max(nextAllowedFetch,Date.parse(body.retry_at_utc)||0)}catch{cardHistory.delete(def.ticker)}}));draw();
  }}finally{historyLoading=false}
 }
 async function loadKrakenCharts(){
@@ -109,7 +153,7 @@ function makeCard(def){
  strike.append(value);const clock=el("div","timer"+(ok&&Date.parse(record.market.close_time)-Date.now()<120000?" urgent":""),ok?timeLeft(record.market.close_time):"15-minute");
  if(ok){clock.dataset.closes=record.market.close_time;clock.setAttribute("aria-label","Time until market close")}
  details.append(strike,clock);
- const chart=contractChart(def),suggestion=readyComparison(def,record);
+ const chart=contractChart(def),suggestion=readyComparison(def,record),checkpoint=checkpointFor(def,record,suggestion);
  const sides=el("div","sides");
  const binaryLabel=ok&&record.market.yes_maps_to_up!==true;
  for(const [side,price] of [["up",ok?record.up:null],["down",ok?record.down:null]]){
@@ -124,10 +168,15 @@ function makeCard(def){
    input.addEventListener("input",()=>{input.value=input.value.replace(/[^0-9]/g,"").replace(/^0+/,"").slice(0,3);amounts.set(def.ticker,input.value)});label.append(input);sides.append(label);
   }
  }
- const gavavi=el("div","gavavi-summary"),body=cardHistory.get(def.ticker),comparison=body?.comparison;
- gavavi.append(el("strong","",suggestion?"Gavavi ending: "+suggestion.suggested_side+" · experimental":"Gavavi ending: WAIT"));
+ const gavavi=el("div","gavavi-summary"),body=cardHistory.get(def.ticker),comparison=body?.comparison;gavavi.setAttribute("aria-live","polite");
+ gavavi.append(el("strong","",suggestion?"Gavavi LIVE: "+suggestion.suggested_side+" · experimental":"Gavavi LIVE: WAIT · no current highlight"));
+ if(checkpoint){
+  gavavi.append(el("div","signal-checkpoint","Initial checkpoint (this browser): "+checkpoint.first+" · "+pacificSignalTime(checkpoint.first_source_at)));
+  if(checkpoint.last_change)gavavi.append(el("div","signal-change","LAST CHANGE: "+checkpoint.last_change.from+" → "+checkpoint.last_change.to+" · "+pacificSignalTime(checkpoint.last_change.at)));
+  gavavi.append(el("small","signal-activity","Direction changes: "+(checkpoint.changes||0)+" · Latest eligible observation: "+pacificSignalTime(checkpoint.last_source_at)));
+ }else gavavi.append(el("small","signal-activity","Initial checkpoint pending first eligible live suggestion."));
  gavavi.append(el("div","",comparison?.matches?comparison.up+" UP / "+comparison.down+" DOWN in "+comparison.matches+" matched settled contracts · "+comparison.cohort:comparison?.reason||"Awaiting observed history comparison."));
- if(suggestion)gavavi.append(el("small","","Historical majority; not a validated prediction or expected profit."));
+ if(suggestion)gavavi.append(el("small","","Moving signal follows the latest eligible archived-history comparison, not an independently validated forecast."));
  gavavi.append(el("small","","D&G confidence awaits validation. Amount is for planning only."));
  const bottom=el("div","bottom"),detail=el("span","",ok?"Observed market quote":"Quote unavailable"),link=el("a","","Kalshi ↗");
  link.href=ok&&MARKET_SLUGS[def.ticker]?("https://kalshi.com/markets/"+def.ticker.toLowerCase()+"/"+MARKET_SLUGS[def.ticker]+"/"+encodeURIComponent(record.market.ticker.toLowerCase())):SOURCES[def.group];link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","View "+def.name+" 15-minute markets on Kalshi");
@@ -227,6 +276,6 @@ function tick(){
 document.querySelectorAll("[data-group]").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.group)));
 $("search").addEventListener("input",e=>{query=String(e.target.value||"").trim().toLowerCase();draw()});
 $("refresh").addEventListener("click",()=>reload(true));
-document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()-(lastRefresh||0)>70000)reload()});
-setInterval(tick,1000);setInterval(()=>{loadCardHistory();draw()},60000);draw();reload();loadKrakenCharts();setInterval(()=>{if(!document.hidden)loadKrakenCharts()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){loadCardHistory();if(Date.now()-(lastRefresh||0)>70000)reload()}});
+setInterval(tick,1000);setInterval(()=>{if(!document.hidden)loadCardHistory()},30000);draw();reload();loadKrakenCharts();setInterval(()=>{if(!document.hidden)loadKrakenCharts()},60000);
 })();
