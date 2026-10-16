@@ -146,17 +146,17 @@ export async function runDamilolaSignalCron(env,ctx,scheduledTime=Date.now(),pha
   if(Date.now()-started>105000)break;
   await Promise.all(LEDGER_SERIES.slice(i,i+2).map(async series=>{
    try{
-    if(phase==='early')rows.push(await captureStage(env,ctx,series,slot,'early'));
-    else if(phase==='late_and_score'){
-     rows.push(await captureStage(env,ctx,series,slot,'late'));
+    if(phase==='early'||phase==='late')rows.push(await captureStage(env,ctx,series,slot,phase));
+    else if(phase==='score'){
      for(const older of [slot-900,slot-1800])rows.push(await scoreWindow(env,series,older));
     }
    }catch(e){rows.push({series,state:'ERROR',reason:String(e?.message||e)})}
   }));
  }
- const result={state:rows.some(x=>x.state==='ERROR')?'PARTIAL':'COMPLETE',
+ const attempted=new Set(rows.map(x=>x.series)).size;
+ const result={state:rows.some(x=>x.state==='ERROR')||attempted<LEDGER_SERIES.length?'PARTIAL':'COMPLETE',
   phase,scheduled_at_utc:iso(scheduledTime),completed_at_utc:iso(Date.now()),
-  attempted_series:new Set(rows.map(x=>x.series)).size,recorded_checkpoints:rows.filter(x=>x.state==='RECORDED').length,
+  attempted_series:attempted,recorded_checkpoints:rows.filter(x=>x.state==='RECORDED').length,
   scored_contracts:rows.filter(x=>x.state==='SCORED').length,rows,read_only:true,no_trading:true};
  if(env.DG_ARCHIVE)await env.DG_ARCHIVE.put('dg:damilola:signal:v1:last-'+phase,JSON.stringify(result));
  return result;
@@ -183,6 +183,6 @@ export async function serveDamilolaSignalLedger(request,env){
    limitations:'Two fixed checkpoints only; not continuous; missed runs are not backfilled',
    rows,summary:summarizeSignalLedger(rows),
    capture_status:env.DG_ARCHIVE?await env.DG_ARCHIVE.get('dg:damilola:signal:v1:last-early','json').catch(()=>null):null,
-   scoring_status:env.DG_ARCHIVE?await env.DG_ARCHIVE.get('dg:damilola:signal:v1:last-late_and_score','json').catch(()=>null):null});
+   scoring_status:env.DG_ARCHIVE?await env.DG_ARCHIVE.get('dg:damilola:signal:v1:last-score','json').catch(()=>null):null});
  }catch(e){return response({state:'LEDGER_READ_UNAVAILABLE',reason:String(e?.message||e)},503)}
 }
