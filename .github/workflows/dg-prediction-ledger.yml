@@ -1,0 +1,46 @@
+name: D&G Prospective Prediction Ledger
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '5,20,35,50 * * * *'
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/run-dg-prediction-ledger.mjs'
+      - 'cloudflare/dg-market-api/src/prediction-ledger.js'
+      - 'damilola-gavavi/prediction-ledger.test.cjs'
+      - '.github/workflows/dg-prediction-ledger.yml'
+permissions:
+  contents: read
+concurrency:
+  group: dg-prediction-ledger
+  cancel-in-progress: false
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/run-dg-prediction-ledger.mjs
+            cloudflare/dg-market-api/src/
+            damilola-gavavi/pattern-math.js
+            damilola-gavavi/prediction-ledger.test.cjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test prospective timestamps and create-once storage
+        run: node --test damilola-gavavi/prediction-ledger.test.cjs
+      - name: Capture current window and join two previous settlements
+        run: node scripts/run-dg-prediction-ledger.mjs
+      - name: Retain observations, abstentions and source failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dg-prediction-ledger-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/dg-prediction-ledger/
+          retention-days: 30
+          if-no-files-found: error

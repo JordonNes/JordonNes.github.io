@@ -1,3 +1,4 @@
+import {servePredictionLedger} from "./prediction-ledger.js";
 import {serveMarketLayers} from "./market-layers.js";
 import {cooldownUntil} from "./kalshi-public-cache.js";
 import {serveCoinbaseAdvancedReference} from "./coinbase-advanced-reference.js";
@@ -60,6 +61,11 @@ export default {
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
+  if(url.pathname==="/api/prediction-ledger"){
+   const r=await servePredictionLedger(request,env),h=new Headers(r.headers);
+   h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
+   return new Response(r.body,{status:r.status,headers:h});
+  }
   if(url.pathname==="/api/coinbase-advanced-reference"){
    const r=await serveCoinbaseAdvancedReference(request,ctx);
    const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
