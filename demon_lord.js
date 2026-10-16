@@ -91,6 +91,43 @@ if(next.schema_version!=="LJ-DEMON-LORD-1")throw new Error("Schema mismatch");
 data=next;draw();
 }catch(err){document.getElementById("dl-status").textContent="Source unavailable — no estimates shown";console.warn(err)}
 }
-document.getElementById("dl-league").addEventListener("change",draw);
+function renderReview(feed){
+  const root=document.getElementById("dl-ljpc-review");if(!root)return;
+  const entries=(Array.isArray(feed.entries)?feed.entries:[]).filter(r=>selected()==="ALL"||lg(r.league)===selected());
+  const cards=entries.slice(0,100).map(r=>{
+    const official=r.match_status==="LJ_EVALUATED_EXACT_MATCH"&&Number.isFinite(r.ljpc)&&!!r.evaluation_id;
+    const chips=metric("LSI status",r.match_status||"RESEARCH ONLY")+
+      (official?'<span class="dl-pill good">L&amp;J LJPC '+esc(r.ljpc.toFixed(1))+'%</span>':
+       metric("LJPC","AWAITING VERIFIED L&J EVALUATION"))+
+      metric("Recent source trend",form(r.recent_form))+
+      metric("Opponent",form(r.head_to_head));
+    const market=[r.side,r.threshold,r.market].filter(x=>x!==null&&x!==undefined&&x!=="").join(" ");
+    return '<article class="dl-card"><h3>'+esc(r.participant||"Unknown participant")+
+      '</h3><p>'+esc(market)+'</p><div class="dl-metrics">'+chips+'</div>'+
+      '<div class="dl-meta">'+esc(r.canonical_event_id||"Event not yet resolved")+
+      ' · '+esc(official?"LJPC derived from existing LSI evaluation only":"Parlee research; no L&J confidence invented")+'</div>'+
+      link(r.source_url)+'</article>';
+  });
+  const freshness=feed.lsi_board_fresh?"Current LSI board":"LSI board stale or unverified";
+  const intro='<div class="dl-card" style="grid-column:1/-1"><h3>'+esc(freshness)+'</h3><p>'+
+   esc(String(feed.counts?.exact_ljpc_matches||0))+' exact evaluated sources · '+
+   esc(String(feed.counts?.pending||0))+' sources awaiting L&amp;J evaluation</p></div>';
+  root.innerHTML=intro+cards.join("")+(cards.length?"":empty("No source observations have been handed to L&J yet. Linemate direct collection remains unavailable."));
+}
+let reviewed=null;
+async function loadReview(){
+  try{
+    const response=await fetch("data/parlee_ljpc_review.json?ts="+Date.now(),{cache:"no-store"});
+    if(!response.ok)throw Error("LJPC handoff not available");
+    const next=await response.json();
+    if(next.schema_version!=="LJ-PARLEE-LJPC-REVIEW-1")throw Error("Invalid review schema");
+    reviewed=next;renderReview(reviewed);
+  }catch(e){
+    const root=document.getElementById("dl-ljpc-review");
+    if(root)root.innerHTML=empty("LJPC handoff is not yet published; official LJPC remains unchanged.");
+  }
+}
+document.getElementById("dl-league").addEventListener("change",()=>{draw();if(reviewed)renderReview(reviewed)});
 update();setInterval(update,90000);
+loadReview();setInterval(loadReview,120000);
 })();
