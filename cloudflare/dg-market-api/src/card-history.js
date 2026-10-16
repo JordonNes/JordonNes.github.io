@@ -35,16 +35,16 @@ async function archivedPages(env,series,now){
   for(const obj of list.objects||[]){const hour=Number(obj.key.slice(prefix.length).split('/')[0]);if(!Number.isInteger(hour)||hour<cutoff||hour>=currentHour)continue;const old=byHour.get(hour);if(!old||new Date(obj.uploaded)>new Date(old.uploaded))byHour.set(hour,obj)}
   truncated=!!list.truncated;cursor=list.cursor;if(!truncated)break;
  }
- const local=clock(now),recentHours=Array.from({length:5},(_,i)=>currentHour-(i+1)*3600),sameHour=[...byHour.keys()].filter(h=>clock(h*1000).hour===local.hour).sort((a,b)=>b-a).slice(0,30);
+ const local=clock(now),recentHours=Array.from({length:5},(_,i)=>currentHour-(i+1)*3600),sameHour=[...byHour.keys()].filter(h=>clock(h*1000).hour===local.hour).sort((a,b)=>b-a).slice(0,19);
  const selected=[...new Set([...recentHours,...sameHour])].filter(h=>byHour.has(h)),pages=[];
  for(const h of selected){const obj=await env.DG_RESEARCH_R2.get(byHour.get(h).key);if(!obj)continue;const p=JSON.parse(await obj.text());if(p.series_ticker===series&&Date.parse(p.hour_start_utc)===h*1000&&Array.isArray(p.contracts))pages.push(p)}
- return {pages,state:truncated?'ARCHIVE_LIST_TRUNCATED':'OBSERVED_ARCHIVE',listed_hours:byHour.size,selected_hours:selected.length,recent_hours_available:recentHours.filter(h=>byHour.has(h)).length,requested_recent_hours:5,lookback_days:30,source_archive_keys:selected.map(h=>byHour.get(h).key),selection:'five completed UTC hours plus same Pacific hour over 30 days; up to 35 archived hours',oldest_selected_utc:pages.length?pages.map(p=>p.hour_start_utc).sort()[0]:null};
+ return {pages,state:truncated?'ARCHIVE_LIST_TRUNCATED':'OBSERVED_ARCHIVE',listed_hours:byHour.size,selected_hours:selected.length,recent_hours_available:recentHours.filter(h=>byHour.has(h)).length,requested_recent_hours:5,lookback_days:30,source_archive_keys:selected.map(h=>byHour.get(h).key),selection:'five completed UTC hours plus same Pacific hour over 30 days; at most 24 sampled archived hours',oldest_selected_utc:pages.length?pages.map(p=>p.hour_start_utc).sort()[0]:null};
 }
 export async function serveCardHistory(request,env,ctx){
  const u=new URL(request.url),series=(u.searchParams.get('series')||'').toUpperCase();const headers={'Content-Type':'application/json','Cache-Control':'no-store'};const out=(body,status=200)=>new Response(JSON.stringify(body),{status,headers});
  if(!SERIES.has(series))return out({state:'INVALID_SERIES'},400);
  const decision=u.searchParams.get('decision_minute');if(decision!==null&&decision!=='5')return out({state:'INVALID_DECISION_MINUTE'},400);
- const key=new Request(u.origin+'/api/card-history?series='+series+'&decision_minute='+(decision||'latest')+'&v=4'),hit=await caches.default.match(key);if(hit){const h=new Headers(hit.headers);h.set('X-DG-Cache','HIT');return new Response(hit.body,{status:hit.status,headers:h})}
+ const key=new Request(u.origin+'/api/card-history?series='+series+'&decision_minute='+(decision||'latest')+'&v=5'),hit=await caches.default.match(key);if(hit){const h=new Headers(hit.headers);h.set('X-DG-Cache','HIT');return new Response(hit.body,{status:hit.status,headers:h})}
  try{
   const now=Date.now(),response=await serveQuarterHour(new Request(u.origin+'/api/quarter-hour?series='+series),env,ctx),snapshot=await response.json();
   if(!response.ok)return out({state:snapshot.state||'QUOTE_UNAVAILABLE',series_ticker:series,retry_at_utc:snapshot.retry_at_utc||null},503);
