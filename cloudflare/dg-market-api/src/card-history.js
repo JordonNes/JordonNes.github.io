@@ -22,8 +22,8 @@ export function compareHistory(series,current,pages,now=Date.now(),maxFeatureAge
   if(co>=open-5*3600000)recent.push(c);const t=clock(co);if(t.hour===local.hour){hourly.push(c);if(t.day===local.day)weekly.push(c)}
  }
  // Precedence is fixed by sample size, never by which cohort has a favorable result.
- const cohort=recent.length>=8?recent:hourly,up=cohort.filter(c=>c.result==='yes').length,down=cohort.length-up,k=Math.max(up,down),rate=cohort.length?k/cohort.length:null;
- Object.assign(base,{cohort:recent.length>=8?'recent five hours':'same Pacific hour within 30 days',matches:cohort.length,up,down,recent_5h_matches:recent.length,same_pacific_hour_matches:hourly.length,same_weekday_hour_matches:weekly.length,observed_majority_fraction:rate,descriptive_wilson_lower:wilson(k,cohort.length),current_quote_trend:f.trend,reason:'Fewer than 8 matching settled contracts; no suggestion.'});
+ const cohort=recent.length>=8?recent:weekly.length>=8?weekly:hourly,cohortName=recent.length>=8?'recent five hours':weekly.length>=8?'same weekday + Pacific hour within 30 days':'same Pacific hour within 30 days',up=cohort.filter(c=>c.result==='yes').length,down=cohort.length-up,k=Math.max(up,down),rate=cohort.length?k/cohort.length:null;
+ Object.assign(base,{cohort:cohortName,matches:cohort.length,up,down,recent_5h_matches:recent.length,same_pacific_hour_matches:hourly.length,same_weekday_hour_matches:weekly.length,archive_window_days:30,comparative_feature:'current 3 consecutive observed YES-quote minutes; trend and level matched to settled contracts',observed_majority_fraction:rate,descriptive_wilson_lower:wilson(k,cohort.length),current_quote_trend:f.trend,reason:'Fewer than 8 matching settled contracts; no suggestion.'});
  if(cohort.length>=8){base.reason='Historical split is inconclusive; no suggestion.';if(rate>=.70&&wilson(k,cohort.length)>.5){base.state='EXPERIMENTAL_SUGGESTION';base.suggested_side=up>down?'UP':'DOWN';base.reason='Historical analog majority only; unvalidated and not a calibrated ending probability.'}}
  return base;
 }
@@ -35,10 +35,10 @@ async function archivedPages(env,series,now){
   for(const obj of list.objects||[]){const hour=Number(obj.key.slice(prefix.length).split('/')[0]);if(!Number.isInteger(hour)||hour<cutoff||hour>=currentHour)continue;const old=byHour.get(hour);if(!old||new Date(obj.uploaded)>new Date(old.uploaded))byHour.set(hour,obj)}
   truncated=!!list.truncated;cursor=list.cursor;if(!truncated)break;
  }
- const local=clock(now),recentHours=Array.from({length:5},(_,i)=>currentHour-(i+1)*3600),sameHour=[...byHour.keys()].filter(h=>clock(h*1000).hour===local.hour).sort((a,b)=>b-a).slice(0,19);
+ const local=clock(now),recentHours=Array.from({length:5},(_,i)=>currentHour-(i+1)*3600),sameHour=[...byHour.keys()].filter(h=>clock(h*1000).hour===local.hour).sort((a,b)=>b-a).slice(0,30);
  const selected=[...new Set([...recentHours,...sameHour])].filter(h=>byHour.has(h)),pages=[];
  for(const h of selected){const obj=await env.DG_RESEARCH_R2.get(byHour.get(h).key);if(!obj)continue;const p=JSON.parse(await obj.text());if(p.series_ticker===series&&Date.parse(p.hour_start_utc)===h*1000&&Array.isArray(p.contracts))pages.push(p)}
- return {pages,state:truncated?'ARCHIVE_LIST_TRUNCATED':'OBSERVED_ARCHIVE',listed_hours:byHour.size,selected_hours:selected.length,recent_hours_available:recentHours.filter(h=>byHour.has(h)).length,requested_recent_hours:5,lookback_days:30,source_archive_keys:selected.map(h=>byHour.get(h).key),selection:'five completed UTC hours plus same Pacific hour; at most 24 archived hours',oldest_selected_utc:pages.length?pages.map(p=>p.hour_start_utc).sort()[0]:null};
+ return {pages,state:truncated?'ARCHIVE_LIST_TRUNCATED':'OBSERVED_ARCHIVE',listed_hours:byHour.size,selected_hours:selected.length,recent_hours_available:recentHours.filter(h=>byHour.has(h)).length,requested_recent_hours:5,lookback_days:30,source_archive_keys:selected.map(h=>byHour.get(h).key),selection:'five completed UTC hours plus same Pacific hour over 30 days; up to 35 archived hours',oldest_selected_utc:pages.length?pages.map(p=>p.hour_start_utc).sort()[0]:null};
 }
 export async function serveCardHistory(request,env,ctx){
  const u=new URL(request.url),series=(u.searchParams.get('series')||'').toUpperCase();const headers={'Content-Type':'application/json','Cache-Control':'no-store'};const out=(body,status=200)=>new Response(JSON.stringify(body),{status,headers});
