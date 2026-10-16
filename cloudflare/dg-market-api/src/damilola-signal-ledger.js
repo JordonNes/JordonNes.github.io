@@ -33,7 +33,7 @@ export function makeSignalCheckpoint(body,series,slot,stage,now=Date.now()){
   featureMinutes.push({time_utc:x.time_utc,yes_bid_dollars:x.yes_bid_dollars,yes_ask_dollars:x.yes_ask_dollars,yes_midpoint_dollars:x.yes_midpoint_dollars});
  }
  const x=body.comparison,majority=x?.up>x?.down?'UP':x?.down>x?.up?'DOWN':null;
- const eligible=x?.minute===spec.decision_minute&&
+ const eligible=x?.version==='gavavi-history-analog-r1'&&x?.minute===spec.decision_minute&&
   x?.state==='EXPERIMENTAL_SUGGESTION'&&validSide(x.suggested_side)&&
   x.suggested_side===majority&&Number.isInteger(x.matches)&&x.matches===x.up+x.down&&
   x.matches>=8&&x.observed_majority_fraction>=.7&&x.descriptive_wilson_lower>.5;
