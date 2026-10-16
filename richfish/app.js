@@ -549,7 +549,7 @@ function initializeCoordinateExplore(){
   form?.addEventListener('submit',event=>{
     event.preventDefault();
     const raw=$('#frmap-gps-coordinates')?.value.trim()||'';
-    const match=raw.match(/^\\s*([-+]?\\d+(?:\\.\\d+)?)\\s*[,;\\s]\\s*([-+]?\\d+(?:\\.\\d+)?)\\s*$/);
+    const match=raw.match(/^\s*([-+]?\d+(?:\.\d+)?)\s*[,;\s]\s*([-+]?\d+(?:\.\d+)?)\s*$/);
     const status=$('#frmap-gps-error');
     if(!match){if(status)status.textContent='Use decimal degrees: latitude, longitude.';return;}
     const lat=Number(match[1]),lng=Number(match[2]);
