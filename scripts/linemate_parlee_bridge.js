@@ -78,20 +78,59 @@ function parlayEchoes(source,trends){
   }
   return results;
 }
+/** Safe market-observation normalization. Price ≠ LJPC; volume ≠ accuracy.
+ * No ownership of exchange APIs is inferred from Linemate's research page.
+ */
+function marketObservations(source){
+  const out=[],errors=[],seen=new Set();
+  for(const m of source.prediction_markets||[]){
+    const source_href=url(m.source_url),at=time(m.observed_at_utc);
+    const category=canonLeague(m.league);
+    const volumePeriod=String(m.volume_period||"").toUpperCase();
+    const exchange=String(m.exchange||"").trim();
+    const id=String(m.market_id||"").trim();
+    const event=String(m.event_id||"").trim();
+    const yes=m.yes_price_cents,no=m.no_price_cents,volume=m.volume_usd,liq=m.liquidity_usd;
+    const centsOk=x=>x===null||x===undefined||(typeof x==="number"&&Number.isFinite(x)&&x>=0&&x<=100);
+    const usdOk=x=>x===null||x===undefined||(typeof x==="number"&&Number.isFinite(x)&&x>=0&&x<=1e12);
+    // A URL or marketing claim alone never creates an observable quote.
+    if(category!=="NFL"||!source_href||!at||!id||!event||!String(m.title||"").trim()||
+       !["24H","TOTAL"].includes(volumePeriod)||!centsOk(yes)||!centsOk(no)||
+       !usdOk(volume)||!usdOk(liq)||volume===null||volume===undefined){
+       errors.push({code:"INVALID_MARKET_OBSERVATION",market_id:id||null});continue;
+    }
+    // At least one measured quote or liquidity metric must be present.
+    if(yes==null&&no==null&&liq==null){errors.push({code:"UNQUOTED_MARKET",market_id:id});continue;}
+    const key=[category,exchange,id,at].join("|");
+    if(seen.has(key))continue;seen.add(key);
+    out.push({
+      league:category,market_id:id.slice(0,140),event_id:event.slice(0,140),
+      title:String(m.title).slice(0,180),exchange:exchange.slice(0,70),
+      contract_type:String(m.contract_type||"").slice(0,80),selection:String(m.selection||"").slice(0,100),
+      yes_price_cents:yes??null,no_price_cents:no??null,
+      volume_usd:volume,volume_period:volumePeriod,liquidity_usd:liq??null,
+      observed_at_utc:at,source:"Linemate",source_url:source_href,
+      source_status:"SOURCE_RESEARCH_ONLY",liquidity_status:liq==null?"UNVERIFIED":"SOURCE_REPORTED",
+      signal_policy:"Market activity and source price only; not L&J LJPC or an executable offer."
+    });
+  }
+  return {rows:out.sort((a,b)=>b.volume_usd-a.volume_usd).slice(0,50),errors};
+}
 function makePublication(source,registry,previous={}){
   if(source.source!=="Linemate"||source.permission_verified!==true)
     throw Error("Authorized source input required: source=Linemate, permission_verified=true (do not assert permission without verification).");
   const {trends,errors}=matchSource(source,registry);
+  const {rows:prediction_markets,errors:market_errors}=marketObservations(source);
   const games=(source.games||[]).map(g=>({...g,league:canonLeague(g.league),source:"Linemate",source_url:url(g.source_url),collected_at_utc:time(g.collected_at_utc)}))
     .filter(g=>LEAGUES.has(g.league)&&g.source_url&&g.collected_at_utc);
   return {
     schema_version:"LJ-DEMON-LORD-1",generated_at_utc:new Date().toISOString(),
     status:"SOURCE_INTELLIGENCE_AVAILABLE",source_policy:"Authorized Linemate structured evidence; independent LSI exact-market validation required.",
-    provider_persona:"Parlee the Demon Lord",source_provider:"Linemate",games,trends,
+    provider_persona:"Parlee the Demon Lord",source_provider:"Linemate",games,trends,prediction_markets,
     picks:Array.isArray(previous.picks)?previous.picks:[],parlays:parlayEchoes(source,trends),
     conflicts:Array.isArray(previous.conflicts)?previous.conflicts:[],
     settled_record:previous.settled_record||{graded:0,hits:0,misses:0,voids:0},
-    ingest_report:{source_trends:(source.trends||[]).length,accepted_trends:trends.length,matched_markets:trends.filter(t=>t.match_status==="LSI_EVALUATED").length,errors}
+    ingest_report:{source_trends:(source.trends||[]).length,accepted_trends:trends.length,matched_markets:trends.filter(t=>t.match_status==="LSI_EVALUATED").length,market_observations:prediction_markets.length,errors:[...errors,...market_errors]}
   };
 }
 function main(){
@@ -106,4 +145,4 @@ fs.renameSync(temp,dstPath);
 process.stdout.write(JSON.stringify(pub.ingest_report)+"\n");
 }
 if(require.main===module){try{main();}catch(error){console.error(error.message);process.exitCode=1;}}
-module.exports={norm,identity,hit,matchSource,makePublication};
+module.exports={norm,identity,hit,matchSource,marketObservations,makePublication};
