@@ -1,4 +1,4 @@
-const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const page=fs.readFileSync('damilola-gavavi/index.html','utf8'),mirror=fs.readFileSync('damilola-gavavi/gavavi-live.html','utf8');
 const script=fs.readFileSync('damilola-gavavi/gam-15m.js','utf8'),css=fs.readFileSync('damilola-gavavi/gam-15m.css','utf8');
 const api=fs.readFileSync('cloudflare/dg-market-api/src/quarter-hour.js','utf8');
@@ -10,3 +10,35 @@ test('all 21 documented 15-minute binary market series are present exactly once'
 test('every advertised series has a matching quote gateway allowlist',()=>{for(const s of series){assert(api.includes('"'+s+'"'),s+" missing in per-series route");assert(worker.includes('"'+s+'"'),s+" missing in batch route")}});
 test('only actual exchange quotes can populate cards; no synthetic fallback',()=>{assert.match(script,/kind==="QUARTER_HOUR_BINARY_OUTCOME"/);assert.match(script,/quote_observed_at_utc/);assert.match(script,/15-minute/);assert.match(script,/Quote unavailable/);assert.doesNotMatch(script,/Math\.random|fakeQuote|generatedPrice/);assert.match(script,/rate limit/i)});
 test('responsive mobile cards and verified Kalshi market URLs exist',()=>{assert.match(css,/@media\(max-width:660px\)/);assert.match(css,/\.cards\{grid-template-columns:1fr/);for(const s of series)assert(script.includes(s+':"'),s+" has no reviewed Kalshi URL slug")});
+
+test('moving highlights depend on current eligible evidence, with automatic observation refresh',()=>{
+ assert.match(script,/const selected=!!suggestion&&suggestion.suggested_side.toLowerCase\(\)===side/);
+ assert.match(script,/if\(selected\)\{b.dataset.suggestedSeries/);
+ assert.match(script,/setInterval\(\(\)=>\{if\(!document.hidden\)loadCardHistory\(\)\},30000\)/);
+ assert.match(script,/if\(!document.hidden\)\{loadCardHistory\(\)/);
+ assert.match(page,/Live signal check every ~30 seconds/);
+ assert.match(css,/\.side\.gavavi-suggested\{/);
+ assert.match(script,/Gavavi LIVE: WAIT · no current highlight/);
+});
+test('first forecast checkpoint is immutable; newer UP DOWN changes update while WAIT does not erase it',()=>{
+ const from=script.indexOf('const SIGNAL_STORAGE_KEY='),to=script.indexOf('let historyLoading=false;');
+ assert(from>=0&&to>from,'checkpoint source found');
+ const stored=new Map(),history=new Map();
+ const localStorage={getItem:key=>stored.get(key)||null,setItem:(key,value)=>stored.set(key,value)};
+ const ctx=vm.createContext({localStorage,cardHistory:history});
+ vm.runInContext(script.slice(from,to)+'\nthis.probe=checkpointFor;',ctx);
+ const now=Date.now(),series='KXBTC15M',def={ticker:series};
+ const market={ticker:'KXBTC15M-CONTRACT-A',close_time:new Date(now+600000).toISOString()};
+ const record={market};
+ const observe=(offset,side)=>{history.set(series,{retrieved_at_utc:new Date(now+offset).toISOString()});return ctx.probe(def,record,side?{suggested_side:side}:null)};
+ let state=observe(-50000,'UP');assert.equal(state.first,'UP');assert.equal(state.latest,'UP');assert.equal(state.changes,0);
+ state=observe(-40000,'UP');assert.equal(state.changes,0);
+ state=observe(-40000,'DOWN');assert.equal(state.latest,'UP');assert.equal(state.changes,0,'same source timestamp cannot reverse');
+ state=observe(-30000,'DOWN');assert.equal(state.first,'UP');assert.equal(state.latest,'DOWN');assert.equal(state.changes,1);
+ assert.equal(state.last_change.from,'UP');assert.equal(state.last_change.to,'DOWN');
+ state=observe(-20000,null);assert.equal(state.first,'UP');assert.equal(state.latest,'DOWN');assert.equal(state.changes,1);
+ state=observe(-10000,'UP');assert.equal(state.first,'UP');assert.equal(state.latest,'UP');assert.equal(state.changes,2);
+ const next=ctx.probe(def,{market:{...market,ticker:'KXBTC15M-CONTRACT-B'}},{suggested_side:'DOWN'});
+ assert.equal(next.first,'DOWN');assert.equal(next.changes,0,'new quarter-hour contract requires fresh initial checkpoint');
+ assert(stored.has('dg-gam-signal-checkpoints-v1'),'browser-local first checkpoint persists through reload');
+});
