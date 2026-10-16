@@ -197,6 +197,11 @@ function makeCard(def){
   const coverage=body?.coverage;
  if(coverage)research.append(el("div","","History coverage: "+coverage.recent_hours_available+" / 5 recent completed hours; "+coverage.selected_hours+" archived hours selected within 30 days. "+coverage.state));
  if(comparison)research.append(el("div","","Damilola analog: "+(comparison.cohort||"no eligible cohort")+" · five-hour matches: "+comparison.recent_5h_matches+" · same Pacific hour: "+comparison.same_pacific_hour_matches+" · weekday + hour: "+comparison.same_weekday_hour_matches+". "+comparison.reason));
+  if(comparison&&Number.isInteger(comparison.eligible_settlements_scanned))research.append(el("div","match-coverage",
+   "Analog evidence: "+comparison.eligible_settlements_scanned+" independently settled sampled contracts · "+
+   comparison.three_minute_feature_pairs+" with matching-minute quote data · "+
+   comparison.same_quote_trend_candidates+" same-trend observations · "+
+   comparison.sampled_thirty_day_matches+" matching trend and quote level. Minimum 8 in the selected cohort."));
  const spot=spotChart(def);if(spot)research.append(spot);
  research.append(el("div","","Damilola ending forecast: not yet validated"));
  const evidence=el("a","","Compare observed history ↗");evidence.href="pattern-lab.html?series="+encodeURIComponent(def.ticker);research.append(evidence);
