@@ -15,7 +15,7 @@ export function auditHour(d,series,hour,now=Date.now()){
  if(d.series_ticker!==series||Date.parse(d.hour_start_utc)!==hour*1000||Date.parse(d.hour_end_utc)!==(hour+3600)*1000||d.read_only!==true||d.underlying_price_history!==false||d.executable_fills_verified!==false||d.prediction_validated!==false||!Array.isArray(d.contracts))return {issues:['ENVELOPE_INVALID'],contracts:0,quotes:0,settled:0,missing:60};
  for(const c of d.contracts){
   const open=Date.parse(c.open_time_utc),close=Date.parse(c.close_time_utc),labelAt=Date.parse(c.settled_at_utc);
-  if(!c.ticker?.startsWith(series+'-')||seen.has(c.ticker)||!Number.isFinite(open)||!Number.isFinite(close)||close-open!==900000||open<hour*1000||close>(hour+3600)*1000||close>now)issues.push('CONTRACT_GRAIN_INVALID');
+  if(!c.ticker?.startsWith(series+'-')||seen.has(c.ticker)||!Number.isFinite(open)||!Number.isFinite(close)||close-open!==900000||open%900000!==0||open<hour*1000||close>(hour+3600)*1000||close>now)issues.push('CONTRACT_GRAIN_INVALID');
   if(slots.has(open))issues.push('DUPLICATE_WINDOW');slots.add(open);
   seen.add(c.ticker);const times=new Set();let valid=0;
   for(const q of c.candles||[]){
