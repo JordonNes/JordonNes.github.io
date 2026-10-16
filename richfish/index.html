@@ -7,7 +7,7 @@
   <title>Rich Water Tavern | Powered by RICHFISH</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="rwt-theme.css?v=20261008-calendar" />
+  <link rel="stylesheet" href="rwt-theme.css?v=20261016-compact" />
 </head>
 <body class="home-page">
   <header class="topbar">
@@ -64,13 +64,13 @@
 
     <section id="frmap" class="section shell frmap-live">
       <div class="section-heading">
-        <div><span class="eyebrow">FRmap · LIVE WATER</span><h2>Click the water. Read the evidence. Fish smarter.</h2></div>
+        <div><span class="eyebrow">FRmap · LIVE WATER</span><h2>Find your water. Fish smarter.</h2></div>
         <span class="sync">Evidence-gated map · no invented calls</span>
       </div>
       <div class="map-workspace">
         <aside class="map-controls">
           <strong>Target species</strong>
-          <label class="map-field" for="frmap-species">Highlight the best supported water</label>
+          <label class="map-field" for="frmap-species">Find fishing spots by species across the Bay–Delta</label>
           <select id="frmap-species" class="map-select" aria-label="FRmap target species">
             <option value="">All modeled targets</option>
           </select>
@@ -78,7 +78,8 @@
             <button class="btn map-btn" id="frmap-near-me" type="button">Use my location</button>
             <button class="btn map-btn" id="frmap-reset" type="button">Reset Bay view</button>
           </div>
-          <div id="frmap-selection-summary" class="map-selection-summary">Select a species or click the map.</div>
+          <div id="frmap-selection-summary" class="map-selection-summary">Choose a species to find fishing spots.</div>
+          <div id="frmap-region-results" class="frmap-region-results" aria-live="polite"></div>
 
           <strong>Visible layers</strong>
           <label><input type="checkbox" data-map-layer="access" checked /> RICHFISH fishing locations</label>
@@ -96,6 +97,17 @@
             <option value="37.909,-122.353,14">Richmond Inner Harbor</option>
             <option value="38.016,-122.364,13">Point Pinole / San Pablo Bay</option>
             <option value="38.055,-122.218,13">Carquinez Strait / Eckley</option>
+            <option value="37.78,-122.42,11">San Francisco Bay · Central</option>
+            <option value="37.57,-122.22,11">South San Francisco Bay</option>
+            <option value="37.82,-122.49,11">Golden Gate / Marin</option>
+            <option value="38.02,-122.42,11">San Pablo Bay</option>
+            <option value="38.06,-122.22,12">Carquinez Strait</option>
+            <option value="38.05,-122.05,11">Suisun / Grizzly / Honker bays</option>
+            <option value="38.12,-121.91,11">Montezuma Slough / Suisun Marsh</option>
+            <option value="38.12,-121.68,10">Sacramento / San Joaquin Delta</option>
+            <option value="38.32,-121.58,10">Sacramento River / Delta</option>
+            <option value="37.98,-121.40,10">San Joaquin River / Stockton</option>
+            <option value="38.25,-122.96,10">Bodega / Tomales / Drakes bays</option>
           </select>
           <p class="map-source-note">Detailed survey candidate: <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ngdc.mgg.dem%3Asan_francisco_bay_P090_2018" target="_blank" rel="noopener noreferrer">NOAA San Francisco Bay P090 bathymetric model (2018, ~10 m grid, MLLW)</a>. Survey-derived historical model; full-resolution raster is not yet loaded.</p>
           <label><input type="checkbox" data-map-layer="relief" /> Underwater shaded relief (NOAA ETOPO1)</label>
@@ -176,7 +188,7 @@
       <p class="notice">The 0–6 Calendar Rating is a general tide/lunar planning index, separate from the live Fish Now Activity Rating and not a catch probability. Weather, water conditions, species seasonality, community evidence, access, regulations and safety remain separate decision layers and can override a favorable calendar rating. Tides4Fishing is credited as a feature/workflow reference; numerical tide data come from NOAA CO-OPS.</p>
     </section>
     <section id="spots" class="section shell">
-      <div class="section-heading"><div><span class="eyebrow">RAY'S LOCATION FILES</span><h2>Full location inventory — not four demo records.</h2></div><div class="section-actions"><a class="btn" href="location-manager.html">Add / update fishing locations →</a><span class="sync">43 normalized master records</span></div></div>
+      <div class="section-heading"><div><span class="eyebrow">RAY'S LOCATION FILES</span><h2>Fishing locations</h2></div><div class="section-actions"><a class="btn" href="location-manager.html">Add / update fishing locations →</a><span class="sync">43 normalized master records</span></div></div>
       <div class="workspace">
         <aside class="selector-panel"><label for="spot-search">Find a spot</label><input id="spot-search" placeholder="Search spot or region" /><div id="spot-list" class="select-list"></div></aside>
         <article id="spot-detail" class="detail-panel loading">Loading spot intelligence…</article>
