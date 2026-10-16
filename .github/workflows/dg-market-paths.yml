@@ -1,0 +1,51 @@
+name: D&G 21-Market Path Archive
+on:
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: 'Completed hours to revisit (1-12); all 21 series'
+        default: '2'
+        required: false
+  schedule:
+    - cron: '8 * * * *'
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/collect-dg-market-paths.mjs'
+      - 'scripts/collect-dg-market-paths.test.mjs'
+      - '.github/workflows/dg-market-paths.yml'
+permissions:
+  contents: read
+concurrency:
+  group: dg-market-paths
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/collect-dg-market-paths.mjs
+            scripts/collect-dg-market-paths.test.mjs
+            damilola-gavavi/pattern-math.js
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test timestamp, quote and settlement audits
+        run: node --test scripts/collect-dg-market-paths.test.mjs
+      - name: Archive and audit all 21 series
+        env:
+          DG_PATH_HOURS: ${{ github.event.inputs.hours || '2' }}
+        run: node scripts/collect-dg-market-paths.mjs
+      - name: Preserve source responses and coverage manifest even after failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dg-market-paths-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/dg-market-paths/
+          retention-days: 30
+          if-no-files-found: error
