@@ -209,7 +209,7 @@ async function reload(manual=false){
  }finally{
   refreshing.active=false;$("refresh").disabled=false;draw();
   loadCardHistory();
-  clearTimeout(pollTimer);pollTimer=setTimeout(()=>reload(),90000);
+  clearTimeout(pollTimer);pollTimer=setTimeout(()=>reload(),Math.max(1000,70000-(Date.now()-refreshing.started)));
  }
 }
 function tick(){
