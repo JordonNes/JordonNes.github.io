@@ -153,15 +153,26 @@ function makePublication(source,registry,previous={}){
   };
 }
 function main(){
-const [, ,srcPath,regPath,dstPath]=process.argv;
-if(!srcPath||!regPath||!dstPath)throw Error("Usage: node scripts/linemate_parlee_bridge.js authorized-input.json registry.json output.json");
+const [, ,srcPath,regPath,dstPath,boardPath]=process.argv;
+if(!srcPath||!regPath||!dstPath||!boardPath)
+  throw Error("Usage: node scripts/linemate_parlee_bridge.js authorized-input.json registry.json .parlee-runtime/intel.json future_market_board.json");
 const read=p=>JSON.parse(fs.readFileSync(p,"utf8"));
-const pub=makePublication(read(srcPath),read(regPath),fs.existsSync(dstPath)?read(dstPath):{});
+const ROOT=path.resolve(__dirname,"..");
+const isEphemeral=p=>{
+  const rel=path.relative(ROOT,path.resolve(p));
+  return rel.startsWith(".parlee-runtime"+path.sep)||rel.startsWith(".."+path.sep)||rel==="..";
+};
+if(!isEphemeral(srcPath)||!isEphemeral(dstPath))
+ throw Error("External-source input/output cannot be stored in Git-tracked paths; use .parlee-runtime/ or another outside-repo directory");
+const {prune}=require("./parlee_research_ttl.js");
+const previous=fs.existsSync(dstPath)?read(dstPath):{};
+const pub=makePublication(read(srcPath),read(regPath),previous);
+const output=prune(pub,read(boardPath));
 fs.mkdirSync(path.dirname(dstPath),{recursive:true});
 const temp=dstPath+".tmp";
-fs.writeFileSync(temp,JSON.stringify(pub,null,2)+"\n");
+fs.writeFileSync(temp,JSON.stringify(output,null,2)+"\n");
 fs.renameSync(temp,dstPath);
-process.stdout.write(JSON.stringify(pub.ingest_report)+"\n");
+process.stdout.write(JSON.stringify({ingest:pub.ingest_report,retention:output.retention_report})+"\n");
 }
 if(require.main===module){try{main();}catch(error){console.error(error.message);process.exitCode=1;}}
 module.exports={norm,identity,hit,matchSource,marketObservations,assertWrittenAuthorization,makePublication};
