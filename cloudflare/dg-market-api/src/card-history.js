@@ -8,11 +8,11 @@ function clock(at){const p=pacific.formatToParts(new Date(at));return {hour:p.fi
 function feature(contract,minute){const open=Date.parse(contract.open_time_utc),rows=contract.candles||[];const values=[minute-2,minute-1,minute].map(m=>rows.filter(c=>Date.parse(c.time_utc)===open+m*60000).length===1?rows.find(c=>Date.parse(c.time_utc)===open+m*60000).yes_midpoint_dollars:null);if(!values.every(x=>finite(x)&&x>=0&&x<=1))return null;const delta=values[2]-values[0];return {level:values[2],trend:delta>=.02?'rising':delta<=-.02?'falling':'flat'}}
 function wilson(k,n){if(!n)return null;const z=1.96,p=k/n;return (p+z*z/(2*n)-z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n)))/(1+z*z/n)}
 // Fixed descriptive rule; no fitting, probability calibration, executable edge or profit claim.
-export function compareHistory(series,current,pages,now=Date.now()){
+export function compareHistory(series,current,pages,now=Date.now(),maxFeatureAgeMs=120000){
  const open=Date.parse(current?.open_time_utc),close=Date.parse(current?.close_time_utc);
  const latest=(current?.candles||[]).filter(c=>finite(c.yes_midpoint_dollars)&&Date.parse(c.time_utc)<=now).at(-1),at=Date.parse(latest?.time_utc),minute=(at-open)/60000;
  const base={version:'gavavi-history-analog-r1',state:'WAIT',suggested_side:null,experimental:true,prediction_validated:false,expected_net_profit_dollars:null,cash_out_at_utc:null,auto_sell_price_dollars:null,exit_state:'NO_VALIDATED_NET_EXIT_EDGE',minute:Number.isFinite(minute)?minute:null,cohort:null,matches:0,up:0,down:0,recent_5h_matches:0,same_pacific_hour_matches:0,same_weekday_hour_matches:0,reason:'Awaiting three consecutive current-contract quote minutes (minutes 3–12).'};
- if(!Number.isFinite(open)||close-open!==900000||open>now||close<=now||minute<3||minute>12||!Number.isInteger(minute)||now-at>120000||now<at)return base;
+ if(!Number.isFinite(open)||close-open!==900000||open>now||close<=now||minute<3||minute>12||!Number.isInteger(minute)||now-at>maxFeatureAgeMs||now<at)return base;
  const f=feature(current,minute);if(!f)return base;
  const seen=new Set(),recent=[],hourly=[],weekly=[],local=clock(open);
  for(const page of pages||[])for(const c of page.contracts||[]){const co=Date.parse(c.open_time_utc),cc=Date.parse(c.close_time_utc),settled=Date.parse(c.settled_at_utc);
@@ -43,7 +43,7 @@ export async function serveCardHistory(request,env,ctx){
  const u=new URL(request.url),series=(u.searchParams.get('series')||'').toUpperCase();const headers={'Content-Type':'application/json','Cache-Control':'no-store'};const out=(body,status=200)=>new Response(JSON.stringify(body),{status,headers});
  if(!SERIES.has(series))return out({state:'INVALID_SERIES'},400);
  const decision=u.searchParams.get('decision_minute');if(decision!==null&&decision!=='5')return out({state:'INVALID_DECISION_MINUTE'},400);
- const key=new Request(u.origin+'/api/card-history?series='+series+'&decision_minute='+(decision||'latest')+'&v=2'),hit=await caches.default.match(key);if(hit){const h=new Headers(hit.headers);h.set('X-DG-Cache','HIT');return new Response(hit.body,{status:hit.status,headers:h})}
+ const key=new Request(u.origin+'/api/card-history?series='+series+'&decision_minute='+(decision||'latest')+'&v=4'),hit=await caches.default.match(key);if(hit){const h=new Headers(hit.headers);h.set('X-DG-Cache','HIT');return new Response(hit.body,{status:hit.status,headers:h})}
  try{
   const now=Date.now(),response=await serveQuarterHour(new Request(u.origin+'/api/quarter-hour?series='+series),env,ctx),snapshot=await response.json();
   if(!response.ok)return out({state:snapshot.state||'QUOTE_UNAVAILABLE',series_ticker:series,retry_at_utc:snapshot.retry_at_utc||null},503);
@@ -53,11 +53,11 @@ export async function serveCardHistory(request,env,ctx){
    if(r.ok&&(!r.data.ticker||r.data.ticker===m.ticker)&&Array.isArray(r.data.candlesticks))current={ticker:m.ticker,open_time_utc:m.open_time,close_time_utc:m.close_time,candles:normalizeLayerCandles(r.data.candlesticks,Date.parse(m.open_time),Math.min(now,Date.parse(m.close_time)))};
   }
   const comparisonInput=decision==='5'&&current?{...current,candles:current.candles.filter(p=>Date.parse(p.time_utc)<=Date.parse(current.open_time_utc)+300000)}:current;
-  const comparison=compareHistory(series,comparisonInput,archive.pages,now);
+  const comparison=compareHistory(series,comparisonInput,archive.pages,now,decision==='5'?180000:120000);
   if(m?.yes_maps_to_up!==true){comparison.state='WAIT';comparison.suggested_side=null;comparison.reason='YES-to-UP settlement mapping is not verified.'}
   const fallback=archive.pages.flatMap(p=>p.contracts).filter(c=>(c.candles||[]).some(p=>finite(p.yes_midpoint_dollars))).sort((a,b)=>Date.parse(b.close_time_utc)-Date.parse(a.close_time_utc))[0]||null;
   const {pages,...coverage}=archive;
-  const body={state:current?.candles?.length?'OBSERVED':fallback?'ARCHIVED_ONLY':'NO_OBSERVATIONS',series_ticker:series,retrieved_at_utc:new Date(now).toISOString(),source:'Kalshi 1-minute paired YES quote midpoints; not underlying price or fills',current_contract:current,chart:current?.candles?.some(p=>finite(p.yes_midpoint_dollars))?{...current,mode:'CURRENT_CONTRACT'}:fallback?{...fallback,mode:'PREVIOUS_ARCHIVED_CONTRACT'}:null,source_state:sourceState,yes_maps_to_up:m?.yes_maps_to_up===true,quote_observed_at_utc:snapshot.retrieved_at_utc,decision_minute:decision==='5'?5:null,coverage,comparison,no_trading:true};
+  const body={state:current?.candles?.length?'OBSERVED':fallback?'ARCHIVED_ONLY':'NO_OBSERVATIONS',series_ticker:series,retrieved_at_utc:new Date(now).toISOString(),source:'Kalshi 1-minute paired YES quote midpoints; not underlying price or fills',current_contract:current,chart:current?.candles?.some(p=>finite(p.yes_midpoint_dollars))?{...current,mode:'CURRENT_CONTRACT'}:fallback?{...fallback,mode:'PREVIOUS_ARCHIVED_CONTRACT'}:null,source_state:sourceState,yes_maps_to_up:m?.yes_maps_to_up===true,quote_observed_at_utc:snapshot.retrieved_at_utc,quote:{yes_bid_dollars:m?.yes_bid_dollars??null,yes_ask_dollars:m?.yes_ask_dollars??null},decision_minute:decision==='5'?5:null,coverage,comparison,no_trading:true};
   const result=new Response(JSON.stringify(body),{headers:{...headers,'Cache-Control':'public, max-age=60','X-DG-Cache':'MISS'}});ctx.waitUntil(caches.default.put(key,result.clone()));return result;
  }catch{return out({state:'CARD_HISTORY_UNAVAILABLE',series_ticker:series},503)}
 }
