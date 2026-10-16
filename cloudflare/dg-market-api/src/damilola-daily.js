@@ -104,9 +104,10 @@ async function listHourlyVersions(bucket,series,dayStart){
   if(!truncated||!cursor||(result.objects||[]).some(x=>Number(x.key.slice(prefix.length).split('/')[0])>=endSec))break;
  }
  if(truncated&&objects.length>=6000)throw Error('ARCHIVE_LIST_TRUNCATED');
- const byHour=new Map();
- for(const x of objects){const hour=Number(x.key.slice(prefix.length).split('/')[0]),old=byHour.get(hour);if(!old||new Date(x.uploaded)>new Date(old.uploaded))byHour.set(hour,x)}
- return [...byHour.values()].sort((a,b)=>a.key.localeCompare(b.key));
+ // Retain all immutable versions within the day. A later source fetch can be
+ // sparser than an earlier one; summarizeDay selects the highest-quality observed
+ // contract version, without inventing missing minutes or duplicate outcomes.
+ return objects.sort((a,b)=>a.key.localeCompare(b.key));
 }
 async function readDay(bucket,series,dayStart){
  const objs=await listHourlyVersions(bucket,series,dayStart),pages=[];
