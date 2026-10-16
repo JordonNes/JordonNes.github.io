@@ -25,6 +25,26 @@ return '<article class="dl-card"><div class="dl-meta">'+esc(lg(r.league)||"—")
  +context+'<div class="dl-meta">Linemate source observed: '+esc(fmtTime(r.collected_at_utc))+'</div>'
  +link(r.source_url)+'</article>';
 }
+const dollars=n=>typeof n==="number"&&Number.isFinite(n)?
+ new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(n):"not reported";
+const cents=n=>typeof n==="number"&&Number.isFinite(n)&&n>=0&&n<=100?n.toFixed(n%1?1:0)+"¢":"not reported";
+function predictionMarketCard(r){
+ const date=Date.parse(r.observed_at_utc||"");
+ const stale=!Number.isFinite(date)||Date.now()-date>15*60*1000||date>Date.now()+60000;
+ const sourceMatch=r.source==="Linemate"&&safe(r.source_url)&&/^https:\/\/(?:[a-z0-9-]+\.)*linemate\.io(?:\/|$)/i.test(r.source_url);
+ if(!sourceMatch||r.league!=="NFL"||r.source_status!=="SOURCE_RESEARCH_ONLY")return "";
+ const chips=metric("Volume "+(r.volume_period==="24H"?"24h":"total"),dollars(r.volume_usd))+
+ metric("YES source quote",cents(r.yes_price_cents))+
+ metric("NO source quote",cents(r.no_price_cents))+
+ metric("Liquidity (source)",dollars(r.liquidity_usd))+
+ metric("Freshness",stale?"STALE / RECHECK":"RECENT SOURCE OBSERVATION");
+ return '<article class="dl-card"><div class="dl-meta">NFL · '+esc(r.exchange||"Exchange unspecified")+" · "+esc(r.market_id||"")+'</div>'
+ +'<h3>'+esc(r.title||"NFL prediction market")+'</h3>'
+ +(r.selection?'<p>'+esc(r.selection)+'</p>':"")+
+ '<div class="dl-metrics">'+chips+'</div>'
+ +'<div class="dl-meta">Snapshot: '+esc(fmtTime(r.observed_at_utc))+' · NOT L&J CONFIDENCE · NOT AN EXECUTABLE QUOTE</div>'
+ +link(r.source_url)+'</article>';
+}
 function parlayLegs(r){
 if(!Array.isArray(r.legs)||!r.legs.length)return "";
 return "<div class=\"dl-meta\">"+r.legs.map(leg=>{
@@ -54,6 +74,8 @@ for(const [kind,id,none] of [["games","dl-games","No matchup sources recorded."]
 const rows=(Array.isArray(data[kind])?data[kind]:[]).filter(r=>selected()==="ALL"||lg(r.league)===selected());
 document.getElementById(id).innerHTML=rows.map(r=>kind==="trends"?trendCard(r):card(kind,r)).filter(Boolean).join("")||empty(none);
 }
+const markets=(Array.isArray(data.prediction_markets)?data.prediction_markets:[]).filter(r=>selected()==="ALL"||lg(r.league)===selected());
+document.getElementById("dl-market-watch").innerHTML=markets.map(predictionMarketCard).filter(Boolean).join("")||empty("No verified NFL prediction-market volume snapshots are available. Linemate market data is not automatically connected.");
 document.getElementById("dl-status").textContent=esc(data.status||"RESEARCH ONLY")+" · Publication: "+(data.generated_at_utc||"not yet collected")+" · LJPC unchanged";
 }
 async function update(){
