@@ -53,6 +53,14 @@ jobs:
           }
           const status=await check("/api/kalshi-status");
           if(status.status!==200||status.body.read_only!==true||typeof status.body.cooldown_active!=="boolean")throw Error("Kalshi diagnostics unavailable");
+          const signalLedger=await check("/api/damilola-signal-ledger?series=KXBTC15M&limit=1");
+          if(signalLedger.status!==200||signalLedger.body.state!=="OBSERVED_LEDGER"||
+             signalLedger.body.read_only!==true||signalLedger.body.trading_enabled!==false||
+             !Array.isArray(signalLedger.body.rows)||signalLedger.body.rows.length!==1)
+            throw Error("Damilola prospective signal ledger unavailable: "+JSON.stringify(signalLedger));
+          console.log(JSON.stringify({damilola_signal_ledger:signalLedger.body.state,
+            first_eligible_calls:signalLedger.body.summary?.first_eligible_calls,
+            recording_mode:"FIXED_CHECKPOINTS_ONLY",trading_enabled:false}));
           const ledger=await check("/api/prediction-ledger?series=KXBTC15M&mode=read");
           if(ledger.status!==200||ledger.body.read_only!==true||ledger.body.trading_enabled!==false||!["RECORDED","NO_RECORD"].includes(ledger.body.state))throw Error("Prospective ledger unavailable: "+JSON.stringify(ledger));
           console.log(JSON.stringify({prediction_ledger:ledger.body.state,trading_enabled:false}));
