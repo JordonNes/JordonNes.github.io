@@ -1,4 +1,5 @@
 import {serveQuarterHour} from './quarter-hour.js';
+import {loadLatestDamilolaReview} from './damilola-daily.js';
 import {fetchKalshiPublic} from './kalshi-public-cache.js';
 import {normalizeLayerCandles} from './market-layers.js';
 const SERIES=new Set('KXGOLD15M KXSILVER15M KXWTI15M KXCOPPER15M KXNATGAS15M KXPALLADIUM15M KXPLATINUM15M KXBTC15M KXETH15M KXSOL15M KXXRP15M KXDOGE15M KXBNB15M KXHYPE15M KXNEAR15M KXZEC15M KXEURUSD15M KXGBPUSD15M KXUSDJPY15M KXAUDUSD15M KXUSDCAD15M'.split(' '));
@@ -57,7 +58,8 @@ export async function serveCardHistory(request,env,ctx){
   if(m?.yes_maps_to_up!==true){comparison.state='WAIT';comparison.suggested_side=null;comparison.reason='YES-to-UP settlement mapping is not verified.'}
   const fallback=archive.pages.flatMap(p=>p.contracts).filter(c=>(c.candles||[]).some(p=>finite(p.yes_midpoint_dollars))).sort((a,b)=>Date.parse(b.close_time_utc)-Date.parse(a.close_time_utc))[0]||null;
   const {pages,...coverage}=archive;
-  const body={state:current?.candles?.length?'OBSERVED':fallback?'ARCHIVED_ONLY':'NO_OBSERVATIONS',series_ticker:series,retrieved_at_utc:new Date(now).toISOString(),source:'Kalshi 1-minute paired YES quote midpoints; not underlying price or fills',current_contract:current,chart:current?.candles?.some(p=>finite(p.yes_midpoint_dollars))?{...current,mode:'CURRENT_CONTRACT'}:fallback?{...fallback,mode:'PREVIOUS_ARCHIVED_CONTRACT'}:null,source_state:sourceState,yes_maps_to_up:m?.yes_maps_to_up===true,quote_observed_at_utc:snapshot.retrieved_at_utc,quote:{yes_bid_dollars:m?.yes_bid_dollars??null,yes_ask_dollars:m?.yes_ask_dollars??null},decision_minute:decision==='5'?5:null,coverage,comparison,no_trading:true};
+  const dailyReview=await loadLatestDamilolaReview(env,series).catch(()=>null);
+  const body={state:current?.candles?.length?'OBSERVED':fallback?'ARCHIVED_ONLY':'NO_OBSERVATIONS',series_ticker:series,retrieved_at_utc:new Date(now).toISOString(),source:'Kalshi 1-minute paired YES quote midpoints; not underlying price or fills',current_contract:current,chart:current?.candles?.some(p=>finite(p.yes_midpoint_dollars))?{...current,mode:'CURRENT_CONTRACT'}:fallback?{...fallback,mode:'PREVIOUS_ARCHIVED_CONTRACT'}:null,source_state:sourceState,yes_maps_to_up:m?.yes_maps_to_up===true,quote_observed_at_utc:snapshot.retrieved_at_utc,quote:{yes_bid_dollars:m?.yes_bid_dollars??null,yes_ask_dollars:m?.yes_ask_dollars??null},decision_minute:decision==='5'?5:null,coverage,comparison,daily_review:dailyReview,no_trading:true};
   const result=new Response(JSON.stringify(body),{headers:{...headers,'Cache-Control':'public, max-age=60','X-DG-Cache':'MISS'}});ctx.waitUntil(caches.default.put(key,result.clone()));return result;
  }catch{return out({state:'CARD_HISTORY_UNAVAILABLE',series_ticker:series},503)}
 }
