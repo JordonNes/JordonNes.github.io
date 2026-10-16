@@ -31,7 +31,11 @@ function prune(source,board,nowIso=new Date().toISOString()){
  const now=stamp(nowIso);if(now===null)throw Error("Invalid clock");
  const {index,ambiguous}=eventIndex(board);
  const reasons={},rejected=new Set();
- const result={...source};
+ const metadataKeys=["schema_version","generated_at_utc","status","source_policy",
+   "provider_persona","source_provider","licensing_status","collection_status",
+   "authorization_reference","prediction_market_policy","policy","source_collection_status",
+   "lsi_board_generated_at_utc","lsi_board_fresh"];
+ const result=Object.fromEntries(metadataKeys.filter(k=>Object.hasOwn(source||{},k)).map(k=>[k,source[k]]));
  const keep=(r)=>{
    const league=nameLeague(r?.league),id=String(r?.canonical_event_id||r?.event_id||"").trim();
    const key=league+"|"+id,match=index.get(key);
@@ -63,6 +67,14 @@ function prune(source,board,nowIso=new Date().toISOString()){
      if(unresolved){reasons.ENDED_PARLAY_LEG=(reasons.ENDED_PARLAY_LEG||0)+1;return false;}
      return true;
    }).map(p=>({...p,expires_at_utc:new Date(index.get(nameLeague(p.league)+"|"+String(p.canonical_event_id||p.event_id)).start).toISOString()}));
+ }
+ // Counters must describe the pruned view, never totals from a stale original.
+ if(result.schema_version==="LJ-PARLEE-LJPC-REVIEW-1"){
+   const entries=result.entries||[],market=result.market_activity||[];
+   result.counts={source_trends:entries.length,
+     exact_ljpc_matches:entries.filter(x=>x.match_status==="LJ_EVALUATED_EXACT_MATCH").length,
+     pending:entries.filter(x=>x.match_status!=="LJ_EVALUATED_EXACT_MATCH").length,
+     prediction_market_research:market.length};
  }
  result.retention_policy="PREGAME_ONLY_SOURCE_RESEARCH";
  result.retention_report={retained:Object.fromEntries([...types,"parlays"].map(k=>[k,Array.isArray(result[k])?result[k].length:0])),
