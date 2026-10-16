@@ -190,7 +190,9 @@ function makeCard(def){
  const daily=body?.daily_review;
   if(daily){
    research.append(el("div","damilola-daily","Damilola daily review · "+daily.day_utc+": "+daily.observed_contracts+"/"+daily.expected_contracts+" contracts archived · "+daily.settled_contracts+" verified settlements · "+daily.quote_minutes+" paired minute quotes · "+daily.dips_10pp+" dips / "+daily.spikes_10pp+" spikes ≥10¢."));
-   research.append(el("small","","Historical summary is retrospective, not a validated direction or executable price. One-month rolling retention; gaps remain gaps."));
+   const rolling=daily.rolling_30d;
+   if(rolling)research.append(el("div","damilola-rolling","Rolling 30-day review: "+rolling.days_with_reports+" daily reports · "+rolling.observed_hours+"/"+rolling.expected_hours+" UTC hours with archived data · "+rolling.verified_settlements+" verified settlements · "+rolling.total_dips_10pp+" dips / "+rolling.total_spikes_10pp+" spikes."));
+   research.append(el("small","","These are retrospective YES quote movements, not underlying OHLC, validated direction probabilities, or executable prices. Historical gaps remain gaps."));
   }else research.append(el("small","","Damilola daily review: not yet verified from the R2 archive."));
   const coverage=body?.coverage;
  if(coverage)research.append(el("div","","History coverage: "+coverage.recent_hours_available+" / 5 recent completed hours; "+coverage.selected_hours+" archived hours selected within 30 days. "+coverage.state));
