@@ -848,7 +848,29 @@ function initMap(){
     layers:'0',format:'image/png',transparent:true,opacity:.65,version:'1.1.1',
     attribution:'NOAA NCEI ETOPO1 shaded relief · regional scale · not for navigation'
   });
-  state.mapLayers={access,stations,buoys,currents,gates,bathymetry,soundings,relief};
+  // Display where NOAA hydrographic grids are archived; these polygons are NOT depth measurements.
+  const HydroSurveyTiles=L.TileLayer.extend({
+    getTileUrl(coords){
+      const size=this.getTileSize();
+      const nw=map.unproject([coords.x*size.x,coords.y*size.y],coords.z);
+      const se=map.unproject([(coords.x+1)*size.x,(coords.y+1)*size.y],coords.z);
+      const p1=L.CRS.EPSG3857.project(nw),p2=L.CRS.EPSG3857.project(se);
+      const bbox=[Math.min(p1.x,p2.x),Math.min(p1.y,p2.y),Math.max(p1.x,p2.x),Math.max(p1.y,p2.y)].join(',');
+      const q=new URLSearchParams({
+        f:'image',bbox,bboxSR:'3857',imageSR:'3857',
+        size:size.x+','+size.y,format:'png32',transparent:'true',layers:'show:0'
+      });
+      return 'https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/nos_hydro_dynamic/MapServer/export?'+q;
+    }
+  });
+  const surveys=new HydroSurveyTiles('',{
+    tileSize:256,minZoom:4,maxZoom:18,opacity:.58,
+    attribution:'NOAA NCEI NOS hydrographic survey BAG footprints · not for navigation'
+  });
+  const surveyStatus=$('#frmap-survey-status');
+  surveys.on('tileerror',()=>{if(surveyStatus)surveyStatus.textContent='NOAA survey coverage service could not load some tiles. Other FRmap layers remain available.';});
+  surveys.on('load',()=>{if(surveyStatus)surveyStatus.textContent='NOAA survey coverage loaded. Footprints show archived survey grids, not measured depth or survey recency.';});
+  state.mapLayers={access,stations,buoys,currents,gates,bathymetry,soundings,relief,surveys};
   const opacityControl=$('#frmap-depth-opacity');
   const updateBathymetryOpacity=()=>{
     const opacity=Number(opacityControl?.value||65)/100;
