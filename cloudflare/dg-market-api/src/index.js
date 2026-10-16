@@ -593,11 +593,14 @@ export default {
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
  async scheduled(event,env,ctx){
+  if(event.cron==="3,18,33,48 * * * *"){
+   ctx.waitUntil(runDamilolaSignalCron(env,ctx,event.scheduledTime,"score"));return;
+  }
   if(event.cron==="6,21,36,51 * * * *"||event.cron==="10,25,40,55 * * * *"){
    const early=event.cron.startsWith("6,");
    ctx.waitUntil(runAccuracyCron(env,ctx,event.scheduledTime,early?"capture":"score"));
    // Independent, fixed prospective samples. Do not block existing accuracy collector.
-   ctx.waitUntil(runDamilolaSignalCron(env,ctx,event.scheduledTime,early?"early":"late_and_score"));
+   ctx.waitUntil(runDamilolaSignalCron(env,ctx,event.scheduledTime,early?"early":"late"));
    return;
   }
   ctx.waitUntil((async()=>{
