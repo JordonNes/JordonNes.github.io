@@ -41,8 +41,17 @@ export function selectArchiveHours(hours,currentHour,contractOpenAt,maxHours=24)
  const sameHour=available.filter(h=>clock(h*1000).hour===local.hour);
  return [...new Set([...recentHours,...weekdayHour,...sameHour,...available])].filter(h=>available.includes(h)).slice(0,Math.max(0,Math.min(24,maxHours)));
 }
-async function archivedPages(env,series,now,contractOpenAt=now){
+async function archivedPages(env,series,now,contractOpenAt=now,ctx){
  if(!env?.DG_RESEARCH_R2)return {pages:[],state:'ARCHIVE_NOT_CONFIGURED',listed_hours:0,selected_hours:0};
+ // Five-minute shared edge cache prevents 24 R2 reads per series every minute.
+ // Key includes the contract-opening UTC hour so relevant weekday/hour context
+ // cannot leak across a boundary. Current-contract quotes are NEVER cached here.
+ const cacheKey=new Request('https://dg-internal.invalid/damilola/archived-hours?series='+series+
+  '&open_hour='+Math.floor(contractOpenAt/3600000)+'&v=1');
+ if(typeof caches!=='undefined'&&caches.default){
+  const existing=await caches.default.match(cacheKey).catch(()=>null);
+  if(existing){try{return await existing.json()}catch{/* R2 reread if cache invalid */}}
+ }
  const prefix='dg/market-paths/v1/'+series+'/',cutoff=Math.floor((now-30*86400000)/3600000)*3600,currentHour=Math.floor(now/3600000)*3600,byHour=new Map();let cursor,truncated=false;
  for(let i=0;i<3;i++){
   const list=await env.DG_RESEARCH_R2.list({prefix,startAfter:prefix+cutoff+'/',limit:1000,...(cursor?{cursor}:{})});
@@ -54,7 +63,11 @@ async function archivedPages(env,series,now,contractOpenAt=now){
  // Never choose history based on the observed outcomes; cap R2 reads at 24.
  const selected=selectArchiveHours([...byHour.keys()],currentHour,contractOpenAt),pages=[];
  for(const h of selected){const obj=await env.DG_RESEARCH_R2.get(byHour.get(h).key);if(!obj)continue;const p=JSON.parse(await obj.text());if(p.series_ticker===series&&Date.parse(p.hour_start_utc)===h*1000&&Array.isArray(p.contracts))pages.push(p)}
- return {pages,state:truncated?'ARCHIVE_LIST_TRUNCATED':'OBSERVED_ARCHIVE',listed_hours:byHour.size,selected_hours:selected.length,recent_hours_available:recentHours.filter(h=>byHour.has(h)).length,requested_recent_hours:5,lookback_days:30,source_archive_keys:selected.map(h=>byHour.get(h).key),selection:'last five completed hours, matching Pacific weekday/hour, matching Pacific hour, then most recent other hours; maximum 24 archive hours, fixed independently of outcomes',oldest_selected_utc:pages.length?pages.map(p=>p.hour_start_utc).sort()[0]:null};
+ const result={pages,state:truncated?'ARCHIVE_LIST_TRUNCATED':'OBSERVED_ARCHIVE',listed_hours:byHour.size,selected_hours:selected.length,recent_hours_available:recentHours.filter(h=>byHour.has(h)).length,requested_recent_hours:5,lookback_days:30,source_archive_keys:selected.map(h=>byHour.get(h).key),selection:'last five completed hours, matching Pacific weekday/hour, matching Pacific hour, then most recent other hours; maximum 24 archive hours, fixed independently of outcomes',oldest_selected_utc:pages.length?pages.map(p=>p.hour_start_utc).sort()[0]:null};
+ if(typeof caches!=='undefined'&&caches.default&&ctx?.waitUntil){
+  ctx.waitUntil(caches.default.put(cacheKey,Response.json(result,{headers:{'Cache-Control':'public, max-age=300'}})).catch(()=>{}));
+ }
+ return result;
 }
 export async function serveCardHistory(request,env,ctx){
  const u=new URL(request.url),series=(u.searchParams.get('series')||'').toUpperCase();const headers={'Content-Type':'application/json','Cache-Control':'no-store'};const out=(body,status=200)=>new Response(JSON.stringify(body),{status,headers});
@@ -65,7 +78,7 @@ export async function serveCardHistory(request,env,ctx){
   const now=Date.now(),response=await serveQuarterHour(new Request(u.origin+'/api/quarter-hour?series='+series),env,ctx),snapshot=await response.json();
   if(!response.ok)return out({state:snapshot.state||'QUOTE_UNAVAILABLE',series_ticker:series,retry_at_utc:snapshot.retry_at_utc||null},503);
   const m=(snapshot.markets||[]).find(x=>Date.parse(x.open_time)<=now&&Date.parse(x.close_time)>now&&Date.parse(x.close_time)-Date.parse(x.open_time)===900000);
-  const archive=await archivedPages(env,series,now,m?.open_time?Date.parse(m.open_time):now);let current=null,sourceState='NO_OPEN_CONTRACT';
+  const archive=await archivedPages(env,series,now,m?.open_time?Date.parse(m.open_time):now,ctx);let current=null,sourceState='NO_OPEN_CONTRACT';
   if(m){const q=new URLSearchParams({start_ts:String(Date.parse(m.open_time)/1000),end_ts:String(Math.floor(now/60000)*60),period_interval:'1'});const r=await fetchKalshiPublic('/series/'+series+'/markets/'+encodeURIComponent(m.ticker)+'/candlesticks?'+q,env,60,8500);sourceState=r.state;
    if(r.ok&&(!r.data.ticker||r.data.ticker===m.ticker)&&Array.isArray(r.data.candlesticks))current={ticker:m.ticker,open_time_utc:m.open_time,close_time_utc:m.close_time,candles:normalizeLayerCandles(r.data.candlesticks,Date.parse(m.open_time),Math.min(now,Date.parse(m.close_time)))};
   }
