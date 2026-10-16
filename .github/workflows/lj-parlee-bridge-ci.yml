@@ -38,3 +38,8 @@ jobs:
           node -e "const d=require('./data/demon_lord_intel.json');if(d.schema_version!=='LJ-DEMON-LORD-1'||!Array.isArray(d.trends)||!Array.isArray(d.parlays)||!Array.isArray(d.conflicts))process.exit(1);console.log('Source intelligence schema passes')"
       - name: Run synthetic matching tests
         run: node --test scripts/linemate_parlee_bridge.test.js scripts/parlee_ljpc_handoff.test.js
+      - name: Real snapshot LSI handoff smoke test
+        run: |
+          node scripts/parlee_ljpc_handoff.js data/demon_lord_intel.json data/future_market_board.json /tmp/parlee-ljpc-review-ci.json
+          node -e "const x=require('/tmp/parlee-ljpc-review-ci.json');if(x.counts.exact_ljpc_matches!==0||x.entries.some(r=>r.ljpc!==null))process.exit(1);console.log('Empty Linemate feed causes no fabricated LJPC')"
+
