@@ -123,3 +123,36 @@ The user supplied a joined/broken URL (`https://linemate.io/nfl/prediction-marke
 4. Use the existing **LJDP** Kalshi public-data adapter (`scripts/kalshi_public_adapter.py`) and its official API provenance for independent market verification rather than copying D&G's unrelated 15-minute crypto market scope. Keep providers and event categories separate.
 5. Add scheduled ingestion only after data-rights checks, rate limits, source semantics, and holdout measurement are accepted.
 
+
+## Linemate data-access investigation and L&J LJPC handoff — October 16, 2026
+
+**User intent:** collect research from `https://linemate.io/nfl/prediction-markets/most-volume` and `https://linemate.io/`, route it to LEGZ & JINX, and receive independently evaluated LJPC on exact available POMs.
+
+### Accessible observations
+
+- Direct public retrieval of `linemate.io/` and `linemate.io/terms` returned a JavaScript-only app shell, without any sports-data table or readable contractual access terms.
+- Direct browsing of `linemate.io/nfl/prediction-markets/most-volume` was disabled/unavailable. The `robots.txt` policy could not be fetched. An independent container request also failed due to unavailable DNS/network access.
+- Search-indexed Linemate player trend pages **do** expose some cached player hit-rate denominators, opponents, venue splits, injury context and a game log. These are not comprehensive current 15-minute or NFL volume snapshots and may refer to a different proposition or event than the headline. No bulk collector or data export right was verified.
+- A publicly indexed source page for Kyren Williams displayed an Anytime TD recent-form trend (7/10) with distinct head-to-head and home-split counts; other player pages showed source-specific trends. These search snippets were *not inserted* into the production LSI registry, because there is no verified exact current match/event/book/observed quote.
+- Do not crawl behind an authentication or anti-bot boundary, query undocumented private APIs, harvest all app contents, or treat search indexing as provider data-redistribution permission. Follow the provider's verified data-use terms before enabling automated collection.
+
+### Formal LEGZ & JINX handoff
+
+- `scripts/parlee_ljpc_handoff.js` consumes Parlee's sourced research feed and `data/future_market_board.json` (the current independently evaluated LEGZ / JINX publication).
+- Exact join: mapped LSI league + independently verified event ID + full player + statistical market + selected side + offered threshold + matching book when known. Also require the game not started, current board publication within 4 hours, source observation within 72 hours, an externally verified active market, an evaluation ID and original market snapshot IDs.
+- The script exports `data/parlee_ljpc_review.json`. A matching record receives only the **existing official evaluated `ljpc`** from LSI. A source trend without independent L&J model evaluation is flagged with a reason such as `CANONICAL_EVENT_UNRESOLVED`, `EXACT_PROP_NOT_ON_BOARD`, `LSI_BOARD_STALE`, or `AWAITING_FORMAL_LJ_EVALUATION`; it has `ljpc: null`. This is a documented handoff, **not a new probability model**.
+- Linemate prediction-market prices and volumes remain `RESEARCH_ONLY_MARKET_PRICE_NOT_LJPC`; game-winner contract settlement semantics must be verified independently before any comparison to an L&J GAME_ML forecast.
+- `Demon_Lord.html` now includes a named L&J LJPC review section, and `demon_lord.js` reads the separate review ledger. No original LJPC is modified, and no source hit-rate percentage is displayed as a forecast.
+
+**Current status:** official Linemate API/access and redistribution rights have not been established. The feed and handoff ledgers remain empty. The bridge plus review tests are staged in PR #59. Automated live Linemate scraping is **not running**, and no Linemate-derived new LJPC can honestly be claimed.
+
+### Runbook (after a permitted structured Linemate feed is obtained)
+
+```sh
+node scripts/linemate_parlee_bridge.js authorized-linemate-snapshot.json data/prediction_registry.json data/demon_lord_intel.json
+node scripts/parlee_ljpc_handoff.js data/demon_lord_intel.json data/future_market_board.json data/parlee_ljpc_review.json
+node --test scripts/linemate_parlee_bridge.test.js scripts/parlee_ljpc_handoff.test.js
+```
+
+The first step validates the actual structured feed and preserves strict market matching. The second step resolves the **latest LSI board**, not Linemate hit percentages, into formal LJPC. Future deployment scheduling is contingent on access verification, browser tests, and ensuring that the review artifact is updated as part of a safe completed LSI publication cycle.
+
