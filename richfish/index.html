@@ -83,12 +83,18 @@
           <strong>Underwater terrain view</strong>
           <label class="map-field" for="frmap-terrain-mode">Map emphasis</label>
           <select id="frmap-terrain-mode" class="map-select" aria-label="Underwater terrain display preset">
+            <option value="combined" selected>Seafloor view · relief + depth contours</option>
             <option value="charts">Fishing depths · NOAA chart contours</option>
             <option value="terrain">Regional seafloor form · NOAA shaded relief</option>
-            <option value="combined">Compare contours + shaded relief</option>
           </select>
-          <div id="frmap-terrain-explainer" class="map-source-note" role="status">Depth contours are chart-derived. Switch to terrain to compare broad seafloor slopes; fine pier-scale bottom structure is not resolved.</div>
+          <div id="frmap-terrain-explainer" class="map-source-note" role="status">Default combines NOAA regional shaded relief and charted depth contours. DWR v4.3 elevation tiles are not yet published.</div>
           <div class="map-source-note"><strong>Bay–Delta DEM v4.3</strong> is the selected future locally processed terrain dataset. Richmond-side raster data are not yet on this map. DWR's newer revisions mainly affect areas east of Carquinez Strait; depths use NAVD88, unlike the charted sounding datum. <a href="https://publish.data.ca.gov/dataset/san-francisco-bay-and-sacramento-san-joaquin-delta-dem-for-modeling-version-4-3" target="_blank" rel="noopener noreferrer">Explore the original DWR map and downloads ↗</a></div>
+          <div id="frmap-depth-legend" style="margin:10px 0 18px;padding:12px;border:1px solid #326073;border-radius:10px;background:#071e29">
+            <strong style="display:block;margin-bottom:8px">Underwater terrain · visual key</strong>
+            <div aria-hidden="true" style="height:15px;border-radius:6px;background:linear-gradient(90deg,#0e1a48,#143969,#175b8f,#1981a6,#2da9b7,#58c1b1,#96cfa3,#d2dbaa)"></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;gap:12px;margin-top:5px"><span>Deeper / darker</span><span>Shallower / lighter</span></div>
+            <p class="map-source-note">Qualitative color guide only until the DWR elevation raster is published with a calibrated NAVD88 legend. NOAA chart soundings may use a different datum.</p>
+          </div>
           <strong>Visible layers</strong>
           <label><input type="checkbox" data-map-layer="access" checked /> RICHFISH fishing locations</label>
           <label><input type="checkbox" data-map-layer="currents" checked /> Bound current vectors</label>
@@ -111,7 +117,7 @@
           <p class="map-source-note"><b>Local terrain source candidates:</b> <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ngdc.mgg.dem%3Asan_francisco_bay_P090_2018" target="_blank" rel="noopener noreferrer">NOAA Bay P090 (~10 m, MLLW)</a> and <a href="https://publish.data.ca.gov/dataset/san-francisco-bay-and-sacramento-san-joaquin-delta-dem-for-modeling-version-4-3" target="_blank" rel="noopener noreferrer">California DWR Bay–Delta DEM v4.3 (10 m package dated 2025)</a>. These are source references, not yet displayed terrain raster layers; verify grid datum, coverage, and survey vintage before use.</p>
           <label><input type="checkbox" data-map-layer="baydem" /> Bay-specific NOAA P090 elevation image (MLLW, historical)</label>
           <p id="frmap-baydem-status" class="map-source-note" role="status">NOAA P090 is a Bay-specific ~10 m bathymetric DEM derived substantially from historical measurements. Experimental WMS layer; switch on to test availability. This is NOT DWR v4.3.</p>
-          <label><input type="checkbox" data-map-layer="relief" /> Underwater shaded relief (NOAA ETOPO1)</label>
+          <label><input type="checkbox" data-map-layer="relief" checked /> Underwater shaded relief (NOAA ETOPO1)</label>
           <label class="map-field" for="frmap-depth-opacity">Underwater layer opacity <output id="frmap-depth-opacity-value">65%</output></label>
           <input id="frmap-depth-opacity" type="range" min="20" max="100" value="65" step="5" aria-label="Underwater map layer opacity" />
           <p class="map-source-note">ETOPO1 is regional-scale relief, not a detailed shoreline-depth survey. Zoomed-in fishing analysis should favor NOAA ENC contours and higher-resolution local surveys.</p>
