@@ -2,7 +2,7 @@
 
 ## Editorial and character contract
 
-Parlee is the male Demon Lord, an independent supporting character. JINX competes on **measured accuracy**. Parlee pursues evidence-backed **surprises and unusual threshold opportunities**, especially Demon/Goblin/Troll expressions. He can disagree publicly; JINX listens without surrendering her forecast to him. LEGZ and JINX use his findings as external context, never as an automatic input to the canonical LJPC score.
+**Parlee (the Demon Lord) is the LEGZ & JINX character representation of the Linemate research platform.** He brings Linemate game summaries, trends, splits, contextual comparisons and parlay ideas into LJDP's independent research lane. JINX competes on **measured accuracy**; Parlee searches for evidence-backed overlooked or unexpected outcomes. LEGZ and JINX consider his evidence and forecasts without automatically modifying canonical LJPC. Parlee's portrayal is not an endorsement of, employment by, or official partnership with Linemate.
 
 ## Implementation status
 
@@ -13,6 +13,31 @@ This branch provides:
 - Live refresh: research page polls every 90 seconds and the badge feed every 120 seconds; these refresh published JSON only. They **do not** poll or scrape Linemate from visitors' browsers.
 
 **Not yet implemented:** automatic collection of Linemate matchups/parlays, canonical source normalization, independent Demon Lord forecasting/calibration, daily publication workflow, end-to-end tests with non-empty validated conflicts.
+
+## Operational integration: Linemate ↔ Parlee ↔ LSI
+
+**Goal:** incorporate relevant Linemate *research*, not mirror the Linemate site or blindly import its suggested parlays. Linemate maintains its own research tools and market displays; LJDP retains sole authority over its published LSI predictions, player identity, offered POM market checks, LJPC, Quickie ticket construction, and graded settlement.
+
+- **Collect only with access rights:** obtain an authorized structured export, API or documented permitted integration. Unverified Linemate access/ToS is a blocker for automatic collection. Site UI `feed` values are not confirmed APIs.
+- **Normalize the observations:** `scripts/linemate_parlee_bridge.js` consumes a source-provided JSON file only when its source permission is verified. It does not request Linemate data. Keys include league, *Linemate event ID*, independently resolved *canonical LSI event ID*, player, market, side, threshold, book, source URL, observed time, L5/L10 rate counts, head-to-head counts, venue split counts and contextual note.
+- **Reconcile against LSI:** `data/prediction_registry.json` authority. An observation enters the exact-match track only if its canonical event is known; then match league+event+player+market+side+threshold+book. A Linemate-only event ID is insufficient. A missing or non-LJ-evaluated market remains **research only**, with no LJPC.
+- **Expose Parlee to each game:** `demon_lord_badges.js` can show source-linked trend denominators within verified per-game QC markets and a research deep link for event-matched game summaries. It never changes `window.LSI_PR`, Quickie legs, odds, eligibility, POM Value, original LJPC or settlement.
+- **Compare parlays:** source-origin Linemate recommendations are recorded in Parlee's separately attributed echoes, with each leg marked `LSI_EVALUATED` or `SOURCE_RESEARCH_ONLY`. They are not L&J recommendations until all standard gates pass. Correlated multi-leg outcomes need a joint probability estimate; multiplying individual hit rates or averaging their percentages does not establish a parlay probability.
+- **Publish a dissent:** red numeric `−3.4` requires an independently calibrated Parlee probability for the exact same outcome, model version, proof of source identity and matched LSI event and current LJPC. A Linemate trend percentage alone **must not** produce a red score. Preserve an immutable forecast and audit settled results.
+- **Build out daily coverage:** target NFL, NBA, MLB, NHL, NCAAF and NCAAB, but use event-driven collection in active league seasons and avoid unnecessary traffic. Never imply complete daily coverage until the collector's per-league coverage logs establish it.
+
+### Adapter inputs and output
+
+Authorized source input: `{source:"Linemate",permission_verified:true,games:[...],trends:[...],parlays:[...]}`.
+The manual bridge is called as:
+
+```sh
+node scripts/linemate_parlee_bridge.js authorized-source.json data/prediction_registry.json data/demon_lord_intel.json
+```
+
+This **must not** be run against content acquired without Linemate permission or an applicable independent data-use basis. The bridge preserves existing Parlee independent picks/conflicts, adds normalized `trends[]`, classifies exact-match statuses, and produces independent per-leg evaluation flags. `scripts/linemate_parlee_bridge.test.js` contains synthetic tests; CI in `.github/workflows/lj-parlee-bridge-ci.yml` does not contact Linemate.
+
+**Current readiness:** UI, schema, read-only QC evidence overlays and structured-authorized-input bridge are staged in PR #59. Automatic legal Linemate collection, daily league sweep, identity crosswalk service and predictive calibration remain unimplemented. Browser/live-QC tests also remain required.
 
 ## Linemate data acquisition: gated work
 
@@ -37,9 +62,10 @@ Every Demon Lord selection/parlay must retain its original pregame forecast, cur
 ## Publisher schema (JSON)
 
 - `games[]`: `league,event_id,matchup,source,source_url,collected_at_utc,status`.
+- `trends[]`: `league,event_id,canonical_event_id,participant,market,threshold,side,source_url,collected_at_utc,recent_form,head_to_head,venue_split,match_status,lsi_prediction_id,ljpc`. Each historical rate stores hits and games; LJPC is nullable absent independent LSI evaluation.
 - `picks[]`: `league,event_id,prediction_id,participant,market_text,book,status,demon_probability,rationale,source_url,ljpc_status,ljpc`. `ljpc` only when `ljpc_status=LJ_EVALUATED`.
 - `parlays[]`: `league,event_id,title,source,source_url,collected_at_utc,status,legs[]`. Each leg needs a market identity and its independent L&J evaluation gate.
-- `conflicts[]`: `league,event_id,prediction_id,participant,market_text,ljpc_ref,demon_same_side_probability,source_url,collected_at_utc,status,rationale`. Badge publication requires `status=VALIDATED`, a pre-event immutable forecast and source, current exact-line correspondence, model calibration and a fresh observation.
+- `conflicts[]`: `league,event_id,prediction_id,participant,market_text,ljpc_ref,demon_same_side_probability,source_url,collected_at_utc,status,calibration_verified,source_identity_verified,model_version,rationale`. Badge publication requires `status=VALIDATED`, a pre-event immutable forecast and source, current exact-line correspondence, model calibration and a fresh observation.
 - `settled_record`: independently verified totals (not borrowed from L&J).
 
 On every update, normalize team and player IDs against LSI, compare exact market direction and line, then write JSON atomically and validate it before publishing. Keep external source text and probability provenance available for audit.
