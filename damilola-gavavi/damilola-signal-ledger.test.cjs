@@ -41,7 +41,7 @@ test('score first and latest, reversal and same-time benchmark on independently 
  assert.equal(result.checkpoints[0].benchmark_correct,true);
  assert.equal(result.net_profit,null);assert.equal(result.calibrated_confidence,null);
  assert.equal(score({early:wrap(e),late:wrap(l)},{...market(),settlement_ts:iso(open+100000)},open+1000000),null);
- assert.equal(score({early:wrap(e,open+901000)},market(),open+1000000),null);
+ assert.throws(()=>score({early:wrap(e,open+901000)},market(),open+1000000),/UNVERIFIED_PRE_CLOSE_SIGNAL_RECORD/);
 });
 test('first eligible may occur at late checkpoint and missed observations are not synthesized',async()=>{
  const {makeSignalCheckpoint:f,scoreSignalWindow:score}=await mod,e=f(payload('early',null),'KXBTC15M',slot,'early',open+390000),l=f(payload('late','UP'),'KXBTC15M',slot,'late',open+630000);
