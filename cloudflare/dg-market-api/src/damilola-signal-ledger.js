@@ -32,8 +32,10 @@ export function makeSignalCheckpoint(body,series,slot,stage,now=Date.now()){
    !finite(x.yes_midpoint_dollars)||Math.abs((x.yes_bid_dollars+x.yes_ask_dollars)/2-x.yes_midpoint_dollars)>1e-9)return null;
   featureMinutes.push({time_utc:x.time_utc,yes_bid_dollars:x.yes_bid_dollars,yes_ask_dollars:x.yes_ask_dollars,yes_midpoint_dollars:x.yes_midpoint_dollars});
  }
- const x=body.comparison,eligible=x?.minute===spec.decision_minute&&
+ const x=body.comparison,majority=x?.up>x?.down?'UP':x?.down>x?.up?'DOWN':null;
+ const eligible=x?.minute===spec.decision_minute&&
   x?.state==='EXPERIMENTAL_SUGGESTION'&&validSide(x.suggested_side)&&
+  x.suggested_side===majority&&Number.isInteger(x.matches)&&x.matches===x.up+x.down&&
   x.matches>=8&&x.observed_majority_fraction>=.7&&x.descriptive_wilson_lower>.5;
  const liveBid=body.quote?.yes_bid_dollars,liveAsk=body.quote?.yes_ask_dollars,
   benchmark=goodQuote(liveBid,liveAsk)?(liveBid+liveAsk)/2:null;
@@ -88,6 +90,8 @@ export function scoreSignalWindow(observations,market,now=Date.now()){
   first_eligible: firstEligible?{stage:firstEligible.stage,side:firstEligible.side,correct:firstEligible.correct}:null,
   latest_eligible:lastEligible?{stage:lastEligible.stage,side:lastEligible.side,correct:lastEligible.correct}:null,
   observed_reversal:eligible.length===2?eligible[0].side!==eligible[1].side:null,
+  latest_sampled:attempts.find(x=>x.stage==='late'&&x.recorded)||attempts.find(x=>x.recorded)||null,
+  signal_withdrawn:attempts[0].eligible&&attempts[1].recorded&&!attempts[1].eligible,
   recorded_checkpoints:attempts.filter(x=>x.recorded).length,eligible_checkpoints:eligible.length,
   checkpoints:attempts,forecast_validated:false,calibrated_confidence:null,net_profit:null};
 }
@@ -103,6 +107,7 @@ export function summarizeSignalLedger(rows){
   latest_eligible_calls:latest.length,latest_eligible_correct:latest.filter(x=>x.latest_eligible.correct).length,
   latest_eligible_hit_rate:latest.length?latest.filter(x=>x.latest_eligible.correct).length/latest.length:null,
   two_eligible_checkpoints:paired.length,observed_reversals:reversals,
+  signal_withdrawals:all.filter(x=>x.signal_withdrawn).length,
   benchmark_paired_checkpoints:compared.length,
   model_correct_on_paired_checkpoints:compared.filter(x=>x.correct).length,
   benchmark_correct_on_paired_checkpoints:compared.filter(x=>x.benchmark_correct).length,
