@@ -823,7 +823,7 @@ function useMapGeolocation(){
 }
 function initMap(){
   if(!window.L||!$('#frmap-canvas'))return;
-  const map=L.map('frmap-canvas',{preferCanvas:true,zoomControl:true}).setView([38.03,-122.25],9);
+  const map=L.map('frmap-canvas',{preferCanvas:true,zoomControl:true}).setView([37.927,-122.352],11);
   state.map=map;
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:18,
@@ -973,6 +973,8 @@ function initMap(){
           : 'NOAA chart contours plus NOAA ETOPO1 shaded relief. These are different sources and vertical references; do not derive precise depths from the combined appearance.';
     }
   });
+  // Initialize the approved terrain-forward preset; retain independent manual layer toggles.
+  terrainMode?.dispatchEvent(new Event('change'));
   document.querySelectorAll('[data-map-layer]').forEach(input=>{
     const layer=state.mapLayers[input.dataset.mapLayer];
     if(!layer)return;
