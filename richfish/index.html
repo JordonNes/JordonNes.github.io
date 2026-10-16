@@ -87,6 +87,17 @@
           <label><input type="checkbox" data-map-layer="stations" checked /> NOAA CO-OPS stations</label>
           <label><input type="checkbox" data-map-layer="buoys" checked /> NOAA NDBC coastal buoys</label>
           <label><input type="checkbox" data-map-layer="bathymetry" checked /> NOAA ENC depth contours</label>
+          <label><input type="checkbox" data-map-layer="soundings" /> NOAA charted depth soundings (zoom in)</label>
+          <label class="map-field" for="frmap-focus">Shoreline study area</label>
+          <select id="frmap-focus" class="map-select" aria-label="Jump to shoreline study area">
+            <option value="">Choose a shoreline area…</option>
+            <option value="37.905,-122.389,14">Ferry Point / Miller-Knox</option>
+            <option value="37.913,-122.373,14">Point Richmond waterfront</option>
+            <option value="37.909,-122.353,14">Richmond Inner Harbor</option>
+            <option value="38.016,-122.364,13">Point Pinole / San Pablo Bay</option>
+            <option value="38.055,-122.218,13">Carquinez Strait / Eckley</option>
+          </select>
+          <p class="map-source-note">Detailed survey candidate: <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ngdc.mgg.dem%3Asan_francisco_bay_P090_2018" target="_blank" rel="noopener noreferrer">NOAA San Francisco Bay P090 bathymetric model (2018, ~10 m grid, MLLW)</a>. Survey-derived historical model; full-resolution raster is not yet loaded.</p>
           <label><input type="checkbox" data-map-layer="relief" /> Underwater shaded relief (NOAA ETOPO1)</label>
           <label class="map-field" for="frmap-depth-opacity">Underwater layer opacity <output id="frmap-depth-opacity-value">65%</output></label>
           <input id="frmap-depth-opacity" type="range" min="20" max="100" value="65" step="5" aria-label="Underwater map layer opacity" />
