@@ -114,7 +114,7 @@ function marketObservations(source){
       signal_policy:"Market activity and source price only; not L&J LJPC or an executable offer."
     });
   }
-  return {rows:out.sort((a,b)=>b.volume_usd-a.volume_usd).slice(0,50),errors};
+  return {rows:out.sort((a,b)=>(a.volume_period===b.volume_period?b.volume_usd-a.volume_usd:(a.volume_period==="24H"?-1:1))).slice(0,50),errors};
 }
 function makePublication(source,registry,previous={}){
   if(source.source!=="Linemate"||source.permission_verified!==true)
