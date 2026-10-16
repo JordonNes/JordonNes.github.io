@@ -67,6 +67,32 @@ export function summarizeDay(series,dayStart,pages,now=Date.now()){
   hourly_patterns:byHour,weekday_hour_patterns:byWeekdayHour,contracts,source_archive_keys:sourceKeys,
   forecast_validated:false,probabilities_calibrated:false,net_profit_verified:false};
 }
+/* Fixed, descriptive 30-day pattern review. Never use the outcome of the
+ * current unclosed contract or declare a calibrated predictive probability. */
+export function summarizeRolling30(series,reviews){
+ const daySeen=new Set(),hourly={},weekdayHour={};let hourCoverage=0,contracts=0,settled=0,quoteMinutes=0,spikes=0,dips=0;
+ const add=(bag,key,x)=>{const b=bag[key]||(bag[key]={contracts:0,settled:0,yes:0,no:0,spikes_10pp:0,dips_10pp:0,quoted:0,net_yes_midpoint_change_sum:0});for(const field of Object.keys(b))b[field]+=Number(x?.[field]||0)};
+ for(const r of reviews||[]){
+  if(r?.series_ticker!==series||!/^\\d{4}-\\d{2}-\\d{2}$/.test(r.day_utc)||daySeen.has(r.day_utc))continue;
+  daySeen.add(r.day_utc);hourCoverage+=Number(r.hour_coverage||0);contracts+=Number(r.observed_contracts||0);
+  settled+=Number(r.settled_contracts||0);quoteMinutes+=Number(r.valid_quote_minutes||0);
+  spikes+=Number(r.total_minute_spikes_10pp||0);dips+=Number(r.total_minute_dips_10pp||0);
+  for(const [key,value] of Object.entries(r.hourly_patterns||{}))add(hourly,key,value);
+  for(const [key,value] of Object.entries(r.weekday_hour_patterns||{}))add(weekdayHour,key,value);
+ }
+ const annotate=(bag)=>Object.fromEntries(Object.entries(bag).map(([key,r])=>{
+  // Descriptive historical prevalence, NOT a future probability or confidence.
+  const yesRate=r.settled?r.yes/r.settled:null;
+  const descriptiveBias=r.settled>=24&&(yesRate>=.70||yesRate<=.30)?(yesRate>=.70?'YES_HEAVY':'NO_HEAVY'):'NO_CLEAR_PATTERN';
+  return [key,{...r,historical_yes_frequency:yesRate,descriptive_bias:descriptiveBias,forecast_validated:false}];
+ }));
+ return {window_days:30,days_with_reports:daySeen.size,expected_hours:30*24,observed_hours:hourCoverage,
+  observed_contracts:contracts,verified_settlements:settled,valid_quote_minutes:quoteMinutes,
+  total_spikes_10pp:spikes,total_dips_10pp:dips,
+  by_pacific_hour:annotate(hourly),by_weekday_hour:annotate(weekdayHour),
+  model_calibrated:false,usable_for_live_forecast_without_current_evidence:false,
+  warning:'Retrospective quote and settlement frequencies are not predictive confidence or market-implied probabilities.'};
+}
 async function listHourlyVersions(bucket,series,dayStart){
  const prefix=PREFIX+series+'/',startSec=Math.floor(dayStart/1000),endSec=Math.floor((dayStart+MS_DAY)/1000);
  let cursor,objects=[],truncated=false;
@@ -119,6 +145,14 @@ export async function runDamilolaDaily(env,scheduledAt=Date.now()){
  for(let i=0;i<SERIES.length;i+=3)await Promise.all(SERIES.slice(i,i+3).map(async series=>{
   try{
    const pages=await readDay(bucket,series,dayStart),summary=summarizeDay(series,dayStart,pages);
+   const prior=[];
+   for(let k=1;k<30;k++){
+    const day=new Date(dayStart-k*MS_DAY).toISOString().slice(0,10);
+    const obj=await bucket.get(DAILY+series+'/'+day+'.json');
+    if(!obj)continue;
+    try{const row=JSON.parse(await obj.text());if(row.series_ticker===series&&row.day_utc===day)prior.push(row)}catch{/* Corrupt prior day cannot contaminate this review. */}
+   }
+   summary.rolling_30d=summarizeRolling30(series,[summary,...prior]);
    const dailyKey=DAILY+series+'/'+summary.day_utc+'.json',stored=JSON.stringify(summary);
    await bucket.put(dailyKey,stored,{httpMetadata:{contentType:'application/json'}});
    const readback=await bucket.get(dailyKey),check=readback?JSON.parse(await readback.text()):null;
@@ -144,6 +178,12 @@ export async function loadLatestDamilolaReview(env,series){
   expected_contracts:96,settled_contracts:review.settled_contracts,
   quote_minutes:review.valid_quote_minutes,spikes_10pp:review.total_minute_spikes_10pp,
   dips_10pp:review.total_minute_dips_10pp,
+  rolling_30d:{days_with_reports:review.rolling_30d?.days_with_reports??0,
+   observed_hours:review.rolling_30d?.observed_hours??0,expected_hours:720,
+   observed_contracts:review.rolling_30d?.observed_contracts??0,
+   verified_settlements:review.rolling_30d?.verified_settlements??0,
+   total_spikes_10pp:review.rolling_30d?.total_spikes_10pp??0,
+   total_dips_10pp:review.rolling_30d?.total_dips_10pp??0},
   forecast_validated:false,review_type:'RETROSPECTIVE_ONLY'};
 }
 export const DAMILOLA_SERIES=SERIES;
