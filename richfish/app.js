@@ -1884,6 +1884,7 @@ async function boot(){
     $('#species-search')?.addEventListener('input',e=>renderSpeciesList(e.target.value));
     nav();
     initMap();
+    document.dispatchEvent(new CustomEvent('richfish:ready'));
   }catch(error){
     console.error(error);
     document.body.insertAdjacentHTML('afterbegin',`<div class="load-error">Unable to load RICHFISH v0.3 data: ${escapeHtml(error.message)}</div>`);

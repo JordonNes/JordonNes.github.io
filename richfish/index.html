@@ -67,7 +67,20 @@
         <div><span class="eyebrow">FRmap · LIVE WATER</span><h2>Click the water. Read the evidence. Fish smarter.</h2></div>
         <span class="sync">Evidence-gated map · no invented calls</span>
       </div>
-      <div class="map-workspace">
+      <form id="ray-trip-form" class="ray-trip-form" aria-label="Richmond Ray flexible fishing search">
+          <div class="ray-trip-top"><strong>Ray's Trip Builder</strong><small>Give a little. Get the rest.</small></div>
+          <div class="ray-trip-fields">
+            <label>Bait available<select id="ray-trip-bait"><option value="">Ray chooses bait</option><optgroup label="Prepared / frozen"><option>Chicken liver</option><option>Shrimp</option><option>Anchovy</option><option>Squid</option><option>Sand flea</option><option>Artificial lure</option><option>Scented soft plastic</option><option>No bait</option></optgroup><optgroup label="Live bait"><option>Live pile worm</option><option>Live smelt</option><option>Live shad</option><option>Live anchovy</option><option>Live sardine</option><option>Live shiner perch</option><option>Live mudsucker</option><option>Live mosquitofish</option></optgroup></select></label>
+            <label>Water type<select id="ray-trip-water"><option value="">Any water</option><option value="saltwater">Saltwater</option><option value="brackish">Brackish</option><option value="freshwater">Freshwater</option></select></label>
+            <label>Method<select id="ray-trip-method"><option value="">Ray chooses method</option><option value="soak">Bait soak</option><option value="lure">Cast lure</option><option value="float">Float fishing</option></select></label>
+            <label>Target<select id="ray-trip-target"><option value="">Ray chooses target</option></select></label>
+            <label>Tide<select id="ray-trip-tide"><option value="">Any / Ray chooses</option><option value="flood">Incoming</option><option value="ebb">Outgoing</option><option value="slack">Slack</option></select></label>
+            <label>Fishing time<select id="ray-trip-time"><option value="">Any time</option><option value="morning">Morning</option><option value="afternoon">Afternoon</option><option value="evening">Evening</option><option value="night">Night</option></select></label>
+          </div>
+          <div class="ray-trip-actions"><button class="btn primary" type="submit">Find my fishing options</button><button class="btn" id="ray-trip-clear" type="button">Clear</button><a href="field-library.html">RICHFISH Field Library →</a></div>
+          <div id="ray-trip-results" aria-live="polite"></div>
+        </form>
+        <div class="map-workspace">
         <aside class="map-controls">
           <strong>Target species</strong>
           <label class="map-field" for="frmap-species">Highlight the best supported water</label>
@@ -299,5 +312,6 @@
   <script src="local-advisor.js" defer></script>
   
   <script src="app.js" defer></script>
+  <script src="trip-builder.js" defer></script>
 </body>
 </html>
