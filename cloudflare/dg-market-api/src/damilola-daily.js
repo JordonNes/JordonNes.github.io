@@ -96,14 +96,20 @@ async function purgeExpired(bucket,series,now){
  const cutoff=Math.floor(now/MS_DAY)*MS_DAY-30*MS_DAY;
  let removed=0;
  for(const prefix of [PREFIX+series+'/',DAILY+series+'/']){
-  const listing=await bucket.list({prefix,limit:1000});
-  const keys=(listing.objects||[]).filter(o=>{
-   const raw=o.key.slice(prefix.length).split('/')[0];
-   const at=prefix.startsWith(PREFIX)?Number(raw)*1000:Date.parse(raw+'T00:00:00Z');
-   return Number.isFinite(at)&&at<cutoff;
-  }).map(o=>o.key);
-  for(let i=0;i<keys.length;i+=100)await bucket.delete(keys.slice(i,i+100));
-  removed+=keys.length;
+  // R2 lists lexicographically: all expired timestamp keys precede retained keys.
+  // Re-list after each deletion batch so old backlogs do not evade the 30-day TTL.
+  for(let page=0;page<8;page++){
+   const listing=await bucket.list({prefix,limit:1000});
+   const keys=(listing.objects||[]).filter(o=>{
+    const raw=o.key.slice(prefix.length).split('/')[0];
+    const at=prefix.startsWith(PREFIX)?Number(raw)*1000:Date.parse(raw+'T00:00:00Z');
+    return Number.isFinite(at)&&at<cutoff;
+   }).map(o=>o.key);
+   if(!keys.length)break;
+   for(let i=0;i<keys.length;i+=100)await bucket.delete(keys.slice(i,i+100));
+   removed+=keys.length;
+   if(keys.length<1000)break;
+  }
  }
  return removed;
 }
