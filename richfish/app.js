@@ -870,13 +870,29 @@ function initMap(){
   const surveyStatus=$('#frmap-survey-status');
   surveys.on('tileerror',()=>{if(surveyStatus)surveyStatus.textContent='NOAA survey coverage service could not load some tiles. Other FRmap layers remain available.';});
   surveys.on('load',()=>{if(surveyStatus)surveyStatus.textContent='NOAA survey coverage loaded. Footprints show archived survey grids, not measured depth or survey recency.';});
-  state.mapLayers={access,stations,buoys,currents,gates,bathymetry,soundings,relief,surveys};
+  // Bay-specific historic bathymetric raster via NOAA THREDDS WMS.
+  // Source: NOAA/NCEI 2018 P090, MLLW, roughly 1/3 arcsecond. NOT DWR v4.3.
+  const baydem=L.tileLayer.wms('https://www.ngdc.noaa.gov/thredds/wms/regional/san_francisco_bay_P090_2018.nc',{
+    layers:'elevation',styles:'boxfill/rainbow',
+    format:'image/png',transparent:true,version:'1.1.1',opacity:.65,
+    minZoom:8,maxZoom:17,
+    attribution:'NOAA NCEI SF Bay P090 (2018, MLLW) · historical bathymetry · not for navigation'
+  });
+  const bayStatus=$('#frmap-baydem-status');
+  baydem.on('tileerror',()=>{
+    if(bayStatus)bayStatus.textContent='NOAA P090 WMS could not render tiles. Turn off this experimental layer; chart contours and other FRmap features remain available.';
+  });
+  baydem.on('load',()=>{
+    if(bayStatus)bayStatus.textContent='NOAA P090 map requests completed. Visually verify that real elevation colors are visible; this is historical Bay bathymetry, not DWR v4.3.';
+  });
+  state.mapLayers={access,stations,buoys,currents,gates,bathymetry,soundings,relief,surveys,baydem};
   const opacityControl=$('#frmap-depth-opacity');
   const updateBathymetryOpacity=()=>{
     const opacity=Number(opacityControl?.value||65)/100;
     $('#frmap-depth-opacity-value').textContent=Math.round(opacity*100)+'%';
     bathymetry.eachLayer(layer=>layer.setOpacity?.(opacity));
     relief.setOpacity(opacity);
+    baydem.setOpacity(opacity);
   };
   opacityControl?.addEventListener('input',updateBathymetryOpacity);
   updateBathymetryOpacity();
