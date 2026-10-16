@@ -14,6 +14,8 @@ on:
     branches: [master]
     paths:
       - 'scripts/collect-dg-15m-history.mjs'
+      - 'scripts/build-dg-model-release.mjs'
+      - 'damilola-gavavi/dg-model-release*'
       - '.github/workflows/dg-15m-research-backfill.yml'
   schedule:
     - cron: '21 * * * *'
@@ -37,7 +39,7 @@ jobs:
         with:
           node-version: '22'
       - name: Verify risk and historical calibration checks
-        run: node --test damilola-gavavi/dg-kalshi-shared-cache.test.cjs damilola-gavavi/dg-15m-independent-audit.test.cjs damilola-gavavi/dg-15m-fee-metadata.test.cjs damilola-gavavi/dg-15m-calibration.test.cjs damilola-gavavi/dg-15m-economics.test.cjs damilola-gavavi/dg-15m-kalshi-schema.test.cjs
+        run: node --test damilola-gavavi/dg-model-release.test.cjs damilola-gavavi/dg-kalshi-shared-cache.test.cjs damilola-gavavi/dg-15m-independent-audit.test.cjs damilola-gavavi/dg-15m-fee-metadata.test.cjs damilola-gavavi/dg-15m-calibration.test.cjs damilola-gavavi/dg-15m-economics.test.cjs damilola-gavavi/dg-15m-kalshi-schema.test.cjs
       - name: Choose supported 15-minute series (rotate on hourly schedule)
         id: choice
         env:
@@ -93,6 +95,8 @@ jobs:
           mkdir -p damilola-gavavi/data
           printf '{"checked_at_utc":"%s","source":"GitHub Actions public Kalshi historical collection","successful_series":%s,"series_results":[%s],"data_confirmed_only_by_dataset_files":true}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$SUCCESS" "$RESULTS" > damilola-gavavi/data/collection-status.json
           echo "success_count=$SUCCESS" >> "$GITHUB_OUTPUT"
+      - name: Build reproducible strict model release artifacts
+        run: node scripts/build-dg-model-release.mjs
       - name: Verify deployed Worker 15-minute production endpoints
         run: node scripts/check-dg-worker.mjs
       - name: Commit actual observations and validation metadata
