@@ -9,7 +9,7 @@ function payload(stage='early',side='UP',now=open+(stage==='early'?390000:630000
    candles:[minute-2,minute-1,minute].map((m,i)=>({time_utc:iso(open+m*60000),
     yes_bid_dollars:.53+i*.01,yes_ask_dollars:.55+i*.01,yes_midpoint_dollars:.54+i*.01}))},
   comparison:{version:'gavavi-history-analog-r1',minute,state:side?'EXPERIMENTAL_SUGGESTION':'WAIT',
-   suggested_side:side,matches:11,up:9,down:2,cohort:'broader sampled hours within 30 days',
+   suggested_side:side,matches:11,up:side==='DOWN'?2:9,down:side==='DOWN'?9:2,cohort:'broader sampled hours within 30 days',
    observed_majority_fraction:9/11,descriptive_wilson_lower:.523,reason:'Unvalidated analog'},
   coverage:{source_archive_keys:['archive/observed']}};
 }
@@ -55,4 +55,20 @@ test('summary never mislabels paired repeated checkpoints as independent settled
  rows=[{slot,early:wrap(e),late:wrap(l),outcome:{record:result}},{slot:slot+900,early:null,late:null,outcome:null}];
  const s=sum(rows);assert.equal(s.windows_with_settlements,1);assert.equal(s.first_eligible_calls,1);assert.equal(s.latest_eligible_calls,1);
  assert.equal(s.observed_reversals,1);assert.equal(s.two_eligible_checkpoints,1);assert.equal(s.benchmark_paired_checkpoints,2);assert.equal(s.confidence_calibrated,false);
+});
+
+test('never turn inconsistent historical majority into a forecast',async()=>{
+ const {makeSignalCheckpoint:f}=await mod,now=open+390000,p=payload('early','UP',now);
+ p.comparison.up=2;p.comparison.down=9;
+ const r=f(p,'KXBTC15M',slot,'early',now);
+ assert.equal(r.model.suggested_side,null);assert.equal(r.model.state,'ABSTAIN');
+});
+test('late WAIT is tracked as withdrawal rather than an unobserved reversal',async()=>{
+ const {makeSignalCheckpoint:f,scoreSignalWindow:score,summarizeSignalLedger:summary}=await mod;
+ const early=f(payload('early','UP'),'KXBTC15M',slot,'early',open+390000);
+ const late=f(payload('late',null),'KXBTC15M',slot,'late',open+630000);
+ const result=score({early:wrap(early),late:wrap(late)},market(),open+1000000);
+ assert.equal(result.signal_withdrawn,true);assert.equal(result.observed_reversal,null);
+ assert.equal(result.latest_sampled.eligible,false);
+ assert.equal(summary([{early:wrap(early),late:wrap(late),outcome:{record:result}}]).signal_withdrawals,1);
 });
