@@ -78,3 +78,48 @@ const output=bridge.makePublication({...source,trends:[{...trend,source_url:fake
 assert.equal(output.trends.length,0);
 }
 });
+
+const market={
+ league:"NFL",market_id:"SYNTH-NFL-W6-001",event_id:"SYNTH-HOU-JAX",
+ title:"Synthetic NFL matchup winner",exchange:"Kalshi",
+ source_url:"https://linemate.io/nfl/prediction-markets",
+ observed_at_utc:"2026-10-16T00:00:00Z",volume_usd:120000,volume_period:"24h",
+ yes_price_cents:62,no_price_cents:39,liquidity_usd:50000,
+ selection:"HOU wins"
+};
+test("authorized Linemate prediction-market observation is research only, not LJPC",()=>{
+ const output=bridge.makePublication({...source,prediction_markets:[market]},{predictions:[pick]});
+ assert.equal(output.prediction_markets.length,1);
+ assert.equal(output.prediction_markets[0].market_id,market.market_id);
+ assert.equal(output.prediction_markets[0].source_status,"SOURCE_RESEARCH_ONLY");
+ assert.equal(output.prediction_markets[0].volume_usd,120000);
+ assert.equal(output.prediction_markets[0].yes_price_cents,62);
+ assert.equal(Object.hasOwn(output.prediction_markets[0],"ljpc"),false);
+ assert.equal(output.ingest_report.market_observations,1);
+});
+test("prediction-market volume ranking requires contemporaneous observed counts",()=>{
+ const valid={...market,market_id:"SYNTH-SECOND",volume_usd:230000};
+ const output=bridge.makePublication({...source,prediction_markets:[market,valid]},{predictions:[pick]});
+ assert.equal(output.prediction_markets[0].volume_usd,230000);
+ for(const bad of [
+   {...market,volume_usd:-1},
+   {...market,volume_usd:null},
+   {...market,volume_period:"unknown"},
+   {...market,yes_price_cents:104},
+   {...market,liquidity_usd:-100},
+   {...market,source_url:"https://github.com/winsharp/LineMate"},
+   {...market,observed_at_utc:"not-a-timestamp"}
+ ]){
+  const d=bridge.makePublication({...source,prediction_markets:[bad]},{predictions:[pick]});
+  assert.equal(d.prediction_markets.length,0);
+  assert.equal(d.ingest_report.errors[0].code,"INVALID_MARKET_OBSERVATION");
+ }
+});
+test("market listing without quotes or liquidity is not invented",()=>{
+ const output=bridge.makePublication({...source,prediction_markets:[{...market,yes_price_cents:null,no_price_cents:null,liquidity_usd:null}]},{predictions:[pick]});
+ assert.equal(output.prediction_markets.length,0);
+ assert.equal(output.ingest_report.errors[0].code,"UNQUOTED_MARKET");
+});
+test("permission is required even for market-volume observations",()=>{
+ assert.throws(()=>bridge.makePublication({...source,permission_verified:false,prediction_markets:[market]},{predictions:[pick]}),/Authorized source input required/);
+});
