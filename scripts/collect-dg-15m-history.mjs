@@ -25,9 +25,9 @@ async function req(path){
 function parse(x){if(x==null||x==="")return null;const n=Number(x);return Number.isFinite(n)&&n>=0&&n<=1?n:null}
 function candleClose(x){return parse(x?.close_dollars??x?.close)}
 const sourceErrors=[];
-async function list(path,source){
+async function list(path,source,maxPages=3){
  let cursor="",all=[],pages=0;
- for(;pages<3;pages++){
+ for(;pages<maxPages;pages++){
   const q=new URLSearchParams({series_ticker:ticker,limit:"200"});if(source==="recent")q.set("status","settled");if(cursor)q.set("cursor",cursor);
   try{const d=await req(path+"?"+q);if(!Array.isArray(d.markets))throw Error("MARKET_SCHEMA");all.push(...d.markets.map(x=>({...x,archived:source==="archived"})));cursor=d.cursor||"";if(!cursor)break}catch(e){sourceErrors.push({source,error:e.message});process.stderr.write(source+": "+e.message+"\n");break}
   await wait(200);
@@ -37,7 +37,8 @@ async function list(path,source){
 const file="damilola-gavavi/data/15m-"+ticker+".json";
 let prior=[];try{const p=JSON.parse(await fs.readFile(file,"utf8"));if(p.series_ticker===ticker&&Array.isArray(p.examples))prior=p.examples}catch{}
 const existing=new Set(prior.map(x=>x.ticker));
-const [recent,archived]=await Promise.all([list("/markets","recent"),list("/historical/markets","archived")]);
+const metadataPages=prior.some(r=>!r.market_open_utc||!r.market_settled_at_utc)?6:3;
+const [recent,archived]=await Promise.all([list("/markets","recent",metadataPages),list("/historical/markets","archived",metadataPages)]);
 if(!recent.length&&!archived.length)throw Error("NO_KALSHI_MARKET_METADATA: do not publish empty research datasets");
 // Exact-ticker source repair never substitutes close time for settlement.
 const repairedMetadata=repairMetadata(prior,[...archived,...recent]);
