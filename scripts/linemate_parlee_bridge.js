@@ -134,7 +134,7 @@ function assertWrittenAuthorization(source,expectedGrantId=process.env.LINEMATE_
     allowed.includes("structured_import")&&allowed.includes("public_display")&&
     expiry&&Date.parse(expiry)>Date.now();
   if(!approved)throw Error("Linemate ingestion blocked: independently verified WRITTEN grant required (LINEMATE_WRITTEN_GRANT_ID and structured_import/public_display scopes).");
-  return {grant_id:grant.grant_id,expires_at:expiry,scopes:["structured_import","public_display"]};
+  return {permission_type:"written",expires_at:expiry,scopes:["structured_import","public_display"]};
 }
 function makePublication(source,registry,previous={}){
   const authorization=assertWrittenAuthorization(source);
