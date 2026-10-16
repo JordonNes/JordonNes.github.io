@@ -109,6 +109,8 @@
             <option value="38.055,-122.218,13">Carquinez Strait / Eckley</option>
           </select>
           <p class="map-source-note"><b>Local terrain source candidates:</b> <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ngdc.mgg.dem%3Asan_francisco_bay_P090_2018" target="_blank" rel="noopener noreferrer">NOAA Bay P090 (~10 m, MLLW)</a> and <a href="https://publish.data.ca.gov/dataset/san-francisco-bay-and-sacramento-san-joaquin-delta-dem-for-modeling-version-4-3" target="_blank" rel="noopener noreferrer">California DWR Bay–Delta DEM v4.3 (10 m package dated 2025)</a>. These are source references, not yet displayed terrain raster layers; verify grid datum, coverage, and survey vintage before use.</p>
+          <label><input type="checkbox" data-map-layer="baydem" /> Bay-specific NOAA P090 elevation image (MLLW, historical)</label>
+          <p id="frmap-baydem-status" class="map-source-note" role="status">NOAA P090 is a Bay-specific ~10 m bathymetric DEM derived substantially from historical measurements. Experimental WMS layer; switch on to test availability. This is NOT DWR v4.3.</p>
           <label><input type="checkbox" data-map-layer="relief" /> Underwater shaded relief (NOAA ETOPO1)</label>
           <label class="map-field" for="frmap-depth-opacity">Underwater layer opacity <output id="frmap-depth-opacity-value">65%</output></label>
           <input id="frmap-depth-opacity" type="range" min="20" max="100" value="65" step="5" aria-label="Underwater map layer opacity" />
