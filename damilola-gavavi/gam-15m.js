@@ -63,7 +63,7 @@ function spotChart(def){
 }
 function contractChart(def){
  const wrapper=el("div","reference-chart contract-chart"),body=cardHistory.get(def.ticker),chart=body?.chart;
- wrapper.append(el("div","reference-chart-caption","Kalshi YES quote midpoint · 0–100¢ · "+(chart?.mode==="PREVIOUS_ARCHIVED_CONTRACT"?"previous archived contract":"current 15-minute contract")));
+ wrapper.append(el("div","reference-chart-caption","Kalshi YES quote midpoint · 0–100¢ · "+(chart&&(chart.mode==="PREVIOUS_ARCHIVED_CONTRACT"||Date.parse(chart.close_time_utc)<=Date.now())?"previous observed contract":"current 15-minute contract")));
  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 300 52");svg.setAttribute("preserveAspectRatio","none");svg.setAttribute("role","img");svg.setAttribute("aria-label",def.name+" Kalshi YES quote midpoint; gaps are not interpolated");
  const axis=document.createElementNS(svg.namespaceURI,"path");axis.setAttribute("d","M0 26 H300");axis.setAttribute("stroke","#dfe8e1");axis.setAttribute("stroke-dasharray","3 3");svg.append(axis);
  const open=Date.parse(chart?.open_time_utc),points=(chart?.candles||[]).filter(p=>Number.isFinite(p.yes_midpoint_dollars)&&p.yes_midpoint_dollars>=0&&p.yes_midpoint_dollars<=1&&Date.parse(p.time_utc)>open&&Date.parse(p.time_utc)<=open+900000).map(p=>({at:Date.parse(p.time_utc),value:p.yes_midpoint_dollars}));
