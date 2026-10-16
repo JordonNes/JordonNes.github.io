@@ -511,6 +511,60 @@ function updateMapSelectionSummary(){
   const scored=state.locations.filter(l=>state.mapSpeciesId?Boolean(getMapScore(l,state.mapSpeciesId)):Boolean(mapOpportunity(l,null))).length;
   el.innerHTML=`<strong>${escapeHtml(selectedMapSpeciesName())}</strong><small>${scored} live-scored location${scored===1?'':'s'} · ${ids.length} modeled species</small>`;
 }
+/* Species-first discovery uses inventory only; no invented shoreline access points. */
+function renderSpeciesDiscovery(){
+  const root=$('#frmap-species-results');
+  if(!root)return;
+  if(!state.mapSpeciesId){root.innerHTML='';return;}
+  const matches=state.locations.filter(l=>l?.coordinates&&l?.access_gate?.status!=='closed'&&
+    (locationTargetsSpecies(l,state.mapSpeciesId)||getMapScore(l,state.mapSpeciesId)));
+  const ranked=matches.map(location=>({location,score:getMapScore(location,state.mapSpeciesId)}))
+    .sort((a,b)=>{
+      const as=Number.isFinite(Number(a.score?.recommendationScore));
+      const bs=Number.isFinite(Number(b.score?.recommendationScore));
+      if(as!==bs)return as?-1:1;
+      return (bs?Number(b.score.recommendationScore):0)-(as?Number(a.score.recommendationScore):0)||
+        a.location.name.localeCompare(b.location.name);
+    });
+  const scored=ranked.filter(r=>Number.isFinite(Number(r.score?.recommendationScore))).length;
+  root.innerHTML='<strong>Bay–Delta matches</strong><small>'+ranked.length+
+    ' inventory sites · '+scored+' modeled · scores are not catch probabilities</small>'+
+    (ranked.length?'<div class="frmap-discovery-list">'+ranked.slice(0,15).map(({location,score})=>{
+      const n=score?.recommendationScore;
+      const rating=Number.isFinite(Number(n))?cleanNumber(n,0)+'% planning index':'Catalog target; unscored';
+      return '<button type="button" data-discover-id="'+escapeHtml(location.id)+'"><b>'+
+        escapeHtml(location.name)+'</b><span>'+escapeHtml(location.region||'Region unspecified')+' · '+rating+
+        '</span></button>';
+    }).join('')+'</div>':'<small>No catalog or modeled match yet. This is not evidence that the species is absent.</small>');
+  root.querySelectorAll('[data-discover-id]').forEach(button=>button.addEventListener('click',()=>{
+    const loc=state.locations.find(l=>l.id===button.dataset.discoverId);
+    if(!loc?.coordinates)return;
+    state.map?.setView([Number(loc.coordinates.lat),Number(loc.coordinates.lng)],13);
+    renderMapEvaluation(Number(loc.coordinates.lat),Number(loc.coordinates.lng),loc);
+    renderLocationCaptureControls($('#frmap-report'),Number(loc.coordinates.lat),Number(loc.coordinates.lng),loc);
+  }));
+}
+function initializeCoordinateExplore(){
+  const form=$('#frmap-gps-form');
+  form?.addEventListener('submit',event=>{
+    event.preventDefault();
+    const raw=$('#frmap-gps-coordinates')?.value.trim()||'';
+    const match=raw.match(/^\\s*([-+]?\\d+(?:\\.\\d+)?)\\s*[,;\\s]\\s*([-+]?\\d+(?:\\.\\d+)?)\\s*$/);
+    const status=$('#frmap-gps-error');
+    if(!match){if(status)status.textContent='Use decimal degrees: latitude, longitude.';return;}
+    const lat=Number(match[1]),lng=Number(match[2]);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat< -90||lat>90||lng< -180||lng>180){
+      if(status)status.textContent='Invalid GPS coordinates.';return;
+    }
+    if(lat<36.5||lat>39.4||lng< -124.1||lng> -120.5){
+      if(status)status.textContent='Outside the current Bay–Delta / nearby coast study extent.';return;
+    }
+    if(status)status.textContent='Unverified point · showing nearby inventory, not confirmed shoreline access.';
+    state.map?.setView([lat,lng],13);
+    renderMapEvaluation(lat,lng);
+    renderLocationCaptureControls($('#frmap-report'),lat,lng);
+  });
+}
 function markerStyleForLocation(location){
   const closed=location?.access_gate?.status==='closed';
   if(closed)return {radius:8,weight:2,opacity:1,fillOpacity:.8,color:'#e26a6a',fillColor:'#7f2727'};
@@ -536,6 +590,7 @@ function refreshMapLocationMarkers(){
     row.marker.setTooltipContent(`${escapeHtml(row.location.name)}${scoreText}`);
   }
   updateMapSelectionSummary();
+  renderSpeciesDiscovery();
 }
 function currentVectorIcon(speed,deg,cardinal){
   const safeDeg=Number.isFinite(Number(deg))?Number(deg):0;
@@ -686,8 +741,13 @@ function populateMapSpeciesFilter(){
   select.addEventListener('change',()=>{
     state.mapSpeciesId=select.value||null;
     refreshMapLocationMarkers();
-    const center=state.map?.getCenter();
-    if(center)renderNearbyCoordinateIntelligence(center.lat,center.lng);
+    if(state.mapSpeciesId){
+      const report=$('#frmap-report');
+      if(report)report.innerHTML='<span class="eyebrow">SPECIES-FIRST SEARCH</span><h3>'+escapeHtml(selectedMapSpeciesName())+'</h3><p>Choose an inventory location from the Bay–Delta matches to see supporting conditions, access and evidence. Unscored target matches are labeled separately.</p>';
+    }else{
+      const center=state.map?.getCenter();
+      if(center)renderNearbyCoordinateIntelligence(center.lat,center.lng);
+    }
   });
   updateMapSelectionSummary();
 }
@@ -992,6 +1052,7 @@ function initMap(){
     }
   });
   populateMapSpeciesFilter();
+  initializeCoordinateExplore();
   refreshMapLocationMarkers();
 
   $('#frmap-near-me')?.addEventListener('click',useMapGeolocation);
