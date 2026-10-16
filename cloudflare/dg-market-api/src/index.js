@@ -1,3 +1,4 @@
+import {serveAccuracyLedger,runAccuracyCron} from "./accuracy-ledger.js";
 import {servePredictionLedger} from "./prediction-ledger.js";
 import {serveCardHistory} from "./card-history.js";
 import {serveMarketLayers} from "./market-layers.js";
@@ -62,6 +63,7 @@ export default {
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
+  if(url.pathname==="/api/prediction-accuracy"){const r=await serveAccuracyLedger(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/prediction-ledger"){
    const r=await servePredictionLedger(request,env),h=new Headers(r.headers);
    h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
@@ -579,6 +581,7 @@ export default {
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
  async scheduled(event,env,ctx){
+  if(event.cron==="6,21,36,51 * * * *"||event.cron==="10,25,40,55 * * * *"){ctx.waitUntil(runAccuracyCron(env,ctx,event.scheduledTime,event.cron.startsWith("6,")?"capture":"score"));return}
   ctx.waitUntil((async()=>{
    // Always preserve the normal RSI collection schedule. Migration runs after
    // collection to avoid concurrent writes to the same R2 daily partition.

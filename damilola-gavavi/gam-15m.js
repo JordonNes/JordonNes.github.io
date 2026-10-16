@@ -117,7 +117,8 @@ function makeCard(def){
   const b=el("div","side "+side+(hasQuote({[side]:price},side)?"":" noquote")+(selected?" gavavi-suggested":""));
   if(selected){b.dataset.suggestedSeries=def.ticker;b.setAttribute("aria-label","Gavavi experimental ending suggestion: "+side);}
   const title=el("span","",binaryLabel?(side==="up"?"YES":"NO"):(side==="up"?"Up":"Down"));
-  const cost=el("span","quote",cents(price));b.append(title,cost);if(selected)b.append(el("small","suggestion-label","Gavavi · experimental"));sides.append(b);
+  const confidence=el("strong","dg-confidence","—%"),confidenceLabel=el("small","confidence-caption","D&G confidence");confidence.setAttribute("aria-label","D&G confidence unavailable; prediction not validated");
+  const cost=el("small","quote kalshi-ask","Kalshi ask: "+cents(price));b.append(title,confidenceLabel,confidence,cost);if(selected)b.append(el("small","suggestion-label","Gavavi · experimental"));sides.append(b);
   if(side==="up"){
    const label=el("label","amount-label","Amount $"),input=el("input","contemplated-amount");input.type="text";input.inputMode="numeric";input.pattern="[1-9][0-9]{0,2}";input.maxLength=3;input.size=3;input.placeholder="0";input.autocomplete="off";input.dataset.amountSeries=def.ticker;input.setAttribute("aria-label",def.name+" contemplated position amount in dollars, 1 to 999; no order is placed");input.value=amounts.get(def.ticker)||"";
    input.addEventListener("input",()=>{input.value=input.value.replace(/[^0-9]/g,"").replace(/^0+/,"").slice(0,3);amounts.set(def.ticker,input.value)});label.append(input);sides.append(label);
@@ -127,7 +128,7 @@ function makeCard(def){
  gavavi.append(el("strong","",suggestion?"Gavavi ending: "+suggestion.suggested_side+" · experimental":"Gavavi ending: WAIT"));
  gavavi.append(el("div","",comparison?.matches?comparison.up+" UP / "+comparison.down+" DOWN in "+comparison.matches+" matched settled contracts · "+comparison.cohort:comparison?.reason||"Awaiting observed history comparison."));
  if(suggestion)gavavi.append(el("small","","Historical majority; not a validated prediction or expected profit."));
- gavavi.append(el("div","exit-plan","Cash-out time: — · Auto-sell price: —"),el("small","","No supported net exit edge. Amount is for planning only; no order is placed."));
+ gavavi.append(el("small","","D&G confidence awaits validation. Amount is for planning only."));
  const bottom=el("div","bottom"),detail=el("span","",ok?"Observed market quote":"Quote unavailable"),link=el("a","","Kalshi ↗");
  link.href=ok&&MARKET_SLUGS[def.ticker]?("https://kalshi.com/markets/"+def.ticker.toLowerCase()+"/"+MARKET_SLUGS[def.ticker]+"/"+encodeURIComponent(record.market.ticker.toLowerCase())):SOURCES[def.group];link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","View "+def.name+" 15-minute markets on Kalshi");
  const research=el("details","card-research"),summary=el("summary","","Context & evidence");research.append(summary);
@@ -143,6 +144,8 @@ function makeCard(def){
  const spot=spotChart(def);if(spot)research.append(spot);
  research.append(el("div","","Damilola ending forecast: not yet validated"));
  const evidence=el("a","","Compare observed history ↗");evidence.href="pattern-lab.html?series="+encodeURIComponent(def.ticker);research.append(evidence);
+ const accuracy=el("a","","D&G prediction accuracy ↗");accuracy.href="accuracy.html?series="+encodeURIComponent(def.ticker);research.append(accuracy);
+ research.append(el("div","exit-plan","Cash-out time: — · Auto-sell price: — · no supported exit recommendation"));
  research.append(el("div","","Early-exit timing / target-fill edge: not yet validated"));
  const exitResearch=el("a","","Gavavi entry & exit research ↗");exitResearch.href="exit-lab.html?series="+encodeURIComponent(def.ticker);research.append(exitResearch);
  bottom.append(detail,link);item.append(top,details);if(chart)item.append(chart);item.append(sides,gavavi,research,bottom);
