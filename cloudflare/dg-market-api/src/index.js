@@ -1,6 +1,7 @@
 import {serveAccuracyLedger,runAccuracyCron} from "./accuracy-ledger.js";
 import {servePredictionLedger} from "./prediction-ledger.js";
 import {serveCardHistory} from "./card-history.js";
+import {runDamilolaDaily} from "./damilola-daily.js";
 import {serveMarketLayers} from "./market-layers.js";
 import {cooldownUntil} from "./kalshi-public-cache.js";
 import {serveCoinbaseAdvancedReference} from "./coinbase-advanced-reference.js";
