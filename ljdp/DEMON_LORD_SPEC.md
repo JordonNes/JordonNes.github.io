@@ -39,6 +39,24 @@ This **must not** be run against content acquired without Linemate permission or
 
 **Current readiness:** UI, schema, read-only QC evidence overlays and structured-authorized-input bridge are staged in PR #59. Automatic legal Linemate collection, daily league sweep, identity crosswalk service and predictive calibration remain unimplemented. Browser/live-QC tests also remain required.
 
+## Source identity audit — October 16, 2026
+
+A proposed GitHub URL, [`winsharp/LineMate/backend/app/api`](https://github.com/winsharp/LineMate/tree/main/backend/app/api), was inspected using its README and API routers. **It is not the Linemate sports betting research service.** Its README states that it is a kitchen operations assistant for Hearthline restaurants; its FastAPI routers expose documents, staff tickets, kitchen workload/ownership analytics, and a local RAG question interface. There is no evidence of NFL/NBA/MLB/NHL/NCAA player props, game matchup trends, betting parlays or integration with `linemate.io`.
+
+**Integration decision:** REJECT this GitHub project as an upstream provider or client library. Do not deploy, vendor, fork, import its endpoints, or treat its example local `X-API-Key` as Linemate sports credentials.
+
+The sports service's own public app listing identifies **Linemate Inc.** and its sports-research offering, while `https://linemate.io/` currently requires JavaScript for web browsing. As of this audit, a documented sports-Linemate API and redistribution/scraping authorization have **not** been verified. The authorized structured-data bridge remains staged but unconnected; source references continue to use the verified `https://linemate.io` origin. A hostname alone does not prove permission or authenticity, and `permission_verified` must only be set after independent authorization.
+
+Regression test: `scripts/linemate_parlee_bridge.test.js` now rejects the mistakenly named kitchen repository URL, lookalike hostnames, non-Linemate sources, and insecure URLs.
+
+### Next legitimate integration steps
+
+1. Locate official sports-Linemate data-feed/API documentation or written approval for licensed export. Do not infer API availability from a similarly named GitHub repository.
+2. Define permitted datasets, attribution, retention, request rate, and public display rights.
+3. Execute a single permitted sample retrieval; verify timestamps, H2H/recent split denominators, team and player identifiers, and market thresholds.
+4. Reconcile the sample against LSI's canonical event and POM registry; publish Parlee research while keeping JINX and LEGZ LJPC mathematically unchanged.
+5. Add operational scheduler and monitored coverage only after authorized sample data pass regression and freshness checks.
+
 ## Linemate data acquisition: gated work
 
 The provided example is `https://linemate.io/nfl/summary/20261018-HOU-JAX`. Its full `feed` query is a UI filter, not proof of an export API. Linemate pages require JavaScript, and its terms at `https://linemate.io/terms` were not reviewable using simple HTML retrieval. Therefore **do not enable crawling or automated harvesting until permission/terms/robots and acceptable usage are confirmed**. Do not use internal undocumented endpoints or circumvent authentication, bot defenses, throttling, or paywalls.
