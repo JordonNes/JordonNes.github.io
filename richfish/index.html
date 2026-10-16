@@ -80,6 +80,15 @@
           </div>
           <div id="frmap-selection-summary" class="map-selection-summary">Select a species or click the map.</div>
 
+          <strong>Underwater terrain view</strong>
+          <label class="map-field" for="frmap-terrain-mode">Map emphasis</label>
+          <select id="frmap-terrain-mode" class="map-select" aria-label="Underwater terrain display preset">
+            <option value="charts">Fishing depths · NOAA chart contours</option>
+            <option value="terrain">Regional seafloor form · NOAA shaded relief</option>
+            <option value="combined">Compare contours + shaded relief</option>
+          </select>
+          <div id="frmap-terrain-explainer" class="map-source-note" role="status">Depth contours are chart-derived. Switch to terrain to compare broad seafloor slopes; fine pier-scale bottom structure is not resolved.</div>
+          <div class="map-source-note"><strong>Bay–Delta DEM v4.3</strong> is the selected future locally processed terrain dataset. Richmond-side raster data are not yet on this map. DWR's newer revisions mainly affect areas east of Carquinez Strait; depths use NAVD88, unlike the charted sounding datum. <a href="https://publish.data.ca.gov/dataset/san-francisco-bay-and-sacramento-san-joaquin-delta-dem-for-modeling-version-4-3" target="_blank" rel="noopener noreferrer">Explore the original DWR map and downloads ↗</a></div>
           <strong>Visible layers</strong>
           <label><input type="checkbox" data-map-layer="access" checked /> RICHFISH fishing locations</label>
           <label><input type="checkbox" data-map-layer="currents" checked /> Bound current vectors</label>
