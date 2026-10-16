@@ -34,6 +34,13 @@ export function compareHistory(series,current,pages,now=Date.now(),maxFeatureAge
  if(cohort.length>=8){base.reason='Historical split is inconclusive; no suggestion.';if(rate>=.70&&wilson(k,cohort.length)>.5){base.state='EXPERIMENTAL_SUGGESTION';base.suggested_side=up>down?'UP':'DOWN';base.reason='Historical analog majority only; unvalidated and not a calibrated ending probability.'}}
  return base;
 }
+export function selectArchiveHours(hours,currentHour,contractOpenAt,maxHours=24){
+ const local=clock(contractOpenAt),available=[...new Set(hours)].filter(h=>Number.isInteger(h)&&h<currentHour).sort((a,b)=>b-a);
+ const recentHours=Array.from({length:5},(_,i)=>currentHour-(i+1)*3600);
+ const weekdayHour=available.filter(h=>{const t=clock(h*1000);return t.hour===local.hour&&t.day===local.day});
+ const sameHour=available.filter(h=>clock(h*1000).hour===local.hour);
+ return [...new Set([...recentHours,...weekdayHour,...sameHour,...available])].filter(h=>available.includes(h)).slice(0,Math.max(0,Math.min(24,maxHours)));
+}
 async function archivedPages(env,series,now,contractOpenAt=now){
  if(!env?.DG_RESEARCH_R2)return {pages:[],state:'ARCHIVE_NOT_CONFIGURED',listed_hours:0,selected_hours:0};
  const prefix='dg/market-paths/v1/'+series+'/',cutoff=Math.floor((now-30*86400000)/3600000)*3600,currentHour=Math.floor(now/3600000)*3600,byHour=new Map();let cursor,truncated=false;
@@ -45,11 +52,7 @@ async function archivedPages(env,series,now,contractOpenAt=now){
  // Fixed (pre-result) sampling: last five hours, analogous weekday/hour,
  // same Pacific hour, then the most recent remaining archived hours.
  // Never choose history based on the observed outcomes; cap R2 reads at 24.
- const local=clock(contractOpenAt),available=[...byHour.keys()].sort((a,b)=>b-a);
- const recentHours=Array.from({length:5},(_,i)=>currentHour-(i+1)*3600);
- const weekdayHour=available.filter(h=>{const t=clock(h*1000);return t.hour===local.hour&&t.day===local.day});
- const sameHour=available.filter(h=>clock(h*1000).hour===local.hour);
- const selected=[...new Set([...recentHours,...weekdayHour,...sameHour,...available])].filter(h=>byHour.has(h)).slice(0,24),pages=[];
+ const selected=selectArchiveHours([...byHour.keys()],currentHour,contractOpenAt),pages=[];
  for(const h of selected){const obj=await env.DG_RESEARCH_R2.get(byHour.get(h).key);if(!obj)continue;const p=JSON.parse(await obj.text());if(p.series_ticker===series&&Date.parse(p.hour_start_utc)===h*1000&&Array.isArray(p.contracts))pages.push(p)}
  return {pages,state:truncated?'ARCHIVE_LIST_TRUNCATED':'OBSERVED_ARCHIVE',listed_hours:byHour.size,selected_hours:selected.length,recent_hours_available:recentHours.filter(h=>byHour.has(h)).length,requested_recent_hours:5,lookback_days:30,source_archive_keys:selected.map(h=>byHour.get(h).key),selection:'last five completed hours, matching Pacific weekday/hour, matching Pacific hour, then most recent other hours; maximum 24 archive hours, fixed independently of outcomes',oldest_selected_utc:pages.length?pages.map(p=>p.hour_start_utc).sort()[0]:null};
 }
