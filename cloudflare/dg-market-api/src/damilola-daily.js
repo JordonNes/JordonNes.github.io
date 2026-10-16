@@ -73,7 +73,7 @@ export function summarizeRolling30(series,reviews){
  const daySeen=new Set(),hourly={},weekdayHour={};let hourCoverage=0,contracts=0,settled=0,quoteMinutes=0,spikes=0,dips=0;
  const add=(bag,key,x)=>{const b=bag[key]||(bag[key]={contracts:0,settled:0,yes:0,no:0,spikes_10pp:0,dips_10pp:0,quoted:0,net_yes_midpoint_change_sum:0});for(const field of Object.keys(b))b[field]+=Number(x?.[field]||0)};
  for(const r of reviews||[]){
-  if(r?.series_ticker!==series||!/^\\d{4}-\\d{2}-\\d{2}$/.test(r.day_utc)||daySeen.has(r.day_utc))continue;
+  if(r?.series_ticker!==series||!/^\d{4}-\d{2}-\d{2}$/.test(r.day_utc)||daySeen.has(r.day_utc))continue;
   daySeen.add(r.day_utc);hourCoverage+=Number(r.hour_coverage||0);contracts+=Number(r.observed_contracts||0);
   settled+=Number(r.settled_contracts||0);quoteMinutes+=Number(r.valid_quote_minutes||0);
   spikes+=Number(r.total_minute_spikes_10pp||0);dips+=Number(r.total_minute_dips_10pp||0);
@@ -162,7 +162,7 @@ export async function runDamilolaDaily(env,scheduledAt=Date.now()){
    completed.push({series,day_utc:summary.day_utc,hours:summary.hour_coverage,contracts:summary.observed_contracts,settled:summary.settled_contracts,purged});
   }catch(e){errors.push({series,reason:String(e?.message||e)})}
  }));
- const status={state:errors.length?'PARTIAL':'COMPLETE',schema_version:1,reviewed_at_utc:timestamp(Date.now()),day_utc:timestamp(dayStart).slice(0,10),markets_requested:SERIES.length,markets_completed:completed.length,completed,errors,retention_days:30,read_only:true,forecast_validated:false};
+ const status={state:errors.length?'PARTIAL':completed.some(x=>x.contracts>0)?'COMPLETE':'NO_ARCHIVED_CONTRACTS',schema_version:1,reviewed_at_utc:timestamp(Date.now()),day_utc:timestamp(dayStart).slice(0,10),markets_requested:SERIES.length,markets_completed:completed.length,markets_with_observations:completed.filter(x=>x.contracts>0).length,markets_with_full_hour_coverage:completed.filter(x=>x.hours===24).length,completed,errors,retention_days:30,read_only:true,forecast_validated:false};
  if(env.DG_ARCHIVE)await env.DG_ARCHIVE.put('dg:damilola:daily:v1:last-run',JSON.stringify(status));
  if(errors.length)console.error(JSON.stringify({type:'DG_DAMILOLA_DAILY_ERRORS',errors}));
  return status;
