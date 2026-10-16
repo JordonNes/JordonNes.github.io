@@ -2,7 +2,7 @@
   "series_ticker": "KXBTC15M",
   "state": "RESEARCH_ONLY",
   "source": "Kalshi official public historical and recent markets + 1-minute candle",
-  "collected_at_utc": "2026-10-16T02:46:13.769Z",
+  "collected_at_utc": "2026-10-16T03:56:13.463Z",
   "archive_partial": true,
   "actual_fills_verified": false,
   "fee_and_execution_verified": false,
@@ -11,8 +11,13 @@
     "attempted": 10,
     "accepted": 10,
     "rejected": 0,
-    "source_errors": [],
-    "metadata_repaired": 10,
+    "source_errors": [
+      {
+        "source": "archived",
+        "error": "SOURCE_HTTP_429"
+      }
+    ],
+    "metadata_repaired": 255,
     "metadata_conflicts": 0,
     "state": "NEW_PAIRS_COLLECTED"
   },
@@ -20,26 +25,26 @@
     "state": "RESEARCH_EVALUATED",
     "calibrated_for_signals": false,
     "go_eligible": false,
-    "total_source_rows": 255,
-    "valid_unique_asof_rows": 255,
+    "total_source_rows": 265,
+    "valid_unique_asof_rows": 265,
     "discarded_rows": 0,
     "required_test_samples": 100,
-    "walk_forward_tests": 195,
+    "walk_forward_tests": 205,
     "raw_market_benchmark": {
-      "n": 195,
-      "brier": 0.17660886666666673,
-      "log_loss": 0.5256611327442784,
-      "accuracy": 0.7384615384615385
+      "n": 205,
+      "brier": 0.17137338658536594,
+      "log_loss": 0.5135625463617893,
+      "accuracy": 0.7463414634146341
     },
     "rolling_bucket_model": {
-      "n": 195,
-      "brier": 0.1775156531150902,
-      "log_loss": 0.5300749713180539,
-      "accuracy": 0.7384615384615385
+      "n": 205,
+      "brier": 0.1717916113171625,
+      "log_loss": 0.5166388376682298,
+      "accuracy": 0.7463414634146341
     },
     "beats_market_baseline_brier": false,
     "method": "rolling prior-only probability bins with shrinkage; no future labels and same-series only",
-    "last_test_at_utc": "2026-10-16T02:35:00.000Z",
+    "last_test_at_utc": "2026-10-16T03:35:00.000Z",
     "sample_preview": [],
     "warning": "Research-only backtest. Independent final holdout, uncertainty, regime analysis, fee economics and real-time forward performance remain required."
   },
@@ -54,25 +59,25 @@
     "audit_version": 2,
     "holdout_training_frozen": true,
     "series_ticker": "KXBTC15M",
-    "source_samples": 255,
-    "verified_settlement_timestamp_rows": 255,
+    "source_samples": 265,
+    "verified_settlement_timestamp_rows": 265,
     "label_availability_fully_verified": true,
-    "evaluable_forecasts": 195,
+    "evaluable_forecasts": 205,
     "earliest_asof_utc": "2026-10-10T20:35:00.000Z",
-    "latest_asof_utc": "2026-10-16T02:35:00.000Z",
+    "latest_asof_utc": "2026-10-16T03:35:00.000Z",
     "historical_source_observations_only": true,
-    "tuning_samples": 95,
+    "tuning_samples": 105,
     "holdout_samples": 100,
     "selected_model": "market",
     "tuning_brier": {
-      "market": 0.153303,
-      "bucket": 0.156963,
-      "shrink85": 0.159193
+      "market": 0.160408,
+      "bucket": 0.163363,
+      "shrink85": 0.16535
     },
     "holdout_brier": {
-      "market": 0.19875,
-      "bucket": 0.196042,
-      "shrink85": 0.199308
+      "market": 0.182888,
+      "bucket": 0.180703,
+      "shrink85": 0.185407
     },
     "holdout_improvement_brier": 0,
     "improvement_95pct_block_interval": [
@@ -100,9 +105,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T20:30:00Z",
       "market_settled_at_utc": "2026-10-10T20:45:03.748872Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82969.23
     },
     {
       "ticker": "KXBTC15M-26OCT101700-00",
@@ -120,9 +126,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T20:45:00Z",
       "market_settled_at_utc": "2026-10-10T21:00:03.794677Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82997.39
     },
     {
       "ticker": "KXBTC15M-26OCT101715-15",
@@ -140,9 +147,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T21:00:00Z",
       "market_settled_at_utc": "2026-10-10T21:15:03.705006Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82966.4
     },
     {
       "ticker": "KXBTC15M-26OCT101730-30",
@@ -160,9 +168,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T21:15:00Z",
       "market_settled_at_utc": "2026-10-10T21:30:03.647571Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82946.54
     },
     {
       "ticker": "KXBTC15M-26OCT101745-45",
@@ -180,9 +189,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T21:30:00Z",
       "market_settled_at_utc": "2026-10-10T21:45:03.702482Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82982.17
     },
     {
       "ticker": "KXBTC15M-26OCT101800-00",
@@ -200,9 +210,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T21:45:00Z",
       "market_settled_at_utc": "2026-10-10T22:00:03.704691Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83004.71
     },
     {
       "ticker": "KXBTC15M-26OCT101815-15",
@@ -220,9 +231,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T22:00:00Z",
       "market_settled_at_utc": "2026-10-10T22:15:03.698493Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82983.5
     },
     {
       "ticker": "KXBTC15M-26OCT101830-30",
@@ -240,9 +252,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T22:15:00Z",
       "market_settled_at_utc": "2026-10-10T22:30:03.701253Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82966.87
     },
     {
       "ticker": "KXBTC15M-26OCT101845-45",
@@ -260,9 +273,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T22:30:00Z",
       "market_settled_at_utc": "2026-10-10T22:45:03.748926Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82974.2
     },
     {
       "ticker": "KXBTC15M-26OCT101900-00",
@@ -280,9 +294,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T22:45:00Z",
       "market_settled_at_utc": "2026-10-10T23:00:03.793614Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82989.72
     },
     {
       "ticker": "KXBTC15M-26OCT101915-15",
@@ -300,9 +315,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T23:00:00Z",
       "market_settled_at_utc": "2026-10-10T23:15:03.701505Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83015.49
     },
     {
       "ticker": "KXBTC15M-26OCT101930-30",
@@ -320,9 +336,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T23:15:00Z",
       "market_settled_at_utc": "2026-10-10T23:30:03.697572Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82986.14
     },
     {
       "ticker": "KXBTC15M-26OCT101945-45",
@@ -340,9 +357,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T23:30:00Z",
       "market_settled_at_utc": "2026-10-10T23:45:03.659326Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82964.62
     },
     {
       "ticker": "KXBTC15M-26OCT102000-00",
@@ -360,9 +378,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-10T23:45:00Z",
       "market_settled_at_utc": "2026-10-11T00:00:03.652683Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82943.77
     },
     {
       "ticker": "KXBTC15M-26OCT102015-15",
@@ -380,9 +399,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T00:00:00Z",
       "market_settled_at_utc": "2026-10-11T00:15:03.697885Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82913.71
     },
     {
       "ticker": "KXBTC15M-26OCT102030-30",
@@ -400,9 +420,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T00:15:00Z",
       "market_settled_at_utc": "2026-10-11T00:30:03.648267Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82949.81
     },
     {
       "ticker": "KXBTC15M-26OCT102045-45",
@@ -420,9 +441,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T00:30:00Z",
       "market_settled_at_utc": "2026-10-11T00:45:03.703536Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82898.45
     },
     {
       "ticker": "KXBTC15M-26OCT102100-00",
@@ -440,9 +462,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T00:45:00Z",
       "market_settled_at_utc": "2026-10-11T01:00:03.838276Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82884.32
     },
     {
       "ticker": "KXBTC15M-26OCT102115-15",
@@ -460,9 +483,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T01:00:00Z",
       "market_settled_at_utc": "2026-10-11T01:15:03.704739Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82869.95
     },
     {
       "ticker": "KXBTC15M-26OCT102130-30",
@@ -480,9 +504,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T01:15:00Z",
       "market_settled_at_utc": "2026-10-11T01:30:03.698155Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82908.41
     },
     {
       "ticker": "KXBTC15M-26OCT102145-45",
@@ -500,9 +525,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T01:30:00Z",
       "market_settled_at_utc": "2026-10-11T01:45:03.705384Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82943.34
     },
     {
       "ticker": "KXBTC15M-26OCT102200-00",
@@ -520,9 +546,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T01:45:00Z",
       "market_settled_at_utc": "2026-10-11T02:00:03.696214Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82936.94
     },
     {
       "ticker": "KXBTC15M-26OCT102215-15",
@@ -540,9 +567,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T02:00:00Z",
       "market_settled_at_utc": "2026-10-11T02:15:03.701415Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82953.5
     },
     {
       "ticker": "KXBTC15M-26OCT102230-30",
@@ -560,9 +588,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T02:15:00Z",
       "market_settled_at_utc": "2026-10-11T02:30:03.692573Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82964.12
     },
     {
       "ticker": "KXBTC15M-26OCT102245-45",
@@ -580,9 +609,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T02:30:00Z",
       "market_settled_at_utc": "2026-10-11T02:45:03.68468Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82965.18
     },
     {
       "ticker": "KXBTC15M-26OCT102300-00",
@@ -600,9 +630,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T02:45:00Z",
       "market_settled_at_utc": "2026-10-11T03:00:03.647561Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83054.1
     },
     {
       "ticker": "KXBTC15M-26OCT102315-15",
@@ -620,9 +651,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T03:00:00Z",
       "market_settled_at_utc": "2026-10-11T03:15:03.697184Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83013.44
     },
     {
       "ticker": "KXBTC15M-26OCT102330-30",
@@ -640,9 +672,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T03:15:00Z",
       "market_settled_at_utc": "2026-10-11T03:30:03.697262Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82897.41
     },
     {
       "ticker": "KXBTC15M-26OCT102345-45",
@@ -660,9 +693,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T03:30:00Z",
       "market_settled_at_utc": "2026-10-11T03:45:03.685751Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82847.25
     },
     {
       "ticker": "KXBTC15M-26OCT110000-00",
@@ -680,9 +714,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T03:45:00Z",
       "market_settled_at_utc": "2026-10-11T04:00:06.692309Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82901.73
     },
     {
       "ticker": "KXBTC15M-26OCT110015-15",
@@ -700,9 +735,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T04:00:00Z",
       "market_settled_at_utc": "2026-10-11T04:15:03.652478Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82763.99
     },
     {
       "ticker": "KXBTC15M-26OCT110030-30",
@@ -720,9 +756,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T04:15:00Z",
       "market_settled_at_utc": "2026-10-11T04:30:03.678999Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82783.08
     },
     {
       "ticker": "KXBTC15M-26OCT110045-45",
@@ -740,9 +777,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T04:30:00Z",
       "market_settled_at_utc": "2026-10-11T04:45:03.636224Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82824.63
     },
     {
       "ticker": "KXBTC15M-26OCT110100-00",
@@ -760,9 +798,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T04:45:00Z",
       "market_settled_at_utc": "2026-10-11T05:00:03.678015Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82907.68
     },
     {
       "ticker": "KXBTC15M-26OCT110115-15",
@@ -780,9 +819,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T05:00:00Z",
       "market_settled_at_utc": "2026-10-11T05:15:03.698608Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82932.82
     },
     {
       "ticker": "KXBTC15M-26OCT110130-30",
@@ -800,9 +840,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T05:15:00Z",
       "market_settled_at_utc": "2026-10-11T05:30:03.689361Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82951.08
     },
     {
       "ticker": "KXBTC15M-26OCT110145-45",
@@ -820,9 +861,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T05:30:00Z",
       "market_settled_at_utc": "2026-10-11T05:45:03.68702Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82980.03
     },
     {
       "ticker": "KXBTC15M-26OCT110200-00",
@@ -840,9 +882,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T05:45:00Z",
       "market_settled_at_utc": "2026-10-11T06:00:03.687209Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82986.87
     },
     {
       "ticker": "KXBTC15M-26OCT110215-15",
@@ -860,9 +903,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T06:00:00Z",
       "market_settled_at_utc": "2026-10-11T06:15:03.684774Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82963.62
     },
     {
       "ticker": "KXBTC15M-26OCT110230-30",
@@ -880,9 +924,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T06:15:00Z",
       "market_settled_at_utc": "2026-10-11T06:30:03.678583Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82962.99
     },
     {
       "ticker": "KXBTC15M-26OCT110245-45",
@@ -900,9 +945,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T06:30:00Z",
       "market_settled_at_utc": "2026-10-11T06:45:03.63013Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82981.91
     },
     {
       "ticker": "KXBTC15M-26OCT110300-00",
@@ -920,9 +966,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T06:45:00Z",
       "market_settled_at_utc": "2026-10-11T07:00:03.681336Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83046.39
     },
     {
       "ticker": "KXBTC15M-26OCT110315-15",
@@ -940,9 +987,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T07:00:00Z",
       "market_settled_at_utc": "2026-10-11T07:15:03.680011Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83083.62
     },
     {
       "ticker": "KXBTC15M-26OCT110330-30",
@@ -960,9 +1008,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T07:15:00Z",
       "market_settled_at_utc": "2026-10-11T07:30:03.670109Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83061.18
     },
     {
       "ticker": "KXBTC15M-26OCT110345-45",
@@ -980,9 +1029,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T07:30:00Z",
       "market_settled_at_utc": "2026-10-11T07:45:03.677483Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82994.43
     },
     {
       "ticker": "KXBTC15M-26OCT110400-00",
@@ -1000,9 +1050,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T07:45:00Z",
       "market_settled_at_utc": "2026-10-11T08:00:03.671581Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82937.06
     },
     {
       "ticker": "KXBTC15M-26OCT110415-15",
@@ -1020,9 +1071,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T08:00:00Z",
       "market_settled_at_utc": "2026-10-11T08:15:03.667944Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82944.84
     },
     {
       "ticker": "KXBTC15M-26OCT110430-30",
@@ -1040,9 +1092,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T08:15:00Z",
       "market_settled_at_utc": "2026-10-11T08:30:03.676343Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82972.48
     },
     {
       "ticker": "KXBTC15M-26OCT110445-45",
@@ -1060,9 +1113,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T08:30:00Z",
       "market_settled_at_utc": "2026-10-11T08:45:03.669428Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82962.68
     },
     {
       "ticker": "KXBTC15M-26OCT110500-00",
@@ -1080,9 +1134,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T08:45:00Z",
       "market_settled_at_utc": "2026-10-11T09:00:03.613733Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82998.92
     },
     {
       "ticker": "KXBTC15M-26OCT110515-15",
@@ -1100,9 +1155,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T09:00:00Z",
       "market_settled_at_utc": "2026-10-11T09:15:03.672452Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82968.31
     },
     {
       "ticker": "KXBTC15M-26OCT110530-30",
@@ -1120,9 +1176,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T09:15:00Z",
       "market_settled_at_utc": "2026-10-11T09:30:03.668804Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82965.5
     },
     {
       "ticker": "KXBTC15M-26OCT110545-45",
@@ -1140,9 +1197,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T09:30:00Z",
       "market_settled_at_utc": "2026-10-11T09:45:03.670127Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82957.34
     },
     {
       "ticker": "KXBTC15M-26OCT110600-00",
@@ -1160,9 +1218,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T09:45:00Z",
       "market_settled_at_utc": "2026-10-11T10:00:03.670142Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82962.56
     },
     {
       "ticker": "KXBTC15M-26OCT110615-15",
@@ -1180,9 +1239,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T10:00:00Z",
       "market_settled_at_utc": "2026-10-11T10:15:03.620113Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82962.71
     },
     {
       "ticker": "KXBTC15M-26OCT110630-30",
@@ -1200,9 +1260,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T10:15:00Z",
       "market_settled_at_utc": "2026-10-11T10:30:03.672052Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82953.45
     },
     {
       "ticker": "KXBTC15M-26OCT110645-45",
@@ -1220,9 +1281,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T10:30:00Z",
       "market_settled_at_utc": "2026-10-11T10:45:03.673122Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82915.9
     },
     {
       "ticker": "KXBTC15M-26OCT110700-00",
@@ -1240,9 +1302,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T10:45:00Z",
       "market_settled_at_utc": "2026-10-11T11:00:03.665109Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82899.33
     },
     {
       "ticker": "KXBTC15M-26OCT110715-15",
@@ -1260,9 +1323,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T11:00:00Z",
       "market_settled_at_utc": "2026-10-11T11:15:03.661666Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82919.06
     },
     {
       "ticker": "KXBTC15M-26OCT110730-30",
@@ -1280,9 +1344,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T11:15:00Z",
       "market_settled_at_utc": "2026-10-11T11:30:03.673762Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82928.67
     },
     {
       "ticker": "KXBTC15M-26OCT110745-45",
@@ -1300,9 +1365,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T11:30:00Z",
       "market_settled_at_utc": "2026-10-11T11:45:03.670143Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82980.84
     },
     {
       "ticker": "KXBTC15M-26OCT110800-00",
@@ -1320,9 +1386,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T11:45:00Z",
       "market_settled_at_utc": "2026-10-11T12:00:03.668634Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82979.08
     },
     {
       "ticker": "KXBTC15M-26OCT110815-15",
@@ -1340,9 +1407,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T12:00:00Z",
       "market_settled_at_utc": "2026-10-11T12:15:03.618063Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83083.27
     },
     {
       "ticker": "KXBTC15M-26OCT110830-30",
@@ -1360,9 +1428,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T12:15:00Z",
       "market_settled_at_utc": "2026-10-11T12:30:03.668966Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83165.85
     },
     {
       "ticker": "KXBTC15M-26OCT110845-45",
@@ -1380,9 +1449,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T12:30:00Z",
       "market_settled_at_utc": "2026-10-11T12:45:03.677609Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83063.02
     },
     {
       "ticker": "KXBTC15M-26OCT110900-00",
@@ -1400,9 +1470,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T12:45:00Z",
       "market_settled_at_utc": "2026-10-11T13:00:03.628786Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83080.18
     },
     {
       "ticker": "KXBTC15M-26OCT110915-15",
@@ -1420,9 +1491,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T13:00:00Z",
       "market_settled_at_utc": "2026-10-11T13:15:03.67342Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83039.5
     },
     {
       "ticker": "KXBTC15M-26OCT110930-30",
@@ -1440,9 +1512,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T13:15:00Z",
       "market_settled_at_utc": "2026-10-11T13:30:03.685614Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83017.42
     },
     {
       "ticker": "KXBTC15M-26OCT110945-45",
@@ -1460,9 +1533,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T13:30:00Z",
       "market_settled_at_utc": "2026-10-11T13:45:03.622719Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83006.63
     },
     {
       "ticker": "KXBTC15M-26OCT111000-00",
@@ -1480,9 +1554,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T13:45:00Z",
       "market_settled_at_utc": "2026-10-11T14:00:03.635145Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83001.66
     },
     {
       "ticker": "KXBTC15M-26OCT111015-15",
@@ -1500,9 +1575,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T14:00:00Z",
       "market_settled_at_utc": "2026-10-11T14:15:03.68964Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83003.9
     },
     {
       "ticker": "KXBTC15M-26OCT111030-30",
@@ -1520,9 +1596,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T14:15:00Z",
       "market_settled_at_utc": "2026-10-11T14:30:03.691972Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83008.51
     },
     {
       "ticker": "KXBTC15M-26OCT111045-45",
@@ -1540,9 +1617,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T14:30:00Z",
       "market_settled_at_utc": "2026-10-11T14:45:03.632018Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83003.59
     },
     {
       "ticker": "KXBTC15M-26OCT111100-00",
@@ -1560,9 +1638,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T14:45:00Z",
       "market_settled_at_utc": "2026-10-11T15:00:03.637325Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83048.26
     },
     {
       "ticker": "KXBTC15M-26OCT111115-15",
@@ -1580,9 +1659,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T15:00:00Z",
       "market_settled_at_utc": "2026-10-11T15:15:03.681722Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83044.56
     },
     {
       "ticker": "KXBTC15M-26OCT111130-30",
@@ -1600,9 +1680,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T15:15:00Z",
       "market_settled_at_utc": "2026-10-11T15:30:03.686285Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83048.54
     },
     {
       "ticker": "KXBTC15M-26OCT111145-45",
@@ -1620,9 +1701,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T15:30:00Z",
       "market_settled_at_utc": "2026-10-11T15:45:03.679559Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83073.42
     },
     {
       "ticker": "KXBTC15M-26OCT111200-00",
@@ -1640,9 +1722,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T15:45:00Z",
       "market_settled_at_utc": "2026-10-11T16:00:03.630676Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83329.29
     },
     {
       "ticker": "KXBTC15M-26OCT111215-15",
@@ -1660,9 +1743,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T16:00:00Z",
       "market_settled_at_utc": "2026-10-11T16:15:03.692508Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83835.85
     },
     {
       "ticker": "KXBTC15M-26OCT111230-30",
@@ -1680,9 +1764,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T16:15:00Z",
       "market_settled_at_utc": "2026-10-11T16:30:03.683147Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83756.47
     },
     {
       "ticker": "KXBTC15M-26OCT111245-45",
@@ -1700,9 +1785,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T16:30:00Z",
       "market_settled_at_utc": "2026-10-11T16:45:03.686032Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83825.96
     },
     {
       "ticker": "KXBTC15M-26OCT111300-00",
@@ -1720,9 +1806,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T16:45:00Z",
       "market_settled_at_utc": "2026-10-11T17:00:03.698704Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83840.08
     },
     {
       "ticker": "KXBTC15M-26OCT111315-15",
@@ -1740,9 +1827,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T17:00:00Z",
       "market_settled_at_utc": "2026-10-11T17:15:03.693536Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83844.01
     },
     {
       "ticker": "KXBTC15M-26OCT111330-30",
@@ -1760,9 +1848,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T17:15:00Z",
       "market_settled_at_utc": "2026-10-11T17:30:03.637222Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83748.46
     },
     {
       "ticker": "KXBTC15M-26OCT111345-45",
@@ -1780,9 +1869,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T17:30:00Z",
       "market_settled_at_utc": "2026-10-11T17:45:03.704831Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83907.26
     },
     {
       "ticker": "KXBTC15M-26OCT111400-00",
@@ -1800,9 +1890,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T17:45:00Z",
       "market_settled_at_utc": "2026-10-11T18:00:03.690413Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83916.46
     },
     {
       "ticker": "KXBTC15M-26OCT111415-15",
@@ -1820,9 +1911,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T18:00:00Z",
       "market_settled_at_utc": "2026-10-11T18:15:03.705425Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83769.95
     },
     {
       "ticker": "KXBTC15M-26OCT111430-30",
@@ -1840,9 +1932,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T18:15:00Z",
       "market_settled_at_utc": "2026-10-11T18:30:03.695144Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83751.67
     },
     {
       "ticker": "KXBTC15M-26OCT111445-45",
@@ -1860,9 +1953,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T18:30:00Z",
       "market_settled_at_utc": "2026-10-11T18:45:03.645974Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83789.48
     },
     {
       "ticker": "KXBTC15M-26OCT111500-00",
@@ -1880,9 +1974,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T18:45:00Z",
       "market_settled_at_utc": "2026-10-11T19:00:03.69357Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83728.28
     },
     {
       "ticker": "KXBTC15M-26OCT111515-15",
@@ -1900,9 +1995,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T19:00:00Z",
       "market_settled_at_utc": "2026-10-11T19:15:03.705221Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83581.29
     },
     {
       "ticker": "KXBTC15M-26OCT111530-30",
@@ -1920,9 +2016,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T19:15:00Z",
       "market_settled_at_utc": "2026-10-11T19:30:03.699562Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83615.39
     },
     {
       "ticker": "KXBTC15M-26OCT111545-45",
@@ -1940,9 +2037,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T19:30:00Z",
       "market_settled_at_utc": "2026-10-11T19:45:03.690366Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83594.47
     },
     {
       "ticker": "KXBTC15M-26OCT111600-00",
@@ -1960,9 +2058,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T19:45:00Z",
       "market_settled_at_utc": "2026-10-11T20:00:04.049383Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83630.3
     },
     {
       "ticker": "KXBTC15M-26OCT111615-15",
@@ -1980,9 +2079,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T20:00:00Z",
       "market_settled_at_utc": "2026-10-11T20:15:03.696174Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83576.72
     },
     {
       "ticker": "KXBTC15M-26OCT111630-30",
@@ -2000,9 +2100,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T20:15:00Z",
       "market_settled_at_utc": "2026-10-11T20:30:03.701476Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83625.99
     },
     {
       "ticker": "KXBTC15M-26OCT111645-45",
@@ -2020,9 +2121,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T20:30:00Z",
       "market_settled_at_utc": "2026-10-11T20:45:03.639733Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83563.56
     },
     {
       "ticker": "KXBTC15M-26OCT111700-00",
@@ -2040,9 +2142,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T20:45:00Z",
       "market_settled_at_utc": "2026-10-11T21:00:03.755247Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83588.6
     },
     {
       "ticker": "KXBTC15M-26OCT111715-15",
@@ -2060,9 +2163,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T21:00:00Z",
       "market_settled_at_utc": "2026-10-11T21:15:03.700051Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83543.76
     },
     {
       "ticker": "KXBTC15M-26OCT111730-30",
@@ -2080,9 +2184,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T21:15:00Z",
       "market_settled_at_utc": "2026-10-11T21:30:03.74156Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83471.65
     },
     {
       "ticker": "KXBTC15M-26OCT111745-45",
@@ -2100,9 +2205,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T21:30:00Z",
       "market_settled_at_utc": "2026-10-11T21:45:03.690172Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83353.7
     },
     {
       "ticker": "KXBTC15M-26OCT111800-00",
@@ -2120,9 +2226,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T21:45:00Z",
       "market_settled_at_utc": "2026-10-11T22:00:03.697494Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83441.34
     },
     {
       "ticker": "KXBTC15M-26OCT111815-15",
@@ -2140,9 +2247,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T22:00:00Z",
       "market_settled_at_utc": "2026-10-11T22:15:03.694164Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83433.51
     },
     {
       "ticker": "KXBTC15M-26OCT111830-30",
@@ -2160,9 +2268,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T22:15:00Z",
       "market_settled_at_utc": "2026-10-11T22:30:04.092175Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83532.74
     },
     {
       "ticker": "KXBTC15M-26OCT111845-45",
@@ -2180,9 +2289,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T22:30:00Z",
       "market_settled_at_utc": "2026-10-11T22:45:03.699442Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83551.37
     },
     {
       "ticker": "KXBTC15M-26OCT111900-00",
@@ -2200,9 +2310,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T22:45:00Z",
       "market_settled_at_utc": "2026-10-11T23:00:03.686338Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83588.71
     },
     {
       "ticker": "KXBTC15M-26OCT111915-15",
@@ -2220,9 +2331,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T23:00:00Z",
       "market_settled_at_utc": "2026-10-11T23:15:03.694589Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83556.45
     },
     {
       "ticker": "KXBTC15M-26OCT111930-30",
@@ -2240,9 +2352,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T23:15:00Z",
       "market_settled_at_utc": "2026-10-11T23:30:03.740144Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83609.64
     },
     {
       "ticker": "KXBTC15M-26OCT111945-45",
@@ -2260,9 +2373,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T23:30:00Z",
       "market_settled_at_utc": "2026-10-11T23:45:03.690061Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83637.24
     },
     {
       "ticker": "KXBTC15M-26OCT112000-00",
@@ -2280,9 +2394,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-11T23:45:00Z",
       "market_settled_at_utc": "2026-10-12T00:00:03.693601Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83607.86
     },
     {
       "ticker": "KXBTC15M-26OCT112015-15",
@@ -2300,9 +2415,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T00:00:00Z",
       "market_settled_at_utc": "2026-10-12T00:15:03.663213Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83676.3
     },
     {
       "ticker": "KXBTC15M-26OCT112030-30",
@@ -2320,9 +2436,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T00:15:00Z",
       "market_settled_at_utc": "2026-10-12T00:30:03.708625Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83683.63
     },
     {
       "ticker": "KXBTC15M-26OCT112045-45",
@@ -2340,9 +2457,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T00:30:00Z",
       "market_settled_at_utc": "2026-10-12T00:45:03.689419Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83762.96
     },
     {
       "ticker": "KXBTC15M-26OCT112100-00",
@@ -2360,9 +2478,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T00:45:00Z",
       "market_settled_at_utc": "2026-10-12T01:00:03.754686Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83755.8
     },
     {
       "ticker": "KXBTC15M-26OCT112115-15",
@@ -2380,9 +2499,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T01:00:00Z",
       "market_settled_at_utc": "2026-10-12T01:15:03.752672Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83844.61
     },
     {
       "ticker": "KXBTC15M-26OCT112130-30",
@@ -2400,9 +2520,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T01:15:00Z",
       "market_settled_at_utc": "2026-10-12T01:30:03.647799Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83858.12
     },
     {
       "ticker": "KXBTC15M-26OCT112145-45",
@@ -2420,9 +2541,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T01:30:00Z",
       "market_settled_at_utc": "2026-10-12T01:45:03.69955Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83695.59
     },
     {
       "ticker": "KXBTC15M-26OCT112200-00",
@@ -2440,9 +2562,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T01:45:00Z",
       "market_settled_at_utc": "2026-10-12T02:00:03.704038Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83578.8
     },
     {
       "ticker": "KXBTC15M-26OCT112215-15",
@@ -2460,9 +2583,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T02:00:00Z",
       "market_settled_at_utc": "2026-10-12T02:15:03.699456Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83555.01
     },
     {
       "ticker": "KXBTC15M-26OCT112230-30",
@@ -2480,9 +2604,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T02:15:00Z",
       "market_settled_at_utc": "2026-10-12T02:30:03.690349Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83667.58
     },
     {
       "ticker": "KXBTC15M-26OCT112245-45",
@@ -2500,9 +2625,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T02:30:00Z",
       "market_settled_at_utc": "2026-10-12T02:45:03.682861Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83779.59
     },
     {
       "ticker": "KXBTC15M-26OCT112300-00",
@@ -2520,9 +2646,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T02:45:00Z",
       "market_settled_at_utc": "2026-10-12T03:00:03.683616Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83793.33
     },
     {
       "ticker": "KXBTC15M-26OCT112315-15",
@@ -2540,9 +2667,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T03:00:00Z",
       "market_settled_at_utc": "2026-10-12T03:15:03.689453Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83741.91
     },
     {
       "ticker": "KXBTC15M-26OCT112330-30",
@@ -2560,9 +2688,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T03:15:00Z",
       "market_settled_at_utc": "2026-10-12T03:30:03.689649Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83607.11
     },
     {
       "ticker": "KXBTC15M-26OCT112345-45",
@@ -2580,9 +2709,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T03:30:00Z",
       "market_settled_at_utc": "2026-10-12T03:45:03.693165Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83564.42
     },
     {
       "ticker": "KXBTC15M-26OCT120000-00",
@@ -2600,9 +2730,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T03:45:00Z",
       "market_settled_at_utc": "2026-10-12T04:00:08.855563Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83499.07
     },
     {
       "ticker": "KXBTC15M-26OCT120015-15",
@@ -2620,9 +2751,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T04:00:00Z",
       "market_settled_at_utc": "2026-10-12T04:15:03.696373Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83520.53
     },
     {
       "ticker": "KXBTC15M-26OCT120030-30",
@@ -2640,9 +2772,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T04:15:00Z",
       "market_settled_at_utc": "2026-10-12T04:30:03.684335Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83444.25
     },
     {
       "ticker": "KXBTC15M-26OCT120045-45",
@@ -2660,9 +2793,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T04:30:00Z",
       "market_settled_at_utc": "2026-10-12T04:45:03.683879Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83589.46
     },
     {
       "ticker": "KXBTC15M-26OCT120100-00",
@@ -2680,9 +2814,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T04:45:00Z",
       "market_settled_at_utc": "2026-10-12T05:00:03.683778Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83989.98
     },
     {
       "ticker": "KXBTC15M-26OCT120115-15",
@@ -2700,9 +2835,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T05:00:00Z",
       "market_settled_at_utc": "2026-10-12T05:15:03.689698Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 84054.35
     },
     {
       "ticker": "KXBTC15M-26OCT120130-30",
@@ -2720,9 +2856,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T05:15:00Z",
       "market_settled_at_utc": "2026-10-12T05:30:03.636687Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 84124.39
     },
     {
       "ticker": "KXBTC15M-26OCT120145-45",
@@ -2740,9 +2877,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T05:30:00Z",
       "market_settled_at_utc": "2026-10-12T05:45:03.627026Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83927.99
     },
     {
       "ticker": "KXBTC15M-26OCT120200-00",
@@ -2760,9 +2898,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T05:45:00Z",
       "market_settled_at_utc": "2026-10-12T06:00:03.676758Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83856.91
     },
     {
       "ticker": "KXBTC15M-26OCT120215-15",
@@ -2780,9 +2919,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T06:00:00Z",
       "market_settled_at_utc": "2026-10-12T06:15:03.682676Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83920.77
     },
     {
       "ticker": "KXBTC15M-26OCT120230-30",
@@ -2800,9 +2940,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T06:15:00Z",
       "market_settled_at_utc": "2026-10-12T06:30:03.625951Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83781.29
     },
     {
       "ticker": "KXBTC15M-26OCT120245-45",
@@ -2820,9 +2961,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T06:30:00Z",
       "market_settled_at_utc": "2026-10-12T06:45:03.673598Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83677.18
     },
     {
       "ticker": "KXBTC15M-26OCT120300-00",
@@ -2840,9 +2982,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T06:45:00Z",
       "market_settled_at_utc": "2026-10-12T07:00:03.66718Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83893.68
     },
     {
       "ticker": "KXBTC15M-26OCT120315-15",
@@ -2860,9 +3003,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T07:00:00Z",
       "market_settled_at_utc": "2026-10-12T07:15:03.678606Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 84136.3
     },
     {
       "ticker": "KXBTC15M-26OCT120330-30",
@@ -2880,9 +3024,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T07:15:00Z",
       "market_settled_at_utc": "2026-10-12T07:30:03.670388Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 84241.38
     },
     {
       "ticker": "KXBTC15M-26OCT120345-45",
@@ -2900,9 +3045,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T07:30:00Z",
       "market_settled_at_utc": "2026-10-12T07:45:03.670785Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 84037.14
     },
     {
       "ticker": "KXBTC15M-26OCT120400-00",
@@ -2920,9 +3066,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T07:45:00Z",
       "market_settled_at_utc": "2026-10-12T08:00:03.672181Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83884.37
     },
     {
       "ticker": "KXBTC15M-26OCT120415-15",
@@ -2940,9 +3087,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T08:00:00Z",
       "market_settled_at_utc": "2026-10-12T08:15:03.672269Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83903.06
     },
     {
       "ticker": "KXBTC15M-26OCT120430-30",
@@ -2960,9 +3108,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T08:15:00Z",
       "market_settled_at_utc": "2026-10-12T08:30:03.663354Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83663.21
     },
     {
       "ticker": "KXBTC15M-26OCT120445-45",
@@ -2980,9 +3129,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T08:30:00Z",
       "market_settled_at_utc": "2026-10-12T08:45:03.671244Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83585.98
     },
     {
       "ticker": "KXBTC15M-26OCT120500-00",
@@ -3000,9 +3150,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T08:45:00Z",
       "market_settled_at_utc": "2026-10-12T09:00:03.665756Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83521.92
     },
     {
       "ticker": "KXBTC15M-26OCT120515-15",
@@ -3020,9 +3171,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T09:00:00Z",
       "market_settled_at_utc": "2026-10-12T09:15:03.663237Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83428.49
     },
     {
       "ticker": "KXBTC15M-26OCT120530-30",
@@ -3040,9 +3192,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T09:15:00Z",
       "market_settled_at_utc": "2026-10-12T09:30:03.615641Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83488.25
     },
     {
       "ticker": "KXBTC15M-26OCT120545-45",
@@ -3060,9 +3213,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T09:30:00Z",
       "market_settled_at_utc": "2026-10-12T09:45:03.66348Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83356.91
     },
     {
       "ticker": "KXBTC15M-26OCT120600-00",
@@ -3080,9 +3234,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T09:45:00Z",
       "market_settled_at_utc": "2026-10-12T10:00:03.609804Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83287.89
     },
     {
       "ticker": "KXBTC15M-26OCT120615-15",
@@ -3100,9 +3255,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T10:00:00Z",
       "market_settled_at_utc": "2026-10-12T10:15:03.616195Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83457.16
     },
     {
       "ticker": "KXBTC15M-26OCT120630-30",
@@ -3120,9 +3276,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T10:15:00Z",
       "market_settled_at_utc": "2026-10-12T10:30:03.668799Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83432.5
     },
     {
       "ticker": "KXBTC15M-26OCT120645-45",
@@ -3140,9 +3297,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T10:30:00Z",
       "market_settled_at_utc": "2026-10-12T10:45:03.669725Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83406.83
     },
     {
       "ticker": "KXBTC15M-26OCT120700-00",
@@ -3160,9 +3318,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T10:45:00Z",
       "market_settled_at_utc": "2026-10-12T11:00:03.621581Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83425.34
     },
     {
       "ticker": "KXBTC15M-26OCT120715-15",
@@ -3180,9 +3339,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T11:00:00Z",
       "market_settled_at_utc": "2026-10-12T11:15:03.618043Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83421.86
     },
     {
       "ticker": "KXBTC15M-26OCT120730-30",
@@ -3200,9 +3360,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T11:15:00Z",
       "market_settled_at_utc": "2026-10-12T11:30:03.668311Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83332.02
     },
     {
       "ticker": "KXBTC15M-26OCT120745-45",
@@ -3220,9 +3381,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T11:30:00Z",
       "market_settled_at_utc": "2026-10-12T11:45:03.667074Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83356.4
     },
     {
       "ticker": "KXBTC15M-26OCT120800-00",
@@ -3240,9 +3402,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T11:45:00Z",
       "market_settled_at_utc": "2026-10-12T12:00:03.628501Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83299.08
     },
     {
       "ticker": "KXBTC15M-26OCT120815-15",
@@ -3260,9 +3423,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T12:00:00Z",
       "market_settled_at_utc": "2026-10-12T12:15:03.668617Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83317.15
     },
     {
       "ticker": "KXBTC15M-26OCT120830-30",
@@ -3280,9 +3444,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T12:15:00Z",
       "market_settled_at_utc": "2026-10-12T12:30:03.671419Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83285.74
     },
     {
       "ticker": "KXBTC15M-26OCT120845-45",
@@ -3300,9 +3465,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T12:30:00Z",
       "market_settled_at_utc": "2026-10-12T12:45:03.671773Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83071.45
     },
     {
       "ticker": "KXBTC15M-26OCT120900-00",
@@ -3320,9 +3486,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T12:45:00Z",
       "market_settled_at_utc": "2026-10-12T13:00:03.675188Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82750.2
     },
     {
       "ticker": "KXBTC15M-26OCT120915-15",
@@ -3340,9 +3507,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T13:00:00Z",
       "market_settled_at_utc": "2026-10-12T13:15:03.627774Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82673.66
     },
     {
       "ticker": "KXBTC15M-26OCT120930-30",
@@ -3360,9 +3528,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T13:15:00Z",
       "market_settled_at_utc": "2026-10-12T13:30:03.636065Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82551.69
     },
     {
       "ticker": "KXBTC15M-26OCT120945-45",
@@ -3380,9 +3549,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T13:30:00Z",
       "market_settled_at_utc": "2026-10-12T13:45:03.685018Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82499.04
     },
     {
       "ticker": "KXBTC15M-26OCT121000-00",
@@ -3400,9 +3570,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T13:45:00Z",
       "market_settled_at_utc": "2026-10-12T14:00:03.680109Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82652.85
     },
     {
       "ticker": "KXBTC15M-26OCT121015-15",
@@ -3420,9 +3591,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T14:00:00Z",
       "market_settled_at_utc": "2026-10-12T14:15:03.628394Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82880.82
     },
     {
       "ticker": "KXBTC15M-26OCT121030-30",
@@ -3440,9 +3612,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T14:15:00Z",
       "market_settled_at_utc": "2026-10-12T14:30:03.677823Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82850.35
     },
     {
       "ticker": "KXBTC15M-26OCT121045-45",
@@ -3460,9 +3633,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T14:30:00Z",
       "market_settled_at_utc": "2026-10-12T14:45:03.685432Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82897.42
     },
     {
       "ticker": "KXBTC15M-26OCT121100-00",
@@ -3480,9 +3654,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T14:45:00Z",
       "market_settled_at_utc": "2026-10-12T15:00:03.675345Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82618.14
     },
     {
       "ticker": "KXBTC15M-26OCT121115-15",
@@ -3500,9 +3675,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T15:00:00Z",
       "market_settled_at_utc": "2026-10-12T15:15:03.68952Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82500.65
     },
     {
       "ticker": "KXBTC15M-26OCT121130-30",
@@ -3520,9 +3696,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T15:15:00Z",
       "market_settled_at_utc": "2026-10-12T15:30:03.694003Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82634.52
     },
     {
       "ticker": "KXBTC15M-26OCT121145-45",
@@ -3540,9 +3717,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T15:30:00Z",
       "market_settled_at_utc": "2026-10-12T15:45:03.68978Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82600.83
     },
     {
       "ticker": "KXBTC15M-26OCT121200-00",
@@ -3560,9 +3738,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T15:45:00Z",
       "market_settled_at_utc": "2026-10-12T16:00:03.688556Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82633.07
     },
     {
       "ticker": "KXBTC15M-26OCT121215-15",
@@ -3580,9 +3759,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T16:00:00Z",
       "market_settled_at_utc": "2026-10-12T16:15:03.684909Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82632.75
     },
     {
       "ticker": "KXBTC15M-26OCT121230-30",
@@ -3600,9 +3780,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T16:15:00Z",
       "market_settled_at_utc": "2026-10-12T16:30:03.68183Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82801.19
     },
     {
       "ticker": "KXBTC15M-26OCT121245-45",
@@ -3620,9 +3801,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T16:30:00Z",
       "market_settled_at_utc": "2026-10-12T16:45:03.688785Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82740.8
     },
     {
       "ticker": "KXBTC15M-26OCT121300-00",
@@ -3640,9 +3822,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T16:45:00Z",
       "market_settled_at_utc": "2026-10-12T17:00:03.684285Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82707.13
     },
     {
       "ticker": "KXBTC15M-26OCT121315-15",
@@ -3660,9 +3843,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T17:00:00Z",
       "market_settled_at_utc": "2026-10-12T17:15:03.686455Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82431.92
     },
     {
       "ticker": "KXBTC15M-26OCT121330-30",
@@ -3680,9 +3864,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T17:15:00Z",
       "market_settled_at_utc": "2026-10-12T17:30:03.687701Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82506.23
     },
     {
       "ticker": "KXBTC15M-26OCT121345-45",
@@ -3700,9 +3885,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T17:30:00Z",
       "market_settled_at_utc": "2026-10-12T17:45:03.687377Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82365.27
     },
     {
       "ticker": "KXBTC15M-26OCT121400-00",
@@ -3720,9 +3906,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T17:45:00Z",
       "market_settled_at_utc": "2026-10-12T18:00:03.682102Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82361.33
     },
     {
       "ticker": "KXBTC15M-26OCT121415-15",
@@ -3740,9 +3927,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T18:00:00Z",
       "market_settled_at_utc": "2026-10-12T18:15:03.69081Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82420.89
     },
     {
       "ticker": "KXBTC15M-26OCT121430-30",
@@ -3760,9 +3948,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T18:15:00Z",
       "market_settled_at_utc": "2026-10-12T18:30:03.694749Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82411.74
     },
     {
       "ticker": "KXBTC15M-26OCT121445-45",
@@ -3780,9 +3969,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T18:30:00Z",
       "market_settled_at_utc": "2026-10-12T18:45:03.648291Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82394.14
     },
     {
       "ticker": "KXBTC15M-26OCT122000-00",
@@ -3800,9 +3990,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-12T23:45:00Z",
       "market_settled_at_utc": "2026-10-13T00:00:04.640869Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81724.64
     },
     {
       "ticker": "KXBTC15M-26OCT122015-15",
@@ -3820,9 +4011,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T00:00:00Z",
       "market_settled_at_utc": "2026-10-13T00:15:04.637911Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81760.01
     },
     {
       "ticker": "KXBTC15M-26OCT122030-30",
@@ -3840,9 +4032,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T00:15:00Z",
       "market_settled_at_utc": "2026-10-13T00:30:04.59081Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81439.74
     },
     {
       "ticker": "KXBTC15M-26OCT122045-45",
@@ -3860,9 +4053,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T00:30:00Z",
       "market_settled_at_utc": "2026-10-13T00:45:04.636689Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81355.61
     },
     {
       "ticker": "KXBTC15M-26OCT122100-00",
@@ -3880,9 +4074,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T00:45:00Z",
       "market_settled_at_utc": "2026-10-13T01:00:04.747698Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81353.06
     },
     {
       "ticker": "KXBTC15M-26OCT122115-15",
@@ -3900,9 +4095,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T01:00:00Z",
       "market_settled_at_utc": "2026-10-13T01:15:04.631904Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81336.61
     },
     {
       "ticker": "KXBTC15M-26OCT122130-30",
@@ -3920,9 +4116,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T01:15:00Z",
       "market_settled_at_utc": "2026-10-13T01:30:04.738479Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81751.31
     },
     {
       "ticker": "KXBTC15M-26OCT122145-45",
@@ -3940,9 +4137,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T01:30:00Z",
       "market_settled_at_utc": "2026-10-13T01:45:04.643317Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81997.82
     },
     {
       "ticker": "KXBTC15M-26OCT122200-00",
@@ -3960,9 +4158,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T01:45:00Z",
       "market_settled_at_utc": "2026-10-13T02:00:04.645502Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82258.34
     },
     {
       "ticker": "KXBTC15M-26OCT122215-15",
@@ -3980,9 +4179,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T02:00:00Z",
       "market_settled_at_utc": "2026-10-13T02:15:04.647095Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82349.5
     },
     {
       "ticker": "KXBTC15M-26OCT130730-30",
@@ -4000,9 +4200,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T11:15:00Z",
       "market_settled_at_utc": "2026-10-13T11:30:04.67415Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83126.52
     },
     {
       "ticker": "KXBTC15M-26OCT130745-45",
@@ -4020,9 +4221,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T11:30:00Z",
       "market_settled_at_utc": "2026-10-13T11:45:04.674967Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83431.89
     },
     {
       "ticker": "KXBTC15M-26OCT130800-00",
@@ -4040,9 +4242,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T11:45:00Z",
       "market_settled_at_utc": "2026-10-13T12:00:04.673079Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83456.7
     },
     {
       "ticker": "KXBTC15M-26OCT130815-15",
@@ -4060,9 +4263,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T12:00:00Z",
       "market_settled_at_utc": "2026-10-13T12:15:04.6765Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83253.75
     },
     {
       "ticker": "KXBTC15M-26OCT130830-30",
@@ -4080,9 +4284,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T12:15:00Z",
       "market_settled_at_utc": "2026-10-13T12:30:04.669367Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83185.48
     },
     {
       "ticker": "KXBTC15M-26OCT130845-45",
@@ -4100,9 +4305,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T12:30:00Z",
       "market_settled_at_utc": "2026-10-13T12:45:04.682465Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83290.94
     },
     {
       "ticker": "KXBTC15M-26OCT130900-00",
@@ -4120,9 +4326,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T12:45:00Z",
       "market_settled_at_utc": "2026-10-13T13:00:04.6256Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83161.39
     },
     {
       "ticker": "KXBTC15M-26OCT130915-15",
@@ -4140,9 +4347,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T13:00:00Z",
       "market_settled_at_utc": "2026-10-13T13:15:04.67376Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83249.07
     },
     {
       "ticker": "KXBTC15M-26OCT130930-30",
@@ -4160,9 +4368,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T13:15:00Z",
       "market_settled_at_utc": "2026-10-13T13:30:04.67864Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83120.41
     },
     {
       "ticker": "KXBTC15M-26OCT130945-45",
@@ -4180,9 +4389,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T13:30:00Z",
       "market_settled_at_utc": "2026-10-13T13:45:04.580794Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83327
     },
     {
       "ticker": "KXBTC15M-26OCT131000-00",
@@ -4200,9 +4410,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T13:45:00Z",
       "market_settled_at_utc": "2026-10-13T14:00:04.685697Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83260.7
     },
     {
       "ticker": "KXBTC15M-26OCT131015-15",
@@ -4220,9 +4431,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T14:00:00Z",
       "market_settled_at_utc": "2026-10-13T14:15:04.629437Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83159.97
     },
     {
       "ticker": "KXBTC15M-26OCT131030-30",
@@ -4240,9 +4452,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T14:15:00Z",
       "market_settled_at_utc": "2026-10-13T14:30:04.637313Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83564.7
     },
     {
       "ticker": "KXBTC15M-26OCT131045-45",
@@ -4260,9 +4473,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T14:30:00Z",
       "market_settled_at_utc": "2026-10-13T14:45:04.691475Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83559.04
     },
     {
       "ticker": "KXBTC15M-26OCT131100-00",
@@ -4280,9 +4494,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-13T14:45:00Z",
       "market_settled_at_utc": "2026-10-13T15:00:04.580385Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 83600.72
     },
     {
       "ticker": "KXBTC15M-26OCT140945-45",
@@ -4300,9 +4515,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T13:30:00Z",
       "market_settled_at_utc": "2026-10-14T13:45:04.130243Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82539.06
     },
     {
       "ticker": "KXBTC15M-26OCT141000-00",
@@ -4320,9 +4536,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T13:45:00Z",
       "market_settled_at_utc": "2026-10-14T14:00:04.126132Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82834.28
     },
     {
       "ticker": "KXBTC15M-26OCT141015-15",
@@ -4340,9 +4557,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T14:00:00Z",
       "market_settled_at_utc": "2026-10-14T14:15:04.181793Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82349.12
     },
     {
       "ticker": "KXBTC15M-26OCT141030-30",
@@ -4360,9 +4578,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T14:15:00Z",
       "market_settled_at_utc": "2026-10-14T14:30:04.130912Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81996.88
     },
     {
       "ticker": "KXBTC15M-26OCT141045-45",
@@ -4380,9 +4599,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T14:30:00Z",
       "market_settled_at_utc": "2026-10-14T14:45:04.139275Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81897.35
     },
     {
       "ticker": "KXBTC15M-26OCT141100-00",
@@ -4400,9 +4620,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T14:45:00Z",
       "market_settled_at_utc": "2026-10-14T15:00:04.141841Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81782.18
     },
     {
       "ticker": "KXBTC15M-26OCT141115-15",
@@ -4420,9 +4641,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T15:00:00Z",
       "market_settled_at_utc": "2026-10-14T15:15:04.133804Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81825.79
     },
     {
       "ticker": "KXBTC15M-26OCT141130-30",
@@ -4440,9 +4662,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T15:15:00Z",
       "market_settled_at_utc": "2026-10-14T15:30:04.138628Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81753.14
     },
     {
       "ticker": "KXBTC15M-26OCT141145-45",
@@ -4460,9 +4683,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T15:30:00Z",
       "market_settled_at_utc": "2026-10-14T15:45:04.133698Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81859.77
     },
     {
       "ticker": "KXBTC15M-26OCT141200-00",
@@ -4480,9 +4704,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T15:45:00Z",
       "market_settled_at_utc": "2026-10-14T16:00:04.241574Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81588.63
     },
     {
       "ticker": "KXBTC15M-26OCT141215-15",
@@ -4500,9 +4725,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T16:00:00Z",
       "market_settled_at_utc": "2026-10-14T16:15:04.148365Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81557.63
     },
     {
       "ticker": "KXBTC15M-26OCT141230-30",
@@ -4520,9 +4746,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T16:15:00Z",
       "market_settled_at_utc": "2026-10-14T16:30:04.140272Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81550.68
     },
     {
       "ticker": "KXBTC15M-26OCT141245-45",
@@ -4540,9 +4767,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T16:30:00Z",
       "market_settled_at_utc": "2026-10-14T16:45:04.288478Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81640.29
     },
     {
       "ticker": "KXBTC15M-26OCT141300-00",
@@ -4560,9 +4788,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T16:45:00Z",
       "market_settled_at_utc": "2026-10-14T17:00:04.295041Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81863.54
     },
     {
       "ticker": "KXBTC15M-26OCT141315-15",
@@ -4580,9 +4809,10 @@
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T17:00:00Z",
       "market_settled_at_utc": "2026-10-14T17:15:04.148506Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81903.91
     },
     {
       "ticker": "KXBTC15M-26OCT141900-00",
@@ -4595,14 +4825,15 @@
       "yes_reference_price_dollars": 0.93,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-14T23:00:04.13863Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T22:45:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81380.17
     },
     {
       "ticker": "KXBTC15M-26OCT141915-15",
@@ -4615,14 +4846,15 @@
       "yes_reference_price_dollars": 0.64,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-14T23:15:04.148018Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T23:00:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81557.68
     },
     {
       "ticker": "KXBTC15M-26OCT141930-30",
@@ -4635,14 +4867,15 @@
       "yes_reference_price_dollars": 0.22,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-14T23:30:04.142959Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T23:15:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81564.83
     },
     {
       "ticker": "KXBTC15M-26OCT141945-45",
@@ -4655,14 +4888,15 @@
       "yes_reference_price_dollars": 0.49,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-14T23:45:04.146829Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T23:30:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81455.69
     },
     {
       "ticker": "KXBTC15M-26OCT142000-00",
@@ -4675,14 +4909,15 @@
       "yes_reference_price_dollars": 0.83,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T00:00:04.202563Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-14T23:45:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81483.16
     },
     {
       "ticker": "KXBTC15M-26OCT142015-15",
@@ -4695,14 +4930,15 @@
       "yes_reference_price_dollars": 0.87,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T00:15:04.15197Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-15T00:00:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81572.32
     },
     {
       "ticker": "KXBTC15M-26OCT142030-30",
@@ -4715,14 +4951,15 @@
       "yes_reference_price_dollars": 0.23,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T00:30:04.144475Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-15T00:15:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81703.92
     },
     {
       "ticker": "KXBTC15M-26OCT142045-45",
@@ -4735,14 +4972,15 @@
       "yes_reference_price_dollars": 0.64,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T00:45:04.146826Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-15T00:30:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81662.99
     },
     {
       "ticker": "KXBTC15M-26OCT142100-00",
@@ -4755,14 +4993,15 @@
       "yes_reference_price_dollars": 0.32,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T01:00:04.145084Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-15T00:45:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81453.35
     },
     {
       "ticker": "KXBTC15M-26OCT142115-15",
@@ -4775,176 +5014,318 @@
       "yes_reference_price_dollars": 0.8,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T01:15:04.143768Z",
-      "label_verified_at_utc": "2026-10-16T02:42:10.499Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "market_open_utc": "2026-10-15T01:00:00Z",
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81513.46
+    },
+    {
+      "ticker": "KXBTC15M-26OCT151630-30",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-15T20:20:00.000Z",
+      "candle_end_utc": "2026-10-15T20:20:00.000Z",
+      "market_target_price": 82222.7,
+      "market_open_utc": "2026-10-15T20:15:00.000Z",
+      "market_close_utc": "2026-10-15T20:30:00.000Z",
+      "yes_bid_dollars": 0.84,
+      "yes_ask_dollars": 0.85,
+      "yes_reference_price_dollars": 0.85,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-15T20:30:01.815901Z",
+      "label_verified_at_utc": "2026-10-16T03:56:13.145Z",
+      "result": "yes",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT151645-45",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-15T20:35:00.000Z",
+      "candle_end_utc": "2026-10-15T20:35:00.000Z",
+      "market_target_price": 82287.81,
+      "market_open_utc": "2026-10-15T20:30:00.000Z",
+      "market_close_utc": "2026-10-15T20:45:00.000Z",
+      "yes_bid_dollars": 0.71,
+      "yes_ask_dollars": 0.72,
+      "yes_reference_price_dollars": 0.71,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-15T20:45:01.82801Z",
+      "label_verified_at_utc": "2026-10-16T03:56:12.825Z",
+      "result": "yes",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT151700-00",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-15T20:50:00.000Z",
+      "candle_end_utc": "2026-10-15T20:50:00.000Z",
+      "market_target_price": 82287.84,
+      "market_open_utc": "2026-10-15T20:45:00.000Z",
+      "market_close_utc": "2026-10-15T21:00:00.000Z",
+      "yes_bid_dollars": 0.16,
+      "yes_ask_dollars": 0.17,
+      "yes_reference_price_dollars": 0.17,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-15T21:00:01.926588Z",
+      "label_verified_at_utc": "2026-10-16T03:56:12.504Z",
+      "result": "no",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT151715-15",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-15T21:05:00.000Z",
+      "candle_end_utc": "2026-10-15T21:05:00.000Z",
+      "market_target_price": 81977.56,
+      "market_open_utc": "2026-10-15T21:00:00.000Z",
+      "market_close_utc": "2026-10-15T21:15:00.000Z",
+      "yes_bid_dollars": 0.76,
+      "yes_ask_dollars": 0.77,
+      "yes_reference_price_dollars": 0.76,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-15T21:15:06.825454Z",
+      "label_verified_at_utc": "2026-10-16T03:56:12.184Z",
+      "result": "yes",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT151730-30",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-15T21:20:00.000Z",
+      "candle_end_utc": "2026-10-15T21:20:00.000Z",
+      "market_target_price": 82062.74,
+      "market_open_utc": "2026-10-15T21:15:00.000Z",
+      "market_close_utc": "2026-10-15T21:30:00.000Z",
+      "yes_bid_dollars": 0.86,
+      "yes_ask_dollars": 0.87,
+      "yes_reference_price_dollars": 0.86,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-15T21:30:06.812783Z",
+      "label_verified_at_utc": "2026-10-16T03:56:11.862Z",
+      "result": "yes",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT151745-45",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-15T21:35:00.000Z",
+      "candle_end_utc": "2026-10-15T21:35:00.000Z",
+      "market_target_price": 82211.25,
+      "market_open_utc": "2026-10-15T21:30:00.000Z",
+      "market_close_utc": "2026-10-15T21:45:00.000Z",
+      "yes_bid_dollars": 0.28,
+      "yes_ask_dollars": 0.29,
+      "yes_reference_price_dollars": 0.29,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-15T21:45:06.87046Z",
+      "label_verified_at_utc": "2026-10-16T03:56:11.544Z",
+      "result": "no",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
     },
     {
       "ticker": "KXBTC15M-26OCT151800-00",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T21:50:00.000Z",
       "candle_end_utc": "2026-10-15T21:50:00.000Z",
-      "market_open_utc": "2026-10-15T21:45:00.000Z",
+      "market_open_utc": "2026-10-15T21:45:00Z",
       "market_close_utc": "2026-10-15T22:00:00.000Z",
       "yes_bid_dollars": 0.7,
       "yes_ask_dollars": 0.71,
       "yes_reference_price_dollars": 0.71,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T22:00:01.838348Z",
-      "label_verified_at_utc": "2026-10-16T02:46:13.454Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82191.08,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT151815-15",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T22:05:00.000Z",
       "candle_end_utc": "2026-10-15T22:05:00.000Z",
-      "market_open_utc": "2026-10-15T22:00:00.000Z",
+      "market_open_utc": "2026-10-15T22:00:00Z",
       "market_close_utc": "2026-10-15T22:15:00.000Z",
       "yes_bid_dollars": 0.87,
       "yes_ask_dollars": 0.88,
       "yes_reference_price_dollars": 0.87,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T22:15:06.841458Z",
-      "label_verified_at_utc": "2026-10-16T02:46:13.117Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82319.67,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT151830-30",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T22:20:00.000Z",
       "candle_end_utc": "2026-10-15T22:20:00.000Z",
-      "market_open_utc": "2026-10-15T22:15:00.000Z",
+      "market_open_utc": "2026-10-15T22:15:00Z",
       "market_close_utc": "2026-10-15T22:30:00.000Z",
       "yes_bid_dollars": 0.16,
       "yes_ask_dollars": 0.17,
       "yes_reference_price_dollars": 0.17,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T22:30:01.881008Z",
-      "label_verified_at_utc": "2026-10-16T02:46:12.781Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82371.62,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT151845-45",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T22:35:00.000Z",
       "candle_end_utc": "2026-10-15T22:35:00.000Z",
-      "market_open_utc": "2026-10-15T22:30:00.000Z",
+      "market_open_utc": "2026-10-15T22:30:00Z",
       "market_close_utc": "2026-10-15T22:45:00.000Z",
       "yes_bid_dollars": 0.44,
       "yes_ask_dollars": 0.45,
       "yes_reference_price_dollars": 0.45,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T22:45:01.830051Z",
-      "label_verified_at_utc": "2026-10-16T02:46:12.444Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82417.16,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT151900-00",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T22:50:00.000Z",
       "candle_end_utc": "2026-10-15T22:50:00.000Z",
-      "market_open_utc": "2026-10-15T22:45:00.000Z",
+      "market_open_utc": "2026-10-15T22:45:00Z",
       "market_close_utc": "2026-10-15T23:00:00.000Z",
       "yes_bid_dollars": 0.43,
       "yes_ask_dollars": 0.44,
       "yes_reference_price_dollars": 0.44,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T23:00:06.831723Z",
-      "label_verified_at_utc": "2026-10-16T02:46:12.105Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82391.56,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT151915-15",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T23:05:00.000Z",
       "candle_end_utc": "2026-10-15T23:05:00.000Z",
-      "market_open_utc": "2026-10-15T23:00:00.000Z",
+      "market_open_utc": "2026-10-15T23:00:00Z",
       "market_close_utc": "2026-10-15T23:15:00.000Z",
       "yes_bid_dollars": 0.1,
       "yes_ask_dollars": 0.11,
       "yes_reference_price_dollars": 0.11,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T23:15:01.871573Z",
-      "label_verified_at_utc": "2026-10-16T02:46:11.768Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82380.94,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT151930-30",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T23:20:00.000Z",
       "candle_end_utc": "2026-10-15T23:20:00.000Z",
-      "market_open_utc": "2026-10-15T23:15:00.000Z",
+      "market_open_utc": "2026-10-15T23:15:00Z",
       "market_close_utc": "2026-10-15T23:30:00.000Z",
       "yes_bid_dollars": 0.42,
       "yes_ask_dollars": 0.43,
       "yes_reference_price_dollars": 0.43,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T23:30:01.876095Z",
-      "label_verified_at_utc": "2026-10-16T02:46:11.431Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82111.17,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT151945-45",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T23:35:00.000Z",
       "candle_end_utc": "2026-10-15T23:35:00.000Z",
-      "market_open_utc": "2026-10-15T23:30:00.000Z",
+      "market_open_utc": "2026-10-15T23:30:00Z",
       "market_close_utc": "2026-10-15T23:45:00.000Z",
       "yes_bid_dollars": 0.32,
       "yes_ask_dollars": 0.33,
       "yes_reference_price_dollars": 0.33,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-15T23:45:06.824688Z",
-      "label_verified_at_utc": "2026-10-16T02:46:11.095Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82130.03,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT152000-00",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-15T23:50:00.000Z",
       "candle_end_utc": "2026-10-15T23:50:00.000Z",
-      "market_open_utc": "2026-10-15T23:45:00.000Z",
+      "market_open_utc": "2026-10-15T23:45:00Z",
       "market_close_utc": "2026-10-16T00:00:00.000Z",
       "yes_bid_dollars": 0.64,
       "yes_ask_dollars": 0.65,
       "yes_reference_price_dollars": 0.65,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T00:00:06.823479Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.755Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
-      "price_snapshot_is_executable": false
+      "price_snapshot_is_executable": false,
+      "market_target_price": 82082.36,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
     },
     {
       "ticker": "KXBTC15M-26OCT152015-15",
@@ -4958,13 +5339,14 @@
       "yes_reference_price_dollars": 0.71,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T00:15:06.826285Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82140.22
     },
     {
       "ticker": "KXBTC15M-26OCT152030-30",
@@ -4978,13 +5360,14 @@
       "yes_reference_price_dollars": 0.56,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T00:30:06.875965Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82263.34
     },
     {
       "ticker": "KXBTC15M-26OCT152045-45",
@@ -4998,13 +5381,14 @@
       "yes_reference_price_dollars": 0.25,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T00:45:06.838441Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82273.4
     },
     {
       "ticker": "KXBTC15M-26OCT152100-00",
@@ -5018,13 +5402,14 @@
       "yes_reference_price_dollars": 0.23,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T01:00:01.890759Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82313.97
     },
     {
       "ticker": "KXBTC15M-26OCT152115-15",
@@ -5038,13 +5423,14 @@
       "yes_reference_price_dollars": 0.52,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T01:15:06.834511Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82240.12
     },
     {
       "ticker": "KXBTC15M-26OCT152130-30",
@@ -5058,13 +5444,14 @@
       "yes_reference_price_dollars": 0.29,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T01:30:01.827407Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82315.85
     },
     {
       "ticker": "KXBTC15M-26OCT152145-45",
@@ -5078,13 +5465,14 @@
       "yes_reference_price_dollars": 0.66,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T01:45:06.824763Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82086.93
     },
     {
       "ticker": "KXBTC15M-26OCT152200-00",
@@ -5098,13 +5486,14 @@
       "yes_reference_price_dollars": 0.45,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T02:00:01.83896Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82070.89
     },
     {
       "ticker": "KXBTC15M-26OCT152215-15",
@@ -5118,13 +5507,14 @@
       "yes_reference_price_dollars": 0.44,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T02:15:01.831487Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 81997.28
     },
     {
       "ticker": "KXBTC15M-26OCT152230-30",
@@ -5138,28 +5528,108 @@
       "yes_reference_price_dollars": 0.59,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T02:30:06.834159Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.378Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false,
       "metadata_source": "Kalshi official exact-ticker market metadata",
-      "metadata_conflict": false
+      "metadata_conflict": false,
+      "market_target_price": 82053.98
     },
     {
       "ticker": "KXBTC15M-26OCT152245-45",
       "series_ticker": "KXBTC15M",
       "observation_cutoff_utc": "2026-10-16T02:35:00.000Z",
       "candle_end_utc": "2026-10-16T02:35:00.000Z",
-      "market_open_utc": "2026-10-16T02:30:00.000Z",
+      "market_open_utc": "2026-10-16T02:30:00Z",
       "market_close_utc": "2026-10-16T02:45:00.000Z",
       "yes_bid_dollars": 0.79,
       "yes_ask_dollars": 0.8,
       "yes_reference_price_dollars": 0.79,
       "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
       "market_settled_at_utc": "2026-10-16T02:45:01.815494Z",
-      "label_verified_at_utc": "2026-10-16T02:46:10.419Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.233Z",
       "result": "yes",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false,
+      "market_target_price": 81972.78,
+      "metadata_source": "Kalshi official exact-ticker market metadata",
+      "metadata_conflict": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT152300-00",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-16T02:50:00.000Z",
+      "candle_end_utc": "2026-10-16T02:50:00.000Z",
+      "market_target_price": 82090.7,
+      "market_open_utc": "2026-10-16T02:45:00.000Z",
+      "market_close_utc": "2026-10-16T03:00:00.000Z",
+      "yes_bid_dollars": 0.09,
+      "yes_ask_dollars": 0.091,
+      "yes_reference_price_dollars": 0.091,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-16T03:00:01.818212Z",
+      "label_verified_at_utc": "2026-10-16T03:56:11.223Z",
+      "result": "no",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT152315-15",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-16T03:05:00.000Z",
+      "candle_end_utc": "2026-10-16T03:05:00.000Z",
+      "market_target_price": 81934.59,
+      "market_open_utc": "2026-10-16T03:00:00.000Z",
+      "market_close_utc": "2026-10-16T03:15:00.000Z",
+      "yes_bid_dollars": 0.74,
+      "yes_ask_dollars": 0.75,
+      "yes_reference_price_dollars": 0.75,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-16T03:15:01.964337Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.902Z",
+      "result": "yes",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT152330-30",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-16T03:20:00.000Z",
+      "candle_end_utc": "2026-10-16T03:20:00.000Z",
+      "market_target_price": 82042.16,
+      "market_open_utc": "2026-10-16T03:15:00.000Z",
+      "market_close_utc": "2026-10-16T03:30:00.000Z",
+      "yes_bid_dollars": 0.56,
+      "yes_ask_dollars": 0.57,
+      "yes_reference_price_dollars": 0.56,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-16T03:30:01.869532Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.580Z",
+      "result": "no",
+      "label_source": "Kalshi settled market result",
+      "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
+      "price_snapshot_is_executable": false
+    },
+    {
+      "ticker": "KXBTC15M-26OCT152345-45",
+      "series_ticker": "KXBTC15M",
+      "observation_cutoff_utc": "2026-10-16T03:35:00.000Z",
+      "candle_end_utc": "2026-10-16T03:35:00.000Z",
+      "market_target_price": 81966.4,
+      "market_open_utc": "2026-10-16T03:30:00.000Z",
+      "market_close_utc": "2026-10-16T03:45:00.000Z",
+      "yes_bid_dollars": 0.11,
+      "yes_ask_dollars": 0.12,
+      "yes_reference_price_dollars": 0.12,
+      "reference_price_kind": "BID_ASK_WITH_TRADE_REFERENCE",
+      "market_settled_at_utc": "2026-10-16T03:45:02.424276Z",
+      "label_verified_at_utc": "2026-10-16T03:56:10.260Z",
+      "result": "no",
       "label_source": "Kalshi settled market result",
       "quote_source": "Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",
       "price_snapshot_is_executable": false
