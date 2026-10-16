@@ -1,3 +1,40 @@
+## VERIFIED SOURCE-ACCESS UPDATE — October 16, 2026
+
+**Current policy supersedes the earlier "terms unreadable" status in the historical notes below.** Firecrawl successfully retrieved the publicly visible `https://linemate.io/robots.txt`, `https://linemate.io/terms`, and `https://linemate.io/nfl/prediction-markets/most-volume`.
+
+- **Confirmed content:** NFL Most Volume presents moneyline, spread, game-total and anytime-touchdown contract activity from exchanges including Kalshi, Polymarket and Novig. The route is real. Exchange percentage figures and volumes are market indicators, not LEGZ/JINX predicted hit probabilities. Observations can be stale or already settled. The homepage may redirect to `/nfl` and show cookie consent.
+- **Confirmed robots:** `robots.txt` contains a blanket `User-agent: *` and empty `Disallow:`; this does **not** create a license to automate collection.
+- **Confirmed terms:** Linemate's published Terms & Conditions (last updated August 20, 2021, as displayed) restrict non-human website access, automated data-mining, systematic retrieval/compilation, and public redistribution of content absent appropriate written consent. The user requested comprehensive scraping, but no Linemate written grant was supplied. **Do not run an automated Linemate crawl, map, scraper, monitor, browser bot, or reverse-engineered API ingestion.** Do not republish snapshots obtained during the one-time access check into public LJDP. Link to Linemate and use independently licensed exchange data instead.
+- **Implementation:** `scripts/linemate_parlee_bridge.js` is an offline **provider-authorized structured export** importer only. Before it will publish anything, it requires a locally controlled `LINEMATE_WRITTEN_GRANT_ID` matching an input `authorization.grant_id`, issuer `Linemate Inc.`, written permission, nonexpired grant and explicit `structured_import` plus `public_display` rights. A plain `permission_verified:true` or permissive `robots.txt` is deliberately insufficient. An operator must inspect the actual written grant independently and configure the environment variable only after approval. The grant ID is not exported into public JSON.
+- **Actionable parallel path:** For live NFL market verification, rely on the repository's `scripts/kalshi_public_adapter.py` (and other permitted first-party exchange feeds) rather than harvesting Linemate's aggregation. L&J's `scripts/legz_statistical_spectrum.py` evaluates independently sourced exact offered props; `scripts/jinx_analyst_intelligence.py` provides contextual review. Parlee's new `scripts/parlee_ljpc_handoff.js` only retrieves an existing formally evaluated LJPC from the current LSI board. It cannot invent a probability from exchange market price or source trend hit rate.
+
+**Current status:** No Linemate source dump, automatic collection, redistribution or new independent Linemate-driven LJPC was executed. PR #59 contains source-guarded adapters and review UI for future authorized use. The legacy technical notes below preserve the former blocked investigation, not current source-access findings.
+
+### Import contract when actual rights are acquired
+
+```json
+{
+  "source":"Linemate",
+  "permission_verified":true,
+  "authorization":{
+    "grant_id":"ID-FROM-WRITTEN-LICENSE",
+    "grantor":"Linemate Inc.",
+    "permission_type":"written",
+    "source_method":"provider_authorized_export",
+    "scopes":["structured_import","public_display"],
+    "expires_at":"YYYY-MM-DDTHH:MM:SSZ"
+  },
+  "trends":[],
+  "games":[],
+  "parlays":[],
+  "prediction_markets":[]
+}
+```
+
+Set `LINEMATE_WRITTEN_GRANT_ID` to the actual grant ID only on an authorized server or GitHub secret, never in a public repo. Written permission must independently validate the intended datasets and display rights; this reference is an operator control, **not automatic proof of license**.
+
+---
+
 # Parlee the Demon Lord — LJDP research integration (V1)
 
 ## Editorial and character contract
