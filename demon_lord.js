@@ -8,6 +8,11 @@ const link=u=>safe(u)?'<a href="'+esc(safe(u))+'" target="_blank" rel="noopener 
 const leagues={NCAA_Football:"NCAAF",NCAA_Basketball:"NCAAB"};
 const lg=s=>leagues[s]||s;
 const selected=()=>document.getElementById("dl-league").value;
+const active=r=>{
+ const expires=Date.parse(r?.expires_at_utc||"");
+ return Number.isFinite(expires)&&Date.now()<expires;
+};
+
 const empty=t=>'<div class="dl-empty">'+esc(t)+'</div>';
 const metric=(name,value)=>'<span class="dl-pill">'+esc(name)+" "+esc(value)+'</span>';
 const confidence=r=>r.ljpc_status==="LJ_EVALUATED"&&Number.isFinite(r.ljpc)&&r.prediction_id?r.ljpc.toFixed(1)+"%":"AWAITING L&J EVALUATION";
@@ -71,10 +76,10 @@ return '<article class="dl-card"><div class="dl-meta">'+esc(lg(r.league)||"—")
 function draw(){
 if(!data)return;
 for(const [kind,id,none] of [["games","dl-games","No matchup sources recorded."],["trends","dl-trends","No source-verified Linemate player trends published."],["picks","dl-picks","No independently validated selections published."],["parlays","dl-parlays","No verified third-party parlay references published."],["conflicts","dl-conflicts","No validated disagreements published."]]){
-const rows=(Array.isArray(data[kind])?data[kind]:[]).filter(r=>selected()==="ALL"||lg(r.league)===selected());
+const rows=(Array.isArray(data[kind])?data[kind]:[]).filter(r=>active(r)&&(selected()==="ALL"||lg(r.league)===selected()));
 document.getElementById(id).innerHTML=rows.map(r=>kind==="trends"?trendCard(r):card(kind,r)).filter(Boolean).join("")||empty(none);
 }
-const markets=(Array.isArray(data.prediction_markets)?data.prediction_markets:[]).filter(r=>selected()==="ALL"||lg(r.league)===selected());
+const markets=(Array.isArray(data.prediction_markets)?data.prediction_markets:[]).filter(r=>active(r)&&(selected()==="ALL"||lg(r.league)===selected()));
 const marketHtml=["24H","TOTAL"].map(period=>{
  const cards=markets.filter(m=>m.volume_period===period).map(predictionMarketCard).filter(Boolean).join("");
  return cards?'<div class="dl-card" style="grid-column:1/-1"><h3>'+esc(period==="24H"?"24-hour volume":"Cumulative volume")+'</h3><p>Ranking applies only within this observation window. Source-reported figures; not confidence or expected profit.</p></div>'+cards:"";
@@ -93,7 +98,7 @@ data=next;draw();
 }
 function renderReview(feed){
   const root=document.getElementById("dl-ljpc-review");if(!root)return;
-  const entries=(Array.isArray(feed.entries)?feed.entries:[]).filter(r=>selected()==="ALL"||lg(r.league)===selected());
+  const entries=(Array.isArray(feed.entries)?feed.entries:[]).filter(r=>active(r)&&(selected()==="ALL"||lg(r.league)===selected()));
   const cards=entries.slice(0,100).map(r=>{
     const official=r.match_status==="LJ_EVALUATED_EXACT_MATCH"&&Number.isFinite(r.ljpc)&&!!r.evaluation_id;
     const chips=metric("LSI status",r.match_status||"RESEARCH ONLY")+
