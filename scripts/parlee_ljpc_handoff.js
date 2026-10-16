@@ -94,12 +94,24 @@ function build(feed,board,nowIso=new Date().toISOString()){
 }
 function main(){
   const [, ,feedPath,boardPath,outPath]=process.argv;
-  if(!feedPath||!boardPath||!outPath)throw Error("Pass source feed, LSI current board and destination JSON paths");
+  if(!feedPath||!boardPath||!outPath)throw Error("Pass source feed, LSI current board and ephemeral destination JSON path");
+  const ROOT=path.resolve(__dirname,"..");
+  const isEphemeral=p=>{const relative=path.relative(ROOT,path.resolve(p));
+    return relative.startsWith(".parlee-runtime"+path.sep)||relative.startsWith(".."+path.sep)||relative==="..";
+  };
+  if(!isEphemeral(outPath))throw Error("Refusing to publish transient Parlee source intelligence to Git-tracked outputs");
   const read=p=>JSON.parse(fs.readFileSync(p,"utf8"));
-  const output=build(read(feedPath),read(boardPath));
+  const feed=read(feedPath),board=read(boardPath);
+  if(!isEphemeral(feedPath)){
+    const active=[feed.trends,feed.picks,feed.conflicts,feed.parlays,feed.prediction_markets];
+    if(active.some(a=>Array.isArray(a)&&a.length))throw Error("Transient source input may not be stored in Git-tracked data/");
+  }
+  const {prune}=require("./parlee_research_ttl.js");
+  const safeFeed=prune(feed,board);
+  const output=build(safeFeed,board);
   fs.mkdirSync(path.dirname(outPath),{recursive:true});
   const tmp=outPath+".tmp";fs.writeFileSync(tmp,JSON.stringify(output,null,2)+"\n");fs.renameSync(tmp,outPath);
-  process.stdout.write(JSON.stringify(output.counts)+"\n");
+  process.stdout.write(JSON.stringify({counts:output.counts,retention:safeFeed.retention_report})+"\n");
 }
 if(require.main===module){try{main()}catch(e){console.error(e.message);process.exitCode=1;}}
 module.exports={build,norm,threshold};
