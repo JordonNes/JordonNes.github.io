@@ -79,6 +79,15 @@
             <button class="btn map-btn" id="frmap-reset" type="button">Reset Bay view</button>
           </div>
           <div id="frmap-selection-summary" class="map-selection-summary">Select a species or click the map.</div>
+          <div id="frmap-species-results" class="frmap-discovery-results" aria-live="polite"></div>
+          <form id="frmap-gps-form" class="frmap-gps-form">
+            <label class="map-field" for="frmap-gps-coordinates">Explore GPS coordinates</label>
+            <div class="frmap-gps-row">
+              <input id="frmap-gps-coordinates" type="text" inputmode="text" placeholder="37.905, -122.389" aria-label="Latitude, longitude" required />
+              <button class="btn map-btn" type="submit">Explore</button>
+            </div>
+            <small id="frmap-gps-error" role="status">Enter latitude, longitude to study nearby known fishing locations.</small>
+          </form>
 
           <strong>Underwater terrain view</strong>
           <label class="map-field" for="frmap-terrain-mode">Map emphasis</label>
@@ -113,6 +122,17 @@
             <option value="37.909,-122.353,14">Richmond Inner Harbor</option>
             <option value="38.016,-122.364,13">Point Pinole / San Pablo Bay</option>
             <option value="38.055,-122.218,13">Carquinez Strait / Eckley</option>
+            <option value="37.78,-122.42,10">Central San Francisco Bay</option>
+            <option value="37.56,-122.22,10">South San Francisco Bay</option>
+            <option value="37.82,-122.49,11">Golden Gate / Marin shoreline</option>
+            <option value="38.01,-122.43,10">San Pablo Bay</option>
+            <option value="38.07,-122.20,11">Carquinez Strait</option>
+            <option value="38.08,-122.04,10">Suisun / Grizzly / Honker bays</option>
+            <option value="38.15,-121.91,11">Suisun Marsh / Montezuma Slough</option>
+            <option value="38.12,-121.68,10">Sacramento–San Joaquin Delta</option>
+            <option value="38.35,-121.57,10">Sacramento River / Delta</option>
+            <option value="37.98,-121.40,10">San Joaquin River / Stockton</option>
+            <option value="38.19,-122.98,9">Tomales / Bodega / Drakes bays</option>
           </select>
           <p class="map-source-note"><b>Local terrain source candidates:</b> <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ngdc.mgg.dem%3Asan_francisco_bay_P090_2018" target="_blank" rel="noopener noreferrer">NOAA Bay P090 (~10 m, MLLW)</a> and <a href="https://publish.data.ca.gov/dataset/san-francisco-bay-and-sacramento-san-joaquin-delta-dem-for-modeling-version-4-3" target="_blank" rel="noopener noreferrer">California DWR Bay–Delta DEM v4.3 (10 m package dated 2025)</a>. These are source references, not yet displayed terrain raster layers; verify grid datum, coverage, and survey vintage before use.</p>
           <label><input type="checkbox" data-map-layer="baydem" /> Bay-specific NOAA P090 elevation image (MLLW, historical)</label>
