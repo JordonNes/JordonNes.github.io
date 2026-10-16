@@ -511,6 +511,34 @@ function updateMapSelectionSummary(){
   const scored=state.locations.filter(l=>state.mapSpeciesId?Boolean(getMapScore(l,state.mapSpeciesId)):Boolean(mapOpportunity(l,null))).length;
   el.innerHTML=`<strong>${escapeHtml(selectedMapSpeciesName())}</strong><small>${scored} live-scored location${scored===1?'':'s'} · ${ids.length} modeled species</small>`;
 }
+function renderRegionalSpeciesRecommendations(){
+  const el=$('#frmap-region-results');
+  if(!el)return;
+  if(!state.mapSpeciesId){el.innerHTML='';return;}
+  const matches=state.locations.filter(loc=>loc?.coordinates&&loc.access_gate?.status!=='closed'&&
+    (locationTargetsSpecies(loc,state.mapSpeciesId)||getMapScore(loc,state.mapSpeciesId)));
+  const ranked=matches.map(location=>({location,score:getMapScore(location,state.mapSpeciesId)}))
+    .sort((a,b)=>{
+      const aScored=a.score?.recommendationScore!=null,bScored=b.score?.recommendationScore!=null;
+      if(aScored!==bScored)return aScored?-1:1;
+      return Number(b.score?.recommendationScore||0)-Number(a.score?.recommendationScore||0)||
+        a.location.name.localeCompare(b.location.name);
+    });
+  const strong=ranked.filter(x=>x.score?.recommendationScore!=null).length;
+  el.innerHTML='<small>'+ranked.length+' catalog matches across Bay–Delta · '+strong+
+    ' currently scored. Scores are planning indices, not catch odds.</small>'+
+    (ranked.length?ranked.slice(0,12).map(({location,score})=>
+      '<button type="button" data-region-location="'+escapeHtml(location.id)+'"><b>'+
+      escapeHtml(location.name)+'</b><span>'+escapeHtml(location.region||'Region not listed')+
+      ' · '+(score?.recommendationScore!=null?cleanNumber(score.recommendationScore,0)+'% planning index':'Catalog target · no live score')+
+      '</span></button>').join(''):'<small>No inventory locations currently identify this target. Try a different species or region.</small>');
+  el.querySelectorAll('[data-region-location]').forEach(button=>button.addEventListener('click',()=>{
+    const loc=state.locations.find(x=>x.id===button.dataset.regionLocation);
+    if(!loc?.coordinates)return;
+    state.map?.setView([loc.coordinates.lat,loc.coordinates.lng],13);
+    renderMapEvaluation(loc.coordinates.lat,loc.coordinates.lng,loc);
+  }));
+}
 function markerStyleForLocation(location){
   const closed=location?.access_gate?.status==='closed';
   if(closed)return {radius:8,weight:2,opacity:1,fillOpacity:.8,color:'#e26a6a',fillColor:'#7f2727'};
@@ -536,6 +564,7 @@ function refreshMapLocationMarkers(){
     row.marker.setTooltipContent(`${escapeHtml(row.location.name)}${scoreText}`);
   }
   updateMapSelectionSummary();
+  renderRegionalSpeciesRecommendations();
 }
 function currentVectorIcon(speed,deg,cardinal){
   const safeDeg=Number.isFinite(Number(deg))?Number(deg):0;
@@ -686,8 +715,8 @@ function populateMapSpeciesFilter(){
   select.addEventListener('change',()=>{
     state.mapSpeciesId=select.value||null;
     refreshMapLocationMarkers();
-    const center=state.map?.getCenter();
-    if(center)renderNearbyCoordinateIntelligence(center.lat,center.lng);
+    if(!state.mapSpeciesId){const center=state.map?.getCenter();if(center)renderNearbyCoordinateIntelligence(center.lat,center.lng);}
+    else { const report=$('#frmap-report'); if(report)report.innerHTML='<span class="eyebrow">REGIONAL SPECIES SEARCH</span><h3>'+escapeHtml(selectedMapSpeciesName())+'</h3><p>Ranked catalog locations now appear under Target Species. Choose a location to inspect its current evidence and access notes.</p>'; }
   });
   updateMapSelectionSummary();
 }
