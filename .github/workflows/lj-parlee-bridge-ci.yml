@@ -8,6 +8,8 @@ on:
       - 'data/demon_lord_intel.json'
       - 'scripts/linemate_parlee_bridge.js'
       - 'scripts/linemate_parlee_bridge.test.js'
+      - 'scripts/parlee_ljpc_handoff.js'
+      - 'scripts/parlee_ljpc_handoff.test.js'
       - '.github/workflows/lj-parlee-bridge-ci.yml'
   push:
     branches: [master]
@@ -30,8 +32,9 @@ jobs:
           node --check demon_lord.js
           node --check demon_lord_badges.js
           node --check scripts/linemate_parlee_bridge.js
+          node --check scripts/parlee_ljpc_handoff.js
       - name: Validate source research feed
         run: |
           node -e "const d=require('./data/demon_lord_intel.json');if(d.schema_version!=='LJ-DEMON-LORD-1'||!Array.isArray(d.trends)||!Array.isArray(d.parlays)||!Array.isArray(d.conflicts))process.exit(1);console.log('Source intelligence schema passes')"
       - name: Run synthetic matching tests
-        run: node --test scripts/linemate_parlee_bridge.test.js
+        run: node --test scripts/linemate_parlee_bridge.test.js scripts/parlee_ljpc_handoff.test.js
