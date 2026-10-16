@@ -5,6 +5,7 @@ const norm=s=>String(s||"").toLowerCase().replace(/[^a-z0-9.]+/g," ").trim().rep
 const league=s=>({"cfb":"ncaaf","cbb":"ncaab","ncaa football":"ncaaf","ncaa basketball":"ncaab"}[norm(s)]||norm(s));
 const key=(l,event,player,market)=>[league(l),norm(event),norm(player),norm(market)].join("|");
 const pct=v=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=100;
+const active=r=>{const expiry=Date.parse(r?.expires_at_utc||"");return Number.isFinite(expiry)&&Date.now()<expiry;};
 const sourceUrl=s=>{try{const u=new URL(s);return u.protocol==="https:"&&/(^|\.)linemate\.io$/i.test(u.hostname)?u.href:null;}catch{return null}};
 let challenges=new Map(),trends=new Map(),games=new Map(),queued=false;
 function sourceMatch(r,leagueName,ev,player,prop){
@@ -15,7 +16,7 @@ function sourceMatch(r,leagueName,ev,player,prop){
 }
 function showResearch(row,sport,event,player,prop){
 const candidate=trends.get(key(sport,event,player,prop));
-if(!sourceMatch(candidate,sport,event,player,prop))return;
+if(!sourceMatch(candidate,sport,event,player,prop)||!active(candidate))return;
 const href=sourceUrl(candidate.source_url);if(!href)return;
 const bits=[];
 if(candidate.recent_form?.games)bits.push("L"+candidate.recent_form.games+" "+candidate.recent_form.hits+"/"+candidate.recent_form.games);
@@ -27,7 +28,7 @@ a.title="Independent source historical research; not a model LJPC or current mar
 row.querySelector(".pom-secondary")?.appendChild(a);
 }
 function showChallenge(row,sport,event,player,prop,displayed){
-const r=challenges.get(key(sport,event,player,prop));if(!r)return;
+const r=challenges.get(key(sport,event,player,prop));if(!r||!active(r))return;
 if(!pct(r.ljpc_ref)||!pct(r.demon_same_side_probability)||Math.abs(displayed-r.ljpc_ref)>0.05)return;
 const delta=Math.round((r.demon_same_side_probability-r.ljpc_ref)*10)/10;
 if(delta>=0)return;
@@ -52,7 +53,7 @@ if(pct(confidence))showChallenge(row,sport,event,player,prop,confidence);
 document.querySelectorAll(".qc-row[data-event-id]").forEach(row=>{
 row.querySelectorAll(".parlee-game-link").forEach(el=>el.remove());
 const event=row.dataset.eventId,game=games.get(event);
-if(!game||!row.querySelector(".qc-game"))return;
+if(!game||!active(game)||!row.querySelector(".qc-game"))return;
 const link=sourceUrl(game.source_url);if(!link)return;
 const a=document.createElement("a");a.className="parlee-game-link";a.href=link;a.target="_blank";a.rel="noopener noreferrer";
 a.textContent="PARLEE · LINEMATE MATCHUP ↗";
@@ -68,15 +69,18 @@ if(!response.ok)return;
 const feed=await response.json();if(feed.schema_version!=="LJ-DEMON-LORD-1")return;
 const now=Date.now(),next=new Map(),trendMap=new Map(),gameMap=new Map();
 for(const r of feed.trends||[]){
+if(!active(r))continue;
 if(!r.canonical_event_id||!r.participant||!r.league||!r.market||!r.side||!sourceUrl(r.source_url))continue;
 if(!["LSI_EVALUATED","MARKET_MATCHED_RESEARCH_ONLY"].includes(r.match_status))continue;
 const market=[r.side,r.threshold,r.market].filter(x=>x!==null&&x!==undefined&&x!=="").join(" ");
 trendMap.set(key(r.league,r.canonical_event_id,r.participant,market),r);
 }
 for(const g of feed.games||[]){
+if(!active(g))continue;
 if(g.canonical_event_id&&sourceUrl(g.source_url))gameMap.set(g.canonical_event_id,g);
 }
 for(const r of feed.conflicts||[]){
+if(!active(r))continue;
 if(r.status!=="VALIDATED"||r.calibration_verified!==true||r.source_identity_verified!==true||!r.model_version||
 !r.prediction_id||!r.event_id||!r.source_url||!r.collected_at_utc||!r.league||!r.participant||!r.market_text)continue;
 const stamp=Date.parse(r.collected_at_utc);
@@ -96,5 +100,5 @@ const observer=new MutationObserver(changes=>{
 if(changes.some(change=>Array.from(change.addedNodes).some(n=>n.nodeType===1&&!n.classList?.contains("dl-challenge")&&!n.classList?.contains("parlee-research")&&!n.classList?.contains("parlee-game-link"))))queue();
 });
 observer.observe(document.getElementById("app")||document.body,{subtree:true,childList:true});
-refresh();setInterval(refresh,120000);
+refresh();setInterval(refresh,120000);setInterval(queue,30000);
 })();
