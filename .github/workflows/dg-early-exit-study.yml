@@ -1,0 +1,58 @@
+name: D&G Gavavi Early-Exit Research
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/build-dg-early-exit.mjs'
+      - 'damilola-gavavi/dg-early-exit*'
+      - '.github/workflows/dg-early-exit-study.yml'
+permissions:
+  contents: write
+concurrency:
+  group: dg-early-exit-study
+  cancel-in-progress: false
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify fixed entry, timing, quote gaps and conditional costs
+        run: node --test damilola-gavavi/dg-early-exit.test.cjs scripts/collect-dg-market-paths.test.mjs
+      - name: Collect frozen 96-hour BTC study and evaluate fixed exit rule
+        id: study
+        continue-on-error: true
+        run: node scripts/build-dg-early-exit.mjs
+      - name: Persist sourced observations, research result or failure diagnostics
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for FILE in damilola-gavavi/data/early-exit-*.json; do
+            if [[ -f "$FILE" ]]; then git add -- "$FILE"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Research: preserve Gavavi fixed early-exit study evidence"
+          for ATTEMPT in {1..5}; do
+            git fetch origin master
+            git rebase origin/master
+            if git push origin HEAD:master; then exit 0; fi
+          done
+          exit 1
+      - name: Preserve study artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dg-early-exit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: damilola-gavavi/data/early-exit-*.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Surface source or study failure
+        if: ${{ steps.study.outcome == 'failure' }}
+        run: |
+          echo "::error::Early-exit source collection or audit failed. No entry or timing recommendation is validated."
+          exit 1

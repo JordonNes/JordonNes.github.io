@@ -97,6 +97,7 @@ function makeCard(def){
  research.append(el("div","","Damilola ending forecast: not yet validated"));
  const evidence=el("a","","Compare observed history ↗");evidence.href="pattern-lab.html?series="+encodeURIComponent(def.ticker);research.append(evidence);
  research.append(el("div","","Early-exit timing / target-fill edge: not yet validated"));
+ const exitResearch=el("a","","Gavavi entry & exit research ↗");exitResearch.href="exit-lab.html?series="+encodeURIComponent(def.ticker);research.append(exitResearch);
  bottom.append(detail,link);item.append(top,details);if(chart)item.append(chart);item.append(sides,research,bottom);
  if(!ok&&record?.state==="RATE_LIMITED")detail.textContent="Source rate-limited";
  else if(!ok&&record?.state==="STALE_QUOTE")detail.textContent="Awaiting fresh quote";

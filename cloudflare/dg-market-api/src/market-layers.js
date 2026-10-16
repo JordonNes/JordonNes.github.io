@@ -16,7 +16,7 @@ export function normalizeLayerCandles(candles,open,close){
 export async function serveMarketLayers(request,env){
  const u=new URL(request.url),series=(u.searchParams.get('series')||'').toUpperCase(),hour=Number(u.searchParams.get('hour'));
  const current=Math.floor(Date.now()/3600000)*3600000;
- if(!ALLOWED.has(series)||!Number.isInteger(hour)||hour%3600!==0||hour*1000>current-3600000||hour*1000<current-24*3600000)return out({state:'INVALID_QUERY',message:'Choose a supported series and a completed UTC hour within 24 hours.'},400);
+ if(!ALLOWED.has(series)||!Number.isInteger(hour)||hour%3600!==0||hour*1000>current-3600000||hour*1000<current-120*3600000)return out({state:'INVALID_QUERY',message:'Choose a supported series and a completed UTC hour within 120 hours.'},400);
  const start=hour*1000,end=start+3600000;
  const query=new URLSearchParams({series_ticker:series,min_close_ts:String(hour),max_close_ts:String(hour+3601),limit:'100'});
  let listing=await fetchKalshiPublic('/markets?'+query,env,180,8500),archived=false;
