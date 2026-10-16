@@ -8,7 +8,8 @@ function repairMetadata(records,markets,now=Date.now()){
   const open=Date.parse(m.open_time||''),close=Date.parse(m.close_time||''),settled=Date.parse(m.settlement_ts||'');
   if(m.market_type!=='binary'||!['settled','finalized'].includes(m.status)||!['yes','no'].includes(m.result)||!Number.isFinite(open)||close-open!==900000||!Number.isFinite(settled)||settled<close||settled>now)return row;
   if(m.result!==row.result||Date.parse(row.market_close_utc)!==close){conflicts++;return {...row,metadata_conflict:true}}
-  if(row.market_open_utc!==m.open_time||row.market_settled_at_utc!==m.settlement_ts){repaired++;return {...row,market_open_utc:m.open_time,market_settled_at_utc:m.settlement_ts,label_verified_at_utc:new Date(now).toISOString(),metadata_source:'Kalshi official exact-ticker market metadata',metadata_conflict:false}}
+  const target=m.floor_strike!==null&&m.floor_strike!==undefined&&Number.isFinite(Number(m.floor_strike))&&Number(m.floor_strike)>0?Number(m.floor_strike):null;
+  if(row.market_open_utc!==m.open_time||row.market_settled_at_utc!==m.settlement_ts||row.market_target_price!==target){repaired++;return {...row,market_open_utc:m.open_time,market_settled_at_utc:m.settlement_ts,market_target_price:target,label_verified_at_utc:new Date(now).toISOString(),metadata_source:'Kalshi official exact-ticker market metadata',metadata_conflict:false}}
   return row;
  });return {rows,repaired,conflicts};
 }

@@ -37,7 +37,7 @@ async function list(path,source,maxPages=3){
 const file="damilola-gavavi/data/15m-"+ticker+".json";
 let prior=[];try{const p=JSON.parse(await fs.readFile(file,"utf8"));if(p.series_ticker===ticker&&Array.isArray(p.examples))prior=p.examples}catch{}
 const existing=new Set(prior.map(x=>x.ticker));
-const metadataPages=prior.some(r=>!r.market_open_utc||!r.market_settled_at_utc)?6:3;
+const metadataPages=prior.some(r=>!r.market_open_utc||!r.market_settled_at_utc||!r.market_target_price)?6:3;
 const [recent,archived]=await Promise.all([list("/markets","recent",metadataPages),list("/historical/markets","archived",metadataPages)]);
 if(!recent.length&&!archived.length)throw Error("NO_KALSHI_MARKET_METADATA: do not publish empty research datasets");
 // Exact-ticker source repair never substitutes close time for settlement.
@@ -67,7 +67,7 @@ for(const m of chosen){
   const arr=d.candlesticks.map(c=>({time:Number(c.end_period_ts)*1000,bid:candleClose(c.yes_bid),ask:candleClose(c.yes_ask),trade:candleClose(c.price)}))
    .filter(x=>Number.isFinite(x.time)&&x.time>open&&x.time<=cutoff&&((x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask)||(x.trade!==null&&x.trade>0&&x.trade<1))).sort((a,b)=>a.time-b.time);
   const x=arr.at(-1);if(!x||cutoff-x.time>90000){rejected++;continue}
-  prior.push({ticker:m.ticker,series_ticker:ticker,observation_cutoff_utc:new Date(cutoff).toISOString(),candle_end_utc:new Date(x.time).toISOString(),market_open_utc:new Date(open).toISOString(),market_close_utc:new Date(close).toISOString(),yes_bid_dollars:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?x.bid:null,yes_ask_dollars:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?x.ask:null,yes_reference_price_dollars:x.trade,reference_price_kind:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?"BID_ASK_WITH_TRADE_REFERENCE":"TRADE_CLOSE",market_settled_at_utc:m.settlement_ts??null,label_verified_at_utc:new Date().toISOString(),result:String(m.result).toLowerCase(),label_source:"Kalshi settled market result",quote_source:"Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",price_snapshot_is_executable:false});
+  prior.push({ticker:m.ticker,series_ticker:ticker,observation_cutoff_utc:new Date(cutoff).toISOString(),candle_end_utc:new Date(x.time).toISOString(),market_target_price:m.floor_strike!=null&&Number(m.floor_strike)>0?Number(m.floor_strike):null,market_open_utc:new Date(open).toISOString(),market_close_utc:new Date(close).toISOString(),yes_bid_dollars:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?x.bid:null,yes_ask_dollars:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?x.ask:null,yes_reference_price_dollars:x.trade,reference_price_kind:x.bid!==null&&x.ask!==null&&x.bid>0&&x.ask<1&&x.bid<=x.ask?"BID_ASK_WITH_TRADE_REFERENCE":"TRADE_CLOSE",market_settled_at_utc:m.settlement_ts??null,label_verified_at_utc:new Date().toISOString(),result:String(m.result).toLowerCase(),label_source:"Kalshi settled market result",quote_source:"Kalshi historical 1m bid/ask and/or trade-price candle (non-executable)",price_snapshot_is_executable:false});
   accepted++;
  }catch(e){rejected++;process.stderr.write(m.ticker+": "+e.message+"\n");if(String(e.message).includes("429"))break}
  await wait(300);
