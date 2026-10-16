@@ -30,7 +30,7 @@ assert.notEqual(d.entries[0].ljpc,d.entries[0].recent_form.hit_rate_pct);
 });
 test("wrong threshold, participant, book, side, or event means no forecast",()=>{
 const original=source.trends[0];
-for(const props of [{threshold:249.5},{participant:"Patrick Mahomes"},{book:"PrizePicks"},{side:"Under"}]){
+for(const props of [{threshold:249.5},{participant:"Patrick Mahomes"},{market_book:"PrizePicks"},{side:"Under"}]){
 const input={...source,trends:[{...original,...props}]};
 const d=run(input);assert.equal(d.entries[0].ljpc,null);
 assert.equal(d.entries[0].match_status,"EXACT_PROP_NOT_ON_BOARD");
