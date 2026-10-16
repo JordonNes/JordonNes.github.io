@@ -12,3 +12,26 @@ test('all 21 gateway series read current candles and reuse cached response witho
  global.fetch=async u=>{calls++;const url=new URL(u),series=url.searchParams.get('series_ticker')||url.pathname.split('/series/')[1]?.split('/')[0];return Response.json(url.pathname.endsWith('/candlesticks')?{ticker:series+'-live',candlesticks:[3,4,5].map((m,i)=>({end_period_ts:open/1000+m*60,yes_bid:{close_dollars:String(.39+i*.02)},yes_ask:{close_dollars:String(.41+i*.02)}}))}:{markets:[{ticker:series+'-live',market_type:'binary',status:'active',title:'Price up in next 15 minutes',open_time:new Date(open).toISOString(),close_time:new Date(open+900000).toISOString(),yes_ask_dollars:'.5',no_ask_dollars:'.5'}]})};
  try{const ctx={waitUntil:p=>pending.push(p)},series=require('./pattern-math.js').markets.map(x=>x.ticker);for(const s of series){const req=new Request('https://worker/api/card-history?series='+s),r=await f(req,{},ctx),b=await r.json();assert.equal(r.status,200);assert.equal(b.chart.candles.length,3);assert.equal(b.series_ticker,s);assert.equal(b.comparison.state,'WAIT');assert.equal(b.coverage.state,'ARCHIVE_NOT_CONFIGURED');await Promise.all(pending);const before=calls,second=await f(req,{},ctx);assert.equal(second.headers.get('X-DG-Cache'),'HIT');assert.equal(calls,before)}assert.equal(calls,42);assert.equal((await f(new Request('https://worker/api/card-history?series=SPY'),{},ctx)).status,400)}finally{global.fetch=oldFetch;global.caches=oldCaches;global.Date=OldDate}});
 test('R2 selection reports partial five-hour coverage and keeps series/time identity boundaries',async()=>{const {serveCardHistory:f}=await mod,oldFetch=global.fetch,oldCaches=global.caches,OldDate=Date;const h=open/1000-3600,prefix='dg/market-paths/v1/KXBTC15M/',page={series_ticker:'KXBTC15M',hour_start_utc:new Date(h*1000).toISOString(),contracts:[contract(h*1000,'archived')]};let gets=0;global.Date=class extends OldDate{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}};global.caches={default:{match:async()=>null,put:async()=>{}}};global.fetch=async()=>Response.json({markets:[]});const env={DG_RESEARCH_R2:{list:async opt=>{assert.equal(opt.prefix,prefix);assert.equal(opt.limit,1000);assert(opt.startAfter.startsWith(prefix));return {objects:[{key:prefix+h+'/hash.json',uploaded:new Date(now-1000)},{key:prefix+(open/1000+3600)+'/future.json',uploaded:new Date(now)}],truncated:false}},get:async()=>{gets++;return {text:async()=>JSON.stringify(page)}}}};try{const r=await f(new Request('https://test/api/card-history?series=KXBTC15M'),env,{waitUntil:p=>p.catch(()=>{})}),b=await r.json();assert.equal(b.state,'ARCHIVED_ONLY');assert.equal(b.chart.mode,'PREVIOUS_ARCHIVED_CONTRACT');assert.equal(b.coverage.recent_hours_available,1);assert.equal(b.coverage.requested_recent_hours,5);assert.equal(b.coverage.selected_hours,1);assert.equal(gets,1);assert.equal(b.comparison.suggested_side,null)}finally{global.fetch=oldFetch;global.caches=oldCaches;global.Date=OldDate}});
+
+
+test('bounded sampling uses five recent hours then weekday/hour then other available archived hours',async()=>{
+ const {selectArchiveHours}=await mod,at=Date.parse('2026-10-16T07:45:00Z'),currentHour=Math.floor(at/3600000)*3600;
+ const archived=Array.from({length:97},(_,i)=>(currentHour-(i+1)*3600000)/1000);
+ const result=selectArchiveHours(archived,currentHour/1000,at);
+ assert.equal(result.length,24);assert.equal(new Set(result).size,24);
+ for(let i=1;i<=5;i++)assert(result.includes(currentHour/1000-i*3600),'missing five-hour slot '+i);
+ assert.deepEqual(selectArchiveHours(archived,currentHour/1000,at,3),result.slice(0,3));
+});
+test('fixed broader 30-day sampled-hour fallback does not bypass 8-match or future-settlement gates',async()=>{
+ const {compareHistory}=await mod,at=open,features=[3,4,5],now=at+5*60000+1000;
+ const currentLive={...current(),candles:features.map((m,i)=>({time_utc:new Date(at+m*60000).toISOString(),yes_midpoint_dollars:.4+i*.02}))};
+ const other=Array.from({length:8},(_,i)=>contract(at-(i+8)*3600000,'other'+i,i===0?'no':'yes'));
+ const good=compareHistory('KXBTC15M',currentLive,[{contracts:other}],now);
+ assert.equal(good.cohort,'broader sampled hours within 30 days');
+ assert.equal(good.sampled_thirty_day_matches,8);
+ assert.equal(good.suggested_side,'UP');
+ assert.equal(good.prediction_validated,false);
+ assert.equal(compareHistory('KXBTC15M',currentLive,[{contracts:other.slice(0,7)}],now).state,'WAIT');
+ assert.equal(compareHistory('KXBTC15M',currentLive,[{contracts:other.map((c,i)=>({...c,result:i%2?'yes':'no'}))}],now).state,'WAIT');
+ assert.equal(compareHistory('KXBTC15M',currentLive,[{contracts:other.map(c=>({...c,settled_at_utc:new Date(at+1000).toISOString()}))}],now).matches,0);
+});
