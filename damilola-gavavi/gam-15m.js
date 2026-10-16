@@ -162,21 +162,21 @@ function makeCard(def){
   if(selected){b.dataset.suggestedSeries=def.ticker;b.setAttribute("aria-label","Gavavi experimental ending suggestion: "+side);}
   const title=el("span","",binaryLabel?(side==="up"?"YES":"NO"):(side==="up"?"Up":"Down"));
   const confidence=el("strong","dg-confidence","—%"),confidenceLabel=el("small","confidence-caption","D&G confidence");confidence.setAttribute("aria-label","D&G confidence unavailable; prediction not validated");
-  const cost=el("small","quote kalshi-ask","Kalshi ask: "+cents(price));b.append(title,confidenceLabel,confidence,cost);if(selected)b.append(el("small","suggestion-label","Gavavi · experimental"));sides.append(b);
+  const cost=el("small","quote kalshi-ask","Kalshi ask: "+cents(price));b.append(title,confidenceLabel,confidence,cost);if(selected)b.append(el("small","suggestion-label","Damilola method · experimental"));sides.append(b);
   if(side==="up"){
    const label=el("label","amount-label","Amount $"),input=el("input","contemplated-amount");input.type="text";input.inputMode="numeric";input.pattern="[1-9][0-9]{0,2}";input.maxLength=3;input.size=3;input.placeholder="0";input.autocomplete="off";input.dataset.amountSeries=def.ticker;input.setAttribute("aria-label",def.name+" contemplated position amount in dollars, 1 to 999; no order is placed");input.value=amounts.get(def.ticker)||"";
    input.addEventListener("input",()=>{input.value=input.value.replace(/[^0-9]/g,"").replace(/^0+/,"").slice(0,3);amounts.set(def.ticker,input.value)});label.append(input);sides.append(label);
   }
  }
  const gavavi=el("div","gavavi-summary"),body=cardHistory.get(def.ticker),comparison=body?.comparison;gavavi.setAttribute("aria-live","polite");
- gavavi.append(el("strong","",suggestion?"Gavavi LIVE: "+suggestion.suggested_side+" · experimental":"Gavavi LIVE: WAIT · no current highlight"));
+ gavavi.append(el("strong","",suggestion?"Damilola LIVE: "+suggestion.suggested_side+" · experimental":"Damilola LIVE: WAIT · no current highlight"));
  if(checkpoint){
   gavavi.append(el("div","signal-checkpoint","Initial checkpoint (this browser): "+checkpoint.first+" · "+pacificSignalTime(checkpoint.first_source_at)));
   if(checkpoint.last_change)gavavi.append(el("div","signal-change","LAST CHANGE: "+checkpoint.last_change.from+" → "+checkpoint.last_change.to+" · "+pacificSignalTime(checkpoint.last_change.at)));
   gavavi.append(el("small","signal-activity","Direction changes: "+(checkpoint.changes||0)+" · Latest eligible observation: "+pacificSignalTime(checkpoint.last_source_at)));
  }else gavavi.append(el("small","signal-activity","Initial checkpoint pending first eligible live suggestion."));
  gavavi.append(el("div","",comparison?.matches?comparison.up+" UP / "+comparison.down+" DOWN in "+comparison.matches+" matched settled contracts · "+comparison.cohort:comparison?.reason||"Awaiting observed history comparison."));
- if(suggestion)gavavi.append(el("small","","Moving signal follows the latest eligible archived-history comparison, not an independently validated forecast."));
+ if(suggestion)gavavi.append(el("small","","Damilola interim: latest eligible five-hour / weekday-hour / same-hour historical analog. Not a validated forecast."));
  gavavi.append(el("small","","D&G confidence awaits validation. Amount is for planning only."));
  const bottom=el("div","bottom"),detail=el("span","",ok?"Observed market quote":"Quote unavailable"),link=el("a","","Kalshi ↗");
  link.href=ok&&MARKET_SLUGS[def.ticker]?("https://kalshi.com/markets/"+def.ticker.toLowerCase()+"/"+MARKET_SLUGS[def.ticker]+"/"+encodeURIComponent(record.market.ticker.toLowerCase())):SOURCES[def.group];link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","View "+def.name+" 15-minute markets on Kalshi");
@@ -187,9 +187,14 @@ function makeCard(def){
  const context=ok?window.DGPatterns?.openingContext(krakenCharts.get(krakenSymbols[def.ticker])?.candles,record.market.open_time,record.market.price_to_beat_usd):null;
  research.append(el("div","",context?"Open reference: "+context.position+" target · "+(context.momentum?context.momentum+" into open (3m)":"opening momentum unavailable"):"Open context: awaiting matched underlying observations"));
  if(context)research.append(el("small","","Kraken spot reference; not the Kalshi settlement index."));
- const coverage=body?.coverage;
+ const daily=body?.daily_review;
+  if(daily){
+   research.append(el("div","damilola-daily","Damilola daily review · "+daily.day_utc+": "+daily.observed_contracts+"/"+daily.expected_contracts+" contracts archived · "+daily.settled_contracts+" verified settlements · "+daily.quote_minutes+" paired minute quotes · "+daily.dips_10pp+" dips / "+daily.spikes_10pp+" spikes ≥10¢."));
+   research.append(el("small","","Historical summary is retrospective, not a validated direction or executable price. One-month rolling retention; gaps remain gaps."));
+  }else research.append(el("small","","Damilola daily review: not yet verified from the R2 archive."));
+  const coverage=body?.coverage;
  if(coverage)research.append(el("div","","History coverage: "+coverage.recent_hours_available+" / 5 recent completed hours; "+coverage.selected_hours+" archived hours selected within 30 days. "+coverage.state));
- if(comparison)research.append(el("div","","Same Pacific hour matches: "+comparison.same_pacific_hour_matches+"; same weekday + hour: "+comparison.same_weekday_hour_matches+". "+comparison.reason));
+ if(comparison)research.append(el("div","","Damilola analog: "+(comparison.cohort||"no eligible cohort")+" · five-hour matches: "+comparison.recent_5h_matches+" · same Pacific hour: "+comparison.same_pacific_hour_matches+" · weekday + hour: "+comparison.same_weekday_hour_matches+". "+comparison.reason));
  const spot=spotChart(def);if(spot)research.append(spot);
  research.append(el("div","","Damilola ending forecast: not yet validated"));
  const evidence=el("a","","Compare observed history ↗");evidence.href="pattern-lab.html?series="+encodeURIComponent(def.ticker);research.append(evidence);
