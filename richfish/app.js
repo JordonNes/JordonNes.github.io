@@ -836,7 +836,21 @@ function initMap(){
   const currents=L.layerGroup().addTo(map);
   const gates=L.layerGroup().addTo(map);
   const bathymetry=addNoaaBathymetryLayer();
-  state.mapLayers={access,stations,buoys,currents,gates,bathymetry};
+  // NOAA ETOPO1 is regional relief. Keep it opt-in: it does not resolve pier-scale seabed structure.
+  const relief=L.tileLayer.wms('https://gis.ngdc.noaa.gov/arcgis/services/etopo1/MapServer/WMSServer',{
+    layers:'0',format:'image/png',transparent:true,opacity:.65,version:'1.1.1',
+    attribution:'NOAA NCEI ETOPO1 shaded relief · regional scale · not for navigation'
+  });
+  state.mapLayers={access,stations,buoys,currents,gates,bathymetry,relief};
+  const opacityControl=$('#frmap-depth-opacity');
+  const updateBathymetryOpacity=()=>{
+    const opacity=Number(opacityControl?.value||65)/100;
+    $('#frmap-depth-opacity-value').textContent=Math.round(opacity*100)+'%';
+    bathymetry.eachLayer(layer=>layer.setOpacity?.(opacity));
+    relief.setOpacity(opacity);
+  };
+  opacityControl?.addEventListener('input',updateBathymetryOpacity);
+  updateBathymetryOpacity();
   state.mapMarkers=[];
 
   for(const loc of state.locations.filter(l=>l.coordinates)){
