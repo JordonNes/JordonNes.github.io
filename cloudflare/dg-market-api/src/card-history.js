@@ -61,6 +61,7 @@ async function archivedPages(env,series,now,contractOpenAt=now,ctx){
  // Fixed (pre-result) sampling: last five hours, analogous weekday/hour,
  // same Pacific hour, then the most recent remaining archived hours.
  // Never choose history based on the observed outcomes; cap R2 reads at 24.
+ const recentHours=Array.from({length:5},(_,i)=>currentHour-(i+1)*3600);
  const selected=selectArchiveHours([...byHour.keys()],currentHour,contractOpenAt),pages=[];
  for(const h of selected){const obj=await env.DG_RESEARCH_R2.get(byHour.get(h).key);if(!obj)continue;const p=JSON.parse(await obj.text());if(p.series_ticker===series&&Date.parse(p.hour_start_utc)===h*1000&&Array.isArray(p.contracts))pages.push(p)}
  const result={pages,state:truncated?'ARCHIVE_LIST_TRUNCATED':'OBSERVED_ARCHIVE',listed_hours:byHour.size,selected_hours:selected.length,recent_hours_available:recentHours.filter(h=>byHour.has(h)).length,requested_recent_hours:5,lookback_days:30,source_archive_keys:selected.map(h=>byHour.get(h).key),selection:'last five completed hours, matching Pacific weekday/hour, matching Pacific hour, then most recent other hours; maximum 24 archive hours, fixed independently of outcomes',oldest_selected_utc:pages.length?pages.map(p=>p.hour_start_utc).sort()[0]:null};
