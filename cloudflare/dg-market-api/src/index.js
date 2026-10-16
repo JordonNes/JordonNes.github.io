@@ -1,6 +1,7 @@
 import {serveAccuracyLedger,runAccuracyCron} from "./accuracy-ledger.js";
 import {servePredictionLedger} from "./prediction-ledger.js";
 import {serveCardHistory} from "./card-history.js";
+import {runDamilolaDaily} from "./damilola-daily.js";
 import {serveMarketLayers} from "./market-layers.js";
 import {cooldownUntil} from "./kalshi-public-cache.js";
 import {serveCoinbaseAdvancedReference} from "./coinbase-advanced-reference.js";
@@ -76,6 +77,15 @@ export default {
   }
   if(url.pathname==="/api/card-history"){const r=await serveCardHistory(request,env,ctx);const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/market-layers"){const r=await serveMarketLayers(request,env);const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
+  if(url.pathname==="/api/damilola-status"){
+   const last=env.DG_ARCHIVE?await env.DG_ARCHIVE.get("dg:damilola:daily:v1:last-run","json").catch(()=>null):null;
+   return new Response(JSON.stringify({read_only:true,method:"damilola-observed-behavior-v1",
+    supported_15m_series:21,retention_days:30,daily_schedule_utc:"02:20",
+    r2_configured:!!env.DG_RESEARCH_R2,history_summarizer_deployed:true,
+    last_run:last||null,completed_run_verified:!!last&&last.markets_completed===21&&last.errors?.length===0,
+    prediction_validation:"UNVALIDATED",checked_at_utc:new Date().toISOString()}),
+    {headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
+  }
   if(url.pathname==="/api/kalshi-status"){
    const kv=env.DG_ARCHIVE;
    const until=kv?cooldownUntil(await kv.get("dg:kalshi:cooldown:v1").catch(()=>null)):0;

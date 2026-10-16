@@ -18,7 +18,7 @@ test('moving highlights depend on current eligible evidence, with automatic obse
  assert.match(script,/if\(!document.hidden\)\{loadCardHistory\(\)/);
  assert.match(page,/Live signal check every ~30 seconds/);
  assert.match(css,/\.side\.gavavi-suggested\{/);
- assert.match(script,/Gavavi LIVE: WAIT · no current highlight/);
+ assert.match(script,/Damilola LIVE: WAIT · no current highlight/);
 });
 test('first forecast checkpoint is immutable; newer UP DOWN changes update while WAIT does not erase it',()=>{
  const from=script.indexOf('const SIGNAL_STORAGE_KEY='),to=script.indexOf('let historyLoading=false;');
