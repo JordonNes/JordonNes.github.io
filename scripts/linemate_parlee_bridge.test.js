@@ -54,3 +54,27 @@ test("invalid denominators never create fake 100% statistics",()=>{
 assert.equal(bridge.hit({hits:3,games:0}),null);
 assert.equal(bridge.hit({hits:4,games:3}),null);
 });
+
+test("similarly named kitchen LineMate GitHub repository cannot be used as Linemate research",()=>{
+const mistaken="https://github.com/winsharp/LineMate/tree/main/backend/app/api";
+const output=bridge.makePublication({...source,
+trends:[{...trend,source_url:mistaken}],
+games:[{league:"NFL",source_url:mistaken,collected_at_utc:"2026-10-16T00:00:00Z"}],
+parlays:[{...source.parlays[0],source_url:mistaken}]
+},{predictions:[pick]});
+assert.equal(output.trends.length,0);
+assert.equal(output.games.length,0);
+assert.equal(output.parlays.length,0);
+assert.equal(output.ingest_report.errors[0].code,"INVALID_SOURCE");
+});
+
+test("source identity rejects spoofed Linemate host and insecure URLs",()=>{
+for(const fake of [
+"https://linemate.io.malicious.example/nfl",
+"https://example.com/linemate.io/nfl",
+"http://linemate.io/nfl"
+]){
+const output=bridge.makePublication({...source,trends:[{...trend,source_url:fake}]},{predictions:[pick]});
+assert.equal(output.trends.length,0);
+}
+});
