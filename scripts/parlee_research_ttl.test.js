@@ -56,7 +56,7 @@ test("pruning only changes the Parlee research payload, not separate immutable L
  const d=data();const original=JSON.stringify(d);
  const v=prune(d,fixture("2026-10-16T07:00:00Z","final"),NOW);
  assert.equal(JSON.stringify(d),original);
- assert.deepEqual(v.retained_unrelated_statistic,d.retained_unrelated_statistic);
+ assert.equal(v.retained_unrelated_statistic,undefined); // unknown top-level payload cannot bypass cleanup
  assert.equal(v.trends.length,0);
 });
 test("review handoff metadata also expires and cannot outlive a game",()=>{
