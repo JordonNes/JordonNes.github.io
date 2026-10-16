@@ -88,3 +88,29 @@ nav a:hover{color:#f8cb78}
 .home-page .rwt-calendar-banner{order:3}
 .focus-calendar .topbar{position:relative;flex-wrap:wrap;gap:16px}
 .focus-calendar #calendar{padding-top:45px}
+
+/* FRmap GPS and species-first discovery, compact responsive controls */
+.home-page #frmap .section-heading h2{font-size:clamp(18px,1.7vw,25px);line-height:1.2}
+.home-page #frmap .section-heading{margin-bottom:14px}
+.home-page #frmap .map-controls{gap:8px;padding:12px}
+.home-page #frmap .map-report{padding:12px}
+.home-page #frmap .map-report h3{font-size:clamp(18px,1.6vw,23px)}
+.home-page #frmap .ray-call-grid{gap:7px;margin:10px 0}
+.home-page #frmap .ray-call-grid .data-card{padding:9px;min-width:0}
+.home-page #frmap .ray-call-grid .data-card strong{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.home-page #frmap .ray-call-grid .data-card small{font-size:9px}
+.home-page #frmap .map-report p{font-size:12px;line-height:1.45}
+.frmap-discovery-results{display:grid;gap:6px}
+.frmap-discovery-results:empty{display:none}
+.frmap-discovery-results>strong{font-size:11px;color:var(--gold2)}
+.frmap-discovery-results>small,.frmap-gps-form small{font-size:10px;color:var(--muted);line-height:1.4}
+.frmap-discovery-list{display:grid;gap:5px;max-height:260px;overflow:auto}
+.frmap-discovery-list button{display:grid;gap:2px;text-align:left;padding:7px;border:1px solid var(--line);border-radius:7px;background:#0b2a30;color:var(--text);cursor:pointer}
+.frmap-discovery-list button:hover,.frmap-discovery-list button:focus-visible{border-color:var(--gold2)}
+.frmap-discovery-list b{font-size:11px}
+.frmap-discovery-list span{font-size:10px;color:var(--muted)}
+.frmap-gps-form{display:grid;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+.frmap-gps-row{display:flex;gap:5px}
+.frmap-gps-row input{min-width:0;width:100%;background:#061d22;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:7px 8px;font-size:12px}
+.frmap-gps-row .btn{padding:7px 9px;font-size:11px}
+@media(max-width:760px){.home-page #frmap .section-heading h2{font-size:18px}.frmap-discovery-list{max-height:200px}}
