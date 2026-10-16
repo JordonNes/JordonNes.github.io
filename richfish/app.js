@@ -836,12 +836,19 @@ function initMap(){
   const currents=L.layerGroup().addTo(map);
   const gates=L.layerGroup().addTo(map);
   const bathymetry=addNoaaBathymetryLayer();
+  const soundings=L.layerGroup();
+  for(const [band,layerId] of [['coastal','61'],['approach','80'],['harbour','76'],['berthing','35']]){
+    L.tileLayer.wms('https://encdirect.noaa.gov/arcgis/services/encdirect/enc_'+band+'/MapServer/WMSServer',{
+      layers:layerId,format:'image/png',transparent:true,opacity:.9,version:'1.1.1',
+      attribution:'NOAA ENC charted soundings · datum varies by chart · not for navigation'
+    }).addTo(soundings);
+  }
   // NOAA ETOPO1 is regional relief. Keep it opt-in: it does not resolve pier-scale seabed structure.
   const relief=L.tileLayer.wms('https://gis.ngdc.noaa.gov/arcgis/services/etopo1/MapServer/WMSServer',{
     layers:'0',format:'image/png',transparent:true,opacity:.65,version:'1.1.1',
     attribution:'NOAA NCEI ETOPO1 shaded relief · regional scale · not for navigation'
   });
-  state.mapLayers={access,stations,buoys,currents,gates,bathymetry,relief};
+  state.mapLayers={access,stations,buoys,currents,gates,bathymetry,soundings,relief};
   const opacityControl=$('#frmap-depth-opacity');
   const updateBathymetryOpacity=()=>{
     const opacity=Number(opacityControl?.value||65)/100;
@@ -912,6 +919,14 @@ function initMap(){
     input.addEventListener('change',()=>{
       if(input.checked)layer.addTo(map);else map.removeLayer(layer);
     });
+  });
+  $('#frmap-focus')?.addEventListener('change',event=>{
+    if(!event.target.value)return;
+    const [lat,lng,zoom]=event.target.value.split(',').map(Number);
+    if([lat,lng,zoom].every(Number.isFinite)){
+      map.setView([lat,lng],zoom);
+      renderNearbyCoordinateIntelligence(lat,lng);
+    }
   });
   populateMapSpeciesFilter();
   refreshMapLocationMarkers();
