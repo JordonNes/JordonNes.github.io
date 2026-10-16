@@ -86,7 +86,11 @@
           <label><input type="checkbox" data-map-layer="gates" checked /> Access hard gates</label>
           <label><input type="checkbox" data-map-layer="stations" checked /> NOAA CO-OPS stations</label>
           <label><input type="checkbox" data-map-layer="buoys" checked /> NOAA NDBC coastal buoys</label>
-          <label><input type="checkbox" data-map-layer="bathymetry" /> NOAA ENC depth contours</label>
+          <label><input type="checkbox" data-map-layer="bathymetry" checked /> NOAA ENC depth contours</label>
+          <label><input type="checkbox" data-map-layer="relief" /> Underwater shaded relief (NOAA ETOPO1)</label>
+          <label class="map-field" for="frmap-depth-opacity">Underwater layer opacity <output id="frmap-depth-opacity-value">65%</output></label>
+          <input id="frmap-depth-opacity" type="range" min="20" max="100" value="65" step="5" aria-label="Underwater map layer opacity" />
+          <p class="map-source-note">ETOPO1 is regional-scale relief, not a detailed shoreline-depth survey. Zoomed-in fishing analysis should favor NOAA ENC contours and higher-resolution local surveys.</p>
           <div class="future-layer">NWS weather / hazards <small>Live context on bound fishing locations</small></div>
           <div class="future-layer">MPAs / advisories / closures <small>Regulatory polygon hard-gates remain a separate data-ingestion task</small></div>
           <p class="notice">Click anywhere for coordinate intelligence. When the exact point is not model-bound, FRmap reports the nearest evidence, stations and scored fishing options without pretending the nearby data were measured at your pin.</p>
