@@ -99,3 +99,27 @@ On every update, normalize team and player IDs against LSI, compare exact market
 7. Only later approve authorized scheduled collection, head-to-head reliability tests, and a holdout-calibrated Demon Lord model.
 
 Keep this feature on a PR branch until the staged changes pass validation. Existing pipeline reliability and prop completeness have priority over an aggressive scraper integration.
+
+
+## Linemate NFL prediction-market discovery / Most Volume — October 16, 2026
+
+The user supplied a joined/broken URL (`https://linemate.io/nfl/prediction-markets/most-volumhttps://linemate.io`). The **likely intended page** is `https://linemate.io/nfl/prediction-markets/most-volume`, but it **could not be independently resolved or retrieved**; do not assert that its path, listed contracts, columns, prices, rankings, or API are confirmed. The official Linemate App Store release history does confirm prediction-market analytics became available in supported regions.
+
+**Business meaning:** Parlee can use a most-active-markets surface to *discover* interesting NFL game, player, or futures contracts and research their drivers. Volume is not hit probability, liquidity is not proof of a fill, the YES quote is market-implied pricing (and may be bid, ask, midpoint, or last, depending on upstream documentation), and volume rankings are not proof of projected ROI. Do not derive LJPC or badge disagreements from volume, popularity, or a quoted cents value. Parlay correlation and event cross-linking require separate models.
+
+### Implemented, permission-gated research display
+
+- `Demon_Lord.html` adds an NFL **prediction-market activity** panel and a verified `https://linemate.io/` outbound link instead of pretending the unreadable page route is live.
+- `data/demon_lord_intel.json` includes `prediction_markets: []` initially; empty means **no verified source observations**.
+- `scripts/linemate_parlee_bridge.js` accepts `prediction_markets[]` in an authorized structured feed, validates a Linemate HTTPS research origin, limits rows to NFL, requires contract and event identities, an observation time, source-reported USD volume and its period (`24H` or `TOTAL`), plus at least one source quote or liquidity measurement. The data are labeled `SOURCE_RESEARCH_ONLY`, sorted by reported volume, capped to 50. No direct Linemate fetches are made.
+- `demon_lord.js` displays the observed price in cents, liquidity and volume and marks observations older than 15 minutes **STALE / RECHECK**. All market observations remain clearly distinct from independently evaluated L&J LJPC and do not imply executability.
+- Synthetic adapter tests verify permission gates, invalid source domains, observed values, volume sorting, empty liquidity/quote rejection, and no creation of an `ljpc` field.
+
+### Additional confirmation required before activation
+
+1. Independently confirm the actual Linemate NFL prediction-markets route in a browser, the contract identifiers and semantics of its market activity metrics, and any export/API permission.
+2. For any source volume number, record currency and rolling period, whether contracts vs notional were traded, observation time and provider identity. Do not compare incompatible `24H` and `TOTAL` measures in a single ranking.
+3. For any cents quote, record bid, ask, last trade or midpoint and exchange, and reconcile the contract against an independently sourced exchange ticker; a source-quoted price is not a fill or guaranteed implied-probability estimate.
+4. Use the existing **LJDP** Kalshi public-data adapter (`scripts/kalshi_public_adapter.py`) and its official API provenance for independent market verification rather than copying D&G's unrelated 15-minute crypto market scope. Keep providers and event categories separate.
+5. Add scheduled ingestion only after data-rights checks, rate limits, source semantics, and holdout measurement are accepted.
+
