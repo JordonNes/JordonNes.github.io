@@ -1,3 +1,35 @@
+## Parlee pregame-only intelligence retention — October 16, 2026
+
+**User clarification:** Parlee's outside observations support analysis of *upcoming* NBA, NFL, NCAA football/basketball and MLB games. Parlee does **not** need to retain third-party observation content after the contest. Third-party material is *temporary scouting context*, not an independent prediction archive.
+
+### Active-window policy
+
+- Acquire data **only from sources permitted for this use**. Source terms remain binding even for screenshots, short-lived temporary storage or hand transcription; a short retention period does not itself grant scraping rights. The existing Linemate written-authorization gate remains active.
+- For each observation, require authoritative league, exact/canonical event ID, observation timestamp, and an LSI event schedule with kickoff/tip-off/first pitch. **Reject unknown, ambiguous, undated or unmatched events.** No observations survive after event start: this conservative *pregame-only* expiry is earlier than the user's "after game" deletion deadline and avoids contaminated in-game/settled odds. Cancelled/final/postponed events expire immediately.
+- The permitted pregame observation freshness window is **at most seven days**. Displayed third-party page values and red-dissent badges carry `expires_at_utc`; client-side pages hide them even if storage cleanup is delayed.
+- `scripts/parlee_research_ttl.js` reconciles source events against `data/future_market_board.json`, removes expired `games`, `trends`, `picks`, `parlays`, `conflicts`, `prediction_markets`, LJPC review `entries` and `market_activity`, and drops any unknown top-level input keys. A parlay with any expired leg is discarded as a whole.
+- Only `.parlee-runtime/` (ignored by Git) or an outside-repository temporary directory may hold observation files. `scripts/linemate_parlee_bridge.js` and `scripts/parlee_ljpc_handoff.js` reject runtime source-data publication to Git-tracked JSON. **Do not publish source datasets through GitHub Pages or commit screenshots/HTML:** deleting from the working tree cannot erase historical Git blobs.
+- **Retain L&J's own evaluation and settlement evidence separately:** LSI's `predictions.csv`, `results.csv`, suggestion ledger and independently recorded model versions may remain for longitudinal calibration. Those datasets must not include copied third-party content or retained Linemate screenshots. Parlee can grade his *own independently generated* picks from actual outcomes without preserving external source pages.
+
+### Current capability and activation boundary
+
+The above implementation is staged on PR #59; no ongoing temporary observation acquisition is enabled. The current GitHub Pages front end has static empty JSON stubs, not a live read path for an ephemeral store. Production use requires a server/Worker-owned **TTL-capable storage and authenticated/authorized source adapter**, plus a read endpoint that never caches source data beyond event start. No live source material has been retained or imported during this change.
+
+Tests: `node --test scripts/parlee_research_ttl.test.js` covers all five league identifiers, exact kickoff deletion, completed/canceled events, missing event ID, expired source timestamps, expired parlay legs, immutable input protection and review-record expiry.
+
+### Temporary offline runbook (only with source collection authorization)
+
+```sh
+mkdir -p .parlee-runtime
+node scripts/linemate_parlee_bridge.js .parlee-runtime/authorized.json data/prediction_registry.json .parlee-runtime/intel.json data/future_market_board.json
+node scripts/parlee_ljpc_handoff.js .parlee-runtime/intel.json data/future_market_board.json .parlee-runtime/ljpc_review.json
+node scripts/parlee_research_ttl.js .parlee-runtime/intel.json data/future_market_board.json .parlee-runtime/intel.json
+```
+
+Remove the `.parlee-runtime` directory manually or by its authorized ephemeral storage expiry; the purge utility removes no Git history because data must never enter Git. Do not run the importer unless a verified Linemate written permission exists.
+
+---
+
 ## VERIFIED SOURCE-ACCESS UPDATE — October 16, 2026
 
 **Current policy supersedes the earlier "terms unreadable" status in the historical notes below.** Firecrawl successfully retrieved the publicly visible `https://linemate.io/robots.txt`, `https://linemate.io/terms`, and `https://linemate.io/nfl/prediction-markets/most-volume`.
