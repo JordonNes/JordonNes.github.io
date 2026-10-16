@@ -1,0 +1,49 @@
+(()=>{'use strict';
+const math=window.DGPatterns,API='https://dg-market-intelligence.jordonnes-markets.workers.dev',$=id=>document.getElementById(id),colors=['#386c9e','#ac7b22','#c56a3e','#75833b','#a85d85'];
+const url=new URL(location.href);let series=math.markets.some(x=>x.ticker===url.searchParams.get('series'))?url.searchParams.get('series'):'KXBTC15M',mode=url.searchParams.get('alignment')==='contract'?'contract':'hour',source=url.searchParams.get('source')==='spot'?'spot':'kalshi',pages=[],spotData=null,layers=[],hidden=new Set(),controller=null,sequence=0;
+const cache=new Map();const fmt=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}),time=v=>fmt.format(new Date(v));
+const clock=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});function tick(){$('marketClock').textContent=clock.format(new Date())}tick();setInterval(tick,1000);
+const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e};
+function drawMarkets(){const q=$('marketSearch').value.toLowerCase();$('marketList').replaceChildren();for(const m of math.markets.filter(m=>(m.name+' '+m.ticker+' '+m.group).toLowerCase().includes(q))){const b=el('button',m.name);b.type='button';b.setAttribute('aria-pressed',String(m.ticker===series));b.append(el('small',m.group+' · '+m.ticker));b.onclick=()=>{series=m.ticker;load()};$('marketList').append(b)}}
+function sync(){const u=new URL(location.href);u.searchParams.set('series',series);u.searchParams.set('source',source);u.searchParams.set('alignment',mode);history.replaceState(null,'',u);$('source').value=source;$('alignment').value=mode;$('alignment').disabled=source==='spot';$('chartTitle').textContent=math.markets.find(x=>x.ticker===series).name;drawMarkets()}
+async function get(path,signal){if(cache.has(path))return cache.get(path);const r=await fetch(API+path,{signal,cache:'no-store'});const p=await r.json();if(!r.ok)throw Error((p.state||p.error||'Source unavailable')+(p.retry_at_utc?' · retry after '+time(p.retry_at_utc):''));cache.set(path,p);return p}
+function unit(){return source==='spot'?'%':'¢'}const val=n=>n===null?'—':(n>=0?'+':'')+n.toFixed(source==='spot'?3:1)+unit();
+function render(){layers=source==='spot'?math.spot(spotData?.candles||[],pages.map(p=>Date.parse(p.hour_start_utc))):math.kalshi(pages,mode);
+ const n=layers.reduce((v,l)=>v+math.stats(l).points,0),contracts=pages.reduce((s,p)=>s+(p.contracts?.length||0),0);
+ $('coverage').textContent=source==='spot'?n+' plotted observations':contracts+' / 20 contracts';
+ $('chartSubtitle').textContent=source==='spot'?'Kraken underlying spot · five completed clock hours · rebased to 0%':(mode==='hour'?'Five completed clock hours · four separate 15-minute paths per hour':'Up to 20 completed 15-minute contracts, aligned by elapsed time');
+ $('method').textContent=source==='spot'?'Each hour begins at its first observed candle open (0%). Later observations show percentage change. Gaps remain gaps. This spot reference is not Kalshi’s settlement index.':'YES bid/ask midpoint, expressed as cents of change from each contract’s first paired quote. Every contract begins at 0¢. Hourly view places four separate paths side by side; lines never join across contract resets. Missing quotes are not replaced with trade prices. First observed quotes may arrive after the contract opens.';
+ const hours=[...new Set(layers.map(l=>l.hour))].sort();$('legend').replaceChildren();for(const [i,h] of hours.entries()){const b=el('button',time(h));b.type='button';b.setAttribute('aria-pressed',String(!hidden.has(h)));const s=el('span',undefined,'swatch');s.style.backgroundColor=colors[i%5];b.prepend(s);b.onclick=()=>{hidden.has(h)?hidden.delete(h):hidden.add(h);render()};$('legend').append(b)}
+ drawPlot(hours);$('evidence').replaceChildren();for(const l of layers){const stats=math.stats(l),tr=el('tr');const coverage=source==='spot'?(l.spot_samples||0)+'/60 completed candles':l.contracts.map(c=>c.samples+'/15 · '+c.ticker+' · first quote +'+c.baseline_delay_minutes.toFixed(1)+'m · result '+(c.result||'unverified')).join('; ')||'No paired quotes';for(const text of [time(l.label),String(stats.points),val(stats.min)+' / '+val(stats.max),coverage])tr.append(el('td',text));$('evidence').append(tr)}
+ $('provenance').textContent=source==='spot'?'Source: Kraken public OHLC, completed one-minute candles. Retrieved '+(spotData?.retrieved_at_utc?time(spotData.retrieved_at_utc):'—')+'.':"Source: Kalshi official market metadata and 1m bid/ask candles. Historical candle quotes are not executable fills. "+pages.filter(p=>p.state!=='OBSERVED').map(p=>time(p.hour_start_utc)+': '+p.state).join(' · ');
+ $('download').disabled=!n;
+}
+function drawPlot(hours){const svg=$('plot');svg.querySelectorAll(':scope > :not(title):not(desc)').forEach(x=>x.remove());const ns='http://www.w3.org/2000/svg',add=(tag,attrs,text)=>{const e=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;svg.append(e);return e};
+ const width=Math.max(280,svg.getBoundingClientRect().width||940),height=width<500?360:410;svg.setAttribute('viewBox','0 0 '+width+' '+height);svg.style.height=height+'px';
+ const visible=layers.filter(l=>!hidden.has(l.hour)),points=visible.flatMap(l=>l.segments.flat()),maxX=mode==='contract'&&source==='kalshi'?15:60;
+ const limit=Math.max(source==='spot'?.01:2,...points.map(p=>Math.abs(p.y)))*1.12,left=65,right=width-16,top=25,bottom=height-60;
+ const x=v=>left+v/maxX*(right-left),y=v=>(top+bottom)/2-v/limit*(bottom-top)/2;
+ for(let i=-2;i<=2;i++){const v=i*limit/2;add('line',{x1:left,x2:right,y1:y(v),y2:y(v),stroke:i===0?'#9eafa2':'#e8eeea','stroke-dasharray':i===0?'':'3 4'});add('text',{x:left-12,y:y(v)+4,'text-anchor':'end'},val(v))}
+ for(let i=0;i<=4;i++){const v=i*maxX/4;add('text',{x:x(v),y:height-33,'text-anchor':'middle'},String(v));if(source==='kalshi'&&mode==='hour'&&i>0&&i<4)add('line',{x1:x(v),x2:x(v),y1:top,y2:bottom,stroke:'#c9d6cd','stroke-dasharray':'4 5'})}
+ add('text',{x:(left+right)/2,y:height-8,'text-anchor':'middle'},source==='kalshi'&&mode==='hour'?'Minute within hour · separate contract baseline at 0, 15, 30, 45':'Minutes since first observed point');
+ for(const l of visible){const color=colors[hours.indexOf(l.hour)%5];for(const segment of l.segments){if(!segment.length)continue;add('polyline',{class:'path',stroke:color,points:segment.map(p=>x(p.x).toFixed(2)+','+y(p.y).toFixed(2)).join(' ')});for(const [i,p] of segment.entries()){const c=add('circle',{class:'point',cx:x(p.x),cy:y(p.y),r:3,fill:color,tabindex:i===0||i===segment.length-1?'0':'-1',role:'img','aria-label':time(p.at)+' · '+(p.ticker||l.label)+' · '+val(p.y)});const show=()=>{$('tooltip').hidden=false;$('tooltip').textContent=time(p.at)+' · '+(p.ticker||'Kraken spot')+' · '+p.kind+' '+(source==='spot'?p.price.toFixed(4)+' USD':(p.price*100).toFixed(2)+'¢')+' · change '+val(p.y)};c.addEventListener('pointerenter',show);c.addEventListener('focus',show)}}}
+ if(!points.length)add('text',{x:(left+right)/2,y:190,'text-anchor':'middle'},'No observations to plot for this selection.');
+ $('plotDesc').textContent=points.length+' observed points. '+$('method').textContent;
+}
+async function load(){controller?.abort();controller=new AbortController();const signal=controller.signal,seq=++sequence;pages=[];spotData=null;hidden.clear();$('tooltip').hidden=true;if(source==='spot')mode='hour';sync();render();$('refresh').disabled=true;
+ const end=Math.floor(Date.now()/3600000)*3600000,hours=Array.from({length:5},(_,i)=>end-(5-i)*3600000);
+ try{
+  if(source==='spot'){
+   const symbol=math.spotSymbols[series];pages=hours.map(h=>({hour_start_utc:new Date(h).toISOString()}));
+   if(!symbol){$('loadStatus').textContent='A verified underlying-price feed is not connected for this market. Choose Kalshi YES contract quotes to inspect its observed contract history.';render();return}
+   $('loadStatus').textContent='Loading completed Kraken candles…';spotData=await get('/api/kraken-candles?symbol='+symbol+'&hours=6',signal);if(seq!==sequence)return;render();
+  }else for(const [i,h] of hours.entries()){$('loadStatus').textContent='Loading observed hour '+(i+1)+' of 5…';const p=await get('/api/market-layers?'+new URLSearchParams({series,hour:String(h/1000)}),signal);if(seq!==sequence)return;pages.push(p);render()}
+  $('loadStatus').textContent='Loaded '+pages.length+' completed-hour windows. '+(source==='kalshi'&&pages.some(p=>!p.complete)?'Coverage is partial; inspect the evidence table.':'Inspect coverage before interpreting patterns.');
+ }catch(e){if(e.name!=='AbortError'&&seq===sequence){$('loadStatus').textContent='Data unavailable or partial: '+e.message;render()}}
+ finally{if(seq===sequence)$('refresh').disabled=false}
+}
+$('marketSearch').oninput=drawMarkets;$('source').onchange=()=>{source=$('source').value;load()};$('alignment').onchange=()=>{mode=$('alignment').value;sync();render()};$('refresh').onclick=()=>{cache.clear();load()};
+$('download').onclick=()=>{const blob=new Blob([JSON.stringify({series,source,alignment:mode,exploratory_only:true,kalshi_hours:source==='kalshi'?pages:undefined,spot:spotData,normalized_layers:layers},null,2)],{type:'application/json'});const a=el('a');a.href=URL.createObjectURL(blob);a.download='DG-'+series+'-observed-layers.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+if(typeof ResizeObserver!=='undefined'){let previousWidth=0;new ResizeObserver(entries=>{const width=entries[0].contentRect.width;if(Math.abs(width-previousWidth)>1){previousWidth=width;drawPlot([...new Set(layers.map(l=>l.hour))].sort())}}).observe(document.querySelector('.plot-wrap'))}
+load();
+})();
