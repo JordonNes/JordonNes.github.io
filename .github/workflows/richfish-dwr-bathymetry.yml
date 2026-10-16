@@ -1,0 +1,34 @@
+name: RICHFISH DWR Bathymetry Build
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bathymetry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GDAL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdal-bin python3-gdal unzip curl
+      - name: Download the official DWR Bay-Delta 10m DEM
+        run: |
+          mkdir -p /tmp/richfish-dem
+          curl -fL --retry 3 --connect-timeout 25 --max-time 1200 \
+            'https://data.cnra.ca.gov/dataset/f902e012-7d8d-429c-8a1a-2bf5b4312532/resource/9f931e1a-b009-4e91-bde1-795e36536922/download/dem_bay_delta_10m_20250312.zip' \
+            -o /tmp/richfish-dem/source.zip
+          unzip -l /tmp/richfish-dem/source.zip
+          unzip -q /tmp/richfish-dem/source.zip -d /tmp/richfish-dem/input
+          find /tmp/richfish-dem/input -iname '*.tif' -print
+      - name: Build Richmond relief tiles
+        run: bash richfish/tools/build-dwr-tiles.sh /tmp/richfish-dem/input /tmp/richfish-dem/output
+      - name: Upload tiles for inspection (not automatically published)
+        uses: actions/upload-artifact@v4
+        with:
+          name: richfish-dwr-bathymetry-preview
+          path: /tmp/richfish-dem/output/
+          retention-days: 7
