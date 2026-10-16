@@ -13,7 +13,9 @@ export async function serveSupplementaryMarketData(request,env,ctx){
  const symbol=String(u.searchParams.get("symbol")||"").toUpperCase();
  if(u.pathname==="/api/kraken-candles"){
   if(!KRAKEN_PAIRS[symbol])return json({error:"unsupported_symbol"},400);
-  const cache=caches.default,key=new Request(u.origin+"/api/kraken-candles?symbol="+symbol+"&v=1");
+  const hours=Number(u.searchParams.get("hours")||1);
+  if(!Number.isInteger(hours)||hours<1||hours>6)return json({state:"INVALID_HOURS"},400);
+  const cache=caches.default,key=new Request(u.origin+"/api/kraken-candles?symbol="+symbol+"&hours="+hours+"&v=2");
   const hit=await cache.match(key);if(hit)return new Response(hit.body,{status:hit.status,headers:{...Object.fromEntries(hit.headers),"X-DG-Cache":"HIT"}});
   const ctl=new AbortController(),timeout=setTimeout(()=>ctl.abort(),7000);
   try{
@@ -23,8 +25,8 @@ export async function serveSupplementaryMarketData(request,env,ctx){
    const pair=Object.keys(raw.result).filter(k=>k!=="last");if(pair.length!==1||!Array.isArray(raw.result[pair[0]]))return json({state:"INVALID_CANDLES",provider:"kraken"},503);
    const now=Math.floor(Date.now()/1000);
    const candles=raw.result[pair[0]].map(c=>({time:Number(c[0]),open:num(c[1]),high:num(c[2]),low:num(c[3]),close:num(c[4])}))
-    .filter(c=>Number.isInteger(c.time)&&c.time>now-3600&&c.time+60<=now&&[c.open,c.high,c.low,c.close].every(v=>v!==null&&v>0)&&c.high>=c.low&&c.close<=c.high&&c.close>=c.low)
-    .sort((a,b)=>a.time-b.time).slice(-30);
+    .filter(c=>Number.isInteger(c.time)&&c.time>=now-hours*3600&&c.time+60<=now&&[c.open,c.high,c.low,c.close].every(v=>v!==null&&v>0)&&c.high>=c.low&&c.close<=c.high&&c.close>=c.low)
+    .sort((a,b)=>a.time-b.time).slice(-(u.searchParams.has("hours")?hours*60:30));
    if(candles.length<2)return json({state:"INSUFFICIENT_CANDLES",provider:"kraken"},503);
    const response=json({state:"OBSERVED",provider:"kraken",instrument:"SPOT_REFERENCE_NOT_KALSHI_SETTLEMENT",symbol,provider_pair:pair[0],granularity_seconds:60,candles,source_timestamp_verified:true,retrieved_at_utc:new Date().toISOString(),no_trading:true},200,60);
    ctx.waitUntil(cache.put(key,response.clone()));return response;
@@ -70,3 +72,4 @@ export async function serveSupplementaryMarketData(request,env,ctx){
  }catch{return json({state:"FETCH_FAILED",provider},503)}
  finally{clearTimeout(timeout)}
 }
+

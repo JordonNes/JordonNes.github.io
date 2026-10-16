@@ -50,6 +50,10 @@ jobs:
           if(status.status!==200||status.body.read_only!==true||typeof status.body.cooldown_active!=="boolean")throw Error("Kalshi diagnostics unavailable");
           const alias=await check("/api/coinbase-advanced-reference?symbol=BTC");
           if(alias.status!==200||alias.body.symbol!=="BTC-USD")throw Error("Coinbase shorthand failed");
+          const hour=Math.floor(Date.now()/3600000)*3600-3600;
+          const layers=await check("/api/market-layers?series=KXBTC15M&hour="+hour);
+          if(layers.status!==200||layers.body.read_only!==true||layers.body.underlying_price_history!==false||!Array.isArray(layers.body.contracts)||!layers.body.contracts.length)throw Error("Pattern Lab source verification failed: "+JSON.stringify(layers));
+          console.log(JSON.stringify({pattern_lab_state:layers.body.state,contracts:layers.body.contracts_returned,archive:layers.body.archive_state}));
           const batch=await check("/api/quarter-hour-batch?series=KXBTC15M,KXGOLD15M");
           if(batch.status!==200||batch.body.kind!=="QUARTER_HOUR_BATCH"||batch.body.shared_kv_configured!==true)throw Error("Active quarter-hour batch or shared KV missing");
           for(const series of ["KXBTC15M","KXGOLD15M"])if(!batch.body.results?.[series])throw Error("Missing "+series+" batch record");
@@ -68,3 +72,4 @@ jobs:
           if(retired.status!==410||retired.body.error!=="route_out_of_scope")throw Error("Retired route inadvertently reenabled");
           console.log(JSON.stringify({quarter_hour:batch.body.kind,shared_kv:true,kraken_status:kraken.status,kraken_state:kraken.body.state,twelvedata_status:td.status,twelvedata_state:td.body.state,retired_route:retired.status}));
           NODE
+

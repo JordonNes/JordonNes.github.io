@@ -90,7 +90,14 @@ function makeCard(def){
  }
  const bottom=el("div","bottom"),detail=el("span","",ok?"Observed market quote":"Quote unavailable"),link=el("a","","Kalshi ↗");
  link.href=ok&&MARKET_SLUGS[def.ticker]?("https://kalshi.com/markets/"+def.ticker.toLowerCase()+"/"+MARKET_SLUGS[def.ticker]+"/"+encodeURIComponent(record.market.ticker.toLowerCase())):SOURCES[def.group];link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","View "+def.name+" 15-minute markets on Kalshi");
- bottom.append(detail,link);item.append(top,details);if(chart)item.append(chart);item.append(sides,bottom);
+ const research=el("details","card-research"),summary=el("summary","","Context & evidence");research.append(summary);
+ const context=ok?window.DGPatterns?.openingContext(krakenCharts.get(krakenSymbols[def.ticker])?.candles,record.market.open_time,record.market.price_to_beat_usd):null;
+ research.append(el("div","",context?"Open reference: "+context.position+" target · "+(context.momentum?context.momentum+" into open (3m)":"opening momentum unavailable"):"Open context: awaiting matched underlying observations"));
+ if(context)research.append(el("small","","Kraken spot reference; not the Kalshi settlement index."));
+ research.append(el("div","","Damilola ending forecast: not yet validated"));
+ const evidence=el("a","","Compare observed history ↗");evidence.href="pattern-lab.html?series="+encodeURIComponent(def.ticker);research.append(evidence);
+ research.append(el("div","","Early-exit timing / target-fill edge: not yet validated"));
+ bottom.append(detail,link);item.append(top,details);if(chart)item.append(chart);item.append(sides,research,bottom);
  if(!ok&&record?.state==="RATE_LIMITED")detail.textContent="Source rate-limited";
  else if(!ok&&record?.state==="STALE_QUOTE")detail.textContent="Awaiting fresh quote";
  else if(!ok&&record?.state==="NO_OPEN_CONTRACT")detail.textContent="No open contract confirmed";

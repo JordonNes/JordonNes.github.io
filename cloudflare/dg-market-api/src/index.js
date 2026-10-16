@@ -1,3 +1,4 @@
+import {serveMarketLayers} from "./market-layers.js";
 import {cooldownUntil} from "./kalshi-public-cache.js";
 import {serveCoinbaseAdvancedReference} from "./coinbase-advanced-reference.js";
 import {migrateTaapiKvToR2} from "./taapi-kv-r2-migration.js";
@@ -64,6 +65,7 @@ export default {
    const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
    return new Response(r.body,{status:r.status,headers:h});
   }
+  if(url.pathname==="/api/market-layers"){const r=await serveMarketLayers(request,env);const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/kalshi-status"){
    const kv=env.DG_ARCHIVE;
    const until=kv?cooldownUntil(await kv.get("dg:kalshi:cooldown:v1").catch(()=>null)):0;
@@ -581,3 +583,4 @@ export default {
   })());
  }
 };
+
