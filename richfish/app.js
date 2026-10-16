@@ -934,6 +934,29 @@ function initMap(){
     marker.addTo(buoys);
   }
 
+  const terrainMode=$('#frmap-terrain-mode');
+  const terrainHelp=$('#frmap-terrain-explainer');
+  const setLayerVisibility=(key,visible)=>{
+    const input=document.querySelector('[data-map-layer="'+key+'"]');
+    if(!input)return;
+    input.checked=visible;
+    const layer=state.mapLayers[key];
+    if(!layer)return;
+    if(visible&&!map.hasLayer(layer))layer.addTo(map);
+    if(!visible&&map.hasLayer(layer))map.removeLayer(layer);
+  };
+  terrainMode?.addEventListener('change',()=>{
+    const mode=terrainMode.value;
+    setLayerVisibility('bathymetry',mode!=='terrain');
+    setLayerVisibility('relief',mode!=='charts');
+    if(terrainHelp){
+      terrainHelp.textContent=mode==='charts'
+        ? 'NOAA ENC chart contours; verify the chart datum. Designed for fishing-depth context, not navigation.'
+        : mode==='terrain'
+          ? 'NOAA ETOPO1 regional shaded relief. Shows broad underwater form only, not DWR v4.3 or pier-scale seabed measurements.'
+          : 'NOAA chart contours plus NOAA ETOPO1 shaded relief. These are different sources and vertical references; do not derive precise depths from the combined appearance.';
+    }
+  });
   document.querySelectorAll('[data-map-layer]').forEach(input=>{
     const layer=state.mapLayers[input.dataset.mapLayer];
     if(!layer)return;
