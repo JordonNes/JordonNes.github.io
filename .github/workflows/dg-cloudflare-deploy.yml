@@ -36,11 +36,11 @@ jobs:
           const root="https://dg-market-intelligence.jordonnes-markets.workers.dev";
           async function check(path) {
             let res;
-  for(let attempt=0;attempt<4;attempt++){
-    res=await fetch(root+path,{headers:{Accept:"application/json"},signal:AbortSignal.timeout(30000)});
-    if(res.status!==404||attempt===3)break;
-    await new Promise(resolve=>setTimeout(resolve,2000));
-  }
+            for(let attempt=0;attempt<4;attempt++){
+              res=await fetch(root+path,{headers:{Accept:"application/json"},signal:AbortSignal.timeout(30000)});
+              if(res.status!==404||attempt===3)break;
+              await new Promise(resolve=>setTimeout(resolve,2000));
+            }
             let body;try{body=await res.json()}catch{throw Error(path+" non-JSON response "+res.status)}
             return {status:res.status,cache:res.headers.get("X-DG-Cache"),body};
           }
@@ -80,4 +80,3 @@ jobs:
           if(retired.status!==410||retired.body.error!=="route_out_of_scope")throw Error("Retired route inadvertently reenabled");
           console.log(JSON.stringify({quarter_hour:batch.body.kind,shared_kv:true,kraken_status:kraken.status,kraken_state:kraken.body.state,twelvedata_status:td.status,twelvedata_state:td.body.state,retired_route:retired.status}));
           NODE
-
