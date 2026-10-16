@@ -75,7 +75,11 @@ const rows=(Array.isArray(data[kind])?data[kind]:[]).filter(r=>selected()==="ALL
 document.getElementById(id).innerHTML=rows.map(r=>kind==="trends"?trendCard(r):card(kind,r)).filter(Boolean).join("")||empty(none);
 }
 const markets=(Array.isArray(data.prediction_markets)?data.prediction_markets:[]).filter(r=>selected()==="ALL"||lg(r.league)===selected());
-document.getElementById("dl-market-watch").innerHTML=markets.map(predictionMarketCard).filter(Boolean).join("")||empty("No verified NFL prediction-market volume snapshots are available. Linemate market data is not automatically connected.");
+const marketHtml=["24H","TOTAL"].map(period=>{
+ const cards=markets.filter(m=>m.volume_period===period).map(predictionMarketCard).filter(Boolean).join("");
+ return cards?'<div class="dl-card" style="grid-column:1/-1"><h3>'+esc(period==="24H"?"24-hour volume":"Cumulative volume")+'</h3><p>Ranking applies only within this observation window. Source-reported figures; not confidence or expected profit.</p></div>'+cards:"";
+}).join("");
+document.getElementById("dl-market-watch").innerHTML=marketHtml||empty("No verified NFL prediction-market volume snapshots are available. Linemate market data is not automatically connected.");
 document.getElementById("dl-status").textContent=esc(data.status||"RESEARCH ONLY")+" · Publication: "+(data.generated_at_utc||"not yet collected")+" · LJPC unchanged";
 }
 async function update(){
