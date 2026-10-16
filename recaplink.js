@@ -324,6 +324,23 @@
     }
 
     addMicroStatus(file);
+    // Demon Lord is a separately published research/challenge surface.
+    const dlActions=document.querySelector('.hero .actions');
+    if(dlActions && !dlActions.querySelector('.demon-lord-link')){
+      const link=document.createElement('a');
+      link.className='action demon-lord-link';
+      link.href='Demon_Lord.html';
+      link.textContent='Demon Lord';
+      dlActions.appendChild(link);
+    }
+    if(file==='LJ_index' || sportPages.has(file)){
+      if(!document.querySelector('script[data-demon-badges]')){
+        const dl=document.createElement('script');
+        dl.dataset.demonBadges='1';
+        dl.src='demon_lord_badges.js?v=1';
+        document.head.appendChild(dl);
+      }
+    }
     const allActions=document.querySelector('.hero .actions');
     if(allActions && !allActions.querySelector('.spectrum-link') && file!=='LJ_Spectrum'){
       const spectrum=document.createElement('a');
