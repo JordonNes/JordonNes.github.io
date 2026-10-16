@@ -35,7 +35,12 @@ jobs:
           node --input-type=module <<'NODE'
           const root="https://dg-market-intelligence.jordonnes-markets.workers.dev";
           async function check(path) {
-            const res=await fetch(root+path,{headers:{Accept:"application/json"},signal:AbortSignal.timeout(15000)});
+            let res;
+  for(let attempt=0;attempt<4;attempt++){
+    res=await fetch(root+path,{headers:{Accept:"application/json"},signal:AbortSignal.timeout(30000)});
+    if(res.status!==404||attempt===3)break;
+    await new Promise(resolve=>setTimeout(resolve,2000));
+  }
             let body;try{body=await res.json()}catch{throw Error(path+" non-JSON response "+res.status)}
             return {status:res.status,cache:res.headers.get("X-DG-Cache"),body};
           }
@@ -48,6 +53,9 @@ jobs:
           }
           const status=await check("/api/kalshi-status");
           if(status.status!==200||status.body.read_only!==true||typeof status.body.cooldown_active!=="boolean")throw Error("Kalshi diagnostics unavailable");
+          const ledger=await check("/api/prediction-ledger?series=KXBTC15M&mode=read");
+          if(ledger.status!==200||ledger.body.read_only!==true||ledger.body.trading_enabled!==false||!["RECORDED","NO_RECORD"].includes(ledger.body.state))throw Error("Prospective ledger unavailable: "+JSON.stringify(ledger));
+          console.log(JSON.stringify({prediction_ledger:ledger.body.state,trading_enabled:false}));
           const alias=await check("/api/coinbase-advanced-reference?symbol=BTC");
           if(alias.status!==200||alias.body.symbol!=="BTC-USD")throw Error("Coinbase shorthand failed");
           const hour=Math.floor(Date.now()/3600000)*3600-3600;
