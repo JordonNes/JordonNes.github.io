@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Damilola prospective fixed-checkpoint 15-minute signal ledger and independently scored Kalshi settlements.">
+<title>D&G | Damilola Signal Ledger</title>
+<link rel="stylesheet" href="gam-15m.css?v=20261016-damilola2">
+<style>
+.ledger-shell{max-width:1050px;margin:auto}.ledger-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:20px 0}.ledger-bar select{border:1px solid #d6e2d9;padding:10px;border-radius:9px;background:#fff;min-width:190px}.ledger-bar button{border:1px solid #cfded3;border-radius:9px;background:#fff;padding:10px 14px;font-weight:700}
+.ledger-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}.ledger-stat{background:white;border:1px solid #e1e8e2;border-radius:12px;padding:16px}.ledger-stat strong{display:block;font-size:24px}.ledger-stat span{color:#6b7973;font-size:11px}
+.ledger-panel{background:white;border:1px solid #e1e8e2;border-radius:12px;padding:18px;margin-bottom:16px}.ledger-scroll{overflow:auto}.ledger-table{border-collapse:collapse;width:100%;min-width:720px;text-align:left;font-size:12px}.ledger-table th,.ledger-table td{padding:12px 10px;border-bottom:1px solid #e5ebe5;vertical-align:top}.ledger-table th{font-size:10px;color:#566a5a;text-transform:uppercase}.ledger-panel p{line-height:1.6}.ledger-status{font-size:12px;color:#496a55}
+@media(max-width:660px){.ledger-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ledger-stat strong{font-size:21px}}
+</style></head><body>
+<header class="sitehead"><div class="headinner"><a class="brand" href="./gavavi-live.html"><span class="monogram" aria-hidden="true">D·G</span><span class="brandtype"><strong>Damilola &amp; Gavavi</strong><small>Signal performance</small></span></a><div class="headright"><a href="./gavavi-live.html">← GAM</a></div></div></header>
+<main class="container ledger-shell">
+<div class="eyebrow">Observed before settlement · Scored after official settlement</div>
+<h1 style="font:700 clamp(28px,4vw,44px)/1.1 Georgia,serif;margin:8px 0">Damilola signal ledger</h1>
+<p style="color:#62776a;max-width:800px">This is an experimental, prospective two-checkpoint record. Each 15-minute contract is sampled using completed minute-5 and minute-9 quotes if source data is available. Changes between those two samples may not be captured. Actual UP/DOWN outcomes are scored only after independently verified settlement. No model confidence, net profitability, or executable order is claimed.</p>
+<div class="ledger-bar"><label for="series">Kalshi series</label><select id="series" aria-label="Kalshi 15-minute series"></select><button type="button" id="refresh">Refresh verified results</button><span class="ledger-status" id="status" role="status">Loading archive…</span></div>
+<div class="ledger-grid" aria-label="Recent signal statistics">
+<div class="ledger-stat"><strong id="settled">—</strong><span>Settled contracts in page</span></div>
+<div class="ledger-stat"><strong id="early">—</strong><span>First eligible direction accuracy</span></div>
+<div class="ledger-stat"><strong id="late">—</strong><span>Latest eligible direction accuracy</span></div>
+<div class="ledger-stat"><strong id="flips">—</strong><span>Observed direction reversals</span></div>
+</div>
+<section class="ledger-panel">
+<h2 style="font-size:17px;margin-top:0">Contract-by-contract observations</h2>
+<div class="ledger-scroll"><table class="ledger-table"><thead><tr><th>Window (Pacific)</th><th>Minute 5</th><th>Minute 9</th><th>First eligible</th><th>Latest eligible</th><th>Verified settlement</th></tr></thead><tbody id="rows"><tr><td colspan="6">Loading…</td></tr></tbody></table></div>
+</section>
+<section class="ledger-panel"><h2 style="font-size:17px;margin-top:0">Collection health and limits</h2><p id="health">Checking scheduled collection coverage…</p><p>Accuracy denominators count <strong>distinct settled contracts</strong>, not every quote or refresh. Fixed minute-5 and minute-9 samples are never backfilled from outcomes. A missing observation remains missing, and a historical 9/11 majority does not mean an 81.8% calibrated prediction probability.</p><p>Scoring retains 30-day R2 observations. <a href="./accuracy.html">See the separate original fixed minute-5 accuracy study ↗</a></p></section>
+</main><script src="pattern-math.js?v=1"></script><script defer src="signal-ledger.js?v=20261016-1"></script>
+</body></html>

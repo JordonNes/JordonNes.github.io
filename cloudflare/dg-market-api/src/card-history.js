@@ -73,8 +73,8 @@ async function archivedPages(env,series,now,contractOpenAt=now,ctx){
 export async function serveCardHistory(request,env,ctx){
  const u=new URL(request.url),series=(u.searchParams.get('series')||'').toUpperCase();const headers={'Content-Type':'application/json','Cache-Control':'no-store'};const out=(body,status=200)=>new Response(JSON.stringify(body),{status,headers});
  if(!SERIES.has(series))return out({state:'INVALID_SERIES'},400);
- const decision=u.searchParams.get('decision_minute');if(decision!==null&&decision!=='5')return out({state:'INVALID_DECISION_MINUTE'},400);
- const key=new Request(u.origin+'/api/card-history?series='+series+'&decision_minute='+(decision||'latest')+'&v=6'),hit=await caches.default.match(key);if(hit){const h=new Headers(hit.headers);h.set('X-DG-Cache','HIT');return new Response(hit.body,{status:hit.status,headers:h})}
+ const decision=u.searchParams.get('decision_minute');if(decision!==null&&!['5','9'].includes(decision))return out({state:'INVALID_DECISION_MINUTE'},400);
+ const key=new Request(u.origin+'/api/card-history?series='+series+'&decision_minute='+(decision||'latest')+'&v=7'),hit=await caches.default.match(key);if(hit){const h=new Headers(hit.headers);h.set('X-DG-Cache','HIT');return new Response(hit.body,{status:hit.status,headers:h})}
  try{
   const now=Date.now(),response=await serveQuarterHour(new Request(u.origin+'/api/quarter-hour?series='+series),env,ctx),snapshot=await response.json();
   if(!response.ok)return out({state:snapshot.state||'QUOTE_UNAVAILABLE',series_ticker:series,retry_at_utc:snapshot.retry_at_utc||null},503);
@@ -83,13 +83,13 @@ export async function serveCardHistory(request,env,ctx){
   if(m){const q=new URLSearchParams({start_ts:String(Date.parse(m.open_time)/1000),end_ts:String(Math.floor(now/60000)*60),period_interval:'1'});const r=await fetchKalshiPublic('/series/'+series+'/markets/'+encodeURIComponent(m.ticker)+'/candlesticks?'+q,env,60,8500);sourceState=r.state;
    if(r.ok&&(!r.data.ticker||r.data.ticker===m.ticker)&&Array.isArray(r.data.candlesticks))current={ticker:m.ticker,open_time_utc:m.open_time,close_time_utc:m.close_time,candles:normalizeLayerCandles(r.data.candlesticks,Date.parse(m.open_time),Math.min(now,Date.parse(m.close_time)))};
   }
-  const comparisonInput=decision==='5'&&current?{...current,candles:current.candles.filter(p=>Date.parse(p.time_utc)<=Date.parse(current.open_time_utc)+300000)}:current;
-  const comparison=compareHistory(series,comparisonInput,archive.pages,now,decision==='5'?180000:120000);
+  const minute=decision===null?null:Number(decision),comparisonInput=minute!==null&&current?{...current,candles:current.candles.filter(p=>Date.parse(p.time_utc)<=Date.parse(current.open_time_utc)+minute*60000)}:current;
+  const comparison=compareHistory(series,comparisonInput,archive.pages,now,minute===null?120000:180000);
   if(m?.yes_maps_to_up!==true){comparison.state='WAIT';comparison.suggested_side=null;comparison.reason='YES-to-UP settlement mapping is not verified.'}
   const fallback=archive.pages.flatMap(p=>p.contracts).filter(c=>(c.candles||[]).some(p=>finite(p.yes_midpoint_dollars))).sort((a,b)=>Date.parse(b.close_time_utc)-Date.parse(a.close_time_utc))[0]||null;
   const {pages,...coverage}=archive;
   const dailyReview=await loadLatestDamilolaReview(env,series).catch(()=>null);
-  const body={state:current?.candles?.length?'OBSERVED':fallback?'ARCHIVED_ONLY':'NO_OBSERVATIONS',series_ticker:series,retrieved_at_utc:new Date(now).toISOString(),source:'Kalshi 1-minute paired YES quote midpoints; not underlying price or fills',current_contract:current,chart:current?.candles?.some(p=>finite(p.yes_midpoint_dollars))?{...current,mode:'CURRENT_CONTRACT'}:fallback?{...fallback,mode:'PREVIOUS_ARCHIVED_CONTRACT'}:null,source_state:sourceState,yes_maps_to_up:m?.yes_maps_to_up===true,quote_observed_at_utc:snapshot.retrieved_at_utc,quote:{yes_bid_dollars:m?.yes_bid_dollars??null,yes_ask_dollars:m?.yes_ask_dollars??null},decision_minute:decision==='5'?5:null,coverage,comparison,daily_review:dailyReview,no_trading:true};
+  const body={state:current?.candles?.length?'OBSERVED':fallback?'ARCHIVED_ONLY':'NO_OBSERVATIONS',series_ticker:series,retrieved_at_utc:new Date(now).toISOString(),source:'Kalshi 1-minute paired YES quote midpoints; not underlying price or fills',current_contract:current,chart:current?.candles?.some(p=>finite(p.yes_midpoint_dollars))?{...current,mode:'CURRENT_CONTRACT'}:fallback?{...fallback,mode:'PREVIOUS_ARCHIVED_CONTRACT'}:null,source_state:sourceState,yes_maps_to_up:m?.yes_maps_to_up===true,quote_observed_at_utc:snapshot.retrieved_at_utc,quote:{yes_bid_dollars:m?.yes_bid_dollars??null,yes_ask_dollars:m?.yes_ask_dollars??null},decision_minute:minute,coverage,comparison,daily_review:dailyReview,no_trading:true};
   const result=new Response(JSON.stringify(body),{headers:{...headers,'Cache-Control':'public, max-age=60','X-DG-Cache':'MISS'}});ctx.waitUntil(caches.default.put(key,result.clone()));return result;
  }catch{return out({state:'CARD_HISTORY_UNAVAILABLE',series_ticker:series},503)}
 }
