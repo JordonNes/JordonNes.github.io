@@ -116,16 +116,35 @@ function marketObservations(source){
   }
   return {rows:out.sort((a,b)=>(a.volume_period===b.volume_period?b.volume_usd-a.volume_usd:(a.volume_period==="24H"?-1:1))).slice(0,50),errors};
 }
+/**
+ * Linemate's Terms prohibit automated acquisition/compilation and public
+ * redistribution absent written permission. Robots allow-list is NOT license.
+ * The grant reference below is an administrative approval control; the
+ * actual written grant must be independently verified before configuring it.
+ * No public-site fetches are performed by this adapter.
+ */
+function assertWrittenAuthorization(source,expectedGrantId=process.env.LINEMATE_WRITTEN_GRANT_ID){
+  const grant=source?.authorization;
+  const allowed=Array.isArray(grant?.scopes)?grant.scopes:[];
+  const expiry=time(grant?.expires_at);
+  const approved=source?.source==="Linemate"&&source.permission_verified===true&&
+    typeof expectedGrantId==="string"&&expectedGrantId.trim().length>0&&
+    !!grant&&grant.grant_id===expectedGrantId&&grant.grantor==="Linemate Inc."&&
+    grant.permission_type==="written"&&grant.source_method==="provider_authorized_export"&&
+    allowed.includes("structured_import")&&allowed.includes("public_display")&&
+    expiry&&Date.parse(expiry)>Date.now();
+  if(!approved)throw Error("Linemate ingestion blocked: independently verified WRITTEN grant required (LINEMATE_WRITTEN_GRANT_ID and structured_import/public_display scopes).");
+  return {grant_id:grant.grant_id,expires_at:expiry,scopes:["structured_import","public_display"]};
+}
 function makePublication(source,registry,previous={}){
-  if(source.source!=="Linemate"||source.permission_verified!==true)
-    throw Error("Authorized source input required: source=Linemate, permission_verified=true (do not assert permission without verification).");
+  const authorization=assertWrittenAuthorization(source);
   const {trends,errors}=matchSource(source,registry);
   const {rows:prediction_markets,errors:market_errors}=marketObservations(source);
   const games=(source.games||[]).map(g=>({...g,league:canonLeague(g.league),source:"Linemate",source_url:url(g.source_url),collected_at_utc:time(g.collected_at_utc)}))
     .filter(g=>LEAGUES.has(g.league)&&g.source_url&&g.collected_at_utc);
   return {
     schema_version:"LJ-DEMON-LORD-1",generated_at_utc:new Date().toISOString(),
-    status:"SOURCE_INTELLIGENCE_AVAILABLE",source_policy:"Authorized Linemate structured evidence; independent LSI exact-market validation required.",
+    status:"SOURCE_INTELLIGENCE_AVAILABLE",source_policy:"Written-permission-gated Linemate export; independent LSI exact-market validation required.",authorization_reference:authorization,
     provider_persona:"Parlee the Demon Lord",source_provider:"Linemate",games,trends,prediction_markets,
     picks:Array.isArray(previous.picks)?previous.picks:[],parlays:parlayEchoes(source,trends),
     conflicts:Array.isArray(previous.conflicts)?previous.conflicts:[],
@@ -145,4 +164,4 @@ fs.renameSync(temp,dstPath);
 process.stdout.write(JSON.stringify(pub.ingest_report)+"\n");
 }
 if(require.main===module){try{main();}catch(error){console.error(error.message);process.exitCode=1;}}
-module.exports={norm,identity,hit,matchSource,marketObservations,makePublication};
+module.exports={norm,identity,hit,matchSource,marketObservations,assertWrittenAuthorization,makePublication};
