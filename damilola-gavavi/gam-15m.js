@@ -1,5 +1,5 @@
 /* D&G — single-purpose, read-only 15-minute GAM.
- * Exchange quotes only. No inferred forecasts, orders, synthetic charts or perps.
+ * Observed quotes and explicitly experimental historical comparisons. No orders or synthetic charts.
  */
 (()=>{"use strict";
 const API="https://dg-market-intelligence.jordonnes-markets.workers.dev";
@@ -22,7 +22,8 @@ const MARKET_SLUGS={
  KXDOGE15M:"dogecoin-15-minute",KXBNB15M:"bnb-15-minute",KXHYPE15M:"hype-15-min",KXNEAR15M:"near-15m",KXZEC15M:"zcash-15min",
  KXEURUSD15M:"15minute-eurusd",KXGBPUSD15M:"15minute-gbpusd",KXUSDJPY15M:"fifteenmin-usdjpy",KXAUDUSD15M:"15minute-audusd",KXUSDCAD15M:"15minute-usdcad"
 };
-const evidenceOpen=new Set();
+const evidenceOpen=new Set(),amounts=new Map(),cardHistory=new Map();
+let historyLoading=false;
 const krakenCharts=new Map(),krakenSymbols={KXBTC15M:"BTC",KXETH15M:"ETH",KXSOL15M:"SOL",KXXRP15M:"XRP"};
 const $=x=>document.getElementById(x),quotes=new Map(),refreshing={active:false,started:0},tabCounts={All:MARKETS.length,Commodities:7,Crypto:9,FX:5};
 let activeTab="All",query="",lastRefresh=null,lastFailure=null,nextAllowedFetch=0,pollTimer=null;
@@ -47,7 +48,7 @@ function normalized(ticker,raw,record){
   down:Number.isFinite(na)&&na>0&&na<1?na:null};
 }
 const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
-function smallChart(def){
+function spotChart(def){
  const symbol=krakenSymbols[def.ticker];if(!symbol)return null;
  const wrapper=el("div","reference-chart");
  const title=el("div","reference-chart-caption","Kraken spot · last 30 completed 1m candles · not Kalshi settlement");
@@ -59,6 +60,33 @@ function smallChart(def){
  const line=document.createElementNS("http://www.w3.org/2000/svg","polyline");
  line.setAttribute("points",vals.map((v,i)=>(i*300/(vals.length-1)).toFixed(1)+","+(47-(v-low)/range*42).toFixed(1)).join(" "));
  line.setAttribute("fill","none");line.setAttribute("stroke","currentColor");line.setAttribute("stroke-width","2");line.setAttribute("vector-effect","non-scaling-stroke");svg.append(line);wrapper.append(svg);return wrapper;
+}
+function contractChart(def){
+ const wrapper=el("div","reference-chart contract-chart"),body=cardHistory.get(def.ticker),chart=body?.chart;
+ wrapper.append(el("div","reference-chart-caption","Kalshi YES quote midpoint · 0–100¢ · "+(chart?.mode==="PREVIOUS_ARCHIVED_CONTRACT"?"previous archived contract":"current 15-minute contract")));
+ const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 300 52");svg.setAttribute("preserveAspectRatio","none");svg.setAttribute("role","img");svg.setAttribute("aria-label",def.name+" Kalshi YES quote midpoint; gaps are not interpolated");
+ const axis=document.createElementNS(svg.namespaceURI,"path");axis.setAttribute("d","M0 26 H300");axis.setAttribute("stroke","#dfe8e1");axis.setAttribute("stroke-dasharray","3 3");svg.append(axis);
+ const open=Date.parse(chart?.open_time_utc),points=(chart?.candles||[]).filter(p=>Number.isFinite(p.yes_midpoint_dollars)&&p.yes_midpoint_dollars>=0&&p.yes_midpoint_dollars<=1&&Date.parse(p.time_utc)>open&&Date.parse(p.time_utc)<=open+900000).map(p=>({at:Date.parse(p.time_utc),value:p.yes_midpoint_dollars}));
+ let previous=null;
+ for(const p of points){const x=(p.at-open)/900000*300,y=49-p.value*46;
+  if(previous&&p.at-previous.at===60000){const line=document.createElementNS(svg.namespaceURI,"line");line.setAttribute("x1",String((previous.at-open)/900000*300));line.setAttribute("y1",String(49-previous.value*46));line.setAttribute("x2",String(x));line.setAttribute("y2",String(y));line.setAttribute("stroke","currentColor");line.setAttribute("stroke-width","2");line.setAttribute("vector-effect","non-scaling-stroke");svg.append(line)}
+  const dot=document.createElementNS(svg.namespaceURI,"circle");dot.setAttribute("cx",String(x));dot.setAttribute("cy",String(y));dot.setAttribute("r","1.7");dot.setAttribute("fill","currentColor");svg.append(dot);previous=p;
+ }
+ wrapper.append(svg);
+ wrapper.append(el("div","reference-chart-caption",points.length?(chart.ticker+" · "+points.length+" observed minutes · "+new Date(chart.close_time_utc).toLocaleTimeString("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit"})+" PT close"):(body?"No paired quote history available; no line invented":"Loading observed quote history…")));
+ return wrapper;
+}
+function readyComparison(def,record){
+ const body=cardHistory.get(def.ticker),c=body?.comparison,chart=body?.current_contract;
+ const last=chart?.candles?.filter(p=>Number.isFinite(p.yes_midpoint_dollars)).at(-1),at=Date.parse(last?.time_utc);
+ return record?.state==="OBSERVED"&&record.market?.yes_maps_to_up===true&&chart?.ticker===record.market.ticker&&Date.parse(record.market.close_time)>Date.now()&&Date.now()-record.observed<=90000&&Date.now()-Date.parse(body.retrieved_at_utc)<=90000&&Date.now()-at<=120000&&at<=Date.now()&&c?.state==="EXPERIMENTAL_SUGGESTION"&&["UP","DOWN"].includes(c.suggested_side)?c:null;
+}
+async function loadCardHistory(){
+ if(historyLoading||document.hidden||Date.now()<nextAllowedFetch)return;historyLoading=true;
+ try{for(const group of chunk(MARKETS,3)){
+  if(document.hidden||Date.now()<nextAllowedFetch)break;
+  await Promise.all(group.map(async def=>{try{const response=await fetch(API+"/api/card-history?series="+def.ticker,{signal:AbortSignal.timeout(20000)}),body=await response.json();if(body.series_ticker===def.ticker)cardHistory.set(def.ticker,body);if(!response.ok&&body.retry_at_utc)nextAllowedFetch=Math.max(nextAllowedFetch,Date.parse(body.retry_at_utc)||0)}catch{cardHistory.delete(def.ticker)}}));draw();
+ }}finally{historyLoading=false}
 }
 async function loadKrakenCharts(){
  await Promise.all(Object.values(krakenSymbols).map(async symbol=>{
@@ -72,7 +100,7 @@ async function loadKrakenCharts(){
 }
 function makeCard(def){
  const record=quotes.get(def.ticker),ok=record?.state==="OBSERVED"&&record.market&&Date.parse(record.market.close_time)>Date.now()&&Date.now()-record.observed<90000;
- const item=el("article","market");item.setAttribute("aria-label",def.name+" 15-minute market");
+ const item=el("article","market");item.dataset.series=def.ticker;item.setAttribute("aria-label",def.name+" 15-minute market");
  const top=el("div","market-top"),symbol=el("div","coin "+(def.group==="Commodities"?"gold":def.group.toLowerCase()),def.symbol);
  const heading=el("div","market-title"),h=el("h2","",def.name+" 15 min"),subtitle=el("p","",def.group==="FX"?"Foreign exchange":def.group);
  const pill=el("span","pill"+(ok?" live":""),ok?"QUOTE":"—");
@@ -81,14 +109,25 @@ function makeCard(def){
  strike.append(value);const clock=el("div","timer"+(ok&&Date.parse(record.market.close_time)-Date.now()<120000?" urgent":""),ok?timeLeft(record.market.close_time):"15-minute");
  if(ok){clock.dataset.closes=record.market.close_time;clock.setAttribute("aria-label","Time until market close")}
  details.append(strike,clock);
- const chart=smallChart(def);
+ const chart=contractChart(def),suggestion=readyComparison(def,record);
  const sides=el("div","sides");
- const binaryLabel=ok&&record.market.yes_maps_to_up===false;
+ const binaryLabel=ok&&record.market.yes_maps_to_up!==true;
  for(const [side,price] of [["up",ok?record.up:null],["down",ok?record.down:null]]){
-  const b=el("div","side "+side+(hasQuote({[side]:price},side)?"":" noquote"));
+  const selected=!!suggestion&&suggestion.suggested_side.toLowerCase()===side;
+  const b=el("div","side "+side+(hasQuote({[side]:price},side)?"":" noquote")+(selected?" gavavi-suggested":""));
+  if(selected){b.dataset.suggestedSeries=def.ticker;b.setAttribute("aria-label","Gavavi experimental ending suggestion: "+side);}
   const title=el("span","",binaryLabel?(side==="up"?"YES":"NO"):(side==="up"?"Up":"Down"));
-  const cost=el("span","quote",cents(price));b.append(title,cost);sides.append(b);
+  const cost=el("span","quote",cents(price));b.append(title,cost);if(selected)b.append(el("small","suggestion-label","Gavavi · experimental"));sides.append(b);
+  if(side==="up"){
+   const label=el("label","amount-label","Amount $"),input=el("input","contemplated-amount");input.type="text";input.inputMode="numeric";input.pattern="[1-9][0-9]{0,2}";input.maxLength=3;input.size=3;input.placeholder="0";input.autocomplete="off";input.dataset.amountSeries=def.ticker;input.setAttribute("aria-label",def.name+" contemplated position amount in dollars, 1 to 999; no order is placed");input.value=amounts.get(def.ticker)||"";
+   input.addEventListener("input",()=>{input.value=input.value.replace(/[^0-9]/g,"").replace(/^0+/,"").slice(0,3);amounts.set(def.ticker,input.value)});label.append(input);sides.append(label);
+  }
  }
+ const gavavi=el("div","gavavi-summary"),body=cardHistory.get(def.ticker),comparison=body?.comparison;
+ gavavi.append(el("strong","",suggestion?"Gavavi ending: "+suggestion.suggested_side+" · experimental":"Gavavi ending: WAIT"));
+ gavavi.append(el("div","",comparison?.matches?comparison.up+" UP / "+comparison.down+" DOWN in "+comparison.matches+" matched settled contracts · "+comparison.cohort:comparison?.reason||"Awaiting observed history comparison."));
+ if(suggestion)gavavi.append(el("small","","Historical majority; not a validated prediction or expected profit."));
+ gavavi.append(el("div","exit-plan","Cash-out time: — · Auto-sell price: —"),el("small","","No supported net exit edge. Amount is for planning only; no order is placed."));
  const bottom=el("div","bottom"),detail=el("span","",ok?"Observed market quote":"Quote unavailable"),link=el("a","","Kalshi ↗");
  link.href=ok&&MARKET_SLUGS[def.ticker]?("https://kalshi.com/markets/"+def.ticker.toLowerCase()+"/"+MARKET_SLUGS[def.ticker]+"/"+encodeURIComponent(record.market.ticker.toLowerCase())):SOURCES[def.group];link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","View "+def.name+" 15-minute markets on Kalshi");
  const research=el("details","card-research"),summary=el("summary","","Context & evidence");research.append(summary);
@@ -98,11 +137,15 @@ function makeCard(def){
  const context=ok?window.DGPatterns?.openingContext(krakenCharts.get(krakenSymbols[def.ticker])?.candles,record.market.open_time,record.market.price_to_beat_usd):null;
  research.append(el("div","",context?"Open reference: "+context.position+" target · "+(context.momentum?context.momentum+" into open (3m)":"opening momentum unavailable"):"Open context: awaiting matched underlying observations"));
  if(context)research.append(el("small","","Kraken spot reference; not the Kalshi settlement index."));
+ const coverage=body?.coverage;
+ if(coverage)research.append(el("div","","History coverage: "+coverage.recent_hours_available+" / 5 recent completed hours; "+coverage.selected_hours+" archived hours selected within 30 days. "+coverage.state));
+ if(comparison)research.append(el("div","","Same Pacific hour matches: "+comparison.same_pacific_hour_matches+"; same weekday + hour: "+comparison.same_weekday_hour_matches+". "+comparison.reason));
+ const spot=spotChart(def);if(spot)research.append(spot);
  research.append(el("div","","Damilola ending forecast: not yet validated"));
  const evidence=el("a","","Compare observed history ↗");evidence.href="pattern-lab.html?series="+encodeURIComponent(def.ticker);research.append(evidence);
  research.append(el("div","","Early-exit timing / target-fill edge: not yet validated"));
  const exitResearch=el("a","","Gavavi entry & exit research ↗");exitResearch.href="exit-lab.html?series="+encodeURIComponent(def.ticker);research.append(exitResearch);
- bottom.append(detail,link);item.append(top,details);if(chart)item.append(chart);item.append(sides,research,bottom);
+ bottom.append(detail,link);item.append(top,details);if(chart)item.append(chart);item.append(sides,gavavi,research,bottom);
  if(!ok&&record?.state==="RATE_LIMITED")detail.textContent="Source rate-limited";
  else if(!ok&&record?.state==="STALE_QUOTE")detail.textContent="Awaiting fresh quote";
  else if(!ok&&record?.state==="NO_OPEN_CONTRACT")detail.textContent="No open contract confirmed";
@@ -111,8 +154,10 @@ function makeCard(def){
 function draw(){
  const filtered=MARKETS.filter(x=>(activeTab==="All"||x.group===activeTab)&&
  (x.name.toLowerCase().includes(query)||x.ticker.toLowerCase().includes(query)||x.group.toLowerCase().includes(query)));
+ const activeInput=document.activeElement,focused=activeInput?.dataset?.amountSeries,selection=focused?activeInput.selectionStart:null;
  const fragment=document.createDocumentFragment();filtered.forEach(x=>fragment.append(makeCard(x)));
  const container=$("marketGrid");container.replaceChildren(fragment);
+ if(focused){const next=document.querySelector('[data-amount-series="'+focused+'"]');if(next){next.focus({preventScroll:true});next.setSelectionRange(selection,selection)}}
  if(!filtered.length)container.append(el("div","empty","No 15-minute markets match your search."));
  const observed=MARKETS.filter(x=>quotes.get(x.ticker)?.state==="OBSERVED").length;
  $("observedCount").textContent=observed+" / "+MARKETS.length;
@@ -160,10 +205,12 @@ async function reload(manual=false){
   }
  }finally{
   refreshing.active=false;$("refresh").disabled=false;draw();
+  loadCardHistory();
   clearTimeout(pollTimer);pollTimer=setTimeout(()=>reload(),90000);
  }
 }
 function tick(){
+ for(const b of document.querySelectorAll("[data-suggested-series]")){const def=MARKETS.find(x=>x.ticker===b.dataset.suggestedSeries);if(!readyComparison(def,quotes.get(def.ticker))){draw();break}}
  for(const x of document.querySelectorAll("[data-closes]"))x.textContent=timeLeft(x.dataset.closes);
  let changed=false,closed=false;
  for(const x of MARKETS){
@@ -178,5 +225,5 @@ document.querySelectorAll("[data-group]").forEach(b=>b.addEventListener("click",
 $("search").addEventListener("input",e=>{query=String(e.target.value||"").trim().toLowerCase();draw()});
 $("refresh").addEventListener("click",()=>reload(true));
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()-(lastRefresh||0)>70000)reload()});
-setInterval(tick,1000);draw();reload();loadKrakenCharts();setInterval(()=>{if(!document.hidden)loadKrakenCharts()},60000);
+setInterval(tick,1000);setInterval(()=>{loadCardHistory();draw()},60000);draw();reload();loadKrakenCharts();setInterval(()=>{if(!document.hidden)loadKrakenCharts()},60000);
 })();
