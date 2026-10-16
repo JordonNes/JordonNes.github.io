@@ -19,9 +19,9 @@ function eventIndex(board){
    const league=nameLeague(e.league);
    if(!SUPPORTED.has(league))continue;
    const start=stamp(e.commence_time||e.event_start_utc||e.event_start_pt);
-   for(const id of ids(e)){
+   for(const id of new Set(ids(e))){
      const k=league+"|"+id;
-     if(index.has(k)&&index.get(k)!==e)ambiguous.add(k);
+     if(index.has(k)&&index.get(k).event!==e)ambiguous.add(k);
      index.set(k,{event:e,start});
    }
  }
@@ -76,8 +76,8 @@ function main(){
  const root=path.resolve(__dirname,"..");
  const output=path.resolve(outPath),relative=path.relative(root,output);
  // Git-tracked or published data must NEVER serve as an ephemeral source store.
- if(!relative.startsWith(".parlee-runtime"+path.sep)&&relative!==".parlee-runtime"&&
-     !relative.startsWith(".."+path.sep)&&relative!==".."&&path.isAbsolute(relative)===false)
+ if(!(relative.startsWith(".parlee-runtime"+path.sep)||
+       relative.startsWith(".."+path.sep)||relative===".."))
    throw Error("Source research must be written to ignored .parlee-runtime/ or outside the repo, never Git-published data/");
  const read=p=>JSON.parse(fs.readFileSync(p,"utf8"));
  const cleaned=prune(read(sourcePath),read(boardPath));
