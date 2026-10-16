@@ -3,6 +3,15 @@
 const test=require("node:test");
 const assert=require("node:assert/strict");
 const bridge=require("./linemate_parlee_bridge.js");
+/* Synthetic CI fixture only. NEVER configure this as a production grant. */
+const SYNTHETIC_GRANT="TEST_ONLY_NON_LINEMATE_GRANT";
+process.env.LINEMATE_WRITTEN_GRANT_ID=SYNTHETIC_GRANT;
+const syntheticAuthorization={
+  grant_id:SYNTHETIC_GRANT,grantor:"Linemate Inc.",permission_type:"written",
+  source_method:"provider_authorized_export",
+  scopes:["structured_import","public_display"],expires_at:"2099-01-01T00:00:00Z"
+};
+
 const pick={
 prediction_id:"LSI-20261018-CJ-OVER-2515",league:"NFL",event_id:"ESPN-20261018-HOU-JAX",
 participant:"C.J. Stroud",market_class:"PLAYER_PROP",market:"Passing Yards",threshold:"251.5",
@@ -14,7 +23,7 @@ participant:"C.J. Stroud",market:"Passing Yards",threshold:251.5,side:"Over",
 market_book:"DraftKings",source_url:"https://linemate.io/nfl/trends",
 collected_at_utc:"2026-10-16T00:00:00Z",recent_form:{hits:7,games:10},
 head_to_head:{hits:2,games:3},venue_split:{hits:4,games:6},venue_split_kind:"Away"};
-const source={source:"Linemate",permission_verified:true,trends:[trend],games:[],parlays:[{
+const source={source:"Linemate",permission_verified:true,authorization:syntheticAuthorization,trends:[trend],games:[],parlays:[{
 league:"NFL",event_id:"20261018-HOU-JAX",title:"Synthetic parlay",source_url:"https://linemate.io/nfl",
 collected_at_utc:"2026-10-16T00:00:00Z",legs:["LM-synthetic-001"]}]};
 test("authoritative join recognizes exact event/player/side/threshold/book",()=>{
@@ -48,7 +57,7 @@ assert.equal(output.trends.length,0);
 assert.equal(output.ingest_report.errors[0].code,"INVALID_SOURCE");
 });
 test("permissions gate prevents unauthorized ingestion",()=>{
-assert.throws(()=>bridge.makePublication({...source,permission_verified:false},{predictions:[pick]}),/Authorized source input required/);
+assert.throws(()=>bridge.makePublication({...source,permission_verified:false},{predictions:[pick]}),/independently verified WRITTEN grant required/);
 });
 test("invalid denominators never create fake 100% statistics",()=>{
 assert.equal(bridge.hit({hits:3,games:0}),null);
@@ -121,5 +130,31 @@ test("market listing without quotes or liquidity is not invented",()=>{
  assert.equal(output.ingest_report.errors[0].code,"UNQUOTED_MARKET");
 });
 test("permission is required even for market-volume observations",()=>{
- assert.throws(()=>bridge.makePublication({...source,permission_verified:false,prediction_markets:[market]},{predictions:[pick]}),/Authorized source input required/);
+ assert.throws(()=>bridge.makePublication({...source,permission_verified:false,prediction_markets:[market]},{predictions:[pick]}),/independently verified WRITTEN grant required/);
+});
+
+test("source flag and permissive robots do not bypass published written-authorization requirement",()=>{
+  const noGrant={...source,authorization:undefined};
+  assert.throws(()=>bridge.makePublication(noGrant,{predictions:[pick]}),/WRITTEN grant required/);
+  const wrongGrant={...source,authorization:{...syntheticAuthorization,grant_id:"UNMATCHED"}};
+  assert.throws(()=>bridge.makePublication(wrongGrant,{predictions:[pick]}),/WRITTEN grant required/);
+  const absentEnv=process.env.LINEMATE_WRITTEN_GRANT_ID;
+  try {
+    delete process.env.LINEMATE_WRITTEN_GRANT_ID;
+    assert.throws(()=>bridge.makePublication(source,{predictions:[pick]}),/WRITTEN grant required/);
+  } finally {process.env.LINEMATE_WRITTEN_GRANT_ID=absentEnv;}
+});
+test("written grant must be current and explicitly cover import plus public display",()=>{
+  for(const change of [
+    {expires_at:"2020-01-01T00:00:00Z"},
+    {source_method:"indexed_search_snippets"},
+    {permission_type:"assumed"},
+    {scopes:["structured_import"]},
+    {scopes:["public_display"]},
+    {grantor:"Unknown"},
+  ]){
+    assert.throws(()=>bridge.makePublication({
+      ...source,authorization:{...syntheticAuthorization,...change}
+    },{predictions:[pick]}),/WRITTEN grant required/);
+  }
 });
