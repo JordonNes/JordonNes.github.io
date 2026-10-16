@@ -1,4 +1,5 @@
 import {servePredictionLedger} from "./prediction-ledger.js";
+import {serveCardHistory} from "./card-history.js";
 import {serveMarketLayers} from "./market-layers.js";
 import {cooldownUntil} from "./kalshi-public-cache.js";
 import {serveCoinbaseAdvancedReference} from "./coinbase-advanced-reference.js";
@@ -71,6 +72,7 @@ export default {
    const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
    return new Response(r.body,{status:r.status,headers:h});
   }
+  if(url.pathname==="/api/card-history"){const r=await serveCardHistory(request,env,ctx);const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/market-layers"){const r=await serveMarketLayers(request,env);const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/kalshi-status"){
    const kv=env.DG_ARCHIVE;
