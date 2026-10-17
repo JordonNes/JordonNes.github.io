@@ -8,11 +8,11 @@
   "trading_enabled": false,
   "execution_verified": false,
   "net_profit_validated": false,
-  "source_rows": 265,
-  "strict_verified_rows": 265,
+  "source_rows": 280,
+  "strict_verified_rows": 280,
   "rejected_rows": 0,
   "rejection_counts": {},
-  "training_cutoff_utc": "2026-10-12T13:50:00.000Z",
+  "training_cutoff_utc": "2026-10-12T17:35:00.000Z",
   "training_tickers": [
     "KXBTC15M-26OCT101645-45",
     "KXBTC15M-26OCT101700-00",
@@ -178,49 +178,64 @@
     "KXBTC15M-26OCT120900-00",
     "KXBTC15M-26OCT120915-15",
     "KXBTC15M-26OCT120930-30",
-    "KXBTC15M-26OCT120945-45"
+    "KXBTC15M-26OCT120945-45",
+    "KXBTC15M-26OCT121000-00",
+    "KXBTC15M-26OCT121015-15",
+    "KXBTC15M-26OCT121030-30",
+    "KXBTC15M-26OCT121045-45",
+    "KXBTC15M-26OCT121100-00",
+    "KXBTC15M-26OCT121115-15",
+    "KXBTC15M-26OCT121130-30",
+    "KXBTC15M-26OCT121145-45",
+    "KXBTC15M-26OCT121200-00",
+    "KXBTC15M-26OCT121215-15",
+    "KXBTC15M-26OCT121230-30",
+    "KXBTC15M-26OCT121245-45",
+    "KXBTC15M-26OCT121300-00",
+    "KXBTC15M-26OCT121315-15",
+    "KXBTC15M-26OCT121330-30"
   ],
-  "training_rows": 165,
+  "training_rows": 180,
   "bins": [
     {
-      "n": 8,
+      "n": 9,
       "yes": 1
     },
     {
-      "n": 17,
+      "n": 18,
       "yes": 2
     },
     {
-      "n": 17,
+      "n": 19,
       "yes": 4
     },
     {
-      "n": 11,
+      "n": 13,
       "yes": 2
     },
     {
+      "n": 28,
+      "yes": 11
+    },
+    {
       "n": 26,
-      "yes": 10
-    },
-    {
-      "n": 23,
-      "yes": 14
-    },
-    {
-      "n": 20,
-      "yes": 13
+      "yes": 16
     },
     {
       "n": 21,
-      "yes": 18
+      "yes": 13
+    },
+    {
+      "n": 23,
+      "yes": 20
     },
     {
       "n": 18,
       "yes": 14
     },
     {
-      "n": 4,
-      "yes": 4
+      "n": 5,
+      "yes": 5
     }
   ],
   "alpha": 24,
@@ -236,25 +251,25 @@
     "audit_version": 2,
     "holdout_training_frozen": true,
     "series_ticker": "KXBTC15M",
-    "source_samples": 265,
-    "verified_settlement_timestamp_rows": 265,
+    "source_samples": 280,
+    "verified_settlement_timestamp_rows": 280,
     "label_availability_fully_verified": true,
-    "evaluable_forecasts": 205,
+    "evaluable_forecasts": 220,
     "earliest_asof_utc": "2026-10-10T20:35:00.000Z",
-    "latest_asof_utc": "2026-10-16T03:35:00.000Z",
+    "latest_asof_utc": "2026-10-17T10:35:00.000Z",
     "historical_source_observations_only": true,
-    "tuning_samples": 105,
+    "tuning_samples": 120,
     "holdout_samples": 100,
     "selected_model": "market",
     "tuning_brier": {
-      "market": 0.160408,
-      "bucket": 0.163363,
-      "shrink85": 0.16535
+      "market": 0.15856,
+      "bucket": 0.159996,
+      "shrink85": 0.163943
     },
     "holdout_brier": {
-      "market": 0.182888,
-      "bucket": 0.180703,
-      "shrink85": 0.185407
+      "market": 0.194277,
+      "bucket": 0.194328,
+      "shrink85": 0.195466
     },
     "holdout_improvement_brier": 0,
     "improvement_95pct_block_interval": [
@@ -266,9 +281,9 @@
     "warning": "Even a historical positive locked holdout is not sufficient for live signals: forward tests, fees, liquidity, regime consistency, and risk policy remain unverified."
   },
   "warning": "Historical gate only. No live probability may be advertised as validated; prospective performance and execution economics remain unverified.",
-  "source_dataset_sha256": "17e18e3b4eedece0d96dd4175401edd1c5bba92328de21f7b8eee9204138bdfd",
-  "frozen_training_sha256": "19156ad95b8f66877935d58067ad8359905ccb76bebe7e2473ee52f07a49b842",
+  "source_dataset_sha256": "72dc4c906326725ad834650f804952a985b44df438f4e9d9d8f4b97124a07c4b",
+  "frozen_training_sha256": "d19d2ed22961557df11d87bbd741b9fd93354a201e4f5da206c79f4145bf65ee",
   "engine_sha256": "d54850cdfa02eb681e9fe61de93341c26e0cdda3ba0de17ccc8b370b0a1d2eb9",
-  "artifact_id": "damilola-calibration-r1-KXBTC15M-b2d20451e8d630989e54",
-  "built_at_utc": "2026-10-17T05:43:46.803Z"
+  "artifact_id": "damilola-calibration-r1-KXBTC15M-89c007328635b0e2b759",
+  "built_at_utc": "2026-10-17T10:59:05.509Z"
 }
