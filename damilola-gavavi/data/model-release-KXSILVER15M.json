@@ -8,11 +8,11 @@
   "trading_enabled": false,
   "execution_verified": false,
   "net_profit_validated": false,
-  "source_rows": 250,
-  "strict_verified_rows": 250,
+  "source_rows": 265,
+  "strict_verified_rows": 265,
   "rejected_rows": 0,
   "rejection_counts": {},
-  "training_cutoff_utc": "2026-10-12T10:05:00.000Z",
+  "training_cutoff_utc": "2026-10-12T13:50:00.000Z",
   "training_tickers": [
     "KXSILVER15M-26OCT081415-15",
     "KXSILVER15M-26OCT081430-30",
@@ -163,28 +163,43 @@
     "KXSILVER15M-26OCT120515-15",
     "KXSILVER15M-26OCT120530-30",
     "KXSILVER15M-26OCT120545-45",
-    "KXSILVER15M-26OCT120600-00"
+    "KXSILVER15M-26OCT120600-00",
+    "KXSILVER15M-26OCT120615-15",
+    "KXSILVER15M-26OCT120630-30",
+    "KXSILVER15M-26OCT120645-45",
+    "KXSILVER15M-26OCT120700-00",
+    "KXSILVER15M-26OCT120715-15",
+    "KXSILVER15M-26OCT120730-30",
+    "KXSILVER15M-26OCT120745-45",
+    "KXSILVER15M-26OCT120800-00",
+    "KXSILVER15M-26OCT120815-15",
+    "KXSILVER15M-26OCT120830-30",
+    "KXSILVER15M-26OCT120845-45",
+    "KXSILVER15M-26OCT120900-00",
+    "KXSILVER15M-26OCT120915-15",
+    "KXSILVER15M-26OCT120930-30",
+    "KXSILVER15M-26OCT120945-45"
   ],
-  "training_rows": 150,
+  "training_rows": 165,
   "bins": [
     {
       "n": 5,
       "yes": 2
     },
     {
-      "n": 13,
+      "n": 17,
+      "yes": 4
+    },
+    {
+      "n": 20,
       "yes": 4
     },
     {
       "n": 18,
-      "yes": 3
+      "yes": 5
     },
     {
-      "n": 16,
-      "yes": 4
-    },
-    {
-      "n": 18,
+      "n": 20,
       "yes": 10
     },
     {
@@ -192,16 +207,16 @@
       "yes": 15
     },
     {
-      "n": 17,
-      "yes": 11
+      "n": 20,
+      "yes": 13
     },
     {
       "n": 19,
       "yes": 15
     },
     {
-      "n": 18,
-      "yes": 15
+      "n": 20,
+      "yes": 17
     },
     {
       "n": 3,
@@ -209,7 +224,7 @@
     }
   ],
   "alpha": 24,
-  "selected_model": "shrink85",
+  "selected_model": "market",
   "locked_holdout": {
     "state": "NO_STATISTICALLY_SUPPORTED_EDGE",
     "go_eligible": false,
@@ -221,39 +236,39 @@
     "audit_version": 2,
     "holdout_training_frozen": true,
     "series_ticker": "KXSILVER15M",
-    "source_samples": 250,
-    "verified_settlement_timestamp_rows": 250,
+    "source_samples": 265,
+    "verified_settlement_timestamp_rows": 265,
     "label_availability_fully_verified": true,
-    "evaluable_forecasts": 190,
+    "evaluable_forecasts": 205,
     "earliest_asof_utc": "2026-10-08T18:05:00.000Z",
-    "latest_asof_utc": "2026-10-16T03:35:00.000Z",
+    "latest_asof_utc": "2026-10-16T20:50:00.000Z",
     "historical_source_observations_only": true,
-    "tuning_samples": 90,
+    "tuning_samples": 105,
     "holdout_samples": 100,
-    "selected_model": "shrink85",
+    "selected_model": "market",
     "tuning_brier": {
-      "market": 0.210765,
-      "bucket": 0.216875,
-      "shrink85": 0.209984
+      "market": 0.20329,
+      "bucket": 0.210862,
+      "shrink85": 0.203506
     },
     "holdout_brier": {
-      "market": 0.177556,
-      "bucket": 0.184016,
-      "shrink85": 0.181453
+      "market": 0.18043,
+      "bucket": 0.181445,
+      "shrink85": 0.184276
     },
-    "holdout_improvement_brier": -0.003897,
+    "holdout_improvement_brier": 0,
     "improvement_95pct_block_interval": [
-      -0.008234,
-      0.000927
+      0,
+      0
     ],
     "block_size": 8,
     "selection_policy": "model chosen on prior resolved tuning only; no selecting best test model; holdout never trains or selects",
     "warning": "Even a historical positive locked holdout is not sufficient for live signals: forward tests, fees, liquidity, regime consistency, and risk policy remain unverified."
   },
   "warning": "Historical gate only. No live probability may be advertised as validated; prospective performance and execution economics remain unverified.",
-  "source_dataset_sha256": "ead48af0a0d1519c31e15db96b1926755271f3edb60556d23cdcaa9476fe6db3",
-  "frozen_training_sha256": "9eab09093b31d72f81ffe4800c4899a667b0fc058bd373bef62aec1a43706b0e",
+  "source_dataset_sha256": "20f37f63c84ae45a9a0905a93ad6d81b5e067a2d9b3cb8ef5307b5956688c511",
+  "frozen_training_sha256": "967da098b6261a8d0ec6bf25d8f792d225030641312c495c657a1210722f8a26",
   "engine_sha256": "d54850cdfa02eb681e9fe61de93341c26e0cdda3ba0de17ccc8b370b0a1d2eb9",
-  "artifact_id": "damilola-calibration-r1-KXSILVER15M-62c266575aa2b6e31e01",
-  "built_at_utc": "2026-10-17T14:18:36.531Z"
+  "artifact_id": "damilola-calibration-r1-KXSILVER15M-7121cafb926afae28389",
+  "built_at_utc": "2026-10-17T17:21:32.273Z"
 }
