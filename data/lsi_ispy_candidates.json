@@ -1,6 +1,6 @@
 {
   "schema_version": "LJ-ISPY-CANDIDATES-2",
-  "generated_at_utc": "2026-10-17T09:46:15.566986+00:00",
+  "generated_at_utc": "2026-10-17T14:07:41.748309+00:00",
   "engine": "JINX_COMBINED_DISCOVERY_2",
   "candidate_count": 60,
   "signals": [
@@ -389,33 +389,33 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.71,
-      "mean_similarity_pct": 74.82,
-      "closest_similarity_pct": 78.84,
-      "observed_rate_pct": 72.08,
+      "effective_sample_size": 24.73,
+      "mean_similarity_pct": 74.75,
+      "closest_similarity_pct": 78.73,
+      "observed_rate_pct": 72.18,
       "baseline_rate_pct": 40.84,
       "baseline_sample_size": 742,
-      "lift_pp": 31.24,
+      "lift_pp": 31.35,
       "stability_score": 0.75,
       "neighborhoods": {
         "5": {
-          "rate_pct": 41.75,
-          "lift_pp": 0.92,
+          "rate_pct": 41.71,
+          "lift_pp": 0.87,
           "n": 5
         },
         "10": {
-          "rate_pct": 69.63,
-          "lift_pp": 28.79,
+          "rate_pct": 69.6,
+          "lift_pp": 28.77,
           "n": 10
         },
         "25": {
-          "rate_pct": 72.08,
-          "lift_pp": 31.24,
+          "rate_pct": 72.18,
+          "lift_pp": 31.35,
           "n": 25
         },
         "50": {
-          "rate_pct": 53.45,
-          "lift_pp": 12.61,
+          "rate_pct": 53.22,
+          "lift_pp": 12.38,
           "n": 50
         }
       },
@@ -423,7 +423,7 @@
         {
           "game_id": "2025_07_NO_CHI",
           "label": "2025-10-19 CHI vs NO",
-          "similarity_pct": 78.8,
+          "similarity_pct": 78.7,
           "outcome_occurred": true,
           "focus_score": 26.0,
           "opp_score": 14.0,
@@ -433,7 +433,7 @@
         {
           "game_id": "2024_11_IND_NYJ",
           "label": "2024-11-17 IND vs NYJ",
-          "similarity_pct": 77.6,
+          "similarity_pct": 77.5,
           "outcome_occurred": false,
           "focus_score": 28.0,
           "opp_score": 27.0,
@@ -453,7 +453,7 @@
         {
           "game_id": "2023_06_NE_LV",
           "label": "2023-10-15 LV vs NE",
-          "similarity_pct": 75.7,
+          "similarity_pct": 75.6,
           "outcome_occurred": true,
           "focus_score": 21.0,
           "opp_score": 17.0,
@@ -463,7 +463,7 @@
         {
           "game_id": "2025_08_CHI_BAL",
           "label": "2025-10-26 CHI vs BAL",
-          "similarity_pct": 75.6,
+          "similarity_pct": 75.5,
           "outcome_occurred": false,
           "focus_score": 16.0,
           "opp_score": 30.0,
@@ -481,7 +481,255 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 72.1% of the time versus a 40.8% contextual baseline. The top-25 analog neighborhood averages 74.8% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 72.2% of the time versus a 40.8% contextual baseline. The top-25 analog neighborhood averages 74.7% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    },
+    {
+      "signal_id": "ISPY-5EFB3FD4DB60E58613",
+      "pattern_key": "886e92beba610163",
+      "status": "VALIDATED",
+      "direction": "SUPPORT",
+      "league": "NFL",
+      "focus_team": "PIT",
+      "opponent": "TB",
+      "title": "PIT — wins the game",
+      "outcome_code": "WIN",
+      "outcome": "wins the game",
+      "cohort_definition": "Games most similar to this measured state: passing efficiency -3.26, rushing efficiency 0.47, opponent rush-defense allowance 72.80, opponent passing form 190.4 yds.",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -3.2609556948884433,
+          "display": "-3.26"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 0.46519894265784806,
+          "display": "0.47"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "low",
+          "value": 72.8,
+          "display": "72.80"
+        },
+        {
+          "feature": "opp_pass_yards_l5",
+          "label": "opponent passing form",
+          "direction": "low",
+          "value": 190.4,
+          "display": "190.4 yds"
+        },
+        {
+          "feature": "opp_win_pct",
+          "label": "opponent win rate",
+          "direction": "low",
+          "value": 0.2,
+          "display": "20%"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 101.2,
+          "display": "101.2 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 246.8,
+          "display": "246.8 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 234.6,
+          "display": "234.60"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 133.0,
+          "display": "133.0 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 5.319999999999999,
+          "display": "5.32"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 3.75,
+          "display": "3.75"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.2623529411764706,
+          "display": "26%"
+        },
+        {
+          "feature": "temperature_f",
+          "label": "temperature",
+          "value": 78.4,
+          "display": "78°F"
+        },
+        {
+          "feature": "wind_mph",
+          "label": "wind",
+          "value": 16.0,
+          "display": "16.0 mph"
+        },
+        {
+          "feature": "rain_in",
+          "label": "rain",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_in",
+          "label": "precipitation",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_probability",
+          "label": "precipitation probability",
+          "value": 0.0,
+          "display": "0.0%"
+        },
+        {
+          "feature": "wind_gust_mph",
+          "label": "wind gust",
+          "value": 21.5,
+          "display": "21.5 mph"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.88,
+      "mean_similarity_pct": 71.44,
+      "closest_similarity_pct": 73.91,
+      "observed_rate_pct": 76.36,
+      "baseline_rate_pct": 46.36,
+      "baseline_sample_size": 742,
+      "lift_pp": 30.0,
+      "stability_score": 1.0,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 100.0,
+          "lift_pp": 53.64,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 90.27,
+          "lift_pp": 43.9,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 76.36,
+          "lift_pp": 30.0,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 68.95,
+          "lift_pp": 22.58,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2020_07_SF_NE",
+          "label": "2020-10-25 SF vs NE",
+          "similarity_pct": 73.9,
+          "outcome_occurred": true,
+          "focus_score": 33.0,
+          "opp_score": 6.0,
+          "pass_yards": 277.0,
+          "rush_yards": 197.0
+        },
+        {
+          "game_id": "2023_15_KC_NE",
+          "label": "2023-12-17 KC vs NE",
+          "similarity_pct": 73.5,
+          "outcome_occurred": true,
+          "focus_score": 27.0,
+          "opp_score": 17.0,
+          "pass_yards": 309.0,
+          "rush_yards": 43.0
+        },
+        {
+          "game_id": "2019_05_BUF_TEN",
+          "label": "2019-10-06 BUF vs TEN",
+          "similarity_pct": 73.5,
+          "outcome_occurred": true,
+          "focus_score": 14.0,
+          "opp_score": 7.0,
+          "pass_yards": 219.0,
+          "rush_yards": 109.0
+        },
+        {
+          "game_id": "2023_13_LAC_NE",
+          "label": "2023-12-03 LAC vs NE",
+          "similarity_pct": 72.7,
+          "outcome_occurred": true,
+          "focus_score": 6.0,
+          "opp_score": 0.0,
+          "pass_yards": 212.0,
+          "rush_yards": 29.0
+        },
+        {
+          "game_id": "2022_07_NYJ_DEN",
+          "label": "2022-10-23 NYJ vs DEN",
+          "similarity_pct": 72.5,
+          "outcome_occurred": true,
+          "focus_score": 16.0,
+          "opp_score": 9.0,
+          "pass_yards": 121.0,
+          "rush_yards": 155.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_06_PIT_TB",
+          "label": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "focus_team": "PIT",
+          "opponent": "TB"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 76.4% of the time versus a 46.4% contextual baseline. The top-25 analog neighborhood averages 71.4% similarity with effective sample 24.9. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -1951,254 +2199,6 @@
       }
     },
     {
-      "signal_id": "ISPY-5EFB3FD4DB60E58613",
-      "pattern_key": "886e92beba610163",
-      "status": "VALIDATED",
-      "direction": "SUPPORT",
-      "league": "NFL",
-      "focus_team": "PIT",
-      "opponent": "TB",
-      "title": "PIT — wins the game",
-      "outcome_code": "WIN",
-      "outcome": "wins the game",
-      "cohort_definition": "Games most similar to this measured state: passing efficiency -3.26, rushing efficiency 0.47, opponent rush-defense allowance 72.80, opponent passing form 190.4 yds.",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -3.2609556948884433,
-          "display": "-3.26"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "high",
-          "value": 0.46519894265784806,
-          "display": "0.47"
-        },
-        {
-          "feature": "opp_rush_allowed_l5",
-          "label": "opponent rush-defense allowance",
-          "direction": "low",
-          "value": 72.8,
-          "display": "72.80"
-        },
-        {
-          "feature": "opp_pass_yards_l5",
-          "label": "opponent passing form",
-          "direction": "low",
-          "value": 190.4,
-          "display": "190.4 yds"
-        },
-        {
-          "feature": "opp_win_pct",
-          "label": "opponent win rate",
-          "direction": "low",
-          "value": 0.2,
-          "display": "20%"
-        }
-      ],
-      "current_state": [
-        {
-          "feature": "focus_rush_yards_l5",
-          "label": "team rushing form",
-          "value": 101.2,
-          "display": "101.2 yds"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "value": 246.8,
-          "display": "246.8 yds"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "value": 234.6,
-          "display": "234.60"
-        },
-        {
-          "feature": "opp_rush_yards_l5",
-          "label": "opponent rushing form",
-          "value": 133.0,
-          "display": "133.0 yds"
-        },
-        {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "value": 5.319999999999999,
-          "display": "5.32"
-        },
-        {
-          "feature": "opp_front7_activity_l5",
-          "label": "opponent front-seven activity proxy",
-          "value": 3.75,
-          "display": "3.75"
-        },
-        {
-          "feature": "postseason_pressure_proxy",
-          "label": "postseason-pressure proxy",
-          "value": 0.2623529411764706,
-          "display": "26%"
-        },
-        {
-          "feature": "temperature_f",
-          "label": "temperature",
-          "value": 78.4,
-          "display": "78°F"
-        },
-        {
-          "feature": "wind_mph",
-          "label": "wind",
-          "value": 16.0,
-          "display": "16.0 mph"
-        },
-        {
-          "feature": "rain_in",
-          "label": "rain",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_in",
-          "label": "precipitation",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_probability",
-          "label": "precipitation probability",
-          "value": 0.0,
-          "display": "0.0%"
-        },
-        {
-          "feature": "wind_gust_mph",
-          "label": "wind gust",
-          "value": 21.5,
-          "display": "21.5 mph"
-        }
-      ],
-      "sample_size": 25,
-      "effective_sample_size": 24.88,
-      "mean_similarity_pct": 71.5,
-      "closest_similarity_pct": 74.02,
-      "observed_rate_pct": 72.73,
-      "baseline_rate_pct": 46.36,
-      "baseline_sample_size": 742,
-      "lift_pp": 26.36,
-      "stability_score": 1.0,
-      "neighborhoods": {
-        "5": {
-          "rate_pct": 100.0,
-          "lift_pp": 53.64,
-          "n": 5
-        },
-        "10": {
-          "rate_pct": 90.34,
-          "lift_pp": 43.98,
-          "n": 10
-        },
-        "25": {
-          "rate_pct": 72.73,
-          "lift_pp": 26.36,
-          "n": 25
-        },
-        "50": {
-          "rate_pct": 70.93,
-          "lift_pp": 24.57,
-          "n": 50
-        }
-      },
-      "analogs": [
-        {
-          "game_id": "2020_07_SF_NE",
-          "label": "2020-10-25 SF vs NE",
-          "similarity_pct": 74.0,
-          "outcome_occurred": true,
-          "focus_score": 33.0,
-          "opp_score": 6.0,
-          "pass_yards": 277.0,
-          "rush_yards": 197.0
-        },
-        {
-          "game_id": "2023_15_KC_NE",
-          "label": "2023-12-17 KC vs NE",
-          "similarity_pct": 73.6,
-          "outcome_occurred": true,
-          "focus_score": 27.0,
-          "opp_score": 17.0,
-          "pass_yards": 309.0,
-          "rush_yards": 43.0
-        },
-        {
-          "game_id": "2019_05_BUF_TEN",
-          "label": "2019-10-06 BUF vs TEN",
-          "similarity_pct": 73.6,
-          "outcome_occurred": true,
-          "focus_score": 14.0,
-          "opp_score": 7.0,
-          "pass_yards": 219.0,
-          "rush_yards": 109.0
-        },
-        {
-          "game_id": "2023_13_LAC_NE",
-          "label": "2023-12-03 LAC vs NE",
-          "similarity_pct": 72.6,
-          "outcome_occurred": true,
-          "focus_score": 6.0,
-          "opp_score": 0.0,
-          "pass_yards": 212.0,
-          "rush_yards": 29.0
-        },
-        {
-          "game_id": "2026_05_IND_PIT",
-          "label": "2026-10-11 PIT vs IND",
-          "similarity_pct": 72.5,
-          "outcome_occurred": true,
-          "focus_score": 34.0,
-          "opp_score": 22.0,
-          "pass_yards": 235.0,
-          "rush_yards": 127.0
-        }
-      ],
-      "current_matches": [
-        {
-          "event_id": "2026_06_PIT_TB",
-          "label": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
-          "focus_team": "PIT",
-          "opponent": "TB"
-        }
-      ],
-      "recommended_poms": [],
-      "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 72.7% of the time versus a 46.4% contextual baseline. The top-25 analog neighborhood averages 71.5% similarity with effective sample 24.9. This is an association in comparable game states, not proof that any single condition causes the outcome.",
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "method": {
-        "similarity": "weighted mixed-feature Gower-like distance",
-        "neighborhood": "top 25 of top 50 historical analogs",
-        "raw_sample_gate": false,
-        "effective_sample_required": true
-      }
-    },
-    {
       "signal_id": "ISPY-7FE522F97932268475",
       "pattern_key": "abf74b8bbdb8a298",
       "status": "VALIDATED",
@@ -2590,13 +2590,13 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.76,
-      "mean_similarity_pct": 73.88,
-      "closest_similarity_pct": 76.78,
-      "observed_rate_pct": 11.41,
+      "effective_sample_size": 24.72,
+      "mean_similarity_pct": 73.82,
+      "closest_similarity_pct": 76.89,
+      "observed_rate_pct": 11.46,
       "baseline_rate_pct": 37.06,
       "baseline_sample_size": 742,
-      "lift_pp": -25.65,
+      "lift_pp": -25.6,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -2610,13 +2610,13 @@
           "n": 10
         },
         "25": {
-          "rate_pct": 11.41,
-          "lift_pp": -25.65,
+          "rate_pct": 11.46,
+          "lift_pp": -25.6,
           "n": 25
         },
         "50": {
-          "rate_pct": 22.66,
-          "lift_pp": -14.4,
+          "rate_pct": 22.73,
+          "lift_pp": -14.33,
           "n": 50
         }
       },
@@ -2624,7 +2624,7 @@
         {
           "game_id": "2019_07_NO_CHI",
           "label": "2019-10-20 CHI vs NO",
-          "similarity_pct": 76.8,
+          "similarity_pct": 76.9,
           "outcome_occurred": false,
           "focus_score": 25.0,
           "opp_score": 36.0,
@@ -2632,19 +2632,9 @@
           "rush_yards": 17.0
         },
         {
-          "game_id": "2021_07_CIN_BAL",
-          "label": "2021-10-24 CIN vs BAL",
-          "similarity_pct": 76.1,
-          "outcome_occurred": false,
-          "focus_score": 41.0,
-          "opp_score": 17.0,
-          "pass_yards": 416.0,
-          "rush_yards": 111.0
-        },
-        {
           "game_id": "2026_04_PIT_CLE",
           "label": "2026-10-01 CLE vs PIT",
-          "similarity_pct": 76.0,
+          "similarity_pct": 76.1,
           "outcome_occurred": false,
           "focus_score": 27.0,
           "opp_score": 24.0,
@@ -2652,9 +2642,19 @@
           "rush_yards": 112.0
         },
         {
+          "game_id": "2021_07_CIN_BAL",
+          "label": "2021-10-24 CIN vs BAL",
+          "similarity_pct": 76.0,
+          "outcome_occurred": false,
+          "focus_score": 41.0,
+          "opp_score": 17.0,
+          "pass_yards": 416.0,
+          "rush_yards": 111.0
+        },
+        {
           "game_id": "2023_04_DET_GB",
           "label": "2023-09-28 GB vs DET",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.8,
           "outcome_occurred": false,
           "focus_score": 20.0,
           "opp_score": 34.0,
@@ -2664,7 +2664,7 @@
         {
           "game_id": "2022_06_DAL_PHI",
           "label": "2022-10-16 DAL vs PHI",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.7,
           "outcome_occurred": false,
           "focus_score": 17.0,
           "opp_score": 26.0,
@@ -2682,7 +2682,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 11.4% of the time versus a 37.1% contextual baseline. The top-25 analog neighborhood averages 73.9% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 11.5% of the time versus a 37.1% contextual baseline. The top-25 analog neighborhood averages 73.8% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -2838,33 +2838,33 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.8,
-      "mean_similarity_pct": 72.51,
-      "closest_similarity_pct": 76.22,
-      "observed_rate_pct": 27.94,
+      "effective_sample_size": 24.79,
+      "mean_similarity_pct": 72.44,
+      "closest_similarity_pct": 76.1,
+      "observed_rate_pct": 27.97,
       "baseline_rate_pct": 53.23,
       "baseline_sample_size": 742,
-      "lift_pp": -25.3,
+      "lift_pp": -25.27,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 41.2,
-          "lift_pp": -12.03,
+          "rate_pct": 41.26,
+          "lift_pp": -11.98,
           "n": 5
         },
         "10": {
-          "rate_pct": 20.69,
-          "lift_pp": -32.54,
+          "rate_pct": 20.9,
+          "lift_pp": -32.33,
           "n": 10
         },
         "25": {
-          "rate_pct": 27.94,
-          "lift_pp": -25.3,
+          "rate_pct": 27.97,
+          "lift_pp": -25.27,
           "n": 25
         },
         "50": {
-          "rate_pct": 31.18,
-          "lift_pp": -22.05,
+          "rate_pct": 31.16,
+          "lift_pp": -22.08,
           "n": 50
         }
       },
@@ -2872,7 +2872,7 @@
         {
           "game_id": "2023_15_KC_NE",
           "label": "2023-12-17 NE vs KC",
-          "similarity_pct": 76.2,
+          "similarity_pct": 76.1,
           "outcome_occurred": false,
           "focus_score": 17.0,
           "opp_score": 27.0,
@@ -2882,7 +2882,7 @@
         {
           "game_id": "2023_07_LV_CHI",
           "label": "2023-10-22 CHI vs LV",
-          "similarity_pct": 76.0,
+          "similarity_pct": 76.1,
           "outcome_occurred": true,
           "focus_score": 30.0,
           "opp_score": 12.0,
@@ -2892,7 +2892,7 @@
         {
           "game_id": "2021_15_ARI_DET",
           "label": "2021-12-19 DET vs ARI",
-          "similarity_pct": 74.2,
+          "similarity_pct": 74.1,
           "outcome_occurred": true,
           "focus_score": 30.0,
           "opp_score": 12.0,
@@ -2902,7 +2902,7 @@
         {
           "game_id": "2022_07_NYJ_DEN",
           "label": "2022-10-23 DEN vs NYJ",
-          "similarity_pct": 73.8,
+          "similarity_pct": 74.0,
           "outcome_occurred": false,
           "focus_score": 9.0,
           "opp_score": 16.0,
@@ -2912,7 +2912,7 @@
         {
           "game_id": "2019_08_DEN_IND",
           "label": "2019-10-27 DEN vs IND",
-          "similarity_pct": 73.6,
+          "similarity_pct": 73.5,
           "outcome_occurred": false,
           "focus_score": 13.0,
           "opp_score": 15.0,
@@ -2930,7 +2930,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 27.9% of the time versus a 53.2% contextual baseline. The top-25 analog neighborhood averages 72.5% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 28.0% of the time versus a 53.2% contextual baseline. The top-25 analog neighborhood averages 72.4% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -3309,12 +3309,12 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.8,
-      "mean_similarity_pct": 73.68,
-      "closest_similarity_pct": 75.98,
-      "observed_rate_pct": 69.03,
+      "mean_similarity_pct": 73.6,
+      "closest_similarity_pct": 75.87,
+      "observed_rate_pct": 68.94,
       "baseline_rate_pct": 46.36,
       "baseline_sample_size": 742,
-      "lift_pp": 22.67,
+      "lift_pp": 22.58,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -3323,18 +3323,18 @@
           "n": 5
         },
         "10": {
-          "rate_pct": 71.73,
-          "lift_pp": 25.37,
+          "rate_pct": 61.45,
+          "lift_pp": 15.08,
           "n": 10
         },
         "25": {
-          "rate_pct": 69.03,
-          "lift_pp": 22.67,
+          "rate_pct": 68.94,
+          "lift_pp": 22.58,
           "n": 25
         },
         "50": {
-          "rate_pct": 72.41,
-          "lift_pp": 26.05,
+          "rate_pct": 72.34,
+          "lift_pp": 25.98,
           "n": 50
         }
       },
@@ -3342,7 +3342,7 @@
         {
           "game_id": "2026_04_TEN_BAL",
           "label": "2026-10-04 BAL vs TEN",
-          "similarity_pct": 76.0,
+          "similarity_pct": 75.9,
           "outcome_occurred": true,
           "focus_score": 24.0,
           "opp_score": 18.0,
@@ -3352,7 +3352,7 @@
         {
           "game_id": "2020_10_MIN_CHI",
           "label": "2020-11-16 MIN vs CHI",
-          "similarity_pct": 75.6,
+          "similarity_pct": 75.5,
           "outcome_occurred": true,
           "focus_score": 19.0,
           "opp_score": 13.0,
@@ -3362,7 +3362,7 @@
         {
           "game_id": "2022_14_PHI_NYG",
           "label": "2022-12-11 PHI vs NYG",
-          "similarity_pct": 74.6,
+          "similarity_pct": 74.5,
           "outcome_occurred": true,
           "focus_score": 48.0,
           "opp_score": 22.0,
@@ -3372,7 +3372,7 @@
         {
           "game_id": "2021_07_CIN_BAL",
           "label": "2021-10-24 BAL vs CIN",
-          "similarity_pct": 74.5,
+          "similarity_pct": 74.4,
           "outcome_occurred": false,
           "focus_score": 17.0,
           "opp_score": 41.0,
@@ -3382,7 +3382,7 @@
         {
           "game_id": "2023_04_DET_GB",
           "label": "2023-09-28 DET vs GB",
-          "similarity_pct": 74.4,
+          "similarity_pct": 74.3,
           "outcome_occurred": true,
           "focus_score": 34.0,
           "opp_score": 20.0,
@@ -3400,7 +3400,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 69.0% of the time versus a 46.4% contextual baseline. The top-25 analog neighborhood averages 73.7% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 68.9% of the time versus a 46.4% contextual baseline. The top-25 analog neighborhood averages 73.6% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -3563,13 +3563,13 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.76,
-      "mean_similarity_pct": 73.88,
-      "closest_similarity_pct": 76.78,
-      "observed_rate_pct": 16.15,
+      "effective_sample_size": 24.72,
+      "mean_similarity_pct": 73.82,
+      "closest_similarity_pct": 76.89,
+      "observed_rate_pct": 16.22,
       "baseline_rate_pct": 38.41,
       "baseline_sample_size": 742,
-      "lift_pp": -22.26,
+      "lift_pp": -22.19,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -3578,18 +3578,18 @@
           "n": 5
         },
         "10": {
-          "rate_pct": 9.73,
-          "lift_pp": -28.68,
+          "rate_pct": 9.69,
+          "lift_pp": -28.72,
           "n": 10
         },
         "25": {
-          "rate_pct": 16.15,
-          "lift_pp": -22.26,
+          "rate_pct": 16.22,
+          "lift_pp": -22.19,
           "n": 25
         },
         "50": {
-          "rate_pct": 27.39,
-          "lift_pp": -11.02,
+          "rate_pct": 27.46,
+          "lift_pp": -10.95,
           "n": 50
         }
       },
@@ -3597,7 +3597,7 @@
         {
           "game_id": "2019_07_NO_CHI",
           "label": "2019-10-20 CHI vs NO",
-          "similarity_pct": 76.8,
+          "similarity_pct": 76.9,
           "outcome_occurred": false,
           "focus_score": 25.0,
           "opp_score": 36.0,
@@ -3605,19 +3605,9 @@
           "rush_yards": 17.0
         },
         {
-          "game_id": "2021_07_CIN_BAL",
-          "label": "2021-10-24 CIN vs BAL",
-          "similarity_pct": 76.1,
-          "outcome_occurred": false,
-          "focus_score": 41.0,
-          "opp_score": 17.0,
-          "pass_yards": 416.0,
-          "rush_yards": 111.0
-        },
-        {
           "game_id": "2026_04_PIT_CLE",
           "label": "2026-10-01 CLE vs PIT",
-          "similarity_pct": 76.0,
+          "similarity_pct": 76.1,
           "outcome_occurred": false,
           "focus_score": 27.0,
           "opp_score": 24.0,
@@ -3625,9 +3615,19 @@
           "rush_yards": 112.0
         },
         {
+          "game_id": "2021_07_CIN_BAL",
+          "label": "2021-10-24 CIN vs BAL",
+          "similarity_pct": 76.0,
+          "outcome_occurred": false,
+          "focus_score": 41.0,
+          "opp_score": 17.0,
+          "pass_yards": 416.0,
+          "rush_yards": 111.0
+        },
+        {
           "game_id": "2023_04_DET_GB",
           "label": "2023-09-28 GB vs DET",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.8,
           "outcome_occurred": false,
           "focus_score": 20.0,
           "opp_score": 34.0,
@@ -3637,7 +3637,7 @@
         {
           "game_id": "2022_06_DAL_PHI",
           "label": "2022-10-16 DAL vs PHI",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.7,
           "outcome_occurred": false,
           "focus_score": 17.0,
           "opp_score": 26.0,
@@ -3655,7 +3655,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 16.2% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 73.9% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 16.2% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 73.8% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -3776,12 +3776,12 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.46,
-      "mean_similarity_pct": 73.72,
-      "closest_similarity_pct": 79.39,
-      "observed_rate_pct": 18.81,
+      "mean_similarity_pct": 73.61,
+      "closest_similarity_pct": 79.27,
+      "observed_rate_pct": 18.8,
       "baseline_rate_pct": 40.84,
       "baseline_sample_size": 742,
-      "lift_pp": -22.03,
+      "lift_pp": -22.04,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -3795,13 +3795,13 @@
           "n": 10
         },
         "25": {
-          "rate_pct": 18.81,
-          "lift_pp": -22.03,
+          "rate_pct": 18.8,
+          "lift_pp": -22.04,
           "n": 25
         },
         "50": {
-          "rate_pct": 24.88,
-          "lift_pp": -15.96,
+          "rate_pct": 24.89,
+          "lift_pp": -15.95,
           "n": 50
         }
       },
@@ -3809,7 +3809,7 @@
         {
           "game_id": "2026_05_BAL_ATL",
           "label": "2026-10-11 ATL vs BAL",
-          "similarity_pct": 79.4,
+          "similarity_pct": 79.3,
           "outcome_occurred": false,
           "focus_score": 23.0,
           "opp_score": 30.0,
@@ -3819,7 +3819,7 @@
         {
           "game_id": "2022_04_CLE_ATL",
           "label": "2022-10-02 ATL vs CLE",
-          "similarity_pct": 76.2,
+          "similarity_pct": 76.1,
           "outcome_occurred": true,
           "focus_score": 23.0,
           "opp_score": 20.0,
@@ -3829,7 +3829,7 @@
         {
           "game_id": "2022_06_SF_ATL",
           "label": "2022-10-16 ATL vs SF",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.8,
           "outcome_occurred": false,
           "focus_score": 28.0,
           "opp_score": 14.0,
@@ -3839,7 +3839,7 @@
         {
           "game_id": "2024_06_ARI_GB",
           "label": "2024-10-13 GB vs ARI",
-          "similarity_pct": 75.5,
+          "similarity_pct": 75.4,
           "outcome_occurred": false,
           "focus_score": 34.0,
           "opp_score": 13.0,
@@ -3849,7 +3849,7 @@
         {
           "game_id": "2020_07_SF_NE",
           "label": "2020-10-25 NE vs SF",
-          "similarity_pct": 75.5,
+          "similarity_pct": 75.4,
           "outcome_occurred": false,
           "focus_score": 6.0,
           "opp_score": 33.0,
@@ -3867,7 +3867,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 18.8% of the time versus a 40.8% contextual baseline. The top-25 analog neighborhood averages 73.7% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 18.8% of the time versus a 40.8% contextual baseline. The top-25 analog neighborhood averages 73.6% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -4691,32 +4691,32 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.79,
-      "mean_similarity_pct": 74.52,
-      "closest_similarity_pct": 77.77,
-      "observed_rate_pct": 15.0,
+      "mean_similarity_pct": 74.46,
+      "closest_similarity_pct": 77.66,
+      "observed_rate_pct": 15.02,
       "baseline_rate_pct": 35.71,
       "baseline_sample_size": 742,
-      "lift_pp": -20.72,
+      "lift_pp": -20.69,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 18.48,
-          "lift_pp": -17.24,
+          "rate_pct": 18.54,
+          "lift_pp": -17.17,
           "n": 5
         },
         "10": {
-          "rate_pct": 9.4,
-          "lift_pp": -26.32,
+          "rate_pct": 9.37,
+          "lift_pp": -26.35,
           "n": 10
         },
         "25": {
-          "rate_pct": 15.0,
-          "lift_pp": -20.72,
+          "rate_pct": 15.02,
+          "lift_pp": -20.69,
           "n": 25
         },
         "50": {
-          "rate_pct": 22.82,
-          "lift_pp": -12.9,
+          "rate_pct": 26.48,
+          "lift_pp": -9.24,
           "n": 50
         }
       },
@@ -4724,7 +4724,7 @@
         {
           "game_id": "2024_09_LAC_CLE",
           "label": "2024-11-03 CLE vs LAC",
-          "similarity_pct": 77.8,
+          "similarity_pct": 77.7,
           "outcome_occurred": false,
           "focus_score": 10.0,
           "opp_score": 27.0,
@@ -4752,24 +4752,24 @@
           "rush_yards": 98.0
         },
         {
-          "game_id": "2022_05_IND_DEN",
-          "label": "2022-10-06 IND vs DEN",
-          "similarity_pct": 75.4,
-          "outcome_occurred": false,
-          "focus_score": 12.0,
-          "opp_score": 9.0,
-          "pass_yards": 251.0,
-          "rush_yards": 106.0
-        },
-        {
           "game_id": "2023_06_NYG_BUF",
           "label": "2023-10-15 NYG vs BUF",
-          "similarity_pct": 75.4,
+          "similarity_pct": 75.3,
           "outcome_occurred": false,
           "focus_score": 9.0,
           "opp_score": 14.0,
           "pass_yards": 200.0,
           "rush_yards": 132.0
+        },
+        {
+          "game_id": "2022_05_IND_DEN",
+          "label": "2022-10-06 IND vs DEN",
+          "similarity_pct": 75.3,
+          "outcome_occurred": false,
+          "focus_score": 12.0,
+          "opp_score": 9.0,
+          "pass_yards": 251.0,
+          "rush_yards": 106.0
         }
       ],
       "current_matches": [
@@ -4783,254 +4783,6 @@
       "recommended_poms": [],
       "actionable_now": false,
       "interpretation": "Across the closest historical analogs, this outcome occurred 15.0% of the time versus a 35.7% contextual baseline. The top-25 analog neighborhood averages 74.5% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "method": {
-        "similarity": "weighted mixed-feature Gower-like distance",
-        "neighborhood": "top 25 of top 50 historical analogs",
-        "raw_sample_gate": false,
-        "effective_sample_required": true
-      }
-    },
-    {
-      "signal_id": "ISPY-57B02C65F18EEB040D",
-      "pattern_key": "b1ffdb970cd567d9",
-      "status": "VALIDATED",
-      "direction": "SUPPORT",
-      "league": "NFL",
-      "focus_team": "PIT",
-      "opponent": "TB",
-      "title": "PIT — finishes at least 10% below its entering passing-attempt form",
-      "outcome_code": "PASS_VOLUME_DROP",
-      "outcome": "finishes at least 10% below its entering passing-attempt form",
-      "cohort_definition": "Games most similar to this measured state: passing efficiency -3.26, rushing efficiency 0.47, opponent rush-defense allowance 72.80, opponent passing form 190.4 yds.",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -3.2609556948884433,
-          "display": "-3.26"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "high",
-          "value": 0.46519894265784806,
-          "display": "0.47"
-        },
-        {
-          "feature": "opp_rush_allowed_l5",
-          "label": "opponent rush-defense allowance",
-          "direction": "low",
-          "value": 72.8,
-          "display": "72.80"
-        },
-        {
-          "feature": "opp_pass_yards_l5",
-          "label": "opponent passing form",
-          "direction": "low",
-          "value": 190.4,
-          "display": "190.4 yds"
-        },
-        {
-          "feature": "opp_win_pct",
-          "label": "opponent win rate",
-          "direction": "low",
-          "value": 0.2,
-          "display": "20%"
-        }
-      ],
-      "current_state": [
-        {
-          "feature": "focus_rush_yards_l5",
-          "label": "team rushing form",
-          "value": 101.2,
-          "display": "101.2 yds"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "value": 246.8,
-          "display": "246.8 yds"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "value": 234.6,
-          "display": "234.60"
-        },
-        {
-          "feature": "opp_rush_yards_l5",
-          "label": "opponent rushing form",
-          "value": 133.0,
-          "display": "133.0 yds"
-        },
-        {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "value": 5.319999999999999,
-          "display": "5.32"
-        },
-        {
-          "feature": "opp_front7_activity_l5",
-          "label": "opponent front-seven activity proxy",
-          "value": 3.75,
-          "display": "3.75"
-        },
-        {
-          "feature": "postseason_pressure_proxy",
-          "label": "postseason-pressure proxy",
-          "value": 0.2623529411764706,
-          "display": "26%"
-        },
-        {
-          "feature": "temperature_f",
-          "label": "temperature",
-          "value": 78.4,
-          "display": "78°F"
-        },
-        {
-          "feature": "wind_mph",
-          "label": "wind",
-          "value": 16.0,
-          "display": "16.0 mph"
-        },
-        {
-          "feature": "rain_in",
-          "label": "rain",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_in",
-          "label": "precipitation",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_probability",
-          "label": "precipitation probability",
-          "value": 0.0,
-          "display": "0.0%"
-        },
-        {
-          "feature": "wind_gust_mph",
-          "label": "wind gust",
-          "value": 21.5,
-          "display": "21.5 mph"
-        }
-      ],
-      "sample_size": 25,
-      "effective_sample_size": 24.88,
-      "mean_similarity_pct": 71.5,
-      "closest_similarity_pct": 74.02,
-      "observed_rate_pct": 55.95,
-      "baseline_rate_pct": 35.85,
-      "baseline_sample_size": 742,
-      "lift_pp": 20.1,
-      "stability_score": 1.0,
-      "neighborhoods": {
-        "5": {
-          "rate_pct": 59.28,
-          "lift_pp": 23.43,
-          "n": 5
-        },
-        "10": {
-          "rate_pct": 69.64,
-          "lift_pp": 33.8,
-          "n": 10
-        },
-        "25": {
-          "rate_pct": 55.95,
-          "lift_pp": 20.1,
-          "n": 25
-        },
-        "50": {
-          "rate_pct": 44.6,
-          "lift_pp": 8.75,
-          "n": 50
-        }
-      },
-      "analogs": [
-        {
-          "game_id": "2020_07_SF_NE",
-          "label": "2020-10-25 SF vs NE",
-          "similarity_pct": 74.0,
-          "outcome_occurred": true,
-          "focus_score": 33.0,
-          "opp_score": 6.0,
-          "pass_yards": 277.0,
-          "rush_yards": 197.0
-        },
-        {
-          "game_id": "2023_15_KC_NE",
-          "label": "2023-12-17 KC vs NE",
-          "similarity_pct": 73.6,
-          "outcome_occurred": false,
-          "focus_score": 27.0,
-          "opp_score": 17.0,
-          "pass_yards": 309.0,
-          "rush_yards": 43.0
-        },
-        {
-          "game_id": "2019_05_BUF_TEN",
-          "label": "2019-10-06 BUF vs TEN",
-          "similarity_pct": 73.6,
-          "outcome_occurred": true,
-          "focus_score": 14.0,
-          "opp_score": 7.0,
-          "pass_yards": 219.0,
-          "rush_yards": 109.0
-        },
-        {
-          "game_id": "2023_13_LAC_NE",
-          "label": "2023-12-03 LAC vs NE",
-          "similarity_pct": 72.6,
-          "outcome_occurred": false,
-          "focus_score": 6.0,
-          "opp_score": 0.0,
-          "pass_yards": 212.0,
-          "rush_yards": 29.0
-        },
-        {
-          "game_id": "2026_05_IND_PIT",
-          "label": "2026-10-11 PIT vs IND",
-          "similarity_pct": 72.5,
-          "outcome_occurred": true,
-          "focus_score": 34.0,
-          "opp_score": 22.0,
-          "pass_yards": 235.0,
-          "rush_yards": 127.0
-        }
-      ],
-      "current_matches": [
-        {
-          "event_id": "2026_06_PIT_TB",
-          "label": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
-          "focus_team": "PIT",
-          "opponent": "TB"
-        }
-      ],
-      "recommended_poms": [],
-      "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 55.9% of the time versus a 35.8% contextual baseline. The top-25 analog neighborhood averages 71.5% similarity with effective sample 24.9. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -5617,32 +5369,32 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.72,
-      "mean_similarity_pct": 71.54,
-      "closest_similarity_pct": 75.82,
-      "observed_rate_pct": 65.5,
+      "mean_similarity_pct": 71.64,
+      "closest_similarity_pct": 75.71,
+      "observed_rate_pct": 65.48,
       "baseline_rate_pct": 46.36,
       "baseline_sample_size": 742,
-      "lift_pp": 19.14,
+      "lift_pp": 19.11,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 81.8,
-          "lift_pp": 35.44,
+          "rate_pct": 81.75,
+          "lift_pp": 35.39,
           "n": 5
         },
         "10": {
-          "rate_pct": 80.9,
-          "lift_pp": 34.54,
+          "rate_pct": 80.87,
+          "lift_pp": 34.51,
           "n": 10
         },
         "25": {
-          "rate_pct": 65.5,
-          "lift_pp": 19.14,
+          "rate_pct": 65.48,
+          "lift_pp": 19.11,
           "n": 25
         },
         "50": {
-          "rate_pct": 68.48,
-          "lift_pp": 22.12,
+          "rate_pct": 68.83,
+          "lift_pp": 22.47,
           "n": 50
         }
       },
@@ -5650,7 +5402,7 @@
         {
           "game_id": "2023_08_NYJ_NYG",
           "label": "2023-10-29 NYJ vs NYG",
-          "similarity_pct": 75.8,
+          "similarity_pct": 75.7,
           "outcome_occurred": true,
           "focus_score": 13.0,
           "opp_score": 10.0,
@@ -5660,7 +5412,7 @@
         {
           "game_id": "2020_07_BUF_NYJ",
           "label": "2020-10-25 BUF vs NYJ",
-          "similarity_pct": 73.2,
+          "similarity_pct": 73.3,
           "outcome_occurred": true,
           "focus_score": 18.0,
           "opp_score": 10.0,
@@ -5670,7 +5422,7 @@
         {
           "game_id": "2021_09_LAC_PHI",
           "label": "2021-11-07 LAC vs PHI",
-          "similarity_pct": 72.9,
+          "similarity_pct": 73.0,
           "outcome_occurred": true,
           "focus_score": 27.0,
           "opp_score": 24.0,
@@ -5680,7 +5432,7 @@
         {
           "game_id": "2025_07_NO_CHI",
           "label": "2025-10-19 CHI vs NO",
-          "similarity_pct": 72.4,
+          "similarity_pct": 72.5,
           "outcome_occurred": true,
           "focus_score": 26.0,
           "opp_score": 14.0,
@@ -5690,7 +5442,7 @@
         {
           "game_id": "2021_09_LV_NYG",
           "label": "2021-11-07 LV vs NYG",
-          "similarity_pct": 72.3,
+          "similarity_pct": 72.5,
           "outcome_occurred": false,
           "focus_score": 16.0,
           "opp_score": 23.0,
@@ -5708,7 +5460,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 65.5% of the time versus a 46.4% contextual baseline. The top-25 analog neighborhood averages 71.5% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 65.5% of the time versus a 46.4% contextual baseline. The top-25 analog neighborhood averages 71.6% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -5864,33 +5616,33 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.7,
-      "mean_similarity_pct": 71.95,
-      "closest_similarity_pct": 77.88,
-      "observed_rate_pct": 34.35,
+      "effective_sample_size": 24.71,
+      "mean_similarity_pct": 72.04,
+      "closest_similarity_pct": 77.77,
+      "observed_rate_pct": 34.31,
       "baseline_rate_pct": 53.23,
       "baseline_sample_size": 742,
-      "lift_pp": -18.88,
+      "lift_pp": -18.93,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 16.56,
-          "lift_pp": -36.67,
+          "rate_pct": 16.61,
+          "lift_pp": -36.62,
           "n": 5
         },
         "10": {
-          "rate_pct": 27.3,
-          "lift_pp": -25.94,
+          "rate_pct": 27.26,
+          "lift_pp": -25.98,
           "n": 10
         },
         "25": {
-          "rate_pct": 34.35,
-          "lift_pp": -18.88,
+          "rate_pct": 34.31,
+          "lift_pp": -18.93,
           "n": 25
         },
         "50": {
-          "rate_pct": 46.31,
-          "lift_pp": -6.92,
+          "rate_pct": 48.16,
+          "lift_pp": -5.07,
           "n": 50
         }
       },
@@ -5898,7 +5650,7 @@
         {
           "game_id": "2023_08_NYJ_NYG",
           "label": "2023-10-29 NYG vs NYJ",
-          "similarity_pct": 77.9,
+          "similarity_pct": 77.8,
           "outcome_occurred": false,
           "focus_score": 10.0,
           "opp_score": 13.0,
@@ -5908,7 +5660,7 @@
         {
           "game_id": "2025_07_NO_CHI",
           "label": "2025-10-19 NO vs CHI",
-          "similarity_pct": 74.0,
+          "similarity_pct": 74.1,
           "outcome_occurred": false,
           "focus_score": 14.0,
           "opp_score": 26.0,
@@ -5918,7 +5670,7 @@
         {
           "game_id": "2022_09_CAR_CIN",
           "label": "2022-11-06 CAR vs CIN",
-          "similarity_pct": 73.9,
+          "similarity_pct": 74.0,
           "outcome_occurred": false,
           "focus_score": 21.0,
           "opp_score": 42.0,
@@ -5928,7 +5680,7 @@
         {
           "game_id": "2019_07_LAC_TEN",
           "label": "2019-10-20 TEN vs LAC",
-          "similarity_pct": 73.2,
+          "similarity_pct": 73.3,
           "outcome_occurred": true,
           "focus_score": 23.0,
           "opp_score": 20.0,
@@ -5938,7 +5690,7 @@
         {
           "game_id": "2022_07_PIT_MIA",
           "label": "2022-10-23 PIT vs MIA",
-          "similarity_pct": 73.0,
+          "similarity_pct": 73.1,
           "outcome_occurred": false,
           "focus_score": 10.0,
           "opp_score": 16.0,
@@ -5956,7 +5708,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 34.4% of the time versus a 53.2% contextual baseline. The top-25 analog neighborhood averages 72.0% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 34.3% of the time versus a 53.2% contextual baseline. The top-25 analog neighborhood averages 72.0% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -6119,33 +5871,33 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.76,
-      "mean_similarity_pct": 73.88,
-      "closest_similarity_pct": 76.78,
-      "observed_rate_pct": 34.86,
+      "effective_sample_size": 24.72,
+      "mean_similarity_pct": 73.82,
+      "closest_similarity_pct": 76.89,
+      "observed_rate_pct": 34.41,
       "baseline_rate_pct": 53.23,
       "baseline_sample_size": 742,
-      "lift_pp": -18.38,
+      "lift_pp": -18.82,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 41.75,
-          "lift_pp": -11.49,
+          "rate_pct": 41.82,
+          "lift_pp": -11.42,
           "n": 5
         },
         "10": {
-          "rate_pct": 22.18,
-          "lift_pp": -31.05,
+          "rate_pct": 22.24,
+          "lift_pp": -30.99,
           "n": 10
         },
         "25": {
-          "rate_pct": 34.86,
-          "lift_pp": -18.38,
+          "rate_pct": 34.41,
+          "lift_pp": -18.82,
           "n": 25
         },
         "50": {
-          "rate_pct": 35.26,
-          "lift_pp": -17.98,
+          "rate_pct": 35.36,
+          "lift_pp": -17.87,
           "n": 50
         }
       },
@@ -6153,7 +5905,7 @@
         {
           "game_id": "2019_07_NO_CHI",
           "label": "2019-10-20 CHI vs NO",
-          "similarity_pct": 76.8,
+          "similarity_pct": 76.9,
           "outcome_occurred": false,
           "focus_score": 25.0,
           "opp_score": 36.0,
@@ -6161,19 +5913,9 @@
           "rush_yards": 17.0
         },
         {
-          "game_id": "2021_07_CIN_BAL",
-          "label": "2021-10-24 CIN vs BAL",
-          "similarity_pct": 76.1,
-          "outcome_occurred": true,
-          "focus_score": 41.0,
-          "opp_score": 17.0,
-          "pass_yards": 416.0,
-          "rush_yards": 111.0
-        },
-        {
           "game_id": "2026_04_PIT_CLE",
           "label": "2026-10-01 CLE vs PIT",
-          "similarity_pct": 76.0,
+          "similarity_pct": 76.1,
           "outcome_occurred": true,
           "focus_score": 27.0,
           "opp_score": 24.0,
@@ -6181,9 +5923,19 @@
           "rush_yards": 112.0
         },
         {
+          "game_id": "2021_07_CIN_BAL",
+          "label": "2021-10-24 CIN vs BAL",
+          "similarity_pct": 76.0,
+          "outcome_occurred": true,
+          "focus_score": 41.0,
+          "opp_score": 17.0,
+          "pass_yards": 416.0,
+          "rush_yards": 111.0
+        },
+        {
           "game_id": "2023_04_DET_GB",
           "label": "2023-09-28 GB vs DET",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.8,
           "outcome_occurred": false,
           "focus_score": 20.0,
           "opp_score": 34.0,
@@ -6193,7 +5945,7 @@
         {
           "game_id": "2022_06_DAL_PHI",
           "label": "2022-10-16 DAL vs PHI",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.7,
           "outcome_occurred": false,
           "focus_score": 17.0,
           "opp_score": 26.0,
@@ -6211,7 +5963,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 34.9% of the time versus a 53.2% contextual baseline. The top-25 analog neighborhood averages 73.9% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 34.4% of the time versus a 53.2% contextual baseline. The top-25 analog neighborhood averages 73.8% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -7093,12 +6845,12 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.8,
-      "mean_similarity_pct": 73.68,
-      "closest_similarity_pct": 75.98,
-      "observed_rate_pct": 20.45,
+      "mean_similarity_pct": 73.6,
+      "closest_similarity_pct": 75.87,
+      "observed_rate_pct": 20.42,
       "baseline_rate_pct": 38.41,
       "baseline_sample_size": 742,
-      "lift_pp": -17.96,
+      "lift_pp": -17.99,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -7107,18 +6859,18 @@
           "n": 5
         },
         "10": {
-          "rate_pct": 20.18,
-          "lift_pp": -18.23,
+          "rate_pct": 9.78,
+          "lift_pp": -28.63,
           "n": 10
         },
         "25": {
-          "rate_pct": 20.45,
-          "lift_pp": -17.96,
+          "rate_pct": 20.42,
+          "lift_pp": -17.99,
           "n": 25
         },
         "50": {
-          "rate_pct": 25.73,
-          "lift_pp": -12.68,
+          "rate_pct": 25.7,
+          "lift_pp": -12.71,
           "n": 50
         }
       },
@@ -7126,7 +6878,7 @@
         {
           "game_id": "2026_04_TEN_BAL",
           "label": "2026-10-04 BAL vs TEN",
-          "similarity_pct": 76.0,
+          "similarity_pct": 75.9,
           "outcome_occurred": false,
           "focus_score": 24.0,
           "opp_score": 18.0,
@@ -7136,7 +6888,7 @@
         {
           "game_id": "2020_10_MIN_CHI",
           "label": "2020-11-16 MIN vs CHI",
-          "similarity_pct": 75.6,
+          "similarity_pct": 75.5,
           "outcome_occurred": true,
           "focus_score": 19.0,
           "opp_score": 13.0,
@@ -7146,7 +6898,7 @@
         {
           "game_id": "2022_14_PHI_NYG",
           "label": "2022-12-11 PHI vs NYG",
-          "similarity_pct": 74.6,
+          "similarity_pct": 74.5,
           "outcome_occurred": false,
           "focus_score": 48.0,
           "opp_score": 22.0,
@@ -7156,7 +6908,7 @@
         {
           "game_id": "2021_07_CIN_BAL",
           "label": "2021-10-24 BAL vs CIN",
-          "similarity_pct": 74.5,
+          "similarity_pct": 74.4,
           "outcome_occurred": false,
           "focus_score": 17.0,
           "opp_score": 41.0,
@@ -7166,7 +6918,7 @@
         {
           "game_id": "2023_04_DET_GB",
           "label": "2023-09-28 DET vs GB",
-          "similarity_pct": 74.4,
+          "similarity_pct": 74.3,
           "outcome_occurred": false,
           "focus_score": 34.0,
           "opp_score": 20.0,
@@ -7184,7 +6936,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 20.5% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 73.7% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 20.4% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 73.6% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -7341,32 +7093,32 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.72,
-      "mean_similarity_pct": 71.54,
-      "closest_similarity_pct": 75.82,
-      "observed_rate_pct": 68.87,
+      "mean_similarity_pct": 71.64,
+      "closest_similarity_pct": 75.71,
+      "observed_rate_pct": 68.85,
       "baseline_rate_pct": 50.94,
       "baseline_sample_size": 742,
-      "lift_pp": 17.93,
+      "lift_pp": 17.91,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 81.26,
-          "lift_pp": 30.31,
+          "rate_pct": 81.2,
+          "lift_pp": 30.26,
           "n": 5
         },
         "10": {
-          "rate_pct": 80.83,
-          "lift_pp": 29.89,
+          "rate_pct": 80.8,
+          "lift_pp": 29.86,
           "n": 10
         },
         "25": {
-          "rate_pct": 68.87,
-          "lift_pp": 17.93,
+          "rate_pct": 68.85,
+          "lift_pp": 17.91,
           "n": 25
         },
         "50": {
-          "rate_pct": 66.12,
-          "lift_pp": 15.17,
+          "rate_pct": 66.21,
+          "lift_pp": 15.27,
           "n": 50
         }
       },
@@ -7374,7 +7126,7 @@
         {
           "game_id": "2023_08_NYJ_NYG",
           "label": "2023-10-29 NYJ vs NYG",
-          "similarity_pct": 75.8,
+          "similarity_pct": 75.7,
           "outcome_occurred": true,
           "focus_score": 13.0,
           "opp_score": 10.0,
@@ -7384,7 +7136,7 @@
         {
           "game_id": "2020_07_BUF_NYJ",
           "label": "2020-10-25 BUF vs NYJ",
-          "similarity_pct": 73.2,
+          "similarity_pct": 73.3,
           "outcome_occurred": true,
           "focus_score": 18.0,
           "opp_score": 10.0,
@@ -7394,7 +7146,7 @@
         {
           "game_id": "2021_09_LAC_PHI",
           "label": "2021-11-07 LAC vs PHI",
-          "similarity_pct": 72.9,
+          "similarity_pct": 73.0,
           "outcome_occurred": false,
           "focus_score": 27.0,
           "opp_score": 24.0,
@@ -7404,7 +7156,7 @@
         {
           "game_id": "2025_07_NO_CHI",
           "label": "2025-10-19 CHI vs NO",
-          "similarity_pct": 72.4,
+          "similarity_pct": 72.5,
           "outcome_occurred": true,
           "focus_score": 26.0,
           "opp_score": 14.0,
@@ -7414,7 +7166,7 @@
         {
           "game_id": "2021_09_LV_NYG",
           "label": "2021-11-07 LV vs NYG",
-          "similarity_pct": 72.3,
+          "similarity_pct": 72.5,
           "outcome_occurred": true,
           "focus_score": 16.0,
           "opp_score": 23.0,
@@ -7432,7 +7184,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 68.9% of the time versus a 50.9% contextual baseline. The top-25 analog neighborhood averages 71.5% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 68.9% of the time versus a 50.9% contextual baseline. The top-25 analog neighborhood averages 71.6% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -7714,45 +7466,38 @@
       }
     },
     {
-      "signal_id": "ISPY-2218EE359683A2B46F",
-      "pattern_key": "e00f035327b995dd",
+      "signal_id": "ISPY-5FF8AEF5656468FB0F",
+      "pattern_key": "26a74df4ad38e529",
       "status": "VALIDATED",
-      "direction": "SUPPORT",
+      "direction": "CHALLENGE",
       "league": "NFL",
-      "focus_team": "PIT",
-      "opponent": "TB",
-      "title": "PIT — holds the opponent at least 10% below its entering rushing-yard form",
-      "outcome_code": "OPP_RUSH_BELOW_FORM",
-      "outcome": "holds the opponent at least 10% below its entering rushing-yard form",
-      "cohort_definition": "Games most similar to this measured state: passing efficiency -3.26, rushing efficiency 0.47, opponent rush-defense allowance 72.80, opponent passing form 190.4 yds.",
+      "focus_team": "NYG",
+      "opponent": "NO",
+      "title": "NYG — finishes at least 10% below its entering passing-yard form",
+      "outcome_code": "PASS_BELOW_FORM",
+      "outcome": "finishes at least 10% below its entering passing-yard form",
+      "cohort_definition": "Games most similar to this measured state: rushing efficiency -4.28, passing efficiency 2.53, opponent rush-defense allowance 148.80, opponent win rate 20%.",
       "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -3.2609556948884433,
-          "display": "-3.26"
-        },
         {
           "feature": "focus_rushing_epa_l5",
           "label": "rushing efficiency",
+          "direction": "low",
+          "value": -4.276153132256611,
+          "display": "-4.28"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
           "direction": "high",
-          "value": 0.46519894265784806,
-          "display": "0.47"
+          "value": 2.526753098307854,
+          "display": "2.53"
         },
         {
           "feature": "opp_rush_allowed_l5",
           "label": "opponent rush-defense allowance",
-          "direction": "low",
-          "value": 72.8,
-          "display": "72.80"
-        },
-        {
-          "feature": "opp_pass_yards_l5",
-          "label": "opponent passing form",
-          "direction": "low",
-          "value": 190.4,
-          "display": "190.4 yds"
+          "direction": "high",
+          "value": 148.8,
+          "display": "148.80"
         },
         {
           "feature": "opp_win_pct",
@@ -7760,44 +7505,51 @@
           "direction": "low",
           "value": 0.2,
           "display": "20%"
+        },
+        {
+          "feature": "opp_secondary_activity_l5",
+          "label": "opponent secondary disruption proxy",
+          "direction": "low",
+          "value": 2.9,
+          "display": "2.90"
         }
       ],
       "current_state": [
         {
           "feature": "focus_rush_yards_l5",
           "label": "team rushing form",
-          "value": 101.2,
-          "display": "101.2 yds"
+          "value": 109.0,
+          "display": "109.0 yds"
         },
         {
           "feature": "focus_pass_yards_l5",
           "label": "team passing form",
-          "value": 246.8,
-          "display": "246.8 yds"
+          "value": 211.0,
+          "display": "211.0 yds"
         },
         {
           "feature": "opp_pass_allowed_l5",
           "label": "opponent pass-defense allowance",
-          "value": 234.6,
-          "display": "234.60"
+          "value": 228.2,
+          "display": "228.20"
         },
         {
           "feature": "opp_rush_yards_l5",
           "label": "opponent rushing form",
-          "value": 133.0,
-          "display": "133.0 yds"
+          "value": 81.8,
+          "display": "81.8 yds"
         },
         {
           "feature": "focus_front7_activity_l5",
           "label": "front-seven activity proxy",
-          "value": 5.319999999999999,
-          "display": "5.32"
+          "value": 3.8199999999999994,
+          "display": "3.82"
         },
         {
           "feature": "opp_front7_activity_l5",
           "label": "opponent front-seven activity proxy",
-          "value": 3.75,
-          "display": "3.75"
+          "value": 4.7,
+          "display": "4.70"
         },
         {
           "feature": "postseason_pressure_proxy",
@@ -7808,14 +7560,14 @@
         {
           "feature": "temperature_f",
           "label": "temperature",
-          "value": 78.4,
-          "display": "78°F"
+          "value": 53.1,
+          "display": "53°F"
         },
         {
           "feature": "wind_mph",
           "label": "wind",
-          "value": 16.0,
-          "display": "16.0 mph"
+          "value": 4.7,
+          "display": "4.7 mph"
         },
         {
           "feature": "rain_in",
@@ -7838,104 +7590,104 @@
         {
           "feature": "wind_gust_mph",
           "label": "wind gust",
-          "value": 21.5,
-          "display": "21.5 mph"
+          "value": 9.1,
+          "display": "9.1 mph"
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.88,
-      "mean_similarity_pct": 71.5,
-      "closest_similarity_pct": 74.02,
-      "observed_rate_pct": 60.69,
-      "baseline_rate_pct": 43.53,
+      "effective_sample_size": 24.73,
+      "mean_similarity_pct": 74.75,
+      "closest_similarity_pct": 78.73,
+      "observed_rate_pct": 20.85,
+      "baseline_rate_pct": 38.41,
       "baseline_sample_size": 742,
-      "lift_pp": 17.16,
+      "lift_pp": -17.56,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 80.22,
-          "lift_pp": 36.69,
+          "rate_pct": 23.3,
+          "lift_pp": -15.11,
           "n": 5
         },
         "10": {
-          "rate_pct": 60.97,
-          "lift_pp": 17.44,
+          "rate_pct": 21.52,
+          "lift_pp": -16.89,
           "n": 10
         },
         "25": {
-          "rate_pct": 60.69,
-          "lift_pp": 17.16,
+          "rate_pct": 20.85,
+          "lift_pp": -17.56,
           "n": 25
         },
         "50": {
-          "rate_pct": 55.05,
-          "lift_pp": 11.52,
+          "rate_pct": 25.81,
+          "lift_pp": -12.6,
           "n": 50
         }
       },
       "analogs": [
         {
-          "game_id": "2020_07_SF_NE",
-          "label": "2020-10-25 SF vs NE",
-          "similarity_pct": 74.0,
+          "game_id": "2025_07_NO_CHI",
+          "label": "2025-10-19 CHI vs NO",
+          "similarity_pct": 78.7,
           "outcome_occurred": true,
-          "focus_score": 33.0,
-          "opp_score": 6.0,
-          "pass_yards": 277.0,
-          "rush_yards": 197.0
+          "focus_score": 26.0,
+          "opp_score": 14.0,
+          "pass_yards": 172.0,
+          "rush_yards": 222.0
         },
         {
-          "game_id": "2023_15_KC_NE",
-          "label": "2023-12-17 KC vs NE",
-          "similarity_pct": 73.6,
-          "outcome_occurred": true,
-          "focus_score": 27.0,
-          "opp_score": 17.0,
-          "pass_yards": 309.0,
-          "rush_yards": 43.0
-        },
-        {
-          "game_id": "2019_05_BUF_TEN",
-          "label": "2019-10-06 BUF vs TEN",
-          "similarity_pct": 73.6,
-          "outcome_occurred": true,
-          "focus_score": 14.0,
-          "opp_score": 7.0,
-          "pass_yards": 219.0,
-          "rush_yards": 109.0
-        },
-        {
-          "game_id": "2023_13_LAC_NE",
-          "label": "2023-12-03 LAC vs NE",
-          "similarity_pct": 72.6,
+          "game_id": "2024_11_IND_NYJ",
+          "label": "2024-11-17 IND vs NYJ",
+          "similarity_pct": 77.5,
           "outcome_occurred": false,
-          "focus_score": 6.0,
-          "opp_score": 0.0,
-          "pass_yards": 212.0,
-          "rush_yards": 29.0
+          "focus_score": 28.0,
+          "opp_score": 27.0,
+          "pass_yards": 272.0,
+          "rush_yards": 91.0
         },
         {
-          "game_id": "2026_05_IND_PIT",
-          "label": "2026-10-11 PIT vs IND",
-          "similarity_pct": 72.5,
-          "outcome_occurred": true,
-          "focus_score": 34.0,
-          "opp_score": 22.0,
-          "pass_yards": 235.0,
-          "rush_yards": 127.0
+          "game_id": "2020_06_CIN_IND",
+          "label": "2020-10-18 IND vs CIN",
+          "similarity_pct": 76.6,
+          "outcome_occurred": false,
+          "focus_score": 31.0,
+          "opp_score": 27.0,
+          "pass_yards": 371.0,
+          "rush_yards": 59.0
+        },
+        {
+          "game_id": "2023_06_NE_LV",
+          "label": "2023-10-15 LV vs NE",
+          "similarity_pct": 75.6,
+          "outcome_occurred": false,
+          "focus_score": 21.0,
+          "opp_score": 17.0,
+          "pass_yards": 264.0,
+          "rush_yards": 84.0
+        },
+        {
+          "game_id": "2025_08_CHI_BAL",
+          "label": "2025-10-26 CHI vs BAL",
+          "similarity_pct": 75.5,
+          "outcome_occurred": false,
+          "focus_score": 16.0,
+          "opp_score": 30.0,
+          "pass_yards": 285.0,
+          "rush_yards": 96.0
         }
       ],
       "current_matches": [
         {
-          "event_id": "2026_06_PIT_TB",
-          "label": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
-          "focus_team": "PIT",
-          "opponent": "TB"
+          "event_id": "2026_06_NO_NYG",
+          "label": "New Orleans Saints @ New York Giants",
+          "focus_team": "NYG",
+          "opponent": "NO"
         }
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 60.7% of the time versus a 43.5% contextual baseline. The top-25 analog neighborhood averages 71.5% similarity with effective sample 24.9. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 20.9% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 74.7% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -8167,6 +7919,254 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    },
+    {
+      "signal_id": "ISPY-2218EE359683A2B46F",
+      "pattern_key": "e00f035327b995dd",
+      "status": "VALIDATED",
+      "direction": "SUPPORT",
+      "league": "NFL",
+      "focus_team": "PIT",
+      "opponent": "TB",
+      "title": "PIT — holds the opponent at least 10% below its entering rushing-yard form",
+      "outcome_code": "OPP_RUSH_BELOW_FORM",
+      "outcome": "holds the opponent at least 10% below its entering rushing-yard form",
+      "cohort_definition": "Games most similar to this measured state: passing efficiency -3.26, rushing efficiency 0.47, opponent rush-defense allowance 72.80, opponent passing form 190.4 yds.",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -3.2609556948884433,
+          "display": "-3.26"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 0.46519894265784806,
+          "display": "0.47"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "low",
+          "value": 72.8,
+          "display": "72.80"
+        },
+        {
+          "feature": "opp_pass_yards_l5",
+          "label": "opponent passing form",
+          "direction": "low",
+          "value": 190.4,
+          "display": "190.4 yds"
+        },
+        {
+          "feature": "opp_win_pct",
+          "label": "opponent win rate",
+          "direction": "low",
+          "value": 0.2,
+          "display": "20%"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 101.2,
+          "display": "101.2 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 246.8,
+          "display": "246.8 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 234.6,
+          "display": "234.60"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 133.0,
+          "display": "133.0 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 5.319999999999999,
+          "display": "5.32"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 3.75,
+          "display": "3.75"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.2623529411764706,
+          "display": "26%"
+        },
+        {
+          "feature": "temperature_f",
+          "label": "temperature",
+          "value": 78.4,
+          "display": "78°F"
+        },
+        {
+          "feature": "wind_mph",
+          "label": "wind",
+          "value": 16.0,
+          "display": "16.0 mph"
+        },
+        {
+          "feature": "rain_in",
+          "label": "rain",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_in",
+          "label": "precipitation",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_probability",
+          "label": "precipitation probability",
+          "value": 0.0,
+          "display": "0.0%"
+        },
+        {
+          "feature": "wind_gust_mph",
+          "label": "wind gust",
+          "value": 21.5,
+          "display": "21.5 mph"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.88,
+      "mean_similarity_pct": 71.44,
+      "closest_similarity_pct": 73.91,
+      "observed_rate_pct": 60.57,
+      "baseline_rate_pct": 43.53,
+      "baseline_sample_size": 742,
+      "lift_pp": 17.04,
+      "stability_score": 1.0,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 59.86,
+          "lift_pp": 16.33,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 60.79,
+          "lift_pp": 17.26,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 60.57,
+          "lift_pp": 17.04,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 53.09,
+          "lift_pp": 9.56,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2020_07_SF_NE",
+          "label": "2020-10-25 SF vs NE",
+          "similarity_pct": 73.9,
+          "outcome_occurred": true,
+          "focus_score": 33.0,
+          "opp_score": 6.0,
+          "pass_yards": 277.0,
+          "rush_yards": 197.0
+        },
+        {
+          "game_id": "2023_15_KC_NE",
+          "label": "2023-12-17 KC vs NE",
+          "similarity_pct": 73.5,
+          "outcome_occurred": true,
+          "focus_score": 27.0,
+          "opp_score": 17.0,
+          "pass_yards": 309.0,
+          "rush_yards": 43.0
+        },
+        {
+          "game_id": "2019_05_BUF_TEN",
+          "label": "2019-10-06 BUF vs TEN",
+          "similarity_pct": 73.5,
+          "outcome_occurred": true,
+          "focus_score": 14.0,
+          "opp_score": 7.0,
+          "pass_yards": 219.0,
+          "rush_yards": 109.0
+        },
+        {
+          "game_id": "2023_13_LAC_NE",
+          "label": "2023-12-03 LAC vs NE",
+          "similarity_pct": 72.7,
+          "outcome_occurred": false,
+          "focus_score": 6.0,
+          "opp_score": 0.0,
+          "pass_yards": 212.0,
+          "rush_yards": 29.0
+        },
+        {
+          "game_id": "2022_07_NYJ_DEN",
+          "label": "2022-10-23 NYJ vs DEN",
+          "similarity_pct": 72.5,
+          "outcome_occurred": false,
+          "focus_score": 16.0,
+          "opp_score": 9.0,
+          "pass_yards": 121.0,
+          "rush_yards": 155.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_06_PIT_TB",
+          "label": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "focus_team": "PIT",
+          "opponent": "TB"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 60.6% of the time versus a 43.5% contextual baseline. The top-25 analog neighborhood averages 71.4% similarity with effective sample 24.9. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "method": {
@@ -8432,6 +8432,254 @@
       }
     },
     {
+      "signal_id": "ISPY-57B02C65F18EEB040D",
+      "pattern_key": "b1ffdb970cd567d9",
+      "status": "VALIDATED",
+      "direction": "SUPPORT",
+      "league": "NFL",
+      "focus_team": "PIT",
+      "opponent": "TB",
+      "title": "PIT — finishes at least 10% below its entering passing-attempt form",
+      "outcome_code": "PASS_VOLUME_DROP",
+      "outcome": "finishes at least 10% below its entering passing-attempt form",
+      "cohort_definition": "Games most similar to this measured state: passing efficiency -3.26, rushing efficiency 0.47, opponent rush-defense allowance 72.80, opponent passing form 190.4 yds.",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -3.2609556948884433,
+          "display": "-3.26"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 0.46519894265784806,
+          "display": "0.47"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "low",
+          "value": 72.8,
+          "display": "72.80"
+        },
+        {
+          "feature": "opp_pass_yards_l5",
+          "label": "opponent passing form",
+          "direction": "low",
+          "value": 190.4,
+          "display": "190.4 yds"
+        },
+        {
+          "feature": "opp_win_pct",
+          "label": "opponent win rate",
+          "direction": "low",
+          "value": 0.2,
+          "display": "20%"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 101.2,
+          "display": "101.2 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 246.8,
+          "display": "246.8 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 234.6,
+          "display": "234.60"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 133.0,
+          "display": "133.0 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 5.319999999999999,
+          "display": "5.32"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 3.75,
+          "display": "3.75"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.2623529411764706,
+          "display": "26%"
+        },
+        {
+          "feature": "temperature_f",
+          "label": "temperature",
+          "value": 78.4,
+          "display": "78°F"
+        },
+        {
+          "feature": "wind_mph",
+          "label": "wind",
+          "value": 16.0,
+          "display": "16.0 mph"
+        },
+        {
+          "feature": "rain_in",
+          "label": "rain",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_in",
+          "label": "precipitation",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_probability",
+          "label": "precipitation probability",
+          "value": 0.0,
+          "display": "0.0%"
+        },
+        {
+          "feature": "wind_gust_mph",
+          "label": "wind gust",
+          "value": 21.5,
+          "display": "21.5 mph"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.88,
+      "mean_similarity_pct": 71.44,
+      "closest_similarity_pct": 73.91,
+      "observed_rate_pct": 52.16,
+      "baseline_rate_pct": 35.85,
+      "baseline_sample_size": 742,
+      "lift_pp": 16.31,
+      "stability_score": 1.0,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 57.94,
+          "lift_pp": 22.09,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 69.54,
+          "lift_pp": 33.69,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 52.16,
+          "lift_pp": 16.31,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 42.7,
+          "lift_pp": 6.85,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2020_07_SF_NE",
+          "label": "2020-10-25 SF vs NE",
+          "similarity_pct": 73.9,
+          "outcome_occurred": true,
+          "focus_score": 33.0,
+          "opp_score": 6.0,
+          "pass_yards": 277.0,
+          "rush_yards": 197.0
+        },
+        {
+          "game_id": "2023_15_KC_NE",
+          "label": "2023-12-17 KC vs NE",
+          "similarity_pct": 73.5,
+          "outcome_occurred": false,
+          "focus_score": 27.0,
+          "opp_score": 17.0,
+          "pass_yards": 309.0,
+          "rush_yards": 43.0
+        },
+        {
+          "game_id": "2019_05_BUF_TEN",
+          "label": "2019-10-06 BUF vs TEN",
+          "similarity_pct": 73.5,
+          "outcome_occurred": true,
+          "focus_score": 14.0,
+          "opp_score": 7.0,
+          "pass_yards": 219.0,
+          "rush_yards": 109.0
+        },
+        {
+          "game_id": "2023_13_LAC_NE",
+          "label": "2023-12-03 LAC vs NE",
+          "similarity_pct": 72.7,
+          "outcome_occurred": false,
+          "focus_score": 6.0,
+          "opp_score": 0.0,
+          "pass_yards": 212.0,
+          "rush_yards": 29.0
+        },
+        {
+          "game_id": "2022_07_NYJ_DEN",
+          "label": "2022-10-23 NYJ vs DEN",
+          "similarity_pct": 72.5,
+          "outcome_occurred": true,
+          "focus_score": 16.0,
+          "opp_score": 9.0,
+          "pass_yards": 121.0,
+          "rush_yards": 155.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_06_PIT_TB",
+          "label": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "focus_team": "PIT",
+          "opponent": "TB"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 52.2% of the time versus a 35.8% contextual baseline. The top-25 analog neighborhood averages 71.4% similarity with effective sample 24.9. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    },
+    {
       "signal_id": "ISPY-62640CC6D9D444D0ED",
       "pattern_key": "e1c21c6ff3d53ecb",
       "status": "VALIDATED",
@@ -8562,32 +8810,32 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.72,
-      "mean_similarity_pct": 71.54,
-      "closest_similarity_pct": 75.82,
-      "observed_rate_pct": 55.81,
+      "mean_similarity_pct": 71.64,
+      "closest_similarity_pct": 75.71,
+      "observed_rate_pct": 55.84,
       "baseline_rate_pct": 39.76,
       "baseline_sample_size": 742,
-      "lift_pp": 16.05,
+      "lift_pp": 16.08,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 57.67,
-          "lift_pp": 17.91,
+          "rate_pct": 57.84,
+          "lift_pp": 18.08,
           "n": 5
         },
         "10": {
-          "rate_pct": 59.13,
-          "lift_pp": 19.37,
+          "rate_pct": 59.22,
+          "lift_pp": 19.46,
           "n": 10
         },
         "25": {
-          "rate_pct": 55.81,
-          "lift_pp": 16.05,
+          "rate_pct": 55.84,
+          "lift_pp": 16.08,
           "n": 25
         },
         "50": {
-          "rate_pct": 56.28,
-          "lift_pp": 16.52,
+          "rate_pct": 54.64,
+          "lift_pp": 14.88,
           "n": 50
         }
       },
@@ -8595,7 +8843,7 @@
         {
           "game_id": "2023_08_NYJ_NYG",
           "label": "2023-10-29 NYJ vs NYG",
-          "similarity_pct": 75.8,
+          "similarity_pct": 75.7,
           "outcome_occurred": false,
           "focus_score": 13.0,
           "opp_score": 10.0,
@@ -8605,7 +8853,7 @@
         {
           "game_id": "2020_07_BUF_NYJ",
           "label": "2020-10-25 BUF vs NYJ",
-          "similarity_pct": 73.2,
+          "similarity_pct": 73.3,
           "outcome_occurred": true,
           "focus_score": 18.0,
           "opp_score": 10.0,
@@ -8615,7 +8863,7 @@
         {
           "game_id": "2021_09_LAC_PHI",
           "label": "2021-11-07 LAC vs PHI",
-          "similarity_pct": 72.9,
+          "similarity_pct": 73.0,
           "outcome_occurred": false,
           "focus_score": 27.0,
           "opp_score": 24.0,
@@ -8625,7 +8873,7 @@
         {
           "game_id": "2025_07_NO_CHI",
           "label": "2025-10-19 CHI vs NO",
-          "similarity_pct": 72.4,
+          "similarity_pct": 72.5,
           "outcome_occurred": true,
           "focus_score": 26.0,
           "opp_score": 14.0,
@@ -8635,7 +8883,7 @@
         {
           "game_id": "2021_09_LV_NYG",
           "label": "2021-11-07 LV vs NYG",
-          "similarity_pct": 72.3,
+          "similarity_pct": 72.5,
           "outcome_occurred": true,
           "focus_score": 16.0,
           "opp_score": 23.0,
@@ -8653,7 +8901,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 55.8% of the time versus a 39.8% contextual baseline. The top-25 analog neighborhood averages 71.5% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 55.8% of the time versus a 39.8% contextual baseline. The top-25 analog neighborhood averages 71.6% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -9574,33 +9822,33 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.71,
-      "mean_similarity_pct": 74.82,
-      "closest_similarity_pct": 78.84,
-      "observed_rate_pct": 52.14,
+      "effective_sample_size": 24.73,
+      "mean_similarity_pct": 74.75,
+      "closest_similarity_pct": 78.73,
+      "observed_rate_pct": 52.33,
       "baseline_rate_pct": 37.6,
       "baseline_sample_size": 742,
-      "lift_pp": 14.54,
+      "lift_pp": 14.73,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 62.9,
-          "lift_pp": 25.3,
+          "rate_pct": 62.84,
+          "lift_pp": 25.24,
           "n": 5
         },
         "10": {
-          "rate_pct": 42.49,
-          "lift_pp": 4.88,
+          "rate_pct": 42.5,
+          "lift_pp": 4.9,
           "n": 10
         },
         "25": {
-          "rate_pct": 52.14,
-          "lift_pp": 14.54,
+          "rate_pct": 52.33,
+          "lift_pp": 14.73,
           "n": 25
         },
         "50": {
-          "rate_pct": 47.19,
-          "lift_pp": 9.59,
+          "rate_pct": 48.94,
+          "lift_pp": 11.34,
           "n": 50
         }
       },
@@ -9608,7 +9856,7 @@
         {
           "game_id": "2025_07_NO_CHI",
           "label": "2025-10-19 CHI vs NO",
-          "similarity_pct": 78.8,
+          "similarity_pct": 78.7,
           "outcome_occurred": true,
           "focus_score": 26.0,
           "opp_score": 14.0,
@@ -9618,7 +9866,7 @@
         {
           "game_id": "2024_11_IND_NYJ",
           "label": "2024-11-17 IND vs NYJ",
-          "similarity_pct": 77.6,
+          "similarity_pct": 77.5,
           "outcome_occurred": true,
           "focus_score": 28.0,
           "opp_score": 27.0,
@@ -9638,7 +9886,7 @@
         {
           "game_id": "2023_06_NE_LV",
           "label": "2023-10-15 LV vs NE",
-          "similarity_pct": 75.7,
+          "similarity_pct": 75.6,
           "outcome_occurred": true,
           "focus_score": 21.0,
           "opp_score": 17.0,
@@ -9648,7 +9896,7 @@
         {
           "game_id": "2025_08_CHI_BAL",
           "label": "2025-10-26 CHI vs BAL",
-          "similarity_pct": 75.6,
+          "similarity_pct": 75.5,
           "outcome_occurred": false,
           "focus_score": 16.0,
           "opp_score": 30.0,
@@ -9666,7 +9914,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 52.1% of the time versus a 37.6% contextual baseline. The top-25 analog neighborhood averages 74.8% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 52.3% of the time versus a 37.6% contextual baseline. The top-25 analog neighborhood averages 74.7% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -10030,33 +10278,33 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.7,
-      "mean_similarity_pct": 71.95,
-      "closest_similarity_pct": 77.88,
-      "observed_rate_pct": 52.06,
+      "effective_sample_size": 24.71,
+      "mean_similarity_pct": 72.04,
+      "closest_similarity_pct": 77.77,
+      "observed_rate_pct": 52.03,
       "baseline_rate_pct": 37.6,
       "baseline_sample_size": 742,
-      "lift_pp": 14.46,
+      "lift_pp": 14.43,
       "stability_score": 0.75,
       "neighborhoods": {
         "5": {
-          "rate_pct": 24.53,
-          "lift_pp": -13.08,
+          "rate_pct": 24.3,
+          "lift_pp": -13.3,
           "n": 5
         },
         "10": {
-          "rate_pct": 60.52,
-          "lift_pp": 22.92,
+          "rate_pct": 60.41,
+          "lift_pp": 22.81,
           "n": 10
         },
         "25": {
-          "rate_pct": 52.06,
-          "lift_pp": 14.46,
+          "rate_pct": 52.03,
+          "lift_pp": 14.43,
           "n": 25
         },
         "50": {
-          "rate_pct": 55.87,
-          "lift_pp": 18.27,
+          "rate_pct": 57.74,
+          "lift_pp": 20.14,
           "n": 50
         }
       },
@@ -10064,7 +10312,7 @@
         {
           "game_id": "2023_08_NYJ_NYG",
           "label": "2023-10-29 NYG vs NYJ",
-          "similarity_pct": 77.9,
+          "similarity_pct": 77.8,
           "outcome_occurred": true,
           "focus_score": 10.0,
           "opp_score": 13.0,
@@ -10074,7 +10322,7 @@
         {
           "game_id": "2025_07_NO_CHI",
           "label": "2025-10-19 NO vs CHI",
-          "similarity_pct": 74.0,
+          "similarity_pct": 74.1,
           "outcome_occurred": false,
           "focus_score": 14.0,
           "opp_score": 26.0,
@@ -10084,7 +10332,7 @@
         {
           "game_id": "2022_09_CAR_CIN",
           "label": "2022-11-06 CAR vs CIN",
-          "similarity_pct": 73.9,
+          "similarity_pct": 74.0,
           "outcome_occurred": false,
           "focus_score": 21.0,
           "opp_score": 42.0,
@@ -10094,7 +10342,7 @@
         {
           "game_id": "2019_07_LAC_TEN",
           "label": "2019-10-20 TEN vs LAC",
-          "similarity_pct": 73.2,
+          "similarity_pct": 73.3,
           "outcome_occurred": false,
           "focus_score": 23.0,
           "opp_score": 20.0,
@@ -10104,7 +10352,7 @@
         {
           "game_id": "2022_07_PIT_MIA",
           "label": "2022-10-23 PIT vs MIA",
-          "similarity_pct": 73.0,
+          "similarity_pct": 73.1,
           "outcome_occurred": false,
           "focus_score": 10.0,
           "opp_score": 16.0,
@@ -10122,255 +10370,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 52.1% of the time versus a 37.6% contextual baseline. The top-25 analog neighborhood averages 72.0% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "method": {
-        "similarity": "weighted mixed-feature Gower-like distance",
-        "neighborhood": "top 25 of top 50 historical analogs",
-        "raw_sample_gate": false,
-        "effective_sample_required": true
-      }
-    },
-    {
-      "signal_id": "ISPY-5FF8AEF5656468FB0F",
-      "pattern_key": "26a74df4ad38e529",
-      "status": "VALIDATED",
-      "direction": "CHALLENGE",
-      "league": "NFL",
-      "focus_team": "NYG",
-      "opponent": "NO",
-      "title": "NYG — finishes at least 10% below its entering passing-yard form",
-      "outcome_code": "PASS_BELOW_FORM",
-      "outcome": "finishes at least 10% below its entering passing-yard form",
-      "cohort_definition": "Games most similar to this measured state: rushing efficiency -4.28, passing efficiency 2.53, opponent rush-defense allowance 148.80, opponent win rate 20%.",
-      "conditions": [
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -4.276153132256611,
-          "display": "-4.28"
-        },
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "high",
-          "value": 2.526753098307854,
-          "display": "2.53"
-        },
-        {
-          "feature": "opp_rush_allowed_l5",
-          "label": "opponent rush-defense allowance",
-          "direction": "high",
-          "value": 148.8,
-          "display": "148.80"
-        },
-        {
-          "feature": "opp_win_pct",
-          "label": "opponent win rate",
-          "direction": "low",
-          "value": 0.2,
-          "display": "20%"
-        },
-        {
-          "feature": "opp_secondary_activity_l5",
-          "label": "opponent secondary disruption proxy",
-          "direction": "low",
-          "value": 2.9,
-          "display": "2.90"
-        }
-      ],
-      "current_state": [
-        {
-          "feature": "focus_rush_yards_l5",
-          "label": "team rushing form",
-          "value": 109.0,
-          "display": "109.0 yds"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "value": 211.0,
-          "display": "211.0 yds"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "value": 228.2,
-          "display": "228.20"
-        },
-        {
-          "feature": "opp_rush_yards_l5",
-          "label": "opponent rushing form",
-          "value": 81.8,
-          "display": "81.8 yds"
-        },
-        {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "value": 3.8199999999999994,
-          "display": "3.82"
-        },
-        {
-          "feature": "opp_front7_activity_l5",
-          "label": "opponent front-seven activity proxy",
-          "value": 4.7,
-          "display": "4.70"
-        },
-        {
-          "feature": "postseason_pressure_proxy",
-          "label": "postseason-pressure proxy",
-          "value": 0.2623529411764706,
-          "display": "26%"
-        },
-        {
-          "feature": "temperature_f",
-          "label": "temperature",
-          "value": 53.1,
-          "display": "53°F"
-        },
-        {
-          "feature": "wind_mph",
-          "label": "wind",
-          "value": 4.7,
-          "display": "4.7 mph"
-        },
-        {
-          "feature": "rain_in",
-          "label": "rain",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_in",
-          "label": "precipitation",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_probability",
-          "label": "precipitation probability",
-          "value": 0.0,
-          "display": "0.0%"
-        },
-        {
-          "feature": "wind_gust_mph",
-          "label": "wind gust",
-          "value": 9.1,
-          "display": "9.1 mph"
-        }
-      ],
-      "sample_size": 25,
-      "effective_sample_size": 24.71,
-      "mean_similarity_pct": 74.82,
-      "closest_similarity_pct": 78.84,
-      "observed_rate_pct": 24.6,
-      "baseline_rate_pct": 38.41,
-      "baseline_sample_size": 742,
-      "lift_pp": -13.81,
-      "stability_score": 1.0,
-      "neighborhoods": {
-        "5": {
-          "rate_pct": 23.32,
-          "lift_pp": -15.09,
-          "n": 5
-        },
-        "10": {
-          "rate_pct": 21.54,
-          "lift_pp": -16.87,
-          "n": 10
-        },
-        "25": {
-          "rate_pct": 24.6,
-          "lift_pp": -13.81,
-          "n": 25
-        },
-        "50": {
-          "rate_pct": 27.79,
-          "lift_pp": -10.62,
-          "n": 50
-        }
-      },
-      "analogs": [
-        {
-          "game_id": "2025_07_NO_CHI",
-          "label": "2025-10-19 CHI vs NO",
-          "similarity_pct": 78.8,
-          "outcome_occurred": true,
-          "focus_score": 26.0,
-          "opp_score": 14.0,
-          "pass_yards": 172.0,
-          "rush_yards": 222.0
-        },
-        {
-          "game_id": "2024_11_IND_NYJ",
-          "label": "2024-11-17 IND vs NYJ",
-          "similarity_pct": 77.6,
-          "outcome_occurred": false,
-          "focus_score": 28.0,
-          "opp_score": 27.0,
-          "pass_yards": 272.0,
-          "rush_yards": 91.0
-        },
-        {
-          "game_id": "2020_06_CIN_IND",
-          "label": "2020-10-18 IND vs CIN",
-          "similarity_pct": 76.6,
-          "outcome_occurred": false,
-          "focus_score": 31.0,
-          "opp_score": 27.0,
-          "pass_yards": 371.0,
-          "rush_yards": 59.0
-        },
-        {
-          "game_id": "2023_06_NE_LV",
-          "label": "2023-10-15 LV vs NE",
-          "similarity_pct": 75.7,
-          "outcome_occurred": false,
-          "focus_score": 21.0,
-          "opp_score": 17.0,
-          "pass_yards": 264.0,
-          "rush_yards": 84.0
-        },
-        {
-          "game_id": "2025_08_CHI_BAL",
-          "label": "2025-10-26 CHI vs BAL",
-          "similarity_pct": 75.6,
-          "outcome_occurred": false,
-          "focus_score": 16.0,
-          "opp_score": 30.0,
-          "pass_yards": 285.0,
-          "rush_yards": 96.0
-        }
-      ],
-      "current_matches": [
-        {
-          "event_id": "2026_06_NO_NYG",
-          "label": "New Orleans Saints @ New York Giants",
-          "focus_team": "NYG",
-          "opponent": "NO"
-        }
-      ],
-      "recommended_poms": [],
-      "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 24.6% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 74.8% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 52.0% of the time versus a 37.6% contextual baseline. The top-25 analog neighborhood averages 72.0% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -10527,32 +10527,32 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.79,
-      "mean_similarity_pct": 74.52,
-      "closest_similarity_pct": 77.77,
-      "observed_rate_pct": 53.27,
+      "mean_similarity_pct": 74.46,
+      "closest_similarity_pct": 77.66,
+      "observed_rate_pct": 53.28,
       "baseline_rate_pct": 39.76,
       "baseline_sample_size": 742,
-      "lift_pp": 13.51,
+      "lift_pp": 13.52,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 58.3,
-          "lift_pp": 18.54,
+          "rate_pct": 58.28,
+          "lift_pp": 18.52,
           "n": 5
         },
         "10": {
-          "rate_pct": 60.92,
-          "lift_pp": 21.16,
+          "rate_pct": 60.5,
+          "lift_pp": 20.74,
           "n": 10
         },
         "25": {
-          "rate_pct": 53.27,
-          "lift_pp": 13.51,
+          "rate_pct": 53.28,
+          "lift_pp": 13.52,
           "n": 25
         },
         "50": {
-          "rate_pct": 43.26,
-          "lift_pp": 3.5,
+          "rate_pct": 43.22,
+          "lift_pp": 3.47,
           "n": 50
         }
       },
@@ -10560,7 +10560,7 @@
         {
           "game_id": "2024_09_LAC_CLE",
           "label": "2024-11-03 CLE vs LAC",
-          "similarity_pct": 77.8,
+          "similarity_pct": 77.7,
           "outcome_occurred": false,
           "focus_score": 10.0,
           "opp_score": 27.0,
@@ -10588,24 +10588,24 @@
           "rush_yards": 98.0
         },
         {
-          "game_id": "2022_05_IND_DEN",
-          "label": "2022-10-06 IND vs DEN",
-          "similarity_pct": 75.4,
-          "outcome_occurred": true,
-          "focus_score": 12.0,
-          "opp_score": 9.0,
-          "pass_yards": 251.0,
-          "rush_yards": 106.0
-        },
-        {
           "game_id": "2023_06_NYG_BUF",
           "label": "2023-10-15 NYG vs BUF",
-          "similarity_pct": 75.4,
+          "similarity_pct": 75.3,
           "outcome_occurred": true,
           "focus_score": 9.0,
           "opp_score": 14.0,
           "pass_yards": 200.0,
           "rush_yards": 132.0
+        },
+        {
+          "game_id": "2022_05_IND_DEN",
+          "label": "2022-10-06 IND vs DEN",
+          "similarity_pct": 75.3,
+          "outcome_occurred": true,
+          "focus_score": 12.0,
+          "opp_score": 9.0,
+          "pass_yards": 251.0,
+          "rush_yards": 106.0
         }
       ],
       "current_matches": [
@@ -11238,32 +11238,32 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.79,
-      "mean_similarity_pct": 74.52,
-      "closest_similarity_pct": 77.77,
-      "observed_rate_pct": 64.01,
+      "mean_similarity_pct": 74.46,
+      "closest_similarity_pct": 77.66,
+      "observed_rate_pct": 63.94,
       "baseline_rate_pct": 50.94,
       "baseline_sample_size": 742,
-      "lift_pp": 13.07,
+      "lift_pp": 12.99,
       "stability_score": 0.75,
       "neighborhoods": {
         "5": {
-          "rate_pct": 81.52,
-          "lift_pp": 30.58,
+          "rate_pct": 81.46,
+          "lift_pp": 30.51,
           "n": 5
         },
         "10": {
-          "rate_pct": 69.38,
-          "lift_pp": 18.43,
+          "rate_pct": 59.72,
+          "lift_pp": 8.78,
           "n": 10
         },
         "25": {
-          "rate_pct": 64.01,
-          "lift_pp": 13.07,
+          "rate_pct": 63.94,
+          "lift_pp": 12.99,
           "n": 25
         },
         "50": {
-          "rate_pct": 52.08,
-          "lift_pp": 1.14,
+          "rate_pct": 50.14,
+          "lift_pp": -0.8,
           "n": 50
         }
       },
@@ -11271,7 +11271,7 @@
         {
           "game_id": "2024_09_LAC_CLE",
           "label": "2024-11-03 CLE vs LAC",
-          "similarity_pct": 77.8,
+          "similarity_pct": 77.7,
           "outcome_occurred": true,
           "focus_score": 10.0,
           "opp_score": 27.0,
@@ -11299,24 +11299,24 @@
           "rush_yards": 98.0
         },
         {
-          "game_id": "2022_05_IND_DEN",
-          "label": "2022-10-06 IND vs DEN",
-          "similarity_pct": 75.4,
-          "outcome_occurred": true,
-          "focus_score": 12.0,
-          "opp_score": 9.0,
-          "pass_yards": 251.0,
-          "rush_yards": 106.0
-        },
-        {
           "game_id": "2023_06_NYG_BUF",
           "label": "2023-10-15 NYG vs BUF",
-          "similarity_pct": 75.4,
+          "similarity_pct": 75.3,
           "outcome_occurred": true,
           "focus_score": 9.0,
           "opp_score": 14.0,
           "pass_yards": 200.0,
           "rush_yards": 132.0
+        },
+        {
+          "game_id": "2022_05_IND_DEN",
+          "label": "2022-10-06 IND vs DEN",
+          "similarity_pct": 75.3,
+          "outcome_occurred": true,
+          "focus_score": 12.0,
+          "opp_score": 9.0,
+          "pass_yards": 251.0,
+          "rush_yards": 106.0
         }
       ],
       "current_matches": [
@@ -11329,7 +11329,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 64.0% of the time versus a 50.9% contextual baseline. The top-25 analog neighborhood averages 74.5% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 63.9% of the time versus a 50.9% contextual baseline. The top-25 analog neighborhood averages 74.5% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -11450,12 +11450,12 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.5,
-      "mean_similarity_pct": 72.84,
-      "closest_similarity_pct": 78.76,
-      "observed_rate_pct": 22.87,
+      "mean_similarity_pct": 72.73,
+      "closest_similarity_pct": 78.64,
+      "observed_rate_pct": 22.86,
       "baseline_rate_pct": 35.85,
       "baseline_sample_size": 742,
-      "lift_pp": -12.98,
+      "lift_pp": -12.99,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -11469,8 +11469,8 @@
           "n": 10
         },
         "25": {
-          "rate_pct": 22.87,
-          "lift_pp": -12.98,
+          "rate_pct": 22.86,
+          "lift_pp": -12.99,
           "n": 25
         },
         "50": {
@@ -11483,7 +11483,7 @@
         {
           "game_id": "2022_04_CLE_ATL",
           "label": "2022-10-02 CLE vs ATL",
-          "similarity_pct": 78.8,
+          "similarity_pct": 78.6,
           "outcome_occurred": false,
           "focus_score": 20.0,
           "opp_score": 23.0,
@@ -11493,7 +11493,7 @@
         {
           "game_id": "2020_14_ARI_NYG",
           "label": "2020-12-13 ARI vs NYG",
-          "similarity_pct": 77.0,
+          "similarity_pct": 76.9,
           "outcome_occurred": false,
           "focus_score": 26.0,
           "opp_score": 7.0,
@@ -11503,7 +11503,7 @@
         {
           "game_id": "2026_05_BAL_ATL",
           "label": "2026-10-11 BAL vs ATL",
-          "similarity_pct": 76.3,
+          "similarity_pct": 76.2,
           "outcome_occurred": false,
           "focus_score": 30.0,
           "opp_score": 23.0,
@@ -11513,7 +11513,7 @@
         {
           "game_id": "2025_13_CHI_PHI",
           "label": "2025-11-28 CHI vs PHI",
-          "similarity_pct": 74.1,
+          "similarity_pct": 74.0,
           "outcome_occurred": false,
           "focus_score": 24.0,
           "opp_score": 15.0,
@@ -11523,7 +11523,7 @@
         {
           "game_id": "2020_15_CLE_NYG",
           "label": "2020-12-20 CLE vs NYG",
-          "similarity_pct": 73.8,
+          "similarity_pct": 73.7,
           "outcome_occurred": false,
           "focus_score": 20.0,
           "opp_score": 6.0,
@@ -11541,7 +11541,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 22.9% of the time versus a 35.8% contextual baseline. The top-25 analog neighborhood averages 72.8% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 22.9% of the time versus a 35.8% contextual baseline. The top-25 analog neighborhood averages 72.7% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -11701,12 +11701,12 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.8,
-      "mean_similarity_pct": 73.68,
-      "closest_similarity_pct": 75.98,
-      "observed_rate_pct": 24.24,
+      "mean_similarity_pct": 73.6,
+      "closest_similarity_pct": 75.87,
+      "observed_rate_pct": 24.22,
       "baseline_rate_pct": 36.93,
       "baseline_sample_size": 742,
-      "lift_pp": -12.69,
+      "lift_pp": -12.71,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -11715,18 +11715,18 @@
           "n": 5
         },
         "10": {
-          "rate_pct": 30.0,
-          "lift_pp": -6.93,
+          "rate_pct": 19.62,
+          "lift_pp": -17.31,
           "n": 10
         },
         "25": {
-          "rate_pct": 24.24,
-          "lift_pp": -12.69,
+          "rate_pct": 24.22,
+          "lift_pp": -12.71,
           "n": 25
         },
         "50": {
-          "rate_pct": 23.73,
-          "lift_pp": -13.2,
+          "rate_pct": 23.7,
+          "lift_pp": -13.23,
           "n": 50
         }
       },
@@ -11734,7 +11734,7 @@
         {
           "game_id": "2026_04_TEN_BAL",
           "label": "2026-10-04 BAL vs TEN",
-          "similarity_pct": 76.0,
+          "similarity_pct": 75.9,
           "outcome_occurred": false,
           "focus_score": 24.0,
           "opp_score": 18.0,
@@ -11744,7 +11744,7 @@
         {
           "game_id": "2020_10_MIN_CHI",
           "label": "2020-11-16 MIN vs CHI",
-          "similarity_pct": 75.6,
+          "similarity_pct": 75.5,
           "outcome_occurred": false,
           "focus_score": 19.0,
           "opp_score": 13.0,
@@ -11754,7 +11754,7 @@
         {
           "game_id": "2022_14_PHI_NYG",
           "label": "2022-12-11 PHI vs NYG",
-          "similarity_pct": 74.6,
+          "similarity_pct": 74.5,
           "outcome_occurred": false,
           "focus_score": 48.0,
           "opp_score": 22.0,
@@ -11764,7 +11764,7 @@
         {
           "game_id": "2021_07_CIN_BAL",
           "label": "2021-10-24 BAL vs CIN",
-          "similarity_pct": 74.5,
+          "similarity_pct": 74.4,
           "outcome_occurred": false,
           "focus_score": 17.0,
           "opp_score": 41.0,
@@ -11774,7 +11774,7 @@
         {
           "game_id": "2023_04_DET_GB",
           "label": "2023-09-28 DET vs GB",
-          "similarity_pct": 74.4,
+          "similarity_pct": 74.3,
           "outcome_occurred": true,
           "focus_score": 34.0,
           "opp_score": 20.0,
@@ -11792,7 +11792,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 24.2% of the time versus a 36.9% contextual baseline. The top-25 analog neighborhood averages 73.7% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 24.2% of the time versus a 36.9% contextual baseline. The top-25 analog neighborhood averages 73.6% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -11913,31 +11913,31 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.46,
-      "mean_similarity_pct": 73.72,
-      "closest_similarity_pct": 79.39,
-      "observed_rate_pct": 28.46,
+      "mean_similarity_pct": 73.61,
+      "closest_similarity_pct": 79.27,
+      "observed_rate_pct": 28.44,
       "baseline_rate_pct": 41.11,
       "baseline_sample_size": 742,
-      "lift_pp": -12.65,
+      "lift_pp": -12.66,
       "stability_score": 0.75,
       "neighborhoods": {
         "5": {
           "rate_pct": 25.74,
-          "lift_pp": -15.37,
+          "lift_pp": -15.36,
           "n": 5
         },
         "10": {
-          "rate_pct": 22.59,
+          "rate_pct": 22.6,
           "lift_pp": -18.51,
           "n": 10
         },
         "25": {
-          "rate_pct": 28.46,
-          "lift_pp": -12.65,
+          "rate_pct": 28.44,
+          "lift_pp": -12.66,
           "n": 25
         },
         "50": {
-          "rate_pct": 41.47,
+          "rate_pct": 41.48,
           "lift_pp": 0.37,
           "n": 50
         }
@@ -11946,7 +11946,7 @@
         {
           "game_id": "2026_05_BAL_ATL",
           "label": "2026-10-11 ATL vs BAL",
-          "similarity_pct": 79.4,
+          "similarity_pct": 79.3,
           "outcome_occurred": true,
           "focus_score": 23.0,
           "opp_score": 30.0,
@@ -11956,7 +11956,7 @@
         {
           "game_id": "2022_04_CLE_ATL",
           "label": "2022-10-02 ATL vs CLE",
-          "similarity_pct": 76.2,
+          "similarity_pct": 76.1,
           "outcome_occurred": false,
           "focus_score": 23.0,
           "opp_score": 20.0,
@@ -11966,7 +11966,7 @@
         {
           "game_id": "2022_06_SF_ATL",
           "label": "2022-10-16 ATL vs SF",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.8,
           "outcome_occurred": false,
           "focus_score": 28.0,
           "opp_score": 14.0,
@@ -11976,7 +11976,7 @@
         {
           "game_id": "2024_06_ARI_GB",
           "label": "2024-10-13 GB vs ARI",
-          "similarity_pct": 75.5,
+          "similarity_pct": 75.4,
           "outcome_occurred": false,
           "focus_score": 34.0,
           "opp_score": 13.0,
@@ -11986,7 +11986,7 @@
         {
           "game_id": "2020_07_SF_NE",
           "label": "2020-10-25 NE vs SF",
-          "similarity_pct": 75.5,
+          "similarity_pct": 75.4,
           "outcome_occurred": false,
           "focus_score": 6.0,
           "opp_score": 33.0,
@@ -12004,7 +12004,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 28.5% of the time versus a 41.1% contextual baseline. The top-25 analog neighborhood averages 73.7% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 28.4% of the time versus a 41.1% contextual baseline. The top-25 analog neighborhood averages 73.6% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -12156,32 +12156,32 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.8,
-      "mean_similarity_pct": 72.51,
-      "closest_similarity_pct": 76.22,
-      "observed_rate_pct": 28.45,
+      "effective_sample_size": 24.79,
+      "mean_similarity_pct": 72.44,
+      "closest_similarity_pct": 76.1,
+      "observed_rate_pct": 28.53,
       "baseline_rate_pct": 40.84,
       "baseline_sample_size": 742,
-      "lift_pp": -12.39,
+      "lift_pp": -12.31,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 22.28,
-          "lift_pp": -18.55,
+          "rate_pct": 22.44,
+          "lift_pp": -18.4,
           "n": 5
         },
         "10": {
-          "rate_pct": 20.61,
-          "lift_pp": -20.23,
+          "rate_pct": 30.22,
+          "lift_pp": -10.61,
           "n": 10
         },
         "25": {
-          "rate_pct": 28.45,
-          "lift_pp": -12.39,
+          "rate_pct": 28.53,
+          "lift_pp": -12.31,
           "n": 25
         },
         "50": {
-          "rate_pct": 31.8,
+          "rate_pct": 31.79,
           "lift_pp": -9.04,
           "n": 50
         }
@@ -12190,7 +12190,7 @@
         {
           "game_id": "2023_15_KC_NE",
           "label": "2023-12-17 NE vs KC",
-          "similarity_pct": 76.2,
+          "similarity_pct": 76.1,
           "outcome_occurred": false,
           "focus_score": 17.0,
           "opp_score": 27.0,
@@ -12200,7 +12200,7 @@
         {
           "game_id": "2023_07_LV_CHI",
           "label": "2023-10-22 CHI vs LV",
-          "similarity_pct": 76.0,
+          "similarity_pct": 76.1,
           "outcome_occurred": true,
           "focus_score": 30.0,
           "opp_score": 12.0,
@@ -12210,7 +12210,7 @@
         {
           "game_id": "2021_15_ARI_DET",
           "label": "2021-12-19 DET vs ARI",
-          "similarity_pct": 74.2,
+          "similarity_pct": 74.1,
           "outcome_occurred": false,
           "focus_score": 30.0,
           "opp_score": 12.0,
@@ -12220,7 +12220,7 @@
         {
           "game_id": "2022_07_NYJ_DEN",
           "label": "2022-10-23 DEN vs NYJ",
-          "similarity_pct": 73.8,
+          "similarity_pct": 74.0,
           "outcome_occurred": false,
           "focus_score": 9.0,
           "opp_score": 16.0,
@@ -12230,7 +12230,7 @@
         {
           "game_id": "2019_08_DEN_IND",
           "label": "2019-10-27 DEN vs IND",
-          "similarity_pct": 73.6,
+          "similarity_pct": 73.5,
           "outcome_occurred": false,
           "focus_score": 13.0,
           "opp_score": 15.0,
@@ -12248,7 +12248,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 28.4% of the time versus a 40.8% contextual baseline. The top-25 analog neighborhood averages 72.5% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 28.5% of the time versus a 40.8% contextual baseline. The top-25 analog neighborhood averages 72.4% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -12369,12 +12369,12 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.5,
-      "mean_similarity_pct": 72.84,
-      "closest_similarity_pct": 78.76,
-      "observed_rate_pct": 47.68,
+      "mean_similarity_pct": 72.73,
+      "closest_similarity_pct": 78.64,
+      "observed_rate_pct": 47.65,
       "baseline_rate_pct": 35.71,
       "baseline_sample_size": 742,
-      "lift_pp": 11.96,
+      "lift_pp": 11.94,
       "stability_score": 0.75,
       "neighborhoods": {
         "5": {
@@ -12388,13 +12388,13 @@
           "n": 10
         },
         "25": {
-          "rate_pct": 47.68,
-          "lift_pp": 11.96,
+          "rate_pct": 47.65,
+          "lift_pp": 11.94,
           "n": 25
         },
         "50": {
-          "rate_pct": 44.06,
-          "lift_pp": 8.34,
+          "rate_pct": 44.03,
+          "lift_pp": 8.32,
           "n": 50
         }
       },
@@ -12402,7 +12402,7 @@
         {
           "game_id": "2022_04_CLE_ATL",
           "label": "2022-10-02 CLE vs ATL",
-          "similarity_pct": 78.8,
+          "similarity_pct": 78.6,
           "outcome_occurred": true,
           "focus_score": 20.0,
           "opp_score": 23.0,
@@ -12412,7 +12412,7 @@
         {
           "game_id": "2020_14_ARI_NYG",
           "label": "2020-12-13 ARI vs NYG",
-          "similarity_pct": 77.0,
+          "similarity_pct": 76.9,
           "outcome_occurred": false,
           "focus_score": 26.0,
           "opp_score": 7.0,
@@ -12422,7 +12422,7 @@
         {
           "game_id": "2026_05_BAL_ATL",
           "label": "2026-10-11 BAL vs ATL",
-          "similarity_pct": 76.3,
+          "similarity_pct": 76.2,
           "outcome_occurred": false,
           "focus_score": 30.0,
           "opp_score": 23.0,
@@ -12432,7 +12432,7 @@
         {
           "game_id": "2025_13_CHI_PHI",
           "label": "2025-11-28 CHI vs PHI",
-          "similarity_pct": 74.1,
+          "similarity_pct": 74.0,
           "outcome_occurred": false,
           "focus_score": 24.0,
           "opp_score": 15.0,
@@ -12442,7 +12442,7 @@
         {
           "game_id": "2020_15_CLE_NYG",
           "label": "2020-12-20 CLE vs NYG",
-          "similarity_pct": 73.8,
+          "similarity_pct": 73.7,
           "outcome_occurred": true,
           "focus_score": 20.0,
           "opp_score": 6.0,
@@ -12460,7 +12460,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 47.7% of the time versus a 35.7% contextual baseline. The top-25 analog neighborhood averages 72.8% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 47.7% of the time versus a 35.7% contextual baseline. The top-25 analog neighborhood averages 72.7% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -13208,254 +13208,6 @@
       }
     },
     {
-      "signal_id": "ISPY-B79DAA74DB1A29642D",
-      "pattern_key": "424d117d1cf6a343",
-      "status": "VALIDATED",
-      "direction": "SUPPORT",
-      "league": "NFL",
-      "focus_team": "TB",
-      "opponent": "PIT",
-      "title": "TB — finishes at least 10% above its entering passing-yard form",
-      "outcome_code": "PASS_SURGE",
-      "outcome": "finishes at least 10% above its entering passing-yard form",
-      "cohort_definition": "Games most similar to this measured state: passing efficiency -5.75, rushing efficiency 0.98, rush-defense allowance 72.80, team passing form 190.4 yds.",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -5.751382234951842,
-          "display": "-5.75"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "high",
-          "value": 0.9798577232519179,
-          "display": "0.98"
-        },
-        {
-          "feature": "focus_rush_allowed_l5",
-          "label": "rush-defense allowance",
-          "direction": "low",
-          "value": 72.8,
-          "display": "72.80"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "direction": "low",
-          "value": 190.4,
-          "display": "190.4 yds"
-        },
-        {
-          "feature": "focus_win_pct",
-          "label": "team win rate",
-          "direction": "low",
-          "value": 0.2,
-          "display": "20%"
-        }
-      ],
-      "current_state": [
-        {
-          "feature": "focus_rush_yards_l5",
-          "label": "team rushing form",
-          "value": 133.0,
-          "display": "133.0 yds"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "value": 190.4,
-          "display": "190.4 yds"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "value": 233.6,
-          "display": "233.60"
-        },
-        {
-          "feature": "opp_rush_yards_l5",
-          "label": "opponent rushing form",
-          "value": 101.2,
-          "display": "101.2 yds"
-        },
-        {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "value": 3.75,
-          "display": "3.75"
-        },
-        {
-          "feature": "opp_front7_activity_l5",
-          "label": "opponent front-seven activity proxy",
-          "value": 5.319999999999999,
-          "display": "5.32"
-        },
-        {
-          "feature": "postseason_pressure_proxy",
-          "label": "postseason-pressure proxy",
-          "value": 0.19882352941176473,
-          "display": "20%"
-        },
-        {
-          "feature": "temperature_f",
-          "label": "temperature",
-          "value": 78.4,
-          "display": "78°F"
-        },
-        {
-          "feature": "wind_mph",
-          "label": "wind",
-          "value": 16.0,
-          "display": "16.0 mph"
-        },
-        {
-          "feature": "rain_in",
-          "label": "rain",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_in",
-          "label": "precipitation",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_probability",
-          "label": "precipitation probability",
-          "value": 0.0,
-          "display": "0.0%"
-        },
-        {
-          "feature": "wind_gust_mph",
-          "label": "wind gust",
-          "value": 21.5,
-          "display": "21.5 mph"
-        }
-      ],
-      "sample_size": 25,
-      "effective_sample_size": 24.8,
-      "mean_similarity_pct": 72.51,
-      "closest_similarity_pct": 76.22,
-      "observed_rate_pct": 48.58,
-      "baseline_rate_pct": 38.27,
-      "baseline_sample_size": 742,
-      "lift_pp": 10.3,
-      "stability_score": 0.75,
-      "neighborhoods": {
-        "5": {
-          "rate_pct": 18.92,
-          "lift_pp": -19.35,
-          "n": 5
-        },
-        "10": {
-          "rate_pct": 49.86,
-          "lift_pp": 11.59,
-          "n": 10
-        },
-        "25": {
-          "rate_pct": 48.58,
-          "lift_pp": 10.3,
-          "n": 25
-        },
-        "50": {
-          "rate_pct": 41.54,
-          "lift_pp": 3.26,
-          "n": 50
-        }
-      },
-      "analogs": [
-        {
-          "game_id": "2023_15_KC_NE",
-          "label": "2023-12-17 NE vs KC",
-          "similarity_pct": 76.2,
-          "outcome_occurred": false,
-          "focus_score": 17.0,
-          "opp_score": 27.0,
-          "pass_yards": 180.0,
-          "rush_yards": 52.0
-        },
-        {
-          "game_id": "2023_07_LV_CHI",
-          "label": "2023-10-22 CHI vs LV",
-          "similarity_pct": 76.0,
-          "outcome_occurred": false,
-          "focus_score": 30.0,
-          "opp_score": 12.0,
-          "pass_yards": 162.0,
-          "rush_yards": 173.0
-        },
-        {
-          "game_id": "2021_15_ARI_DET",
-          "label": "2021-12-19 DET vs ARI",
-          "similarity_pct": 74.2,
-          "outcome_occurred": true,
-          "focus_score": 30.0,
-          "opp_score": 12.0,
-          "pass_yards": 216.0,
-          "rush_yards": 126.0
-        },
-        {
-          "game_id": "2022_07_NYJ_DEN",
-          "label": "2022-10-23 DEN vs NYJ",
-          "similarity_pct": 73.8,
-          "outcome_occurred": false,
-          "focus_score": 9.0,
-          "opp_score": 16.0,
-          "pass_yards": 225.0,
-          "rush_yards": 105.0
-        },
-        {
-          "game_id": "2019_08_DEN_IND",
-          "label": "2019-10-27 DEN vs IND",
-          "similarity_pct": 73.6,
-          "outcome_occurred": false,
-          "focus_score": 13.0,
-          "opp_score": 15.0,
-          "pass_yards": 174.0,
-          "rush_yards": 113.0
-        }
-      ],
-      "current_matches": [
-        {
-          "event_id": "2026_06_PIT_TB",
-          "label": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
-          "focus_team": "TB",
-          "opponent": "PIT"
-        }
-      ],
-      "recommended_poms": [],
-      "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 48.6% of the time versus a 38.3% contextual baseline. The top-25 analog neighborhood averages 72.5% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "method": {
-        "similarity": "weighted mixed-feature Gower-like distance",
-        "neighborhood": "top 25 of top 50 historical analogs",
-        "raw_sample_gate": false,
-        "effective_sample_required": true
-      }
-    },
-    {
       "signal_id": "ISPY-3A2E9EEFFFB9F816E1",
       "pattern_key": "c0b5473f8a2ac744",
       "status": "VALIDATED",
@@ -13550,17 +13302,17 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.5,
-      "mean_similarity_pct": 72.84,
-      "closest_similarity_pct": 78.76,
-      "observed_rate_pct": 53.17,
+      "mean_similarity_pct": 72.73,
+      "closest_similarity_pct": 78.64,
+      "observed_rate_pct": 53.15,
       "baseline_rate_pct": 43.53,
       "baseline_sample_size": 742,
-      "lift_pp": 9.64,
+      "lift_pp": 9.62,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
-          "rate_pct": 77.58,
-          "lift_pp": 34.05,
+          "rate_pct": 77.57,
+          "lift_pp": 34.04,
           "n": 5
         },
         "10": {
@@ -13569,13 +13321,13 @@
           "n": 10
         },
         "25": {
-          "rate_pct": 53.17,
-          "lift_pp": 9.64,
+          "rate_pct": 53.15,
+          "lift_pp": 9.62,
           "n": 25
         },
         "50": {
-          "rate_pct": 56.24,
-          "lift_pp": 12.71,
+          "rate_pct": 56.23,
+          "lift_pp": 12.7,
           "n": 50
         }
       },
@@ -13583,7 +13335,7 @@
         {
           "game_id": "2022_04_CLE_ATL",
           "label": "2022-10-02 CLE vs ATL",
-          "similarity_pct": 78.8,
+          "similarity_pct": 78.6,
           "outcome_occurred": false,
           "focus_score": 20.0,
           "opp_score": 23.0,
@@ -13593,7 +13345,7 @@
         {
           "game_id": "2020_14_ARI_NYG",
           "label": "2020-12-13 ARI vs NYG",
-          "similarity_pct": 77.0,
+          "similarity_pct": 76.9,
           "outcome_occurred": true,
           "focus_score": 26.0,
           "opp_score": 7.0,
@@ -13603,7 +13355,7 @@
         {
           "game_id": "2026_05_BAL_ATL",
           "label": "2026-10-11 BAL vs ATL",
-          "similarity_pct": 76.3,
+          "similarity_pct": 76.2,
           "outcome_occurred": true,
           "focus_score": 30.0,
           "opp_score": 23.0,
@@ -13613,7 +13365,7 @@
         {
           "game_id": "2025_13_CHI_PHI",
           "label": "2025-11-28 CHI vs PHI",
-          "similarity_pct": 74.1,
+          "similarity_pct": 74.0,
           "outcome_occurred": true,
           "focus_score": 24.0,
           "opp_score": 15.0,
@@ -13623,7 +13375,7 @@
         {
           "game_id": "2020_15_CLE_NYG",
           "label": "2020-12-20 CLE vs NYG",
-          "similarity_pct": 73.8,
+          "similarity_pct": 73.7,
           "outcome_occurred": true,
           "focus_score": 20.0,
           "opp_score": 6.0,
@@ -13641,7 +13393,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 53.2% of the time versus a 43.5% contextual baseline. The top-25 analog neighborhood averages 72.8% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 53.1% of the time versus a 43.5% contextual baseline. The top-25 analog neighborhood averages 72.7% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -13758,17 +13510,17 @@
       ],
       "sample_size": 25,
       "effective_sample_size": 24.46,
-      "mean_similarity_pct": 73.72,
-      "closest_similarity_pct": 79.39,
-      "observed_rate_pct": 47.83,
+      "mean_similarity_pct": 73.61,
+      "closest_similarity_pct": 79.27,
+      "observed_rate_pct": 47.81,
       "baseline_rate_pct": 38.41,
       "baseline_sample_size": 742,
-      "lift_pp": 9.42,
+      "lift_pp": 9.4,
       "stability_score": 0.75,
       "neighborhoods": {
         "5": {
-          "rate_pct": 54.62,
-          "lift_pp": 16.21,
+          "rate_pct": 54.61,
+          "lift_pp": 16.2,
           "n": 5
         },
         "10": {
@@ -13777,13 +13529,13 @@
           "n": 10
         },
         "25": {
-          "rate_pct": 47.83,
-          "lift_pp": 9.42,
+          "rate_pct": 47.81,
+          "lift_pp": 9.4,
           "n": 25
         },
         "50": {
-          "rate_pct": 35.04,
-          "lift_pp": -3.37,
+          "rate_pct": 35.03,
+          "lift_pp": -3.38,
           "n": 50
         }
       },
@@ -13791,7 +13543,7 @@
         {
           "game_id": "2026_05_BAL_ATL",
           "label": "2026-10-11 ATL vs BAL",
-          "similarity_pct": 79.4,
+          "similarity_pct": 79.3,
           "outcome_occurred": false,
           "focus_score": 23.0,
           "opp_score": 30.0,
@@ -13801,7 +13553,7 @@
         {
           "game_id": "2022_04_CLE_ATL",
           "label": "2022-10-02 ATL vs CLE",
-          "similarity_pct": 76.2,
+          "similarity_pct": 76.1,
           "outcome_occurred": true,
           "focus_score": 23.0,
           "opp_score": 20.0,
@@ -13811,7 +13563,7 @@
         {
           "game_id": "2022_06_SF_ATL",
           "label": "2022-10-16 ATL vs SF",
-          "similarity_pct": 75.9,
+          "similarity_pct": 75.8,
           "outcome_occurred": true,
           "focus_score": 28.0,
           "opp_score": 14.0,
@@ -13821,7 +13573,7 @@
         {
           "game_id": "2024_06_ARI_GB",
           "label": "2024-10-13 GB vs ARI",
-          "similarity_pct": 75.5,
+          "similarity_pct": 75.4,
           "outcome_occurred": false,
           "focus_score": 34.0,
           "opp_score": 13.0,
@@ -13831,7 +13583,7 @@
         {
           "game_id": "2020_07_SF_NE",
           "label": "2020-10-25 NE vs SF",
-          "similarity_pct": 75.5,
+          "similarity_pct": 75.4,
           "outcome_occurred": true,
           "focus_score": 6.0,
           "opp_score": 33.0,
@@ -13849,7 +13601,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 47.8% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 73.7% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 47.8% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 73.6% similarity with effective sample 24.5. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -14127,16 +13879,264 @@
       }
     },
     {
-      "signal_id": "ISPY-F7F16D8D5C43CA060D",
-      "pattern_key": "ffd7974a294aed45",
+      "signal_id": "ISPY-B79DAA74DB1A29642D",
+      "pattern_key": "424d117d1cf6a343",
       "status": "EMERGING",
       "direction": "SUPPORT",
       "league": "NFL",
+      "focus_team": "TB",
+      "opponent": "PIT",
+      "title": "TB — finishes at least 10% above its entering passing-yard form",
+      "outcome_code": "PASS_SURGE",
+      "outcome": "finishes at least 10% above its entering passing-yard form",
+      "cohort_definition": "Games most similar to this measured state: passing efficiency -5.75, rushing efficiency 0.98, rush-defense allowance 72.80, team passing form 190.4 yds.",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -5.751382234951842,
+          "display": "-5.75"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 0.9798577232519179,
+          "display": "0.98"
+        },
+        {
+          "feature": "focus_rush_allowed_l5",
+          "label": "rush-defense allowance",
+          "direction": "low",
+          "value": 72.8,
+          "display": "72.80"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 190.4,
+          "display": "190.4 yds"
+        },
+        {
+          "feature": "focus_win_pct",
+          "label": "team win rate",
+          "direction": "low",
+          "value": 0.2,
+          "display": "20%"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 133.0,
+          "display": "133.0 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 190.4,
+          "display": "190.4 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 233.6,
+          "display": "233.60"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 101.2,
+          "display": "101.2 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 3.75,
+          "display": "3.75"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 5.319999999999999,
+          "display": "5.32"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.19882352941176473,
+          "display": "20%"
+        },
+        {
+          "feature": "temperature_f",
+          "label": "temperature",
+          "value": 78.4,
+          "display": "78°F"
+        },
+        {
+          "feature": "wind_mph",
+          "label": "wind",
+          "value": 16.0,
+          "display": "16.0 mph"
+        },
+        {
+          "feature": "rain_in",
+          "label": "rain",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_in",
+          "label": "precipitation",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_probability",
+          "label": "precipitation probability",
+          "value": 0.0,
+          "display": "0.0%"
+        },
+        {
+          "feature": "wind_gust_mph",
+          "label": "wind gust",
+          "value": 21.5,
+          "display": "21.5 mph"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.79,
+      "mean_similarity_pct": 72.44,
+      "closest_similarity_pct": 76.1,
+      "observed_rate_pct": 48.5,
+      "baseline_rate_pct": 38.27,
+      "baseline_sample_size": 742,
+      "lift_pp": 10.22,
+      "stability_score": 0.5,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 18.82,
+          "lift_pp": -19.46,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 40.01,
+          "lift_pp": 1.74,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 48.5,
+          "lift_pp": 10.22,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 41.6,
+          "lift_pp": 3.33,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2023_15_KC_NE",
+          "label": "2023-12-17 NE vs KC",
+          "similarity_pct": 76.1,
+          "outcome_occurred": false,
+          "focus_score": 17.0,
+          "opp_score": 27.0,
+          "pass_yards": 180.0,
+          "rush_yards": 52.0
+        },
+        {
+          "game_id": "2023_07_LV_CHI",
+          "label": "2023-10-22 CHI vs LV",
+          "similarity_pct": 76.1,
+          "outcome_occurred": false,
+          "focus_score": 30.0,
+          "opp_score": 12.0,
+          "pass_yards": 162.0,
+          "rush_yards": 173.0
+        },
+        {
+          "game_id": "2021_15_ARI_DET",
+          "label": "2021-12-19 DET vs ARI",
+          "similarity_pct": 74.1,
+          "outcome_occurred": true,
+          "focus_score": 30.0,
+          "opp_score": 12.0,
+          "pass_yards": 216.0,
+          "rush_yards": 126.0
+        },
+        {
+          "game_id": "2022_07_NYJ_DEN",
+          "label": "2022-10-23 DEN vs NYJ",
+          "similarity_pct": 74.0,
+          "outcome_occurred": false,
+          "focus_score": 9.0,
+          "opp_score": 16.0,
+          "pass_yards": 225.0,
+          "rush_yards": 105.0
+        },
+        {
+          "game_id": "2019_08_DEN_IND",
+          "label": "2019-10-27 DEN vs IND",
+          "similarity_pct": 73.5,
+          "outcome_occurred": false,
+          "focus_score": 13.0,
+          "opp_score": 15.0,
+          "pass_yards": 174.0,
+          "rush_yards": 113.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_06_PIT_TB",
+          "label": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "focus_team": "TB",
+          "opponent": "PIT"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 48.5% of the time versus a 38.3% contextual baseline. The top-25 analog neighborhood averages 72.4% similarity with effective sample 24.8. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    },
+    {
+      "signal_id": "ISPY-3D2F84F00CF8D98859",
+      "pattern_key": "d4ef3d4b936195d7",
+      "status": "EMERGING",
+      "direction": "CHALLENGE",
+      "league": "NFL",
       "focus_team": "PHI",
       "opponent": "CAR",
-      "title": "PHI — finishes at least 10% above its entering rushing-yard form",
-      "outcome_code": "RUSH_SURGE",
-      "outcome": "finishes at least 10% above its entering rushing-yard form",
+      "title": "PHI — finishes at least 10% below its entering passing-yard form",
+      "outcome_code": "PASS_BELOW_FORM",
+      "outcome": "finishes at least 10% below its entering passing-yard form",
       "cohort_definition": "Games most similar to this measured state: passing efficiency -3.05, rushing efficiency -3.52, opponent passing form 317.0 yds, team passing form 186.6 yds.",
       "conditions": [
         {
@@ -14256,33 +14256,33 @@
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.7,
-      "mean_similarity_pct": 71.95,
-      "closest_similarity_pct": 77.88,
-      "observed_rate_pct": 51.01,
-      "baseline_rate_pct": 40.84,
+      "effective_sample_size": 24.71,
+      "mean_similarity_pct": 72.04,
+      "closest_similarity_pct": 77.77,
+      "observed_rate_pct": 28.23,
+      "baseline_rate_pct": 38.41,
       "baseline_sample_size": 742,
-      "lift_pp": 10.18,
+      "lift_pp": -10.18,
       "stability_score": 0.5,
       "neighborhoods": {
         "5": {
-          "rate_pct": 24.53,
-          "lift_pp": -16.31,
+          "rate_pct": 43.55,
+          "lift_pp": 5.14,
           "n": 5
         },
         "10": {
-          "rate_pct": 31.07,
-          "lift_pp": -9.77,
+          "rate_pct": 40.94,
+          "lift_pp": 2.53,
           "n": 10
         },
         "25": {
-          "rate_pct": 51.01,
-          "lift_pp": 10.18,
+          "rate_pct": 28.23,
+          "lift_pp": -10.18,
           "n": 25
         },
         "50": {
-          "rate_pct": 55.84,
-          "lift_pp": 15.0,
+          "rate_pct": 31.09,
+          "lift_pp": -7.32,
           "n": 50
         }
       },
@@ -14290,7 +14290,7 @@
         {
           "game_id": "2023_08_NYJ_NYG",
           "label": "2023-10-29 NYG vs NYJ",
-          "similarity_pct": 77.9,
+          "similarity_pct": 77.8,
           "outcome_occurred": true,
           "focus_score": 10.0,
           "opp_score": 13.0,
@@ -14300,7 +14300,7 @@
         {
           "game_id": "2025_07_NO_CHI",
           "label": "2025-10-19 NO vs CHI",
-          "similarity_pct": 74.0,
+          "similarity_pct": 74.1,
           "outcome_occurred": false,
           "focus_score": 14.0,
           "opp_score": 26.0,
@@ -14310,8 +14310,8 @@
         {
           "game_id": "2022_09_CAR_CIN",
           "label": "2022-11-06 CAR vs CIN",
-          "similarity_pct": 73.9,
-          "outcome_occurred": false,
+          "similarity_pct": 74.0,
+          "outcome_occurred": true,
           "focus_score": 21.0,
           "opp_score": 42.0,
           "pass_yards": 164.0,
@@ -14320,7 +14320,7 @@
         {
           "game_id": "2019_07_LAC_TEN",
           "label": "2019-10-20 TEN vs LAC",
-          "similarity_pct": 73.2,
+          "similarity_pct": 73.3,
           "outcome_occurred": false,
           "focus_score": 23.0,
           "opp_score": 20.0,
@@ -14330,7 +14330,7 @@
         {
           "game_id": "2022_07_PIT_MIA",
           "label": "2022-10-23 PIT vs MIA",
-          "similarity_pct": 73.0,
+          "similarity_pct": 73.1,
           "outcome_occurred": false,
           "focus_score": 10.0,
           "opp_score": 16.0,
@@ -14348,7 +14348,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 51.0% of the time versus a 40.8% contextual baseline. The top-25 analog neighborhood averages 72.0% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 28.2% of the time versus a 38.4% contextual baseline. The top-25 analog neighborhood averages 72.0% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
