@@ -1,0 +1,35 @@
+name: D&G Portfolio Pull Request Gate
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'damilola-gavavi/**'
+      - 'cloudflare/dg-market-api/**'
+      - '.github/workflows/dg-portfolio-pr-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  portfolio-security-and-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /cloudflare/dg-market-api/
+            /damilola-gavavi/
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse Phase 2 scripts
+        run: |
+          node --check cloudflare/dg-market-api/src/private-portfolio.js
+          node --check cloudflare/dg-market-api/src/portfolio-math.js
+          node --check damilola-gavavi/phase-2.js
+          node --check damilola-gavavi/dg-navigation.js
+      - name: Phase 2 authorization, accounting and collector tests
+        run: node --test damilola-gavavi/phase-2.test.cjs
+      - name: Shared navigation and privacy smoke tests
+        run: node --test damilola-gavavi/dg-navigation.test.cjs

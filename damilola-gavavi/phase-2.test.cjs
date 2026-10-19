@@ -14,10 +14,37 @@ test('opposite signal and consecutive adverse movement trigger consider exit',as
 test('opposite signal alone watches; gaps do not manufacture reversal',async()=>{const {assessPosition:f}=await math;const h=history('DOWN',[.60,.57,.54]);h.current_contract.candles[1].time_utc=iso(now-200000);assert.equal(f({ticker:'KXBTC15M-T',side:'YES'},h,null,now).stance,'WATCH')});
 test('NO positions use opposite movement direction',async()=>{const {assessPosition:f}=await math;assert.equal(f({ticker:'KXBTC15M-T',side:'NO'},history('UP',[.50,.54,.57]),null,now).stance,'CONSIDER_EXIT')});
 test('stale, future, wrong ticker, unverified mapping and closed contract fail closed',async()=>{const {assessPosition:f}=await math;for(const edit of [h=>h.quote_observed_at_utc=iso(now-100000),h=>h.retrieved_at_utc=iso(now+1),h=>h.current_contract.ticker='OTHER',h=>h.yes_maps_to_up=false,h=>h.current_contract.close_time_utc=iso(now-1)]){const h=history();edit(h);assert.equal(f({ticker:'KXBTC15M-T',side:'YES'},h,null,now).stance,'WAIT')}});
-test('authentication checks only bearer header and rejects query tokens',async()=>{const {authorized:f}=await api;const token='a'.repeat(43),env={DG_PORTFOLIO_ACCESS_SHA256:cryptoNode.createHash('sha256').update(token).digest('hex')};assert(await f(new Request('https://test/',{headers:{Authorization:'Bearer '+token}}),env));assert(!await f(new Request('https://test/?token='+token),env));assert(!await f(new Request('https://test/',{headers:{Authorization:'Bearer '+'b'.repeat(43)}}),env));assert(!await f(new Request('https://test/'),{}))});
-test('private routes return no account records when unauthenticated and disable caching',async()=>{const {servePrivatePortfolio:f}=await api;const r=await f(new Request('https://test/api/private/portfolio'),{},{});assert.equal(r.status,401);assert.match(r.headers.get('Cache-Control'),/no-store/);assert.equal((await r.json()).state,'LOCKED')});
+function authKV(){const rows=new Map(),stats={reads:0,writes:0,deletes:0};return {stats,get:async k=>{stats.reads++;return rows.has(k)?JSON.parse(rows.get(k)):null},put:async(k,v)=>{stats.writes++;rows.set(k,v)},delete:async k=>{stats.deletes++;rows.delete(k)}}}
+test('authentication checks only bearer header and rejects query tokens',async()=>{
+ const {authorized:f}=await api,token='a'.repeat(43),kv=authKV(),env={DG_PORTFOLIO_ACCESS_SHA256:cryptoNode.createHash('sha256').update(token).digest('hex'),DG_ARCHIVE:kv};
+ assert(await f(new Request('https://test/',{headers:{Authorization:'Bearer '+token}}),env));
+ assert(!await f(new Request('https://test/?token='+token),env));
+ assert(!await f(new Request('https://test/',{headers:{Authorization:'Bearer '+'b'.repeat(43)}}),env));
+ assert(!await f(new Request('https://test/'),{}));
+ assert.equal(kv.stats.deletes,0,'valid refresh must not consume a KV delete');
+});
+test('short code valid auth clears recorded failures once; refresh does not spend KV deletes',async()=>{
+ const {authorized:f}=await api,token='newCode!',kv=authKV(),env={DG_PORTFOLIO_ACCESS_SHA256:cryptoNode.createHash('sha256').update(token).digest('hex'),DG_ARCHIVE:kv};
+ const request=code=>new Request('https://test/',{headers:{Authorization:'Bearer '+code,'CF-Connecting-IP':'192.0.2.21'}});
+ assert(!await f(request('wrongPwd'),env));
+ assert(await f(request(token),env));
+ assert.equal(kv.stats.deletes,1);
+ for(let i=0;i<20;i++)assert(await f(request(token),env));
+ assert.equal(kv.stats.deletes,1,'repeat successful refreshes must not write/delete KV');
+});
+test('five bad codes temporarily block further portfolio reads',async()=>{
+ const {servePrivatePortfolio:f}=await api,kv=authKV(),env={DG_ARCHIVE:kv,DG_PORTFOLIO_ACCESS_SHA256:cryptoNode.createHash('sha256').update('validCode!').digest('hex')};
+ const request=code=>new Request('https://test/api/private/portfolio',{headers:{Authorization:'Bearer '+code,'CF-Connecting-IP':'192.0.2.22'}});
+ for(let i=0;i<5;i++){const r=await f(request('wrongCode!'),env,{});assert.equal(r.status,401)}
+ const blocked=await f(request('validCode!'),env,{});
+ assert.equal(blocked.status,429);
+ assert.equal((await blocked.json()).state,'ACCESS_TEMPORARILY_LOCKED');
+});
+
+test('private routes return no account records when unauthenticated and disable caching',async()=>{const {servePrivatePortfolio:f}=await api;const r=await f(new Request('https://test/api/private/portfolio'),{DG_ARCHIVE:authKV()},{});assert.equal(r.status,401);assert.match(r.headers.get('Cache-Control'),/no-store/);assert.equal((await r.json()).state,'LOCKED');const unavailable=await f(new Request('https://test/api/private/portfolio'),{},{});assert.equal(unavailable.status,503);assert.equal((await unavailable.json()).state,'ACCESS_RATE_LIMIT_UNAVAILABLE')});
 test('account signer rejects orders and arbitrary paths before signing',async()=>{const {kalshiPortfolioHeaders:f}=await import('../cloudflare/dg-market-api/src/kalshi-read-auth.js');for(const path of ['/portfolio/orders','/portfolio/positions/../orders','https://evil.test','/portfolio/positions%3F'])await assert.rejects(f(path,{}),/PORTFOLIO_GET_PATH_REQUIRED/)});
-test('page retains original GAM script and requires a separate private unlock',()=>{const fs=require('node:fs'),html=fs.readFileSync(__dirname+'/phase-2.html','utf8');assert.match(html,/id="unlockForm"/);assert.match(html,/id="marketGrid"/);assert.match(html,/src="gam-15m.js/);assert.match(html,/id="privateWorkspace" hidden/);const js=fs.readFileSync(__dirname+'/phase-2.js','utf8');assert(!js.includes('localStorage'));assert(!js.includes('innerHTML'));assert.match(js,/generation/)});
+test('public follow page has no login or trading controls and uses sanitized endpoint',()=>{const fs=require('node:fs'),html=fs.readFileSync(__dirname+'/phase-2.html','utf8');assert.doesNotMatch(html,/id="unlockForm"/);assert.doesNotMatch(html,/id="marketGrid"/);assert.match(html,/id="positionGrid"/);assert.match(html,/id="resultsMetrics"/);const js=fs.readFileSync(__dirname+'/phase-2.js','utf8');assert(js.includes('/api/public/portfolio'));assert.doesNotMatch(js,/Authorization:/);assert(!js.includes('localStorage'));assert(!js.includes('innerHTML'))});
+
 function bucket(){const m=new Map();let n=0;return {records:m,get:async k=>m.has(k)?{text:async()=>m.get(k).body,etag:m.get(k).etag,uploaded:new Date()}:null,put:async(k,v,o={})=>{const old=m.get(k);if(o.onlyIf?.etagDoesNotMatch==='*'&&old)return null;if(o.onlyIf?.etagMatches&&old?.etag!==o.onlyIf.etagMatches)return null;const etag=String(++n);m.set(k,{body:v,etag});return {etag}}}}
 test('collector signs only GETs, resumes pagination, deduplicates fills, and isolates account storage',async()=>{
  const {collectPortfolio}=await api,keys=cryptoNode.generateKeyPairSync('rsa',{modulusLength:2048}),privateBucket=bucket(),research=bucket();
@@ -34,4 +61,17 @@ test('collector signs only GETs, resumes pagination, deduplicates fills, and iso
 test('collection failures remain explicit and do not mark missing history complete',async()=>{
  const {collectPortfolio}=await api,keys=cryptoNode.generateKeyPairSync('rsa',{modulusLength:2048}),env={DG_PORTFOLIO_R2:bucket(),KALSHI_API_KEY_ID:'fixture',KALSHI_PRIVATE_KEY:keys.privateKey.export({type:'pkcs8',format:'pem'})},original=global.fetch;
  global.fetch=async()=>new Response('',{status:401});try{const r=await collectPortfolio(env);assert(Object.values(r.streams).every(s=>s.state==='ERROR'&&s.reason==='KALSHI_ACCOUNT_HTTP_401'));assert(![...env.DG_PORTFOLIO_R2.records.keys()].some(k=>k.endsWith('/live.json')))}finally{global.fetch=original}
+});
+
+test('public follower endpoint exposes only allowlisted data, never secret, raw fills or account IDs',async()=>{
+ const {servePublicPortfolio:f}=await api,privateBucket=bucket();
+ await privateBucket.put('dg/private-portfolio/v1/live.json',JSON.stringify({retrieved_at:new Date().toISOString(),complete:true,positions:[p()],balance:{balance:12345,portfolio_value:23456},private_api_key:'NEVER_EXPOSE'}));
+ await privateBucket.put('dg/private-portfolio/v1/fills.json',JSON.stringify({rows:[{fill_id:'PRIVATE_FILL',ticker:'KXBTC15M-T',fee_cost:'.1000'}]}));
+ await privateBucket.put('dg/private-portfolio/v1/public-follow.json',JSON.stringify({positions:[{ticker:'KXBTC15M-T',side:'YES',assessment:{stance:'WATCH',icon:'🟡',statement:'Observed watch',confidence:null}}]}));
+ const r=await f(new Request('https://test/api/public/portfolio'),{DG_PORTFOLIO_R2:privateBucket},{});
+ assert.equal(r.status,200);const body=await r.json();const encoded=JSON.stringify(body);
+ assert.equal(body.trading_enabled,false);assert.equal(body.read_only,true);assert.equal(body.positions.length,1);
+ assert.equal(body.positions[0].ticker,'KXBTC15M-T');assert.equal(body.positions[0].assessment.stance,'WATCH');
+ assert.equal(body.balance.cash_dollars,123.45);assert(!encoded.includes('PRIVATE_FILL'));assert(!encoded.includes('NEVER_EXPOSE'));
+ assert(!encoded.includes('private_api_key'));assert(!encoded.includes('exchange_index'));
 });

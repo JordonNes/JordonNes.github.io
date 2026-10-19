@@ -3,7 +3,7 @@
 <meta name="theme-color" content="#ffffff"><meta name="description" content="Damilola & Gavavi Action Monitor — all supported Kalshi 15-minute Up/Down markets in one clean read-only market dashboard.">
 <title>D&G | 15-Minute Action Monitor</title>
 <link rel="stylesheet" href="gam-15m.css?v=20261016-live1">
-<style>.market-clock{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";white-space:nowrap;color:#334d40;font-size:12px;font-weight:700;letter-spacing:.025em;padding:6px 0}</style></head><body>
+<style>.market-clock{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";white-space:nowrap;color:#334d40;font-size:12px;font-weight:700;letter-spacing:.025em;padding:6px 0}</style><link rel="stylesheet" href="dg-navigation.css?v=20261019"><style>.portfolio-secret-letter{font:inherit;letter-spacing:inherit;color:inherit;background:transparent;border:0;padding:0;margin:0;display:inline;vertical-align:baseline;cursor:pointer}.portfolio-secret-letter:focus-visible{outline:2px solid #16845d;outline-offset:2px;border-radius:3px}.portfolio-secret-letter.is-unlocked{color:#16845d;text-shadow:0 0 10px #16845d44}</style></head><body>
 <header class="sitehead"><div class="headinner">
 <a class="brand" href="./" aria-label="Damilola and Gavavi Home">
 <span class="monogram" aria-hidden="true">D·G</span>
@@ -12,7 +12,7 @@
 </div></header>
 <main class="container">
 <section class="hero">
-<div><div class="eyebrow">Gavavi Action Monitor · GAM</div><h1>15-minute markets</h1><p>Every supported 15-minute Up/Down market in one simple view. Yellow follows the interim Damilola Method’s latest eligible live suggestion; the initial recommendation remains a checkpoint. Signals update automatically as observed one-minute Kalshi data arrives. Gavavi forecasting remains under validation.</p></div>
+<div><div class="eyebrow">Gavavi Action Monitor · GAM</div><h1>15-minute market<button id="portfolioSecret" class="portfolio-secret-letter" type="button" aria-label="Reveal Portfolio shortcut" aria-pressed="false" title="Reveal Portfolio shortcut">s</button></h1><p>Every supported 15-minute Up/Down market in one simple view. Yellow follows the interim Damilola Method’s latest eligible live suggestion; the initial recommendation remains a checkpoint. Signals update automatically as observed one-minute Kalshi data arrives. Gavavi forecasting remains under validation.</p></div>
 <div class="countbox"><strong id="observedCount">0 / 21</strong><span>markets with observed quotes</span></div>
 </section>
 <div class="toolbar"><div class="tabs" role="tablist" aria-label="Filter 15-minute markets">
@@ -21,7 +21,7 @@
 <button type="button" data-group="Crypto" role="tab" aria-selected="false">Crypto <span>9</span></button>
 <button type="button" data-group="FX" role="tab" aria-selected="false">FX <span>5</span></button>
 </div><div class="tools"><label class="sr-only" for="search">Search markets</label><input class="search" type="search" id="search" placeholder="Search markets…" autocomplete="off" aria-label="Search markets"></div></div>
-<div class="note-row"><a href="phase-2.html" style="color:#426b50;font-weight:750">Phase 2 · My positions ↗</a><a href="pattern-lab.html" style="color:#426b50;font-weight:750">Pattern Lab · compare five hours ↗</a><a href="accuracy.html" style="color:#426b50;font-weight:750">D&G accuracy history ↗</a><a href="signal-ledger.html" style="color:#426b50;font-weight:750">Damilola signal ledger ↗</a><span id="visibleCount">21 markets</span><span class="signal-auto" aria-label="Automatic live signal polling">Live signal check every ~30 seconds while visible</span><span id="updated">Updates pending</span></div>
+<div class="note-row"><a href="pattern-lab.html" style="color:#426b50;font-weight:750">Pattern Lab · compare five hours ↗</a><a href="accuracy.html" style="color:#426b50;font-weight:750">D&G accuracy history ↗</a><a href="signal-ledger.html" style="color:#426b50;font-weight:750">Damilola signal ledger ↗</a><span id="visibleCount">21 markets</span><span class="signal-auto" aria-label="Automatic live signal polling">Live signal check every ~30 seconds while visible</span><span id="updated">Updates pending</span></div>
 <section id="marketGrid" class="cards" aria-label="Kalshi 15-minute market cards" aria-live="polite"></section>
 <footer class="foot"><span>Read-only market monitor. Quotes are indicative, delayed by retrieval, and not executable offers. No orders are placed here.</span><span><a href="https://kalshi.com/category/commodities/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Kalshi Commodities ↗</a> · <a href="https://kalshi.com/category/crypto/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Crypto ↗</a> · <a href="https://kalshi.com/category/financials/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">FX ↗</a></span></footer>
 </main>
@@ -30,4 +30,4 @@
 <script>
 (()=>{const el=document.getElementById("marketClock");const fmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});function tick(){el.textContent=fmt.format(new Date());}tick();setInterval(tick,1000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});})();
 </script>
-</body></html>
+<script defer src="dg-navigation.js?v=20261019"></script><script defer src="portfolio-shortcut.js?v=20261019"></script></body></html>

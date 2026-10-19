@@ -1,0 +1,9 @@
+/* Consistent navigation across every D&G section. */
+.dg-global-nav{display:flex;align-items:center;margin-left:auto;min-width:0}
+.dg-nav-links{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.dg-nav-links a{color:#4c6054;text-decoration:none;font-size:11px;font-weight:720;padding:7px 8px;border-radius:7px;white-space:nowrap}
+.dg-nav-links a:hover,.dg-nav-links a[aria-current=page]{color:#176745;background:#e8f7ef}
+.dg-nav-toggle{display:none;border:1px solid #dce5dd;background:white;color:#294a34;border-radius:8px;padding:8px 10px;font-weight:750}
+@media(max-width:1240px){.dg-global-nav{position:relative}.dg-nav-toggle{display:block}.dg-nav-links{display:none;position:absolute;right:0;top:calc(100% + 14px);width:210px;background:white;border:1px solid #dde8df;box-shadow:0 8px 24px #15392222;border-radius:12px;padding:8px;flex-direction:column;align-items:stretch;z-index:30}.dg-global-nav.is-open .dg-nav-links{display:flex}.dg-nav-links a{font-size:13px;padding:10px 12px}}
+@media(min-width:1241px){.dg-global-nav{margin-right:8px}}
+@media(max-width:660px){.dg-global-nav{margin-left:auto}.dg-nav-toggle{font-size:12px;padding:7px}.brandtype small{display:none}}
