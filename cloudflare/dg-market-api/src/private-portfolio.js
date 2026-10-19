@@ -186,3 +186,10 @@ export async function servePublicPortfolio(request,env,ctx){
   },{headers:{'Cache-Control':'public, max-age=20','X-Content-Type-Options':'nosniff'}});
  }catch(e){return Response.json({state:'PUBLIC_PORTFOLIO_READ_UNAVAILABLE',read_only:true,trading_enabled:false,positions:[]},{status:503,headers:{'Cache-Control':'no-store'}})}
 }
+
+/* Scheduled owner account snapshot refresh. Never callable as a public mutation. */
+export async function refreshPublicPortfolioSnapshot(env){
+ if(!env.DG_PORTFOLIO_R2||!env.KALSHI_API_KEY_ID||!env.KALSHI_PRIVATE_KEY)return {state:'NOT_CONFIGURED'};
+ try{const snapshot=await liveSnapshot(env);return {state:'SNAPSHOT_COLLECTED',retrieved_at:snapshot.retrieved_at,positions:snapshot.positions?.length||0}}
+ catch(e){return {state:'SNAPSHOT_REFRESH_FAILED',reason:String(e.message||e).replace(/[^A-Z0-9_]/g,'').slice(0,75)}}
+}
