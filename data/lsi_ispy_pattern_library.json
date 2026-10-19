@@ -1,6 +1,6 @@
 {
   "schema_version": "LJ-ISPY-PATTERN-LIBRARY-2",
-  "generated_at_utc": "2026-10-19T01:34:44.390868+00:00",
+  "generated_at_utc": "2026-10-19T06:10:44.347953+00:00",
   "policy": "Validated recurring analog patterns persist independently of current sportsbook availability.",
   "patterns": [
     {
@@ -292,14 +292,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-D72F340A615C9B3AF4",
       "last_evidence": {
-        "observed_rate_pct": 7.27,
+        "observed_rate_pct": 7.2,
         "baseline_rate_pct": 40.5,
-        "lift_pp": -33.22,
-        "effective_sample_size": 24.67,
-        "mean_similarity_pct": 72.53,
+        "lift_pp": -33.3,
+        "effective_sample_size": 24.68,
+        "mean_similarity_pct": 72.61,
         "stability_score": 1.0
       },
       "max_lift_pp": -33.22,
@@ -852,7 +852,7 @@
           "display": "-7.00"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-E848D7FE1B8ACD1C5A",
       "last_evidence": {
         "observed_rate_pct": 26.77,
@@ -1187,14 +1187,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-D95EFCA03FFC296991",
       "last_evidence": {
-        "observed_rate_pct": 62.59,
+        "observed_rate_pct": 62.46,
         "baseline_rate_pct": 39.07,
-        "lift_pp": 23.52,
-        "effective_sample_size": 24.81,
-        "mean_similarity_pct": 72.97,
+        "lift_pp": 23.39,
+        "effective_sample_size": 24.8,
+        "mean_similarity_pct": 73.01,
         "stability_score": 1.0
       },
       "max_lift_pp": 31.14,
@@ -1514,7 +1514,7 @@
           "display": "-7.00"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-8606FB4B75B22E056E",
       "last_evidence": {
         "observed_rate_pct": 16.01,
@@ -1599,14 +1599,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-C0090F165C0A1E4828",
       "last_evidence": {
         "observed_rate_pct": 7.26,
         "baseline_rate_pct": 37.29,
         "lift_pp": -30.03,
-        "effective_sample_size": 24.67,
-        "mean_similarity_pct": 72.53,
+        "effective_sample_size": 24.68,
+        "mean_similarity_pct": 72.61,
         "stability_score": 1.0
       },
       "max_lift_pp": -30.03,
@@ -1634,6 +1634,86 @@
         }
       ],
       "first_seen_utc": "2026-10-18T17:43:23.131529+00:00",
+      "times_observed": 1
+    },
+    {
+      "pattern_key": "8b3f6aef0c008770",
+      "league": "NFL",
+      "title": "PIT — wins the game",
+      "outcome": "wins the game",
+      "outcome_code": "WIN",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -3.2609556948884433,
+          "display": "-3.26"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 0.46519894265784806,
+          "display": "0.47"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "high",
+          "value": 148.8,
+          "display": "148.80"
+        },
+        {
+          "feature": "opp_win_pct",
+          "label": "opponent win rate",
+          "direction": "low",
+          "value": 0.2,
+          "display": "20%"
+        },
+        {
+          "feature": "focus_secondary_activity_l5",
+          "label": "secondary disruption proxy",
+          "direction": "high",
+          "value": 7.8,
+          "display": "7.80"
+        }
+      ],
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
+      "last_signal_id": "ISPY-6F67BC0D512D1EA812",
+      "last_evidence": {
+        "observed_rate_pct": 76.39,
+        "baseline_rate_pct": 46.32,
+        "lift_pp": 30.07,
+        "effective_sample_size": 24.7,
+        "mean_similarity_pct": 74.9,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 30.07,
+      "max_abs_lift_pp": 30.07,
+      "observed_event_ids": [
+        "2026_07_PIT_NO"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-18T14:18:42.951617+00:00",
       "times_observed": 1
     },
     {
@@ -1721,86 +1801,6 @@
         }
       ],
       "first_seen_utc": "2026-10-11T20:37:59.159355+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "8b3f6aef0c008770",
-      "league": "NFL",
-      "title": "PIT — wins the game",
-      "outcome": "wins the game",
-      "outcome_code": "WIN",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -3.2609556948884433,
-          "display": "-3.26"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "high",
-          "value": 0.46519894265784806,
-          "display": "0.47"
-        },
-        {
-          "feature": "opp_rush_allowed_l5",
-          "label": "opponent rush-defense allowance",
-          "direction": "high",
-          "value": 148.8,
-          "display": "148.80"
-        },
-        {
-          "feature": "opp_win_pct",
-          "label": "opponent win rate",
-          "direction": "low",
-          "value": 0.2,
-          "display": "20%"
-        },
-        {
-          "feature": "focus_secondary_activity_l5",
-          "label": "secondary disruption proxy",
-          "direction": "high",
-          "value": 7.8,
-          "display": "7.80"
-        }
-      ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
-      "last_signal_id": "ISPY-6F67BC0D512D1EA812",
-      "last_evidence": {
-        "observed_rate_pct": 76.01,
-        "baseline_rate_pct": 46.32,
-        "lift_pp": 29.69,
-        "effective_sample_size": 24.76,
-        "mean_similarity_pct": 74.96,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": 29.95,
-      "max_abs_lift_pp": 29.95,
-      "observed_event_ids": [
-        "2026_07_PIT_NO"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-18T14:18:42.951617+00:00",
       "times_observed": 1
     },
     {
@@ -2114,18 +2114,18 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-1A9A19728D00C3E542",
       "last_evidence": {
-        "observed_rate_pct": 67.54,
+        "observed_rate_pct": 67.57,
         "baseline_rate_pct": 37.89,
-        "lift_pp": 29.65,
+        "lift_pp": 29.68,
         "effective_sample_size": 24.75,
-        "mean_similarity_pct": 71.78,
+        "mean_similarity_pct": 71.93,
         "stability_score": 1.0
       },
-      "max_lift_pp": 29.65,
-      "max_abs_lift_pp": 29.65,
+      "max_lift_pp": 29.68,
+      "max_abs_lift_pp": 29.68,
       "observed_event_ids": [
         "2026_07_TB_CAR"
       ],
@@ -2520,7 +2520,7 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-8F9CA8646F80F02389",
       "last_evidence": {
         "observed_rate_pct": 66.93,
@@ -2771,14 +2771,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-B06B5E3B5779CDA4B4",
       "last_evidence": {
-        "observed_rate_pct": 67.58,
+        "observed_rate_pct": 60.42,
         "baseline_rate_pct": 39.07,
-        "lift_pp": 28.5,
-        "effective_sample_size": 24.74,
-        "mean_similarity_pct": 70.71,
+        "lift_pp": 21.35,
+        "effective_sample_size": 24.71,
+        "mean_similarity_pct": 70.76,
         "stability_score": 0.75
       },
       "max_lift_pp": 28.5,
@@ -2931,14 +2931,14 @@
           "display": "82.6 yds"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-1DD619609C00C725A4",
       "last_evidence": {
-        "observed_rate_pct": 25.31,
+        "observed_rate_pct": 25.33,
         "baseline_rate_pct": 37.89,
-        "lift_pp": -12.57,
-        "effective_sample_size": 24.54,
-        "mean_similarity_pct": 74.02,
+        "lift_pp": -12.56,
+        "effective_sample_size": 24.55,
+        "mean_similarity_pct": 74.06,
         "stability_score": 0.75
       },
       "max_lift_pp": -9.35,
@@ -3260,7 +3260,7 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-A9C368BB1AD1B1BE44",
       "last_evidence": {
         "observed_rate_pct": 10.93,
@@ -3572,7 +3572,7 @@
           "display": "80.20"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-180D89164DDB634071",
       "last_evidence": {
         "observed_rate_pct": 73.4,
@@ -5764,7 +5764,7 @@
           "display": "20%"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-C4F822DC5865A30458",
       "last_evidence": {
         "observed_rate_pct": 76.27,
@@ -5878,6 +5878,86 @@
       "times_observed": 1
     },
     {
+      "pattern_key": "08451b472690c51d",
+      "league": "NFL",
+      "title": "TEN — wins the game",
+      "outcome": "wins the game",
+      "outcome_code": "WIN",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -6.090930444771089,
+          "display": "-6.09"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -1.440130696945276,
+          "display": "-1.44"
+        },
+        {
+          "feature": "focus_win_pct",
+          "label": "team win rate",
+          "direction": "low",
+          "value": 0.0,
+          "display": "0%"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 179.2,
+          "display": "179.2 yds"
+        },
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "direction": "near typical",
+          "value": 82.6,
+          "display": "82.6 yds"
+        }
+      ],
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
+      "last_signal_id": "ISPY-C69D312B1200A20C89",
+      "last_evidence": {
+        "observed_rate_pct": 28.56,
+        "baseline_rate_pct": 53.33,
+        "lift_pp": -24.76,
+        "effective_sample_size": 24.55,
+        "mean_similarity_pct": 74.06,
+        "stability_score": 0.75
+      },
+      "max_lift_pp": -24.57,
+      "max_abs_lift_pp": 24.76,
+      "observed_event_ids": [
+        "2026_07_CLE_TEN"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-10-18T17:43:23.131529+00:00",
+      "times_observed": 1
+    },
+    {
       "pattern_key": "233ae387d0f86f58",
       "league": "NFL",
       "title": "TEN — finishes at least 10% above its entering passing-yard form",
@@ -5958,86 +6038,6 @@
         }
       ],
       "first_seen_utc": "2026-10-11T20:37:59.159355+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "08451b472690c51d",
-      "league": "NFL",
-      "title": "TEN — wins the game",
-      "outcome": "wins the game",
-      "outcome_code": "WIN",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -6.090930444771089,
-          "display": "-6.09"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -1.440130696945276,
-          "display": "-1.44"
-        },
-        {
-          "feature": "focus_win_pct",
-          "label": "team win rate",
-          "direction": "low",
-          "value": 0.0,
-          "display": "0%"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "direction": "low",
-          "value": 179.2,
-          "display": "179.2 yds"
-        },
-        {
-          "feature": "focus_rush_yards_l5",
-          "label": "team rushing form",
-          "direction": "near typical",
-          "value": 82.6,
-          "display": "82.6 yds"
-        }
-      ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
-      "last_signal_id": "ISPY-C69D312B1200A20C89",
-      "last_evidence": {
-        "observed_rate_pct": 28.65,
-        "baseline_rate_pct": 53.33,
-        "lift_pp": -24.68,
-        "effective_sample_size": 24.54,
-        "mean_similarity_pct": 74.02,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": -24.57,
-      "max_abs_lift_pp": 24.71,
-      "observed_event_ids": [
-        "2026_07_CLE_TEN"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-10-18T17:43:23.131529+00:00",
       "times_observed": 1
     },
     {
@@ -6494,14 +6494,14 @@
           "display": "7.80"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-45E88B15C16B3BB95A",
       "last_evidence": {
-        "observed_rate_pct": 63.52,
+        "observed_rate_pct": 56.29,
         "baseline_rate_pct": 39.07,
-        "lift_pp": 24.45,
-        "effective_sample_size": 24.76,
-        "mean_similarity_pct": 74.96,
+        "lift_pp": 17.21,
+        "effective_sample_size": 24.7,
+        "mean_similarity_pct": 74.9,
         "stability_score": 0.75
       },
       "max_lift_pp": 24.45,
@@ -6574,7 +6574,7 @@
           "display": "20%"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-A7969B3FA2A19FF14B",
       "last_evidence": {
         "observed_rate_pct": 28.89,
@@ -6984,7 +6984,7 @@
           "display": "20%"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-354B6ADABF1FA47562",
       "last_evidence": {
         "observed_rate_pct": 70.49,
@@ -7140,7 +7140,7 @@
           "display": "7.83"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-E469EED12AD6A3F894",
       "last_evidence": {
         "observed_rate_pct": 77.11,
@@ -7462,18 +7462,18 @@
           "display": "20%"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-60268694517598569C",
       "last_evidence": {
-        "observed_rate_pct": 34.16,
+        "observed_rate_pct": 30.13,
         "baseline_rate_pct": 53.33,
-        "lift_pp": -19.17,
-        "effective_sample_size": 24.78,
-        "mean_similarity_pct": 75.65,
+        "lift_pp": -23.19,
+        "effective_sample_size": 24.81,
+        "mean_similarity_pct": 75.58,
         "stability_score": 1.0
       },
       "max_lift_pp": -19.06,
-      "max_abs_lift_pp": 23.17,
+      "max_abs_lift_pp": 23.19,
       "observed_event_ids": [
         "2026_07_PIT_NO"
       ],
@@ -7705,17 +7705,17 @@
           "display": "82.6 yds"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-61D0CC2CB026C5FDCB",
       "last_evidence": {
-        "observed_rate_pct": 22.18,
+        "observed_rate_pct": 22.23,
         "baseline_rate_pct": 36.22,
-        "lift_pp": -14.04,
-        "effective_sample_size": 24.54,
-        "mean_similarity_pct": 74.02,
+        "lift_pp": -14.0,
+        "effective_sample_size": 24.55,
+        "mean_similarity_pct": 74.06,
         "stability_score": 1.0
       },
-      "max_lift_pp": -14.03,
+      "max_lift_pp": -14.0,
       "max_abs_lift_pp": 23.11,
       "observed_event_ids": [
         "2026_05_CIN_MIA",
@@ -8110,7 +8110,7 @@
           "display": "78.40"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-E82F92C5D6DB9A3222",
       "last_evidence": {
         "observed_rate_pct": 15.99,
@@ -8193,14 +8193,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-18T21:38:43.749083+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-FD4D9EB37B2EF12FFC",
       "last_evidence": {
-        "observed_rate_pct": 60.24,
+        "observed_rate_pct": 56.95,
         "baseline_rate_pct": 37.29,
-        "lift_pp": 22.95,
-        "effective_sample_size": 24.77,
-        "mean_similarity_pct": 71.94,
+        "lift_pp": 19.66,
+        "effective_sample_size": 24.75,
+        "mean_similarity_pct": 71.93,
         "stability_score": 0.75
       },
       "max_lift_pp": 22.95,
@@ -8273,7 +8273,7 @@
           "display": "78.40"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-FD288AE31626F9E462",
       "last_evidence": {
         "observed_rate_pct": 60.22,
@@ -8741,7 +8741,7 @@
           "display": "78.40"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-341478A8CB0ADA1FA5",
       "last_evidence": {
         "observed_rate_pct": 60.51,
@@ -9071,14 +9071,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-0C1FDE167612CB50C4",
       "last_evidence": {
-        "observed_rate_pct": 15.53,
+        "observed_rate_pct": 15.47,
         "baseline_rate_pct": 37.89,
-        "lift_pp": -22.35,
-        "effective_sample_size": 24.67,
-        "mean_similarity_pct": 72.53,
+        "lift_pp": -22.42,
+        "effective_sample_size": 24.68,
+        "mean_similarity_pct": 72.61,
         "stability_score": 1.0
       },
       "max_lift_pp": -19.25,
@@ -10393,14 +10393,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-464F0021050D5FDC67",
       "last_evidence": {
-        "observed_rate_pct": 55.78,
+        "observed_rate_pct": 59.26,
         "baseline_rate_pct": 37.89,
-        "lift_pp": 17.9,
-        "effective_sample_size": 24.65,
-        "mean_similarity_pct": 71.71,
+        "lift_pp": 21.38,
+        "effective_sample_size": 24.6,
+        "mean_similarity_pct": 71.85,
         "stability_score": 1.0
       },
       "max_lift_pp": 21.68,
@@ -10792,7 +10792,7 @@
           "display": "80.20"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-581B1ECF6A7F7ADB85",
       "last_evidence": {
         "observed_rate_pct": 19.04,
@@ -11434,7 +11434,7 @@
           "display": "20%"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-93C0EC97B82CE17095",
       "last_evidence": {
         "observed_rate_pct": 56.26,
@@ -11851,14 +11851,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-95EB18C735B1BA3E32",
       "last_evidence": {
-        "observed_rate_pct": 16.75,
+        "observed_rate_pct": 19.6,
         "baseline_rate_pct": 37.89,
-        "lift_pp": -21.14,
-        "effective_sample_size": 24.75,
-        "mean_similarity_pct": 70.47,
+        "lift_pp": -18.29,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 70.6,
         "stability_score": 1.0
       },
       "max_lift_pp": -14.84,
@@ -12011,14 +12011,14 @@
           "display": "202.0 yds"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-DD81FF9CFA5F1518FB",
       "last_evidence": {
-        "observed_rate_pct": 63.96,
+        "observed_rate_pct": 64.04,
         "baseline_rate_pct": 46.32,
-        "lift_pp": 17.64,
+        "lift_pp": 17.72,
         "effective_sample_size": 24.53,
-        "mean_similarity_pct": 74.16,
+        "mean_similarity_pct": 74.2,
         "stability_score": 1.0
       },
       "max_lift_pp": 21.09,
@@ -12657,14 +12657,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-5873388C78887887A9",
       "last_evidence": {
-        "observed_rate_pct": 19.83,
+        "observed_rate_pct": 15.98,
         "baseline_rate_pct": 36.7,
-        "lift_pp": -16.87,
-        "effective_sample_size": 24.65,
-        "mean_similarity_pct": 71.71,
+        "lift_pp": -20.71,
+        "effective_sample_size": 24.6,
+        "mean_similarity_pct": 71.85,
         "stability_score": 1.0
       },
       "max_lift_pp": -16.87,
@@ -12827,14 +12827,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-324260F2CD2A7E5E91",
       "last_evidence": {
-        "observed_rate_pct": 23.83,
+        "observed_rate_pct": 27.53,
         "baseline_rate_pct": 44.42,
-        "lift_pp": -20.59,
-        "effective_sample_size": 24.74,
-        "mean_similarity_pct": 70.71,
+        "lift_pp": -16.89,
+        "effective_sample_size": 24.71,
+        "mean_similarity_pct": 70.76,
         "stability_score": 1.0
       },
       "max_lift_pp": -16.24,
@@ -12907,14 +12907,14 @@
           "display": "7.80"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-7CC676A7C873F7CAC3",
       "last_evidence": {
-        "observed_rate_pct": 56.74,
+        "observed_rate_pct": 53.53,
         "baseline_rate_pct": 36.7,
-        "lift_pp": 20.04,
-        "effective_sample_size": 24.76,
-        "mean_similarity_pct": 74.96,
+        "lift_pp": 16.83,
+        "effective_sample_size": 24.7,
+        "mean_similarity_pct": 74.9,
         "stability_score": 1.0
       },
       "max_lift_pp": 20.57,
@@ -13222,14 +13222,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-B1CCE000F3C3EE50B9",
       "last_evidence": {
-        "observed_rate_pct": 53.43,
+        "observed_rate_pct": 53.16,
         "baseline_rate_pct": 36.7,
-        "lift_pp": 16.73,
-        "effective_sample_size": 24.81,
-        "mean_similarity_pct": 72.97,
+        "lift_pp": 16.46,
+        "effective_sample_size": 24.8,
+        "mean_similarity_pct": 73.01,
         "stability_score": 1.0
       },
       "max_lift_pp": 20.35,
@@ -13970,14 +13970,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-EFBF932D927D6DBC25",
       "last_evidence": {
-        "observed_rate_pct": 56.23,
+        "observed_rate_pct": 56.1,
         "baseline_rate_pct": 36.22,
-        "lift_pp": 20.01,
+        "lift_pp": 19.88,
         "effective_sample_size": 24.75,
-        "mean_similarity_pct": 71.78,
+        "mean_similarity_pct": 71.93,
         "stability_score": 1.0
       },
       "max_lift_pp": 20.01,
@@ -14714,7 +14714,7 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-A1D5971EDD20C1ECE4",
       "last_evidence": {
         "observed_rate_pct": 55.82,
@@ -15105,7 +15105,7 @@
           "display": "80.20"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-4B4C8C11B7B83FFAAF",
       "last_evidence": {
         "observed_rate_pct": 63.78,
@@ -15431,14 +15431,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-85C1D54BF208356609",
       "last_evidence": {
-        "observed_rate_pct": 23.78,
+        "observed_rate_pct": 23.15,
         "baseline_rate_pct": 39.07,
-        "lift_pp": -15.29,
-        "effective_sample_size": 24.65,
-        "mean_similarity_pct": 71.71,
+        "lift_pp": -15.92,
+        "effective_sample_size": 24.6,
+        "mean_similarity_pct": 71.85,
         "stability_score": 0.75
       },
       "max_lift_pp": -15.29,
@@ -16079,7 +16079,7 @@
           "display": "20%"
         }
       ],
-      "last_seen_utc": "2026-10-19T01:34:44.390868+00:00",
+      "last_seen_utc": "2026-10-19T06:10:44.347953+00:00",
       "last_signal_id": "ISPY-66876647F542E4D7E4",
       "last_evidence": {
         "observed_rate_pct": 20.22,
