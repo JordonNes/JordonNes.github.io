@@ -71,6 +71,8 @@ let historyLoading=false;
 const krakenCharts=new Map(),krakenSymbols={KXBTC15M:"BTC",KXETH15M:"ETH",KXSOL15M:"SOL",KXXRP15M:"XRP"};
 const $=x=>document.getElementById(x),quotes=new Map(),refreshing={active:false,started:0},tabCounts={All:MARKETS.length,Commodities:7,Crypto:9,FX:5};
 let activeTab="All",query="",lastRefresh=null,lastFailure=null,nextAllowedFetch=0,pollTimer=null;
+const preferredSeries=new URLSearchParams(location.search).get("series")?.trim().toUpperCase();
+if(MARKETS.some(m=>m.ticker===preferredSeries)){query=preferredSeries;const searchBox=document.getElementById("search");if(searchBox)searchBox.value=query;}
 const money=n=>typeof n==="number"&&Number.isFinite(n)?"$"+n.toLocaleString("en-US",{maximumFractionDigits:n<1?8:n<10?5:n<100?3:2}):"—";
 const cents=n=>typeof n==="number"&&Number.isFinite(n)&&n>=0&&n<=1?(n*100).toFixed(+(n*100%1!==0))+"¢":"—";
 const timeLeft=date=>{const left=Math.floor((Date.parse(date)-Date.now())/1000);if(!Number.isFinite(left)||left<=0)return "Closing";return Math.floor(left/60)+":"+String(left%60).padStart(2,"0")};
