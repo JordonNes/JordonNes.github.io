@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><meta name="theme-color" content="#ffffff"><meta name="description" content="Damilola & Gavavi Action Monitor — all supported Kalshi 15-minute Up/Down markets in one clean read-only market dashboard.">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><meta name="theme-color" content="#ffffff"><meta name="description" content="D&G Portfolio overlays open Kalshi positions onto matching 15-minute GAM market cards and separately displays evidence-gated experimental suggestions.">
 <title>D&G | Phase 2 · My Positions</title>
 <link rel="stylesheet" href="gam-15m.css?v=20261016-live1">
-<style>.market-clock{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";white-space:nowrap;color:#334d40;font-size:12px;font-weight:700;letter-spacing:.025em;padding:6px 0}</style><link rel="stylesheet" href="phase-2.css?v=1"><link rel="stylesheet" href="dg-navigation.css?v=20261019"></head><body>
+<style>.market-clock{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";white-space:nowrap;color:#334d40;font-size:12px;font-weight:700;letter-spacing:.025em;padding:6px 0}</style><link rel="stylesheet" href="phase-2.css?v=20261019-layer1"><link rel="stylesheet" href="dg-navigation.css?v=20261019"></head><body>
 <header class="sitehead"><div class="headinner">
 <a class="brand" href="./" aria-label="Damilola and Gavavi Home">
 <span class="monogram" aria-hidden="true">D·G</span>
@@ -12,21 +12,22 @@
 </div></header>
 <main class="container">
 
-<section class="portfolio-head"><div class="eyebrow">D&amp;G · Phase 2</div><h1>Your positions. Our next move.</h1><p>Owner-approved public read-only Portfolio: open Kalshi holdings, balances, historical results and D&amp;G hold/watch/exit research. Snapshot timing is shown below; no trading is enabled.</p><a href="./">← GAM</a></section>
+<section class="portfolio-head"><div class="eyebrow">D&amp;G · Phase 2</div><h1>My positions · 15-minute GAM</h1><p>My open positions layered onto D&amp;G’s live market cards, with matching UP/DOWN quotes, position economics and research when verified. Unrelated event contracts stay visible separately. No trading enabled.</p><a href="./">← GAM</a></section>
 <div class="portfolio-status" id="portfolioStatus" role="status">Loading the owner-approved public read-only Kalshi portfolio…</div>
+<section class="suggested-section" aria-label="Current D&G experimental 15-minute market suggestions"><div class="section-title"><h2>D&amp;G · suggested 15-minute markets</h2><button type="button" id="scanAllSuggestions" class="scan-suggestions">Scan all 21 markets</button></div><p class="method-note">Only fresh experimental candidates from matching Kalshi markets appear here, with a pale-green background. These are not independently validated win probabilities or trade instructions.</p><div id="suggestionCount" class="portfolio-live-count" role="status">Checking D&amp;G research…</div><p id="suggestionEmpty" class="method-note">Checking the latest experimental signals…</p><div id="suggestionGrid" class="position-grid"></div><p id="marketFeedStatus" class="method-note">Connecting to observed Kalshi quotes…</p></section>
 <section id="privateWorkspace" hidden>
 <div class="portfolio-actions"><button id="accountRefresh">↻ Refresh positions</button><span id="accountUpdated"></span></div>
 <div id="accountMetrics" class="account-metrics"></div><p class="method-note">This is a public read-only view. All visitors can see the displayed positions, cash balance, portfolio value, and aggregate performance. Kalshi API credentials, account identifiers, fills, and trading functions are not exposed.</p>
-<div class="section-title"><h2>My open positions</h2><span>🟢 Stay aligned · 🟡 Watch · 🔴 Consider exit · ⚪ No call</span></div>
+<div class="section-title"><h2>My open 15-minute holdings</h2><span id="activeHoldingsCount">Checking holdings…</span></div>
 <p class="method-note">D&amp;G’s current model is experimental. Entry ✓ / ✕ means aligned / opposed to a recorded pre-buy signal; it does not establish that the price was good value. Confidence remains unavailable until validated.</p>
-<div id="positionGrid" class="position-grid"></div><section class="reports" aria-label="Historical portfolio results"><h2>Results to date</h2><div id="resultsMetrics" class="account-metrics"></div><p class="method-note">Kalshi-reported realized P&amp;L and fees; partial collection may affect totals. These figures are not independently audited and do not establish predictive skill.</p></section><p class="method-note">Only open positions are displayed. Closed-position reporting remains in the separately maintained archival system.</p>
+<div id="positionGrid" class="position-grid"></div><section id="otherHoldings" hidden><div class="section-title"><h2>Other Kalshi holdings</h2><span>Not part of the 15-minute GAM model</span></div><p class="method-note">MLB, election and other-duration holdings are preserved here with actual account details. They are not mislabeled as 15-minute contracts.</p><div id="otherPositionGrid" class="position-grid"></div></section><section class="reports" aria-label="Historical portfolio results"><h2>Results to date</h2><div id="resultsMetrics" class="account-metrics"></div><p class="method-note">Kalshi-reported realized P&amp;L and fees; partial collection may affect totals. These figures are not independently audited and do not establish predictive skill.</p></section><p class="method-note">Only open positions are displayed. Closed-position reporting remains in the separately maintained archival system.</p>
 <p id="assessmentNote" class="method-note"></p>
 </section>
 
 <footer class="foot"><span>Read-only market monitor. Quotes are indicative, delayed by retrieval, and not executable offers. No orders are placed here.</span><span><a href="https://kalshi.com/category/commodities/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Kalshi Commodities ↗</a> · <a href="https://kalshi.com/category/crypto/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Crypto ↗</a> · <a href="https://kalshi.com/category/financials/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">FX ↗</a></span></footer>
 </main>
 
-<script defer src="phase-2.js?v=20261019-public1"></script>
+<script defer src="phase-2-match.js?v=20261019-layer1"></script><script defer src="phase-2.js?v=20261019-layer1"></script>
 
 <script>
 (()=>{const el=document.getElementById("marketClock");const fmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});function tick(){el.textContent=fmt.format(new Date());}tick();setInterval(tick,1000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});})();
