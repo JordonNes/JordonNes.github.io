@@ -41,7 +41,7 @@ test('five bad codes temporarily block further portfolio reads',async()=>{
  assert.equal((await blocked.json()).state,'ACCESS_TEMPORARILY_LOCKED');
 });
 
-test('private routes return no account records when unauthenticated and disable caching',async()=>{const {servePrivatePortfolio:f}=await api;const r=await f(new Request('https://test/api/private/portfolio'),{DG_ARCHIVE:authKV()},{});assert.equal(r.status,401);assert.match(r.headers.get('Cache-Control'),/no-store/);assert.equal((await r.json()).state,'LOCKED');const unavailable=await f(new Request('https://test/api/private/portfolio'),{},{});assert.equal(unavailable.status,503);assert.equal((await unavailable.json()).state,'ACCESS_RATE_LIMIT_UNAVAILABLE')});
+test('private routes return no account records when unauthenticated and disable caching',async()=>{const {servePrivatePortfolio:f}=await api;const r=await f(new Request('https://test/api/private/portfolio'),{DG_ARCHIVE:authKV()},{});assert.equal(r.status,401);assert.match(r.headers.get('Cache-Control'),/no-store/);assert.equal((await r.json()).state,'LOCKED');const anonymous=await f(new Request('https://test/api/private/portfolio'),{},{});assert.equal(anonymous.status,401);assert.equal((await anonymous.json()).state,'LOCKED')});
 test('account signer rejects orders and arbitrary paths before signing',async()=>{const {kalshiPortfolioHeaders:f}=await import('../cloudflare/dg-market-api/src/kalshi-read-auth.js');for(const path of ['/portfolio/orders','/portfolio/positions/../orders','https://evil.test','/portfolio/positions%3F'])await assert.rejects(f(path,{}),/PORTFOLIO_GET_PATH_REQUIRED/)});
 test('public follow page has no login or trading controls and uses sanitized endpoint',()=>{const fs=require('node:fs'),html=fs.readFileSync(__dirname+'/phase-2.html','utf8');assert.doesNotMatch(html,/id="unlockForm"/);assert.doesNotMatch(html,/id="marketGrid"/);assert.match(html,/id="positionGrid"/);assert.match(html,/id="resultsMetrics"/);const js=fs.readFileSync(__dirname+'/phase-2.js','utf8');assert(js.includes('/api/public/portfolio'));assert.doesNotMatch(js,/Authorization:/);assert(!js.includes('localStorage'));assert(!js.includes('innerHTML'))});
 
@@ -74,4 +74,19 @@ test('public follower endpoint exposes only allowlisted data, never secret, raw 
  assert.equal(body.positions[0].ticker,'KXBTC15M-T');assert.equal(body.positions[0].assessment.stance,'WATCH');
  assert.equal(body.balance.cash_dollars,123.45);assert(!encoded.includes('PRIVATE_FILL'));assert(!encoded.includes('NEVER_EXPOSE'));
  assert(!encoded.includes('private_api_key'));assert(!encoded.includes('exchange_index'));
+});
+
+test('anonymous private route avoids KV lookup; KV outage on supplied code fails closed',async()=>{
+ const {servePrivatePortfolio:f}=await api;
+ const deadKV={get:async()=>{throw Error('KV exhausted')},put:async()=>{throw Error('KV unavailable')}};
+ const noCode=await f(new Request('https://test/api/private/portfolio'),{DG_ARCHIVE:deadKV},{});
+ assert.equal(noCode.status,401);
+ assert.equal((await noCode.json()).state,'LOCKED');
+ const code=new Request('https://test/api/private/portfolio',{headers:{Authorization:'Bearer reviewCode2026'}});
+ const fail=await f(code,{DG_ARCHIVE:deadKV},{});
+ assert.equal(fail.status,503);
+ assert.equal((await fail.json()).state,'ACCESS_RATE_LIMIT_UNAVAILABLE');
+ const withoutKV=await f(code,{},{});
+ assert.equal(withoutKV.status,503);
+ assert.equal((await withoutKV.json()).state,'ACCESS_RATE_LIMIT_UNAVAILABLE');
 });
