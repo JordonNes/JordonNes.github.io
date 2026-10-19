@@ -137,3 +137,52 @@ export async function servePrivatePortfolio(request,env,ctx){
    assessment_note:'Experimental decision rules, not validated forecasts. Entry icons assess signal alignment at the latest recorded buy, not whether its price offered positive expected value. A 4¢ adverse two-minute move is a watch rule, not a proven reversal forecast. No trades are executed.'});
  }catch(e){return json({state:'ACCOUNT_UNAVAILABLE',reason:String(e.message).replace(/[^A-Z_0-9]/g,'').slice(0,80)},503)}
 }
+
+/* Owner-approved public FOLLOW view, strictly sanitized and read-only.
+ * No credentials, fills, subaccounts, user identifiers, order permissions, or private routes.
+ * Reads the saved private R2 snapshot; never signs Kalshi requests on public demand.
+ */
+export async function servePublicPortfolio(request,env,ctx){
+ if(request.method!=='GET')return Response.json({state:'READ_ONLY'},{status:405,headers:{'Cache-Control':'no-store'}});
+ const b=env.DG_PORTFOLIO_R2;
+ if(!b)return Response.json({state:'PORTFOLIO_STORAGE_UNAVAILABLE',positions:[],read_only:true,trading_enabled:false},{status:503,headers:{'Cache-Control':'no-store'}});
+ try{
+  const [live,settled,archived,fills,hfills]=await Promise.all(['live.json','settled.json','historical_positions.json','fills.json','historical_fills.json'].map(k=>read(b,k)));
+  if(!live?.retrieved_at||!Array.isArray(live.positions))return Response.json({state:'SNAPSHOT_NOT_YET_COLLECTED',positions:[],read_only:true,trading_enabled:false},{status:503,headers:{'Cache-Control':'no-store'}});
+  const allFills=mergeRows(hfills?.rows||[],fills?.rows||[],r=>r.fill_id||r.trade_id);
+  const report=buildReport(live.positions,settled?.rows||[],archived?.rows||[],allFills);
+  const open=report.rows.filter(p=>p.state==='OPEN');
+  const liveAge=Date.now()-Date.parse(live.retrieved_at);
+  const results=[];
+  for(const p of open){
+   const record={ticker:p.ticker,series:p.series,side:p.side,direction:p.side==='YES'?'UP':p.side==='NO'?'DOWN':'UNVERIFIED',
+    quantity:p.quantity,cost_basis:p.cost_basis,close_time:null,indicative_exit_value:null,
+    unrealized_before_exit_fees:null,latest_buy:null,assessment:null};
+   // Only archived evidence is read here. Never use private credentials on public requests.
+   try{
+    const latest=await b.get(ROOT+'assessments/'+Math.floor(Date.parse(live.retrieved_at)/60000)+'.json');
+    if(latest){const audit=JSON.parse(await latest.text());const found=audit?.positions?.find(x=>x.ticker===p.ticker&&x.side===p.side);if(found?.assessment)record.assessment={
+      stance:found.assessment.stance,icon:found.assessment.icon,statement:found.assessment.statement,
+      entry_statement:found.assessment.entry_statement,valid_until:found.assessment.valid_until||null,
+      match_rate:found.assessment.match_rate??null,matches:found.assessment.matches??0,confidence:null,
+      cash_out_at:null,auto_sell_price:null
+    }}
+   }catch{/* Optional evidence unavailable. */}
+   results.push(record);
+  }
+  const summary=report.summary||{};
+  return Response.json({state:'PUBLIC_OBSERVED_PORTFOLIO',read_only:true,trading_enabled:false,
+   retrieved_at:live.retrieved_at,age_seconds:Number.isFinite(liveAge)?Math.max(0,Math.floor(liveAge/1000)):null,
+   snapshot_complete:!!live.complete,snapshot_stale:!Number.isFinite(liveAge)||liveAge>180000,
+   balance:{cash_dollars:number(live.balance?.balance)===null?null:number(live.balance.balance)/100,
+     portfolio_value_dollars:number(live.balance?.portfolio_value)===null?null:number(live.balance.portfolio_value)/100},
+   positions:results,performance:{closed_markets:summary.closed_markets??null,
+     realized_pnl:summary.reported_realized_pnl??null,fees:summary.closed_market_fees??null,
+     pnl_less_fees:summary.realized_less_fees??null,win_rate:summary.win_rate??null,
+     scored_closed_markets:(summary.wins??0)+(summary.losses??0)+(summary.breakeven??0)},
+   portfolio_summary:{open_cost_basis:summary.open_cost_basis??null},
+   assessment_note:'Public owner-approved follow view. Snapshot may be delayed; assessments are experimental and never trade-ready. No buying, selling, account credentials, raw fills or account identifiers exposed.',
+   provenance:'Private R2 saved snapshots and recorded research only; no live authenticated account fetch on visitor request.'
+  },{headers:{'Cache-Control':'public, max-age=20','X-Content-Type-Options':'nosniff'}});
+ }catch(e){return Response.json({state:'PUBLIC_PORTFOLIO_READ_UNAVAILABLE',read_only:true,trading_enabled:false,positions:[]},{status:503,headers:{'Cache-Control':'no-store'}})}
+}
