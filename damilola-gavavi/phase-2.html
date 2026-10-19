@@ -12,22 +12,21 @@
 </div></header>
 <main class="container">
 
-<section class="portfolio-head"><div class="eyebrow">D&amp;G · Phase 2</div><h1>Your positions. Our next move.</h1><p>Open Kalshi positions only: current holdings, indicative values and D&amp;G hold/watch/exit assessments. Experimental signals are not validated forecasts.</p><a href="./">← GAM</a></section>
-<section class="account-login" id="accountLogin"><form id="unlockForm"><label for="accessCode">Private Phase 2 access code</label><div class="unlock-row"><input id="accessCode" type="password" autocomplete="off" required placeholder="Enter your access code"><button type="submit">Unlock my portfolio</button></div><small>Private Kalshi account records require secure server-side access. The hidden GAM shortcut does not authorize account reads. No account-name field is required.</small></form></section>
-<div class="portfolio-status" id="portfolioStatus" role="status">Portfolio locked. Public market cards remain available below.</div>
+<section class="portfolio-head"><div class="eyebrow">D&amp;G · Phase 2</div><h1>Your positions. Our next move.</h1><p>Owner-approved public read-only Portfolio: open Kalshi holdings, balances, historical results and D&amp;G hold/watch/exit research. Snapshot timing is shown below; no trading is enabled.</p><a href="./">← GAM</a></section>
+<div class="portfolio-status" id="portfolioStatus" role="status">Loading the owner-approved public read-only Kalshi portfolio…</div>
 <section id="privateWorkspace" hidden>
-<div class="portfolio-actions"><button id="accountRefresh">↻ Refresh positions</button><button id="lockPortfolio">Lock portfolio</button><span id="accountUpdated"></span></div>
-<div id="accountMetrics" class="account-metrics"></div>
+<div class="portfolio-actions"><button id="accountRefresh">↻ Refresh positions</button><span id="accountUpdated"></span></div>
+<div id="accountMetrics" class="account-metrics"></div><p class="method-note">This is a public read-only view. All visitors can see the displayed positions, cash balance, portfolio value, and aggregate performance. Kalshi API credentials, account identifiers, fills, and trading functions are not exposed.</p>
 <div class="section-title"><h2>My open positions</h2><span>🟢 Stay aligned · 🟡 Watch · 🔴 Consider exit · ⚪ No call</span></div>
 <p class="method-note">D&amp;G’s current model is experimental. Entry ✓ / ✕ means aligned / opposed to a recorded pre-buy signal; it does not establish that the price was good value. Confidence remains unavailable until validated.</p>
-<div id="positionGrid" class="position-grid"></div><p class="method-note">Only open positions are displayed. Closed-position reporting remains in the separately maintained archival system.</p>
+<div id="positionGrid" class="position-grid"></div><section class="reports" aria-label="Historical portfolio results"><h2>Results to date</h2><div id="resultsMetrics" class="account-metrics"></div><p class="method-note">Kalshi-reported realized P&amp;L and fees; partial collection may affect totals. These figures are not independently audited and do not establish predictive skill.</p></section><p class="method-note">Only open positions are displayed. Closed-position reporting remains in the separately maintained archival system.</p>
 <p id="assessmentNote" class="method-note"></p>
 </section>
 
 <footer class="foot"><span>Read-only market monitor. Quotes are indicative, delayed by retrieval, and not executable offers. No orders are placed here.</span><span><a href="https://kalshi.com/category/commodities/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Kalshi Commodities ↗</a> · <a href="https://kalshi.com/category/crypto/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Crypto ↗</a> · <a href="https://kalshi.com/category/financials/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">FX ↗</a></span></footer>
 </main>
 
-<script defer src="phase-2.js?v=1"></script>
+<script defer src="phase-2.js?v=20261019-public1"></script>
 
 <script>
 (()=>{const el=document.getElementById("marketClock");const fmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});function tick(){el.textContent=fmt.format(new Date());}tick();setInterval(tick,1000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});})();
