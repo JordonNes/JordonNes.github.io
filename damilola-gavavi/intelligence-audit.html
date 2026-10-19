@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D&G | Intelligence Audit</title><link rel="stylesheet" href="gam-15m.css?v=20261015">
+<style>main{max-width:1100px;margin:2rem auto;padding:1rem}h1{margin-bottom:.4rem}.panel{background:#fff;border:1px solid #d9e2df;border-radius:14px;padding:1rem;margin:1rem 0;color:#172c23}select,button{font:inherit;padding:.5rem}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #ddd;padding:.65rem;text-align:left}th{background:#eef3f0}small,.muted{color:#52645b}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem}.stat{background:#f1f5f3;padding:1rem;border-radius:10px}.stat strong{display:block;font-size:1.5rem}.scroll{overflow:auto}#error{color:#9b2626}</style><link rel="stylesheet" href="dg-navigation.css?v=20261019"></head><body>
+<header class="sitehead"><div class="headinner"><a class="brand" href="./" aria-label="Damilola and Gavavi Home"><span class="monogram">D·G</span><span class="brandtype"><strong>Damilola &amp; Gavavi</strong><small>Intelligence Audit</small></span></a><div class="headright"><a href="./">GAM</a></div></div></header>
+<main><p><a href="./pattern-lab.html">← Pattern Lab</a></p><h1>Archive Intelligence Audit</h1><p>Actual R2 historical observations and the scoped prospective prediction ledgers. Historical frequencies are descriptive, not trading confidence.</p>
+<label for="series">Kalshi 15-minute series</label> <select id="series"></select> <button id="refresh">Refresh verified archive</button><p id="status" role="status">Loading archive…</p><p id="error" role="alert"></p>
+<section class="panel"><h2>Archive coverage</h2><div class="grid" id="coverage"></div><p id="provenance" class="muted"></p></section>
+<section class="panel"><h2>Prospective directional accuracy</h2><p class="muted">The existing accuracy ledger reports only its latest twelve 15-minute windows. An empty sample is not a zero-percent hit rate.</p><div class="grid" id="accuracy"></div></section>
+<section class="panel"><h2>Historical weekday/hour observations</h2><p class="muted">Ranked by verified settlements. No displayed frequency is a validated forecast.</p><div class="scroll"><table><thead><tr><th>Pacific weekday / hour</th><th>Settled / observed</th><th>Historical YES</th><th>10pp spikes</th><th>10pp dips</th><th>Evidence</th></tr></thead><tbody id="patterns"></tbody></table></div></section>
+<section class="panel"><h2>Forecast validation</h2><p id="validation"></p><p class="muted">No trading enabled; midpoint candle prices do not verify fillability or net profit. Verified outcomes, prospective predictions, and executable market prices must be paired before claiming an edge.</p></section></main>
+<script>
+'use strict';
+const API='https://dg-market-intelligence.jordonnes-markets.workers.dev/api/intelligence-report';
+const tickers='KXBTC15M KXETH15M KXSOL15M KXXRP15M KXDOGE15M KXBNB15M KXHYPE15M KXNEAR15M KXZEC15M KXGOLD15M KXSILVER15M KXWTI15M KXCOPPER15M KXNATGAS15M KXPALLADIUM15M KXPLATINUM15M KXEURUSD15M KXGBPUSD15M KXUSDJPY15M KXAUDUSD15M KXUSDCAD15M'.split(' ');
+const $=x=>document.getElementById(x),pct=x=>typeof x==='number'?(100*x).toFixed(1)+'%':'Not available',number=x=>typeof x==='number'?x.toLocaleString():'Not available';
+for(const t of tickers){const o=document.createElement('option');o.value=t;o.textContent=t;$('series').append(o)}
+const requested=new URL(location.href).searchParams.get('series');$('series').value=tickers.includes(requested)?requested:'KXBTC15M';
+function tile(target,label,value){const d=document.createElement('div');d.className='stat';const l=document.createElement('small');l.textContent=label;const v=document.createElement('strong');v.textContent=value;d.append(l,v);$(target).append(d)}
+function cell(row,value){const c=document.createElement('td');c.textContent=String(value);row.append(c)}
+async function load(){
+ $('status').textContent='Reading R2/KV summaries…';$('error').textContent='';$('coverage').replaceChildren();$('accuracy').replaceChildren();$('patterns').replaceChildren();
+ const series=$('series').value;history.replaceState(null,'','?series='+encodeURIComponent(series));
+ try{const r=await fetch(API+'?series='+encodeURIComponent(series),{cache:'no-store'});const p=await r.json();if(!r.ok)throw Error(p.state+': '+(p.message||'Could not read archive'));const a=p.archive||{},x=p.accuracy||{};
+ $('status').textContent=p.state+' · checked '+p.checked_at_utc;
+ tile('coverage','Days with daily summaries',number(a.days_with_reports));tile('coverage','Observed contracts',number(a.observed_contracts));
+ tile('coverage','Verified settlements',number(a.verified_settlements));tile('coverage','Settlement coverage',pct(a.settlement_coverage));
+ tile('coverage','10pp quote spikes',number(a.total_minute_spikes_10pp));tile('coverage','10pp quote dips',number(a.total_minute_dips_10pp));
+ $('provenance').textContent='Latest daily summary: '+(a.latest_daily_date||'Unavailable')+' · R2 source: '+(a.latest_daily_key||'None');
+ tile('accuracy','Eligible scored calls',number(x.scored_suggestions));tile('accuracy','Correct eligible calls',number(x.correct));tile('accuracy','Observed eligible hit rate',pct(x.hit_rate));
+ tile('accuracy','Model on paired calls',pct(x.model_paired_hit_rate));tile('accuracy','Kalshi on same paired calls',pct(x.benchmark_paired_hit_rate));
+ for(const z of p.descriptive_patterns||[]){const r=document.createElement('tr');cell(r,z.pacific_weekday_hour);cell(r,z.settled_contracts+' / '+z.observed_contracts);cell(r,pct(z.historical_yes_frequency));cell(r,z.minute_spikes_10pp);cell(r,z.minute_dips_10pp);cell(r,z.evidence_state);$('patterns').append(r)}
+ $('validation').textContent='Predictive edge: '+(p.validation?.predictive_edge_verified?'Verified':'NOT VERIFIED')+' · Net profitable execution: '+(p.validation?.positive_net_profit_verified?'Verified':'NOT VERIFIED')+' · Confidence calibrated: '+(p.validation?.calibrated_probabilities_verified?'Yes':'No');
+ }catch(e){$('status').textContent='Archive results unavailable';$('error').textContent=String(e.message||e)}
+}
+$('series').onchange=load;$('refresh').onclick=load;load();
+</script><script defer src="dg-navigation.js?v=20261019"></script></body></html>
