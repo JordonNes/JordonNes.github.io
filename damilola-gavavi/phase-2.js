@@ -25,6 +25,40 @@ function currentSignal(series){
 }
 function remaining(close){const secs=Math.floor((Date.parse(close)-Date.now())/1000);return Number.isFinite(secs)&&secs>0?Math.floor(secs/60)+":"+String(secs%60).padStart(2,"0"):"Closed"}
 function addCountdown(node,close){if(close&&Date.parse(close)>Date.now())node.dataset.portfolioCloses=close}
+function observedQuoteChart(series,m){
+ const h=history.get(series),c=h?.current_contract;if(!m||c?.ticker!==m.ticker)return null;
+ const start=Date.parse(c.open_time_utc),end=Date.parse(c.close_time_utc);
+ if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start)return null;
+ const points=(c.candles||[]).map(x=>({at:Date.parse(x.time_utc),price:x.yes_midpoint_dollars}))
+  .filter(x=>Number.isFinite(x.at)&&x.at>=start&&x.at<=end&&typeof x.price==="number"&&Number.isFinite(x.price)&&x.price>=0&&x.price<=1)
+  .sort((a,b)=>a.at-b.at);
+ if(!points.length)return null;
+ const root=el("div","portfolio-quote-chart"),caption=el("div","reference-chart-caption","Kalshi YES midpoint · "+points.length+" observed minutes, not executable fills");
+ const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+ svg.setAttribute("viewBox","0 0 300 56");svg.setAttribute("preserveAspectRatio","none");svg.setAttribute("role","img");
+ svg.setAttribute("aria-label","Observed Kalshi YES midpoint by minute for "+series+"; missing minutes not interpolated");
+ let last=null;
+ for(const p of points){
+  const xx=(p.at-start)/(end-start)*300,yy=52-p.price*48;
+  if(last&&p.at-last.at===60000){
+   const line=document.createElementNS(svg.namespaceURI,"line");
+   for(const [k,v] of [["x1",(last.at-start)/(end-start)*300],["y1",52-last.price*48],["x2",xx],["y2",yy]])line.setAttribute(k,String(v));
+   line.setAttribute("stroke","currentColor");line.setAttribute("stroke-width","2");svg.append(line);
+  }
+  const dot=document.createElementNS(svg.namespaceURI,"circle");dot.setAttribute("cx",String(xx));dot.setAttribute("cy",String(yy));
+  dot.setAttribute("r","2");dot.setAttribute("fill","currentColor");svg.append(dot);last=p;
+ }
+ root.append(caption,svg);return root;
+}
+function marketResearch(series,record){
+ const h=history.get(series),q=latestQuote(series),suggestion=currentSignal(series),cmp=h?.comparison;
+ const wrap=el("div","portfolio-market-research");
+ const lead=suggestion.state==="EXPERIMENTAL_CANDIDATE"?"Damilola · "+suggestion.direction+" (experimental)":"Damilola · WAIT";
+ wrap.append(el("strong","",lead));
+ const detail=cmp?.matches?"Historical analog: "+cmp.matches+" matches · "+(cmp.cohort||"observed cohort")+".":"Historical analog not currently eligible.";
+ wrap.append(el("small","",detail+" Confidence — (not validated). Gavavi needs verified net expected value before a trade/exit call."));
+ return wrap;
+}
 function addGAMSurface(card,definition,record,matched){
  const top=el("div","market-top"),symbol=el("div","coin "+(definition.group==="Commodities"?"gold":definition.group.toLowerCase()),definition.symbol);
  const title=el("div","market-title"),h=el("h3","",definition.name+" · 15-minute"),sub=el("p","",definition.group+" · "+definition.series);
@@ -41,6 +75,8 @@ function addGAMSurface(card,definition,record,matched){
   box.append(label,el("span","quote",valid?cents(price):"—"));if(!valid)box.classList.add("noquote");sides.append(box);
  }
  card.append(sides);
+ const chart=observedQuoteChart(definition.series,m);if(chart)card.append(chart);
+ card.append(marketResearch(definition.series,record));
 }
 function otherLabel(p){
  const series=MATCH.seriesOf(p.ticker),parts=String(p.ticker||"").split("-");
