@@ -33,7 +33,7 @@ jobs:
           CF_DEPLOY_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_DEPLOY_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          node --test damilola-gavavi/phase-2.test.cjs damilola-gavavi/phase-2-match.test.cjs
+          node --test damilola-gavavi/portfolio-stake-profile.test.cjs damilola-gavavi/phase-2.test.cjs damilola-gavavi/phase-2-match.test.cjs
           node --input-type=module <<'NODE'
           const base='https://api.cloudflare.com/client/v4/accounts/'+process.env.CF_DEPLOY_ACCOUNT+'/r2/buckets';
           const name='dg-private-portfolio';
