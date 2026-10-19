@@ -1,6 +1,6 @@
 /* Shared D&G navigation; one canonical menu across research and portfolio pages. */
 (()=>{'use strict';
- const links=[['GAM','./'],['Portfolio','phase-2.html'],['Pattern Lab','pattern-lab.html'],['Exit Lab','exit-lab.html'],['Accuracy','accuracy.html'],['Signals','signal-ledger.html'],['Intelligence','intelligence-audit.html']];
+ const links=[['GAM','./'],['Pattern Lab','pattern-lab.html'],['Exit Lab','exit-lab.html'],['Accuracy','accuracy.html'],['Signals','signal-ledger.html'],['Intelligence','intelligence-audit.html']];
  const head=document.querySelector('.sitehead .headinner');if(!head||head.querySelector('.dg-global-nav'))return;
  const nav=document.createElement('nav');nav.className='dg-global-nav';nav.setAttribute('aria-label','D&G main navigation');
  const list=document.createElement('div');list.className='dg-nav-links';
