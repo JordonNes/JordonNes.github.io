@@ -16,16 +16,18 @@ test('all seven existing D&G pages load one shared menu stylesheet and script',(
     assert.match(html,/<div[^>]+class="headinner"/,file+' menu mount point');
   }
 });
-test('navigation retains canonical portfolio and research links',()=>{
+test('navigation keeps Portfolio hidden but retains research links',()=>{
   const nav=read('dg-navigation.js');
-  for(const url of ['phase-2.html','pattern-lab.html','exit-lab.html','accuracy.html','signal-ledger.html','intelligence-audit.html'])
+  for(const url of ['pattern-lab.html','exit-lab.html','accuracy.html','signal-ledger.html','intelligence-audit.html'])
     assert(nav.includes("'"+url+"'"),url+' in menu');
+  assert(!nav.includes("'phase-2.html'"),'Portfolio hidden in main nav');
   assert.match(nav,/aria-expanded/);
   assert.match(nav,/aria-current/);
 });
 test('public site never embeds account credentials or stores portfolio access code',()=>{
   const html=read('phase-2.html'),js=read('phase-2.js');
-  assert.match(html,/id="unlockForm"/);
+  assert.doesNotMatch(html,/id="unlockForm"/);
+  assert.match(html,/id="positionGrid"/);
   assert.doesNotMatch(html,/KALSHI_PRIVATE_KEY|DG_PORTFOLIO_ACCESS_SHA256|KALSHI_API_KEY_ID/);
   assert.doesNotMatch(js,/localStorage|sessionStorage/);
   assert.doesNotMatch(js,/KALSHI_PRIVATE_KEY|DG_PORTFOLIO_ACCESS_SHA256|KALSHI_API_KEY_ID/);
