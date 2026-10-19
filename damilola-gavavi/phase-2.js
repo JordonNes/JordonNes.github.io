@@ -6,14 +6,15 @@ const cash=v=>typeof v==='number'&&Number.isFinite(v)?new Intl.NumberFormat('en-
 const time=t=>t&&Number.isFinite(Date.parse(t))?new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))+' PT':'—';
 const metric=(label,value)=>{const d=el('div','metric');d.append(el('span','',label),el('strong','',value));return d};
 let data=null,busy=false;
-const fresh=()=>data&&Date.now()-Date.parse(data.retrieved_at)<90000;
+const fresh=()=>data&&!data.snapshot_stale&&Date.now()-Date.parse(data.retrieved_at)<180000;
+const quoteFresh=p=>fresh()&&p.quote_observed_at_utc&&Date.now()-Date.parse(p.quote_observed_at_utc)<90000;
 function positions(){
  const frag=document.createDocumentFragment();
  for(const p of data?.positions||[]){
   const card=el('article','position-card');card.append(el('h3','',p.ticker),el('div','position-side',(p.direction||p.side||'Unverified')+' · '+(p.quantity??'—')+' contracts'));
   const fields=el('div','position-details');for(const [label,value] of [
    ['Remaining cost basis',cash(p.cost_basis)],['Avg basis / contract',cash(p.quantity&&p.cost_basis!==null?p.cost_basis/p.quantity:null)],
-   ['Indicative exit value',fresh()?cash(p.indicative_exit_value):'Stale'],['Unrealized before exit fees',fresh()?cash(p.unrealized_before_exit_fees):'Stale'],
+   ['Indicative exit value',quoteFresh(p)?cash(p.indicative_exit_value):'Stale quote'],['Unrealized before exit fees',quoteFresh(p)?cash(p.unrealized_before_exit_fees):'Stale quote'],
    ['Latest recorded buy',time(p.latest_buy?.at)],['Contract closes',time(p.close_time)]]){const d=el('div');d.append(el('span','',label),el('strong','',value));fields.append(d)}card.append(fields);
   const a=p.assessment,current=fresh()&&a?.valid_until&&Date.parse(a.valid_until)>Date.now();
   card.append(el('p','position-entry',a?.entry_statement||'No recorded pre-entry assessment.'));
