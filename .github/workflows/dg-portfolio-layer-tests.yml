@@ -1,0 +1,27 @@
+name: D&G Portfolio GAM Overlay Tests
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'damilola-gavavi/phase-2*'
+      - 'damilola-gavavi/gam-15m.js'
+      - 'cloudflare/dg-market-api/src/private-portfolio.js'
+      - '.github/workflows/dg-portfolio-layer-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  portfolio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse Phase 2 scripts
+        run: |
+          node --check damilola-gavavi/phase-2.js
+          node --check damilola-gavavi/phase-2-match.js
+      - name: Verify market joins, read-only public portfolio, and 15-minute suggestion gates
+        run: node --test damilola-gavavi/phase-2-match.test.cjs damilola-gavavi/phase-2.test.cjs
