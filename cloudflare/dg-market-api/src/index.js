@@ -1,5 +1,5 @@
 import {serveIntelligenceReport} from './intelligence-report.js';
-import {servePrivatePortfolio,collectPortfolio} from "./private-portfolio.js";
+import {servePrivatePortfolio,servePublicPortfolio,collectPortfolio,refreshPublicPortfolioSnapshot} from "./private-portfolio.js";
 import {serveAccuracyLedger,runAccuracyCron} from "./accuracy-ledger.js";
 import {servePredictionLedger} from "./prediction-ledger.js";
 import {serveCardHistory} from "./card-history.js";
@@ -67,6 +67,7 @@ export default {
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
+  if(url.pathname==="/api/public/portfolio"){const r=await servePublicPortfolio(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname.startsWith("/api/private/")){const r=await servePrivatePortfolio(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/prediction-accuracy"){const r=await serveAccuracyLedger(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/prediction-ledger"){
@@ -597,6 +598,7 @@ export default {
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
  async scheduled(event,env,ctx){
+  if(event.cron==="*/2 * * * *"){ctx.waitUntil(refreshPublicPortfolioSnapshot(env,ctx));return;}
   if(event.cron==="*/15 * * * *")ctx.waitUntil(collectPortfolio(env).catch(()=>{}));
   if(event.cron==="3,18,33,48 * * * *"){
    ctx.waitUntil(runDamilolaSignalCron(env,ctx,event.scheduledTime,"score"));return;
