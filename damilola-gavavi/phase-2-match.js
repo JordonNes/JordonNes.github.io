@@ -17,8 +17,13 @@ function exactJoin(position,market){
 function researchCall(record,quote,now=Date.now()){
  const r=record?.comparison,c=record?.current_contract,m=quote?.market;
  const timestamp=Date.parse(record?.retrieved_at_utc||""),qtime=Date.parse(quote?.market?.quote_observed_at_utc||quote?.observed_at_utc||"");
- const hasMatch=!!m&&!!c&&c.ticker===m.ticker&&quote?.state==="OBSERVED"&&m.yes_maps_to_up===true&&
+ const last=(c?.candles||[]).filter(x=>Number.isFinite(Date.parse(x?.time_utc))&&typeof x.yes_midpoint_dollars==="number").at(-1);
+ const lastCandle=Date.parse(last?.time_utc||"");
+ const yes=Number(m?.yes_ask_dollars),no=Number(m?.no_ask_dollars);
+ const completeQuote=m?.yes_ask_dollars!=null&&m?.no_ask_dollars!=null&&Number.isFinite(yes)&&Number.isFinite(no)&&yes>0&&yes<1&&no>0&&no<1;
+ const hasMatch=!!m&&!!c&&c.ticker===m.ticker&&quote?.state==="OBSERVED"&&m.yes_maps_to_up===true&&completeQuote&&
  Number.isFinite(timestamp)&&now-timestamp>=0&&now-timestamp<=90000&&Number.isFinite(qtime)&&now-qtime>=0&&now-qtime<=90000&&
+ Number.isFinite(lastCandle)&&lastCandle<=now&&now-lastCandle<=120000&&
  Date.parse(m.close_time)>now&&r?.state==="EXPERIMENTAL_SUGGESTION"&&["UP","DOWN"].includes(r.suggested_side);
  return hasMatch?{state:"EXPERIMENTAL_CANDIDATE",direction:r.suggested_side,matches:r.matches??null,cohort:r.cohort||null,updated_at:record.retrieved_at_utc}:
  {state:"WAIT",direction:null,reason:!m?"No current exchange quote":!c||c.ticker!==m.ticker?"Waiting for matching 15-minute contract history":"No eligible, fresh D&G experimental signal"};
