@@ -10,7 +10,7 @@ const cents=v=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=1?(v*100).toFix
 const time=v=>v&&Number.isFinite(Date.parse(v))?new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}).format(new Date(v))+" PT":"—";
 const metric=(label,v)=>{const d=el("div","metric");d.append(el("span","",label),el("strong","",v));return d};
 const watch=["KXBTC15M","KXETH15M","KXSOL15M","KXGOLD15M","KXSILVER15M"],quotes=new Map(),history=new Map();
-let portfolio=null,lastAccountFetch=0,lastQuoteFetch=0,lastHistoryFetch=0,loadingAccount=false,loadingQuotes=false,loadingHistory=false,refreshError="",expandedWatch=false,epoch=0;
+let portfolio=null,lastAccountFetch=0,lastQuoteFetch=0,lastHistoryFetch=0,loadingAccount=false,loadingQuotes=false,loadingHistory=false,refreshError="",expandedWatch=false,nextQuoteRetry=0;
 const cacheKey="dg-public-portfolio-display-v2";
 function getInitial(){try{const x=JSON.parse(sessionStorage.getItem(cacheKey)||"null");return x?.state==="PUBLIC_OBSERVED_PORTFOLIO"&&Array.isArray(x.positions)?x:null}catch{return null}}
 portfolio=getInitial();
@@ -147,22 +147,29 @@ function normalizeQuote(series,record){
 }
 const sleep=ms=>new Promise(ok=>setTimeout(ok,ms));
 async function quotesRefresh(force=false){
- if(loadingQuotes||document.hidden)return;if(!force&&Date.now()-lastQuoteFetch<45000)return;
+ if(loadingQuotes||document.hidden||Date.now()<nextQuoteRetry)return;if(!force&&Date.now()-lastQuoteFetch<45000)return;
  loadingQuotes=true;lastQuoteFetch=Date.now();show();
  try{
   const included=new Set([...watch,...(portfolio?.positions||[]).map(p=>p.series).filter(s=>MATCH.markets.some(m=>m.series===s))]);
   if(expandedWatch)for(const m of MATCH.markets)included.add(m.series);
   const series=[...included],groups=[];for(let i=0;i<series.length;i+=8)groups.push(series.slice(i,i+8));
+  let sourceLimited=false,sourceError="";
   for(let i=0;i<groups.length;i++){
    if(i)await sleep(500);
    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),11000);
    try{const r=await fetch(API+"/api/quarter-hour-batch?series="+encodeURIComponent(groups[i].join(",")),{signal:controller.signal});
     if(!r.ok)throw Error("Quote gateway "+r.status);
     const payload=await r.json();if(payload.kind!=="QUARTER_HOUR_BATCH")throw Error("Unexpected quote response");
-    for(const series of groups[i])quotes.set(series,normalizeQuote(series,payload.results?.[series]));show();
-   }catch(e){$("marketFeedStatus").textContent="GAM quotes temporarily limited: "+String(e.message||e);break}finally{clearTimeout(timer)}
+    for(const series of groups[i]){
+     const entry=payload.results?.[series],normalized=normalizeQuote(series,entry);
+     quotes.set(series,normalized);
+     const limited=entry?.http_status===429||entry?.http_status===503&&["RATE_LIMITED","SHARED_KALSHI_COOLDOWN"].includes(normalized.state);
+     if(limited){sourceLimited=true;const retry=Date.parse(entry?.payload?.retry_at_utc||"");nextQuoteRetry=Math.max(nextQuoteRetry,Number.isFinite(retry)?retry:Date.now()+60000)}
+    }
+    show();if(sourceLimited)break;
+   }catch(e){sourceError=String(e.message||e);nextQuoteRetry=Math.max(nextQuoteRetry,Date.now()+30000);break}finally{clearTimeout(timer)}
   }
-  $("marketFeedStatus").textContent="15-minute quote check "+time(new Date().toISOString())+" · Values shown only when fresh.";
+  $("marketFeedStatus").textContent=sourceLimited?"Kalshi rate limited · observing cooldown; no stale prices will be presented as live.":sourceError?"GAM quote feed temporarily unavailable: "+sourceError:"15-minute quote check "+time(new Date().toISOString())+" · Values shown only when fresh.";
  }finally{loadingQuotes=false;show()}
 }
 async function researchRefresh(force=false){
