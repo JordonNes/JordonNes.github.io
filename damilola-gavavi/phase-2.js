@@ -163,6 +163,15 @@ function show(){
   $("activeHoldingsCount").textContent=matched.length+" positions";
   const v=portfolio.performance||{},pct=typeof v.win_rate==="number"?(v.win_rate*100).toFixed(1)+"%":"—";
   $("resultsMetrics").replaceChildren(metric("Closed markets",v.closed_markets==null?"—":String(v.closed_markets)),metric("Realized P&L",cash(v.realized_pnl)),metric("Fees",cash(v.fees)),metric("P&L after fees",cash(v.pnl_less_fees)),metric("Win rate",pct));
+  const rp=portfolio.risk_reference;
+  if(rp?.policy){
+   const profile=rp.sample_adequate&&rp.typical_observed_stake_dollars!==null;
+   const usual=profile?cash(rp.typical_observed_stake_dollars)+" observed median":cash(rp.policy.typical_reference_stake_dollars)+" provisional reference";
+   const count=rp.observation_count||0;
+   const daily=rp.average_spend_per_active_day_dollars!==null&&rp.average_spend_per_active_day_dollars!==undefined?cash(rp.average_spend_per_active_day_dollars):"not yet established";
+   $("riskReference").textContent="D&G 15-minute sizing · "+usual+" per new entry · $5 maximum reference · $20 daily new-entry budget · historical avg active-day spend: "+daily+
+   " ("+count+" recorded buy orders). The 2% account-capital limit remains unverified until actual strategy capital is defined; none of these are automatic order settings.";
+  }else $("riskReference").textContent="D&G 15-minute sizing · Provisional $2 entry / $5 maximum / $20 daily allowance based on your stated routine. Historical order-size calculation is awaiting a Worker update; 2% actual capital not verified.";
   $("assessmentNote").textContent=portfolio.assessment_note||"Experimental historical research only.";
  }
  const suggestions=document.createDocumentFragment(),seriesToScan=expandedWatch?MATCH.markets:MATCH.markets.filter(x=>watch.includes(x.series)||matched.some(p=>p.series===x.series));
