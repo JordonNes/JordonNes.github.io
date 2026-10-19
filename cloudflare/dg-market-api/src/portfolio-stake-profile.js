@@ -21,10 +21,12 @@ function historicalStakeProfile(fills,{historyComplete=false,sessionLimit=20,now
   if(qty===null||qty<=0){unsupported.unknown_size++;continue}
   const price=val(side==="YES"?f.yes_price_dollars:side==="NO"?f.no_price_dollars:null);
   if(price===null||price<=0||price>=1){unsupported.unknown_price++;continue}
-  const orderId=f.order_id||f.client_order_id||f.fill_id||f.trade_id;
-  // Missing exchange identifier = cannot safely deduplicate.
-  if(!orderId){unsupported.unknown_size++;continue}
-  const id=String(orderId),key=ticker+"|"+side+"|"+id;
+  const fillId=f.fill_id||f.trade_id;
+  const orderId=f.order_id||f.client_order_id;
+  // An exchange fill ID identifies each execution. Multiple fills can belong
+  // to one order; never discard later executions in that order.
+  if(!fillId&&!orderId){unsupported.unknown_size++;continue}
+  const id=String(fillId||orderId),key=ticker+"|"+side+"|"+id;
   if(unique.has(key))continue;
   unique.set(key,{key,ticker,side,order: f.order_id||f.client_order_id?String(f.order_id||f.client_order_id):null,fill:f.fill_id||f.trade_id?String(f.fill_id||f.trade_id):null,stamp,amount:price*qty});
  }
