@@ -1,0 +1,32 @@
+name: D&G Intelligence Audit PR Gate
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'cloudflare/dg-market-api/src/index.js'
+      - 'cloudflare/dg-market-api/src/intelligence-report.js'
+      - 'damilola-gavavi/intelligence-audit*'
+      - '.github/workflows/dg-intelligence-audit-pr-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /cloudflare/dg-market-api/
+            /damilola-gavavi/
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse archive API and audit page source
+        run: |
+          node --check cloudflare/dg-market-api/src/index.js
+          node --check cloudflare/dg-market-api/src/intelligence-report.js
+      - name: Test no fabricated forecast confidence or account disclosure
+        run: node --test damilola-gavavi/intelligence-audit.test.cjs
