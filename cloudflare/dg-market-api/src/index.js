@@ -598,6 +598,16 @@ export default {
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
  async scheduled(event,env,ctx){
+  // The 02:20 UTC trigger is dedicated to the retrospective 21-series R2 review.
+  // Keep the 2-minute TAAPI/Portfolio tasks running independently below.
+  if(event.cron==="20 2 * * *"){
+   ctx.waitUntil(runDamilolaDaily(env,event.scheduledTime).catch(async error=>{
+    const diagnostic={state:'DAILY_REVIEW_FAILED',at_utc:new Date().toISOString(),
+     reason:String(error?.message||error).replace(/[^A-Za-z0-9_]/g,'').slice(0,80)};
+    console.error(JSON.stringify({kind:'DG_DAMILOLA_DAILY_ERROR',...diagnostic}));
+    if(env.DG_ARCHIVE)await env.DG_ARCHIVE.put('dg:damilola:daily:v1:last-error',JSON.stringify(diagnostic)).catch(()=>{});
+   }));
+  }
   if(event.cron==="*/2 * * * *")ctx.waitUntil(refreshPublicPortfolioSnapshot(env,ctx));
 
   if(event.cron==="3,18,33,48 * * * *"){
