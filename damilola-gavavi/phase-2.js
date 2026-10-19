@@ -49,7 +49,7 @@ function otherLabel(p){
  return {title:"Other Kalshi market",sub:series||"Unknown series"};
 }
 function infoPair(label,value){const item=el("div","pfield");item.append(el("span","",label),el("strong","",value));return item}
-function decisionBlock(p,is15m,matchingMarket){
+function decisionBlock(p,is15m,matchingMarket,hasCurrentSeriesQuote){
  const assessment=p.assessment,at=Date.parse(assessment?.valid_until||""),active=!!assessment&&is15m&&matchingMarket&&isSnapshotFresh()&&Number.isFinite(at)&&at>Date.now();
  const block=el("div","position-call "+(!active?"wait":assessment.stance==="CONSIDER_EXIT"?"exit":assessment.stance==="WATCH"?"watch":""));
  let label="",details="";
@@ -60,8 +60,8 @@ function decisionBlock(p,is15m,matchingMarket){
   label="NOT A 15-MINUTE GAM CONTRACT";
   details="This holding is preserved here, but D&G's 15-minute forecast cannot assess an unrelated Kalshi event market.";
  }else if(!matchingMarket){
-  label="D&G · NO CURRENT HOLDING MATCH";
-  details="This is a 15-minute contract from another window. Current Up/Down quotes belong to the latest market, not to this holding.";
+  label="D&G · NO MATCHING LIVE CONTRACT";
+  details=hasCurrentSeriesQuote?"Your held 15-minute contract belongs to a different window. The Up/Down quotes above are for a new contract, not for your position.":"No fresh quote for this held 15-minute contract. Its direction and current exit value cannot be verified.";
  }else{
   label="D&G · WAIT";
   details=assessment?.statement?"Previous model comment (expired): "+assessment.statement:"No fresh eligible D&G hold/exit decision for this contract.";
@@ -79,7 +79,7 @@ function positionCard(p){
   title.append(el("h3","",names.title),el("p","",names.sub));top.append(coin,title,el("span","pill","OTHER MARKET"));card.append(top);
  }
  const overlay=el("div","holding-overlay"),row=el("div","holding-title");
- row.append(el("span","holding-tag","YOUR OPEN POSITION"),el("strong","holding-direction",(m&&q?.market?.yes_maps_to_up===true?(p.side==="YES"?"UP":"DOWN"):p.side||"—")+" · "+(p.quantity??"—")+" contracts"));
+ row.append(el("span","holding-tag","YOUR OPEN POSITION"),el("strong","holding-direction",(m&&q?.market?.yes_maps_to_up===true?(p.side==="YES"?"UP":"DOWN"):(p.direction&&p.direction!==p.side?p.direction+" ("+(p.side||"—")+")":p.side||"—"))+" · "+(p.quantity??"—")+" contracts"));
  overlay.append(row,el("div","holding-ticker",p.ticker));
  const fields=el("div","position-details");
  for(const [a,b] of [["Remaining cost basis",cash(p.cost_basis)],["Avg basis / contract",cash(p.quantity&&p.cost_basis!==null?p.cost_basis/p.quantity:null)],
@@ -91,7 +91,7 @@ function positionCard(p){
  overlay.append(fields);
  const outcome=matchedResearch(p,q);
  if(outcome)overlay.append(el("div","holding-research",outcome));
- overlay.append(decisionBlock(p,!!m,joined.exact));
+ overlay.append(decisionBlock(p,!!m,joined.exact,!!q));
  const bottom=el("div","holding-links"),marketLink=el("a","","View GAM ↗"),exchange=el("a","","Open Kalshi portfolio ↗");
  marketLink.href=m?"./?series="+encodeURIComponent(p.series||""):"./";exchange.href="https://kalshi.com/portfolio";exchange.target="_blank";exchange.rel="noopener noreferrer";bottom.append(marketLink,exchange);overlay.append(bottom);card.append(overlay);
  return card;
