@@ -62,3 +62,16 @@ test('collection failures remain explicit and do not mark missing history comple
  const {collectPortfolio}=await api,keys=cryptoNode.generateKeyPairSync('rsa',{modulusLength:2048}),env={DG_PORTFOLIO_R2:bucket(),KALSHI_API_KEY_ID:'fixture',KALSHI_PRIVATE_KEY:keys.privateKey.export({type:'pkcs8',format:'pem'})},original=global.fetch;
  global.fetch=async()=>new Response('',{status:401});try{const r=await collectPortfolio(env);assert(Object.values(r.streams).every(s=>s.state==='ERROR'&&s.reason==='KALSHI_ACCOUNT_HTTP_401'));assert(![...env.DG_PORTFOLIO_R2.records.keys()].some(k=>k.endsWith('/live.json')))}finally{global.fetch=original}
 });
+
+test('public follower endpoint exposes only allowlisted data, never secret, raw fills or account IDs',async()=>{
+ const {servePublicPortfolio:f}=await api,privateBucket=bucket();
+ await privateBucket.put('dg/private-portfolio/v1/live.json',JSON.stringify({retrieved_at:new Date().toISOString(),complete:true,positions:[p()],balance:{balance:12345,portfolio_value:23456},private_api_key:'NEVER_EXPOSE'}));
+ await privateBucket.put('dg/private-portfolio/v1/fills.json',JSON.stringify({rows:[{fill_id:'PRIVATE_FILL',ticker:'KXBTC15M-T',fee_cost:'.1000'}]}));
+ await privateBucket.put('dg/private-portfolio/v1/public-follow.json',JSON.stringify({positions:[{ticker:'KXBTC15M-T',side:'YES',assessment:{stance:'WATCH',icon:'🟡',statement:'Observed watch',confidence:null}}]}));
+ const r=await f(new Request('https://test/api/public/portfolio'),{DG_PORTFOLIO_R2:privateBucket},{});
+ assert.equal(r.status,200);const body=await r.json();const encoded=JSON.stringify(body);
+ assert.equal(body.trading_enabled,false);assert.equal(body.read_only,true);assert.equal(body.positions.length,1);
+ assert.equal(body.positions[0].ticker,'KXBTC15M-T');assert.equal(body.positions[0].assessment.stance,'WATCH');
+ assert.equal(body.balance.cash_dollars,123.45);assert(!encoded.includes('PRIVATE_FILL'));assert(!encoded.includes('NEVER_EXPOSE'));
+ assert(!encoded.includes('private_api_key'));assert(!encoded.includes('exchange_index'));
+});
