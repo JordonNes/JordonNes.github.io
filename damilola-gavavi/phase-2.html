@@ -8,42 +8,27 @@
 <a class="brand" href="./" aria-label="Damilola and Gavavi Home">
 <span class="monogram" aria-hidden="true">D·G</span>
 <span class="brandtype"><strong>Damilola &amp; Gavavi</strong><small>Market intelligence</small></span></a>
-<div class="headright"><span class="status"><i class="live-dot" id="feedDot"></i><span id="feedState">Connecting to Kalshi…</span></span><time id="marketClock" class="market-clock" aria-label="Current Pacific time" title="Current Pacific time">--:--:--</time><button id="refresh" class="refresh" type="button" aria-label="Refresh Kalshi market quotes">↻ Refresh</button></div>
+<div class="headright"><time id="marketClock" class="market-clock" aria-label="Current Pacific time" title="Current Pacific time">--:--:--</time><button id="refresh" class="refresh" type="button" aria-label="Refresh Kalshi market quotes">↻ Refresh</button></div>
 </div></header>
 <main class="container">
 
-<section class="portfolio-head"><div class="eyebrow">D&amp;G · Phase 2</div><h1>Your positions. Our next move.</h1><p>A private view of your holdings, D&amp;G’s experimental hold-or-exit assessment, and your recorded financial results.</p><a href="./">← Original market monitor</a></section>
-<section class="account-login" id="accountLogin"><form id="unlockForm"><label for="accessCode">Private Phase 2 access code</label><div class="unlock-row"><input id="accessCode" type="password" autocomplete="off" required placeholder="Enter your access code"><button type="submit">Unlock my portfolio</button></div><small>Use your Phase 2 code, never your Kalshi private key. The code stays in this tab’s memory.</small></form></section>
+<section class="portfolio-head"><div class="eyebrow">D&amp;G · Phase 2</div><h1>Your positions. Our next move.</h1><p>Open Kalshi positions only: current holdings, indicative values and D&amp;G hold/watch/exit assessments. Experimental signals are not validated forecasts.</p><a href="./">← GAM</a></section>
+<section class="account-login" id="accountLogin"><form id="unlockForm"><label for="accessCode">Private Phase 2 access code</label><div class="unlock-row"><input id="accessCode" type="password" autocomplete="off" required placeholder="Enter your access code"><button type="submit">Unlock my portfolio</button></div><small>Private Kalshi account records require secure server-side access. The hidden GAM shortcut does not authorize account reads. No account-name field is required.</small></form></section>
 <div class="portfolio-status" id="portfolioStatus" role="status">Portfolio locked. Public market cards remain available below.</div>
 <section id="privateWorkspace" hidden>
 <div class="portfolio-actions"><button id="accountRefresh">↻ Refresh positions</button><button id="lockPortfolio">Lock portfolio</button><span id="accountUpdated"></span></div>
 <div id="accountMetrics" class="account-metrics"></div>
-<div class="section-title"><h2>Open positions</h2><span>🟢 Stay aligned · 🟡 Watch · 🔴 Consider exit · ⚪ No call</span></div>
+<div class="section-title"><h2>My open positions</h2><span>🟢 Stay aligned · 🟡 Watch · 🔴 Consider exit · ⚪ No call</span></div>
 <p class="method-note">D&amp;G’s current model is experimental. Entry ✓ / ✕ means aligned / opposed to a recorded pre-buy signal; it does not establish that the price was good value. Confidence remains unavailable until validated.</p>
-<div id="positionGrid" class="position-grid"></div>
-<details class="reports" open><summary>Performance &amp; fiscal details</summary>
-<div class="report-tools"><label>Closed-market date from <input type="date" id="reportFrom"></label><label>Through <input type="date" id="reportTo"></label><label>Market <select id="reportSeries"><option value="">All markets</option></select></label><button id="exportReport">Export report CSV</button><button id="exportFills">Export recorded fills</button><button id="printReport">Print / save PDF</button></div>
-<p id="coverageNote" class="method-note"></p><div id="reportMetrics" class="account-metrics"></div><div class="report-table"><table><thead><tr><th>Market / updated (Pacific)</th><th>Status</th><th>Reported realized P&amp;L</th><th>Fees</th><th>P&amp;L less fees</th></tr></thead><tbody id="reportRows"></tbody></table></div><p id="reportMethod" class="method-note"></p>
-</details><p id="assessmentNote" class="method-note"></p>
+<div id="positionGrid" class="position-grid"></div><p class="method-note">Only open positions are displayed. Closed-position reporting remains in the separately maintained archival system.</p>
+<p id="assessmentNote" class="method-note"></p>
 </section>
 
-<section class="hero">
-<div><div class="eyebrow">Gavavi Action Monitor · GAM</div><h1>15-minute markets</h1><p>Every supported 15-minute Up/Down market in one simple view. Yellow follows the interim Damilola Method’s latest eligible live suggestion; the initial recommendation remains a checkpoint. Signals update automatically as observed one-minute Kalshi data arrives. Gavavi forecasting remains under validation.</p></div>
-<div class="countbox"><strong id="observedCount">0 / 21</strong><span>markets with observed quotes</span></div>
-</section>
-<div class="toolbar"><div class="tabs" role="tablist" aria-label="Filter 15-minute markets">
-<button type="button" data-group="All" role="tab" aria-selected="true">All <span>21</span></button>
-<button type="button" data-group="Commodities" role="tab" aria-selected="false">Commodities <span>7</span></button>
-<button type="button" data-group="Crypto" role="tab" aria-selected="false">Crypto <span>9</span></button>
-<button type="button" data-group="FX" role="tab" aria-selected="false">FX <span>5</span></button>
-</div><div class="tools"><label class="sr-only" for="search">Search markets</label><input class="search" type="search" id="search" placeholder="Search markets…" autocomplete="off" aria-label="Search markets"></div></div>
-<div class="note-row"><a href="phase-2.html" style="color:#426b50;font-weight:750">Phase 2 · My positions ↗</a><a href="pattern-lab.html" style="color:#426b50;font-weight:750">Pattern Lab · compare five hours ↗</a><a href="accuracy.html" style="color:#426b50;font-weight:750">D&G accuracy history ↗</a><a href="signal-ledger.html" style="color:#426b50;font-weight:750">Damilola signal ledger ↗</a><span id="visibleCount">21 markets</span><span class="signal-auto" aria-label="Automatic live signal polling">Live signal check every ~30 seconds while visible</span><span id="updated">Updates pending</span></div>
-<section id="marketGrid" class="cards" aria-label="Kalshi 15-minute market cards" aria-live="polite"></section>
 <footer class="foot"><span>Read-only market monitor. Quotes are indicative, delayed by retrieval, and not executable offers. No orders are placed here.</span><span><a href="https://kalshi.com/category/commodities/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Kalshi Commodities ↗</a> · <a href="https://kalshi.com/category/crypto/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">Crypto ↗</a> · <a href="https://kalshi.com/category/financials/frequency/fifteen_min" rel="noopener noreferrer" target="_blank">FX ↗</a></span></footer>
 </main>
-<script src="pattern-math.js?v=1"></script>
+
 <script defer src="phase-2.js?v=1"></script>
-<script defer src="gam-15m.js?v=20261016-damilola2"></script>
+
 <script>
 (()=>{const el=document.getElementById("marketClock");const fmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});function tick(){el.textContent=fmt.format(new Date());}tick();setInterval(tick,1000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});})();
 </script>
