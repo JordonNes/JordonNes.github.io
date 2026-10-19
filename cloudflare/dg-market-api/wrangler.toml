@@ -4,9 +4,7 @@ compatibility_date = "2026-10-01"
 workers_dev = true
 
 [vars]
-# SHA-256 verifier only; the private access code is never committed.
-DG_PORTFOLIO_ACCESS_SHA256 = "ee07b265b30a383b7f22528c6b875e90261b793ab2dace041b066f737ebabeb6"
-ALLOWED_ORIGIN = "https://jordonnes.github.io"
+# No portfolio access codes or verifiers in public repository configuration.\nALLOWED_ORIGIN = "https://jordonnes.github.io"
 
 [triggers]
 crons = ["*/2 * * * *", "*/15 * * * *", "6,21,36,51 * * * *", "10,25,40,55 * * * *", "20 2 * * *", "3,18,33,48 * * * *"] # Preserve RSI and forward-ledger jobs; Damilola review 02:20 UTC daily.
