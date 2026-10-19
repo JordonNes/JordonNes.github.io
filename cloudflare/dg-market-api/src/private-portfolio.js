@@ -80,6 +80,17 @@ export async function collectPortfolio(env){
    status.streams[name]={state:archive.complete?'COMPLETE':'BACKFILLING',records:archive.rows.length,updated_at:archive.updated_at};
   }catch(e){status.streams[name]={state:'ERROR',reason:String(e.message).replace(/[^A-Z_0-9]/g,'').slice(0,80),records:archive.rows.length};}
  }
+ // Derive the owner's stake profile inside private storage once per history
+ // collection, not during anonymous public page loads.
+ try{
+  const [recent,old]=await Promise.all(['fills.json','historical_fills.json'].map(k=>read(b,k)));
+  const allFills=mergeRows(old?.rows||[],recent?.rows||[],r=>r.fill_id||r.trade_id);
+  const profile=historicalStakeProfile(allFills,{historyComplete:!!recent?.complete&&!!old?.complete,sessionLimit:20});
+  profile.calculated_at_utc=new Date().toISOString();
+  await write(b,'stake-profile.json',profile);
+  status.risk_profile_state=profile.state;
+  status.risk_profile_buy_orders=profile.observed?.observed_buy_orders??0;
+ }catch{status.risk_profile_state='PROFILE_PENDING'}
  status.checked_at=new Date().toISOString();await write(b,'status.json',status);return status;
  });
 }
@@ -152,11 +163,11 @@ export async function servePublicPortfolio(request,env,ctx){
  const b=env.DG_PORTFOLIO_R2;
  if(!b)return Response.json({state:'PORTFOLIO_STORAGE_UNAVAILABLE',positions:[],read_only:true,trading_enabled:false},{status:503,headers:{'Cache-Control':'no-store'}});
  try{
-  const [live,settled,archived,fills,hfills]=await Promise.all(['live.json','settled.json','historical_positions.json','fills.json','historical_fills.json'].map(k=>read(b,k)));
+  const [live,settled,archived,fills,hfills,riskSaved]=await Promise.all(['live.json','settled.json','historical_positions.json','fills.json','historical_fills.json','stake-profile.json'].map(k=>read(b,k)));
   if(!live?.retrieved_at||!Array.isArray(live.positions))return Response.json({state:'SNAPSHOT_NOT_YET_COLLECTED',positions:[],read_only:true,trading_enabled:false},{status:503,headers:{'Cache-Control':'no-store'}});
   const allFills=mergeRows(hfills?.rows||[],fills?.rows||[],r=>r.fill_id||r.trade_id);
   const report=buildReport(live.positions,settled?.rows||[],archived?.rows||[],allFills);
-  const stakes=historicalStakeProfile(allFills,{historyComplete:!!fills?.complete&&!!hfills?.complete,sessionLimit:20});
+  const stakes=riskSaved?.policy?riskSaved:historicalStakeProfile([],{historyComplete:false,sessionLimit:20});
   const open=report.rows.filter(p=>p.state==='OPEN');
   const liveAge=Date.now()-Date.parse(live.retrieved_at);
   const results=[];
