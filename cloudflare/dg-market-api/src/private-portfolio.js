@@ -1,5 +1,6 @@
 import {kalshiPortfolioHeaders} from './kalshi-read-auth.js';
 import {buildReport,mergeRows,key,number,assessPosition} from './portfolio-math.js';
+import {historicalStakeProfile} from './portfolio-stake-profile.js';
 import {serveCardHistory} from './card-history.js';
 const ROOT='dg/private-portfolio/v1/',API='https://external-api.kalshi.com/trade-api/v2';
 const streams={fills:{path:'/portfolio/fills?limit=1000&subaccount=0',field:'fills',id:r=>r.fill_id||r.trade_id},historical_fills:{path:'/historical/fills?limit=1000&subaccount=0',field:'fills',id:r=>r.fill_id||r.trade_id},settled:{path:'/portfolio/positions?settlement_status=settled&limit=1000',field:'market_positions',id:key},historical_positions:{path:'/historical/positions?limit=1000',field:'market_positions',id:key},settlements:{path:'/portfolio/settlements?limit=1000',field:'settlements',id:r=>key(r)+':'+r.settled_time}};
@@ -155,6 +156,7 @@ export async function servePublicPortfolio(request,env,ctx){
   if(!live?.retrieved_at||!Array.isArray(live.positions))return Response.json({state:'SNAPSHOT_NOT_YET_COLLECTED',positions:[],read_only:true,trading_enabled:false},{status:503,headers:{'Cache-Control':'no-store'}});
   const allFills=mergeRows(hfills?.rows||[],fills?.rows||[],r=>r.fill_id||r.trade_id);
   const report=buildReport(live.positions,settled?.rows||[],archived?.rows||[],allFills);
+  const stakes=historicalStakeProfile(allFills,{historyComplete:!!fills?.complete&&!!hfills?.complete,sessionLimit:20});
   const open=report.rows.filter(p=>p.state==='OPEN');
   const liveAge=Date.now()-Date.parse(live.retrieved_at);
   const results=[];
@@ -184,6 +186,16 @@ export async function servePublicPortfolio(request,env,ctx){
      pnl_less_fees:summary.realized_less_fees??null,win_rate:summary.win_rate??null,
      scored_closed_markets:(summary.wins??0)+(summary.losses??0)+(summary.breakeven??0)},
    portfolio_summary:{open_cost_basis:summary.open_cost_basis??null},
+   // Only aggregate historical stake information is published. Never raw fill rows,
+   // daily activity dates, specific orders or any credentials.
+   risk_reference:{
+    state:stakes.state,history_complete:stakes.history_complete,sample_adequate:stakes.sample_adequate,
+    observation_count:stakes.observed?.observed_buy_orders??0,
+    typical_observed_stake_dollars:stakes.observed?.typical_entry_median_dollars??null,
+    average_observed_stake_dollars:stakes.observed?.average_entry_dollars??null,
+    average_spend_per_active_day_dollars:stakes.observed?.average_spend_per_active_day_dollars??null,
+    policy:stakes.policy
+   },
    assessment_note:'Public owner-approved follow view. Snapshot may be delayed; assessments are experimental and never trade-ready. No buying, selling, account credentials, raw fills or account identifiers exposed.',
    provenance:'Private R2 saved snapshots and recorded research only; no live authenticated account fetch on visitor request.'
   },{headers:{'Cache-Control':'public, max-age=20','X-Content-Type-Options':'nosniff'}});
