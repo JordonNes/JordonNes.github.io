@@ -6,11 +6,36 @@ const streams={fills:{path:'/portfolio/fills?limit=1000&subaccount=0',field:'fil
 const json=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'private, no-store, max-age=0','Pragma':'no-cache','X-Robots-Tag':'noindex, nofollow'}});
 const read=async(b,k)=>{const o=await b.get(ROOT+k);return o?JSON.parse(await o.text()):null};
 const write=(b,k,v)=>b.put(ROOT+k,JSON.stringify(v),{httpMetadata:{contentType:'application/json',cacheControl:'private, no-store'}});
-export async function authorized(request,env){
- const expected=String(env.DG_PORTFOLIO_ACCESS_SHA256||'');const token=request.headers.get('Authorization')?.match(/^Bearer ([A-Za-z0-9_-]{40,100})$/)?.[1];
- if(!/^[a-f0-9]{64}$/.test(expected)||!token)return false;
- const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)));const hex=Array.from(digest,b=>b.toString(16).padStart(2,'0')).join('');let diff=0;for(let i=0;i<64;i++)diff|=hex.charCodeAt(i)^expected.charCodeAt(i);return diff===0;
+// Phase 2 code-only access; the SHA-256 digest is an encrypted Worker secret.
+// This is a single-user private portfolio, not an account-name login.
+const ACCESS_WINDOW_SECONDS=900,ACCESS_MAX_FAILURES=5;
+async function accessRateKey(request){
+ const ip=request.headers.get('CF-Connecting-IP')||'unknown';
+ const bytes=new TextEncoder().encode('dg-portfolio-login-v1:'+ip);
+ const digest=await crypto.subtle.digest('SHA-256',bytes);
+ return 'dg:portfolio:login-fail:v1/'+Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
 }
+async function verifyCode(request,env){
+ // A short passcode is only permitted when durable attempt-limiting KV is available.
+ const bearer=request.headers.get('Authorization')?.match(/^Bearer ([^\\s]{8,100})$/)?.[1];
+ const expected=String(env.DG_PORTFOLIO_ACCESS_SHA256||'').toLowerCase();
+ const kv=env.DG_ARCHIVE;
+ if(!kv)return {ok:false,state:'ACCESS_RATE_LIMIT_UNAVAILABLE',status:503};
+ const key=await accessRateKey(request),attempts=await kv.get(key,'json');
+ if((attempts?.failures||0)>=ACCESS_MAX_FAILURES)return {ok:false,state:'ACCESS_TEMPORARILY_LOCKED',status:429};
+ let correct=false;
+ if(/^[a-f0-9]{64}$/.test(expected)&&bearer){
+  const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(bearer)));
+  const hex=Array.from(digest,b=>b.toString(16).padStart(2,'0')).join('');
+  let diff=0;for(let i=0;i<64;i++)diff|=hex.charCodeAt(i)^expected.charCodeAt(i);
+  correct=diff===0;
+ }
+ if(correct){await kv.delete(key);return {ok:true}}
+ await kv.put(key,JSON.stringify({failures:(attempts?.failures||0)+1}),{expirationTtl:ACCESS_WINDOW_SECONDS});
+ return {ok:false,state:'LOCKED',status:401};
+}
+export async function authorized(request,env){return (await verifyCode(request,env)).ok}
+
 export async function accountGet(path,env){
  const headers=await kalshiPortfolioHeaders(path,env);const r=await fetch(API+path,{method:'GET',headers,cache:'no-store',signal:AbortSignal.timeout(12000)});
  if(!r.ok)throw Error('KALSHI_ACCOUNT_HTTP_'+r.status);return r.json();
@@ -70,7 +95,7 @@ async function entryEvidence(env,position,fills,history){
  return {fill:{at:f.created_time,price:number(position.side==='YES'?f.yes_price_dollars:f.no_price_dollars),quantity:number(f.count_fp??f.count),label:'Latest recorded buy on held side'},checkpoint:selected};
 }
 export async function servePrivatePortfolio(request,env,ctx){
- if(!await authorized(request,env))return json({state:'LOCKED',message:'Enter your private Phase 2 access code.'},401);
+ const access=await verifyCode(request,env);if(!access.ok)return json({state:access.state,message:access.status===429?'Too many attempts. Try again later.':'Enter your private Phase 2 access code.'},access.status);
  if(request.method!=='GET')return json({state:'READ_ONLY'},405);
  if(!env.DG_PORTFOLIO_R2)return json({state:'PRIVATE_ARCHIVE_NOT_CONFIGURED'},503);
  const url=new URL(request.url);
