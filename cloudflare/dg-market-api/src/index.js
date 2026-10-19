@@ -598,9 +598,10 @@ export default {
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
  async scheduled(event,env,ctx){
-  if(event.cron==="*/2 * * * *"){ctx.waitUntil(refreshPublicPortfolioSnapshot(env,ctx));return;}
-  if(event.cron==="*/15 * * * *")ctx.waitUntil(collectPortfolio(env).catch(()=>{}));
+  if(event.cron==="*/2 * * * *")ctx.waitUntil(refreshPublicPortfolioSnapshot(env,ctx));
+
   if(event.cron==="3,18,33,48 * * * *"){
+   ctx.waitUntil(collectPortfolio(env).catch(()=>{}));
    ctx.waitUntil(runDamilolaSignalCron(env,ctx,event.scheduledTime,"score"));return;
   }
   if(event.cron==="6,21,36,51 * * * *"||event.cron==="10,25,40,55 * * * *"){
