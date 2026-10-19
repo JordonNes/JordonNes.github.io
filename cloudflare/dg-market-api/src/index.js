@@ -67,7 +67,18 @@ export default {
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
-  if(url.pathname==="/api/public/portfolio"){const r=await servePublicPortfolio(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
+  if(url.pathname==="/api/public/portfolio"){
+   // This route is explicitly owner-approved PUBLIC and redacted; cache ONLY this
+   // sanitized GET response, never private account routes, fills or credentials.
+   const key=new Request(url.origin+"/api/public/portfolio?public-cache=v2");
+   const cached=await caches.default.match(key);
+   if(cached){const h=new Headers(cached.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");h.set("X-DG-Public-Cache","HIT");return new Response(cached.body,{status:cached.status,headers:h})}
+   const r=await servePublicPortfolio(request,env,ctx),h=new Headers(r.headers);
+   h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");
+   const result=new Response(r.body,{status:r.status,headers:h});
+   if(r.ok)ctx.waitUntil(caches.default.put(key,result.clone()));
+   return result;
+  }
   if(url.pathname.startsWith("/api/private/")){const r=await servePrivatePortfolio(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/prediction-accuracy"){const r=await serveAccuracyLedger(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/prediction-ledger"){
