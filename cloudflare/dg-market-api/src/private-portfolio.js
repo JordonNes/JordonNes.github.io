@@ -192,6 +192,8 @@ export async function refreshPublicPortfolioSnapshot(env,ctx){
  try{
   const snapshot=await liveSnapshot(env),b=env.DG_PORTFOLIO_R2;
   const positions=buildReport(snapshot.positions,[],[],[]).rows.filter(p=>p.state==='OPEN');
+  const [fills,hfills]=await Promise.all(['fills.json','historical_fills.json'].map(k=>read(b,k)));
+  const historyFills=mergeRows(hfills?.rows||[],fills?.rows||[],r=>r.fill_id||r.trade_id);
   const assessed=[];
   // Collect public market evidence only in the background; never on anonymous demand.
   for(const p of positions.slice(0,8)){
@@ -201,7 +203,9 @@ export async function refreshPublicPortfolioSnapshot(env,ctx){
      const r=await serveCardHistory(new Request('https://worker/api/card-history?series='+p.series),env,ctx);
      if(r.ok)h=await r.json();
     }
-    assessment=assessPosition(p,h);
+    const evidence=await entryEvidence(env,p,historyFills,h);
+    assessment=assessPosition(p,h,evidence.checkpoint);
+    p._public_entry_at=evidence.fill?.at||null;
    }catch{assessment=assessPosition(p,null)}
    const matched=h?.current_contract?.ticker===p.ticker&&h?.yes_maps_to_up===true&&Date.now()-Date.parse(h.quote_observed_at_utc)<90000;
    const q=h?.quote,bid=matched?(p.side==='YES'?number(q?.yes_bid_dollars):number(q?.yes_ask_dollars)===null?null:1-number(q.yes_ask_dollars)):null;
@@ -212,6 +216,7 @@ export async function refreshPublicPortfolioSnapshot(env,ctx){
      cash_out_at:null,auto_sell_price:null
     },close_time:matched?h.current_contract.close_time_utc:null,
     quote_observed_at_utc:matched?h.quote_observed_at_utc:null,
+    entry_at:p._public_entry_at||null,
     indicative_exit_value:bid===null?null:bid*p.quantity,
     unrealized_before_exit_fees:bid===null||p.cost_basis===null?null:bid*p.quantity-p.cost_basis});
   }
