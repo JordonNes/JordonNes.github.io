@@ -15,7 +15,7 @@ test("historical order stakes are computed from price times quantity, not positi
  assert.equal(r.policy.allowable_new_position_stake_dollars,null);
 });
 test("split fills aggregate to a single order, but duplicate history is ignored",async()=>{
- const analyze=await engine(),a=buy(1,{order:"same"}),b=buy(2,{order:"same"});
+ const analyze=await engine(),a=buy(1,{order:"same"}),b=buy(2,{order:"same",ticker:a.ticker});
  const result=analyze([a,b,b],{historyComplete:true,now:Date.parse("2026-10-20T00:00:00Z")});
  assert.equal(result.audit.eligible_deduplicated_fills,2);assert.equal(result.observed.observed_buy_orders,1);
  assert.equal(result.observed.typical_entry_median_dollars,4);
