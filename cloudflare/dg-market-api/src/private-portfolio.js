@@ -199,8 +199,11 @@ export async function refreshPublicPortfolioSnapshot(env,ctx){
   const [fills,hfills]=await Promise.all(['fills.json','historical_fills.json'].map(k=>read(b,k)));
   const historyFills=mergeRows(hfills?.rows||[],fills?.rows||[],r=>r.fill_id||r.trade_id);
   const assessed=[];
-  // Collect public market evidence only in the background; never on anonymous demand.
-  for(const p of positions.slice(0,8)){
+  // Assess in bounded pairs so an unrelated stale holding cannot delay every
+  // 15-minute match. Still cron-only; anonymous visitors never call Kalshi private APIs.
+  const shortlist=positions.slice(0,8);
+  for(let i=0;i<shortlist.length;i+=2){
+   const group=await Promise.all(shortlist.slice(i,i+2).map(async p=>{
    let h=null,assessment=null;
    try{
     if(/^KX[A-Z0-9]+15M$/.test(p.series)){
@@ -213,7 +216,7 @@ export async function refreshPublicPortfolioSnapshot(env,ctx){
    }catch{assessment=assessPosition(p,null)}
    const matched=h?.current_contract?.ticker===p.ticker&&h?.yes_maps_to_up===true&&Date.now()-Date.parse(h.quote_observed_at_utc)<90000;
    const q=h?.quote,bid=matched?(p.side==='YES'?number(q?.yes_bid_dollars):number(q?.yes_ask_dollars)===null?null:1-number(q.yes_ask_dollars)):null;
-   assessed.push({ticker:p.ticker,side:p.side,assessment:{
+   return {ticker:p.ticker,side:p.side,assessment:{
      stance:assessment.stance,icon:assessment.icon,statement:assessment.statement,
      entry_statement:assessment.entry_statement,valid_until:assessment.valid_until||null,
      match_rate:assessment.match_rate??null,matches:assessment.matches??0,confidence:null,
@@ -222,7 +225,9 @@ export async function refreshPublicPortfolioSnapshot(env,ctx){
     quote_observed_at_utc:matched?h.quote_observed_at_utc:null,
     entry_at:p._public_entry_at||null,
     indicative_exit_value:bid===null?null:bid*p.quantity,
-    unrealized_before_exit_fees:bid===null||p.cost_basis===null?null:bid*p.quantity-p.cost_basis});
+    unrealized_before_exit_fees:bid===null||p.cost_basis===null?null:bid*p.quantity-p.cost_basis};
+   }));
+   assessed.push(...group);
   }
   await write(b,'public-follow.json',{snapshot_at:snapshot.retrieved_at,observed_at:new Date().toISOString(),positions:assessed});
   return {state:'SNAPSHOT_COLLECTED',retrieved_at:snapshot.retrieved_at,positions:positions.length,assessed:assessed.length};
