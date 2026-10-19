@@ -30,7 +30,12 @@ async function verifyCode(request,env){
   let diff=0;for(let i=0;i<64;i++)diff|=hex.charCodeAt(i)^expected.charCodeAt(i);
   correct=diff===0;
  }
- if(correct){await kv.delete(key);return {ok:true}}
+ if(correct){
+  // Refreshes can occur every 30s: clear the failure record only if it exists.
+  // Avoid a KV delete for every successful authenticated portfolio request.
+  if((attempts?.failures||0)>0)await kv.delete(key);
+  return {ok:true};
+ }
  await kv.put(key,JSON.stringify({failures:(attempts?.failures||0)+1}),{expirationTtl:ACCESS_WINDOW_SECONDS});
  return {ok:false,state:'LOCKED',status:401};
 }
