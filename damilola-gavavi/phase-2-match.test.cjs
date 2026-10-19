@@ -1,0 +1,14 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const m=require('./phase-2-match.js'),fs=require('node:fs');
+const page=fs.readFileSync('damilola-gavavi/phase-2.html','utf8'),js=fs.readFileSync('damilola-gavavi/phase-2.js','utf8');
+const at=Date.parse('2026-10-19T20:00:00Z');
+const contract={ticker:'KXBTC15M-26OCT192000-15',series_ticker:'KXBTC15M',yes_maps_to_up:true,close_time:new Date(at+900000).toISOString(),quote_observed_at_utc:new Date(at-30000).toISOString()};
+const q={state:'OBSERVED',market:contract,observed_at_utc:new Date(at-30000).toISOString()};
+const hist={retrieved_at_utc:new Date(at-30000).toISOString(),current_contract:{ticker:contract.ticker},comparison:{state:'EXPERIMENTAL_SUGGESTION',suggested_side:'UP',matches:23,cohort:'matched minute'}};
+test('catalog exactly matches all 21 GAM 15-minute series',()=>{assert.equal(m.markets.length,21);assert.equal(new Set(m.markets.map(x=>x.series)).size,21)});
+test('screenshot KXMLB is an unrelated market, not an invented 15-minute BTC card',()=>{assert.equal(m.marketFor('KXMLB-26-MIL'),null);assert.equal(m.exactJoin({ticker:'KXMLB-26-MIL'},q).is15m,false)});
+test('screenshot nomination holdings do not inherit 15-minute signals',()=>{for(const t of ['KXPRESNOMD-28-AOC','KXPRESNOMD-28-GN'])assert.equal(m.marketFor(t),null)});
+test('exact 15-minute contract joins only to its own Kalshi series AND time window',()=>{const held={ticker:contract.ticker};assert.equal(m.exactJoin(held,q).exact,true);assert.equal(m.exactJoin({ticker:'KXBTC15M-OTHER-WINDOW'},q).exact,false);assert.equal(m.exactJoin({ticker:'KXETH15M-26OCT192000-15'},q).exact,false)});
+test('a stale, mismatched or unverified analog is not a suggestion',()=>{assert.equal(m.researchCall(hist,q,at).state,'EXPERIMENTAL_CANDIDATE');assert.equal(m.researchCall(hist,q,at+130000).state,'WAIT');assert.equal(m.researchCall({...hist,comparison:{state:'INSUFFICIENT',suggested_side:'UP'}},q,at).state,'WAIT');assert.equal(m.researchCall({...hist,current_contract:{ticker:'OTHER'}},q,at).state,'WAIT')});
+test('Portfolio shows suggestions only when eligible, highlights research cards and retains other holdings',()=>{for(const id of ['positionGrid','otherHoldings','otherPositionGrid','suggestionGrid','suggestionCount','suggestionEmpty','scanAllSuggestions'])assert(page.includes('id="'+id+'"'));assert(js.includes('EXPERIMENTAL_CANDIDATE'));assert(js.includes('suggested-market'));assert(js.includes('No eligible live D&G suggestion'));assert(js.includes('Data')||js.includes('portfolio'));assert(js.includes('!other.length'));assert(!js.includes('Math.random'))});
+test('fast independent feeds do not expose private Kalshi authentication',()=>{assert(js.includes('/api/public/portfolio'));assert(js.includes('/api/quarter-hour-batch'));assert(js.includes('/api/card-history'));assert(!js.includes('KALSHI_PRIVATE_KEY'));assert(!js.includes('KALSHI_API_KEY_ID'));assert(!js.includes('/api/private/'));});
