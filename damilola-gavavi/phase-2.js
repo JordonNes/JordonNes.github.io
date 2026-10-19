@@ -5,7 +5,7 @@ const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className
 const cash=v=>typeof v==='number'&&Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v):'—';
 const time=t=>t&&Number.isFinite(Date.parse(t))?new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))+' PT':'—';
 const metric=(label,value)=>{const d=el('div','metric');d.append(el('span','',label),el('strong','',value));return d};
-let code='',data=null,busy=false,generation=0;
+let data=null,busy=false;
 const fresh=()=>data&&Date.now()-Date.parse(data.retrieved_at)<90000;
 function positions(){
  const frag=document.createDocumentFragment();
@@ -28,25 +28,27 @@ function positions(){
  $('positionGrid').replaceChildren(frag);
 }
 function display(){
- $('accountLogin').hidden=true;$('privateWorkspace').hidden=false;
- $('accountMetrics').replaceChildren(metric('Cash balance',cash(data.balance?.cash_dollars)),metric('Portfolio value',cash(data.balance?.portfolio_value_dollars)),metric('Open positions',String(data.positions?.length||0)),metric('Open cost basis',cash(data.report?.summary?.open_cost_basis)));
- $('accountUpdated').textContent='Snapshot '+time(data.retrieved_at);
+ $('privateWorkspace').hidden=false;
+ $('accountMetrics').replaceChildren(metric('Cash balance',cash(data.balance?.cash_dollars)),metric('Portfolio value',cash(data.balance?.portfolio_value_dollars)),metric('Open positions',String(data.positions?.length||0)),metric('Open cost basis',cash(data.portfolio_summary?.open_cost_basis)));
+ $('accountUpdated').textContent='Account snapshot '+time(data.retrieved_at)+(data.age_seconds!==null?' · '+Math.round(data.age_seconds/60)+'m old':'');
  $('portfolioStatus').textContent=(fresh()?'Connected':'Stale snapshot')+' · '+(data.snapshot_complete?'Current positions captured':'Partial snapshot');
  $('assessmentNote').textContent=data.assessment_note||'Experimental analysis only.';
+ const v=data.performance||{},pct=typeof v.win_rate==='number'?(v.win_rate*100).toFixed(1)+'%':'—';
+ $('resultsMetrics').replaceChildren(metric('Closed markets',v.closed_markets===null?'—':String(v.closed_markets)),metric('Realized P&L',cash(v.realized_pnl)),metric('Fees',cash(v.fees)),metric('P&L after fees',cash(v.pnl_less_fees)),metric('Win rate on scored markets',pct));
  positions();
 }
 async function refresh(){
- if(!code||busy)return;const g=generation;busy=true;$('accountRefresh').disabled=true;$('portfolioStatus').textContent='Checking currently held Kalshi positions…';
+ if(busy)return;busy=true;$('accountRefresh').disabled=true;$('portfolioStatus').textContent='Checking currently held Kalshi positions…';
  try{
-  const r=await fetch(API+'/api/private/portfolio',{headers:{Authorization:'Bearer '+code},cache:'no-store',signal:AbortSignal.timeout(90000)});
+  const r=await fetch(API+'/api/public/portfolio',{cache:'no-store',signal:AbortSignal.timeout(30000)});
   const body=await r.json();if(!r.ok)throw Error(body.message||body.reason||body.state||'Portfolio request unavailable');
-  if(g!==generation)return;data=body;display();
- }catch(e){if(g===generation)$('portfolioStatus').textContent='Private Portfolio unavailable: '+String(e.message||e)+'. Account data remains protected.'}
+  data=body;display();
+ }catch(e){$('portfolioStatus').textContent='Public Portfolio temporarily unavailable: '+String(e.message||e)+'. No holdings are fabricated.'}
  finally{busy=false;$('accountRefresh').disabled=false}
 }
-function lock(){generation++;code='';data=null;$('accessCode').value='';$('accountLogin').hidden=false;$('privateWorkspace').hidden=true;$('positionGrid').replaceChildren();$('accountMetrics').replaceChildren();$('portfolioStatus').textContent='Portfolio locked.'}
-$('unlockForm').addEventListener('submit',e=>{e.preventDefault();code=$('accessCode').value.trim();$('accessCode').value='';generation++;refresh()});
-$('lockPortfolio').addEventListener('click',lock);$('accountRefresh').addEventListener('click',refresh);
-setInterval(()=>{if(code&&!document.hidden)refresh()},30000);setInterval(()=>{if(data&&!document.hidden)positions()},10000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&code)refresh()});
+$('accountRefresh').addEventListener('click',refresh);
+setInterval(()=>{if(!document.hidden)refresh()},60000);
+setInterval(()=>{if(data&&!document.hidden)positions()},10000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+refresh();
 })();
