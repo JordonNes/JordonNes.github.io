@@ -1,3 +1,4 @@
+import {serveIntelligenceReport} from './intelligence-report.js';
 import {serveAccuracyLedger,runAccuracyCron} from "./accuracy-ledger.js";
 import {servePredictionLedger} from "./prediction-ledger.js";
 import {serveCardHistory} from "./card-history.js";
@@ -79,6 +80,7 @@ export default {
   if(url.pathname==="/api/damilola-signal-ledger"){const r=await serveDamilolaSignalLedger(request,env),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/card-history"){const r=await serveCardHistory(request,env,ctx);const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/market-layers"){const r=await serveMarketLayers(request,env);const h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
+  if(url.pathname==="/api/intelligence-report"){const r=await serveIntelligenceReport(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/damilola-status"){
    const last=env.DG_ARCHIVE?await env.DG_ARCHIVE.get("dg:damilola:daily:v1:last-run","json").catch(()=>null):null;
    return new Response(JSON.stringify({read_only:true,method:"damilola-observed-behavior-v1",
