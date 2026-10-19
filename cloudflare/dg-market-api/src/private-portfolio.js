@@ -154,20 +154,19 @@ export async function servePublicPortfolio(request,env,ctx){
   const open=report.rows.filter(p=>p.state==='OPEN');
   const liveAge=Date.now()-Date.parse(live.retrieved_at);
   const results=[];
+  const published=await read(b,'public-follow.json');
+  const publishedByTicker=new Map((published?.positions||[]).map(x=>[x.ticker+'|'+x.side,x])); 
   for(const p of open){
    const record={ticker:p.ticker,series:p.series,side:p.side,direction:p.side==='YES'?'UP':p.side==='NO'?'DOWN':'UNVERIFIED',
     quantity:p.quantity,cost_basis:p.cost_basis,close_time:null,indicative_exit_value:null,
     unrealized_before_exit_fees:null,latest_buy:null,assessment:null};
-   // Only archived evidence is read here. Never use private credentials on public requests.
-   try{
-    const latest=await b.get(ROOT+'assessments/'+Math.floor(Date.parse(live.retrieved_at)/60000)+'.json');
-    if(latest){const audit=JSON.parse(await latest.text());const found=audit?.positions?.find(x=>x.ticker===p.ticker&&x.side===p.side);if(found?.assessment)record.assessment={
-      stance:found.assessment.stance,icon:found.assessment.icon,statement:found.assessment.statement,
-      entry_statement:found.assessment.entry_statement,valid_until:found.assessment.valid_until||null,
-      match_rate:found.assessment.match_rate??null,matches:found.assessment.matches??0,confidence:null,
-      cash_out_at:null,auto_sell_price:null
-    }}
-   }catch{/* Optional evidence unavailable. */}
+   const advice=publishedByTicker.get(p.ticker+'|'+p.side);
+   if(advice?.assessment)record.assessment=advice.assessment;
+   if(advice?.close_time)record.close_time=advice.close_time;
+   if(advice?.quote_observed_at_utc)record.quote_observed_at_utc=advice.quote_observed_at_utc;
+   if(advice?.indicative_exit_value!==undefined)record.indicative_exit_value=advice.indicative_exit_value;
+   if(advice?.unrealized_before_exit_fees!==undefined)record.unrealized_before_exit_fees=advice.unrealized_before_exit_fees;
+   if(advice?.entry_at)record.latest_buy={at:advice.entry_at};
    results.push(record);
   }
   const summary=report.summary||{};
@@ -188,8 +187,35 @@ export async function servePublicPortfolio(request,env,ctx){
 }
 
 /* Scheduled owner account snapshot refresh. Never callable as a public mutation. */
-export async function refreshPublicPortfolioSnapshot(env){
+export async function refreshPublicPortfolioSnapshot(env,ctx){
  if(!env.DG_PORTFOLIO_R2||!env.KALSHI_API_KEY_ID||!env.KALSHI_PRIVATE_KEY)return {state:'NOT_CONFIGURED'};
- try{const snapshot=await liveSnapshot(env);return {state:'SNAPSHOT_COLLECTED',retrieved_at:snapshot.retrieved_at,positions:snapshot.positions?.length||0}}
- catch(e){return {state:'SNAPSHOT_REFRESH_FAILED',reason:String(e.message||e).replace(/[^A-Z0-9_]/g,'').slice(0,75)}}
+ try{
+  const snapshot=await liveSnapshot(env),b=env.DG_PORTFOLIO_R2;
+  const positions=buildReport(snapshot.positions,[],[],[]).rows.filter(p=>p.state==='OPEN');
+  const assessed=[];
+  // Collect public market evidence only in the background; never on anonymous demand.
+  for(const p of positions.slice(0,8)){
+   let h=null,assessment=null;
+   try{
+    if(/^KX[A-Z0-9]+15M$/.test(p.series)){
+     const r=await serveCardHistory(new Request('https://worker/api/card-history?series='+p.series),env,ctx);
+     if(r.ok)h=await r.json();
+    }
+    assessment=assessPosition(p,h);
+   }catch{assessment=assessPosition(p,null)}
+   const matched=h?.current_contract?.ticker===p.ticker&&h?.yes_maps_to_up===true&&Date.now()-Date.parse(h.quote_observed_at_utc)<90000;
+   const q=h?.quote,bid=matched?(p.side==='YES'?number(q?.yes_bid_dollars):number(q?.yes_ask_dollars)===null?null:1-number(q.yes_ask_dollars)):null;
+   assessed.push({ticker:p.ticker,side:p.side,assessment:{
+     stance:assessment.stance,icon:assessment.icon,statement:assessment.statement,
+     entry_statement:assessment.entry_statement,valid_until:assessment.valid_until||null,
+     match_rate:assessment.match_rate??null,matches:assessment.matches??0,confidence:null,
+     cash_out_at:null,auto_sell_price:null
+    },close_time:matched?h.current_contract.close_time_utc:null,
+    quote_observed_at_utc:matched?h.quote_observed_at_utc:null,
+    indicative_exit_value:bid===null?null:bid*p.quantity,
+    unrealized_before_exit_fees:bid===null||p.cost_basis===null?null:bid*p.quantity-p.cost_basis});
+  }
+  await write(b,'public-follow.json',{snapshot_at:snapshot.retrieved_at,observed_at:new Date().toISOString(),positions:assessed});
+  return {state:'SNAPSHOT_COLLECTED',retrieved_at:snapshot.retrieved_at,positions:positions.length,assessed:assessed.length};
+ }catch(e){return {state:'SNAPSHOT_REFRESH_FAILED',reason:String(e.message||e).replace(/[^A-Z0-9_]/g,'').slice(0,75)}}
 }
