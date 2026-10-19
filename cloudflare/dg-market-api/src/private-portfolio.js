@@ -16,28 +16,32 @@ async function accessRateKey(request){
  return 'dg:portfolio:login-fail:v1/'+Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
 }
 async function verifyCode(request,env){
- // A short passcode is only permitted when durable attempt-limiting KV is available.
+ // An anonymous GET has no credentials to verify and must not consume KV reads.
  const bearer=request.headers.get('Authorization')?.match(/^Bearer ([!-~]{8,100})$/)?.[1];
+ if(!bearer)return {ok:false,state:'LOCKED',status:401};
  const expected=String(env.DG_PORTFOLIO_ACCESS_SHA256||'').toLowerCase();
  const kv=env.DG_ARCHIVE;
  if(!kv)return {ok:false,state:'ACCESS_RATE_LIMIT_UNAVAILABLE',status:503};
- const key=await accessRateKey(request),attempts=await kv.get(key,'json');
- if((attempts?.failures||0)>=ACCESS_MAX_FAILURES)return {ok:false,state:'ACCESS_TEMPORARILY_LOCKED',status:429};
- let correct=false;
- if(/^[a-f0-9]{64}$/.test(expected)&&bearer){
-  const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(bearer)));
-  const hex=Array.from(digest,b=>b.toString(16).padStart(2,'0')).join('');
-  let diff=0;for(let i=0;i<64;i++)diff|=hex.charCodeAt(i)^expected.charCodeAt(i);
-  correct=diff===0;
+ try{
+  const key=await accessRateKey(request),attempts=await kv.get(key,'json');
+  if((attempts?.failures||0)>=ACCESS_MAX_FAILURES)return {ok:false,state:'ACCESS_TEMPORARILY_LOCKED',status:429};
+  let correct=false;
+  if(/^[a-f0-9]{64}$/.test(expected)){
+   const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(bearer)));
+   const hex=Array.from(digest,b=>b.toString(16).padStart(2,'0')).join('');
+   let diff=0;for(let i=0;i<64;i++)diff|=hex.charCodeAt(i)^expected.charCodeAt(i);
+   correct=diff===0;
+  }
+  if(correct){
+   if((attempts?.failures||0)>0)await kv.delete(key);
+   return {ok:true};
+  }
+  await kv.put(key,JSON.stringify({failures:(attempts?.failures||0)+1}),{expirationTtl:ACCESS_WINDOW_SECONDS});
+  return {ok:false,state:'LOCKED',status:401};
+ }catch{
+  // KV / crypto failures must not become HTTP 500 or accidentally authorize access.
+  return {ok:false,state:'ACCESS_RATE_LIMIT_UNAVAILABLE',status:503};
  }
- if(correct){
-  // Refreshes can occur every 30s: clear the failure record only if it exists.
-  // Avoid a KV delete for every successful authenticated portfolio request.
-  if((attempts?.failures||0)>0)await kv.delete(key);
-  return {ok:true};
- }
- await kv.put(key,JSON.stringify({failures:(attempts?.failures||0)+1}),{expirationTtl:ACCESS_WINDOW_SECONDS});
- return {ok:false,state:'LOCKED',status:401};
 }
 export async function authorized(request,env){return (await verifyCode(request,env)).ok}
 
