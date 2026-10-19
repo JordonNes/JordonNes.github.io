@@ -4,10 +4,11 @@ compatibility_date = "2026-10-01"
 workers_dev = true
 
 [vars]
-# No portfolio access codes or verifiers in public repository configuration.\nALLOWED_ORIGIN = "https://jordonnes.github.io"
+# No portfolio access codes or verifiers in public repository configuration.
+ALLOWED_ORIGIN = "https://jordonnes.github.io"
 
 [triggers]
-crons = ["*/2 * * * *", "*/15 * * * *", "6,21,36,51 * * * *", "10,25,40,55 * * * *", "20 2 * * *", "3,18,33,48 * * * *"] # Preserve RSI and forward-ledger jobs; Damilola review 02:20 UTC daily.
+crons = ["*/2 * * * *", "6,21,36,51 * * * *", "10,25,40,55 * * * *", "20 2 * * *", "3,18,33,48 * * * *"] # Preserve RSI and forward-ledger jobs; Damilola review 02:20 UTC daily.
 
 # Shared KV for archive persistence, event-target metadata, and global 429 cooldown.
 [[kv_namespaces]]
