@@ -72,7 +72,7 @@ function decisionBlock(p,is15m,matchingMarket){
 }
 function positionCard(p){
  const q=latestQuote(p.series),joined=MATCH.exactJoin(p,q),m=joined.definition;
- const card=el("article","market position-card "+(m?"gam-matched":"portfolio-other"));
+ const card=el("article","market position-card "+(m?"gam-matched":"portfolio-other"));card.dataset.heldTicker=p.ticker;
  if(m){addGAMSurface(card,m,q,joined.exact);if(joined.differentWindow){card.append(el("p","match-warning","Different contract window · live market prices shown above are NOT quotes for your holding."))}}
  else{
   const names=otherLabel(p),top=el("div","market-top"),coin=el("div","coin","•"),title=el("div","market-title");
@@ -93,7 +93,7 @@ function positionCard(p){
  if(outcome)overlay.append(el("div","holding-research",outcome));
  overlay.append(decisionBlock(p,!!m,joined.exact));
  const bottom=el("div","holding-links"),marketLink=el("a","","View GAM ↗"),exchange=el("a","","Open Kalshi portfolio ↗");
- marketLink.href="./?series="+encodeURIComponent(p.series||"");exchange.href="https://kalshi.com/portfolio";exchange.target="_blank";exchange.rel="noopener noreferrer";bottom.append(marketLink,exchange);overlay.append(bottom);card.append(overlay);
+ marketLink.href=m?"./?series="+encodeURIComponent(p.series||""):"./";exchange.href="https://kalshi.com/portfolio";exchange.target="_blank";exchange.rel="noopener noreferrer";bottom.append(marketLink,exchange);overlay.append(bottom);card.append(overlay);
  return card;
 }
 function matchedResearch(p,q){
@@ -207,11 +207,13 @@ async function refreshAccount(force=false){
 }
 async function reload(){void refreshAccount(true);void quotesRefresh(true);void researchRefresh(true)}
 $("accountRefresh").addEventListener("click",reload);
+$("refresh")?.addEventListener("click",reload);
 $("scanAllSuggestions").addEventListener("click",()=>{expandedWatch=!expandedWatch;$("scanAllSuggestions").textContent=expandedWatch?"Focus on primary markets":"Scan all 21 markets";show();void quotesRefresh(true);void researchRefresh(true)});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){void refreshAccount();void quotesRefresh();void researchRefresh()}});
 setInterval(()=>{if(!document.hidden){void refreshAccount();void quotesRefresh();void researchRefresh()}},30000);
 setInterval(()=>{for(const node of document.querySelectorAll("[data-portfolio-closes]"))node.textContent=remaining(node.dataset.portfolioCloses);
- if(portfolio&&!document.hidden&&Date.now()-lastAccountFetch>180000)show()},1000);
+},1000);
+setInterval(()=>{if(!document.hidden&&portfolio)show()},15000);
 show();
 void refreshAccount(true);
 void quotesRefresh(true);
