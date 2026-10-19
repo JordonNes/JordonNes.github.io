@@ -71,15 +71,45 @@ jobs:
             let body;try{body=await res.json()}catch{throw Error(path+" non-JSON response "+res.status)}
             return {status:res.status,cache:res.headers.get("X-DG-Cache"),body};
           }
+          const providerWarnings=[];
           for(const symbol of ["BTC-USD","ETH-USD","SOL-USD"]){
             const path="/api/coinbase-advanced-reference?symbol="+symbol;
             const first=await check(path),second=await check(path);
-            for(const r of [first,second])if(r.status!==200||r.body.symbol!==symbol||!(Number(r.body.price_usd)>0)||r.body.read_only!==true||r.body.execution_ready!==false)throw Error("Coinbase feed failed: "+symbol+" "+JSON.stringify(r));
+            if([first,second].some(r=>r.status===503&&r.body.error==="coinbase_unavailable"&&r.body.upstream_status===429)){
+              providerWarnings.push("Coinbase rate-limited "+symbol);
+              console.warn("::warning title=Coinbase upstream 429::"+symbol+" temporarily rate-limited; Worker remains deployed.");
+              continue;
+            }
+            for(const r of [first,second])if(r.status!==200||r.body.symbol!==symbol||!(Number(r.body.price_usd)>0)||r.body.read_only!==true||r.body.execution_ready!==false)throw Error("Coinbase route failed: "+symbol+" "+JSON.stringify(r));
             if(second.cache!=="HIT")throw Error("Coinbase cache not verified: "+symbol+" "+second.cache);
             console.log(JSON.stringify({cache:second.cache,coinbase_symbol:symbol,price_usd:second.body.price_usd,retrieved_at_utc:second.body.retrieved_at_utc,read_only:true}));
           }
           const locked=await check("/api/private/portfolio");
           if(locked.status!==401||locked.body.state!=="LOCKED")throw Error("Private portfolio access control failed");
+          const publicPortfolio=await check("/api/public/portfolio");
+          if(publicPortfolio.status!==200||publicPortfolio.body.state!=="PUBLIC_OBSERVED_PORTFOLIO"||
+             publicPortfolio.body.read_only!==true||publicPortfolio.body.trading_enabled!==false||
+             !Array.isArray(publicPortfolio.body.positions)||!publicPortfolio.body.snapshot_complete)
+            throw Error("Public Portfolio not available with complete read-only snapshot: "+JSON.stringify({
+             status:publicPortfolio.status,state:publicPortfolio.body.state}));
+          const exposed=JSON.stringify(publicPortfolio.body);
+          for(const secret of ['private_api_key','KALSHI_PRIVATE_KEY','KALSHI_API_KEY_ID','fill_id','exchange_index','account_id'])
+            if(exposed.includes('"'+secret+'"'))throw Error("Public Portfolio leaks private field: "+secret);
+          if(publicPortfolio.body.snapshot_stale)console.warn("::warning title=Public Portfolio stale::Account snapshot is older than three minutes.");
+          console.log(JSON.stringify({public_portfolio:publicPortfolio.body.state,
+           open_positions:publicPortfolio.body.positions.length,snapshot_stale:publicPortfolio.body.snapshot_stale}));
+          const audit=await check("/api/intelligence-report?series=KXBTC15M");
+          if(audit.status!==200||!['OBSERVED_REPORT','NO_DAILY_REVIEW','INSUFFICIENT_ARCHIVE'].includes(audit.body.state)||
+             audit.body.trading_enabled!==false||audit.body.read_only!==true)
+             throw Error("Intelligence Audit endpoint unavailable: "+JSON.stringify({status:audit.status,state:audit.body.state}));
+          if(audit.body.state!=="OBSERVED_REPORT")
+            console.warn("::warning title=No historical evidence yet::Damilola audit reported "+audit.body.state);
+          console.log(JSON.stringify({intelligence_audit:audit.body.state,observed_contracts:audit.body.archive?.observed_contracts??null,
+           validated_edge:audit.body.validation?.predictive_edge_verified??false}));
+          const dailyStatus=await check("/api/damilola-status");
+          if(dailyStatus.status!==200||dailyStatus.body.r2_configured!==true)
+            throw Error("Damilola historical review status route missing R2 connection.");
+
           const status=await check("/api/kalshi-status");
           if(status.status!==200||status.body.read_only!==true||typeof status.body.cooldown_active!=="boolean")throw Error("Kalshi diagnostics unavailable");
           const signalLedger=await check("/api/damilola-signal-ledger?series=KXBTC15M&limit=1");
@@ -94,7 +124,10 @@ jobs:
           if(ledger.status!==200||ledger.body.read_only!==true||ledger.body.trading_enabled!==false||!["RECORDED","NO_RECORD"].includes(ledger.body.state))throw Error("Prospective ledger unavailable: "+JSON.stringify(ledger));
           console.log(JSON.stringify({prediction_ledger:ledger.body.state,trading_enabled:false}));
           const alias=await check("/api/coinbase-advanced-reference?symbol=BTC");
-          if(alias.status!==200||alias.body.symbol!=="BTC-USD")throw Error("Coinbase shorthand failed");
+          if(alias.status===503&&alias.body.error==="coinbase_unavailable"&&alias.body.upstream_status===429){
+            providerWarnings.push("Coinbase alias rate-limited");
+            console.warn("::warning title=Coinbase upstream 429::BTC shorthand temporarily rate-limited.");
+          }else if(alias.status!==200||alias.body.symbol!=="BTC-USD")throw Error("Coinbase shorthand failed");
           const hour=Math.floor(Date.now()/3600000)*3600-3600;
           const layers=await check("/api/market-layers?series=KXBTC15M&hour="+hour);
           if(layers.status!==200||layers.body.read_only!==true||layers.body.underlying_price_history!==false||!Array.isArray(layers.body.contracts)||!layers.body.contracts.length)throw Error("Pattern Lab source verification failed: "+JSON.stringify(layers));
@@ -116,4 +149,5 @@ jobs:
           const retired=await check("/api/kalshi");
           if(retired.status!==410||retired.body.error!=="route_out_of_scope")throw Error("Retired route inadvertently reenabled");
           console.log(JSON.stringify({quarter_hour:batch.body.kind,shared_kv:true,kraken_status:kraken.status,kraken_state:kraken.body.state,twelvedata_status:td.status,twelvedata_state:td.body.state,retired_route:retired.status}));
+          if(providerWarnings.length)console.warn("::warning title=Upstream degradation::"+providerWarnings.join("; "));
           NODE

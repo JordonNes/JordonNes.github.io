@@ -31,3 +31,12 @@ test('private Kalshi history collection shares the existing signal scoring check
   assert.match(segment,/ctx\.waitUntil\(runDamilolaSignalCron\(env,ctx,event\.scheduledTime,"score"\)\)/);
   assert(!scheduled.includes('if(event.cron==="*/15 * * * *")'));
 });
+
+test('Damilola daily historical archive is actually scheduled on the pre-existing 02:20 UTC trigger',()=>{
+ const scheduled=worker.slice(worker.indexOf('async scheduled(event,env,ctx)'));
+ const daily=scheduled.split('if(event.cron==="20 2 * * *"){')[1]?.split('if(event.cron==="*/2 * * * *")')[0]||'';
+ assert.match(daily,/ctx\.waitUntil\(runDamilolaDaily\(env,event\.scheduledTime\)/);
+ assert.match(daily,/DG_DAMILOLA_DAILY_ERROR/);
+ assert(!/\breturn;/.test(daily),'Daily review cannot short-circuit RSI collection');
+ assert.match(scheduled,/await ingestTaapiRsi\(env,event\.scheduledTime\)/);
+});

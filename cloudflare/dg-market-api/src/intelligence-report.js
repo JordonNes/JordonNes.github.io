@@ -36,6 +36,19 @@ export async function serveIntelligenceReport(request,env,ctx){
     if(obj){review=JSON.parse(await obj.text());sourceKey=info.daily_key}
    }
   }
+  // Optional low-volume provenance diagnostic. Do not list R2 keys on normal refreshes.
+  let sourceInventory=null;
+  if(u.searchParams.get('diagnostics')==='1'){
+   try{
+    const found=await bucket.list({prefix:'dg/market-paths/v1/'+series+'/',limit:10});
+    const sampled=found.objects?.length||0;
+    sourceInventory={state:sampled?'ARCHIVE_OBJECTS_FOUND':'NO_ARCHIVED_HOURLY_PAGES',
+     objects_sampled:sampled,has_more:!!found.truncated,raw_quotes_exposed:false};
+   }catch{
+    sourceInventory={state:'SOURCE_INVENTORY_UNAVAILABLE',objects_sampled:null,
+     has_more:null,raw_quotes_exposed:false};
+   }
+  }
   const [accuracyResponse,signalResponse]=await Promise.all([
    serveAccuracyLedger(new Request(u.origin+'/api/prediction-accuracy?series='+series),env,ctx),
    serveDamilolaSignalLedger(new Request(u.origin+'/api/damilola-signal-ledger?series='+series+'&limit=12'),env)
@@ -47,8 +60,8 @@ export async function serveIntelligenceReport(request,env,ctx){
   const scored=a?.scored_suggestions??null,correct=a?.correct??null;
   const paired=a?.paired_direction_comparisons??null;
   const modelPaired=a?.model_correct_on_paired_calls??null,benchPaired=a?.benchmark_correct_on_same_calls??null;
-  const known=!!review;
-  return response({schema_version:1,state:known?'OBSERVED_REPORT':'NO_DAILY_REVIEW',
+  const known=!!review,hasEvidence=known&&(Number(roll?.observed_contracts)||0)>0;
+  return response({schema_version:1,state:!known?'NO_DAILY_REVIEW':hasEvidence?'OBSERVED_REPORT':'INSUFFICIENT_ARCHIVE',
    checked_at_utc:new Date().toISOString(),series_ticker:series,
    archive:{r2_configured:true,latest_daily_key:sourceKey,latest_daily_date:review?.day_utc??null,
     latest_analyzed_at_utc:review?.analyzed_at_utc??null,days_with_reports:roll?.days_with_reports??0,
@@ -57,6 +70,7 @@ export async function serveIntelligenceReport(request,env,ctx){
     settlement_coverage:rate(settled,observed),total_minute_spikes_10pp:roll?.total_spikes_10pp??null,
     total_minute_dips_10pp:roll?.total_dips_10pp??null},
    descriptive_patterns:rankedPatterns(roll),
+   ...(sourceInventory?{source_inventory:sourceInventory}:{}),
    accuracy:{scope:'Last twelve 15-minute windows only, not thirty days',
     ledger_read_state:accuracy?.state??'UNAVAILABLE',scored_suggestions:scored,correct,incorrect:a?.incorrect??null,
     hit_rate:scored===null?null:rate(correct,scored),abstentions:a?.abstentions??null,
@@ -68,7 +82,7 @@ export async function serveIntelligenceReport(request,env,ctx){
    checkpoints:{scope:'Last twelve 15-minute windows only, two fixed checkpoints',
     ledger_read_state:signals?.state??'UNAVAILABLE',...(s||{}),
     calibration_verified:false},
-   validation:{historical_observations_available:known,predictive_edge_verified:false,
+   validation:{historical_observations_available:hasEvidence,predictive_edge_verified:false,
     calibrated_probabilities_verified:false,positive_net_profit_verified:false,
     entry_exit_fill_probability_verified:false},
    limitations:['Descriptive weekday/hour frequency is not a probability forecast.',
