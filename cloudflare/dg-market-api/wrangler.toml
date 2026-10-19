@@ -4,6 +4,8 @@ compatibility_date = "2026-10-01"
 workers_dev = true
 
 [vars]
+# SHA-256 verifier only; the private access code is never committed.
+DG_PORTFOLIO_ACCESS_SHA256 = "ee07b265b30a383b7f22528c6b875e90261b793ab2dace041b066f737ebabeb6"
 ALLOWED_ORIGIN = "https://jordonnes.github.io"
 
 [triggers]
@@ -18,3 +20,8 @@ id = "d5aaa8e47ff140e081b0f1e01a921d74"
 [[r2_buckets]]
 binding = "DG_RESEARCH_R2"
 bucket_name = "dg-research-archive"
+
+# Account history is isolated from public market research. Never enable public access.
+[[r2_buckets]]
+binding = "DG_PORTFOLIO_R2"
+bucket_name = "dg-private-portfolio"
