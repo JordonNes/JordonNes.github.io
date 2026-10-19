@@ -17,7 +17,7 @@ async function accessRateKey(request){
 }
 async function verifyCode(request,env){
  // A short passcode is only permitted when durable attempt-limiting KV is available.
- const bearer=request.headers.get('Authorization')?.match(/^Bearer ([^\\s]{8,100})$/)?.[1];
+ const bearer=request.headers.get('Authorization')?.match(/^Bearer ([!-~]{8,100})$/)?.[1];
  const expected=String(env.DG_PORTFOLIO_ACCESS_SHA256||'').toLowerCase();
  const kv=env.DG_ARCHIVE;
  if(!kv)return {ok:false,state:'ACCESS_RATE_LIMIT_UNAVAILABLE',status:503};
