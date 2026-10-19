@@ -18,7 +18,7 @@ experimental position assessments, and financial reporting. Original GAM URLs re
 
 ## Collection
 
-Cron `2-59/5 * * * *` reads account history every five minutes. An unlocked page refreshes
+The existing cron `*/15 * * * *` also reads account history every fifteen minutes. An unlocked page refreshes
 positions about every 30 seconds while visible. It also requests background history catch-up.
 
 Live and historical fills, live settled positions, historical positions and settlement records
