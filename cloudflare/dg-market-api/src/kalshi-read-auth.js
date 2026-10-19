@@ -22,6 +22,15 @@ async function load(pem){
 }
 export async function kalshiReadHeaders(path,env={}){
  if(!allowed(path))throw Error('KALSHI_READ_PATH_REQUIRED');
+ return signedGetHeaders(path,env);
+}
+export async function kalshiPortfolioHeaders(path,env={}){
+ const base=String(path).split('?')[0];
+ if(!['/portfolio/positions','/portfolio/fills','/portfolio/settlements','/portfolio/balance','/historical/positions','/historical/fills'].includes(base))throw Error('PORTFOLIO_GET_PATH_REQUIRED');
+ if(!env.KALSHI_API_KEY_ID||!env.KALSHI_PRIVATE_KEY)throw Error('ACCOUNT_CREDENTIALS_MISSING');
+ return signedGetHeaders(path,env);
+}
+async function signedGetHeaders(path,env){
  const id=String(env.KALSHI_API_KEY_ID||'').trim(),pem=String(env.KALSHI_PRIVATE_KEY||'').replace(/\\n/g,'\n').trim();
  if(!id&&!pem)return {Accept:'application/json'};
  if(!id||!pem)throw Error('KALSHI_READ_CREDENTIALS_INCOMPLETE');

@@ -1,3 +1,4 @@
+import {servePrivatePortfolio,collectPortfolio} from "./private-portfolio.js";
 import {serveAccuracyLedger,runAccuracyCron} from "./accuracy-ledger.js";
 import {servePredictionLedger} from "./prediction-ledger.js";
 import {serveCardHistory} from "./card-history.js";
@@ -17,7 +18,7 @@ import {serveAsOfQuarterHour} from "./quarter-hour-asof.js";
 import {serveQuarterHourOutcomes} from "./quarter-hour-history.js";
 import {serveSnapshot} from "./price-archive.js";
 import {servePerpsHistory} from "./perps-historical.js";
-// D&G public-market read-only gateway. No trading or private Kalshi API calls.
+// D&G public-market read-only gateway. Private account GETs are isolated behind bearer authentication; no trading.
 const JSON_HEADERS = {"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=15"};
 const KALSHI="https://external-api.kalshi.com/trade-api/v2/markets";
 
@@ -60,11 +61,12 @@ export default {
  async fetch(request,env,ctx){
   const origin=request.headers.get("Origin")||"";
   const allow=env.ALLOWED_ORIGIN||"https://jordonnes.github.io";
-  const cors={"Access-Control-Allow-Origin":allow,"Vary":"Origin","Access-Control-Allow-Methods":"GET, OPTIONS","Access-Control-Allow-Headers":"Content-Type"};
+  const cors={"Access-Control-Allow-Origin":allow,"Vary":"Origin","Access-Control-Allow-Methods":"GET, OPTIONS","Access-Control-Allow-Headers":"Content-Type, Authorization"};
   if(request.method==="OPTIONS")return new Response(null,{status:204,headers:cors});
   if(origin && origin!==allow)return new Response(JSON.stringify({error:"origin_not_allowed"}),{status:403,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   if(request.method!=="GET")return new Response(JSON.stringify({error:"method_not_allowed"}),{status:405,headers:{...JSON_HEADERS,...cors,"Cache-Control":"no-store"}});
   const url=new URL(request.url);
+  if(url.pathname.startsWith("/api/private/")){const r=await servePrivatePortfolio(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/prediction-accuracy"){const r=await serveAccuracyLedger(request,env,ctx),h=new Headers(r.headers);h.set("Access-Control-Allow-Origin",allow);h.set("Vary","Origin");return new Response(r.body,{status:r.status,headers:h});}
   if(url.pathname==="/api/prediction-ledger"){
    const r=await servePredictionLedger(request,env),h=new Headers(r.headers);
@@ -593,6 +595,7 @@ export default {
   }catch{return new Response(JSON.stringify({error:"upstream_request_failed"}),{status:502,headers:{...JSON_HEADERS,...cors}});}
  },
  async scheduled(event,env,ctx){
+  if(event.cron==="2-59/5 * * * *"){ctx.waitUntil(collectPortfolio(env).catch(()=>{}));return;}
   if(event.cron==="3,18,33,48 * * * *"){
    ctx.waitUntil(runDamilolaSignalCron(env,ctx,event.scheduledTime,"score"));return;
   }
