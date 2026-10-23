@@ -1,16 +1,16 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-10-21T09:24:03.736382+00:00",
+  "checked_at_utc": "2026-10-23T06:02:20.601486+00:00",
   "status": "OK",
-  "raw_market_count": 9054,
-  "normalized_props": 1206,
-  "history_rows_added": 1185,
+  "raw_market_count": 7340,
+  "normalized_props": 20,
+  "history_rows_added": 20,
   "skip_reasons": {
-    "ambiguous_matchup": 42,
-    "ambiguous_participant_threshold": 1471,
-    "ok": 1206,
-    "unknown_sport": 5746,
-    "unsupported_market": 589
+    "ambiguous_matchup": 29,
+    "ambiguous_participant_threshold": 1341,
+    "ok": 20,
+    "unknown_sport": 5442,
+    "unsupported_market": 508
   },
   "skip_samples": {
     "unknown_sport": {
@@ -68,59 +68,60 @@
   },
   "targeted_series": {
     "selected": [
-      "KXMLBHIT",
+      "KXBOXINGOCCUR",
+      "KXMLBHRDERBYMATCHUP",
       "KXUFCWHITEHOUSE",
-      "KXNBAPR",
-      "KXNCAAFTEAMRECYDS",
-      "KXNFLLONGREC",
-      "KXNHLPTS",
-      "KXWTAACES",
-      "KXWNBA3PTCONTEST",
-      "KXMLBPLAYOFFHRS",
-      "KXUFCOCCUR",
-      "KXNBAREB",
-      "KXNCAAFTEAMTO",
-      "KXNFLRSHATT",
-      "KXNHLTEAMTOTAL",
-      "KXATPACES",
-      "KXWNBA40PTS",
-      "KXMLBASGHR",
-      "KXNBACELEBRITYGAME",
-      "KXNCAAFFIRSTTDTEAM",
-      "KXNFLRACE",
-      "KXNHLGOAL",
-      "KXWNBA3PTROUND",
-      "KXMLBKS",
-      "KXNBA3PTCONTEST",
-      "KXNCAAFTEAMRSHATT",
-      "KXNFLLONGESTFG",
-      "KXNHLFIRSTGOAL",
-      "KXWNBAH2HPTS",
-      "KXMLBSEASONHR",
-      "KXNBASERIESPTS",
+      "KXNBAPTSALLGAMES",
       "KXNCAAFTEAMTOTAL",
-      "KXNFLPASSYDSH2H",
-      "KXNHLANYGOAL",
-      "KXWNBAPTS",
-      "KXMLBHRDERBYDISTANCE",
-      "KXNBARACE",
-      "KXNCAAF2PT",
-      "KXNFLLONGFG",
-      "KXNHLSERIESTOTALGOALS",
-      "KXWNBA3PTCONTESTOU",
-      "KXMLBHRDERBYOU",
-      "KXNBA3PTPROT",
+      "KXNFL1HTOTAL",
+      "KXNHLPTS",
+      "KXATPACES",
+      "KXWNBA3PT",
+      "KXMLBHRDERBYFIN",
+      "KXUFCOCCUR",
+      "KXNBAH2H3PT",
       "KXNCAAFTEAMREC",
-      "KXNFLPASSYDSPROT",
+      "KXNFLBOTH",
       "KXNHLSAVE",
+      "KXWTAACES",
+      "KXWNBA40PTS",
+      "KXMLBRBI",
+      "KXNBA3PTCONTEST",
+      "KXNCAAFTEAMRSHYDS",
+      "KXNFL2PTCONV",
+      "KXNHLFIRSTGOAL",
       "KXWNBAAST",
+      "KXMLBASGHR",
+      "KXNBAREBPROT",
+      "KXNCAAF2PT",
+      "KXNFLASSCOACH",
+      "KXNHLF10G",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBSB",
+      "KXNBA3PT",
+      "KXNCAAFTEAMRECYDS",
+      "KXNFLWEEKMOSTRECYDS",
+      "KXNHLTOTAL",
+      "KXWNBAPTS",
+      "KXMLBSEASONHR",
+      "KXNBA3PTPROT",
+      "KXNCAAFTOTALFG",
+      "KXNFLLADDERRECYDS",
+      "KXNHLPSEASONGOALS",
+      "KXWNBAREB",
       "KXMLBWALKOFFS",
-      "KXNBARA"
+      "KXNBASERIESTOTALPTS",
+      "KXNCAAFTEAMFG",
+      "KXNFLCAREERRECYDS",
+      "KXNHLAST",
+      "KXWNBA3PTROUND",
+      "KXMLBASGHIT"
     ],
     "by_league": {
+      "Boxing": 1,
       "MLB": 8,
       "MMA": 2,
-      "NBA": 8,
+      "NBA": 7,
       "NCAA_Football": 7,
       "NFL": 7,
       "NHL": 7,
@@ -129,10 +130,38 @@
     },
     "forced": [
       "KXNHLPTS"
-    ]
+    ],
+    "error": "HTTP Error 429: Too Many Requests"
   },
   "targeted_series_diagnostics": {
     "KXATPACES": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXBOXINGOCCUR": {
+      "raw": 4,
+      "normalized": 0,
+      "skip_reasons": {
+        "unsupported_market": 4
+      },
+      "skip_samples": {
+        "unsupported_market": {
+          "ticker": "KXBOXINGOCCUR-FMRG27-01MAR27",
+          "event_ticker": "KXBOXINGOCCUR-FMRG27",
+          "event_title": "Floyd Mayweather Jr. vs Ryan Garcia: Fight To Occur",
+          "title": "Floyd Mayweather Jr. vs Ryan Garcia: Fight before Mar 1, 2027?",
+          "subtitle": "By Mar 1, 2027",
+          "yes_sub_title": "Before Mar 1, 2027",
+          "primary_participant_key": null,
+          "floor_strike": null,
+          "functional_strike": null,
+          "occurrence_datetime": "2027-03-02T05:00:00Z"
+        }
+      }
+    },
+    "KXMLBASGHIT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -144,54 +173,31 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHIT": {
-      "raw": 18,
-      "normalized": 18,
-      "skip_reasons": {
-        "ok": 18
-      },
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYDISTANCE": {
+    "KXMLBHRDERBYFIN": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYOU": {
+    "KXMLBHRDERBYMATCHUP": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBKS": {
-      "raw": 16,
-      "normalized": 16,
+    "KXMLBRBI": {
+      "raw": 20,
+      "normalized": 20,
       "skip_reasons": {
-        "ok": 16
+        "ok": 20
       },
       "skip_samples": {}
     },
-    "KXMLBPLAYOFFHRS": {
-      "raw": 13,
+    "KXMLBSB": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 13
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXMLBPLAYOFFHRS-26-65",
-          "event_ticker": "KXMLBPLAYOFFHRS-26",
-          "event_title": "Pro Baseball: Total Home Runs in Playoffs",
-          "title": "Playoffs: 65+ home runs",
-          "subtitle": null,
-          "yes_sub_title": "65+ home runs",
-          "primary_participant_key": null,
-          "floor_strike": 65,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-12-01T15:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXMLBSEASONHR": {
       "raw": 0,
@@ -200,25 +206,16 @@
       "skip_samples": {}
     },
     "KXMLBWALKOFFS": {
-      "raw": 4,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "unsupported_market": 4
-      },
-      "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXMLBWALKOFFS-26-2",
-          "event_ticker": "KXMLBWALKOFFS-26",
-          "event_title": "Total Walk-Offs in Pro Baseball Playoffs",
-          "title": "2+ walk-offs",
-          "subtitle": null,
-          "yes_sub_title": "2+ walk-offs",
-          "primary_participant_key": null,
-          "floor_strike": 2,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-12-01T15:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBA3PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNBA3PTCONTEST": {
       "raw": 0,
@@ -227,89 +224,30 @@
       "skip_samples": {}
     },
     "KXNBA3PTPROT": {
-      "raw": 518,
-      "normalized": 513,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 5,
-        "ok": 513
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBA3PTPROT-26OCT21UTAMEM-UTAABAILEY19-1",
-          "event_ticker": "KXNBA3PTPROT-26OCT21UTAMEM",
-          "event_title": "Utah vs Memphis: Threes",
-          "title": "Ace Bailey: 1+ threes",
-          "subtitle": null,
-          "yes_sub_title": "Ace Bailey: 1+",
-          "primary_participant_key": null,
-          "floor_strike": 0.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-22T03:00:00Z"
-        }
-      }
-    },
-    "KXNBACELEBRITYGAME": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPR": {
+    "KXNBAH2H3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBARA": {
+    "KXNBAPTSALLGAMES": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBARACE": {
-      "raw": 78,
+    "KXNBAREBPROT": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 78
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBARACE-26OCT21ATLORL-10-ATL",
-          "event_ticker": "KXNBARACE-26OCT21ATLORL-10",
-          "event_title": "Atlanta vs Orlando: Race to 10 Points",
-          "title": "Atlanta reaches 10 points first",
-          "subtitle": null,
-          "yes_sub_title": "Atlanta",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-22T02:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
-    "KXNBAREB": {
-      "raw": 482,
-      "normalized": 478,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 4,
-        "ok": 478
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBAREB-26OCT21UTAMEM-UTAABAILEY19-2",
-          "event_ticker": "KXNBAREB-26OCT21UTAMEM",
-          "event_title": "Utah vs Memphis: Rebounds",
-          "title": "Ace Bailey: 2+ rebounds",
-          "subtitle": null,
-          "yes_sub_title": "Ace Bailey: 2+",
-          "primary_participant_key": null,
-          "floor_strike": 1.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-22T03:00:00Z"
-        }
-      }
-    },
-    "KXNBASERIESPTS": {
+    "KXNBASERIESTOTALPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -321,26 +259,11 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFFIRSTTDTEAM": {
-      "raw": 81,
+    "KXNCAAFTEAMFG": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "unsupported_market": 81
-      },
-      "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXNCAAFFIRSTTDTEAM-26OCT23DUKEUVA-UVA",
-          "event_ticker": "KXNCAAFFIRSTTDTEAM-26OCT23DUKEUVA",
-          "event_title": "Duke vs Virginia: First Team to Score a TD",
-          "title": "Virginia scores first TD",
-          "subtitle": null,
-          "yes_sub_title": "Virginia",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-24T02:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNCAAFTEAMREC": {
       "raw": 0,
@@ -349,138 +272,138 @@
       "skip_samples": {}
     },
     "KXNCAAFTEAMRECYDS": {
-      "raw": 14,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 14
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTEAMRECYDS-26OCT23DUKEUVA-UVA100",
-          "event_ticker": "KXNCAAFTEAMRECYDS-26OCT23DUKEUVA",
-          "event_title": "Duke vs Virginia: Team Receiving Yards",
-          "title": "Virginia: 100+ receiving yards",
-          "subtitle": null,
-          "yes_sub_title": "Virginia: 100+",
-          "primary_participant_key": null,
-          "floor_strike": 99.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-24T02:00:00Z"
-        }
-      }
-    },
-    "KXNCAAFTEAMRSHATT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMTO": {
+    "KXNCAAFTEAMRSHYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNCAAFTEAMTOTAL": {
-      "raw": 1204,
+      "raw": 1110,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1204
+        "ambiguous_participant_threshold": 1110
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTEAMTOTAL-26OCT21NMSUSHSU-SHSU7",
-          "event_ticker": "KXNCAAFTEAMTOTAL-26OCT21NMSUSHSU",
-          "event_title": "New Mexico St. vs Sam Houston: Team Total",
-          "title": "Sam Houston over 6.5 points scored",
+          "ticker": "KXNCAAFTEAMTOTAL-26OCT23DUKEUVA-UVA10",
+          "event_ticker": "KXNCAAFTEAMTOTAL-26OCT23DUKEUVA",
+          "event_title": "Duke vs Virginia: Team Total",
+          "title": "Virginia over 9.5 points scored",
           "subtitle": null,
-          "yes_sub_title": "Sam Houston over 6.5 points",
+          "yes_sub_title": "Virginia over 9.5 points",
           "primary_participant_key": null,
-          "floor_strike": 6.5,
+          "floor_strike": 9.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-10-22T03:00:00Z"
+          "occurrence_datetime": "2026-10-24T02:00:00Z"
         }
       }
     },
-    "KXNFLLONGESTFG": {
-      "raw": 4,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 4
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLLONGESTFG-27-66",
-          "event_ticker": "KXNFLLONGESTFG-27",
-          "event_title": "Longest Field Goal in the Regular Season",
-          "title": "Longest field goal in 2026-27 regular season: 66+ yards",
-          "subtitle": null,
-          "yes_sub_title": "66+ yards",
-          "primary_participant_key": null,
-          "floor_strike": 66,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-01-31T15:00:00Z"
-        }
-      }
-    },
-    "KXNFLLONGFG": {
+    "KXNCAAFTOTALFG": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLLONGREC": {
-      "raw": 12,
-      "normalized": 12,
+    "KXNFL1HTOTAL": {
+      "raw": 176,
+      "normalized": 0,
       "skip_reasons": {
-        "ok": 12
+        "ambiguous_participant_threshold": 176
       },
-      "skip_samples": {}
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNFL1HTOTAL-26OCT25PITNO-4",
+          "event_ticker": "KXNFL1HTOTAL-26OCT25PITNO",
+          "event_title": "Pittsburgh vs New Orleans: 1st Half Total",
+          "title": "Will there be over 3.5 1H points scored?",
+          "subtitle": null,
+          "yes_sub_title": "Over 3.5 points",
+          "primary_participant_key": null,
+          "floor_strike": 3.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-25T16:30:00Z"
+        }
+      }
     },
-    "KXNFLPASSYDSH2H": {
+    "KXNFL2PTCONV": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLPASSYDSPROT": {
-      "raw": 154,
-      "normalized": 154,
-      "skip_reasons": {
-        "ok": 154
-      },
+    "KXNFLASSCOACH": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLRACE": {
-      "raw": 15,
+    "KXNFLBOTH": {
+      "raw": 48,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 15
+        "ambiguous_participant_threshold": 48
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNFLRACE-26OCT22NECHI-10-CHI",
-          "event_ticker": "KXNFLRACE-26OCT22NECHI-10",
-          "event_title": "New England vs Chicago: Race to 10 Points",
-          "title": "Will Chicago reach 10 points first?",
+          "ticker": "KXNFLBOTH-26OCT25PITNO-14",
+          "event_ticker": "KXNFLBOTH-26OCT25PITNO",
+          "event_title": "Pittsburgh vs New Orleans: Both Teams to Score",
+          "title": "Both teams score at least 14 points",
           "subtitle": null,
-          "yes_sub_title": "Chicago",
+          "yes_sub_title": "14+ points",
           "primary_participant_key": null,
-          "floor_strike": null,
+          "floor_strike": 14,
           "functional_strike": null,
-          "occurrence_datetime": "2026-10-23T03:15:00Z"
+          "occurrence_datetime": "2026-10-25T16:30:00Z"
         }
       }
     },
-    "KXNFLRSHATT": {
-      "raw": 15,
-      "normalized": 15,
+    "KXNFLCAREERRECYDS": {
+      "raw": 10,
+      "normalized": 0,
       "skip_reasons": {
-        "ok": 15
+        "ambiguous_matchup": 10
       },
+      "skip_samples": {
+        "ambiguous_matchup": {
+          "ticker": "KXNFLCAREERRECYDS-MEVANS-14000",
+          "event_ticker": "KXNFLCAREERRECYDS-MEVANS",
+          "event_title": "Mike Evans Career Regular Season Receiving Yards",
+          "title": "Mike Evans: 14,000+ Receiving Yards",
+          "subtitle": null,
+          "yes_sub_title": "14,000+ receiving yards",
+          "primary_participant_key": null,
+          "floor_strike": 13999.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2040-03-01T15:00:00Z"
+        }
+      }
+    },
+    "KXNFLLADDERRECYDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLANYGOAL": {
+    "KXNFLWEEKMOSTRECYDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLAST": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLF10G": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -492,7 +415,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLGOAL": {
+    "KXNHLPSEASONGOALS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -510,32 +433,11 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLSERIESTOTALGOALS": {
+    "KXNHLTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
-    },
-    "KXNHLTEAMTOTAL": {
-      "raw": 140,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 140
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNHLTEAMTOTAL-26OCT21FLAOTT-OTT2",
-          "event_ticker": "KXNHLTEAMTOTAL-26OCT21FLAOTT",
-          "event_title": "Florida vs Ottawa: Team Total",
-          "title": "Ottawa over 1.5 goals scored",
-          "subtitle": null,
-          "yes_sub_title": "Ottawa over 1.5",
-          "primary_participant_key": null,
-          "floor_strike": 1.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-22T02:30:00Z"
-        }
-      }
     },
     "KXUFCOCCUR": {
       "raw": 0,
@@ -549,7 +451,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBA3PTCONTEST": {
+    "KXWNBA3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -579,13 +481,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAH2HPTS": {
+    "KXWNBAPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAPTS": {
+    "KXWNBAREB": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -599,9 +501,7 @@
     }
   },
   "leagues": {
-    "MLB": 34,
-    "NBA": 991,
-    "NFL": 181
+    "MLB": 20
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
