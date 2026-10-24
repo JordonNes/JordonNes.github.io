@@ -1,16 +1,17 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-10-24T00:22:01.528697+00:00",
+  "checked_at_utc": "2026-10-24T05:43:21.790785+00:00",
   "status": "OK",
-  "raw_market_count": 9797,
-  "normalized_props": 553,
-  "history_rows_added": 553,
+  "raw_market_count": 10900,
+  "normalized_props": 1840,
+  "history_rows_added": 1840,
   "skip_reasons": {
-    "ambiguous_matchup": 343,
-    "ambiguous_participant_threshold": 2924,
-    "ok": 553,
+    "ambiguous_matchup": 119,
+    "ambiguous_participant_threshold": 2934,
+    "not_upcoming": 25,
+    "ok": 1840,
     "unknown_sport": 5469,
-    "unsupported_market": 508
+    "unsupported_market": 513
   },
   "skip_samples": {
     "unknown_sport": {
@@ -64,58 +65,71 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
+    },
+    "not_upcoming": {
+      "ticker": "KXNBAREBPROT-26OCT23MEMGSW-MEMJGRANT9-2",
+      "event_ticker": "KXNBAREBPROT-26OCT23MEMGSW",
+      "series_ticker": "KXNBAREBPROT",
+      "event_title": "Memphis vs Golden State: Rebounds",
+      "title": "Jerami Grant: 2+ rebounds",
+      "subtitle": null,
+      "yes_sub_title": "Jerami Grant: 2+",
+      "primary_participant_key": "basketball_player",
+      "floor_strike": 1.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-10-24T05:00:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBHRR",
-      "KXUFCWHITEHOUSE",
-      "KXNBAH2HPTS",
-      "KXNCAAFTEAMRSHYDS",
-      "KXNFLFFPTS",
+      "KXMLBHRDERBYTOT",
+      "KXUFCOCCUR",
+      "KXNBAPA",
+      "KXNCAAF2PT",
+      "KXNFLFG",
       "KXNHLPTS",
       "KXATPACES",
-      "KXWNBAPTS",
-      "KXMLBTB",
-      "KXUFCOCCUR",
-      "KXNBASERIESTOTALPTS",
-      "KXNCAAFTEAMREC",
-      "KXNFLLONGESTFG",
-      "KXNHLPSEASONGOALS",
-      "KXWTAACES",
-      "KXWNBA3PT",
-      "KXMLBPLAYOFFHRS",
-      "KXNBASERIESPTS",
-      "KXNCAAFTOTAL",
-      "KXNFLSEASONPASSTDS",
-      "KXNHLSERIESTOTALGOAL",
-      "KXWNBAAST",
-      "KXMLBASGHR",
-      "KXNBABENCHPTS",
-      "KXNCAAFTEAMTO",
-      "KXNFLFFPTSSEASON",
-      "KXNHLGOAL",
       "KXWNBA3PTCONTEST",
-      "KXMLBHRDERBYDISTANCE",
-      "KXNBASERIESREBLEADER",
-      "KXNCAAFTOTALFG",
-      "KXNFLSEASONREC",
-      "KXNHLTOTAL",
-      "KXWNBAH2HPTS",
-      "KXMLBKS",
-      "KXNBACELEBRITYGAME",
+      "KXMLBOUTS",
+      "KXUFCWHITEHOUSE",
+      "KXNBASTOCKS",
       "KXNCAAFTEAMTOTAL",
-      "KXNFLTEAMTO",
+      "KXNFLRECYDSPROT",
       "KXNHLF10G",
+      "KXWTAACES",
+      "KXWNBA3PTROUND",
+      "KXMLBHRDERBYOU",
+      "KXNBAPTSPROT",
+      "KXNCAAFTEAMREC",
+      "KXNFLWEEKMOSTRECYDS",
+      "KXNHLTEAMTOTAL",
+      "KXWNBAPTS",
+      "KXMLBHIT",
+      "KXNBAREBPROT",
+      "KXNCAAFTEAMTO",
+      "KXNFLLONGESTFG",
+      "KXNHLGOAL",
       "KXWNBA40PTS",
-      "KXMLBHRDERBYFORECAST",
-      "KXNBAPTSALLGAMES",
-      "KXNCAAFTEAMFG",
-      "KXNFLRECYDSH2H",
-      "KXNHLSERIESTOTALGOALS",
-      "KXWNBAREB",
-      "KXMLBHIT"
+      "KXMLBHRDERBYVELO",
+      "KXNBAH2HTEAM3PT",
+      "KXNCAAFTOTAL",
+      "KXNFLPASSYDS",
+      "KXNHLSAVE",
+      "KXWNBAH2HPTS",
+      "KXMLBHRDERBYQUAL",
+      "KXNBASERIESTOTALPTS",
+      "KXNCAAFTEAMRSHYDS",
+      "KXNFLANYTD",
+      "KXNHLAST",
+      "KXWNBA3PT",
+      "KXMLBRBI",
+      "KXNBACENTRAL",
+      "KXNCAAFTEAMRECYDS",
+      "KXNFLCAREERPASSTDS",
+      "KXNHLSEASONPPTS",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBHRDERBYLONGEST"
     ],
     "by_league": {
       "Boxing": 1,
@@ -160,112 +174,122 @@
         }
       }
     },
-    "KXMLBASGHR": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
     "KXMLBHIT": {
-      "raw": 54,
-      "normalized": 54,
+      "raw": 35,
+      "normalized": 35,
       "skip_reasons": {
-        "ok": 54
+        "ok": 35
       },
       "skip_samples": {}
     },
-    "KXMLBHRDERBYDISTANCE": {
+    "KXMLBHRDERBYLONGEST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYFORECAST": {
+    "KXMLBHRDERBYOU": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRR": {
-      "raw": 84,
-      "normalized": 84,
+    "KXMLBHRDERBYQUAL": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBHRDERBYTOT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBHRDERBYVELO": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBOUTS": {
+      "raw": 2,
+      "normalized": 2,
       "skip_reasons": {
-        "ok": 84
+        "ok": 2
       },
       "skip_samples": {}
     },
-    "KXMLBKS": {
-      "raw": 14,
-      "normalized": 14,
+    "KXMLBRBI": {
+      "raw": 22,
+      "normalized": 22,
       "skip_reasons": {
-        "ok": 14
+        "ok": 22
       },
       "skip_samples": {}
     },
-    "KXMLBPLAYOFFHRS": {
-      "raw": 13,
+    "KXNBACENTRAL": {
+      "raw": 5,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 13
+        "unsupported_market": 5
       },
       "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXMLBPLAYOFFHRS-26-65",
-          "event_ticker": "KXMLBPLAYOFFHRS-26",
-          "event_title": "Pro Baseball: Total Home Runs in Playoffs",
-          "title": "Playoffs: 65+ home runs",
-          "subtitle": null,
-          "yes_sub_title": "65+ home runs",
+        "unsupported_market": {
+          "ticker": "KXNBACENTRAL-26-DET",
+          "event_ticker": "KXNBACENTRAL-26",
+          "event_title": "Pro Basketball Central Division Winner",
+          "title": "Will Detroit be the Central Division winner in the 2026-27 season?",
+          "subtitle": "Detroit",
+          "yes_sub_title": "Detroit",
           "primary_participant_key": null,
-          "floor_strike": 65,
+          "floor_strike": null,
           "functional_strike": null,
-          "occurrence_datetime": "2026-12-01T15:00:00Z"
+          "occurrence_datetime": "2027-06-30T14:00:00Z"
         }
       }
     },
-    "KXMLBTB": {
-      "raw": 60,
-      "normalized": 60,
+    "KXNBAH2HTEAM3PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAPA": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAPTSPROT": {
+      "raw": 45,
+      "normalized": 45,
       "skip_reasons": {
-        "ok": 60
+        "ok": 45
       },
       "skip_samples": {}
     },
-    "KXNBABENCHPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBACELEBRITYGAME": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBAH2HPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBAPTSALLGAMES": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASERIESPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASERIESREBLEADER": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+    "KXNBAREBPROT": {
+      "raw": 67,
+      "normalized": 42,
+      "skip_reasons": {
+        "not_upcoming": 25,
+        "ok": 42
+      },
+      "skip_samples": {
+        "not_upcoming": {
+          "ticker": "KXNBAREBPROT-26OCT23MEMGSW-MEMJGRANT9-2",
+          "event_ticker": "KXNBAREBPROT-26OCT23MEMGSW",
+          "event_title": "Memphis vs Golden State: Rebounds",
+          "title": "Jerami Grant: 2+ rebounds",
+          "subtitle": null,
+          "yes_sub_title": "Jerami Grant: 2+",
+          "primary_participant_key": "basketball_player",
+          "floor_strike": 1.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-24T05:00:00Z"
+        }
+      }
     },
     "KXNBASERIESTOTALPTS": {
       "raw": 0,
@@ -273,7 +297,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMFG": {
+    "KXNBASTOCKS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAF2PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -284,6 +314,28 @@
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
+    },
+    "KXNCAAFTEAMRECYDS": {
+      "raw": 126,
+      "normalized": 42,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 84,
+        "ok": 42
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNCAAFTEAMRECYDS-26OCT24INDMICH-MICH75",
+          "event_ticker": "KXNCAAFTEAMRECYDS-26OCT24INDMICH",
+          "event_title": "Indiana vs Michigan: Team Receiving Yards",
+          "title": "Michigan: 75+ receiving yards",
+          "subtitle": null,
+          "yes_sub_title": "Michigan: 75+",
+          "primary_participant_key": null,
+          "floor_strike": 74.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-24T19:00:00Z"
+        }
+      }
     },
     "KXNCAAFTEAMRSHYDS": {
       "raw": 0,
@@ -298,66 +350,80 @@
       "skip_samples": {}
     },
     "KXNCAAFTEAMTOTAL": {
-      "raw": 1108,
+      "raw": 1018,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1108
+        "ambiguous_participant_threshold": 1018
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTEAMTOTAL-26OCT23DUKEUVA-UVA14",
-          "event_ticker": "KXNCAAFTEAMTOTAL-26OCT23DUKEUVA",
-          "event_title": "Duke vs Virginia: Team Total",
-          "title": "Virginia over 13.5 points scored",
+          "ticker": "KXNCAAFTEAMTOTAL-26OCT23NCSTSTAN-STAN35",
+          "event_ticker": "KXNCAAFTEAMTOTAL-26OCT23NCSTSTAN",
+          "event_title": "NC St. vs Stanford: Team Total",
+          "title": "Stanford over 34.5 points scored",
           "subtitle": null,
-          "yes_sub_title": "Virginia over 13.5 points",
+          "yes_sub_title": "Stanford over 34.5 points",
           "primary_participant_key": null,
-          "floor_strike": 13.5,
+          "floor_strike": 34.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-10-24T02:00:00Z"
+          "occurrence_datetime": "2026-10-24T05:30:00Z"
         }
       }
     },
     "KXNCAAFTOTAL": {
-      "raw": 1618,
+      "raw": 1515,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1618
+        "ambiguous_participant_threshold": 1515
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTOTAL-26OCT23NCCUDSU-24",
-          "event_ticker": "KXNCAAFTOTAL-26OCT23NCCUDSU",
-          "event_title": "North Carolina Central vs Delaware St.: Total Points",
-          "title": "Full Game: Over 23.5 points scored",
+          "ticker": "KXNCAAFTOTAL-26OCT23NCSTSTAN-36",
+          "event_ticker": "KXNCAAFTOTAL-26OCT23NCSTSTAN",
+          "event_title": "NC St. vs Stanford: Total Points",
+          "title": "Full Game: Over 35.5 points scored",
           "subtitle": null,
-          "yes_sub_title": "Over 23.5 points",
+          "yes_sub_title": "Over 35.5 points",
           "primary_participant_key": null,
-          "floor_strike": 23.5,
+          "floor_strike": 35.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-10-24T00:00:00Z"
+          "occurrence_datetime": "2026-10-24T05:30:00Z"
         }
       }
     },
-    "KXNCAAFTOTALFG": {
+    "KXNFLANYTD": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLFFPTS": {
-      "raw": 129,
-      "normalized": 129,
+    "KXNFLCAREERPASSTDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLFG": {
+      "raw": 104,
+      "normalized": 36,
       "skip_reasons": {
-        "ok": 129
+        "ambiguous_participant_threshold": 68,
+        "ok": 36
       },
-      "skip_samples": {}
-    },
-    "KXNFLFFPTSSEASON": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNFLFG-26OCT25PITNO-PIT1",
+          "event_ticker": "KXNFLFG-26OCT25PITNO",
+          "event_title": "Pittsburgh vs New Orleans: Team Field Goals",
+          "title": "Pittsburgh: 1+ Field Goals",
+          "subtitle": null,
+          "yes_sub_title": "Pittsburgh: 1+",
+          "primary_participant_key": null,
+          "floor_strike": 0.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-25T16:30:00Z"
+        }
+      }
     },
     "KXNFLLONGESTFG": {
       "raw": 4,
@@ -380,148 +446,133 @@
         }
       }
     },
-    "KXNFLRECYDSH2H": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
+    "KXNFLPASSYDS": {
+      "raw": 211,
+      "normalized": 211,
+      "skip_reasons": {
+        "ok": 211
+      },
       "skip_samples": {}
     },
-    "KXNFLSEASONPASSTDS": {
-      "raw": 115,
-      "normalized": 0,
+    "KXNFLRECYDSPROT": {
+      "raw": 1273,
+      "normalized": 1273,
       "skip_reasons": {
-        "ambiguous_matchup": 115
+        "ok": 1273
       },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNFLSEASONPASSTDS-27C20-JBURROW9",
-          "event_ticker": "KXNFLSEASONPASSTDS-27C20",
-          "event_title": "Pro Football: 20+ Passing Touchdowns Season",
-          "title": "Will Joe Burrow record 20+ passing touchdowns during the 2026-27 Pro Football regular season?",
-          "subtitle": null,
-          "yes_sub_title": "Joe Burrow",
-          "primary_participant_key": "football_player",
-          "floor_strike": 19.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-01-31T15:00:00Z"
-        }
-      }
-    },
-    "KXNFLSEASONREC": {
-      "raw": 169,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 169
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNFLSEASONREC-27C100-JCHASE1",
-          "event_ticker": "KXNFLSEASONREC-27C100",
-          "event_title": "Pro Football: 100+ Receptions Season",
-          "title": "Will Ja'Marr Chase record 100+ receptions during the 2026-27 Pro Football regular season?",
-          "subtitle": "Ja'Marr Chase",
-          "yes_sub_title": "Ja'Marr Chase",
-          "primary_participant_key": "football_player",
-          "floor_strike": 99.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-01-31T15:00:00Z"
-        }
-      }
-    },
-    "KXNFLTEAMTO": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLF10G": {
-      "raw": 16,
+    "KXNFLWEEKMOSTRECYDS": {
+      "raw": 51,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 16
+        "ambiguous_participant_threshold": 51
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNHLF10G-26OCT23MTLCHI-Y",
-          "event_ticker": "KXNHLF10G-26OCT23MTLCHI",
-          "event_title": "Montreal vs Chicago: Goal in First 10 Minutes",
+          "ticker": "KXNFLWEEKMOSTRECYDS-26W7-CHILBURDEN10",
+          "event_ticker": "KXNFLWEEKMOSTRECYDS-26W7",
+          "event_title": "Pro Football Week 7: Most Receiving Yards",
+          "title": "Luther Burden III: most receiving yards in Pro Football Week 7",
+          "subtitle": null,
+          "yes_sub_title": "Luther Burden III",
+          "primary_participant_key": "football_player",
+          "floor_strike": null,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-27T00:15:00Z"
+        }
+      }
+    },
+    "KXNHLAST": {
+      "raw": 16,
+      "normalized": 16,
+      "skip_reasons": {
+        "ok": 16
+      },
+      "skip_samples": {}
+    },
+    "KXNHLF10G": {
+      "raw": 17,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 17
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLF10G-26OCT24ANAPHI-Y",
+          "event_ticker": "KXNHLF10G-26OCT24ANAPHI",
+          "event_title": "Anaheim vs Philadelphia: Goal in First 10 Minutes",
           "title": "Either team to score in the first 10 minutes",
           "subtitle": null,
           "yes_sub_title": "Goal in first 10 min",
           "primary_participant_key": null,
           "floor_strike": 1,
           "functional_strike": null,
-          "occurrence_datetime": "2026-10-24T03:00:00Z"
+          "occurrence_datetime": "2026-10-24T20:00:00Z"
         }
       }
     },
     "KXNHLGOAL": {
-      "raw": 126,
-      "normalized": 126,
+      "raw": 59,
+      "normalized": 59,
       "skip_reasons": {
-        "ok": 126
+        "ok": 59
       },
       "skip_samples": {}
     },
-    "KXNHLPSEASONGOALS": {
-      "raw": 17,
+    "KXNHLPTS": {
+      "raw": 19,
+      "normalized": 19,
+      "skip_reasons": {
+        "ok": 19
+      },
+      "skip_samples": {}
+    },
+    "KXNHLSAVE": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLSEASONPPTS": {
+      "raw": 90,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 17
+        "ambiguous_matchup": 90
       },
       "skip_samples": {
         "ambiguous_matchup": {
-          "ticker": "KXNHLPSEASONGOALS-27AOVECHKIN8-15",
-          "event_ticker": "KXNHLPSEASONGOALS-27AOVECHKIN8",
-          "event_title": "Alex Ovechkin: Regular Season Goals",
-          "title": "Alex Ovechkin: 15+ goals in 2026-27 NHL regular season?",
-          "subtitle": "Alex Ovechkin",
-          "yes_sub_title": "15+ goals",
+          "ticker": "KXNHLSEASONPPTS-27C100-NKUCHEROV86",
+          "event_ticker": "KXNHLSEASONPPTS-27C100",
+          "event_title": "NHL: 100+ Points Season",
+          "title": "Nikita Kucherov: 100+ points in 2026-27 NHL regular season?",
+          "subtitle": "Nikita Kucherov:: Tampa Bay Lightning",
+          "yes_sub_title": "Nikita Kucherov",
           "primary_participant_key": "hockey_player",
-          "floor_strike": 14.5,
+          "floor_strike": 99.5,
           "functional_strike": null,
           "occurrence_datetime": "2027-04-11T14:00:00Z"
         }
       }
     },
-    "KXNHLPTS": {
-      "raw": 86,
-      "normalized": 86,
-      "skip_reasons": {
-        "ok": 86
-      },
-      "skip_samples": {}
-    },
-    "KXNHLSERIESTOTALGOAL": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLSERIESTOTALGOALS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLTOTAL": {
-      "raw": 171,
+    "KXNHLTEAMTOTAL": {
+      "raw": 170,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 171
+        "ambiguous_participant_threshold": 170
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNHLTOTAL-26OCT23MTLCHI-2",
-          "event_ticker": "KXNHLTOTAL-26OCT23MTLCHI",
-          "event_title": "Montreal vs Chicago: Total Goals",
-          "title": "Full Game: Over 1.5 goals scored",
+          "ticker": "KXNHLTEAMTOTAL-26OCT24ANAPHI-PHI2",
+          "event_ticker": "KXNHLTEAMTOTAL-26OCT24ANAPHI",
+          "event_title": "Anaheim vs Philadelphia: Team Total",
+          "title": "Philadelphia over 1.5 goals scored",
           "subtitle": null,
-          "yes_sub_title": "Over 1.5 goals scored",
+          "yes_sub_title": "Philadelphia over 1.5",
           "primary_participant_key": null,
           "floor_strike": 1.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-10-24T03:00:00Z"
+          "occurrence_datetime": "2026-10-24T20:00:00Z"
         }
       }
     },
@@ -538,9 +589,11 @@
       "skip_samples": {}
     },
     "KXWNBA3PT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
+      "raw": 14,
+      "normalized": 14,
+      "skip_reasons": {
+        "ok": 14
+      },
       "skip_samples": {}
     },
     "KXWNBA3PTCONTEST": {
@@ -549,13 +602,19 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBA40PTS": {
+    "KXWNBA3PTCONTESTOU": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAAST": {
+    "KXWNBA3PTROUND": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXWNBA40PTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -568,15 +627,11 @@
       "skip_samples": {}
     },
     "KXWNBAPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXWNBAREB": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
+      "raw": 24,
+      "normalized": 24,
+      "skip_reasons": {
+        "ok": 24
+      },
       "skip_samples": {}
     },
     "KXWTAACES": {
@@ -587,9 +642,12 @@
     }
   },
   "leagues": {
-    "MLB": 212,
-    "NFL": 129,
-    "NHL": 212
+    "MLB": 59,
+    "NBA": 87,
+    "NCAA_Football": 42,
+    "NFL": 1520,
+    "NHL": 94,
+    "WNBA": 38
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
