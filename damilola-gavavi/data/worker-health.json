@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-10-25T19:48:37.549Z",
+  "checked_at_utc": "2026-10-25T22:41:59.441Z",
   "source": "Read-only GitHub Actions network requests to deployed D&G Worker",
   "worker_url": "https://dg-market-intelligence.jordonnes-markets.workers.dev",
   "checks": {
@@ -9,13 +9,13 @@
       "markets": {
         "KXGOLD15M": {
           "source_http_status": 200,
-          "state": "NO_OPEN_CONTRACTS",
-          "open_contracts": 0
+          "state": "OBSERVATIONAL",
+          "open_contracts": 1
         },
         "KXSILVER15M": {
           "source_http_status": 200,
-          "state": "NO_OPEN_CONTRACTS",
-          "open_contracts": 0
+          "state": "OBSERVATIONAL",
+          "open_contracts": 1
         },
         "KXBTC15M": {
           "source_http_status": 200,
@@ -29,7 +29,7 @@
       "http_status": 200,
       "state": "EFFECTIVE_FEE_METADATA_OBSERVED",
       "effective_fee_verified": true,
-      "event_fee_checked": false
+      "event_fee_checked": true
     },
     "historical_training": {
       "http_status": 200,
@@ -42,7 +42,9 @@
       ]
     },
     "orderbook": {
-      "state": "NO_VERIFIED_OPEN_GOLD_CONTRACT"
+      "http_status": 200,
+      "state": "OBSERVED_TOP_OF_BOOK",
+      "exchange_timestamp_verified": false
     }
   },
   "applicable_to": "Kalshi 15-minute binary contracts only",
