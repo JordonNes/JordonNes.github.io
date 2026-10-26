@@ -646,6 +646,44 @@ function renderNearbyCoordinateIntelligence(lat,lng){
     }
   }));
 }
+
+let fishScaleV2Request=0;
+async function renderFishScaleV2OnMap(location,speciesId){
+  const requestId=++fishScaleV2Request;
+  const panel=document.querySelector('#frmap-report');
+  if(!panel||!location||!speciesId)return;
+  try{
+    const response=await fetch(RICHFISH_API+'/api/v2/fish-scale/evaluate',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({locationId:location.id,speciesId})
+    });
+    if(!response.ok)throw new Error('FISH SCALE service '+response.status);
+    const data=await response.json();
+    if(requestId!==fishScaleV2Request)return;
+    const current=document.querySelector('#frmap-report');
+    if(!current)return;
+    const score=data.fishScale===null?'Not assessed':data.fishScale.toFixed(1)+'/100';
+    const reason=(data.reasoning||[]).map(x=>'<li>'+escapeHtml(x)+'</li>').join('');
+    const article=document.createElement('section');
+    article.className='rf-fishscale-v2';
+    article.style.cssText='margin-top:14px;padding:14px;border:1px solid #507e83;border-radius:12px;background:#082a30;color:#e7f4ef';
+    article.innerHTML='<small>FISH SCALE 2.0 · '+escapeHtml(data.dataMode||'')+'</small>'+
+      '<h3>Opportunity: '+escapeHtml(score)+'</h3>'+
+      '<p>'+escapeHtml(data.classification)+' · Assessment confidence: '+escapeHtml(data.confidence)+'</p>'+
+      '<p>Knowledge 25% · Community 35% · Personal 40% (baseline)</p>'+
+      '<p>Effective evidence coverage: '+escapeHtml(data.evidenceCoverage)+'%. Missing: '+escapeHtml(data.missingCategories.join(', ')||'none')+'</p>'+
+      '<ul>'+reason+'</ul>'+
+      '<p><strong>Regulatory status:</strong> '+escapeHtml(data.regulatoryStatus)+'. '+escapeHtml(data.regulatoryNote||'Confirm official rules')+'</p>'+
+      '<small>Opportunity index, not a catch probability. Provisional scores are based on the catalog, not a live community catch feed.</small>';
+    current.querySelector('.rf-fishscale-v2')?.remove();
+    current.appendChild(article);
+  }catch(e){
+    if(requestId!==fishScaleV2Request)return;
+    // Preserve existing FRmap experience when the new backend is unavailable.
+    console.warn('FISH SCALE 2.0 unavailable',e.message);
+  }
+}
+
 function renderMapEvaluation(lat,lng,forcedLocation=null){
   const panel=$('#frmap-report');
   if(!panel)return;
@@ -657,6 +695,10 @@ function renderMapEvaluation(lat,lng,forcedLocation=null){
   }
   const nearest=forcedLocation?{location:forcedLocation,distanceKm:0}:nearestMappedLocation(lat,lng);
   const loc=nearest?.location;
+  if(loc&&(forcedLocation||nearest.distanceKm<=2)){
+    const speciesId=state.mapSpeciesId||resolveSpeciesId(loc.targets?.primary?.[0]||'');
+    if(speciesId)void renderFishScaleV2OnMap(loc,speciesId);
+  }else fishScaleV2Request++;
   if(!forcedLocation&&(!loc||nearest.distanceKm>2)){
     renderNearbyCoordinateIntelligence(lat,lng);
     return;
