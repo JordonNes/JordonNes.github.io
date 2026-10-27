@@ -1,0 +1,25 @@
+name: RICHFISH Cloudflare FISH SCALE Deploy
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'cloudflare/richfish-fish-scale/**'
+      - '.github/workflows/richfish-cloudflare.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test cloudflare/richfish-fish-scale/test.mjs
+      - uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare/richfish-fish-scale
+          command: deploy
