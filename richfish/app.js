@@ -653,7 +653,7 @@ async function renderFishScaleV2OnMap(location,speciesId){
   const panel=document.querySelector('#frmap-report');
   if(!panel||!location||!speciesId)return;
   try{
-    const response=await fetch(RICHFISH_API+'/api/v2/fish-scale/evaluate',{
+    const response=await fetch('https://richfish-fish-scale.jordonnes-markets.workers.dev/api/v2/fish-scale/evaluate',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({locationId:location.id,speciesId})
     });
