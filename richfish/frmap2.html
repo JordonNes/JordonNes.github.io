@@ -17,7 +17,7 @@
 <div class="field"><label for="region">2 · Water region / shoreline / harbor</label><select id="region"><option value="">All Bay &amp; Delta regions</option></select></div>
 <div class="small">Top three fish to target in this region</div><div id="top-fish" class="buttons" style="margin-top:7px"></div><div id="selection" class="small" style="margin-top:10px" aria-live="polite"></div></section>
 <section class="panel"><div class="toplevel"><strong>3 · Recommended locations and spots</strong><span class="small" id="matchcount"></span></div><div id="rankings" class="rankings" aria-live="polite"></div><div class="buttons" style="margin-top:10px"><button id="add" class="primary" type="button">+ Add Fishing Spot</button><button id="reset" type="button">Reset view</button></div></section>
-<section class="panel"><div class="toplevel"><strong>Map intelligence</strong><span id="mapstatus" class="status"><span class="dot"></span>Loading…</span></div><div class="notice">Fish Scale 2.0 inputs: personal reports 40%, community 35%, Richmond Ray habitat knowledge 25%. Scores are <b>relative evidence rankings, not validated catch probabilities.</b> Conditions and fishing regulations must be checked before travel.</div><div style="margin-top:9px" class="small" id="data-count"></div></section>
+<section class="panel"><div class="toplevel"><strong>Map intelligence</strong><span id="mapstatus" class="status"><span class="dot"></span>Loading…</span></div><div class="notice">Fish Scale 2.0 inputs: personal reports 40%, community 35%, Richmond Ray habitat knowledge 25%. Absent reports contribute zero—not invented support. Scores are <b>relative evidence rankings, not validated catch probabilities.</b> Conditions and fishing regulations must be checked before travel.</div><div style="margin-top:9px" class="small" id="data-count"></div></section>
 </div>
 <div class="mapwrap"><div id="map" aria-label="RichFish interactive nautical fishing map"></div>
 <div class="mapbar"><button id="depth-btn" type="button" class="primary" title="Toggle neutral GEBCO 2026 bathymetric contours">Depth contours</button><button id="heat-btn" type="button" class="primary">Opportunity heat</button><button id="spots-btn" type="button">Spot pins</button></div>
@@ -54,10 +54,10 @@ if(s==="surfperch")hit=/perch/.test(text);
 if(s==="english sole")hit=/english sole|flatfish|sole/.test(text);
 if(s==="starry flounder")hit=/flounder/.test(text);
 var targetHit=target.indexOf(s)!==-1||(s==="surfperch"&&target.indexOf("perch")!==-1)||(s==="california halibut"&&target.indexOf("halibut")!==-1);
-var noMatch=p.kind==="catch"&&!hit;var personal=p.kind==="catch"&&hit?100:p.kind==="sighting"&&hit?73:p.kind==="strike"&&hit?51:p.kind==="spot"&&hit?47:p.kind==="bait"?(s==="california halibut"||s==="striped bass"?32:19):p.kind==="community"&&hit?18:p.kind==="spot"?19:targetHit?27:7;
+var noMatch=p.kind==="catch"&&!hit;var personal=p.kind==="catch"&&hit?100:p.kind==="sighting"&&hit?73:p.kind==="strike"&&hit?51:p.kind==="spot"&&hit?47:p.kind==="bait"&&hit?32:p.kind==="saved"?25:0;
 if(noMatch)personal=3;
-var community=p.kind==="community"&&hit?65:p.kind==="community"?14:targetHit?33:18;
-var knowledge=targetHit?84:hit?76:/(pier|shoreline|harbor|bay|cove|channel)/i.test([p.habitat,p.site_type,p.name].join(" "))?40:25;
+var community=p.kind==="community"&&hit?65:0;
+var knowledge=targetHit?90:hit?76:/(pier|shoreline|harbor|bay|cove|channel)/i.test([p.habitat,p.site_type,p.name].join(" "))?35:15;
 var score=Math.min(100,Math.round(.40*personal+.35*community+.25*knowledge));
 return {score:score,matched:hit||targetHit,personal:personal,community:community,knowledge:knowledge}}
 function candidate(p){if(p.kind==="bait")return false;return p.kind==="spot"||p.kind==="catch"||p.kind==="sighting"||p.kind==="community"||p.kind==="strike"||p.kind==="saved"||!!p.site_type}
