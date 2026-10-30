@@ -1,6 +1,6 @@
 name: RWT Pages Release Sync
-# Master receives frequent data commits, which repeatedly cancel Pages builds.
-# Publish a stable snapshot of the complete site every 15 minutes.
+# Avoid Pages cancellations from frequent master data commits.
+# Fast-forward a stable Pages publishing branch every 15 minutes.
 on:
   schedule:
     - cron: '*/15 * * * *'
@@ -16,28 +16,20 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
-      - name: Checkout master and full history
-        uses: actions/checkout@v4
-        with:
-          ref: master
-          fetch-depth: 0
-          persist-credentials: true
-      - name: Fast-forward release snapshot
+      - name: Update release branch using GitHub refs API
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          git fetch origin master rwt-pages-release
-          source_sha="$(git rev-parse origin/master)"
-          release_sha="$(git rev-parse origin/rwt-pages-release)"
+          repo="$GITHUB_REPOSITORY"
+          source_sha="$(gh api "repos/$repo/git/ref/heads/master" --jq '.object.sha')"
+          release_sha="$(gh api "repos/$repo/git/ref/heads/rwt-pages-release" --jq '.object.sha')"
           if [ "$source_sha" = "$release_sha" ]; then
-            echo "Release already current: $source_sha"
+            echo "No new commits to publish."
             exit 0
           fi
-          if ! git merge-base --is-ancestor "$release_sha" "$source_sha"; then
-            echo "::error::Release branch diverged from master. Manual review required."
-            exit 1
-          fi
-          git push origin "$source_sha:refs/heads/rwt-pages-release"
-          echo "Published snapshot: $source_sha"
+          gh api --method PATCH "repos/$repo/git/refs/heads/rwt-pages-release" -f sha="$source_sha" -F force=false >/dev/null
+          echo "Release snapshot advanced to $source_sha"
