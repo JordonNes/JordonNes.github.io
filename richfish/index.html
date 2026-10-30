@@ -75,11 +75,10 @@
     </section>
 
     <section id="frmap" class="section shell frmap-live">
-      <div class="section-heading">
-        <div><span class="eyebrow">FRmap · LIVE WATER</span><h2>Click the water. Read the evidence. Fish smarter.</h2></div>
-        <span class="sync">Evidence-gated map · no invented calls</span>
-      </div>
-      <form id="ray-trip-form" class="ray-trip-form" aria-label="Richmond Ray flexible fishing search">
+<div class="section-heading"><div><span class="eyebrow">FR MAP 2.0 · RICHFISH INTELLIGENCE</span><h2>Pick a species. Find the water. Choose your spot.</h2></div><div class="section-actions"><a class="btn" href="frmap2.html" target="_blank" rel="noopener">Open full-screen FR Map 2.0 ↗</a><a class="btn" href="location-manager.html">Add / manage Fishing Spots ↗</a></div></div>
+<style>.rf-v2-frame{width:100%;height:1140px;border:1px solid #345d67;border-radius:14px;background:#071b24;display:block}.rf-trip-below{margin-top:18px}.rf-trip-below>.ray-trip-form{margin:0}@media(max-width:900px){.rf-v2-frame{height:1820px}}@media(max-width:620px){.rf-v2-frame{height:2200px}}</style>
+<iframe class="rf-v2-frame" src="frmap2.html" title="RichFish FR Map 2.0 - species opportunities and fishing spots" loading="lazy" allow="geolocation"></iframe>
+<div class="rf-trip-below"><div class="section-heading"><div><span class="eyebrow">RICHMOND RAY'S TRIP BUILDER</span><h2>Build out your full fishing trip</h2></div></div><form id="ray-trip-form" class="ray-trip-form" aria-label="Richmond Ray flexible fishing search">
           <div class="ray-trip-top"><strong>Ray's Trip Builder</strong><small>Give a little. Get the rest.</small></div>
           <div class="ray-trip-fields">
             <label>Bait available<select id="ray-trip-bait"><option value="">Ray chooses bait</option><optgroup label="Prepared / frozen"><option>Chicken liver</option><option>Shrimp</option><option>Anchovy</option><option>Squid</option><option>Sand flea</option><option>Artificial lure</option><option>Scented soft plastic</option><option>No bait</option></optgroup><optgroup label="Live bait"><option>Live pile worm</option><option>Live smelt</option><option>Live shad</option><option>Live anchovy</option><option>Live sardine</option><option>Live shiner perch</option><option>Live mudsucker</option><option>Live mosquitofish</option></optgroup></select></label>
@@ -91,94 +90,8 @@
           </div>
           <div class="ray-trip-actions"><button class="btn primary" type="submit">Find my fishing options</button><button class="btn" id="ray-trip-clear" type="button">Clear</button><a href="field-library.html">RICHFISH Field Library →</a></div>
           <div id="ray-trip-results" aria-live="polite"></div>
-        </form>
-        <div class="map-workspace">
-        <aside class="map-controls">
-          <strong>Target species</strong>
-          <label class="map-field" for="frmap-species">Highlight the best supported water</label>
-          <select id="frmap-species" class="map-select" aria-label="FRmap target species">
-            <option value="">All modeled targets</option>
-          </select>
-          <div class="map-action-row">
-            <button class="btn map-btn" id="frmap-near-me" type="button">Use my location</button>
-            <button class="btn map-btn" id="frmap-reset" type="button">Reset Bay view</button>
-          </div>
-          <div id="frmap-selection-summary" class="map-selection-summary">Select a species or click the map.</div>
-          <div id="frmap-species-results" class="frmap-discovery-results" aria-live="polite"></div>
-          <form id="frmap-gps-form" class="frmap-gps-form">
-            <label class="map-field" for="frmap-gps-coordinates">Explore GPS coordinates</label>
-            <div class="frmap-gps-row">
-              <input id="frmap-gps-coordinates" type="text" inputmode="text" placeholder="37.905, -122.389" aria-label="Latitude, longitude" required />
-              <button class="btn map-btn" type="submit">Explore</button>
-            </div>
-            <small id="frmap-gps-error" role="status">Enter latitude, longitude to study nearby known fishing locations.</small>
-          </form>
-
-          <strong>Underwater terrain view</strong>
-          <label class="map-field" for="frmap-terrain-mode">Map emphasis</label>
-          <select id="frmap-terrain-mode" class="map-select" aria-label="Underwater terrain display preset">
-            <option value="combined" selected>Seafloor view · relief + depth contours</option>
-            <option value="charts">Fishing depths · NOAA chart contours</option>
-            <option value="terrain">Regional seafloor form · NOAA shaded relief</option>
-          </select>
-          <div id="frmap-terrain-explainer" class="map-source-note" role="status">Default combines NOAA regional shaded relief and charted depth contours. DWR v4.3 elevation tiles are not yet published.</div>
-          <div class="map-source-note"><strong>Bay–Delta DEM v4.3</strong> is the selected future locally processed terrain dataset. Richmond-side raster data are not yet on this map. DWR's newer revisions mainly affect areas east of Carquinez Strait; depths use NAVD88, unlike the charted sounding datum. <a href="https://publish.data.ca.gov/dataset/san-francisco-bay-and-sacramento-san-joaquin-delta-dem-for-modeling-version-4-3" target="_blank" rel="noopener noreferrer">Explore the original DWR map and downloads ↗</a></div>
-          <div id="frmap-depth-legend" style="margin:10px 0 18px;padding:12px;border:1px solid #326073;border-radius:10px;background:#071e29">
-            <strong style="display:block;margin-bottom:8px">Underwater terrain · visual key</strong>
-            <div aria-hidden="true" style="height:15px;border-radius:6px;background:linear-gradient(90deg,#0e1a48,#143969,#175b8f,#1981a6,#2da9b7,#58c1b1,#96cfa3,#d2dbaa)"></div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;gap:12px;margin-top:5px"><span>Deeper / darker</span><span>Shallower / lighter</span></div>
-            <p class="map-source-note">Qualitative color guide only until the DWR elevation raster is published with a calibrated NAVD88 legend. NOAA chart soundings may use a different datum.</p>
-          </div>
-          <strong>Visible layers</strong>
-          <label><input type="checkbox" data-map-layer="access" checked /> RICHFISH fishing locations</label>
-          <label><input type="checkbox" data-map-layer="currents" checked /> Bound current vectors</label>
-          <label><input type="checkbox" data-map-layer="gates" checked /> Access hard gates</label>
-          <label><input type="checkbox" data-map-layer="stations" checked /> NOAA CO-OPS stations</label>
-          <label><input type="checkbox" data-map-layer="buoys" checked /> NOAA NDBC coastal buoys</label>
-          <label><input type="checkbox" data-map-layer="bathymetry" checked /> NOAA ENC depth contours</label>
-          <label><input type="checkbox" data-map-layer="soundings" /> NOAA charted depth soundings (zoom in)</label>
-          <label><input type="checkbox" data-map-layer="surveys" /> NOAA surveyed bathymetry coverage</label>
-          <p class="map-source-note" id="frmap-survey-status" role="status">Survey footprints indicate available NOAA hydrographic datasets, not underwater heights or current survey accuracy.</p>
-          <label class="map-field" for="frmap-focus">Shoreline study area</label>
-          <select id="frmap-focus" class="map-select" aria-label="Jump to shoreline study area">
-            <option value="">Choose a shoreline area…</option>
-            <option value="37.905,-122.389,14">Ferry Point / Miller-Knox</option>
-            <option value="37.913,-122.373,14">Point Richmond waterfront</option>
-            <option value="37.909,-122.353,14">Richmond Inner Harbor</option>
-            <option value="38.016,-122.364,13">Point Pinole / San Pablo Bay</option>
-            <option value="38.055,-122.218,13">Carquinez Strait / Eckley</option>
-            <option value="37.78,-122.42,10">Central San Francisco Bay</option>
-            <option value="37.56,-122.22,10">South San Francisco Bay</option>
-            <option value="37.82,-122.49,11">Golden Gate / Marin shoreline</option>
-            <option value="38.01,-122.43,10">San Pablo Bay</option>
-            <option value="38.07,-122.20,11">Carquinez Strait</option>
-            <option value="38.08,-122.04,10">Suisun / Grizzly / Honker bays</option>
-            <option value="38.15,-121.91,11">Suisun Marsh / Montezuma Slough</option>
-            <option value="38.12,-121.68,10">Sacramento–San Joaquin Delta</option>
-            <option value="38.35,-121.57,10">Sacramento River / Delta</option>
-            <option value="37.98,-121.40,10">San Joaquin River / Stockton</option>
-            <option value="38.19,-122.98,9">Tomales / Bodega / Drakes bays</option>
-          </select>
-          <p class="map-source-note"><b>Local terrain source candidates:</b> <a href="https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ngdc.mgg.dem%3Asan_francisco_bay_P090_2018" target="_blank" rel="noopener noreferrer">NOAA Bay P090 (~10 m, MLLW)</a> and <a href="https://publish.data.ca.gov/dataset/san-francisco-bay-and-sacramento-san-joaquin-delta-dem-for-modeling-version-4-3" target="_blank" rel="noopener noreferrer">California DWR Bay–Delta DEM v4.3 (10 m package dated 2025)</a>. These are source references, not yet displayed terrain raster layers; verify grid datum, coverage, and survey vintage before use.</p>
-          <label><input type="checkbox" data-map-layer="baydem" /> Bay-specific NOAA P090 elevation image (MLLW, historical)</label>
-          <p id="frmap-baydem-status" class="map-source-note" role="status">NOAA P090 is a Bay-specific ~10 m bathymetric DEM derived substantially from historical measurements. Experimental WMS layer; switch on to test availability. This is NOT DWR v4.3.</p>
-          <label><input type="checkbox" data-map-layer="relief" checked /> Underwater shaded relief (NOAA ETOPO1)</label>
-          <label class="map-field" for="frmap-depth-opacity">Underwater layer opacity <output id="frmap-depth-opacity-value">65%</output></label>
-          <input id="frmap-depth-opacity" type="range" min="20" max="100" value="65" step="5" aria-label="Underwater map layer opacity" />
-          <p class="map-source-note">ETOPO1 is regional-scale relief, not a detailed shoreline-depth survey. Zoomed-in fishing analysis should favor NOAA ENC contours and higher-resolution local surveys.</p>
-          <div class="future-layer">NWS weather / hazards <small>Live context on bound fishing locations</small></div>
-          <div class="future-layer">MPAs / advisories / closures <small>Regulatory polygon hard-gates remain a separate data-ingestion task</small></div>
-          <p class="notice">Click anywhere for coordinate intelligence. When the exact point is not model-bound, FRmap reports the nearest evidence, stations and scored fishing options without pretending the nearby data were measured at your pin.</p>
-          <p class="map-source-note">NOAA ENC depth contours are chart-derived GIS context and are not certified for navigation.</p>
-        </aside>
-        <div id="frmap-canvas" class="frmap-canvas" aria-label="Interactive RICHFISH fishing map"></div>
-        <article id="frmap-report" class="map-report">
-          <span class="eyebrow">RAY'S CALL</span>
-          <h3>Select a mapped fishing location or click the water.</h3>
-          <p>RICHFISH will tell you what the evidence supports and what is still missing.</p>
-        </article>
-      </div>
-    </section>
+        </form></div>
+</section>
     <div class="rwt-calendar-banner"><img src="../assets/rwt-calendar-header.png?v=f01efd07" alt="Richmond Ray, Kida and their dog fishing along the Richmond waterfront at sunset — Rich Water Tavern" width="1981" height="201"></div>
     <section id="calendar" class="section shell fishing-calendar">
       <div class="section-heading">
