@@ -9,7 +9,7 @@
 @media(max-width:900px){.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.mapwrap,#map{height:580px;min-height:580px}.planner-grid{grid-template-columns:1fr 1fr}.planner-grid button{grid-column:1/-1}}@media(max-width:620px){.side{grid-template-columns:1fr}.mapwrap,#map{height:530px;min-height:530px}.mapbar{top:7px;right:7px;max-width:65%}.mapbar button{font-size:10px;padding:6px}.planner-results{grid-template-columns:1fr}.intro h1{font-size:19px}}
 </style></head><body>
 <main class="shell">
-<div class="intro"><div><div class="eyebrow">RICHFISH · Richmond Ray's Fishing Intelligence</div><h1>FR Map 2.0 · Find the fish, then find the spot</h1><div class="muted">Select a target, choose a water region, or click any fishing point. The heat layer represents relative fishing opportunity—not bathymetric depth.</div></div>
+<div class="intro"><div><div class="eyebrow">RICHFISH · Richmond Ray's Fishing Intelligence</div><h1>FR Map 2.0 · Find the fish, then find the spot</h1><div class="muted">Select a target, choose a water region, or click any fishing point. The heat layer represents relative fishing opportunity—not bathymetric depth. Heat extents near shore are approximate, not surveyed water boundaries.</div></div>
 <a class="button" href="location-manager.html" target="_parent">Manage My Fishing Spots</a></div>
 <div class="layout">
 <div class="side">
@@ -60,14 +60,14 @@ var community=p.kind==="community"&&hit?65:p.kind==="community"?14:targetHit?33:
 var knowledge=targetHit?84:hit?76:/(pier|shoreline|harbor|bay|cove|channel)/i.test([p.habitat,p.site_type,p.name].join(" "))?40:25;
 var score=Math.min(100,Math.round(.40*personal+.35*community+.25*knowledge));
 return {score:score,matched:hit||targetHit,personal:personal,community:community,knowledge:knowledge}}
-function candidate(p){return p.kind==="spot"||p.kind==="catch"||p.kind==="sighting"||p.site_type||p.kind==="strike"}
+function candidate(p){if(p.kind==="bait")return false;return p.kind==="spot"||p.kind==="catch"||p.kind==="sighting"||p.kind==="community"||p.kind==="strike"||p.kind==="saved"||!!p.site_type}
 function ranked(s,region){return data.filter(function(p){return coords(p)&&candidate(p)&&(!region||regionMatches(p,region))}).map(function(p){return {p:p,e:speciesEvidence(p,s)}}).sort(function(a,b){return b.e.score-a.e.score})}
 function regionMatches(p,r){if(!r)return true;var loc=norm(regionalName(p)),reg=norm(r);if(loc===reg||loc.indexOf(reg)>=0||reg.indexOf(loc)>=0)return true;
 if(r==="Carquinez Strait")return /crockett|eckley|port costa|little bull|carquinez/.test(loc);
 if(r==="San Pablo Bay")return /pinole|san pablo|richmond/.test(loc);
 if(r==="Central Bay")return /ferry point|central bay|richmond/.test(loc);
 return false}
-function top3(region){var rankedSpecies=SPECIES.map(function(s){var rows=ranked(s,region);var best=rows.slice(0,6);return {s:s,score:best.reduce(function(n,r){return n+r.e.score},0)/(best.length||1)}}).sort(function(a,b){return b.score-a.score});return rankedSpecies.slice(0,3)}
+function top3(region){var rankedSpecies=SPECIES.map(function(s){var rows=ranked(s,region).filter(function(r){return r.e.matched&&r.e.score>=24});var best=rows.slice(0,6);return {s:s,score:best.reduce(function(n,r){return n+r.e.score},0)/(best.length||1),count:best.length}}).filter(function(v){return v.count>0}).sort(function(a,b){return b.score-a.score});return rankedSpecies.slice(0,3)}
 function localSave(){try{var v=JSON.parse(localStorage.getItem(STORE)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}}
 function flatten(source){if(Array.isArray(source))return source;if(source&&Array.isArray(source.locations))return source.locations;return []}
 function combine(){var baseById=new Map(seed.map(function(p){return [p.id,p]}));saved=localSave();saved.forEach(function(p){if(p.id)baseById.set(p.id,Object.assign({},baseById.get(p.id)||{},p,{kind:p.kind||"saved"}))});data=Array.from(baseById.values());el("data-count").textContent=data.filter(function(p){return coords(p)}).length+" coordinate records available; "+saved.length+" locally saved/edited locations. Reports remain separate from saved spots."}
@@ -83,11 +83,11 @@ points.forEach(function(p){var c=coords(p);if(!c)return;var gold=candidates.has(
 function showSpotTargets(p){var top=SPECIES.map(function(s){return {s:s,e:speciesEvidence(p,s)}}).sort(function(a,b){return b.e.score-a.e.score}).slice(0,3);
 el("selection").innerHTML="<b>Selected: "+esc(p.name)+"</b><br>"+esc(evidenceLabel(p))+'<div class="small" style="margin:6px 0 4px">Top targets at this point:</div>';
 top.forEach(function(v){var b=document.createElement("button");b.textContent=v.s+" · "+v.e.score;b.onclick=function(){el("species").value=v.s;displaySpecies=v.s;refresh(false)};el("selection").appendChild(b)})}
-function renderRegionButtons(){var top=top3(displayRegion),box=el("top-fish");box.innerHTML="";top.forEach(function(x){var b=document.createElement("button");b.type="button";b.className=x.s===displaySpecies?"active":"";b.textContent=x.s; b.onclick=function(){displaySpecies=x.s;el("species").value=x.s;refresh(false)};box.appendChild(b)})}
+function renderRegionButtons(){var top=top3(displayRegion),box=el("top-fish");box.innerHTML="";if(!top.length){box.innerHTML="<span class=\"small\">No species-specific evidence for this region yet. Select a nearby region or add a fishing report.</span>";return}top.forEach(function(x){var b=document.createElement("button");b.type="button";b.className=x.s===displaySpecies?"active":"";b.textContent=x.s; b.onclick=function(){displaySpecies=x.s;el("species").value=x.s;refresh(false)};box.appendChild(b)})}
 function renderRanks(){var rows=ranked(displaySpecies,displayRegion).slice(0,10),box=el("rankings");box.innerHTML="";el("matchcount").textContent=rows.length+" shown";rows.forEach(function(r,i){var p=r.p;var b=document.createElement("button");b.type="button";b.className="rank";b.innerHTML='<div class="meta"><span><b>'+(i+1)+'.</b> '+esc(regionalName(p))+'</span><b>'+r.e.score+'/100</b></div><strong>'+esc(p.name)+'</strong><div class="why">'+esc(evidenceLabel(p))+' · '+esc((p.note||p.habitat||"Habitat suitability").slice(0,135))+'</div>';b.onclick=function(){map.setView(coords(p),15);selectedPoint=p;showSpotTargets(p);markerLayer.eachLayer(function(l){if(l.getLatLng&&l.getLatLng().lat===coords(p)[0]&&l.getLatLng().lng===coords(p)[1])l.openPopup()})};box.appendChild(b)})}
 function fWeight(p){var e=speciesEvidence(p,displaySpecies);return e.score}
 function drawHeat(){heatLayer.clearLayers();if(!showHeat)return;var rows=ranked(displaySpecies,displayRegion).filter(function(r){return r.e.matched&&r.e.score>=23}).slice(0,18);if(!rows.length)rows=ranked(displaySpecies,displayRegion).slice(0,6);
-rows.forEach(function(row){var c=coords(row.p),v=row.e.score,kind=row.p.kind;if(!c)return;var color=v>=65?"#f2a650":v>=48?"#ead06d":"#64bfc4";var radius=kind==="catch"?250:kind==="sighting"?310:kind==="community"?420:370;
+rows.forEach(function(row){var c=coords(row.p),v=row.e.score,kind=row.p.kind;if(!c)return;var color=v>=65?"#f2a650":v>=48?"#ead06d":"#64bfc4";var radius=kind==="catch"?185:kind==="sighting"?220:kind==="community"?260:225;
 L.circle(c,{radius:radius,color:color,weight:0,fillColor:color,fillOpacity:Math.min(.33,Math.max(.11,v/340)),interactive:false}).addTo(heatLayer);
 L.circle(c,{radius:Math.max(85,radius*.35),color:color,weight:0,fillColor:color,fillOpacity:Math.min(.34,Math.max(.13,v/260)),interactive:false}).addTo(heatLayer)});
 el("heat-title").textContent=displaySpecies+" · relative opportunity";el("heat-btn").classList.toggle("primary",showHeat)}
@@ -103,7 +103,7 @@ function formatDate(d){return d.toLocaleString(undefined,{month:"short",day:"num
 function plan(){var start=new Date(el("start").value),end=new Date(el("end").value);el("plan-errors").textContent="";el("plan-results").innerHTML="";
 if(!Number.isFinite(+start)||!Number.isFinite(+end)||end<=start){el("plan-errors").textContent="Enter a valid start and later end time.";return}
 if(end-start>14*86400000){el("plan-errors").textContent="Limit one trip to 14 days for this planner.";return}
-var choices=[],taken=new Set();for(var s of SPECIES){var best=ranked(s,displayRegion).find(function(x){return x.e.score>=25&&!taken.has(x.p.id)});if(best)choices.push({s:s,best:best})}
+var choices=[],taken=new Set();for(var s of SPECIES){var best=ranked(s,displayRegion).find(function(x){return x.e.matched&&x.e.score>=25&&!taken.has(x.p.id)});if(best)choices.push({s:s,best:best})}
 choices.sort(function(a,b){return b.best.e.score-a.best.e.score});var top=choices.slice(0,2);if(top.length<2){el("plan-errors").textContent="Insufficient distinct mapped fishing sites with evidence in the selected region; widen your search.";return}
 top.forEach(function(x,i){var p=x.best.p,r=x.best.e;var win="Favor moving water and low-light periods during "+formatDate(start)+" – "+formatDate(end)+"; exact tide windows pending live NOAA data.";var div=document.createElement("div");div.className="plan-result";div.innerHTML="<h3>"+(i+1)+". "+esc(p.name)+"</h3><div class='small'>"+esc(regionalName(p))+" · "+r.score+"/100 relative evidence index</div><p><b>Target:</b> "+esc(x.s)+"<br><b>Bait:</b> "+esc(baitFor(x.s))+"</p><p class='small'>"+esc(win)+"</p><button type='button'>Show on map</button>";
 div.querySelector("button").onclick=function(){displaySpecies=x.s;el("species").value=x.s;refresh(false);map.setView(coords(p),15)};el("plan-results").appendChild(div)})}
