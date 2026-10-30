@@ -19,12 +19,13 @@
     <button class="nav-toggle" aria-label="Open navigation">☰</button>
     <nav>
       <a href="#home">Tavern</a>
-      <a href="#spots">Rooms</a>
+      <a href="fishing-locations.html">Fishing Locations & Map</a>
       <a href="fish-now.html">Fish Right Now</a>
       
       <a href="calendar.html">Fishing Calendar</a>
       <a href="../kida/">Kida · Catch & Cook</a>
       <a href="#documents">Field Library</a>
+      <a href="species-explorer.html">Species Explorer</a>
       <a href="fishing-intelligence.html">Fishing Intelligence</a>
       <a class="bootcamp-link" href="bootcamp/">101 Bootcamp</a>
       <a href="#guide">Fishing Bible</a>
@@ -47,7 +48,7 @@
         <p>Richmond-centered fishing intelligence for the shoreline, San Pablo Bay, Carquinez Strait, Suisun Bay, the Sacramento–San Joaquin Delta and nearby coast. Conditions, target species, local spots, rigs, field knowledge and transparent source tracking—organized the way an angler actually plans a trip.</p>
         <div class="actions">
           <a class="btn primary" href="#fish-now-live">Use my location · Fish near me</a>
-          <a class="btn" href="#finder">Browse target species</a>
+          <a class="btn" href="species-explorer.html">Browse target species</a>
         </div>
       </div>
       <div class="hero-cards" id="condition-strip"></div>
@@ -141,22 +142,9 @@
 
       <p class="notice">The 0–6 Calendar Rating is a general tide/lunar planning index, separate from the live Fish Now Activity Rating and not a catch probability. Weather, water conditions, species seasonality, community evidence, access, regulations and safety remain separate decision layers and can override a favorable calendar rating. Tides4Fishing is credited as a feature/workflow reference; numerical tide data come from NOAA CO-OPS.</p>
     </section>
-    <section id="spots" class="section shell">
-      <div class="section-heading"><div><span class="eyebrow">RAY'S LOCATION FILES</span><h2>Full location inventory — not four demo records.</h2></div><div class="section-actions"><a class="btn" href="location-manager.html">Add / update fishing locations →</a><a class="btn" href="google-maps-import.html">Import Google Maps saved places →</a><span class="sync">43 normalized master records</span></div></div>
-      <div class="workspace">
-        <aside class="selector-panel"><label for="spot-search">Find a spot</label><input id="spot-search" placeholder="Search spot or region" /><div id="spot-list" class="select-list"></div></aside>
-        <article id="spot-detail" class="detail-panel loading">Loading spot intelligence…</article>
-      </div>
-    </section>
+    
     <a class="rwt-kida-banner-link" href="../kida/" aria-label="Visit Kida's Catch and Cook Kitchen"><span class="sr-only">Visit Kida's Catch and Cook Kitchen</span></a>
-    <section id="finder" class="section shell alt">
-      <div class="section-heading"><div><span class="eyebrow">SPECIES EXPLORER</span><h2>Browse the full 230-species RICHFISH catalog.</h2></div><span class="sync">Catalog evidence + condition-aware recommendations where supported</span></div>
-      <div class="workspace">
-        <aside class="selector-panel"><label for="species-search">Find a species</label><input id="species-search" placeholder="Search common name, scientific name or group" /><div id="species-list" class="select-list"></div></aside>
-        <article id="finder-detail" class="detail-panel loading">Loading species recommendations…</article>
-      </div>
-    </section>
-
+    
     <section id="documents" class="section shell">
       <div class="section-heading"><div><span class="eyebrow">THE FIELD LIBRARY</span><h2>Master guides, working datasets and operational references.</h2></div><span class="sync" id="doc-count"></span></div>
       <div id="document-grid" class="document-grid"></div>
