@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="RICHFISH community fishing reports, angler observations and scientific source intelligence for Richmond Ray's Fishin Tavern.">
+<title>Fishing Intelligence | Richmond Ray's Fishin Tavern</title>
+<style>
+:root{color-scheme:dark;--bg:#081c20;--card:#102e34;--border:#355a5b;--ink:#ecf7f4;--muted:#b6cfc9;--accent:#b8e7d8;--gold:#f4cf87}
+*{box-sizing:border-box}body{font:15px/1.57 system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;color:var(--ink);background:var(--bg)}a{color:var(--accent)}
+header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;background:#123239;border-bottom:1px solid #385b59;padding:14px clamp(18px,4vw,48px)}header strong{font-size:16px}header nav{display:flex;flex-wrap:wrap;gap:17px;font-size:13px}
+main{max-width:1250px;margin:auto;padding:clamp(18px,3vw,36px)}h1{font-size:clamp(27px,3.7vw,44px);line-height:1.15;letter-spacing:-.03em;margin:10px 0}h2{font-size:23px;margin:0 0 5px}h3{font-size:17px;margin:8px 0}p{margin:9px 0}.muted,small{color:var(--muted)}
+.hero{background:linear-gradient(125deg,#183f40,#0b262f);border:1px solid var(--border);padding:clamp(20px,3vw,35px);border-radius:15px}
+.overline{letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:750;font-size:11px}.hero p{max-width:810px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0 23px}.stat{background:#12353a;border:1px solid var(--border);border-radius:12px;padding:14px}.stat strong{font-size:clamp(23px,3vw,32px);line-height:1.1;display:block;font-variant-numeric:tabular-nums}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+section{margin-top:34px}.heading{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px;margin-bottom:14px}.note{border-left:3px solid var(--gold);padding:11px 15px;background:#193a3d;border-radius:0 8px 8px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:13px}.card{border:1px solid var(--border);border-radius:12px;background:var(--card);padding:16px;min-width:0}.card strong{font-size:16px}.card .meta{font-size:12px;color:var(--muted);display:block;margin-top:5px}.card .body{margin:10px 0}.card a{font-size:13px}.badge{display:inline-block;font-size:11px;line-height:1.4;padding:3px 9px;border:1px solid #779c91;border-radius:99px;color:#d5f3e9}.badge.gold{border-color:#b99459;color:#f5d69b}.badge.grey{border-color:#64818b;color:#bfd2d7}.details{padding-top:10px;margin-top:11px;border-top:1px solid #315459}.details div{font-size:13px;margin:4px 0}.details b{color:#dbeee9}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 16px}input,select{background:#12333a;color:var(--ink);border:1px solid #648f88;border-radius:9px;padding:11px;font:inherit;min-width:200px;flex:1}input:focus,select:focus,a:focus-visible{outline:2px solid #f4cf87;outline-offset:2px}
+.tags{display:flex;flex-wrap:wrap;gap:7px}.tag{padding:5px 10px;font-size:12px;border:1px solid #446b68;border-radius:20px;background:#14363a}
+.kpi{display:inline-block;color:#f1d398;font-size:12px}.empty{color:var(--muted);padding:18px;border:1px dashed var(--border);border-radius:10px}
+.disclaimer{font-size:13px;color:var(--muted);margin-top:18px}footer{padding:24px;border-top:1px solid var(--border);margin-top:36px;color:var(--muted);text-align:center}
+@media(max-width:750px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{grid-template-columns:1fr}header nav{gap:12px}}@media(max-width:390px){.stats{grid-template-columns:1fr 1fr}.stat{padding:10px}.toolbar>*{min-width:100%}}
+</style>
+</head>
+<body>
+<header><strong>RICHMOND RAY'S · FISHIN' TAVERN</strong><nav><a href="./">Tavern</a><a href="fishing-locations.html">Master Fishing Map</a><a href="./#frmap">FRmap</a></nav></header>
+<main>
+<div class="hero"><span class="overline">RICHFISH · COMMUNITY INTELLIGENCE</span><h1>The catch reports. The patterns. The water.</h1><p>Real sourced angler observations combined with fishing methods, seasonal knowledge and geographic context. Individual reports are counted once—not required to be independently corroborated before Richmond Ray learns from them.</p><p class="muted" id="last-updated">Loading the latest published research snapshot…</p></div>
+<div class="stats" id="stats" aria-live="polite"></div>
+<div class="note">An angler's post, a catch photograph, a charter advertisement and a regional bite forecast are different types of information. Reports are labeled by what they actually establish; a boat report is never silently treated as a shoreline catch.</div>
+
+<section id="community">
+<div class="heading"><div><span class="overline">NEW · DIRECT SOCIALCRAWL IMPORT</span><h2>Community fishing reports</h2><p class="muted" id="group-info">Facebook source group · collecting reports</p></div><a href="#archive">View wider report archive</a></div>
+<div class="toolbar"><input id="social-search" aria-label="Search community reports" placeholder="Search lake, species, bait, technique"><select id="social-type" aria-label="Filter community report type"><option value="intelligence">Fishing reports &amp; field intelligence</option><option value="all">All retrieved posts</option><option value="fishing_report">Specific fishing reports</option><option value="catch_claim">Angler catch claims</option><option value="regional_report">Regional bite reports</option><option value="promotion">Promotions</option><option value="image_only">Image-only items</option></select></div>
+<p class="muted" id="social-result-count" aria-live="polite"></p>
+<div class="cards" id="social-cards"></div>
+<p class="disclaimer">These are time-stamped original-source summaries and RICHFISH interpretations. Media descriptions are informative only; they do not establish fish species without sufficient visible detail. Personal author information and expiring Facebook image URLs are not published here.</p>
+</section>
+
+<section id="archive"><div class="heading"><div><span class="overline">FISHING HISTORY · PUBLIC SOURCES</span><h2>Regional reports and fishing conditions</h2><p class="muted">Additional published reports, observations and dock totals. Dates and fishing platform are displayed where supplied.</p></div></div>
+<div class="toolbar"><input id="report-search" aria-label="Search public research reports" placeholder="Search location, species, method"><select id="report-type" aria-label="Filter archived report type"><option value="">All report categories</option></select></div>
+<p class="muted" id="archive-result-count"></p><div id="archive-cards" class="cards"></div>
+</section>
+
+<section id="species"><div class="heading"><div><span class="overline">THE RICHFISH TARGET LIST</span><h2>Primary species and incidental catches</h2></div></div><div class="tags" id="target-groups"></div></section>
+<section id="research"><div class="heading"><div><span class="overline">BACKGROUND KNOWLEDGE</span><h2>Science, maps and reporting sources</h2><p class="muted">Habitat references inform fishing hypotheses; they are not themselves catch events.</p></div></div><div class="cards" id="source-cards"></div></section>
+</main><footer>RICHFISH · Richmond Ray's Fishin' Tavern · Evidence-led fishing intelligence</footer>
+<script>
+const $=id=>document.getElementById(id);
+const safe=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+const goodUrl=u=>{try{let p=new URL(u);return ['https:','http:'].includes(p.protocol)?p.href:null}catch{return null}};
+const joinList=v=>Array.isArray(v)?v.join(', '):v||'Not recorded';
+const titleCase=s=>String(s||'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
+function metaRow(k,v){return '<div><b>'+safe(k)+':</b> '+safe(v)+'</div>'}
+function infoCard(p){
+ const types={fishing_report:'Fishing report',catch_claim:'Angler catch claim',regional_report:'Regional bite commentary',promotion:'Promotional post',image_only:'Image-only post',other:'Community post'};
+ const type=p.type||'other',link=goodUrl(p.post_url);
+ const methods=joinList(p.reported_bait_methods);const species=joinList(p.species);
+ const m=[metaRow('Species',species),metaRow('Bait / technique',methods),metaRow('Water',p.reported_water_temp_descriptor||'Not supplied'),metaRow('Fishing platform',p.platform||'Not supplied')];
+ if(p.reported_depth_ft)m.push(metaRow('Reported depth',JSON.stringify(p.reported_depth_ft)));
+ if(p.photo_count)m.push(metaRow('Attached imagery',p.photo_count+' image(s) · '+(p.photo_summary||'No usable description')));
+ return '<article class="card"><span class="badge '+(type==='promotion'||type==='image_only'?'grey':'gold')+'">'+safe(types[type]||titleCase(type))+'</span><h3>'+safe(p.region||'Location not specified')+'</h3><span class="meta">'+safe(p.report_date||'Date unknown')+' · '+safe(p.report_time_pacific?p.report_time_pacific+' Pacific':'Time unknown')+' · '+safe(p.source_group||'Public Facebook group')+'</span><p class="body">'+safe(p.summary||'No fishing observation supplied')+'</p><div class="details">'+m.join('')+'</div>'+(link?'<p><a href="'+safe(link)+'" target="_blank" rel="noopener noreferrer">Open original public post</a></p>':'')+'</article>';
+}
+function reportCard(r){
+ const u=goodUrl(r.source_url),date=r.report_date||'Date unknown',kind=r.record_type||'report';
+ return '<article class="card"><span class="badge">'+safe(titleCase(kind))+'</span><h3>'+safe(r.region_or_location||'Area unknown')+'</h3><span class="meta">'+safe(date)+' · '+safe(r.platform||'Platform unknown')+' · '+safe(r.source_name||'Public source')+'</span><p class="body">'+safe(r.observation_summary||'No summary')+'</p><div class="details">'+metaRow('Species',joinList(r.species))+metaRow('Bait / method',r.technique||'Not supplied')+'</div>'+(u?'<p><a href="'+safe(u)+'" target="_blank" rel="noopener noreferrer">Read original source</a></p>':'')+'</article>';
+}
+(async()=>{
+ const response=await fetch('data/public-fishing-intelligence-2026-10-30.json',{cache:'no-store'});if(!response.ok)throw Error('Published research data missing (HTTP '+response.status+')');
+ const d=await response.json(),community=d.community_intelligence||{},posts=community.posts||[],archive=d.report_entries||[],sources=d.public_sources||[];
+ $('last-updated').textContent='Collected '+(community.collection_date||'date not supplied')+' · public research snapshot '+(d.last_updated||'date unknown');
+ const stats=[['Facebook posts collected',community.posts_retrieved||0],['Fishing reports or claims',community.report_or_claim_count||0],['Original image attachments reviewed',community.photo_attachments_examined||0],['Additional published entries',archive.length]];
+ $('stats').innerHTML=stats.map(s=>'<div class="stat"><strong>'+safe(s[1])+'</strong><span>'+safe(s[0])+'</span></div>').join('');
+ $('group-info').textContent=(community.source_group||'Source unknown')+' · '+(community.api_pages_reviewed||0)+' imported page(s) · '+(community.sherman_island_specific_catch_reports||0)+' Sherman Island-specific catches in this import';
+ function showSocial(){const q=$('social-search').value.trim().toLowerCase(),v=$('social-type').value;const rows=posts.filter(p=>(v==='all'||(v==='intelligence'?['fishing_report','catch_claim','regional_report'].includes(p.type):p.type===v))&&(!q||[p.region,p.summary,p.source_group,(p.species||[]).join(' '),joinList(p.reported_bait_methods)].join(' ').toLowerCase().includes(q)));$('social-result-count').textContent=rows.length+' of '+posts.length+' imported posts shown';$('social-cards').innerHTML=rows.map(infoCard).join('')||'<div class="empty">No posts match these filters.</div>'}
+ $('social-search').addEventListener('input',showSocial);$('social-type').addEventListener('change',showSocial);showSocial();
+ const typeSelect=$('report-type');[...new Set(archive.map(r=>r.record_type).filter(Boolean))].sort().forEach(kind=>{const e=document.createElement('option');e.value=kind;e.textContent=titleCase(kind);typeSelect.append(e)});
+ function showArchive(){const q=$('report-search').value.trim().toLowerCase(),type=typeSelect.value;const rows=archive.filter(r=>(!type||r.record_type===type)&&(!q||[r.region_or_location,r.observation_summary,r.source_name,(r.species||[]).join(' '),r.technique].join(' ').toLowerCase().includes(q)));$('archive-result-count').textContent=rows.length+' of '+archive.length+' source entries';$('archive-cards').innerHTML=rows.map(reportCard).join('')||'<div class="empty">No matching source reports.</div>'}
+ $('report-search').addEventListener('input',showArchive);typeSelect.addEventListener('change',showArchive);showArchive();
+ $('target-groups').innerHTML=(d.species_priorities||[]).map(t=>'<span class="tag">'+safe(t.label)+(t.priority==='incidental_non_target'?' · incidental only':'')+'</span>').join('');
+ $('source-cards').innerHTML=sources.map(r=>{const u=goodUrl(r.url);return '<article class="card"><span class="badge grey">'+safe(titleCase(r.category))+'</span><h3>'+safe(r.title)+'</h3><p>'+safe(r.review_summary)+'</p><small>'+safe(r.coverage)+'</small>'+(u?'<p><a href="'+safe(u)+'" target="_blank" rel="noopener noreferrer">Open resource</a></p>':'')+'</article>'}).join('');
+})().catch(e=>{$('stats').innerHTML='<div class="empty">Unable to load RICHFISH source data: '+safe(e.message)+'</div>';$('last-updated').textContent='Research data unavailable';});
+</script>
+</body>
+</html>
