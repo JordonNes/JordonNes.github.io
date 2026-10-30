@@ -1,8 +1,8 @@
 {
-  "schema_version": "0.3",
+  "schema_version": "0.4",
   "register_name": "RICHFISH Community Evidence Register",
-  "purpose": "Preserve community catch and bait reports as auditable evidence signals without converting isolated claims into bite-status statements.",
-  "updated_at": "2026-09-18T19:00:00Z",
+  "purpose": "Retain and tally sourced angler observations, articles, blogs, posts and field notes without requiring independent corroboration for inclusion. Report counts represent reported activity, not independently measured fish abundance.",
+  "updated_at": "2026-10-30",
   "required_fields": [
     "date",
     "source",
@@ -17,30 +17,43 @@
     "reliability_tier"
   ],
   "confidence_scales": {
-    "location_confidence": ["low", "medium", "high"],
-    "species_id_confidence": ["low", "medium", "high"],
-    "photograph_evidence": ["none", "weak", "moderate", "strong"]
+    "location_confidence": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "species_id_confidence": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "photograph_evidence": [
+      "none",
+      "weak",
+      "moderate",
+      "strong"
+    ]
   },
   "reliability_tiers": {
     "unverified_signal": {
-      "label": "Unverified signal",
-      "minimum": "Single report or otherwise insufficiently corroborated claim.",
-      "public_language": "Unverified signal: one recent reported catch."
+      "label": "Reported observation",
+      "minimum": "One original report is retained and counted once.",
+      "public_language": "One sourced observation"
     },
     "corroborated_signal": {
-      "label": "Corroborated signal",
-      "minimum": "At least two plausibly independent reports with compatible time/location/species evidence, or one report with strong geolocated photographic evidence plus an independent corroborator.",
-      "public_language": "Corroborated local signal: multiple compatible recent reports."
+      "label": "Multiple supporting reports",
+      "minimum": "Two or more compatible underlying observations.",
+      "public_language": "Multiple source reports"
     },
     "strong_recurring_evidence": {
-      "label": "Strong recurring evidence",
-      "minimum": "Multiple independent reports recurring across a short window, normally five or more within three days, plus at least one different evidence class such as tackle-shop report, RICHFISH field observation, survey/creel evidence, or strong geolocated imagery.",
-      "public_language": "Strong recurring evidence: repeated recent reports supported by independent evidence."
+      "label": "Recurring report pattern",
+      "minimum": "Repeated observations over time.",
+      "public_language": "Recurring fishing reports"
     },
     "verified_field_evidence": {
-      "label": "Verified field evidence",
-      "minimum": "Direct RICHFISH field observation or equivalent documented evidence with time/location/species verification. This verifies the observation, not that the bite is generally hot.",
-      "public_language": "Verified field observation at the stated time and place."
+      "label": "Direct field observation",
+      "minimum": "First-hand field note recorded with available metadata.",
+      "public_language": "Direct field observation"
     }
   },
   "rules": [
@@ -51,5 +64,106 @@
     "Official regulations, closures, access rules, and health advisories are separate controlling sources and cannot be overridden by community evidence.",
     "Every derived public statement must retain the source report IDs and generation timestamp."
   ],
-  "records": []
+  "records": [],
+  "methodology_note": "External sources support structured observation metadata, quality control, independent validation, species/photo verification, uncertainty handling, and caution about social-media/self-reported bias. RICHFISH reliability-tier thresholds are project-defined editorial heuristics and are not presented as NOAA, GBIF, iNaturalist, or peer-reviewed statistical thresholds.",
+  "methodology_sources": [
+    {
+      "id": "noaa-mrip-standards",
+      "title": "NOAA Fisheries Recreational Fishing Survey and Data Standards",
+      "url": "https://www.fisheries.noaa.gov/recreational-fishing-data/recreational-fishing-survey-and-data-standards",
+      "supports": [
+        "quality assurance",
+        "independent validation where possible",
+        "documented data editing",
+        "bias/error evaluation",
+        "transparent data management"
+      ]
+    },
+    {
+      "id": "noaa-species-verification",
+      "title": "NOAA Fisheries Species Verification Program",
+      "url": "https://www.fisheries.noaa.gov/new-england-mid-atlantic/fisheries-observers/species-verification-program",
+      "supports": [
+        "photographic/sample evidence",
+        "species identification verification",
+        "species-ID confidence"
+      ]
+    },
+    {
+      "id": "gbif-occurrence-quality",
+      "title": "GBIF Data Quality Requirements: Occurrence Datasets",
+      "url": "https://www.gbif.org/data-quality-requirements-occurrences",
+      "supports": [
+        "event date",
+        "basis of record",
+        "species identity",
+        "coordinates",
+        "coordinate uncertainty",
+        "stable occurrence IDs"
+      ]
+    },
+    {
+      "id": "inaturalist-dqa",
+      "title": "iNaturalist Data Quality Assessment",
+      "url": "https://help.inaturalist.org/en/support/solutions/articles/151000169936",
+      "supports": [
+        "date accuracy",
+        "georeferencing",
+        "photo/sound evidence",
+        "community-supported identification",
+        "quality grading"
+      ]
+    },
+    {
+      "id": "vitale-2021-social-media",
+      "title": "Characterizing the Profile of Recreational Fishers Who Share Their Catches on Social Media",
+      "url": "https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2021.768047/full",
+      "supports": [
+        "social-media data can supplement monitoring",
+        "sharer/avidity bias",
+        "trophy/showcasing bias",
+        "need for quality control and cautious interpretation"
+      ]
+    },
+    {
+      "id": "venturelli-2017-angler-apps",
+      "title": "Angler apps as a source of recreational fisheries data: opportunities, challenges and proposed standards",
+      "url": "https://doi.org/10.1111/faf.12189",
+      "supports": [
+        "minimum trip/catch data standards",
+        "self-reported data can be useful",
+        "data-quality and recruitment bias must be addressed",
+        "integration as complementary evidence"
+      ]
+    },
+    {
+      "id": "frontiers-2026-georeferenced-catch",
+      "title": "Pilot multilingual citizen-science mobile application for georeferenced marine catch observations",
+      "url": "https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2026.1918530/full",
+      "supports": [
+        "duplicate removal",
+        "non-fish/photo quality control",
+        "georeferenced catch imagery",
+        "location claims require contextual review"
+      ]
+    }
+  ],
+  "reporting_policy": {
+    "inclusion_rule": "All attributable fishing reports may be recorded, regardless of independent corroboration.",
+    "counting_unit": "One underlying event or observation; mirrors, reposts and article syndication share an event identifier.",
+    "use": "Summaries by location, target species, technique, bait, source category and date; distinguish source counts from unique-event counts.",
+    "categories": [
+      "personal_field_observation",
+      "community_report",
+      "tackle_shop_report",
+      "article",
+      "blog",
+      "social_post",
+      "agency_survey",
+      "historical_knowledge"
+    ],
+    "missing_data": "Unknown dates/species remain null; never fabricate.",
+    "freshness": "Historical observations remain available; show age for current-action insights.",
+    "hard_gates": "Legal access, fishing restrictions, closures, contamination and physical safety remain distinct and authoritative."
+  }
 }

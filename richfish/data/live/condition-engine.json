@@ -1,0 +1,5204 @@
+{
+  "schemaVersion": "0.2",
+  "generatedAt": "2026-10-30T22:52:22.885Z",
+  "engine": {
+    "name": "RICHFISH Condition Engine",
+    "version": "0.2.2",
+    "status": "heuristic-calibration",
+    "principle": "Separate environmental condition fit from evidence confidence. Missing inputs reduce confidence rather than being silently replaced with invented values.",
+    "note": "Condition Fit is environmental suitability, not catch probability. Data Confidence is evidence quality/coverage, not catch probability."
+  },
+  "sourceStatus": {
+    "noaaAvailable": true,
+    "noaaGeneratedAt": "2026-10-30T22:50:48.882Z",
+    "usgsAvailable": true,
+    "usgsGeneratedAt": "2026-10-30T22:51:25.213Z",
+    "sfbofsAvailable": true,
+    "sfbofsGeneratedAt": "2026-10-30T22:52:15.797939+00:00",
+    "sfbofsModelCycle": "2026-10-30T21:00:00+00:00",
+    "sfbofsModelFreshness": "fresh",
+    "sfbofsForecastHorizonStatus": "complete",
+    "sfbofsMaxForecastHour": 48
+  },
+  "spots": {
+    "point-pinole": {
+      "id": "point-pinole",
+      "name": "Point Pinole Regional Shoreline",
+      "region": "San Pablo Bay",
+      "binding": {
+        "noaaStation": "9414863",
+        "usgsFlowStation": "USGS-11447650",
+        "label": "Richmond / San Pablo Bay"
+      },
+      "observations": {
+        "noaaStationId": "9414863",
+        "noaaStationName": "Richmond, CA",
+        "waterLevelFt": 7.897,
+        "waterTemperatureF": 63,
+        "salinityPsu": null,
+        "windMph": 7.19,
+        "windDirection": "S",
+        "windDegreesFrom": 185,
+        "tide": {
+          "trend": "falling",
+          "nextTurnType": "low",
+          "nextTurnAt": "2026-10-30 22:29",
+          "minutesToTurn": 397,
+          "phaseFraction": 0.12
+        },
+        "freshwater": {
+          "stationId": "USGS-11447650",
+          "value": 9270,
+          "unit": "ft^3/s",
+          "observedAt": "2026-10-30T22:15:00+00:00",
+          "freshnessStatus": "fresh",
+          "ageMinutes": 36,
+          "baseline31dMean": null,
+          "ratioTo31dMean": null,
+          "approvalStatus": "Provisional",
+          "qualifier": null
+        },
+        "current": {
+          "eastwardMps": -0.01428,
+          "northwardMps": 0.01585,
+          "speedMps": 0.02134,
+          "speedKnots": 0.041,
+          "speedMph": 0.048,
+          "towardDegreesTrue": 318,
+          "towardCardinal": "NW",
+          "directionReference": "true-north",
+          "cellConsistency": "same-horizontal-cell",
+          "rotationApplied": false,
+          "gridAngleRadians": null,
+          "eastCell": {
+            "value": -0.014276853762567043,
+            "lat": 38.0071907043457,
+            "lon": -122.35026550292969,
+            "distanceKm": 0.829,
+            "latVariable": "latc",
+            "lonVariable": "lonc",
+            "indices": {
+              "nele": 56010
+            }
+          },
+          "northCell": {
+            "value": 0.015854349359869957,
+            "lat": 38.0071907043457,
+            "lon": -122.35026550292969,
+            "distanceKm": 0.829,
+            "latVariable": "latc",
+            "lonVariable": "lonc",
+            "indices": {
+              "nele": 56010
+            }
+          },
+          "localShear": {
+            "available": true,
+            "radiusKm": 1.5,
+            "sampleCount": 32,
+            "p90VelocityGradientMpsPerKm": 0.0838,
+            "medianVelocityGradientMpsPerKm": 0.042,
+            "p90DirectionDifferenceDegrees": 148.1,
+            "speedRangeKnots": 0.122,
+            "localShearIndex": 50,
+            "category": "high",
+            "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+          },
+          "validTime": "2026-10-30T23:00:00+00:00",
+          "forecastHour": 2,
+          "dataset": "sfbofs.t21z.20261030.fields.f002.nc",
+          "modelCycle": "2026-10-30T21:00:00+00:00",
+          "modelFreshness": "fresh",
+          "trend": {
+            "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+            "deltaKnots": 0.695,
+            "direction": "strengthening"
+          },
+          "forecastSeries": [
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "forecastHour": 2,
+              "requestedLeadHours": 0,
+              "speedKnots": 0.041,
+              "speedMph": 0.048,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 50,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.0838
+              }
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "forecastHour": 5,
+              "requestedLeadHours": 3,
+              "speedKnots": 0.736,
+              "speedMph": 0.847,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 100,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.6867
+              }
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "forecastHour": 8,
+              "requestedLeadHours": 6,
+              "speedKnots": 0.737,
+              "speedMph": 0.849,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 100,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.7146
+              }
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "forecastHour": 14,
+              "requestedLeadHours": 12,
+              "speedKnots": 0.299,
+              "speedMph": 0.345,
+              "towardDegreesTrue": 138,
+              "towardCardinal": "SE",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 100,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.4421
+              }
+            },
+            {
+              "validTime": "2026-10-31T23:00:00+00:00",
+              "forecastHour": 26,
+              "requestedLeadHours": 24,
+              "speedKnots": 0.138,
+              "speedMph": 0.159,
+              "towardDegreesTrue": 138,
+              "towardCardinal": "SE",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 78,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.2049
+              }
+            },
+            {
+              "validTime": "2026-11-01T11:00:00+00:00",
+              "forecastHour": 38,
+              "requestedLeadHours": 36,
+              "speedKnots": 0.304,
+              "speedMph": 0.35,
+              "towardDegreesTrue": 138,
+              "towardCardinal": "SE",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 100,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.4377
+              }
+            },
+            {
+              "validTime": "2026-11-01T21:00:00+00:00",
+              "forecastHour": 48,
+              "requestedLeadHours": 48,
+              "speedKnots": 0.261,
+              "speedMph": 0.3,
+              "towardDegreesTrue": 138,
+              "towardCardinal": "SE",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 100,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.4277
+              }
+            }
+          ]
+        },
+        "currentStrength": {
+          "index": 1.4,
+          "category": "slack",
+          "speedKnots": 0.041
+        },
+        "currentShear": {
+          "index": 50,
+          "category": "high",
+          "radiusKm": 1.5,
+          "sampleCount": 32,
+          "p90VelocityGradientMpsPerKm": 0.0838,
+          "p90DirectionDifferenceDegrees": 148.1,
+          "speedRangeKnots": 0.122,
+          "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+        },
+        "windCurrentInteraction": {
+          "difficultyIndex": 0.3,
+          "category": "low",
+          "windDegreesFrom": 185,
+          "windTowardDegreesTrue": 5,
+          "currentTowardDegreesTrue": 318,
+          "angularDifferenceDegrees": 47,
+          "relationship": "crossing"
+        }
+      },
+      "operational": {
+        "currentStrength": {
+          "index": 1.4,
+          "category": "slack",
+          "speedKnots": 0.041
+        },
+        "currentShear": {
+          "index": 50,
+          "category": "high",
+          "radiusKm": 1.5,
+          "sampleCount": 32,
+          "p90VelocityGradientMpsPerKm": 0.0838,
+          "p90DirectionDifferenceDegrees": 148.1,
+          "speedRangeKnots": 0.122,
+          "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+        },
+        "windCurrentInteraction": {
+          "difficultyIndex": 0.3,
+          "category": "low",
+          "windDegreesFrom": 185,
+          "windTowardDegreesTrue": 5,
+          "currentTowardDegreesTrue": 318,
+          "angularDifferenceDegrees": 47,
+          "relationship": "crossing"
+        },
+        "currentTrend": {
+          "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+          "deltaKnots": 0.695,
+          "direction": "strengthening"
+        }
+      },
+      "species": {
+        "striped-bass": {
+          "siteFit": 82,
+          "conditionFit": 56.3,
+          "dataConfidence": 84.5,
+          "recommendationScore": 67.3,
+          "availableFactorWeight": 0.85,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "falling",
+              "score": 36.8,
+              "weight": 0.2,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "falling",
+                "nextTurnType": "low",
+                "nextTurnAt": "2026-10-30 22:29",
+                "minutesToTurn": 397,
+                "phaseFraction": 0.12
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63,
+              "score": 100,
+              "weight": 0.2,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.1,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0.15,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.041,
+              "score": 0,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.041,
+                "speedMph": 0.048,
+                "towardDegreesTrue": 318,
+                "towardCardinal": "NW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": 0.695,
+                  "direction": "strengthening"
+                },
+                "currentStrength": {
+                  "index": 1.4,
+                  "category": "slack",
+                  "speedKnots": 0.041
+                },
+                "currentShear": {
+                  "index": 50,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.0838,
+                  "p90DirectionDifferenceDegrees": 148.1,
+                  "speedRangeKnots": 0.122,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.3,
+                  "category": "low",
+                  "windDegreesFrom": 185,
+                  "windTowardDegreesTrue": 5,
+                  "currentTowardDegreesTrue": 318,
+                  "angularDifferenceDegrees": 47,
+                  "relationship": "crossing"
+                },
+                "eastCell": {
+                  "value": -0.014276853762567043,
+                  "lat": 38.0071907043457,
+                  "lon": -122.35026550292969,
+                  "distanceKm": 0.829,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 56010
+                  }
+                },
+                "northCell": {
+                  "value": 0.015854349359869957,
+                  "lat": 38.0071907043457,
+                  "lon": -122.35026550292969,
+                  "distanceKm": 0.829,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 56010
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.736,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.737,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "hoursAhead": 12.1,
+              "speedKnots": 0.299,
+              "towardDegreesTrue": 138,
+              "towardCardinal": "SE",
+              "currentFit": 42.6,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        },
+        "california-halibut": {
+          "siteFit": 69,
+          "conditionFit": 64.7,
+          "dataConfidence": 77.5,
+          "recommendationScore": 63.2,
+          "availableFactorWeight": 0.75,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "falling",
+              "score": 56.6,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "falling",
+                "nextTurnType": "low",
+                "nextTurnAt": "2026-10-30 22:29",
+                "minutesToTurn": 397,
+                "phaseFraction": 0.12
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63,
+              "score": 100,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.041,
+              "score": 0,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.041,
+                "speedMph": 0.048,
+                "towardDegreesTrue": 318,
+                "towardCardinal": "NW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": 0.695,
+                  "direction": "strengthening"
+                },
+                "currentStrength": {
+                  "index": 1.4,
+                  "category": "slack",
+                  "speedKnots": 0.041
+                },
+                "currentShear": {
+                  "index": 50,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.0838,
+                  "p90DirectionDifferenceDegrees": 148.1,
+                  "speedRangeKnots": 0.122,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.3,
+                  "category": "low",
+                  "windDegreesFrom": 185,
+                  "windTowardDegreesTrue": 5,
+                  "currentTowardDegreesTrue": 318,
+                  "angularDifferenceDegrees": 47,
+                  "relationship": "crossing"
+                },
+                "eastCell": {
+                  "value": -0.014276853762567043,
+                  "lat": 38.0071907043457,
+                  "lon": -122.35026550292969,
+                  "distanceKm": 0.829,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 56010
+                  }
+                },
+                "northCell": {
+                  "value": 0.015854349359869957,
+                  "lat": 38.0071907043457,
+                  "lon": -122.35026550292969,
+                  "distanceKm": 0.829,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 56010
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.736,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.737,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "hoursAhead": 12.1,
+              "speedKnots": 0.299,
+              "towardDegreesTrue": 138,
+              "towardCardinal": "SE",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        },
+        "starry-flounder": {
+          "siteFit": 64,
+          "conditionFit": 74.2,
+          "dataConfidence": 77.5,
+          "recommendationScore": 64.4,
+          "availableFactorWeight": 0.75,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "falling",
+              "score": 63.2,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "falling",
+                "nextTurnType": "low",
+                "nextTurnAt": "2026-10-30 22:29",
+                "minutesToTurn": 397,
+                "phaseFraction": 0.12
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63,
+              "score": 83.3,
+              "weight": 0.3,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.041,
+              "score": 41,
+              "weight": 0.15,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.041,
+                "speedMph": 0.048,
+                "towardDegreesTrue": 318,
+                "towardCardinal": "NW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": 0.695,
+                  "direction": "strengthening"
+                },
+                "currentStrength": {
+                  "index": 1.4,
+                  "category": "slack",
+                  "speedKnots": 0.041
+                },
+                "currentShear": {
+                  "index": 50,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.0838,
+                  "p90DirectionDifferenceDegrees": 148.1,
+                  "speedRangeKnots": 0.122,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.3,
+                  "category": "low",
+                  "windDegreesFrom": 185,
+                  "windTowardDegreesTrue": 5,
+                  "currentTowardDegreesTrue": 318,
+                  "angularDifferenceDegrees": 47,
+                  "relationship": "crossing"
+                },
+                "eastCell": {
+                  "value": -0.014276853762567043,
+                  "lat": 38.0071907043457,
+                  "lon": -122.35026550292969,
+                  "distanceKm": 0.829,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 56010
+                  }
+                },
+                "northCell": {
+                  "value": 0.015854349359869957,
+                  "lat": 38.0071907043457,
+                  "lon": -122.35026550292969,
+                  "distanceKm": 0.829,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 56010
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.736,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.737,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "hoursAhead": 12.1,
+              "speedKnots": 0.299,
+              "towardDegreesTrue": 138,
+              "towardCardinal": "SE",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        },
+        "white-sturgeon": {
+          "siteFit": 48,
+          "conditionFit": 52.6,
+          "dataConfidence": 84.5,
+          "recommendationScore": 50.1,
+          "availableFactorWeight": 0.85,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "falling",
+              "score": 36.8,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "falling",
+                "nextTurnType": "low",
+                "nextTurnAt": "2026-10-30 22:29",
+                "minutesToTurn": 397,
+                "phaseFraction": 0.12
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63,
+              "score": 100,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.1,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0.15,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.041,
+              "score": 0,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.041,
+                "speedMph": 0.048,
+                "towardDegreesTrue": 318,
+                "towardCardinal": "NW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": 0.695,
+                  "direction": "strengthening"
+                },
+                "currentStrength": {
+                  "index": 1.4,
+                  "category": "slack",
+                  "speedKnots": 0.041
+                },
+                "currentShear": {
+                  "index": 50,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.0838,
+                  "p90DirectionDifferenceDegrees": 148.1,
+                  "speedRangeKnots": 0.122,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.3,
+                  "category": "low",
+                  "windDegreesFrom": 185,
+                  "windTowardDegreesTrue": 5,
+                  "currentTowardDegreesTrue": 318,
+                  "angularDifferenceDegrees": 47,
+                  "relationship": "crossing"
+                },
+                "eastCell": {
+                  "value": -0.014276853762567043,
+                  "lat": 38.0071907043457,
+                  "lon": -122.35026550292969,
+                  "distanceKm": 0.829,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 56010
+                  }
+                },
+                "northCell": {
+                  "value": 0.015854349359869957,
+                  "lat": 38.0071907043457,
+                  "lon": -122.35026550292969,
+                  "distanceKm": 0.829,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 56010
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.736,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.737,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "hoursAhead": 12.1,
+              "speedKnots": 0.299,
+              "towardDegreesTrue": 138,
+              "towardCardinal": "SE",
+              "currentFit": 99.6,
+              "shearIndex": 100,
+              "shearCategory": "very-high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": "Always verify current CDFW season, possession, report-card and emergency rules before presenting a fish-now recommendation."
+        }
+      }
+    },
+    "eckley-pier": {
+      "id": "eckley-pier",
+      "name": "Eckley Pier and Shoreline",
+      "region": "Carquinez Strait",
+      "binding": {
+        "noaaStation": "9415102",
+        "usgsFlowStation": "USGS-11447650",
+        "label": "Martinez / Carquinez Strait"
+      },
+      "observations": {
+        "noaaStationId": "9415102",
+        "noaaStationName": "Martinez-Amorco Pier, CA",
+        "waterLevelFt": 7.005,
+        "waterTemperatureF": null,
+        "salinityPsu": null,
+        "windMph": 3.5,
+        "windDirection": "WNW",
+        "windDegreesFrom": 284,
+        "tide": {
+          "trend": "rising",
+          "nextTurnType": "high",
+          "nextTurnAt": "2026-10-30 16:24",
+          "minutesToTurn": 32,
+          "phaseFraction": 0.901
+        },
+        "freshwater": {
+          "stationId": "USGS-11447650",
+          "value": 9270,
+          "unit": "ft^3/s",
+          "observedAt": "2026-10-30T22:15:00+00:00",
+          "freshnessStatus": "fresh",
+          "ageMinutes": 36,
+          "baseline31dMean": null,
+          "ratioTo31dMean": null,
+          "approvalStatus": "Provisional",
+          "qualifier": null
+        },
+        "current": {
+          "eastwardMps": 0.52024,
+          "northwardMps": -0.06097,
+          "speedMps": 0.5238,
+          "speedKnots": 1.018,
+          "speedMph": 1.172,
+          "towardDegreesTrue": 96.7,
+          "towardCardinal": "E",
+          "directionReference": "true-north",
+          "cellConsistency": "same-horizontal-cell",
+          "rotationApplied": false,
+          "gridAngleRadians": null,
+          "eastCell": {
+            "value": 0.5202353000640869,
+            "lat": 38.05671310424805,
+            "lon": -122.22621154785156,
+            "distanceKm": 0.453,
+            "latVariable": "latc",
+            "lonVariable": "lonc",
+            "indices": {
+              "nele": 79800
+            }
+          },
+          "northCell": {
+            "value": -0.06097008287906647,
+            "lat": 38.05671310424805,
+            "lon": -122.22621154785156,
+            "distanceKm": 0.453,
+            "latVariable": "latc",
+            "lonVariable": "lonc",
+            "indices": {
+              "nele": 79800
+            }
+          },
+          "localShear": {
+            "available": true,
+            "radiusKm": 1.5,
+            "sampleCount": 32,
+            "p90VelocityGradientMpsPerKm": 0.9848,
+            "medianVelocityGradientMpsPerKm": 0.7344,
+            "p90DirectionDifferenceDegrees": 9.4,
+            "speedRangeKnots": 1.201,
+            "localShearIndex": 73,
+            "category": "high",
+            "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+          },
+          "validTime": "2026-10-30T23:00:00+00:00",
+          "forecastHour": 2,
+          "dataset": "sfbofs.t21z.20261030.fields.f002.nc",
+          "modelCycle": "2026-10-30T21:00:00+00:00",
+          "modelFreshness": "fresh",
+          "trend": {
+            "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+            "deltaKnots": -0.517,
+            "direction": "weakening"
+          },
+          "forecastSeries": [
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "forecastHour": 2,
+              "requestedLeadHours": 0,
+              "speedKnots": 1.018,
+              "speedMph": 1.172,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 73,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.9848
+              }
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "forecastHour": 5,
+              "requestedLeadHours": 3,
+              "speedKnots": 0.501,
+              "speedMph": 0.577,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 73,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.9644
+              }
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "forecastHour": 8,
+              "requestedLeadHours": 6,
+              "speedKnots": 0.899,
+              "speedMph": 1.034,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 73,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 2.3235
+              }
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "forecastHour": 14,
+              "requestedLeadHours": 12,
+              "speedKnots": 0.188,
+              "speedMph": 0.216,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 79,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.736
+              }
+            },
+            {
+              "validTime": "2026-10-31T23:00:00+00:00",
+              "forecastHour": 26,
+              "requestedLeadHours": 24,
+              "speedKnots": 1.182,
+              "speedMph": 1.36,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 74,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.9797
+              }
+            },
+            {
+              "validTime": "2026-11-01T11:00:00+00:00",
+              "forecastHour": 38,
+              "requestedLeadHours": 36,
+              "speedKnots": 0.209,
+              "speedMph": 0.241,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 79,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.7473
+              }
+            },
+            {
+              "validTime": "2026-11-01T21:00:00+00:00",
+              "forecastHour": 48,
+              "requestedLeadHours": 48,
+              "speedKnots": 0.265,
+              "speedMph": 0.305,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 76,
+                "category": "very-high",
+                "p90VelocityGradientMpsPerKm": 0.9647
+              }
+            }
+          ]
+        },
+        "currentStrength": {
+          "index": 33.9,
+          "category": "moderate",
+          "speedKnots": 1.018
+        },
+        "currentShear": {
+          "index": 73,
+          "category": "high",
+          "radiusKm": 1.5,
+          "sampleCount": 32,
+          "p90VelocityGradientMpsPerKm": 0.9848,
+          "p90DirectionDifferenceDegrees": 9.4,
+          "speedRangeKnots": 1.201,
+          "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+        },
+        "windCurrentInteraction": {
+          "difficultyIndex": 0.4,
+          "category": "low",
+          "windDegreesFrom": 284,
+          "windTowardDegreesTrue": 104,
+          "currentTowardDegreesTrue": 96.7,
+          "angularDifferenceDegrees": 7.3,
+          "relationship": "following"
+        }
+      },
+      "operational": {
+        "currentStrength": {
+          "index": 33.9,
+          "category": "moderate",
+          "speedKnots": 1.018
+        },
+        "currentShear": {
+          "index": 73,
+          "category": "high",
+          "radiusKm": 1.5,
+          "sampleCount": 32,
+          "p90VelocityGradientMpsPerKm": 0.9848,
+          "p90DirectionDifferenceDegrees": 9.4,
+          "speedRangeKnots": 1.201,
+          "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+        },
+        "windCurrentInteraction": {
+          "difficultyIndex": 0.4,
+          "category": "low",
+          "windDegreesFrom": 284,
+          "windTowardDegreesTrue": 104,
+          "currentTowardDegreesTrue": 96.7,
+          "angularDifferenceDegrees": 7.3,
+          "relationship": "following"
+        },
+        "currentTrend": {
+          "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+          "deltaKnots": -0.517,
+          "direction": "weakening"
+        }
+      },
+      "species": {
+        "striped-bass": {
+          "siteFit": 85,
+          "conditionFit": 71.7,
+          "dataConfidence": 70.5,
+          "recommendationScore": 70.5,
+          "availableFactorWeight": 0.65,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "rising",
+              "score": 30.6,
+              "weight": 0.2,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "rising",
+                "nextTurnType": "high",
+                "nextTurnAt": "2026-10-30 16:24",
+                "minutesToTurn": 32,
+                "phaseFraction": 0.901
+              }
+            },
+            {
+              "id": "temperature",
+              "value": null,
+              "score": null,
+              "weight": 0.2,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 3.5,
+              "score": 100,
+              "weight": 0.1,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0.15,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 1.018,
+              "score": 100,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 1.018,
+                "speedMph": 1.172,
+                "towardDegreesTrue": 96.7,
+                "towardCardinal": "E",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": -0.517,
+                  "direction": "weakening"
+                },
+                "currentStrength": {
+                  "index": 33.9,
+                  "category": "moderate",
+                  "speedKnots": 1.018
+                },
+                "currentShear": {
+                  "index": 73,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.9848,
+                  "p90DirectionDifferenceDegrees": 9.4,
+                  "speedRangeKnots": 1.201,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.4,
+                  "category": "low",
+                  "windDegreesFrom": 284,
+                  "windTowardDegreesTrue": 104,
+                  "currentTowardDegreesTrue": 96.7,
+                  "angularDifferenceDegrees": 7.3,
+                  "relationship": "following"
+                },
+                "eastCell": {
+                  "value": 0.5202353000640869,
+                  "lat": 38.05671310424805,
+                  "lon": -122.22621154785156,
+                  "distanceKm": 0.453,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 79800
+                  }
+                },
+                "northCell": {
+                  "value": -0.06097008287906647,
+                  "lat": 38.05671310424805,
+                  "lon": -122.22621154785156,
+                  "distanceKm": 0.453,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 79800
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "hoursAhead": 0.1,
+              "speedKnots": 1.018,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.501,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.899,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        },
+        "starry-flounder": {
+          "siteFit": 70,
+          "conditionFit": 89.2,
+          "dataConfidence": 56.5,
+          "recommendationScore": 66.2,
+          "availableFactorWeight": 0.45,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "rising",
+              "score": 69.4,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "rising",
+                "nextTurnType": "high",
+                "nextTurnAt": "2026-10-30 16:24",
+                "minutesToTurn": 32,
+                "phaseFraction": 0.901
+              }
+            },
+            {
+              "id": "temperature",
+              "value": null,
+              "score": null,
+              "weight": 0.3,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 3.5,
+              "score": 100,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 1.018,
+              "score": 98.2,
+              "weight": 0.15,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 1.018,
+                "speedMph": 1.172,
+                "towardDegreesTrue": 96.7,
+                "towardCardinal": "E",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": -0.517,
+                  "direction": "weakening"
+                },
+                "currentStrength": {
+                  "index": 33.9,
+                  "category": "moderate",
+                  "speedKnots": 1.018
+                },
+                "currentShear": {
+                  "index": 73,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.9848,
+                  "p90DirectionDifferenceDegrees": 9.4,
+                  "speedRangeKnots": 1.201,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.4,
+                  "category": "low",
+                  "windDegreesFrom": 284,
+                  "windTowardDegreesTrue": 104,
+                  "currentTowardDegreesTrue": 96.7,
+                  "angularDifferenceDegrees": 7.3,
+                  "relationship": "following"
+                },
+                "eastCell": {
+                  "value": 0.5202353000640869,
+                  "lat": 38.05671310424805,
+                  "lon": -122.22621154785156,
+                  "distanceKm": 0.453,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 79800
+                  }
+                },
+                "northCell": {
+                  "value": -0.06097008287906647,
+                  "lat": 38.05671310424805,
+                  "lon": -122.22621154785156,
+                  "distanceKm": 0.453,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 79800
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "hoursAhead": 12.1,
+              "speedKnots": 0.188,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "currentFit": 100,
+              "shearIndex": 79,
+              "shearCategory": "very-high"
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.501,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.899,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        },
+        "white-sturgeon": {
+          "siteFit": 55,
+          "conditionFit": 68.8,
+          "dataConfidence": 74,
+          "recommendationScore": 58.3,
+          "availableFactorWeight": 0.7,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "rising",
+              "score": 30.6,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "rising",
+                "nextTurnType": "high",
+                "nextTurnAt": "2026-10-30 16:24",
+                "minutesToTurn": 32,
+                "phaseFraction": 0.901
+              }
+            },
+            {
+              "id": "temperature",
+              "value": null,
+              "score": null,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 3.5,
+              "score": 100,
+              "weight": 0.1,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0.15,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 1.018,
+              "score": 100,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 1.018,
+                "speedMph": 1.172,
+                "towardDegreesTrue": 96.7,
+                "towardCardinal": "E",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": -0.517,
+                  "direction": "weakening"
+                },
+                "currentStrength": {
+                  "index": 33.9,
+                  "category": "moderate",
+                  "speedKnots": 1.018
+                },
+                "currentShear": {
+                  "index": 73,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.9848,
+                  "p90DirectionDifferenceDegrees": 9.4,
+                  "speedRangeKnots": 1.201,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.4,
+                  "category": "low",
+                  "windDegreesFrom": 284,
+                  "windTowardDegreesTrue": 104,
+                  "currentTowardDegreesTrue": 96.7,
+                  "angularDifferenceDegrees": 7.3,
+                  "relationship": "following"
+                },
+                "eastCell": {
+                  "value": 0.5202353000640869,
+                  "lat": 38.05671310424805,
+                  "lon": -122.22621154785156,
+                  "distanceKm": 0.453,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 79800
+                  }
+                },
+                "northCell": {
+                  "value": -0.06097008287906647,
+                  "lat": 38.05671310424805,
+                  "lon": -122.22621154785156,
+                  "distanceKm": 0.453,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 79800
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "hoursAhead": 0.1,
+              "speedKnots": 1.018,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.501,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.899,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": "Always verify current CDFW season, possession, report-card and emergency rules before presenting a fish-now recommendation."
+        }
+      }
+    },
+    "richmond-inner-harbor": {
+      "id": "richmond-inner-harbor",
+      "name": "Richmond Inner Harbor",
+      "region": "Central San Francisco Bay",
+      "binding": {
+        "noaaStation": "9414863",
+        "usgsFlowStation": "USGS-11447650",
+        "label": "Richmond / Central Bay"
+      },
+      "observations": {
+        "noaaStationId": "9414863",
+        "noaaStationName": "Richmond, CA",
+        "waterLevelFt": 7.897,
+        "waterTemperatureF": 63,
+        "salinityPsu": null,
+        "windMph": 7.19,
+        "windDirection": "S",
+        "windDegreesFrom": 185,
+        "tide": {
+          "trend": "falling",
+          "nextTurnType": "low",
+          "nextTurnAt": "2026-10-30 22:29",
+          "minutesToTurn": 397,
+          "phaseFraction": 0.12
+        },
+        "freshwater": {
+          "stationId": "USGS-11447650",
+          "value": 9270,
+          "unit": "ft^3/s",
+          "observedAt": "2026-10-30T22:15:00+00:00",
+          "freshnessStatus": "fresh",
+          "ageMinutes": 36,
+          "baseline31dMean": null,
+          "ratioTo31dMean": null,
+          "approvalStatus": "Provisional",
+          "qualifier": null
+        },
+        "current": {
+          "eastwardMps": -0.00435,
+          "northwardMps": 0.00929,
+          "speedMps": 0.01026,
+          "speedKnots": 0.02,
+          "speedMph": 0.023,
+          "towardDegreesTrue": 334.9,
+          "towardCardinal": "NNW",
+          "directionReference": "true-north",
+          "cellConsistency": "same-horizontal-cell",
+          "rotationApplied": false,
+          "gridAngleRadians": null,
+          "eastCell": {
+            "value": -0.004353034775704145,
+            "lat": 37.91998291015625,
+            "lon": -122.36683654785156,
+            "distanceKm": 0.093,
+            "latVariable": "latc",
+            "lonVariable": "lonc",
+            "indices": {
+              "nele": 39681
+            }
+          },
+          "northCell": {
+            "value": 0.009290662594139576,
+            "lat": 37.91998291015625,
+            "lon": -122.36683654785156,
+            "distanceKm": 0.093,
+            "latVariable": "latc",
+            "lonVariable": "lonc",
+            "indices": {
+              "nele": 39681
+            }
+          },
+          "localShear": {
+            "available": true,
+            "radiusKm": 1.5,
+            "sampleCount": 32,
+            "p90VelocityGradientMpsPerKm": 0.1058,
+            "medianVelocityGradientMpsPerKm": 0.0295,
+            "p90DirectionDifferenceDegrees": 72.1,
+            "speedRangeKnots": 0.077,
+            "localShearIndex": 49,
+            "category": "moderate",
+            "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+          },
+          "validTime": "2026-10-30T23:00:00+00:00",
+          "forecastHour": 2,
+          "dataset": "sfbofs.t21z.20261030.fields.f002.nc",
+          "modelCycle": "2026-10-30T21:00:00+00:00",
+          "modelFreshness": "fresh",
+          "trend": {
+            "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+            "deltaKnots": -0.011,
+            "direction": "steady"
+          },
+          "forecastSeries": [
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "forecastHour": 2,
+              "requestedLeadHours": 0,
+              "speedKnots": 0.02,
+              "speedMph": 0.023,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 49,
+                "category": "moderate",
+                "p90VelocityGradientMpsPerKm": 0.1058
+              }
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "forecastHour": 5,
+              "requestedLeadHours": 3,
+              "speedKnots": 0.009,
+              "speedMph": 0.011,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 42,
+                "category": "moderate",
+                "p90VelocityGradientMpsPerKm": 0.0503
+              }
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "forecastHour": 8,
+              "requestedLeadHours": 6,
+              "speedKnots": 0.01,
+              "speedMph": 0.012,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 37,
+                "category": "moderate",
+                "p90VelocityGradientMpsPerKm": 0.0311
+              }
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "forecastHour": 14,
+              "requestedLeadHours": 12,
+              "speedKnots": 0.042,
+              "speedMph": 0.048,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 36,
+                "category": "moderate",
+                "p90VelocityGradientMpsPerKm": 0.0903
+              }
+            },
+            {
+              "validTime": "2026-10-31T23:00:00+00:00",
+              "forecastHour": 26,
+              "requestedLeadHours": 24,
+              "speedKnots": 0.022,
+              "speedMph": 0.025,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 55,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.1052
+              }
+            },
+            {
+              "validTime": "2026-11-01T11:00:00+00:00",
+              "forecastHour": 38,
+              "requestedLeadHours": 36,
+              "speedKnots": 0.016,
+              "speedMph": 0.018,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 38,
+                "category": "moderate",
+                "p90VelocityGradientMpsPerKm": 0.0363
+              }
+            },
+            {
+              "validTime": "2026-11-01T21:00:00+00:00",
+              "forecastHour": 48,
+              "requestedLeadHours": 48,
+              "speedKnots": 0.007,
+              "speedMph": 0.008,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 56,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.1101
+              }
+            }
+          ]
+        },
+        "currentStrength": {
+          "index": 0.7,
+          "category": "slack",
+          "speedKnots": 0.02
+        },
+        "currentShear": {
+          "index": 49,
+          "category": "moderate",
+          "radiusKm": 1.5,
+          "sampleCount": 32,
+          "p90VelocityGradientMpsPerKm": 0.1058,
+          "p90DirectionDifferenceDegrees": 72.1,
+          "speedRangeKnots": 0.077,
+          "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+        },
+        "windCurrentInteraction": {
+          "difficultyIndex": 0.1,
+          "category": "low",
+          "windDegreesFrom": 185,
+          "windTowardDegreesTrue": 5,
+          "currentTowardDegreesTrue": 334.9,
+          "angularDifferenceDegrees": 30.1,
+          "relationship": "following"
+        }
+      },
+      "operational": {
+        "currentStrength": {
+          "index": 0.7,
+          "category": "slack",
+          "speedKnots": 0.02
+        },
+        "currentShear": {
+          "index": 49,
+          "category": "moderate",
+          "radiusKm": 1.5,
+          "sampleCount": 32,
+          "p90VelocityGradientMpsPerKm": 0.1058,
+          "p90DirectionDifferenceDegrees": 72.1,
+          "speedRangeKnots": 0.077,
+          "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+        },
+        "windCurrentInteraction": {
+          "difficultyIndex": 0.1,
+          "category": "low",
+          "windDegreesFrom": 185,
+          "windTowardDegreesTrue": 5,
+          "currentTowardDegreesTrue": 334.9,
+          "angularDifferenceDegrees": 30.1,
+          "relationship": "following"
+        },
+        "currentTrend": {
+          "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+          "deltaKnots": -0.011,
+          "direction": "steady"
+        }
+      },
+      "species": {
+        "striped-bass": {
+          "siteFit": 75,
+          "conditionFit": 56.3,
+          "dataConfidence": 84.5,
+          "recommendationScore": 64,
+          "availableFactorWeight": 0.85,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "falling",
+              "score": 36.8,
+              "weight": 0.2,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "falling",
+                "nextTurnType": "low",
+                "nextTurnAt": "2026-10-30 22:29",
+                "minutesToTurn": 397,
+                "phaseFraction": 0.12
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63,
+              "score": 100,
+              "weight": 0.2,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.1,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0.15,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.02,
+              "score": 0,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.02,
+                "speedMph": 0.023,
+                "towardDegreesTrue": 334.9,
+                "towardCardinal": "NNW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": -0.011,
+                  "direction": "steady"
+                },
+                "currentStrength": {
+                  "index": 0.7,
+                  "category": "slack",
+                  "speedKnots": 0.02
+                },
+                "currentShear": {
+                  "index": 49,
+                  "category": "moderate",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.1058,
+                  "p90DirectionDifferenceDegrees": 72.1,
+                  "speedRangeKnots": 0.077,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.1,
+                  "category": "low",
+                  "windDegreesFrom": 185,
+                  "windTowardDegreesTrue": 5,
+                  "currentTowardDegreesTrue": 334.9,
+                  "angularDifferenceDegrees": 30.1,
+                  "relationship": "following"
+                },
+                "eastCell": {
+                  "value": -0.004353034775704145,
+                  "lat": 37.91998291015625,
+                  "lon": -122.36683654785156,
+                  "distanceKm": 0.093,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 39681
+                  }
+                },
+                "northCell": {
+                  "value": 0.009290662594139576,
+                  "lat": 37.91998291015625,
+                  "lon": -122.36683654785156,
+                  "distanceKm": 0.093,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 39681
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "hoursAhead": 0.1,
+              "speedKnots": 0.02,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "currentFit": 0,
+              "shearIndex": 49,
+              "shearCategory": "moderate"
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.009,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "currentFit": 0,
+              "shearIndex": 42,
+              "shearCategory": "moderate"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.01,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "currentFit": 0,
+              "shearIndex": 37,
+              "shearCategory": "moderate"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        },
+        "california-halibut": {
+          "siteFit": 77,
+          "conditionFit": 64.7,
+          "dataConfidence": 77.5,
+          "recommendationScore": 66.6,
+          "availableFactorWeight": 0.75,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "falling",
+              "score": 56.6,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "falling",
+                "nextTurnType": "low",
+                "nextTurnAt": "2026-10-30 22:29",
+                "minutesToTurn": 397,
+                "phaseFraction": 0.12
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63,
+              "score": 100,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.02,
+              "score": 0,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.02,
+                "speedMph": 0.023,
+                "towardDegreesTrue": 334.9,
+                "towardCardinal": "NNW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": -0.011,
+                  "direction": "steady"
+                },
+                "currentStrength": {
+                  "index": 0.7,
+                  "category": "slack",
+                  "speedKnots": 0.02
+                },
+                "currentShear": {
+                  "index": 49,
+                  "category": "moderate",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.1058,
+                  "p90DirectionDifferenceDegrees": 72.1,
+                  "speedRangeKnots": 0.077,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.1,
+                  "category": "low",
+                  "windDegreesFrom": 185,
+                  "windTowardDegreesTrue": 5,
+                  "currentTowardDegreesTrue": 334.9,
+                  "angularDifferenceDegrees": 30.1,
+                  "relationship": "following"
+                },
+                "eastCell": {
+                  "value": -0.004353034775704145,
+                  "lat": 37.91998291015625,
+                  "lon": -122.36683654785156,
+                  "distanceKm": 0.093,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 39681
+                  }
+                },
+                "northCell": {
+                  "value": 0.009290662594139576,
+                  "lat": 37.91998291015625,
+                  "lon": -122.36683654785156,
+                  "distanceKm": 0.093,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 39681
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "hoursAhead": 0.1,
+              "speedKnots": 0.02,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "currentFit": 0,
+              "shearIndex": 49,
+              "shearCategory": "moderate"
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 0.009,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "currentFit": 0,
+              "shearIndex": 42,
+              "shearCategory": "moderate"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.01,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "currentFit": 0,
+              "shearIndex": 37,
+              "shearCategory": "moderate"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        },
+        "starry-flounder": {
+          "siteFit": 58,
+          "conditionFit": 70,
+          "dataConfidence": 77.5,
+          "recommendationScore": 60.4,
+          "availableFactorWeight": 0.75,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "falling",
+              "score": 63.2,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "falling",
+                "nextTurnType": "low",
+                "nextTurnAt": "2026-10-30 22:29",
+                "minutesToTurn": 397,
+                "phaseFraction": 0.12
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63,
+              "score": 83.3,
+              "weight": 0.3,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11447650",
+                "value": 9270,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T22:15:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 36,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.02,
+              "score": 20,
+              "weight": 0.15,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.02,
+                "speedMph": 0.023,
+                "towardDegreesTrue": 334.9,
+                "towardCardinal": "NNW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": -0.011,
+                  "direction": "steady"
+                },
+                "currentStrength": {
+                  "index": 0.7,
+                  "category": "slack",
+                  "speedKnots": 0.02
+                },
+                "currentShear": {
+                  "index": 49,
+                  "category": "moderate",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.1058,
+                  "p90DirectionDifferenceDegrees": 72.1,
+                  "speedRangeKnots": 0.077,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 0.1,
+                  "category": "low",
+                  "windDegreesFrom": 185,
+                  "windTowardDegreesTrue": 5,
+                  "currentTowardDegreesTrue": 334.9,
+                  "angularDifferenceDegrees": 30.1,
+                  "relationship": "following"
+                },
+                "eastCell": {
+                  "value": -0.004353034775704145,
+                  "lat": 37.91998291015625,
+                  "lon": -122.36683654785156,
+                  "distanceKm": 0.093,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 39681
+                  }
+                },
+                "northCell": {
+                  "value": 0.009290662594139576,
+                  "lat": 37.91998291015625,
+                  "lon": -122.36683654785156,
+                  "distanceKm": 0.093,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 39681
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "hoursAhead": 12.1,
+              "speedKnots": 0.042,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "currentFit": 42,
+              "shearIndex": 36,
+              "shearCategory": "moderate"
+            },
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "hoursAhead": 0.1,
+              "speedKnots": 0.02,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "currentFit": 20,
+              "shearIndex": 49,
+              "shearCategory": "moderate"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 0.01,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "currentFit": 10,
+              "shearIndex": 37,
+              "shearCategory": "moderate"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        }
+      }
+    },
+    "sherman-island": {
+      "id": "sherman-island",
+      "name": "Sherman Island",
+      "region": "Sacramento–San Joaquin Delta",
+      "binding": {
+        "noaaStation": "9415144",
+        "usgsFlowStation": "USGS-11455420",
+        "fallbackUsgsFlowStation": "USGS-11447650",
+        "label": "Suisun / western Delta"
+      },
+      "observations": {
+        "noaaStationId": "9415144",
+        "noaaStationName": "Port Chicago, CA",
+        "waterLevelFt": 6.316,
+        "waterTemperatureF": 63.7,
+        "salinityPsu": null,
+        "windMph": 7.19,
+        "windDirection": "WNW",
+        "windDegreesFrom": 298,
+        "tide": {
+          "trend": "rising",
+          "nextTurnType": "high",
+          "nextTurnAt": "2026-10-30 16:50",
+          "minutesToTurn": 58,
+          "phaseFraction": 0.823
+        },
+        "freshwater": {
+          "stationId": "USGS-11455420",
+          "value": 331,
+          "unit": "ft^3/s",
+          "observedAt": "2026-10-30T21:30:00+00:00",
+          "freshnessStatus": "fresh",
+          "ageMinutes": 81,
+          "baseline31dMean": null,
+          "ratioTo31dMean": null,
+          "approvalStatus": "Provisional",
+          "qualifier": null
+        },
+        "current": {
+          "eastwardMps": -0.27522,
+          "northwardMps": 0.0942,
+          "speedMps": 0.2909,
+          "speedKnots": 0.565,
+          "speedMph": 0.651,
+          "towardDegreesTrue": 288.9,
+          "towardCardinal": "WNW",
+          "directionReference": "true-north",
+          "cellConsistency": "same-horizontal-cell",
+          "rotationApplied": false,
+          "gridAngleRadians": null,
+          "eastCell": {
+            "value": -0.2752249836921692,
+            "lat": 38.059810638427734,
+            "lon": -121.82243347167969,
+            "distanceKm": 0.268,
+            "latVariable": "latc",
+            "lonVariable": "lonc",
+            "indices": {
+              "nele": 100913
+            }
+          },
+          "northCell": {
+            "value": 0.09420446306467056,
+            "lat": 38.059810638427734,
+            "lon": -121.82243347167969,
+            "distanceKm": 0.268,
+            "latVariable": "latc",
+            "lonVariable": "lonc",
+            "indices": {
+              "nele": 100913
+            }
+          },
+          "localShear": {
+            "available": true,
+            "radiusKm": 1.5,
+            "sampleCount": 32,
+            "p90VelocityGradientMpsPerKm": 0.2619,
+            "medianVelocityGradientMpsPerKm": 0.0915,
+            "p90DirectionDifferenceDegrees": 9.7,
+            "speedRangeKnots": 0.184,
+            "localShearIndex": 64,
+            "category": "high",
+            "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+          },
+          "validTime": "2026-10-30T23:00:00+00:00",
+          "forecastHour": 2,
+          "dataset": "sfbofs.t21z.20261030.fields.f002.nc",
+          "modelCycle": "2026-10-30T21:00:00+00:00",
+          "modelFreshness": "fresh",
+          "trend": {
+            "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+            "deltaKnots": 0.699,
+            "direction": "strengthening"
+          },
+          "forecastSeries": [
+            {
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "forecastHour": 2,
+              "requestedLeadHours": 0,
+              "speedKnots": 0.565,
+              "speedMph": 0.651,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 64,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.2619
+              }
+            },
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "forecastHour": 5,
+              "requestedLeadHours": 3,
+              "speedKnots": 1.264,
+              "speedMph": 1.455,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 73,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.3836
+              }
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "forecastHour": 8,
+              "requestedLeadHours": 6,
+              "speedKnots": 1.86,
+              "speedMph": 2.141,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 72,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.5409
+              }
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "forecastHour": 14,
+              "requestedLeadHours": 12,
+              "speedKnots": 1.142,
+              "speedMph": 1.314,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 72,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.3738
+              }
+            },
+            {
+              "validTime": "2026-10-31T23:00:00+00:00",
+              "forecastHour": 26,
+              "requestedLeadHours": 24,
+              "speedKnots": 0.702,
+              "speedMph": 0.808,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 62,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.2545
+              }
+            },
+            {
+              "validTime": "2026-11-01T11:00:00+00:00",
+              "forecastHour": 38,
+              "requestedLeadHours": 36,
+              "speedKnots": 1.423,
+              "speedMph": 1.637,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 72,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.4437
+              }
+            },
+            {
+              "validTime": "2026-11-01T21:00:00+00:00",
+              "forecastHour": 48,
+              "requestedLeadHours": 48,
+              "speedKnots": 1.688,
+              "speedMph": 1.943,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "localShear": {
+                "localShearIndex": 72,
+                "category": "high",
+                "p90VelocityGradientMpsPerKm": 0.4905
+              }
+            }
+          ]
+        },
+        "currentStrength": {
+          "index": 18.8,
+          "category": "moderate",
+          "speedKnots": 0.565
+        },
+        "currentShear": {
+          "index": 64,
+          "category": "high",
+          "radiusKm": 1.5,
+          "sampleCount": 32,
+          "p90VelocityGradientMpsPerKm": 0.2619,
+          "p90DirectionDifferenceDegrees": 9.7,
+          "speedRangeKnots": 0.184,
+          "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+        },
+        "windCurrentInteraction": {
+          "difficultyIndex": 7.1,
+          "category": "low",
+          "windDegreesFrom": 298,
+          "windTowardDegreesTrue": 118,
+          "currentTowardDegreesTrue": 288.9,
+          "angularDifferenceDegrees": 170.9,
+          "relationship": "opposing"
+        }
+      },
+      "operational": {
+        "currentStrength": {
+          "index": 18.8,
+          "category": "moderate",
+          "speedKnots": 0.565
+        },
+        "currentShear": {
+          "index": 64,
+          "category": "high",
+          "radiusKm": 1.5,
+          "sampleCount": 32,
+          "p90VelocityGradientMpsPerKm": 0.2619,
+          "p90DirectionDifferenceDegrees": 9.7,
+          "speedRangeKnots": 0.184,
+          "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+        },
+        "windCurrentInteraction": {
+          "difficultyIndex": 7.1,
+          "category": "low",
+          "windDegreesFrom": 298,
+          "windTowardDegreesTrue": 118,
+          "currentTowardDegreesTrue": 288.9,
+          "angularDifferenceDegrees": 170.9,
+          "relationship": "opposing"
+        },
+        "currentTrend": {
+          "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+          "deltaKnots": 0.699,
+          "direction": "strengthening"
+        }
+      },
+      "species": {
+        "striped-bass": {
+          "siteFit": 79,
+          "conditionFit": 83.6,
+          "dataConfidence": 84.5,
+          "recommendationScore": 76.3,
+          "availableFactorWeight": 0.85,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "rising",
+              "score": 52.8,
+              "weight": 0.2,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "rising",
+                "nextTurnType": "high",
+                "nextTurnAt": "2026-10-30 16:50",
+                "minutesToTurn": 58,
+                "phaseFraction": 0.823
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63.7,
+              "score": 100,
+              "weight": 0.2,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.1,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0.15,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11455420",
+                "value": 331,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T21:30:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 81,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.565,
+              "score": 100,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.565,
+                "speedMph": 0.651,
+                "towardDegreesTrue": 288.9,
+                "towardCardinal": "WNW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": 0.699,
+                  "direction": "strengthening"
+                },
+                "currentStrength": {
+                  "index": 18.8,
+                  "category": "moderate",
+                  "speedKnots": 0.565
+                },
+                "currentShear": {
+                  "index": 64,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.2619,
+                  "p90DirectionDifferenceDegrees": 9.7,
+                  "speedRangeKnots": 0.184,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 7.1,
+                  "category": "low",
+                  "windDegreesFrom": 298,
+                  "windTowardDegreesTrue": 118,
+                  "currentTowardDegreesTrue": 288.9,
+                  "angularDifferenceDegrees": 170.9,
+                  "relationship": "opposing"
+                },
+                "eastCell": {
+                  "value": -0.2752249836921692,
+                  "lat": 38.059810638427734,
+                  "lon": -121.82243347167969,
+                  "distanceKm": 0.268,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 100913
+                  }
+                },
+                "northCell": {
+                  "value": 0.09420446306467056,
+                  "lat": 38.059810638427734,
+                  "lon": -121.82243347167969,
+                  "distanceKm": 0.268,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 100913
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 1.264,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 1.86,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "currentFit": 100,
+              "shearIndex": 72,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "hoursAhead": 12.1,
+              "speedKnots": 1.142,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "currentFit": 100,
+              "shearIndex": 72,
+              "shearCategory": "high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": null
+        },
+        "white-sturgeon": {
+          "siteFit": 52,
+          "conditionFit": 80.8,
+          "dataConfidence": 84.5,
+          "recommendationScore": 62.7,
+          "availableFactorWeight": 0.85,
+          "totalFactorWeight": 1,
+          "factors": [
+            {
+              "id": "tide",
+              "value": "rising",
+              "score": 52.8,
+              "weight": 0.25,
+              "source": "NOAA CO-OPS tide predictions",
+              "details": {
+                "trend": "rising",
+                "nextTurnType": "high",
+                "nextTurnAt": "2026-10-30 16:50",
+                "minutesToTurn": 58,
+                "phaseFraction": 0.823
+              }
+            },
+            {
+              "id": "temperature",
+              "value": 63.7,
+              "score": 100,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed water temperature",
+              "unit": "degF"
+            },
+            {
+              "id": "salinity",
+              "value": null,
+              "score": null,
+              "weight": 0.15,
+              "source": "NOAA CO-OPS observed salinity",
+              "unit": "PSU"
+            },
+            {
+              "id": "wind",
+              "value": 7.19,
+              "score": 100,
+              "weight": 0.1,
+              "source": "NOAA CO-OPS observed wind",
+              "unit": "mph"
+            },
+            {
+              "id": "freshwater",
+              "value": null,
+              "score": 70,
+              "weight": 0.15,
+              "source": "USGS discharge IV compared with DV baseline",
+              "details": {
+                "stationId": "USGS-11455420",
+                "value": 331,
+                "unit": "ft^3/s",
+                "observedAt": "2026-10-30T21:30:00+00:00",
+                "freshnessStatus": "fresh",
+                "ageMinutes": 81,
+                "baseline31dMean": null,
+                "ratioTo31dMean": null,
+                "approvalStatus": "Provisional",
+                "qualifier": null
+              }
+            },
+            {
+              "id": "current",
+              "value": 0.565,
+              "score": 100,
+              "weight": 0.2,
+              "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+              "unit": "knots",
+              "details": {
+                "speedKnots": 0.565,
+                "speedMph": 0.651,
+                "towardDegreesTrue": 288.9,
+                "towardCardinal": "WNW",
+                "directionReference": "true-north",
+                "validTime": "2026-10-30T23:00:00+00:00",
+                "modelCycle": "2026-10-30T21:00:00+00:00",
+                "trend": {
+                  "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                  "deltaKnots": 0.699,
+                  "direction": "strengthening"
+                },
+                "currentStrength": {
+                  "index": 18.8,
+                  "category": "moderate",
+                  "speedKnots": 0.565
+                },
+                "currentShear": {
+                  "index": 64,
+                  "category": "high",
+                  "radiusKm": 1.5,
+                  "sampleCount": 32,
+                  "p90VelocityGradientMpsPerKm": 0.2619,
+                  "p90DirectionDifferenceDegrees": 9.7,
+                  "speedRangeKnots": 0.184,
+                  "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+                },
+                "windCurrentInteraction": {
+                  "difficultyIndex": 7.1,
+                  "category": "low",
+                  "windDegreesFrom": 298,
+                  "windTowardDegreesTrue": 118,
+                  "currentTowardDegreesTrue": 288.9,
+                  "angularDifferenceDegrees": 170.9,
+                  "relationship": "opposing"
+                },
+                "eastCell": {
+                  "value": -0.2752249836921692,
+                  "lat": 38.059810638427734,
+                  "lon": -121.82243347167969,
+                  "distanceKm": 0.268,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 100913
+                  }
+                },
+                "northCell": {
+                  "value": 0.09420446306467056,
+                  "lat": 38.059810638427734,
+                  "lon": -121.82243347167969,
+                  "distanceKm": 0.268,
+                  "latVariable": "latc",
+                  "lonVariable": "lonc",
+                  "indices": {
+                    "nele": 100913
+                  }
+                }
+              }
+            }
+          ],
+          "bestCurrentWindows": [
+            {
+              "validTime": "2026-10-31T02:00:00+00:00",
+              "hoursAhead": 3.1,
+              "speedKnots": 1.264,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "currentFit": 100,
+              "shearIndex": 73,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T05:00:00+00:00",
+              "hoursAhead": 6.1,
+              "speedKnots": 1.86,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "currentFit": 100,
+              "shearIndex": 72,
+              "shearCategory": "high"
+            },
+            {
+              "validTime": "2026-10-31T11:00:00+00:00",
+              "hoursAhead": 12.1,
+              "speedKnots": 1.142,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "currentFit": 100,
+              "shearIndex": 72,
+              "shearCategory": "high"
+            }
+          ],
+          "activeCaveats": [
+            "USGS discharge is provisional and subject to revision."
+          ],
+          "legalGate": "Always verify current CDFW season, possession, report-card and emergency rules before presenting a fish-now recommendation."
+        }
+      }
+    }
+  },
+  "rankings": {
+    "striped-bass": [
+      {
+        "spotId": "sherman-island",
+        "spotName": "Sherman Island",
+        "siteFit": 79,
+        "conditionFit": 83.6,
+        "dataConfidence": 84.5,
+        "recommendationScore": 76.3,
+        "availableFactorWeight": 0.85,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "rising",
+            "score": 52.8,
+            "weight": 0.2,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "rising",
+              "nextTurnType": "high",
+              "nextTurnAt": "2026-10-30 16:50",
+              "minutesToTurn": 58,
+              "phaseFraction": 0.823
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63.7,
+            "score": 100,
+            "weight": 0.2,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.1,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0.15,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11455420",
+              "value": 331,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T21:30:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 81,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.565,
+            "score": 100,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.565,
+              "speedMph": 0.651,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": 0.699,
+                "direction": "strengthening"
+              },
+              "currentStrength": {
+                "index": 18.8,
+                "category": "moderate",
+                "speedKnots": 0.565
+              },
+              "currentShear": {
+                "index": 64,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.2619,
+                "p90DirectionDifferenceDegrees": 9.7,
+                "speedRangeKnots": 0.184,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 7.1,
+                "category": "low",
+                "windDegreesFrom": 298,
+                "windTowardDegreesTrue": 118,
+                "currentTowardDegreesTrue": 288.9,
+                "angularDifferenceDegrees": 170.9,
+                "relationship": "opposing"
+              },
+              "eastCell": {
+                "value": -0.2752249836921692,
+                "lat": 38.059810638427734,
+                "lon": -121.82243347167969,
+                "distanceKm": 0.268,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 100913
+                }
+              },
+              "northCell": {
+                "value": 0.09420446306467056,
+                "lat": 38.059810638427734,
+                "lon": -121.82243347167969,
+                "distanceKm": 0.268,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 100913
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 1.264,
+            "towardDegreesTrue": 288.9,
+            "towardCardinal": "WNW",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 1.86,
+            "towardDegreesTrue": 288.9,
+            "towardCardinal": "WNW",
+            "currentFit": 100,
+            "shearIndex": 72,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T11:00:00+00:00",
+            "hoursAhead": 12.1,
+            "speedKnots": 1.142,
+            "towardDegreesTrue": 288.9,
+            "towardCardinal": "WNW",
+            "currentFit": 100,
+            "shearIndex": 72,
+            "shearCategory": "high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      },
+      {
+        "spotId": "eckley-pier",
+        "spotName": "Eckley Pier and Shoreline",
+        "siteFit": 85,
+        "conditionFit": 71.7,
+        "dataConfidence": 70.5,
+        "recommendationScore": 70.5,
+        "availableFactorWeight": 0.65,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "rising",
+            "score": 30.6,
+            "weight": 0.2,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "rising",
+              "nextTurnType": "high",
+              "nextTurnAt": "2026-10-30 16:24",
+              "minutesToTurn": 32,
+              "phaseFraction": 0.901
+            }
+          },
+          {
+            "id": "temperature",
+            "value": null,
+            "score": null,
+            "weight": 0.2,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 3.5,
+            "score": 100,
+            "weight": 0.1,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0.15,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 1.018,
+            "score": 100,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 1.018,
+              "speedMph": 1.172,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": -0.517,
+                "direction": "weakening"
+              },
+              "currentStrength": {
+                "index": 33.9,
+                "category": "moderate",
+                "speedKnots": 1.018
+              },
+              "currentShear": {
+                "index": 73,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.9848,
+                "p90DirectionDifferenceDegrees": 9.4,
+                "speedRangeKnots": 1.201,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.4,
+                "category": "low",
+                "windDegreesFrom": 284,
+                "windTowardDegreesTrue": 104,
+                "currentTowardDegreesTrue": 96.7,
+                "angularDifferenceDegrees": 7.3,
+                "relationship": "following"
+              },
+              "eastCell": {
+                "value": 0.5202353000640869,
+                "lat": 38.05671310424805,
+                "lon": -122.22621154785156,
+                "distanceKm": 0.453,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 79800
+                }
+              },
+              "northCell": {
+                "value": -0.06097008287906647,
+                "lat": 38.05671310424805,
+                "lon": -122.22621154785156,
+                "distanceKm": 0.453,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 79800
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-30T23:00:00+00:00",
+            "hoursAhead": 0.1,
+            "speedKnots": 1.018,
+            "towardDegreesTrue": 96.7,
+            "towardCardinal": "E",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.501,
+            "towardDegreesTrue": 276.7,
+            "towardCardinal": "W",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.899,
+            "towardDegreesTrue": 276.7,
+            "towardCardinal": "W",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      },
+      {
+        "spotId": "point-pinole",
+        "spotName": "Point Pinole Regional Shoreline",
+        "siteFit": 82,
+        "conditionFit": 56.3,
+        "dataConfidence": 84.5,
+        "recommendationScore": 67.3,
+        "availableFactorWeight": 0.85,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "falling",
+            "score": 36.8,
+            "weight": 0.2,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "falling",
+              "nextTurnType": "low",
+              "nextTurnAt": "2026-10-30 22:29",
+              "minutesToTurn": 397,
+              "phaseFraction": 0.12
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63,
+            "score": 100,
+            "weight": 0.2,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.1,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0.15,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.041,
+            "score": 0,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.041,
+              "speedMph": 0.048,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": 0.695,
+                "direction": "strengthening"
+              },
+              "currentStrength": {
+                "index": 1.4,
+                "category": "slack",
+                "speedKnots": 0.041
+              },
+              "currentShear": {
+                "index": 50,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.0838,
+                "p90DirectionDifferenceDegrees": 148.1,
+                "speedRangeKnots": 0.122,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.3,
+                "category": "low",
+                "windDegreesFrom": 185,
+                "windTowardDegreesTrue": 5,
+                "currentTowardDegreesTrue": 318,
+                "angularDifferenceDegrees": 47,
+                "relationship": "crossing"
+              },
+              "eastCell": {
+                "value": -0.014276853762567043,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              },
+              "northCell": {
+                "value": 0.015854349359869957,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.736,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.737,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T11:00:00+00:00",
+            "hoursAhead": 12.1,
+            "speedKnots": 0.299,
+            "towardDegreesTrue": 138,
+            "towardCardinal": "SE",
+            "currentFit": 42.6,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      },
+      {
+        "spotId": "richmond-inner-harbor",
+        "spotName": "Richmond Inner Harbor",
+        "siteFit": 75,
+        "conditionFit": 56.3,
+        "dataConfidence": 84.5,
+        "recommendationScore": 64,
+        "availableFactorWeight": 0.85,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "falling",
+            "score": 36.8,
+            "weight": 0.2,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "falling",
+              "nextTurnType": "low",
+              "nextTurnAt": "2026-10-30 22:29",
+              "minutesToTurn": 397,
+              "phaseFraction": 0.12
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63,
+            "score": 100,
+            "weight": 0.2,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.1,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0.15,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.02,
+            "score": 0,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.02,
+              "speedMph": 0.023,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": -0.011,
+                "direction": "steady"
+              },
+              "currentStrength": {
+                "index": 0.7,
+                "category": "slack",
+                "speedKnots": 0.02
+              },
+              "currentShear": {
+                "index": 49,
+                "category": "moderate",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.1058,
+                "p90DirectionDifferenceDegrees": 72.1,
+                "speedRangeKnots": 0.077,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.1,
+                "category": "low",
+                "windDegreesFrom": 185,
+                "windTowardDegreesTrue": 5,
+                "currentTowardDegreesTrue": 334.9,
+                "angularDifferenceDegrees": 30.1,
+                "relationship": "following"
+              },
+              "eastCell": {
+                "value": -0.004353034775704145,
+                "lat": 37.91998291015625,
+                "lon": -122.36683654785156,
+                "distanceKm": 0.093,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 39681
+                }
+              },
+              "northCell": {
+                "value": 0.009290662594139576,
+                "lat": 37.91998291015625,
+                "lon": -122.36683654785156,
+                "distanceKm": 0.093,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 39681
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-30T23:00:00+00:00",
+            "hoursAhead": 0.1,
+            "speedKnots": 0.02,
+            "towardDegreesTrue": 334.9,
+            "towardCardinal": "NNW",
+            "currentFit": 0,
+            "shearIndex": 49,
+            "shearCategory": "moderate"
+          },
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.009,
+            "towardDegreesTrue": 334.9,
+            "towardCardinal": "NNW",
+            "currentFit": 0,
+            "shearIndex": 42,
+            "shearCategory": "moderate"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.01,
+            "towardDegreesTrue": 154.9,
+            "towardCardinal": "SSE",
+            "currentFit": 0,
+            "shearIndex": 37,
+            "shearCategory": "moderate"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      }
+    ],
+    "california-halibut": [
+      {
+        "spotId": "richmond-inner-harbor",
+        "spotName": "Richmond Inner Harbor",
+        "siteFit": 77,
+        "conditionFit": 64.7,
+        "dataConfidence": 77.5,
+        "recommendationScore": 66.6,
+        "availableFactorWeight": 0.75,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "falling",
+            "score": 56.6,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "falling",
+              "nextTurnType": "low",
+              "nextTurnAt": "2026-10-30 22:29",
+              "minutesToTurn": 397,
+              "phaseFraction": 0.12
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63,
+            "score": 100,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.02,
+            "score": 0,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.02,
+              "speedMph": 0.023,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": -0.011,
+                "direction": "steady"
+              },
+              "currentStrength": {
+                "index": 0.7,
+                "category": "slack",
+                "speedKnots": 0.02
+              },
+              "currentShear": {
+                "index": 49,
+                "category": "moderate",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.1058,
+                "p90DirectionDifferenceDegrees": 72.1,
+                "speedRangeKnots": 0.077,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.1,
+                "category": "low",
+                "windDegreesFrom": 185,
+                "windTowardDegreesTrue": 5,
+                "currentTowardDegreesTrue": 334.9,
+                "angularDifferenceDegrees": 30.1,
+                "relationship": "following"
+              },
+              "eastCell": {
+                "value": -0.004353034775704145,
+                "lat": 37.91998291015625,
+                "lon": -122.36683654785156,
+                "distanceKm": 0.093,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 39681
+                }
+              },
+              "northCell": {
+                "value": 0.009290662594139576,
+                "lat": 37.91998291015625,
+                "lon": -122.36683654785156,
+                "distanceKm": 0.093,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 39681
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-30T23:00:00+00:00",
+            "hoursAhead": 0.1,
+            "speedKnots": 0.02,
+            "towardDegreesTrue": 334.9,
+            "towardCardinal": "NNW",
+            "currentFit": 0,
+            "shearIndex": 49,
+            "shearCategory": "moderate"
+          },
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.009,
+            "towardDegreesTrue": 334.9,
+            "towardCardinal": "NNW",
+            "currentFit": 0,
+            "shearIndex": 42,
+            "shearCategory": "moderate"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.01,
+            "towardDegreesTrue": 154.9,
+            "towardCardinal": "SSE",
+            "currentFit": 0,
+            "shearIndex": 37,
+            "shearCategory": "moderate"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      },
+      {
+        "spotId": "point-pinole",
+        "spotName": "Point Pinole Regional Shoreline",
+        "siteFit": 69,
+        "conditionFit": 64.7,
+        "dataConfidence": 77.5,
+        "recommendationScore": 63.2,
+        "availableFactorWeight": 0.75,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "falling",
+            "score": 56.6,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "falling",
+              "nextTurnType": "low",
+              "nextTurnAt": "2026-10-30 22:29",
+              "minutesToTurn": 397,
+              "phaseFraction": 0.12
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63,
+            "score": 100,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.041,
+            "score": 0,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.041,
+              "speedMph": 0.048,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": 0.695,
+                "direction": "strengthening"
+              },
+              "currentStrength": {
+                "index": 1.4,
+                "category": "slack",
+                "speedKnots": 0.041
+              },
+              "currentShear": {
+                "index": 50,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.0838,
+                "p90DirectionDifferenceDegrees": 148.1,
+                "speedRangeKnots": 0.122,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.3,
+                "category": "low",
+                "windDegreesFrom": 185,
+                "windTowardDegreesTrue": 5,
+                "currentTowardDegreesTrue": 318,
+                "angularDifferenceDegrees": 47,
+                "relationship": "crossing"
+              },
+              "eastCell": {
+                "value": -0.014276853762567043,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              },
+              "northCell": {
+                "value": 0.015854349359869957,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.736,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.737,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T11:00:00+00:00",
+            "hoursAhead": 12.1,
+            "speedKnots": 0.299,
+            "towardDegreesTrue": 138,
+            "towardCardinal": "SE",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      }
+    ],
+    "starry-flounder": [
+      {
+        "spotId": "eckley-pier",
+        "spotName": "Eckley Pier and Shoreline",
+        "siteFit": 70,
+        "conditionFit": 89.2,
+        "dataConfidence": 56.5,
+        "recommendationScore": 66.2,
+        "availableFactorWeight": 0.45,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "rising",
+            "score": 69.4,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "rising",
+              "nextTurnType": "high",
+              "nextTurnAt": "2026-10-30 16:24",
+              "minutesToTurn": 32,
+              "phaseFraction": 0.901
+            }
+          },
+          {
+            "id": "temperature",
+            "value": null,
+            "score": null,
+            "weight": 0.3,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 3.5,
+            "score": 100,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 1.018,
+            "score": 98.2,
+            "weight": 0.15,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 1.018,
+              "speedMph": 1.172,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": -0.517,
+                "direction": "weakening"
+              },
+              "currentStrength": {
+                "index": 33.9,
+                "category": "moderate",
+                "speedKnots": 1.018
+              },
+              "currentShear": {
+                "index": 73,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.9848,
+                "p90DirectionDifferenceDegrees": 9.4,
+                "speedRangeKnots": 1.201,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.4,
+                "category": "low",
+                "windDegreesFrom": 284,
+                "windTowardDegreesTrue": 104,
+                "currentTowardDegreesTrue": 96.7,
+                "angularDifferenceDegrees": 7.3,
+                "relationship": "following"
+              },
+              "eastCell": {
+                "value": 0.5202353000640869,
+                "lat": 38.05671310424805,
+                "lon": -122.22621154785156,
+                "distanceKm": 0.453,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 79800
+                }
+              },
+              "northCell": {
+                "value": -0.06097008287906647,
+                "lat": 38.05671310424805,
+                "lon": -122.22621154785156,
+                "distanceKm": 0.453,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 79800
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-31T11:00:00+00:00",
+            "hoursAhead": 12.1,
+            "speedKnots": 0.188,
+            "towardDegreesTrue": 96.7,
+            "towardCardinal": "E",
+            "currentFit": 100,
+            "shearIndex": 79,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.501,
+            "towardDegreesTrue": 276.7,
+            "towardCardinal": "W",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.899,
+            "towardDegreesTrue": 276.7,
+            "towardCardinal": "W",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      },
+      {
+        "spotId": "point-pinole",
+        "spotName": "Point Pinole Regional Shoreline",
+        "siteFit": 64,
+        "conditionFit": 74.2,
+        "dataConfidence": 77.5,
+        "recommendationScore": 64.4,
+        "availableFactorWeight": 0.75,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "falling",
+            "score": 63.2,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "falling",
+              "nextTurnType": "low",
+              "nextTurnAt": "2026-10-30 22:29",
+              "minutesToTurn": 397,
+              "phaseFraction": 0.12
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63,
+            "score": 83.3,
+            "weight": 0.3,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.041,
+            "score": 41,
+            "weight": 0.15,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.041,
+              "speedMph": 0.048,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": 0.695,
+                "direction": "strengthening"
+              },
+              "currentStrength": {
+                "index": 1.4,
+                "category": "slack",
+                "speedKnots": 0.041
+              },
+              "currentShear": {
+                "index": 50,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.0838,
+                "p90DirectionDifferenceDegrees": 148.1,
+                "speedRangeKnots": 0.122,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.3,
+                "category": "low",
+                "windDegreesFrom": 185,
+                "windTowardDegreesTrue": 5,
+                "currentTowardDegreesTrue": 318,
+                "angularDifferenceDegrees": 47,
+                "relationship": "crossing"
+              },
+              "eastCell": {
+                "value": -0.014276853762567043,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              },
+              "northCell": {
+                "value": 0.015854349359869957,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.736,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.737,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T11:00:00+00:00",
+            "hoursAhead": 12.1,
+            "speedKnots": 0.299,
+            "towardDegreesTrue": 138,
+            "towardCardinal": "SE",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      },
+      {
+        "spotId": "richmond-inner-harbor",
+        "spotName": "Richmond Inner Harbor",
+        "siteFit": 58,
+        "conditionFit": 70,
+        "dataConfidence": 77.5,
+        "recommendationScore": 60.4,
+        "availableFactorWeight": 0.75,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "falling",
+            "score": 63.2,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "falling",
+              "nextTurnType": "low",
+              "nextTurnAt": "2026-10-30 22:29",
+              "minutesToTurn": 397,
+              "phaseFraction": 0.12
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63,
+            "score": 83.3,
+            "weight": 0.3,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.02,
+            "score": 20,
+            "weight": 0.15,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.02,
+              "speedMph": 0.023,
+              "towardDegreesTrue": 334.9,
+              "towardCardinal": "NNW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": -0.011,
+                "direction": "steady"
+              },
+              "currentStrength": {
+                "index": 0.7,
+                "category": "slack",
+                "speedKnots": 0.02
+              },
+              "currentShear": {
+                "index": 49,
+                "category": "moderate",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.1058,
+                "p90DirectionDifferenceDegrees": 72.1,
+                "speedRangeKnots": 0.077,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.1,
+                "category": "low",
+                "windDegreesFrom": 185,
+                "windTowardDegreesTrue": 5,
+                "currentTowardDegreesTrue": 334.9,
+                "angularDifferenceDegrees": 30.1,
+                "relationship": "following"
+              },
+              "eastCell": {
+                "value": -0.004353034775704145,
+                "lat": 37.91998291015625,
+                "lon": -122.36683654785156,
+                "distanceKm": 0.093,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 39681
+                }
+              },
+              "northCell": {
+                "value": 0.009290662594139576,
+                "lat": 37.91998291015625,
+                "lon": -122.36683654785156,
+                "distanceKm": 0.093,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 39681
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-31T11:00:00+00:00",
+            "hoursAhead": 12.1,
+            "speedKnots": 0.042,
+            "towardDegreesTrue": 334.9,
+            "towardCardinal": "NNW",
+            "currentFit": 42,
+            "shearIndex": 36,
+            "shearCategory": "moderate"
+          },
+          {
+            "validTime": "2026-10-30T23:00:00+00:00",
+            "hoursAhead": 0.1,
+            "speedKnots": 0.02,
+            "towardDegreesTrue": 334.9,
+            "towardCardinal": "NNW",
+            "currentFit": 20,
+            "shearIndex": 49,
+            "shearCategory": "moderate"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.01,
+            "towardDegreesTrue": 154.9,
+            "towardCardinal": "SSE",
+            "currentFit": 10,
+            "shearIndex": 37,
+            "shearCategory": "moderate"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": null
+      }
+    ],
+    "white-sturgeon": [
+      {
+        "spotId": "sherman-island",
+        "spotName": "Sherman Island",
+        "siteFit": 52,
+        "conditionFit": 80.8,
+        "dataConfidence": 84.5,
+        "recommendationScore": 62.7,
+        "availableFactorWeight": 0.85,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "rising",
+            "score": 52.8,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "rising",
+              "nextTurnType": "high",
+              "nextTurnAt": "2026-10-30 16:50",
+              "minutesToTurn": 58,
+              "phaseFraction": 0.823
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63.7,
+            "score": 100,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.1,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0.15,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11455420",
+              "value": 331,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T21:30:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 81,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.565,
+            "score": 100,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.565,
+              "speedMph": 0.651,
+              "towardDegreesTrue": 288.9,
+              "towardCardinal": "WNW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": 0.699,
+                "direction": "strengthening"
+              },
+              "currentStrength": {
+                "index": 18.8,
+                "category": "moderate",
+                "speedKnots": 0.565
+              },
+              "currentShear": {
+                "index": 64,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.2619,
+                "p90DirectionDifferenceDegrees": 9.7,
+                "speedRangeKnots": 0.184,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 7.1,
+                "category": "low",
+                "windDegreesFrom": 298,
+                "windTowardDegreesTrue": 118,
+                "currentTowardDegreesTrue": 288.9,
+                "angularDifferenceDegrees": 170.9,
+                "relationship": "opposing"
+              },
+              "eastCell": {
+                "value": -0.2752249836921692,
+                "lat": 38.059810638427734,
+                "lon": -121.82243347167969,
+                "distanceKm": 0.268,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 100913
+                }
+              },
+              "northCell": {
+                "value": 0.09420446306467056,
+                "lat": 38.059810638427734,
+                "lon": -121.82243347167969,
+                "distanceKm": 0.268,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 100913
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 1.264,
+            "towardDegreesTrue": 288.9,
+            "towardCardinal": "WNW",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 1.86,
+            "towardDegreesTrue": 288.9,
+            "towardCardinal": "WNW",
+            "currentFit": 100,
+            "shearIndex": 72,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T11:00:00+00:00",
+            "hoursAhead": 12.1,
+            "speedKnots": 1.142,
+            "towardDegreesTrue": 288.9,
+            "towardCardinal": "WNW",
+            "currentFit": 100,
+            "shearIndex": 72,
+            "shearCategory": "high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": "Always verify current CDFW season, possession, report-card and emergency rules before presenting a fish-now recommendation."
+      },
+      {
+        "spotId": "eckley-pier",
+        "spotName": "Eckley Pier and Shoreline",
+        "siteFit": 55,
+        "conditionFit": 68.8,
+        "dataConfidence": 74,
+        "recommendationScore": 58.3,
+        "availableFactorWeight": 0.7,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "rising",
+            "score": 30.6,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "rising",
+              "nextTurnType": "high",
+              "nextTurnAt": "2026-10-30 16:24",
+              "minutesToTurn": 32,
+              "phaseFraction": 0.901
+            }
+          },
+          {
+            "id": "temperature",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 3.5,
+            "score": 100,
+            "weight": 0.1,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0.15,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 1.018,
+            "score": 100,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 1.018,
+              "speedMph": 1.172,
+              "towardDegreesTrue": 96.7,
+              "towardCardinal": "E",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": -0.517,
+                "direction": "weakening"
+              },
+              "currentStrength": {
+                "index": 33.9,
+                "category": "moderate",
+                "speedKnots": 1.018
+              },
+              "currentShear": {
+                "index": 73,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.9848,
+                "p90DirectionDifferenceDegrees": 9.4,
+                "speedRangeKnots": 1.201,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.4,
+                "category": "low",
+                "windDegreesFrom": 284,
+                "windTowardDegreesTrue": 104,
+                "currentTowardDegreesTrue": 96.7,
+                "angularDifferenceDegrees": 7.3,
+                "relationship": "following"
+              },
+              "eastCell": {
+                "value": 0.5202353000640869,
+                "lat": 38.05671310424805,
+                "lon": -122.22621154785156,
+                "distanceKm": 0.453,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 79800
+                }
+              },
+              "northCell": {
+                "value": -0.06097008287906647,
+                "lat": 38.05671310424805,
+                "lon": -122.22621154785156,
+                "distanceKm": 0.453,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 79800
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-30T23:00:00+00:00",
+            "hoursAhead": 0.1,
+            "speedKnots": 1.018,
+            "towardDegreesTrue": 96.7,
+            "towardCardinal": "E",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.501,
+            "towardDegreesTrue": 276.7,
+            "towardCardinal": "W",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.899,
+            "towardDegreesTrue": 276.7,
+            "towardCardinal": "W",
+            "currentFit": 100,
+            "shearIndex": 73,
+            "shearCategory": "high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": "Always verify current CDFW season, possession, report-card and emergency rules before presenting a fish-now recommendation."
+      },
+      {
+        "spotId": "point-pinole",
+        "spotName": "Point Pinole Regional Shoreline",
+        "siteFit": 48,
+        "conditionFit": 52.6,
+        "dataConfidence": 84.5,
+        "recommendationScore": 50.1,
+        "availableFactorWeight": 0.85,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "falling",
+            "score": 36.8,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "falling",
+              "nextTurnType": "low",
+              "nextTurnAt": "2026-10-30 22:29",
+              "minutesToTurn": 397,
+              "phaseFraction": 0.12
+            }
+          },
+          {
+            "id": "temperature",
+            "value": 63,
+            "score": 100,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 7.19,
+            "score": 100,
+            "weight": 0.1,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0.15,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 9270,
+              "unit": "ft^3/s",
+              "observedAt": "2026-10-30T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 36,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.041,
+            "score": 0,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.041,
+              "speedMph": 0.048,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "directionReference": "true-north",
+              "validTime": "2026-10-30T23:00:00+00:00",
+              "modelCycle": "2026-10-30T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-10-31T02:00:00+00:00",
+                "deltaKnots": 0.695,
+                "direction": "strengthening"
+              },
+              "currentStrength": {
+                "index": 1.4,
+                "category": "slack",
+                "speedKnots": 0.041
+              },
+              "currentShear": {
+                "index": 50,
+                "category": "high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.0838,
+                "p90DirectionDifferenceDegrees": 148.1,
+                "speedRangeKnots": 0.122,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.3,
+                "category": "low",
+                "windDegreesFrom": 185,
+                "windTowardDegreesTrue": 5,
+                "currentTowardDegreesTrue": 318,
+                "angularDifferenceDegrees": 47,
+                "relationship": "crossing"
+              },
+              "eastCell": {
+                "value": -0.014276853762567043,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              },
+              "northCell": {
+                "value": 0.015854349359869957,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-10-31T02:00:00+00:00",
+            "hoursAhead": 3.1,
+            "speedKnots": 0.736,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T05:00:00+00:00",
+            "hoursAhead": 6.1,
+            "speedKnots": 0.737,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-10-31T11:00:00+00:00",
+            "hoursAhead": 12.1,
+            "speedKnots": 0.299,
+            "towardDegreesTrue": 138,
+            "towardCardinal": "SE",
+            "currentFit": 99.6,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": "Always verify current CDFW season, possession, report-card and emergency rules before presenting a fish-now recommendation."
+      }
+    ]
+  }
+}
