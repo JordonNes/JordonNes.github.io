@@ -1,0 +1,43 @@
+name: RWT Pages Release Sync
+# Master receives frequent data commits, which repeatedly cancel Pages builds.
+# Publish a stable snapshot of the complete site every 15 minutes.
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rwt-pages-release-sync
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout master and full history
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Fast-forward release snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin master rwt-pages-release
+          source_sha="$(git rev-parse origin/master)"
+          release_sha="$(git rev-parse origin/rwt-pages-release)"
+          if [ "$source_sha" = "$release_sha" ]; then
+            echo "Release already current: $source_sha"
+            exit 0
+          fi
+          if ! git merge-base --is-ancestor "$release_sha" "$source_sha"; then
+            echo "::error::Release branch diverged from master. Manual review required."
+            exit 1
+          fi
+          git push origin "$source_sha:refs/heads/rwt-pages-release"
+          echo "Published snapshot: $source_sha"
