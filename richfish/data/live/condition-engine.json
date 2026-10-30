@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.2",
-  "generatedAt": "2026-10-30T23:04:17.805Z",
+  "generatedAt": "2026-10-30T23:05:38.097Z",
   "engine": {
     "name": "RICHFISH Condition Engine",
     "version": "0.2.2",
@@ -10,11 +10,11 @@
   },
   "sourceStatus": {
     "noaaAvailable": true,
-    "noaaGeneratedAt": "2026-10-30T23:03:38.673Z",
+    "noaaGeneratedAt": "2026-10-30T23:04:40.176Z",
     "usgsAvailable": true,
-    "usgsGeneratedAt": "2026-10-30T23:03:49.985Z",
+    "usgsGeneratedAt": "2026-10-30T23:04:52.078Z",
     "sfbofsAvailable": true,
-    "sfbofsGeneratedAt": "2026-10-30T23:04:12.471643+00:00",
+    "sfbofsGeneratedAt": "2026-10-30T23:05:31.081075+00:00",
     "sfbofsModelCycle": "2026-10-30T21:00:00+00:00",
     "sfbofsModelFreshness": "fresh",
     "sfbofsForecastHorizonStatus": "complete",
@@ -33,18 +33,18 @@
       "observations": {
         "noaaStationId": "9414863",
         "noaaStationName": "Richmond, CA",
-        "waterLevelFt": 7.828,
+        "waterLevelFt": 7.772,
         "waterTemperatureF": 63,
         "salinityPsu": null,
-        "windMph": 7,
-        "windDirection": "S",
-        "windDegreesFrom": 188,
+        "windMph": 7.19,
+        "windDirection": "SSW",
+        "windDegreesFrom": 192,
         "tide": {
           "trend": "falling",
           "nextTurnType": "low",
           "nextTurnAt": "2026-10-30 22:29",
-          "minutesToTurn": 385,
-          "phaseFraction": 0.146
+          "minutesToTurn": 384,
+          "phaseFraction": 0.149
         },
         "freshwater": {
           "stationId": "USGS-11447650",
@@ -52,7 +52,7 @@
           "unit": "ft^3/s",
           "observedAt": "2026-10-30T22:15:00+00:00",
           "freshnessStatus": "fresh",
-          "ageMinutes": 49,
+          "ageMinutes": 50,
           "baseline31dMean": null,
           "ratioTo31dMean": null,
           "approvalStatus": "Provisional",
@@ -240,10 +240,10 @@
         "windCurrentInteraction": {
           "difficultyIndex": 0.3,
           "category": "low",
-          "windDegreesFrom": 188,
-          "windTowardDegreesTrue": 8,
+          "windDegreesFrom": 192,
+          "windTowardDegreesTrue": 12,
           "currentTowardDegreesTrue": 318,
-          "angularDifferenceDegrees": 50,
+          "angularDifferenceDegrees": 54,
           "relationship": "crossing"
         }
       },
@@ -266,10 +266,10 @@
         "windCurrentInteraction": {
           "difficultyIndex": 0.3,
           "category": "low",
-          "windDegreesFrom": 188,
-          "windTowardDegreesTrue": 8,
+          "windDegreesFrom": 192,
+          "windTowardDegreesTrue": 12,
           "currentTowardDegreesTrue": 318,
-          "angularDifferenceDegrees": 50,
+          "angularDifferenceDegrees": 54,
           "relationship": "crossing"
         },
         "currentTrend": {
@@ -281,24 +281,24 @@
       "species": {
         "striped-bass": {
           "siteFit": 82,
-          "conditionFit": 58.1,
+          "conditionFit": 58.3,
           "dataConfidence": 84.5,
-          "recommendationScore": 67.9,
+          "recommendationScore": 68,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 44.3,
+              "score": 45.1,
               "weight": 0.2,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-10-30 22:29",
-                "minutesToTurn": 385,
-                "phaseFraction": 0.146
+                "minutesToTurn": 384,
+                "phaseFraction": 0.149
               }
             },
             {
@@ -319,7 +319,7 @@
             },
             {
               "id": "wind",
-              "value": 7,
+              "value": 7.19,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -337,7 +337,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -382,10 +382,10 @@
                 "windCurrentInteraction": {
                   "difficultyIndex": 0.3,
                   "category": "low",
-                  "windDegreesFrom": 188,
-                  "windTowardDegreesTrue": 8,
+                  "windDegreesFrom": 192,
+                  "windTowardDegreesTrue": 12,
                   "currentTowardDegreesTrue": 318,
-                  "angularDifferenceDegrees": 50,
+                  "angularDifferenceDegrees": 54,
                   "relationship": "crossing"
                 },
                 "eastCell": {
@@ -452,24 +452,24 @@
         },
         "california-halibut": {
           "siteFit": 69,
-          "conditionFit": 67,
+          "conditionFit": 67.2,
           "dataConfidence": 77.5,
-          "recommendationScore": 64,
+          "recommendationScore": 64.1,
           "availableFactorWeight": 0.75,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 68.1,
+              "score": 69.4,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-10-30 22:29",
-                "minutesToTurn": 385,
-                "phaseFraction": 0.146
+                "minutesToTurn": 384,
+                "phaseFraction": 0.149
               }
             },
             {
@@ -490,7 +490,7 @@
             },
             {
               "id": "wind",
-              "value": 7,
+              "value": 7.19,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -508,7 +508,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -553,10 +553,10 @@
                 "windCurrentInteraction": {
                   "difficultyIndex": 0.3,
                   "category": "low",
-                  "windDegreesFrom": 188,
-                  "windTowardDegreesTrue": 8,
+                  "windDegreesFrom": 192,
+                  "windTowardDegreesTrue": 12,
                   "currentTowardDegreesTrue": 318,
-                  "angularDifferenceDegrees": 50,
+                  "angularDifferenceDegrees": 54,
                   "relationship": "crossing"
                 },
                 "eastCell": {
@@ -623,24 +623,24 @@
         },
         "starry-flounder": {
           "siteFit": 64,
-          "conditionFit": 72.7,
+          "conditionFit": 72.5,
           "dataConfidence": 77.5,
-          "recommendationScore": 63.9,
+          "recommendationScore": 63.8,
           "availableFactorWeight": 0.75,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 55.7,
+              "score": 54.9,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-10-30 22:29",
-                "minutesToTurn": 385,
-                "phaseFraction": 0.146
+                "minutesToTurn": 384,
+                "phaseFraction": 0.149
               }
             },
             {
@@ -661,7 +661,7 @@
             },
             {
               "id": "wind",
-              "value": 7,
+              "value": 7.19,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -679,7 +679,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -724,10 +724,10 @@
                 "windCurrentInteraction": {
                   "difficultyIndex": 0.3,
                   "category": "low",
-                  "windDegreesFrom": 188,
-                  "windTowardDegreesTrue": 8,
+                  "windDegreesFrom": 192,
+                  "windTowardDegreesTrue": 12,
                   "currentTowardDegreesTrue": 318,
-                  "angularDifferenceDegrees": 50,
+                  "angularDifferenceDegrees": 54,
                   "relationship": "crossing"
                 },
                 "eastCell": {
@@ -794,24 +794,24 @@
         },
         "white-sturgeon": {
           "siteFit": 48,
-          "conditionFit": 54.8,
+          "conditionFit": 55,
           "dataConfidence": 84.5,
-          "recommendationScore": 50.9,
+          "recommendationScore": 51,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 44.3,
+              "score": 45.1,
               "weight": 0.25,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-10-30 22:29",
-                "minutesToTurn": 385,
-                "phaseFraction": 0.146
+                "minutesToTurn": 384,
+                "phaseFraction": 0.149
               }
             },
             {
@@ -832,7 +832,7 @@
             },
             {
               "id": "wind",
-              "value": 7,
+              "value": 7.19,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -850,7 +850,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -895,10 +895,10 @@
                 "windCurrentInteraction": {
                   "difficultyIndex": 0.3,
                   "category": "low",
-                  "windDegreesFrom": 188,
-                  "windTowardDegreesTrue": 8,
+                  "windDegreesFrom": 192,
+                  "windTowardDegreesTrue": 12,
                   "currentTowardDegreesTrue": 318,
-                  "angularDifferenceDegrees": 50,
+                  "angularDifferenceDegrees": 54,
                   "relationship": "crossing"
                 },
                 "eastCell": {
@@ -987,8 +987,8 @@
           "trend": "rising",
           "nextTurnType": "high",
           "nextTurnAt": "2026-10-30 16:24",
-          "minutesToTurn": 20,
-          "phaseFraction": 0.938
+          "minutesToTurn": 19,
+          "phaseFraction": 0.941
         },
         "freshwater": {
           "stationId": "USGS-11447650",
@@ -996,7 +996,7 @@
           "unit": "ft^3/s",
           "observedAt": "2026-10-30T22:15:00+00:00",
           "freshnessStatus": "fresh",
-          "ageMinutes": 49,
+          "ageMinutes": 50,
           "baseline31dMean": null,
           "ratioTo31dMean": null,
           "approvalStatus": "Provisional",
@@ -1225,24 +1225,24 @@
       "species": {
         "striped-bass": {
           "siteFit": 85,
-          "conditionFit": 68.3,
+          "conditionFit": 68,
           "dataConfidence": 70.5,
-          "recommendationScore": 69.4,
+          "recommendationScore": 69.3,
           "availableFactorWeight": 0.65,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "rising",
-              "score": 19.4,
+              "score": 18.4,
               "weight": 0.2,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "rising",
                 "nextTurnType": "high",
                 "nextTurnAt": "2026-10-30 16:24",
-                "minutesToTurn": 20,
-                "phaseFraction": 0.938
+                "minutesToTurn": 19,
+                "phaseFraction": 0.941
               }
             },
             {
@@ -1281,7 +1281,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -1396,24 +1396,24 @@
         },
         "starry-flounder": {
           "siteFit": 70,
-          "conditionFit": 92.9,
+          "conditionFit": 93.3,
           "dataConfidence": 56.5,
-          "recommendationScore": 67.1,
+          "recommendationScore": 67.2,
           "availableFactorWeight": 0.45,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "rising",
-              "score": 80.6,
+              "score": 81.6,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "rising",
                 "nextTurnType": "high",
                 "nextTurnAt": "2026-10-30 16:24",
-                "minutesToTurn": 20,
-                "phaseFraction": 0.938
+                "minutesToTurn": 19,
+                "phaseFraction": 0.941
               }
             },
             {
@@ -1452,7 +1452,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -1567,24 +1567,24 @@
         },
         "white-sturgeon": {
           "siteFit": 55,
-          "conditionFit": 64.8,
+          "conditionFit": 64.4,
           "dataConfidence": 74,
-          "recommendationScore": 57,
+          "recommendationScore": 56.8,
           "availableFactorWeight": 0.7,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "rising",
-              "score": 19.4,
+              "score": 18.4,
               "weight": 0.25,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "rising",
                 "nextTurnType": "high",
                 "nextTurnAt": "2026-10-30 16:24",
-                "minutesToTurn": 20,
-                "phaseFraction": 0.938
+                "minutesToTurn": 19,
+                "phaseFraction": 0.941
               }
             },
             {
@@ -1623,7 +1623,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -1750,18 +1750,18 @@
       "observations": {
         "noaaStationId": "9414863",
         "noaaStationName": "Richmond, CA",
-        "waterLevelFt": 7.828,
+        "waterLevelFt": 7.772,
         "waterTemperatureF": 63,
         "salinityPsu": null,
-        "windMph": 7,
-        "windDirection": "S",
-        "windDegreesFrom": 188,
+        "windMph": 7.19,
+        "windDirection": "SSW",
+        "windDegreesFrom": 192,
         "tide": {
           "trend": "falling",
           "nextTurnType": "low",
           "nextTurnAt": "2026-10-30 22:29",
-          "minutesToTurn": 385,
-          "phaseFraction": 0.146
+          "minutesToTurn": 384,
+          "phaseFraction": 0.149
         },
         "freshwater": {
           "stationId": "USGS-11447650",
@@ -1769,7 +1769,7 @@
           "unit": "ft^3/s",
           "observedAt": "2026-10-30T22:15:00+00:00",
           "freshnessStatus": "fresh",
-          "ageMinutes": 49,
+          "ageMinutes": 50,
           "baseline31dMean": null,
           "ratioTo31dMean": null,
           "approvalStatus": "Provisional",
@@ -1957,10 +1957,10 @@
         "windCurrentInteraction": {
           "difficultyIndex": 0.1,
           "category": "low",
-          "windDegreesFrom": 188,
-          "windTowardDegreesTrue": 8,
+          "windDegreesFrom": 192,
+          "windTowardDegreesTrue": 12,
           "currentTowardDegreesTrue": 334.9,
-          "angularDifferenceDegrees": 33.1,
+          "angularDifferenceDegrees": 37.1,
           "relationship": "following"
         }
       },
@@ -1983,10 +1983,10 @@
         "windCurrentInteraction": {
           "difficultyIndex": 0.1,
           "category": "low",
-          "windDegreesFrom": 188,
-          "windTowardDegreesTrue": 8,
+          "windDegreesFrom": 192,
+          "windTowardDegreesTrue": 12,
           "currentTowardDegreesTrue": 334.9,
-          "angularDifferenceDegrees": 33.1,
+          "angularDifferenceDegrees": 37.1,
           "relationship": "following"
         },
         "currentTrend": {
@@ -1998,24 +1998,24 @@
       "species": {
         "striped-bass": {
           "siteFit": 75,
-          "conditionFit": 58.1,
+          "conditionFit": 58.3,
           "dataConfidence": 84.5,
-          "recommendationScore": 64.7,
+          "recommendationScore": 64.8,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 44.3,
+              "score": 45.1,
               "weight": 0.2,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-10-30 22:29",
-                "minutesToTurn": 385,
-                "phaseFraction": 0.146
+                "minutesToTurn": 384,
+                "phaseFraction": 0.149
               }
             },
             {
@@ -2036,7 +2036,7 @@
             },
             {
               "id": "wind",
-              "value": 7,
+              "value": 7.19,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -2054,7 +2054,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -2099,10 +2099,10 @@
                 "windCurrentInteraction": {
                   "difficultyIndex": 0.1,
                   "category": "low",
-                  "windDegreesFrom": 188,
-                  "windTowardDegreesTrue": 8,
+                  "windDegreesFrom": 192,
+                  "windTowardDegreesTrue": 12,
                   "currentTowardDegreesTrue": 334.9,
-                  "angularDifferenceDegrees": 33.1,
+                  "angularDifferenceDegrees": 37.1,
                   "relationship": "following"
                 },
                 "eastCell": {
@@ -2169,24 +2169,24 @@
         },
         "california-halibut": {
           "siteFit": 77,
-          "conditionFit": 67,
+          "conditionFit": 67.2,
           "dataConfidence": 77.5,
-          "recommendationScore": 67.4,
+          "recommendationScore": 67.5,
           "availableFactorWeight": 0.75,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 68.1,
+              "score": 69.4,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-10-30 22:29",
-                "minutesToTurn": 385,
-                "phaseFraction": 0.146
+                "minutesToTurn": 384,
+                "phaseFraction": 0.149
               }
             },
             {
@@ -2207,7 +2207,7 @@
             },
             {
               "id": "wind",
-              "value": 7,
+              "value": 7.19,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -2225,7 +2225,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -2270,10 +2270,10 @@
                 "windCurrentInteraction": {
                   "difficultyIndex": 0.1,
                   "category": "low",
-                  "windDegreesFrom": 188,
-                  "windTowardDegreesTrue": 8,
+                  "windDegreesFrom": 192,
+                  "windTowardDegreesTrue": 12,
                   "currentTowardDegreesTrue": 334.9,
-                  "angularDifferenceDegrees": 33.1,
+                  "angularDifferenceDegrees": 37.1,
                   "relationship": "following"
                 },
                 "eastCell": {
@@ -2340,7 +2340,7 @@
         },
         "starry-flounder": {
           "siteFit": 58,
-          "conditionFit": 68.5,
+          "conditionFit": 68.3,
           "dataConfidence": 77.5,
           "recommendationScore": 59.8,
           "availableFactorWeight": 0.75,
@@ -2349,15 +2349,15 @@
             {
               "id": "tide",
               "value": "falling",
-              "score": 55.7,
+              "score": 54.9,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-10-30 22:29",
-                "minutesToTurn": 385,
-                "phaseFraction": 0.146
+                "minutesToTurn": 384,
+                "phaseFraction": 0.149
               }
             },
             {
@@ -2378,7 +2378,7 @@
             },
             {
               "id": "wind",
-              "value": 7,
+              "value": 7.19,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -2396,7 +2396,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 49,
+                "ageMinutes": 50,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -2441,10 +2441,10 @@
                 "windCurrentInteraction": {
                   "difficultyIndex": 0.1,
                   "category": "low",
-                  "windDegreesFrom": 188,
-                  "windTowardDegreesTrue": 8,
+                  "windDegreesFrom": 192,
+                  "windTowardDegreesTrue": 12,
                   "currentTowardDegreesTrue": 334.9,
-                  "angularDifferenceDegrees": 33.1,
+                  "angularDifferenceDegrees": 37.1,
                   "relationship": "following"
                 },
                 "eastCell": {
@@ -2534,8 +2534,8 @@
           "trend": "rising",
           "nextTurnType": "high",
           "nextTurnAt": "2026-10-30 16:50",
-          "minutesToTurn": 46,
-          "phaseFraction": 0.859
+          "minutesToTurn": 45,
+          "phaseFraction": 0.862
         },
         "freshwater": {
           "stationId": "USGS-11455420",
@@ -2543,7 +2543,7 @@
           "unit": "ft^3/s",
           "observedAt": "2026-10-30T22:30:00+00:00",
           "freshnessStatus": "fresh",
-          "ageMinutes": 34,
+          "ageMinutes": 35,
           "baseline31dMean": null,
           "ratioTo31dMean": null,
           "approvalStatus": "Provisional",
@@ -2772,24 +2772,24 @@
       "species": {
         "striped-bass": {
           "siteFit": 79,
-          "conditionFit": 81.3,
+          "conditionFit": 81.1,
           "dataConfidence": 84.5,
-          "recommendationScore": 75.4,
+          "recommendationScore": 75.3,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "rising",
-              "score": 42.9,
+              "score": 42,
               "weight": 0.2,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "rising",
                 "nextTurnType": "high",
                 "nextTurnAt": "2026-10-30 16:50",
-                "minutesToTurn": 46,
-                "phaseFraction": 0.859
+                "minutesToTurn": 45,
+                "phaseFraction": 0.862
               }
             },
             {
@@ -2828,7 +2828,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:30:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 34,
+                "ageMinutes": 35,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -2943,24 +2943,24 @@
         },
         "white-sturgeon": {
           "siteFit": 52,
-          "conditionFit": 77.9,
+          "conditionFit": 77.6,
           "dataConfidence": 84.5,
-          "recommendationScore": 61.5,
+          "recommendationScore": 61.4,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "rising",
-              "score": 42.9,
+              "score": 42,
               "weight": 0.25,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "rising",
                 "nextTurnType": "high",
                 "nextTurnAt": "2026-10-30 16:50",
-                "minutesToTurn": 46,
-                "phaseFraction": 0.859
+                "minutesToTurn": 45,
+                "phaseFraction": 0.862
               }
             },
             {
@@ -2999,7 +2999,7 @@
                 "unit": "ft^3/s",
                 "observedAt": "2026-10-30T22:30:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 34,
+                "ageMinutes": 35,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -3121,24 +3121,24 @@
         "spotId": "sherman-island",
         "spotName": "Sherman Island",
         "siteFit": 79,
-        "conditionFit": 81.3,
+        "conditionFit": 81.1,
         "dataConfidence": 84.5,
-        "recommendationScore": 75.4,
+        "recommendationScore": 75.3,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "rising",
-            "score": 42.9,
+            "score": 42,
             "weight": 0.2,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "rising",
               "nextTurnType": "high",
               "nextTurnAt": "2026-10-30 16:50",
-              "minutesToTurn": 46,
-              "phaseFraction": 0.859
+              "minutesToTurn": 45,
+              "phaseFraction": 0.862
             }
           },
           {
@@ -3177,7 +3177,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:30:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 34,
+              "ageMinutes": 35,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3294,24 +3294,24 @@
         "spotId": "eckley-pier",
         "spotName": "Eckley Pier and Shoreline",
         "siteFit": 85,
-        "conditionFit": 68.3,
+        "conditionFit": 68,
         "dataConfidence": 70.5,
-        "recommendationScore": 69.4,
+        "recommendationScore": 69.3,
         "availableFactorWeight": 0.65,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "rising",
-            "score": 19.4,
+            "score": 18.4,
             "weight": 0.2,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "rising",
               "nextTurnType": "high",
               "nextTurnAt": "2026-10-30 16:24",
-              "minutesToTurn": 20,
-              "phaseFraction": 0.938
+              "minutesToTurn": 19,
+              "phaseFraction": 0.941
             }
           },
           {
@@ -3350,7 +3350,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3467,24 +3467,24 @@
         "spotId": "point-pinole",
         "spotName": "Point Pinole Regional Shoreline",
         "siteFit": 82,
-        "conditionFit": 58.1,
+        "conditionFit": 58.3,
         "dataConfidence": 84.5,
-        "recommendationScore": 67.9,
+        "recommendationScore": 68,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 44.3,
+            "score": 45.1,
             "weight": 0.2,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-10-30 22:29",
-              "minutesToTurn": 385,
-              "phaseFraction": 0.146
+              "minutesToTurn": 384,
+              "phaseFraction": 0.149
             }
           },
           {
@@ -3505,7 +3505,7 @@
           },
           {
             "id": "wind",
-            "value": 7,
+            "value": 7.19,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -3523,7 +3523,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3568,10 +3568,10 @@
               "windCurrentInteraction": {
                 "difficultyIndex": 0.3,
                 "category": "low",
-                "windDegreesFrom": 188,
-                "windTowardDegreesTrue": 8,
+                "windDegreesFrom": 192,
+                "windTowardDegreesTrue": 12,
                 "currentTowardDegreesTrue": 318,
-                "angularDifferenceDegrees": 50,
+                "angularDifferenceDegrees": 54,
                 "relationship": "crossing"
               },
               "eastCell": {
@@ -3640,24 +3640,24 @@
         "spotId": "richmond-inner-harbor",
         "spotName": "Richmond Inner Harbor",
         "siteFit": 75,
-        "conditionFit": 58.1,
+        "conditionFit": 58.3,
         "dataConfidence": 84.5,
-        "recommendationScore": 64.7,
+        "recommendationScore": 64.8,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 44.3,
+            "score": 45.1,
             "weight": 0.2,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-10-30 22:29",
-              "minutesToTurn": 385,
-              "phaseFraction": 0.146
+              "minutesToTurn": 384,
+              "phaseFraction": 0.149
             }
           },
           {
@@ -3678,7 +3678,7 @@
           },
           {
             "id": "wind",
-            "value": 7,
+            "value": 7.19,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -3696,7 +3696,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3741,10 +3741,10 @@
               "windCurrentInteraction": {
                 "difficultyIndex": 0.1,
                 "category": "low",
-                "windDegreesFrom": 188,
-                "windTowardDegreesTrue": 8,
+                "windDegreesFrom": 192,
+                "windTowardDegreesTrue": 12,
                 "currentTowardDegreesTrue": 334.9,
-                "angularDifferenceDegrees": 33.1,
+                "angularDifferenceDegrees": 37.1,
                 "relationship": "following"
               },
               "eastCell": {
@@ -3815,24 +3815,24 @@
         "spotId": "richmond-inner-harbor",
         "spotName": "Richmond Inner Harbor",
         "siteFit": 77,
-        "conditionFit": 67,
+        "conditionFit": 67.2,
         "dataConfidence": 77.5,
-        "recommendationScore": 67.4,
+        "recommendationScore": 67.5,
         "availableFactorWeight": 0.75,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 68.1,
+            "score": 69.4,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-10-30 22:29",
-              "minutesToTurn": 385,
-              "phaseFraction": 0.146
+              "minutesToTurn": 384,
+              "phaseFraction": 0.149
             }
           },
           {
@@ -3853,7 +3853,7 @@
           },
           {
             "id": "wind",
-            "value": 7,
+            "value": 7.19,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -3871,7 +3871,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3916,10 +3916,10 @@
               "windCurrentInteraction": {
                 "difficultyIndex": 0.1,
                 "category": "low",
-                "windDegreesFrom": 188,
-                "windTowardDegreesTrue": 8,
+                "windDegreesFrom": 192,
+                "windTowardDegreesTrue": 12,
                 "currentTowardDegreesTrue": 334.9,
-                "angularDifferenceDegrees": 33.1,
+                "angularDifferenceDegrees": 37.1,
                 "relationship": "following"
               },
               "eastCell": {
@@ -3988,24 +3988,24 @@
         "spotId": "point-pinole",
         "spotName": "Point Pinole Regional Shoreline",
         "siteFit": 69,
-        "conditionFit": 67,
+        "conditionFit": 67.2,
         "dataConfidence": 77.5,
-        "recommendationScore": 64,
+        "recommendationScore": 64.1,
         "availableFactorWeight": 0.75,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 68.1,
+            "score": 69.4,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-10-30 22:29",
-              "minutesToTurn": 385,
-              "phaseFraction": 0.146
+              "minutesToTurn": 384,
+              "phaseFraction": 0.149
             }
           },
           {
@@ -4026,7 +4026,7 @@
           },
           {
             "id": "wind",
-            "value": 7,
+            "value": 7.19,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -4044,7 +4044,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4089,10 +4089,10 @@
               "windCurrentInteraction": {
                 "difficultyIndex": 0.3,
                 "category": "low",
-                "windDegreesFrom": 188,
-                "windTowardDegreesTrue": 8,
+                "windDegreesFrom": 192,
+                "windTowardDegreesTrue": 12,
                 "currentTowardDegreesTrue": 318,
-                "angularDifferenceDegrees": 50,
+                "angularDifferenceDegrees": 54,
                 "relationship": "crossing"
               },
               "eastCell": {
@@ -4163,24 +4163,24 @@
         "spotId": "eckley-pier",
         "spotName": "Eckley Pier and Shoreline",
         "siteFit": 70,
-        "conditionFit": 92.9,
+        "conditionFit": 93.3,
         "dataConfidence": 56.5,
-        "recommendationScore": 67.1,
+        "recommendationScore": 67.2,
         "availableFactorWeight": 0.45,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "rising",
-            "score": 80.6,
+            "score": 81.6,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "rising",
               "nextTurnType": "high",
               "nextTurnAt": "2026-10-30 16:24",
-              "minutesToTurn": 20,
-              "phaseFraction": 0.938
+              "minutesToTurn": 19,
+              "phaseFraction": 0.941
             }
           },
           {
@@ -4219,7 +4219,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4336,24 +4336,24 @@
         "spotId": "point-pinole",
         "spotName": "Point Pinole Regional Shoreline",
         "siteFit": 64,
-        "conditionFit": 72.7,
+        "conditionFit": 72.5,
         "dataConfidence": 77.5,
-        "recommendationScore": 63.9,
+        "recommendationScore": 63.8,
         "availableFactorWeight": 0.75,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 55.7,
+            "score": 54.9,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-10-30 22:29",
-              "minutesToTurn": 385,
-              "phaseFraction": 0.146
+              "minutesToTurn": 384,
+              "phaseFraction": 0.149
             }
           },
           {
@@ -4374,7 +4374,7 @@
           },
           {
             "id": "wind",
-            "value": 7,
+            "value": 7.19,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -4392,7 +4392,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4437,10 +4437,10 @@
               "windCurrentInteraction": {
                 "difficultyIndex": 0.3,
                 "category": "low",
-                "windDegreesFrom": 188,
-                "windTowardDegreesTrue": 8,
+                "windDegreesFrom": 192,
+                "windTowardDegreesTrue": 12,
                 "currentTowardDegreesTrue": 318,
-                "angularDifferenceDegrees": 50,
+                "angularDifferenceDegrees": 54,
                 "relationship": "crossing"
               },
               "eastCell": {
@@ -4509,7 +4509,7 @@
         "spotId": "richmond-inner-harbor",
         "spotName": "Richmond Inner Harbor",
         "siteFit": 58,
-        "conditionFit": 68.5,
+        "conditionFit": 68.3,
         "dataConfidence": 77.5,
         "recommendationScore": 59.8,
         "availableFactorWeight": 0.75,
@@ -4518,15 +4518,15 @@
           {
             "id": "tide",
             "value": "falling",
-            "score": 55.7,
+            "score": 54.9,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-10-30 22:29",
-              "minutesToTurn": 385,
-              "phaseFraction": 0.146
+              "minutesToTurn": 384,
+              "phaseFraction": 0.149
             }
           },
           {
@@ -4547,7 +4547,7 @@
           },
           {
             "id": "wind",
-            "value": 7,
+            "value": 7.19,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -4565,7 +4565,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4610,10 +4610,10 @@
               "windCurrentInteraction": {
                 "difficultyIndex": 0.1,
                 "category": "low",
-                "windDegreesFrom": 188,
-                "windTowardDegreesTrue": 8,
+                "windDegreesFrom": 192,
+                "windTowardDegreesTrue": 12,
                 "currentTowardDegreesTrue": 334.9,
-                "angularDifferenceDegrees": 33.1,
+                "angularDifferenceDegrees": 37.1,
                 "relationship": "following"
               },
               "eastCell": {
@@ -4684,24 +4684,24 @@
         "spotId": "sherman-island",
         "spotName": "Sherman Island",
         "siteFit": 52,
-        "conditionFit": 77.9,
+        "conditionFit": 77.6,
         "dataConfidence": 84.5,
-        "recommendationScore": 61.5,
+        "recommendationScore": 61.4,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "rising",
-            "score": 42.9,
+            "score": 42,
             "weight": 0.25,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "rising",
               "nextTurnType": "high",
               "nextTurnAt": "2026-10-30 16:50",
-              "minutesToTurn": 46,
-              "phaseFraction": 0.859
+              "minutesToTurn": 45,
+              "phaseFraction": 0.862
             }
           },
           {
@@ -4740,7 +4740,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:30:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 34,
+              "ageMinutes": 35,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4857,24 +4857,24 @@
         "spotId": "eckley-pier",
         "spotName": "Eckley Pier and Shoreline",
         "siteFit": 55,
-        "conditionFit": 64.8,
+        "conditionFit": 64.4,
         "dataConfidence": 74,
-        "recommendationScore": 57,
+        "recommendationScore": 56.8,
         "availableFactorWeight": 0.7,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "rising",
-            "score": 19.4,
+            "score": 18.4,
             "weight": 0.25,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "rising",
               "nextTurnType": "high",
               "nextTurnAt": "2026-10-30 16:24",
-              "minutesToTurn": 20,
-              "phaseFraction": 0.938
+              "minutesToTurn": 19,
+              "phaseFraction": 0.941
             }
           },
           {
@@ -4913,7 +4913,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -5030,24 +5030,24 @@
         "spotId": "point-pinole",
         "spotName": "Point Pinole Regional Shoreline",
         "siteFit": 48,
-        "conditionFit": 54.8,
+        "conditionFit": 55,
         "dataConfidence": 84.5,
-        "recommendationScore": 50.9,
+        "recommendationScore": 51,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 44.3,
+            "score": 45.1,
             "weight": 0.25,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-10-30 22:29",
-              "minutesToTurn": 385,
-              "phaseFraction": 0.146
+              "minutesToTurn": 384,
+              "phaseFraction": 0.149
             }
           },
           {
@@ -5068,7 +5068,7 @@
           },
           {
             "id": "wind",
-            "value": 7,
+            "value": 7.19,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -5086,7 +5086,7 @@
               "unit": "ft^3/s",
               "observedAt": "2026-10-30T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 49,
+              "ageMinutes": 50,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -5131,10 +5131,10 @@
               "windCurrentInteraction": {
                 "difficultyIndex": 0.3,
                 "category": "low",
-                "windDegreesFrom": 188,
-                "windTowardDegreesTrue": 8,
+                "windDegreesFrom": 192,
+                "windTowardDegreesTrue": 12,
                 "currentTowardDegreesTrue": 318,
-                "angularDifferenceDegrees": 50,
+                "angularDifferenceDegrees": 54,
                 "relationship": "crossing"
               },
               "eastCell": {
