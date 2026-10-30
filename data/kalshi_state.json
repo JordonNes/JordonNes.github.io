@@ -1,15 +1,14 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-10-30T07:02:54.167408+00:00",
+  "checked_at_utc": "2026-10-30T08:56:46.462992+00:00",
   "status": "OK",
-  "raw_market_count": 10088,
-  "normalized_props": 2275,
-  "history_rows_added": 2275,
+  "raw_market_count": 9252,
+  "normalized_props": 346,
+  "history_rows_added": 296,
   "skip_reasons": {
-    "ambiguous_matchup": 46,
-    "ambiguous_participant_threshold": 1813,
-    "no_current_yes_price": 17,
-    "ok": 2275,
+    "ambiguous_matchup": 119,
+    "ambiguous_participant_threshold": 2850,
+    "ok": 346,
     "unknown_sport": 5538,
     "unsupported_market": 399
   },
@@ -65,71 +64,58 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
-    },
-    "no_current_yes_price": {
-      "ticker": "KXNBAPTSPROT-26OCT30DETBKN-DETCCUNNINGHAM2-15",
-      "event_ticker": "KXNBAPTSPROT-26OCT30DETBKN",
-      "series_ticker": "KXNBAPTSPROT",
-      "event_title": "Detroit vs Brooklyn: Points",
-      "title": "Cade Cunningham: 15+ points",
-      "subtitle": null,
-      "yes_sub_title": "Cade Cunningham: 15+",
-      "primary_participant_key": "basketball_player",
-      "floor_strike": 14.5,
-      "functional_strike": null,
-      "occurrence_datetime": "2026-10-31T02:30:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBASGHR",
+      "KXMLBPLAYOFFHRS",
       "KXUFCOCCUR",
-      "KXNBAWHATTEND",
-      "KXNCAAFTEAMRSHYDS",
-      "KXNFLRECPROT",
+      "KXNBAPRA",
+      "KXNCAAFTEAMFG",
+      "KXNFLPASSTDSPROT",
       "KXNHLPTS",
-      "KXWTAACES",
-      "KXWNBAREB",
-      "KXMLBTOTAL",
-      "KXUFCWHITEHOUSE",
-      "KXNBAPTSPROT",
-      "KXNCAAFTEAMREC",
-      "KXNFL2PTCONV",
-      "KXNHLANYGOAL",
       "KXATPACES",
-      "KXWNBAPTS",
-      "KXMLBHRDERBYMATCHUP",
+      "KXWNBA3PTCONTEST",
+      "KXMLBSEASONHR",
+      "KXUFCWHITEHOUSE",
+      "KXNBAH2H3PT",
+      "KXNCAAFTOTAL",
+      "KXNFLRSHATT",
+      "KXNHLF10G",
+      "KXWTAACES",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBHRR",
       "KXNBALADDERPTS",
-      "KXNCAAFTEAMRECYDS",
-      "KXNFLRSHYDSPROT",
-      "KXNHLSAVES",
+      "KXNCAAFTEAMTOTAL",
+      "KXNFLGAMEFG",
+      "KXNHLSEASONPPTS",
       "KXWNBA3PTROUND",
       "KXMLBHRDERBYFIN",
+      "KXNBASERIESASTLEADER",
+      "KXNCAAF2PT",
+      "KXNFLPASSYDSH2H",
+      "KXNHLANYGOAL",
+      "KXWNBAPTS",
+      "KXMLBRBI",
+      "KXNBASERIESTOTALPTS",
+      "KXNCAAFTEAMREC",
+      "KXNFLESCALATORRSHYDS",
+      "KXNHLSERIESTOTALGOALS",
+      "KXWNBA3PT",
+      "KXMLBHRDERBYDISTANCE",
       "KXNBARACE",
-      "KXNCAAFTOTALFG",
-      "KXNFLRACE",
-      "KXNHLPSEASONGOALS",
-      "KXWNBAAST",
-      "KXMLBALLSTARHR",
-      "KXNBAESCALATORPTS",
-      "KXNCAAFTEAMRSHATT",
-      "KXNFLMOSTRSHYDS",
-      "KXNHLTEAMTOTAL",
-      "KXWNBA3PTCONTEST",
-      "KXMLBHRDERBYSEMI",
-      "KXNBA3PT",
+      "KXNCAAFFIRSTTDTEAM",
+      "KXNFLRECPROT",
+      "KXNHLPLAYOFFGOALS",
+      "KXWNBA40PTS",
+      "KXMLBHR",
+      "KXNBA3PTALLGAMES",
       "KXNCAAF1HTEAMTOTAL",
-      "KXNFLRSHATT",
-      "KXNHLGOAL",
-      "KXWNBA3PTCONTESTOU",
-      "KXMLBSB",
-      "KXNBAAST",
-      "KXNCAAFTEAMTOTAL",
-      "KXNFLASSCOACH",
-      "KXNHLSAVE",
+      "KXNFLESCALATORREC",
+      "KXNHLSEASONPTS",
       "KXWNBAH2HPTS",
-      "KXMLBTB"
+      "KXMLBHIT"
     ],
     "by_league": {
       "Boxing": 1,
@@ -144,7 +130,8 @@
     },
     "forced": [
       "KXNHLPTS"
-    ]
+    ],
+    "error": "HTTP Error 429: Too Many Requests"
   },
   "targeted_series_diagnostics": {
     "KXATPACES": {
@@ -174,13 +161,19 @@
         }
       }
     },
-    "KXMLBALLSTARHR": {
+    "KXMLBHIT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBASGHR": {
+    "KXMLBHR": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBHRDERBYDISTANCE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -192,53 +185,37 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYMATCHUP": {
+    "KXMLBHRR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYSEMI": {
+    "KXMLBPLAYOFFHRS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBSB": {
+    "KXMLBRBI": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBTB": {
+    "KXMLBSEASONHR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBTOTAL": {
+    "KXNBA3PTALLGAMES": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBA3PT": {
-      "raw": 379,
-      "normalized": 379,
-      "skip_reasons": {
-        "ok": 379
-      },
-      "skip_samples": {}
-    },
-    "KXNBAAST": {
-      "raw": 280,
-      "normalized": 280,
-      "skip_reasons": {
-        "ok": 280
-      },
-      "skip_samples": {}
-    },
-    "KXNBAESCALATORPTS": {
+    "KXNBAH2H3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -250,110 +227,57 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPTSPROT": {
-      "raw": 332,
-      "normalized": 315,
+    "KXNBAPRA": {
+      "raw": 148,
+      "normalized": 148,
       "skip_reasons": {
-        "no_current_yes_price": 17,
-        "ok": 315
+        "ok": 148
       },
-      "skip_samples": {
-        "no_current_yes_price": {
-          "ticker": "KXNBAPTSPROT-26OCT30DETBKN-DETCCUNNINGHAM2-15",
-          "event_ticker": "KXNBAPTSPROT-26OCT30DETBKN",
-          "event_title": "Detroit vs Brooklyn: Points",
-          "title": "Cade Cunningham: 15+ points",
-          "subtitle": null,
-          "yes_sub_title": "Cade Cunningham: 15+",
-          "primary_participant_key": "basketball_player",
-          "floor_strike": 14.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-31T02:30:00Z"
-        }
-      }
+      "skip_samples": {}
     },
     "KXNBARACE": {
-      "raw": 102,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 102
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBARACE-26OCT30CHAWAS-10-CHA",
-          "event_ticker": "KXNBARACE-26OCT30CHAWAS-10",
-          "event_title": "Charlotte vs Washington: Race to 10 Points",
-          "title": "Charlotte reaches 10 points first",
-          "subtitle": null,
-          "yes_sub_title": "Charlotte",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-31T02:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
-    "KXNBAWHATTEND": {
-      "raw": 1,
+    "KXNBASERIESASTLEADER": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 1
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBAWHATTEND-26NYK-Y",
-          "event_ticker": "KXNBAWHATTEND-26NYK",
-          "event_title": "Will the New York Pro Basketball team visit the White House?",
-          "title": "Will the New York Pro Basketball team visit the White House before Dec 31, 2026?",
-          "subtitle": null,
-          "yes_sub_title": "New York Pro Basketball team to visit the White House",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-12-31T15:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBASERIESTOTALPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNCAAF1HTEAMTOTAL": {
-      "raw": 216,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 216
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAF1HTEAMTOTAL-26OCT31ILLMD-MD3",
-          "event_ticker": "KXNCAAF1HTEAMTOTAL-26OCT31ILLMD",
-          "event_title": "Illinois vs Maryland: 1st Half Team Total",
-          "title": "Maryland over 2.5 1H points scored",
-          "subtitle": null,
-          "yes_sub_title": "Maryland over 2.5 points",
-          "primary_participant_key": null,
-          "floor_strike": 2.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-10-31T19:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAF2PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAFFIRSTTDTEAM": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAFTEAMFG": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNCAAFTEAMREC": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAFTEAMRECYDS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAFTEAMRSHATT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAFTEAMRSHYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -380,57 +304,63 @@
         }
       }
     },
-    "KXNCAAFTOTALFG": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFL2PTCONV": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLASSCOACH": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLMOSTRSHYDS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLRACE": {
-      "raw": 180,
+    "KXNCAAFTOTAL": {
+      "raw": 1653,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 180
+        "ambiguous_participant_threshold": 1653
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNFLRACE-26NOV01ARIDAL-10-DAL",
-          "event_ticker": "KXNFLRACE-26NOV01ARIDAL-10",
-          "event_title": "Arizona vs Dallas: Race to 10 Points",
-          "title": "Will Dallas reach 10 points first?",
+          "ticker": "KXNCAAFTOTAL-26OCT30HARVDART-23",
+          "event_ticker": "KXNCAAFTOTAL-26OCT30HARVDART",
+          "event_title": "Harvard vs Dartmouth: Total Points",
+          "title": "Full Game: Over 22.5 points scored",
           "subtitle": null,
-          "yes_sub_title": "Dallas",
+          "yes_sub_title": "Over 22.5 points",
           "primary_participant_key": null,
-          "floor_strike": null,
+          "floor_strike": 22.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-11-01T21:00:00Z"
+          "occurrence_datetime": "2026-10-31T02:00:00Z"
         }
       }
     },
-    "KXNFLRECPROT": {
-      "raw": 691,
-      "normalized": 691,
+    "KXNFLESCALATORREC": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLESCALATORRSHYDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLGAMEFG": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLPASSTDSPROT": {
+      "raw": 105,
+      "normalized": 105,
       "skip_reasons": {
-        "ok": 691
+        "ok": 105
       },
+      "skip_samples": {}
+    },
+    "KXNFLPASSYDSH2H": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLRECPROT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNFLRSHATT": {
@@ -441,46 +371,38 @@
       },
       "skip_samples": {}
     },
-    "KXNFLRSHYDSPROT": {
-      "raw": 517,
-      "normalized": 517,
-      "skip_reasons": {
-        "ok": 517
-      },
-      "skip_samples": {}
-    },
     "KXNHLANYGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLGOAL": {
+    "KXNHLF10G": {
+      "raw": 13,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 13
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLF10G-26OCT30NJVGK-Y",
+          "event_ticker": "KXNHLF10G-26OCT30NJVGK",
+          "event_title": "New Jersey vs Vegas: Goal in First 10 Minutes",
+          "title": "Either team to score in the first 10 minutes",
+          "subtitle": null,
+          "yes_sub_title": "Goal in first 10 min",
+          "primary_participant_key": null,
+          "floor_strike": 1,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-10-31T01:00:00Z"
+        }
+      }
+    },
+    "KXNHLPLAYOFFGOALS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
-    },
-    "KXNHLPSEASONGOALS": {
-      "raw": 17,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 17
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNHLPSEASONGOALS-27AOVECHKIN8-15",
-          "event_ticker": "KXNHLPSEASONGOALS-27AOVECHKIN8",
-          "event_title": "Alex Ovechkin: Regular Season Goals",
-          "title": "Alex Ovechkin: 15+ goals in 2026-27 NHL regular season?",
-          "subtitle": "Alex Ovechkin",
-          "yes_sub_title": "15+ goals",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": 14.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-04-11T14:00:00Z"
-        }
-      }
     },
     "KXNHLPTS": {
       "raw": 0,
@@ -488,38 +410,38 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLSAVE": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLSAVES": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLTEAMTOTAL": {
-      "raw": 130,
+    "KXNHLSEASONPPTS": {
+      "raw": 90,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 130
+        "ambiguous_matchup": 90
       },
       "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNHLTEAMTOTAL-26OCT30NJVGK-VGK2",
-          "event_ticker": "KXNHLTEAMTOTAL-26OCT30NJVGK",
-          "event_title": "New Jersey vs Vegas: Team Total",
-          "title": "Vegas over 1.5 goals scored",
-          "subtitle": null,
-          "yes_sub_title": "Vegas over 1.5",
-          "primary_participant_key": null,
-          "floor_strike": 1.5,
+        "ambiguous_matchup": {
+          "ticker": "KXNHLSEASONPPTS-27C100-NKUCHEROV86",
+          "event_ticker": "KXNHLSEASONPPTS-27C100",
+          "event_title": "NHL: 100+ Points Season",
+          "title": "Nikita Kucherov: 100+ points in 2026-27 NHL regular season?",
+          "subtitle": "Nikita Kucherov:: Tampa Bay Lightning",
+          "yes_sub_title": "Nikita Kucherov",
+          "primary_participant_key": "hockey_player",
+          "floor_strike": 99.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-10-31T01:00:00Z"
+          "occurrence_datetime": "2027-04-11T14:00:00Z"
         }
       }
+    },
+    "KXNHLSEASONPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLSERIESTOTALGOALS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXUFCOCCUR": {
       "raw": 0,
@@ -528,6 +450,12 @@
       "skip_samples": {}
     },
     "KXUFCWHITEHOUSE": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXWNBA3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -551,7 +479,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAAST": {
+    "KXWNBA40PTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -569,12 +497,6 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAREB": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
     "KXWTAACES": {
       "raw": 0,
       "normalized": 0,
@@ -583,8 +505,8 @@
     }
   },
   "leagues": {
-    "NBA": 974,
-    "NFL": 1301
+    "NBA": 148,
+    "NFL": 198
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
