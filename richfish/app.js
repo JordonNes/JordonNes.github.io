@@ -213,6 +213,7 @@ function renderConditionStrip(){
 }
 
 function renderSpotList(filter=''){
+  if(!$('#spot-list'))return; // Spot explorer moved to standalone location map
   const list=state.locations.filter(s=>`${s.name} ${s.region} ${s.subregion}`.toLowerCase().includes(filter.toLowerCase()));
   $('#spot-list').innerHTML=list.map(s=>`<button class="select-item ${state.selectedLocation?.id===s.id?'active':''}" data-location="${s.id}"><strong>${escapeHtml(s.name)}</strong><small>${escapeHtml(s.region)} · ${escapeHtml(s.verification?.label||'Unverified')}</small></button>`).join('');
   document.querySelectorAll('[data-location]').forEach(b=>b.onclick=()=>selectLocation(b.dataset.location));
@@ -243,6 +244,7 @@ function locationFieldGuide(loc,o={}){
 }
 
 function renderLocationDetail(){
+  if(!$('#spot-detail'))return; // Map and Ray can still maintain selected location
   const loc=state.selectedLocation;
   if(!loc)return;
   const spot=liveSpotForLocation(loc);
@@ -345,6 +347,7 @@ function renderHydroDetail(row){
 }
 
 function renderSpeciesList(filter=''){
+  if(!$('#species-list'))return; // Complete catalog now has its own page
   const f=filter.toLowerCase();
   const list=state.speciesCatalog.filter(s=>`${s.common_name} ${s.scientific_name} ${s.group} ${s.occurrence_class}`.toLowerCase().includes(f));
   $('#species-list').innerHTML=list.map(s=>`<button class="select-item ${state.selectedSpecies?.id===s.id?'active':''}" data-species="${s.id}"><strong>${escapeHtml(s.common_name)}</strong><small>${escapeHtml(s.scientific_name)} · ${escapeHtml(s.verification?.confidence||'unknown')}</small></button>`).join('');
@@ -357,6 +360,7 @@ function selectSpecies(id){
   updateRayContext();
 }
 function renderSpeciesDetail(id){
+  if(!$('#finder-detail'))return; // Standalone Species Explorer renders this panel
   const species=catalogSpeciesFor(id);
   const liveSpecies=liveSpeciesFor(id);
   const rows=state.conditionEngine?.rankings?.[id]||[];
