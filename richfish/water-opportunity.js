@@ -10,7 +10,8 @@ const BAY=["striped bass","california halibut","surfperch","english sole","starr
 const FRESH=["largemouth bass","smallmouth bass","rainbow trout","channel catfish","bluegill"];
 const TYPES={
  estuary:{"striped bass":56,"california halibut":43,"surfperch":40,"english sole":35,"starry flounder":38,"largemouth bass":0,"smallmouth bass":0,"rainbow trout":0,"channel catfish":7,"bluegill":0},
- freshwater:{"striped bass":8,"california halibut":0,"surfperch":0,"english sole":0,"starry flounder":0,"largemouth bass":47,"smallmouth bass":42,"rainbow trout":36,"channel catfish":38,"bluegill":43}
+ freshwater:{"striped bass":8,"california halibut":0,"surfperch":0,"english sole":0,"starry flounder":0,"largemouth bass":47,"smallmouth bass":42,"rainbow trout":36,"channel catfish":38,"bluegill":43},
+ river:{"striped bass":46,"california halibut":0,"surfperch":0,"english sole":0,"starry flounder":0,"largemouth bass":43,"smallmouth bass":42,"rainbow trout":32,"channel catfish":44,"bluegill":37}
 };
 function clamp(x,min,max){return Math.max(min,Math.min(max,x))}
 function ringContains(pt,ring){let within=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const a=ring[i],b=ring[j];if(((a[1]>pt[1])!==(b[1]>pt[1]))&&(pt[0]<(b[0]-a[0])*(pt[1]-a[1])/(b[1]-a[1])+a[0]))within=!within}return within}
@@ -68,7 +69,7 @@ function makeGoldIcon(){return L.divIcon({className:"",html:'<div class="gold-ma
 function create(map,opts){
  if(!map||!root.L)throw Error("RichFish water map requires Leaflet");
  opts=opts||{};
- let features=[],coverage=[],candidates=[],enabled=true,canvas=null,ctx=null,layer=L.layerGroup().addTo(map),drawPending=false,lastStatus="No water coverage loaded";
+ let features=[],coverage=[],candidates=[],enabled=true,canvas=null,ctx=null,layer=L.layerGroup().addTo(map),drawPending=false,lastStatus="No water coverage loaded",dynamicBusy=false;const queriedViewports=new Set();
  const pane=map.createPane("richfishOpportunityPane");
  pane.style.zIndex="355";pane.style.pointerEvents="none";
  canvas=L.DomUtil.create("canvas","richfish-opportunity-canvas",pane);
@@ -80,7 +81,7 @@ function create(map,opts){
  function at(p){let pt=Array.isArray(p)?p:[p.lng,p.lat],i=locate(features,pt);return i<0?null:{feature:features[i],score:scoreAt(features[i],pt,getSpecies(),getPoints()),index:i,pt}};
  function speciesAt(latlng){
    const pt=[latlng.lng,latlng.lat],idx=locate(features,pt);if(idx<0)return [];
-   const f=features[idx],list=f.properties.water_type==="freshwater"?FRESH:BAY;
+   const f=features[idx],list=f.properties.water_type==="freshwater"?FRESH:f.properties.water_type==="river"?BAY.concat(FRESH):BAY;
    return list.map(s=>({species:s,...scoreAt(f,pt,s,getPoints())})).filter(x=>x.score>=25).sort((a,b)=>b.score-a.score).slice(0,3);
  }
  function focus(lat,lng){
@@ -97,10 +98,37 @@ function create(map,opts){
      find:for(const d of deltas)for(const [dx,dy] of [[d,0],[-d,0],[0,d],[0,-d],[d,d],[-d,-d],[d,-d],[-d,d]]){let test=[pt[0]+dx,pt[1]+dy];idx=locate(features,test);if(idx>=0){pt=test;break find}}
    }
    if(idx<0)return [];
-   let f=features[idx],list=f.properties.water_type==="freshwater"?FRESH:BAY;
+   let f=features[idx],list=f.properties.water_type==="freshwater"?FRESH:f.properties.water_type==="river"?BAY.concat(FRESH):BAY;
    return list.map(s=>({s,score:scoreAt(f,pt,s,getPoints()).score,modelled:true,count:0})).filter(x=>x.score>=22).sort((a,b)=>b.score-a.score).slice(0,3);
  }
- function schedule(){if(drawPending)return;drawPending=true;root.requestAnimationFrame?root.requestAnimationFrame(()=>{drawPending=false;draw()}):(drawPending=false,draw())}
+ function queryUnmappedWaters(){
+ if(dynamicBusy||map.getZoom()<11)return;
+ const bb=map.getBounds(),lngSpan=bb.getEast()-bb.getWest(),latSpan=bb.getNorth()-bb.getSouth();
+ if(lngSpan>.28||latSpan>.24)return;
+ const center=map.getCenter();
+ if(locate(features,[center.lng,center.lat])>=0)return;
+ const key=[Math.floor(center.lat*18),Math.floor(center.lng*18),Math.floor(map.getZoom()/2)].join(":");
+ if(queriedViewports.has(key))return;queriedViewports.add(key);
+ const base="https://hydro.nationalmap.gov/arcgis/rest/services/3DHP_all/MapServer/60/query";
+ const q={where:"featuretype IN (1,2,3,4) AND areasqkm > 0.025",geometry:bb.toBBoxString(),geometryType:"esriGeometryEnvelope",inSR:"4326",
+ spatialRel:"esriSpatialRelIntersects",outFields:"OBJECTID,featuretype,featuretypelabel,gnisidlabel,areasqkm",outSR:"4326",
+ maxAllowableOffset:map.getZoom()>14?"0.00035":"0.0009",geometryPrecision:"6",returnGeometry:"true",f:"geojson"};
+ const url=base+"?"+Object.keys(q).map(k=>encodeURIComponent(k)+"="+encodeURIComponent(q[k])).join("&");
+ dynamicBusy=true;
+ fetch(url,{mode:"cors"}).then(r=>{if(!r.ok)throw Error("Hydrographic query HTTP "+r.status);return r.json()})
+ .then(data=>{
+  const seen=new Set(features.map(f=>String(f.properties.source_oid)));let count=0;
+  (data.features||[]).slice(0,250).forEach(f=>{
+    const p=f.properties||{},id=String(p.OBJECTID||""),type=Number(p.featuretype);
+    if(!id||seen.has(id)||!f.geometry||!["Polygon","MultiPolygon"].includes(f.geometry.type))return;
+    const water_type=type===3?"freshwater":type===1||type===2?"river":"estuary";
+    features.push({type:"Feature",geometry:f.geometry,properties:{id:"dynamic-water-"+id,name:p.gnisidlabel||p.featuretypelabel||"Mapped waterbody",
+    water_type,source_oid:p.OBJECTID,source:"USGS 3DHP on-demand",dynamic:true}});seen.add(id);count++;
+  });
+  if(count){lastStatus="USGS water coverage expanded to "+features.length+" areas";schedule()}
+ }).catch(err=>console.warn("Optional RichFish on-demand water geometry unavailable:",err.message)).finally(()=>{dynamicBusy=false});
+}
+function schedule(){if(drawPending)return;drawPending=true;root.requestAnimationFrame?root.requestAnimationFrame(()=>{drawPending=false;draw();queryUnmappedWaters()}):(drawPending=false,draw(),queryUnmappedWaters())}
  function canvasSize(){const sz=map.getSize(),dpr=Math.min(root.devicePixelRatio||1,2);canvas.width=Math.round(sz.x*dpr);canvas.height=Math.round(sz.y*dpr);canvas.style.width=sz.x+"px";canvas.style.height=sz.y+"px";L.DomUtil.setPosition(canvas,map.containerPointToLayerPoint([0,0]));ctx.setTransform(dpr,0,0,dpr,0,0);return sz}
  function draw(){
    if(!canvas)return;
