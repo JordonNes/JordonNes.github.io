@@ -2,16 +2,16 @@
   "archive_branch": "lsi-archive",
   "archive_files": {
     "context_history": {
-      "bytes": 22868516,
+      "bytes": 23271006,
       "files": 1,
-      "max_file_bytes": 22868516,
-      "records": 17636
+      "max_file_bytes": 23271006,
+      "records": 17950
     },
     "evaluation_state_history": {
-      "bytes": 1631716581,
-      "files": 64,
+      "bytes": 1687813793,
+      "files": 96,
       "max_file_bytes": 28682221,
-      "records": 215695
+      "records": 221151
     },
     "evaluation_state_history_legacy": {
       "bytes": 79685259,
@@ -20,16 +20,16 @@
       "records": 34135
     },
     "event_history": {
-      "bytes": 15841132,
+      "bytes": 16299888,
       "files": 1,
-      "max_file_bytes": 15841132,
-      "records": 17362
+      "max_file_bytes": 16299888,
+      "records": 17857
     },
     "market_history": {
-      "bytes": 1477641194,
-      "files": 160,
+      "bytes": 1541111320,
+      "files": 192,
       "max_file_bytes": 16977489,
-      "records": 1285485
+      "records": 1329561
     },
     "prediction_history": {
       "bytes": 177962,
@@ -38,10 +38,10 @@
       "records": 78
     },
     "publication_history": {
-      "bytes": 3883803066,
+      "bytes": 3988696726,
       "files": 96,
       "max_file_bytes": 94370321,
-      "records": 49144
+      "records": 50112
     },
     "publication_history_legacy": {
       "bytes": 99924802,
@@ -63,22 +63,22 @@
     }
   },
   "counts": {
-    "context_history": 17636,
-    "evaluation_state_history": 215695,
+    "context_history": 17950,
+    "evaluation_state_history": 221151,
     "evaluation_state_history_legacy": 34135,
-    "event_history": 17362,
-    "market_history": 1285485,
+    "event_history": 17857,
+    "market_history": 1329561,
     "prediction_history": 78,
-    "publication_history": 49144,
+    "publication_history": 50112,
     "publication_history_legacy": 2456,
     "result_history": 20827,
     "settlement_history": 286
   },
   "entity_counts": {
     "books": 37,
-    "events": 1472,
-    "markets": 255,
-    "participants": 5744
+    "events": 1501,
+    "markets": 261,
+    "participants": 5630
   },
   "evaluation_state_sharding": {
     "hash_buckets": 32,
@@ -86,27 +86,27 @@
     "legacy_file": "evaluation_state_history.jsonl remains read-only historical data",
     "reason": "Preserve immutable evaluation history without allowing one archive file to exceed GitHub limits."
   },
-  "generated_at_utc": "2026-10-31T11:00:09.252944+00:00",
+  "generated_at_utc": "2026-11-02T02:59:41.408108+00:00",
   "market_sharding": {
     "hash_buckets": 32,
     "layout": "market_history/YYYY-MM/<dataset>-<00..31>.jsonl",
     "reason": "Keep high-volume immutable history below repository file-size limits."
   },
   "new_records": {
-    "context_registry": 449,
-    "evaluation_state": 4034,
-    "event_inventory": 7161,
+    "context_registry": 50,
+    "evaluation_state": 5456,
+    "event_inventory": 495,
     "lsi_market": 0,
-    "oddspapi_market": 19828,
-    "prediction_registry": 1,
+    "oddspapi_market": 27407,
+    "prediction_registry": 0,
     "prediction_source": 0,
-    "propline_intelligence": 22162,
-    "qc_prop_board": 751,
-    "results": 2066,
-    "rotowire_context": 602,
+    "propline_intelligence": 16669,
+    "qc_prop_board": 968,
+    "results": 0,
+    "rotowire_context": 51,
     "settlement_aliases": 0,
-    "settlement_status": 1,
-    "weather_history": 3357
+    "settlement_status": 0,
+    "weather_history": 213
   },
   "phase": "MEMORY_ONLY",
   "publication_state_sharding": {
@@ -116,5 +116,5 @@
     "reason": "Preserve immutable publication snapshots without allowing one archive file to exceed GitHub limits."
   },
   "schema_version": "LSI-ARCHIVE-MANIFEST-1",
-  "source_commit": "96a33fce071166147d7cfe8305b27aef0d2dbf82"
+  "source_commit": "15e253ce06a6c070cc080475ed927c6410bccba0"
 }
