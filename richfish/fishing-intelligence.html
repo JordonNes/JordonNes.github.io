@@ -42,9 +42,6 @@ section{margin-top:34px}.heading{display:flex;justify-content:space-between;alig
 </section>
 
 <section id="species"><div class="heading"><div><span class="overline">THE RICHFISH TARGET LIST</span><h2>Primary species and incidental catches</h2></div></div><div class="tags" id="target-groups"></div></section>
-<section id="bait-knowledge"><div class="heading"><div><span class="overline">FRI BAIT LIBRARY · SOURCED KNOWLEDGE</span><h2>Pile worms and native clam worms</h2><p class="muted">Bay Area bait identification, target species, hooks, bottom rigs, float presentations, storage, collection and seasonal context. A published fishing guide is background knowledge—not a live catch report.</p></div></div>
-<div id="bait-knowledge-cards" class="cards" aria-live="polite"><div class="card">Loading Richmond Ray's sourced bait knowledge…</div></div>
-<p class="disclaimer" id="bait-knowledge-caveat">Source text provided by an angler; scientific names are retained as reported. Confirm current rules, bait availability and exact species-specific relevance before fishing.</p></section>
 <section id="research"><div class="heading"><div><span class="overline">BACKGROUND KNOWLEDGE</span><h2>Science, maps and reporting sources</h2><p class="muted">Habitat references inform fishing hypotheses; they are not themselves catch events.</p></div></div><div class="cards" id="source-cards"></div></section>
 </main><footer>RICHFISH · Richmond Ray's Fishin' Tavern · Evidence-led fishing intelligence</footer>
 <script>
@@ -82,36 +79,6 @@ function reportCard(r){
  $('target-groups').innerHTML=(d.species_priorities||[]).map(t=>'<span class="tag">'+safe(t.label)+(t.priority==='incidental_non_target'?' · incidental only':'')+'</span>').join('');
  $('source-cards').innerHTML=sources.map(r=>{const u=goodUrl(r.url);return '<article class="card"><span class="badge grey">'+safe(titleCase(r.category))+'</span><h3>'+safe(r.title)+'</h3><p>'+safe(r.review_summary)+'</p><small>'+safe(r.coverage)+'</small>'+(u?'<p><a href="'+safe(u)+'" target="_blank" rel="noopener noreferrer">Open resource</a></p>':'')+'</article>'}).join('');
 })().catch(e=>{$('stats').innerHTML='<div class="empty">Unable to load RICHFISH source data: '+safe(e.message)+'</div>';$('last-updated').textContent='Research data unavailable';});
-</script>
-<script>
-(function(){
-const mount=document.getElementById('bait-knowledge-cards');
-if(!mount)return;
-const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-fetch('data/bait-intelligence.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Bait knowledge HTTP '+r.status);return r.json()}).then(d=>{
- const rigs=Object.fromEntries(d.rigs.map(r=>[r.id,r]));
- const card=(p)=>{
-  const groups=p.target_relevance.filter(t=>/Bay Area|California coast/i.test(t.region));
-  const top=groups.slice(0,14).map(t=>t.common_name).join(', ');
-  const hooks=rigs.perch_bottom_hook.hook_sizes_from_source.join(' to ');
-  const tips=p.id==='pile_worm'?
-   'Shop-sold bait in the source, commonly imported from northeastern U.S. states; cool live worms in a small cooler. Winter sourcing may be affected by distant digging conditions.' :
-   'Locally collected West Coast polychaete, described in mussel clumps, under rocks and docks, and in sand, mud or gravel. Verify legal collection areas and protect shoreline habitat.';
-  return '<article class="card"><span class="badge grey">Historical technique source · Bay &amp; Pacific Coast</span>'+
-   '<h3>'+esc(p.canonical_label)+'</h3><p><strong>As named in source:</strong> <em>'+esc(p.reported_scientific_name)+'</em></p>'+
-   '<p>'+esc(p.origin_context)+'</p><p><b>Reported Bay/coastal targets:</b> '+esc(top)+'</p>'+
-   '<p><b>Rig:</b> Thread on perch hooks '+esc(hooks)+' with point showing; high/low bottom leaders or Carolina-style bottom rigs. For jacksmelt, small worm portions below a float.</p>'+
-   '<p>'+esc(tips)+'</p>'+
-   '<p><small>Handling: pincer jaws can bite. Source describes techniques and habitat; it does not establish a current catch, current price or bait-shop inventory.</small></p></article>';
- };
- const src=d.sourced_from&&d.sourced_from[0],article=(src?.source_attachment_page||'');
- const rig=d.rigs.find(r=>r.id==='jacksmelt_float');
- mount.innerHTML=d.profiles.map(card).join('')+
- '<article class="card"><span class="badge grey">Technique · tackle setup</span><h3>Jacksmelt float rig</h3><p>'+esc(rig.method)+'</p><p>Illustrative spacing from source: first hook approximately '+esc(rig.geometry_from_source.first_hook_below_float_ft)+' ft below float, further hooks '+esc(rig.geometry_from_source.subsequent_hook_spacing_ft)+' ft apart, weight '+esc(rig.geometry_from_source.weight_below_last_hook_ft)+' ft below final hook.</p><p><small>Verify local hook limits and regulations.</small></p></article>'+
- '<article class="card"><span class="badge grey">FRI provenance</span><h3>Evidence classification</h3><p>'+esc(src?.publication||'Pier Fishing in California')+' — user-supplied passages; publication date not supplied. No catch or bait-shop price was verified.</p><p>Source reports native clam-worm spawning swarms around some summer full moons; retained as ecological context, not a prediction of the next bite.</p>'+
- (article?'<p><a href="'+esc(article)+'" target="_blank" rel="noopener noreferrer">View supplied pile-worm photograph source</a></p>':'')+'</article>';
-}).catch(e=>{mount.innerHTML='<div class="card">FRI bait source unavailable: '+esc(e.message)+'</div>'})
-})();
 </script>
 </body>
 </html>
