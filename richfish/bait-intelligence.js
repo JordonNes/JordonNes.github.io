@@ -32,7 +32,7 @@ function profile(id){return library?.profiles?.find(p=>p.id===id)||null}
 function applicability(rule,region){
  if(!rule)return false;
  const r=low(region);
- if(rule.priority==="occasional_socal_only")return /socal|southern|san diego|newport|orange county|los angeles|ventura/.test(r);
+ if(rule.priority==="occasional_socal_only")return false; // Anecdotal SoCal halibut: informative only, never promoted as recommended bait.
  if(rule.priority==="possible")return false;
  if(/lake|reservoir|freshwater/i.test(r)&&!/bay|delta|brackish/.test(r))return false;
  return true;
