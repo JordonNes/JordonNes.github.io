@@ -1859,6 +1859,30 @@ function initRayChat(){
     }
 
     try{
+      // Deterministic source-derived answer; the remote AI worker is not claimed to have ingested this reference.
+      if(/\b(?:pile[\s-]*worms?|clam[\s-]*worms?|nereis|bristleworms?)\b/i.test(question) && window.RichFishBaitIntelligence){
+        const lib=await RichFishBaitIntelligence.load('data/bait-intelligence.json');
+        const targetNames=['striped bass','california halibut','surfperch','blackperch','rubberlip','pileperch','starry flounder','english sole','jacksmelt','sturgeon','sand sole','sanddab','white croaker'];
+        const target=targetNames.find(x=>question.toLowerCase().includes(x))||state.selectedSpecies?.common_name||'striped bass';
+        const region=state.selectedLocation?.name||'San Francisco Bay';
+        const advice=RichFishBaitIntelligence.bestFor(target,region);
+        const id=/clam[\s-]*worms?|vexillosa/i.test(question)?'clam_worm':'pile_worm';
+        const profile=RichFishBaitIntelligence.profile(id),source=lib.sourced_from[0];
+        const paragraphs=[
+          'FRI knowledge · '+profile.canonical_label+' (reported scientific name: '+profile.reported_scientific_name+').',
+          profile.origin_context,
+          'Target: '+target+'. '+(advice&&advice.supported?
+            'The supplied PFIC account documents worm bait for this target in coastal/Bay settings. '+advice.rig_note:
+            'The supplied passage does not establish a reliable Bay Area worm-bait recommendation for this exact target; it is not a recent catch report.'),
+          'Practical rig: threaded worms with exposed hook point; #8–#4 for perch. High/low bottom leaders or Carolina-style rigs for bottom fish. Jacksmelt: small worm pieces below a float.',
+          'Worm jaws can bite. Keep live bait cool, and verify marine protected areas and bait-collection rules before harvesting.',
+          'Source: '+source.publication+'; user-provided passages, publication date not supplied. Current bait inventory and price are unverified.'
+        ];
+        renderRayAnswer(paragraphs.join('\n\n'));
+        if(meta)meta.textContent='FRI sourced knowledge · not an AI prediction';
+        formStatus.textContent='Answered from the published FRI bait reference.';
+        return;
+      }
       const response=await fetch(`${RICHFISH_API}/api/richfish/analyze`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
