@@ -1,0 +1,40 @@
+name: FIBA Market Source Coverage Audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths: ['.github/workflows/fiba-market-coverage-audit.yml']
+permissions:
+  contents: read
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: scripts/propline_adapter.py
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.12'}
+      - name: Inspect provider competition catalog without guessing FIBA mappings
+        env:
+          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY || vars.PROPLINE_API_KEY }}
+          PROP_LINE_API_KEY: ${{ secrets.PROP_LINE_API_KEY || vars.PROP_LINE_API_KEY }}
+        run: |
+          python - <<'PY'
+          import sys,json
+          sys.path.insert(0,'scripts')
+          import propline_adapter as source
+          if not source.KEY: raise SystemExit('Configured PropLine credential unavailable')
+          catalog,_=source.get('/sports')
+          if not isinstance(catalog,list): raise SystemExit('Provider returned an unexpected competition catalog')
+          basketball=[]
+          for row in catalog:
+              text=' '.join(str(row.get(k) or '') for k in ('key','group','title','description')).lower()
+              if 'basketball' in text or 'fiba' in text or 'euro' in text:
+                  basketball.append({k:row.get(k) for k in ('key','title','description','active')})
+          print('VERIFIED_PROVIDER_BASKETBALL_CATALOG='+json.dumps(basketball,ensure_ascii=False))
+          print('Coverage audit only: competition names must match official FIBA competitions before ingesting any markets.')
+          PY

@@ -4,7 +4,7 @@ name: RWT Pages Release Sync
 on:
   push:
     branches: [master]
-    paths: ['_config.yml', 'NBA.html', 'FIBA.html', 'nba_live_qc.js', 'fiba_live_qc.js', '.github/workflows/rwt-pages-release-sync.yml']
+    paths: ['_config.yml', 'NBA.html', 'FIBA.html', 'nba_live_qc.js', 'fiba_live_qc.js', 'data/fiba_verified_fixtures.js', '.github/workflows/rwt-pages-release-sync.yml']
   workflow_run:
     workflows: ["LSI Daily Predictions Pipeline", "LSI Game Winner Refresh", "LSI Spectrum v3 Release", "pages build and deployment"]
     types: [completed]
