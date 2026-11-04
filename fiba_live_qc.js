@@ -79,9 +79,20 @@
   // actionable only when a market exists and an evaluated LJPC is available.
   const watchMen=byTrack('men').filter(x=>x.date>currentDay).slice(0,10),watchWomen=byTrack('women').filter(x=>x.date>currentDay).slice(0,10);
   const watch=[...watchMen,...watchWomen].sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id)).slice(0,20);
-  const live=allVerified.slice(0,20);
-  const twentySlots=live.length?live.map(({game,p},i)=>({game,verified:p,slot:i+1}))
-    :watch.map((game,i)=>({game,slot:i+1,market:classes[i%classes.length]}));
+  // Promote one evaluated selection per game, then retain sourced watchlist slots.
+  // A single verified market must not collapse the 20 Piece down to one card.
+  const promoted=[],selected=new Set();
+  for(const e of allVerified){
+    if(selected.has(e.game.id))continue;
+    promoted.push(e);selected.add(e.game.id);
+    if(promoted.length===20)break;
+  }
+  const live=promoted;
+  const pending=watch.filter(g=>!selected.has(g.id)).slice(0,20-live.length);
+  const twentySlots=[
+    ...live.map(({game,p},i)=>({game,verified:p,slot:i+1})),
+    ...pending.map((game,i)=>({game,slot:live.length+i+1,market:classes[(live.length+i)%classes.length]}))
+  ];
   const twentyCards=twentySlots.map(({game,verified,slot,market})=>
     '<div class="fiba-twenty-item"><span class="fiba-num">'+slot+'</span><div><b>'+html(game.home)+' vs '+html(game.away)+'</b><div class="fiba-muted">'+html(game.track.toUpperCase())+' • '+html(game.competition)+' • '+fmtDate(game.date)+'</div><div>'+(verified?'<strong class="fiba-ready">'+html(fmtLine(verified))+'</strong>':'<b>'+html(market.short)+'</b> • <span class="fiba-wait">Line / side / LJPC pending verification</span>')+'</div></div></div>').join('');
   const piece='<section class="section fiba-twenty"><div class="section-head"><h2>L&J FIBA 20 PIECE</h2><span class="fiba-muted">'+live.length+'/20 market-verified, evaluated entries</span></div><p>'+(live.length?'Verified current market entries are ranked by POM, subject to the final pre-game refresh.':'20 source-confirmed future game opportunities (10 men / 10 women). <strong>WATCHLIST ONLY — NOT 20 BETTING PICKS.</strong> No executable current FIBA markets or evaluated LJPCs were available in the connected registry.')+'</p><div class="fiba-twenty-grid">'+twentyCards+'</div></section>';
