@@ -76,6 +76,12 @@ jobs:
             /data/qc_card_ledger.json
             /data/recap_backfill.json
             /data/results.csv
+            /data/suggestion_accuracy.json
+            /data/settlement_status.json
+            /data/ljpc_calibration.json
+            /data/legz_jinx_accountability.json
+            /data/inbox/
+            /data/fiba_competitions.js
             /data/settlement_aliases.json
             /data/prediction_registry.json
             /data/player_context.csv
@@ -158,7 +164,7 @@ jobs:
               python scripts/lsi_suggestion_calibration.py
               python scripts/lsi_build_recaps.py
             fi
-            git add data/recap_backfill.json data/suggestion_ledger.json data/suggestions data/qc_card_ledger.json data/recaps data/suggestion_accuracy.json data/results.csv data/settlement_status.json data/settlement_aliases.json data/ljpc_calibration.json data/legz_jinx_accountability.json ljrecapdata.js
+            git add --sparse data/recap_backfill.json data/suggestion_ledger.json data/suggestions data/qc_card_ledger.json data/recaps data/suggestion_accuracy.json data/results.csv data/settlement_status.json data/settlement_aliases.json data/ljpc_calibration.json data/legz_jinx_accountability.json ljrecapdata.js
             if git diff --cached --quiet; then
               echo 'Publication ledger already current.'
               exit 0
