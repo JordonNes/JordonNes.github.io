@@ -39,6 +39,7 @@ on:
       - 'data/future_market_board.js'
       - 'scripts/qc_publication_audit.js'
       - 'ljapp.js'
+      - 'scripts/test_lj_season_status.js'
       - 'ljqc.css'
       - 'lsi_registry_bridge.js'
       - 'data/prediction_registry.js'
@@ -60,6 +61,7 @@ jobs:
       - name: JavaScript syntax
         run: |
           node --check ljapp.js
+          node --check scripts/test_lj_season_status.js
           node --check lj_special_pages.js
           node --check lsi_registry_bridge.js
           node --check scripts/frontend_home_audit.js
@@ -73,6 +75,7 @@ jobs:
           node --check scripts/test_special_header_quality.js
       - name: Specialty intelligence regression tests
         run: |
+          node scripts/test_lj_season_status.js
           node scripts/test_lj_special_pages.js
           node scripts/test_special_header_quality.js
       - name: LJ_index + QC presentation audit
