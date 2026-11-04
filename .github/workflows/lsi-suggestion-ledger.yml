@@ -116,6 +116,13 @@ jobs:
           print(f"Suggestion ledger v2: total={len(rows)} eligible={len(eligible)} ambiguous={len(ambiguous)} quarantined_v1={len(quarantined)}")
           PY
 
+      - name: Settle recent published calls before rendering the recap
+        shell: bash
+        run: |
+          export LSI_SETTLE_SINCE_PT="$(TZ=America/Los_Angeles date -d yesterday +%F)"
+          python scripts/lsi_settle.py
+          python scripts/lsi_suggestion_calibration.py
+
       - name: Refresh accuracy aggregates from current settled results
         run: python scripts/lsi_build_recaps.py
 
@@ -146,9 +153,12 @@ jobs:
               git reset --hard origin/master
               python scripts/lsi_backfill_publications.py
               node --max-old-space-size=3072 scripts/lsi_snapshot_suggestions.js
+              export LSI_SETTLE_SINCE_PT="$(TZ=America/Los_Angeles date -d yesterday +%F)"
+              python scripts/lsi_settle.py
+              python scripts/lsi_suggestion_calibration.py
               python scripts/lsi_build_recaps.py
             fi
-            git add data/recap_backfill.json data/suggestion_ledger.json data/suggestions data/qc_card_ledger.json data/recaps data/suggestion_accuracy.json ljrecapdata.js
+            git add data/recap_backfill.json data/suggestion_ledger.json data/suggestions data/qc_card_ledger.json data/recaps data/suggestion_accuracy.json data/results.csv data/settlement_status.json data/settlement_aliases.json data/ljpc_calibration.json data/legz_jinx_accountability.json ljrecapdata.js
             if git diff --cached --quiet; then
               echo 'Publication ledger already current.'
               exit 0

@@ -758,6 +758,12 @@ def main():
     registry_predictions=registry.get("predictions") or []
     suggestion_predictions,suggestion_total,suggestion_structured=load_suggestion_predictions()
     predictions=[*registry_predictions,*suggestion_predictions]
+    # A publication refresh settles the recent capture first. The existing
+    # hourly full-history job remains responsible for the older backlog.
+    since=os.environ.get('LSI_SETTLE_SINCE_PT')
+    if since:
+        datetime.strptime(since,'%Y-%m-%d')
+        predictions=[p for p in predictions if not p.get('publication_date_pt') or p['publication_date_pt']>=since]
     existing=read_results()
     inbox=verified_inbox_results()
     for pid,row in inbox.items():
