@@ -52,7 +52,8 @@ async function evaluate(at,validSource=true){
   assert.match(t.html,/Los Angeles Lakers @ Sacramento Kings/);
   assert.match(t.meta,/REGULAR SEASON ACTIVE/);
   const after=await evaluate('2026-11-05T08:00:00Z');
-  assert.equal(after.status.todayGames,0,'Nov 4 slate cannot reappear as Nov 5 game day');
+  assert.equal(after.status.todayGames,2,'Nov 5 should contain only the two genuinely scheduled games');
+  assert.ok(after.status.loadedGames<24,'Nov 4 games must not roll into the Nov 5 active QC list');
   const outage=await evaluate('2026-11-04T19:55:00Z',false);
   assert.equal(outage.status.sourceStatus,'FALLBACK_BOARD','Never silently claim live ESPN feed when HTTP failed');
   assert.equal(outage.status.watchlistSlots,0,'Empty rolling fallback yields no fictional entries');
