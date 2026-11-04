@@ -42,6 +42,21 @@ assert.match(nodes['#men.track'].innerHTML,/Winning margin/);
 assert.match(nodes['#men.track'].innerHTML,/Market not verified/);
 assert.doesNotMatch(nodes['#men.track'].innerHTML,/69% LJPC|70% LJPC/);
 assert.match(nodes['.command-grid'].innerHTML,/MEN’S CURRENT COMPETITIONS/);
+// Exact future matchup, fresh source evidence and a full evaluation are required.
+const fixture=data.events.find(e=>e.date>'2026-11-04');
+const event={league:fixture.track==='men'?'FIBA_Men':'FIBA_Women',event_id:'fiba-provider-1',fiba_fixture_id:fixture.id,commence_time:fixture.date+'T20:00:00Z',props:[],game_markets:[]};
+const pick={event_id:event.event_id,market_class:'GAME_TOTAL',market:'Total points',side:'Over',threshold:150.5,price:-110,book:'Verified Book',ljpc:62.1,pom_value:65,evaluation_status:'LJ_EVALUATED',evaluation_id:'fiba-eval',evaluation_material_hash:'fiba-material',evaluated_at_utc:fixed.toISOString(),retrieved_at:fixed.toISOString(),source_snapshot_ids:['real-market'],market_verified:true,market_verification:'EXACT_MARKET_MATCH'};
+event.game_markets=[pick];context.window.LJ_FUTURE_MARKET_BOARD.events=[event];
+vm.runInContext(fs.readFileSync('fiba_live_qc.js','utf8'),context);
+assert.equal(context.window.LJ_FIBA_QC_STATUS.verifiedSelections,1);
+assert.match(nodes['#'+fixture.track+'.track'].innerHTML,/Over.*150.5/,'QC retains actual side and line');
+pick.evaluation_material_hash='';
+vm.runInContext(fs.readFileSync('fiba_live_qc.js','utf8'),context);
+assert.equal(context.window.LJ_FIBA_QC_STATUS.verifiedSelections,0,'Missing material evidence cannot publish');
+pick.evaluation_material_hash='fiba-material';pick.synthetic=true;
+vm.runInContext(fs.readFileSync('fiba_live_qc.js','utf8'),context);
+assert.equal(context.window.LJ_FIBA_QC_STATUS.verifiedSelections,0,'Synthetic markets stay out');
+context.window.LJ_FUTURE_MARKET_BOARD.events=[];
 // On a subsequent day past all documented fixtures, no stale events are offered as future games.
 const lateDate=new Date('2028-01-15T20:00:00Z');
 class LateDate extends Date {constructor(...a){super(...(a.length?a:[lateDate.toISOString()]))}static now(){return lateDate.getTime()}}
@@ -51,3 +66,4 @@ assert.equal(context.window.LJ_FIBA_QC_STATUS.futureFixtures,0,'Old matches excl
 assert.equal(context.window.LJ_FIBA_QC_STATUS.watchlistSlots,0,'Expired fixtures cannot fill 20 piece');
 assert.equal(context.window.LJ_FIBA_QC_STATUS.snapshotStale,true,'Stale snapshot flagged');
 console.log('PASS FIBA 20 Piece + '+data.events.length+' per-game QC fixtures + unverified market gate + source expiry.');
+

@@ -83,6 +83,7 @@
     if(status!=="LJ_EVALUATED"||!p.evaluated_at_utc||!safety.fresh(p.evaluated_at_utc))return false;
     if(!p.evaluation_id||!p.evaluation_material_hash||!(Number(p.ljpc)>0)||Number(p.ljpc)>100)return false;
     if(p.synthetic||p.model_generated||p.market_live===false||p.market_suspended===true)return false;
+    if(p.price==null||p.price===""||!Number.isFinite(Number(p.price))||Number(p.price)===0)return false;
     if(p.market_verified!==true||p.market_verification!=="EXACT_MARKET_MATCH")return false;
     if(!String(p.book||p.market_source||"").trim()||!Array.isArray(p.source_snapshot_ids)||!p.source_snapshot_ids.length)return false;
     if(!(g.start>stamp)||boardAgeHours>6||freshness==="STALE_RECHECK_REQUIRED"||(Number.isFinite(age)&&p.stale_market_age_hours!=null&&age>6))return false;
@@ -90,8 +91,7 @@
     if(Number.isFinite(seen)&&!safety.fresh(new Date(seen).toISOString()))return false;
     const cls=String(p.market_class||p.marketClass||"").toUpperCase();
     if(!["PLAYER_PROP",...safety.gameMarket].includes(cls))return false;
-    if(["GAME_TOTAL","SPREAD","WINNING_MARGIN","TEAM_TOTAL"].includes(cls)&&
-      !Number.isFinite(Number(p.threshold??p.current_line)))return false;
+    if(cls!=="GAME_ML"&&((p.threshold??p.current_line)==null||(p.threshold??p.current_line)===""||!Number.isFinite(Number(p.threshold??p.current_line))))return false;
     return true;
   };
   const registry=Array.isArray(window.LSI_PR?.predictions)?window.LSI_PR.predictions:[];
@@ -111,7 +111,14 @@
   const allPicks=future.flatMap(g=>(picks.get(g.id)||[]).map(p=>({game:g,p})))
     .sort((a,b)=>(Number(b.p.pom_value)||0)-(Number(a.p.pom_value)||0));
   const distinct=[],taken=new Set();
-  for(const p of allPicks){distinct.push(p);taken.add(p.game.id);if(distinct.length===20)break;}
+  const gameSides=new Set();
+  for(const p of allPicks){
+    const cls=String(p.p.market_class||"");
+    const key=p.game.id+"|"+cls;
+    if(cls!=="PLAYER_PROP"&&gameSides.has(key))continue;
+    if(cls!=="PLAYER_PROP")gameSides.add(key);
+    distinct.push(p);taken.add(p.game.id);if(distinct.length===20)break;
+  }
   const pending=future.filter(g=>!taken.has(g.id)).slice(0,20-distinct.length);
   const slots=[...distinct.map(x=>({...x,approved:true})),...pending.map((game,i)=>({game,watchMarket:gameLabels[(i+distinct.length)%4][1]}))];
   const marketText=p=>[p.participant||p.selection||p.pick||"",p.side||"",p.market||p.market_class||"",p.threshold==null?"":String(p.threshold),p.book||p.market_source,p.price==null?"":"price "+p.price,"LJPC "+Number(p.ljpc).toFixed(1)+"%"].filter(Boolean).join(" • ");

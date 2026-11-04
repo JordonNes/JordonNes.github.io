@@ -2,6 +2,12 @@ name: RWT Pages Release Sync
 # Avoid Pages cancellations from frequent master data commits.
 # Fast-forward a stable Pages publishing branch every 15 minutes.
 on:
+  push:
+    branches: [master]
+    paths: ['_config.yml', 'NBA.html', 'FIBA.html', 'nba_live_qc.js', 'fiba_live_qc.js', '.github/workflows/rwt-pages-release-sync.yml']
+  workflow_run:
+    workflows: ["LSI Daily Predictions Pipeline", "LSI Game Winner Refresh", "LSI Spectrum v3 Release"]
+    types: [completed]
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch:
@@ -15,6 +21,7 @@ concurrency:
 
 jobs:
   publish:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

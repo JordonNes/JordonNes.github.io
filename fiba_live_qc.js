@@ -59,6 +59,7 @@
     if(!matches)return false;
     if(String(p.evaluation_status||'').toUpperCase()!=='LJ_EVALUATED')return false;
     if(!(Number(p.ljpc)>0&&Number(p.ljpc)<=100&&p.evaluated_at_utc))return false;
+    if(p.price==null||p.price===''||!Number.isFinite(Number(p.price))||Number(p.price)===0)return false;
     if(!p.evaluation_id||!p.evaluation_material_hash||p.synthetic||p.model_generated)return false;
     if(p.market_verified!==true||p.market_verification!=='EXACT_MARKET_MATCH')return false;
     const evaluated=Date.parse(p.evaluated_at_utc);
@@ -67,7 +68,7 @@
     const checked=Date.parse(p.retrieved_at||p.market_observed_at_pt||'');
     if(!Number.isFinite(checked)||Date.now()-checked>6*3600000||checked>Date.now()+60000)return false;
     if(!String(p.book||p.market_source||'').trim())return false;
-    if(marketClass!=='GAME_ML'&&marketClass!=='PLAYER_PROP'&&!Number.isFinite(Number(p.current_line??p.threshold)))return false;
+    if(marketClass!=='GAME_ML'&&((p.current_line??p.threshold)==null||(p.current_line??p.threshold)===''||!Number.isFinite(Number(p.current_line??p.threshold))))return false;
     return true;
   }
   function selections(x){
@@ -91,9 +92,11 @@
   const watch=[...watchMen,...watchWomen].sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id)).slice(0,20);
   // Promote one evaluated selection per game, then retain sourced watchlist slots.
   // A single verified market must not collapse the 20 Piece down to one card.
-  const promoted=[],selected=new Set();
+  const promoted=[],selected=new Set(),gameSides=new Set();
   for(const e of allVerified){
-    
+    const cls=String(e.p.market_class||""),key=e.game.id+"|"+cls;
+    if(cls!=="PLAYER_PROP"&&gameSides.has(key))continue;
+    if(cls!=="PLAYER_PROP")gameSides.add(key);
     promoted.push(e);selected.add(e.game.id);
     if(promoted.length===20)break;
   }
