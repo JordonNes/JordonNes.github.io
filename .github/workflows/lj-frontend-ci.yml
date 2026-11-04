@@ -29,6 +29,9 @@ on:
       - 'FIBA_Men.html'
       - 'FIBA_Women.html'
       - 'fiba_hub.js'
+      - 'fiba_live_qc.js'
+      - 'data/fiba_verified_fixtures.js'
+      - 'scripts/test_fiba_live_qc.js'
       - 'fiba_scenario_engine.js'
       - 'data/fiba_competitions.js'
       - 'scripts/fiba_hub_audit.js'
@@ -67,6 +70,9 @@ jobs:
           node --check scripts/frontend_home_audit.js
           node --check scripts/qc_publication_audit.js
           node --check fiba_hub.js
+          node --check fiba_live_qc.js
+          node --check data/fiba_verified_fixtures.js
+          node --check scripts/test_fiba_live_qc.js
           node --check fiba_scenario_engine.js
           node --check data/fiba_competitions.js
           node --check scripts/fiba_hub_audit.js
@@ -83,4 +89,5 @@ jobs:
           node scripts/frontend_home_audit.js
           node scripts/qc_publication_audit.js
           node scripts/fiba_hub_audit.js
+          node scripts/test_fiba_live_qc.js
           node scripts/fiba_scenario_test.js
