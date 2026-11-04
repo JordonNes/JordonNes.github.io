@@ -13,7 +13,7 @@ from __future__ import annotations
 import csv
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -96,9 +96,77 @@ def read_csv(path: Path) -> list[dict]:
 
 
 def load_markets():
-    rows = read_csv(MARKETS)
-    by_snapshot = {row.get("snapshot_id", ""): row for row in rows if row.get("snapshot_id")}
-    return rows, by_snapshot
+    audits=read_csv(PRED)
+    event_ids={r.get("event_id") for r in audits if r.get("event_id")}
+    wanted={sid for r in audits for sid in first(r,"source_snapshot_ids","source_snapshot_id","market_snapshot_id").split("|") if sid}
+    if QC_BOARD.exists():
+        qc=json.loads(QC_BOARD.read_text(encoding="utf-8"))
+        wanted.update(sid for e in qc.get("events",[]) for p in e.get("props",[]) for sid in (p.get("source_snapshot_ids") or []))
+    rows=[];by_snapshot={};seen=set()
+    # Only legacy audited events need complete price tapes. Current evaluated
+    # POMs need their exact immutable snapshots, not millions of unrelated rows.
+    for path in [MARKETS,*sorted(DATA.glob("market_history_delta*.csv"))]:
+        if not path.exists():continue
+        with path.open(newline="",encoding="utf-8-sig") as fh:
+            for row in csv.DictReader(fh):
+                sid=row.get("snapshot_id")
+                if sid in wanted:by_snapshot[sid]=row
+                if row.get("event_id") in event_ids and sid not in seen:
+                    rows.append(row);seen.add(sid)
+    return rows,by_snapshot
+
+
+def live_qc_predictions(board, snapshots, now):
+    from lsi_publish_future_board import bounded_event_props, exact_market_verified
+    out=[]
+    for event in board.get("events") or []:
+        start=parse_dt(event.get("commence_time") or event.get("event_start_pt"))
+        if start is None or not now<start<=now+timedelta(days=7):continue
+        candidates=[]
+        for p in event.get("props") or []:
+            if p.get("evaluation_status")!="LJ_EVALUATED" or not exact_market_verified(p):continue
+            evaluated=parse_dt(p.get("evaluated_at_utc"));observed=parse_dt(p.get("retrieved_at") or p.get("market_observed_at_pt"))
+            if evaluated is None or observed is None:continue
+            if evaluated>now+timedelta(minutes=1) or observed>now+timedelta(minutes=1):continue
+            if now-evaluated>timedelta(hours=6) or now-observed>timedelta(hours=6):continue
+            if p.get("market_live") is False or p.get("market_suspended"):continue
+            if not p.get("evaluation_id") or not p.get("evaluation_material_hash") or not p.get("feature_state"):continue
+            probability=f(p.get("ljpc"))
+            if probability is None or not 0<probability<=100:continue
+            ids=p.get("source_snapshot_ids") or []
+            if not ids or any(sid not in snapshots for sid in ids):continue
+            sources=[snapshots[sid] for sid in ids]
+            eid=str(event.get("source_event_id") or event.get("event_id") or "")
+            if any(str(r.get("event_id"))!=eid for r in sources):continue
+            exact=any(norm(r.get("participant"))==norm(p.get("participant"))
+                      and numeric_line(r.get("threshold"))==numeric_line(p.get("threshold"))
+                      and norm(r.get("side"))==norm(p.get("side"))
+                      and norm(r.get("market")) in {norm(p.get("market")),norm(p.get("market_key"))}
+                      for r in sources)
+            if not exact:continue
+            candidates.append(p)
+        for p in bounded_event_props(candidates):
+            probability=float(p["ljpc"]);ids=p["source_snapshot_ids"]
+            record={field:None for field in PROP_FIELDS}
+            record.update(p)
+            record.update({
+              "prediction_id":"LIVE-"+p["evaluation_id"],"status":"ACTIVE",
+              "created_at_pt":p["evaluated_at_utc"],"updated_at_pt":p["evaluated_at_utc"],
+              "sport":event.get("league"),"league":event.get("league"),
+              "event_id":str(event.get("source_event_id") or event.get("event_id")),"event_start_pt":start.isoformat(),
+              "market_class":"PLAYER_PROP","book":p.get("best_book") or p.get("book"),
+              "market_source":p.get("best_book") or p.get("book"),"price":p.get("best_price") if p.get("best_price") is not None else p.get("price"),
+              "current_line":p.get("threshold"),"market_observed_at_pt":p.get("retrieved_at"),
+              "selection":" ".join(str(v) for v in [p.get("participant"),p.get("side"),p.get("threshold"),p.get("market")] if v is not None),
+              "market_verified":True,"market_verification":"EXACT_MARKET_MATCH",
+              "ljpc":probability,"lj_probability":probability,"lj_confidence":probability,
+              "legz_confidence":p.get("legz_baseline"),"learning_delta":0,"learning_applied":False,
+              "provenance":[{k:snapshots[sid].get(k) for k in ("snapshot_id","source","collected_at_pt","status","event_start_pt")} for sid in ids],
+              "evidence_ids":list(ids),"model_version":p.get("evaluation_version"),
+            })
+            record["pick"]=record["selection"]
+            out.append(record)
+    return list({r["prediction_id"]:r for r in out}.values())
 
 
 def same_prop(row: dict, event_id: str, participant: str, market: str) -> bool:
@@ -540,6 +608,16 @@ def build():
             record["pom_value"] = pom_value_score(record["legz_value"], record["ljpc"], record["economic_value"])
             rows.append(record)
 
+    now=datetime.now(timezone.utc)
+    for record in rows:
+        start=parse_dt(record.get("event_start_pt"))
+        if start is not None and start<=now:record["status"]="ARCHIVED"
+    if QC_BOARD.exists():
+        live=live_qc_predictions(json.loads(QC_BOARD.read_text(encoding="utf-8")),by_snapshot,now)
+        ids={r["prediction_id"] for r in rows}
+        rows.extend(r for r in live if r["prediction_id"] not in ids)
+        print(f"Current exact QC predictions added to registry: {len(live)}")
+
     if errors:
         raise SystemExit("\n".join(errors))
 
@@ -567,7 +645,7 @@ def build():
         "learning_overlay_enabled": bool(learning.get("enabled")),
         "predictions": rows,
     }
-    REG.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    REG.write_text(json.dumps(payload, separators=(",",":"), ensure_ascii=False) + "\n", encoding="utf-8")
     js = (
         "/* Generated by scripts/lsi_pipeline.py; do not edit manually. */\n"
         "window.LSI_PR=" + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n"

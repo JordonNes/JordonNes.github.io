@@ -1,6 +1,9 @@
 name: LSI Spectrum v3 Release
 
 on:
+  workflow_run:
+    workflows: ["LSI Daily Predictions Pipeline"]
+    types: [completed]
   push:
     branches: [master]
     paths:
@@ -25,6 +28,7 @@ concurrency:
 
 jobs:
   validate-release:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -48,15 +52,19 @@ jobs:
           node --check /tmp/quickie-inline.js
 
       - name: Merge verified override evidence
+        if: github.event_name != 'workflow_run'
         run: python scripts/lsi_apply_verified_overrides.py
 
       - name: Generate LEGZ Synthetic Book fallback
+        if: github.event_name != 'workflow_run'
         run: python scripts/legz_synthetic_book.py
 
       - name: Validate forecast-first player-prop ladder
+        if: github.event_name != 'workflow_run'
         run: python scripts/legz_prop_ladder_test.py
 
       - name: Execute Spectrum v3 from durable cache
+        if: github.event_name != 'workflow_run'
         env:
           LSI_FAST_RUNTIME: 'true'
         run: python scripts/legz_statistical_spectrum.py
@@ -88,10 +96,13 @@ jobs:
           PY
 
       - name: Explain forecast-first projection gaps
+        if: github.event_name != 'workflow_run'
         run: python scripts/lsi_projection_gap_report.py
 
       - name: Build canonical Prediction Registry
-        run: python scripts/lsi_pipeline.py
+        run: |
+          python scripts/test_lsi_live_registry.py
+          python scripts/lsi_pipeline.py
 
       - name: Publish future board
         run: python scripts/lsi_publish_future_board.py
@@ -168,7 +179,9 @@ jobs:
                 cp -a "$snapshot/$p" "$p"
               fi
             done
-            git add "${outputs[@]}" 2>/dev/null || true
+            for p in "${outputs[@]}"; do
+              if [ -e "$p" ]; then git add -- "$p"; fi
+            done
             python scripts/lsi_publish_dp_payloads.py
             git add -- data/dp
             if git diff --cached --quiet; then
