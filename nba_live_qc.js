@@ -197,10 +197,10 @@
     if(/PER-GAME QUICKIES|NBA QUICKIE|NBA DAILY PREDICTIONS/i.test(h))x.remove();
   });
   anchor.insertAdjacentHTML("afterend",top+twenty+qc);
-  const statusStamp=root.querySelector('.current-status-section .section-head .muted');
+  const statusStamp=root.querySelector('.sport-micro-status .section-head .muted')||root.querySelector('.current-status-section .section-head .muted');
   if(statusStamp)statusStamp.textContent='Prediction snapshot: '+(board.generated_at_utc||'unavailable');
-  const statusCount=root.querySelector('.current-status-section .chip');
-  if(statusCount)statusCount.textContent='NBA • '+games.length+' scheduled QCs • '+allPicks.length+' verified markets';
+  const statusCount=root.querySelector('.sport-micro-status .micro-status-bar')||root.querySelector('.current-status-section .chip');
+  if(statusCount)statusCount.textContent='NBA • '+season.phase+' • '+games.length+' game QCs • '+distinct.length+'/20 verified selections';
   const footer=root.querySelector('.footer');
   if(footer)footer.textContent='LEGZ & JINX • Prediction snapshot '+(board.generated_at_utc||'unavailable')+' • LJPC is an estimated hit probability';
   const meta=root.querySelector('.topbar .meta');
