@@ -352,7 +352,7 @@ jobs:
           python scripts/legz_statistical_spectrum.py
           python - <<'PY'
           import json
-          from scripts.legz_statistical_spectrum import EVALUATION_VERSION
+          from scripts.legz_statistical_spectrum import EVALUATION_VERSION, validate_compacted_evaluation_state
           d=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
           assert d.get('evaluation_engine')==EVALUATION_VERSION, f"Evaluation engine drift: board={d.get('evaluation_engine')} code={EVALUATION_VERSION}"
           props=[p for e in d.get('events',[]) for p in (e.get('props') or [])]
@@ -367,14 +367,14 @@ jobs:
           assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in props)
           state=json.load(open('data/lsi_evaluation_state.json',encoding='utf-8'))
           assert state.get('schema_version')=='LSI-EVALUATION-STATE-1'
+          consistency=validate_compacted_evaluation_state(props,state)
           ids={r.get('evaluation_id') for r in state.get('records',[]) if r.get('evaluation_id')}
-          assert all(p.get('evaluation_id') in ids for p in props)
           import os
           size=os.path.getsize('data/lsi_evaluation_state.json')
           assert state.get('retention_policy')=='LIVE_CURRENT_BOARD_RECORDS_PLUS_LATEST_HASH_INDEX'
           assert size < 80*1024*1024, f'Live evaluation state too large: {size/1024/1024:.2f} MB'
           assert state.get('record_count')==len(state.get('records') or [])
-          print(f'Spectrum v3 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence; durable_live_states={len(ids)}; size_mb={size/1024/1024:.2f}.')
+          print(f'Spectrum v3 invariant: {len(evaluated)} evaluated; {len(waiting)} awaiting evidence; durable_live_states={len(ids)}; hash_index={consistency["hash_index_keys"]}; size_mb={size/1024/1024:.2f}.')
           PY
       - name: Explain forecast-first projection gaps
         if: steps.league_schedule.outputs.cycle_required == 'true'
