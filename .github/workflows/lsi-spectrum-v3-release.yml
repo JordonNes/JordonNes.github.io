@@ -23,7 +23,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: lsi-spectrum-v3-release
+  group: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success' && format('lsi-spectrum-ignored-{0}', github.run_id) || 'lsi-spectrum-v3-release' }}
   cancel-in-progress: true
 
 jobs:
@@ -134,7 +134,8 @@ jobs:
           # props when no live market feed is available. In that case the browser bridge
           # must render durable evaluated QC inventory as LINE RECHECK REQUIRED.
           assert future_props or durable_eval, 'No current or durable evaluated player-prop inventory exists'
-          assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in future_props)
+          qbyid={p.get('evaluation_id'):p for e in board.get('events',[]) for p in (e.get('props') or []) if p.get('evaluation_id')}
+          assert all(p.get('evaluation_id') in qbyid and p.get('evaluation_material_hash')==qbyid[p['evaluation_id']].get('evaluation_material_hash') for p in future_props), 'Public evaluation identity/material hash does not resolve to canonical QC evidence'
           evaluated_future=[p for p in future_props if p.get('evaluation_status')=='LJ_EVALUATED' and p.get('ljpc') is not None]
           assert all(p.get('player_projection') for p in evaluated_future), 'Public LJ_EVALUATED prop missing player_projection'
           summary=board.get('projection_summary') or {}
