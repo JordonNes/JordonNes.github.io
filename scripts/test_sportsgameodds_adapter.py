@@ -50,6 +50,8 @@ board_event={
          "market_source_count":0}
     ]
 }
+assert "underdog" not in m.REQUESTED_BOOKS, "Restricted bookmaker must not break free-tier refresh"
+assert {"draftkings","fanduel","betmgm"}.issubset(set(m.REQUESTED_BOOKS))
 assert m.event_matches(board_event,event)
 markets=m.normalized_sgo_markets(event)
 assert len(markets)==1
