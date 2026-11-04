@@ -79,6 +79,43 @@ def exact_market_verified(p):
     synthetic=bool(p.get("synthetic") or p.get("model_generated") or p.get("model_target"))
     return bool(participant and market and side and threshold not in (None,"") and snaps and source and not synthetic and freshness!="STALE_RECHECK_REQUIRED")
 
+def public_projection(p):
+    """Keep inspectable forecast essentials, not a second complete feature graph."""
+    raw=p.get("player_projection") or ((p.get("spectrum") or {}).get("player_projection")) or {}
+    if not isinstance(raw,dict):return None
+    keys=("l5_average","l10_average","l20_average","projected_output",
+          "line_profile_class","distance_sigma","identity_match",
+          "sample_size","l5_hit_rate","l10_hit_rate","l20_hit_rate")
+    compact={k:raw[k] for k in keys if k in raw}
+    return compact or None
+
+def public_feature(p):
+    context=(p.get("feature_state") or {}).get("context") or {}
+    review=context.get("analyst_review") or {}
+    if not isinstance(review,dict):review={}
+    summary={k:review[k] for k in ("spy_context_pending","research_expected",
+             "fresh_context_available") if k in review}
+    return {"context":{"analyst_review":summary}} if summary else None
+
+def bounded_event_props(rows,maximum=24):
+    """Safely distribute public evaluations across participants in a game.
+
+    The full exact-market variant inventory remains on qc_prop_board and in
+    permanent history. Public QC receives the best 24 evaluated opportunities
+    per fixture, capped at 3 lines per participant before other players.
+    """
+    chosen=[];deferred=[];counts={}
+    for p in rows:
+        name=str(p.get("participant") or "").lower()
+        n=counts.get(name,0)
+        if n<3:
+            chosen.append(p);counts[name]=n+1
+        else:
+            deferred.append(p)
+        if len(chosen)>=maximum:break
+    if len(chosen)<maximum:chosen.extend(deferred[:maximum-len(chosen)])
+    return chosen
+
 def canonical_prop(p):
     evaluated=str(p.get("evaluation_status") or "").upper()=="LJ_EVALUATED"
     verified=exact_market_verified(p)
@@ -105,10 +142,10 @@ def canonical_prop(p):
       "prizepicks_available":bool(p.get("prizepicks_available")),
       "underdog_available":bool(p.get("underdog_available")),
       "retail_books":p.get("retail_books") or [],
-      "provider_offers":p.get("provider_offers") or [],
+      "provider_offers":[],  # Raw offer ladders remain in canonical QC state.
       "provider_projection_type":p.get("provider_projection_type"),
       "promo_variant":bool(p.get("promo_variant")),
-      "sports_game_odds":p.get("sports_game_odds"),
+      "sports_game_odds":None,  # De-duplicate deep sportsbook context.
       "sgo_fair_probability":p.get("sgo_fair_probability"),
       "sgo_consensus_probability":p.get("sgo_consensus_probability"),
       "sgo_consensus_line":p.get("sgo_consensus_line"),
@@ -138,13 +175,13 @@ def canonical_prop(p):
       "evaluation_material_hash":p.get("evaluation_material_hash"),
       "evaluation_version":p.get("evaluation_version"),
       "evaluated_at_utc":p.get("evaluated_at_utc"),
-      "player_projection":p.get("player_projection") or ((p.get("spectrum") or {}).get("player_projection")),
-      "feature_state":p.get("feature_state"),
-      "spectrum":p.get("spectrum"),
-      "evaluation_reason":p.get("evaluation_reason"),
+      "player_projection":public_projection(p),
+      "feature_state":public_feature(p),
+      "spectrum":None,  # Canonical statistical evidence is indexed by material hash.
+      "evaluation_reason":None,  # Long standard explanation lives in model documentation.
       "model":"LEGZ STATISTICAL SPECTRUM" if publishable else ("INTERNAL SYNTHETIC TARGET — NOT A POM" if synthetic else ("UNVERIFIED MARKET — NONACTIONABLE" if explicit is not None else "AWAITING L&J EVALUATION")),
       "source_snapshot_ids":p.get("source_snapshot_ids") or [],
-      "evidence_summary":p.get("evidence_summary"),
+      "evidence_summary":None,  # Source snapshot IDs remain available.
       "evaluation_reason":p.get("evaluation_reason"),
     }
 
@@ -429,7 +466,7 @@ def main():
             prior=best.get(key)
             if prior is None or float(p.get("ljpc") or 0)>float(prior.get("ljpc") or 0):
                 best[key]=p
-        props=sorted(best.values(),key=lambda x:(-float(x.get("ljpc") or 0),str(x["participant"]),str(x["market"])))
+        props=bounded_event_props(sorted(best.values(),key=lambda x:(-float(x.get("pom_value") or 0),-float(x.get("ljpc") or 0),str(x["participant"]),str(x["market"]))))
         event_game_markets=game_markets_for_event(e,game_markets)
         carried_game_evals=carry_forward_game_evaluations(e,event_game_markets,previous_game_evaluations)
         events.append({
