@@ -11,8 +11,12 @@ const vm=require('vm');
 const path=require('path');
 const crypto=require('crypto');
 
-const ROOT=path.resolve(__dirname,'..');
-const OUT=path.join(ROOT,'data','suggestion_ledger.json');
+const ROOT=path.resolve(process.env.LSI_CAPTURE_ROOT||path.resolve(__dirname,'..'));
+const OUTPUT_DATA=path.resolve(process.env.LSI_CAPTURE_OUTPUT||path.join(ROOT,'data'));
+const OUT=path.join(OUTPUT_DATA,'suggestion_ledger.json');
+const CAPTURE_TIME=process.env.LSI_CAPTURE_AT?new Date(process.env.LSI_CAPTURE_AT):new Date();
+if(!Number.isFinite(CAPTURE_TIME.getTime()))throw new Error('Invalid historical capture timestamp');
+class CaptureDate extends Date{constructor(...args){super(...(args.length?args:[CAPTURE_TIME.getTime()]));}static now(){return CAPTURE_TIME.getTime();}}
 const PAGES={
   'MLB.html':'MLB','NFL.html':'NFL','NBA.html':'NBA','WNBA.html':'WNBA',
   'NHL.html':'NHL','FIBA_Men.html':'FIBA_Men','FIBA_Women.html':'FIBA_Women',
@@ -74,7 +78,7 @@ function evaluatePublication(page){
   const html=fs.readFileSync(path.join(ROOT,page),'utf8');
   const order=[...html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)]
     .map(m=>m[1].split('?')[0].replace(/^\.\//,''));
-  const context={console,setTimeout:()=>0,clearTimeout:()=>{},setInterval:()=>0,clearInterval:()=>{}};
+  const context={console,Date:CaptureDate,setTimeout:()=>0,clearTimeout:()=>{},setInterval:()=>0,clearInterval:()=>{}};
   context.window=context;
   context.document={querySelector:()=>null,querySelectorAll:()=>[]};
   context.addEventListener=()=>{};
@@ -240,7 +244,7 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
   const family=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side)];
   const complete=Boolean(!eventAmbiguous&&((marketClass==='GAME_ML'&&eventId&&participant)||(marketClass==='PLAYER_PROP'&&eventId&&participant&&market&&side&&(threshold!==null||/touchdown|anytime td/i.test(market)))));
   return {
-    suggestion_id:hash('SUG-',core),publication_date_pt:date,first_seen_at_utc:now,last_seen_at_utc:now,page,
+    suggestion_id:hash('SUG-',core),publication_commit:process.env.LSI_CAPTURE_COMMIT||null,publication_date_pt:date,first_seen_at_utc:now,last_seen_at_utc:now,page,
     league:hint.league||src.league||'',event_id:eventId||null,event_start_pt:src.event_start_pt||hint.event_start_pt||null,
     away:n(src.away||hint.away)||null,home:n(src.home||hint.home)||null,
     market_class:marketClass,suggestion_type:marketClass==='GAME_ML'?'GAME_WINNER':'POM',participant:participant||null,
@@ -266,8 +270,8 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
 }
 
 const ledger=readLedger();
-const now=new Date().toISOString();
-const date=ptDate();
+const now=CAPTURE_TIME.toISOString();
+const date=ptDate(CAPTURE_TIME);
 for(const s of ledger.suggestions){
   if(Number(s.capture_schema_version||0)<2){
     s.capture_validity='QUARANTINED_CAPTURE_V1';
@@ -282,7 +286,7 @@ try{eventAliases=JSON.parse(fs.readFileSync(path.join(ROOT,'data','settlement_al
 const observedIds=new Set();
 const families=new Map();
 for(const row of ledger.suggestions) families.set(row.publication_date_pt+'|'+row.family_key,row);
-const CARD_OUT=path.join(ROOT,'data','qc_card_ledger.json');
+const CARD_OUT=path.join(OUTPUT_DATA,'qc_card_ledger.json');
 let cardLedger;
 try{cardLedger=JSON.parse(fs.readFileSync(CARD_OUT,'utf8'));}catch(_){cardLedger={schema_version:'LSI-QC-CARDS-1',cards:[]};}
 const cardIds=new Set(cardLedger.cards.map(c=>c.id));
@@ -315,7 +319,8 @@ function mergeRecord(rec){
     }
     if(prior.currently_displayed===false) prior.last_reappeared_at_utc=now;
     prior.currently_displayed=true;
-    prior.last_seen_at_utc=now;
+    prior.last_seen_at_utc=[prior.last_seen_at_utc,now].filter(Boolean).sort().at(-1);
+    prior.first_seen_at_utc=[prior.first_seen_at_utc,now].filter(Boolean).sort()[0];
     prior.snapshot_count=Number(prior.snapshot_count||1)+1;
     prior.placements=[...new Set([...(prior.placements||[]),...(rec.placements||[])])];
     prior.publication_labels=[...new Set([...(prior.publication_labels||[]),...(rec.publication_labels||[])])];
@@ -389,7 +394,7 @@ for(const [page,league] of Object.entries(PAGES)){
       const legs=(Array.isArray(items)?items:[]).map(item=>({text:n(item),suggestion_id:record(placement,n(item),{event_id:eventId,event_start_pt:eventStart,away:q.away||'',home:q.home||''})||null}));
       cardGroups.push({name:placement,legs});
     }
-    const card={date,league,page,event_id:eventId,event_start:eventStart,matchup:[q.away,q.home].filter(Boolean).join(' @ '),winner:q.winner||'',winner_ljpc:q.conf||null,groups:cardGroups};
+    const card={date,league,page,publication_commit:process.env.LSI_CAPTURE_COMMIT||null,event_id:eventId,event_start:eventStart,matchup:[q.away,q.home].filter(Boolean).join(' @ '),winner:q.winner||'',winner_ljpc:q.conf||null,groups:cardGroups};
     const id=hash('QCC-',[JSON.stringify(card)]);
     if(!cardIds.has(id)){cardLedger.cards.push({id,captured_at:now,...card});cardIds.add(id);}
   }
@@ -445,7 +450,7 @@ for(const row of ledger.suggestions){
   if(!daily.has(day))daily.set(day,[]);
   daily.get(day).push(row);
 }
-fs.mkdirSync(path.join(ROOT,'data','suggestions'),{recursive:true});
+fs.mkdirSync(path.join(OUTPUT_DATA,'suggestions'),{recursive:true});
 const writeChanged=(file,payload)=>{
   const text=JSON.stringify(payload)+'\n';
   if(Buffer.byteLength(text)>95*1024*1024) throw new Error('Publication shard exceeds safe blob size: '+file);
@@ -455,7 +460,7 @@ ledger.archive_files=[];
 for(const [day,suggestions] of [...daily].sort((a,b)=>a[0].localeCompare(b[0]))){
   if(day===date)continue;
   const name='suggestions/'+day+'.json';
-  writeChanged(path.join(ROOT,'data',name),{schema_version:'LSI-SUGGESTION-LEDGER-2',publication_date_pt:day,suggestions});
+  writeChanged(path.join(OUTPUT_DATA,name),{schema_version:'LSI-SUGGESTION-LEDGER-2',publication_date_pt:day,suggestions});
   ledger.archive_files.push(name);
 }
 ledger.suggestions=daily.get(date)||[];

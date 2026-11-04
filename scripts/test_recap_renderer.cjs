@@ -14,7 +14,7 @@ assert.equal(audit.ticketGrade(['VOID','PUSH']),'VOID');
 assert.equal(audit.ticketGrade(['HIT','VOID']),'HIT');
 // Execute only parser definitions, never mutate a real ledger in this test.
 const capture=fs.readFileSync('scripts/lsi_snapshot_suggestions.js','utf8').split('const ledger=readLedger();')[0];
-const parser={require,console,__dirname:require('node:path').resolve('scripts')};
+const parser={require,console,process:{env:{}},__dirname:require('node:path').resolve('scripts')};
 vm.createContext(parser);
 vm.runInContext(capture+'\nglobalThis.parse=parsePlayerText;globalThis.structure=structuredSuggestion;',parser);
 assert.equal(parser.parse('Example OVER 4.5 Receptions • MARKET CONSENSUS 80%').ljpc,null);

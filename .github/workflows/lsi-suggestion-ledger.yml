@@ -14,6 +14,8 @@ on:
     branches: [master]
     paths:
       - 'scripts/lsi_snapshot_suggestions.js'
+      - 'scripts/lsi_backfill_publications.py'
+      - 'scripts/lsi_suggestion_store.py'
       - 'scripts/lsi_build_recaps.py'
       - 'scripts/lsi_recap_audit.py'
       - 'scripts/test_lsi_recap_audit.py'
@@ -61,6 +63,24 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*.html
+            /*.js
+            /scripts/
+            /data/dp/
+            /data/suggestions/
+            /data/recaps/
+            /data/suggestion_ledger.json
+            /data/qc_ticket_registry.json
+            /data/qc_card_ledger.json
+            /data/recap_backfill.json
+            /data/results.csv
+            /data/settlement_aliases.json
+            /data/prediction_registry.json
+            /data/player_context.csv
+            /data/context_registry.json
+            /data/espn_player_registry.json
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -70,6 +90,9 @@ jobs:
 
       - name: Test recap audit rules
         run: python -m unittest scripts/test_lsi_recap_audit.py
+
+      - name: Recover previous-day committed publications
+        run: python scripts/lsi_backfill_publications.py
 
       - name: Capture committed LJDP publication state
         run: node --max-old-space-size=3072 scripts/lsi_snapshot_suggestions.js
@@ -121,10 +144,11 @@ jobs:
             echo "Ledger attempt ${attempt}: remote=$(git rev-parse --short origin/master) local=$(git rev-parse --short HEAD)"
             if [ "$attempt" -gt 1 ]; then
               git reset --hard origin/master
+              python scripts/lsi_backfill_publications.py
               node --max-old-space-size=3072 scripts/lsi_snapshot_suggestions.js
               python scripts/lsi_build_recaps.py
             fi
-            git add data/suggestion_ledger.json data/suggestions data/qc_card_ledger.json data/recaps data/suggestion_accuracy.json ljrecapdata.js
+            git add data/recap_backfill.json data/suggestion_ledger.json data/suggestions data/qc_card_ledger.json data/recaps data/suggestion_accuracy.json ljrecapdata.js
             if git diff --cached --quiet; then
               echo 'Publication ledger already current.'
               exit 0
