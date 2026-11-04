@@ -1,0 +1,34 @@
+name: NBA Game QC Release Gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'NBA.html'
+      - 'nba_live_qc.js'
+      - 'scripts/test_nba_live_qc.js'
+      - '.github/workflows/nba-live-qc-ci.yml'
+permissions:
+  contents: read
+jobs:
+  nba-qc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          filter: blob:none
+          sparse-checkout: |
+            NBA.html
+            nba_live_qc.js
+            scripts/test_nba_live_qc.js
+            data/espn_event_intelligence.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Verify source and regression syntax
+        run: |
+          node --check nba_live_qc.js
+          node --check scripts/test_nba_live_qc.js
+      - name: NBA current schedule and market safety regressions
+        run: node scripts/test_nba_live_qc.js
