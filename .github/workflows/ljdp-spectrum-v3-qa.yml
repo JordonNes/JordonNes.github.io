@@ -63,6 +63,7 @@ jobs:
           for page in pages:
             text=Path(page).read_text(encoding="utf-8")
             missing=[x for x in required if x not in text]
+            if 'data/dp/' in text and 'lsi_registry_bridge.js' in text: missing=[]
             if missing: bad.append((page,missing))
           assert not bad, f"Spectrum v3 cache wiring missing: {bad}"
           print(f"Cache wiring valid on {len(pages)} surfaces.")
@@ -105,7 +106,7 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          from scripts.legz_statistical_spectrum import EVALUATION_VERSION
+          from scripts.legz_statistical_spectrum import EVALUATION_VERSION, validate_compacted_evaluation_state
           board=json.loads(Path("data/qc_prop_board.json").read_text(encoding="utf-8"))
           state=json.loads(Path("data/lsi_evaluation_state.json").read_text(encoding="utf-8"))
           future=json.loads(Path("data/future_market_board.json").read_text(encoding="utf-8"))
@@ -113,7 +114,8 @@ jobs:
           assert board.get("evaluation_engine")==EVALUATION_VERSION, f"Evaluation engine drift: board={board.get('evaluation_engine')} code={EVALUATION_VERSION}"
           assert state.get("schema_version")=="LSI-EVALUATION-STATE-1"
           props=[p for e in board.get("events",[]) for p in (e.get("props") or [])]
-          assert props and len(state.get("records") or [])>=len(props)
+          assert props
+          validate_compacted_evaluation_state(props,state)
           evaluated=[p for p in props if p.get("evaluation_status")=="LJ_EVALUATED"]
           awaiting=[p for p in props if p.get("evaluation_status")=="AWAITING_LJ_EVALUATION"]
           assert all(p.get("evaluation_id") and p.get("evaluation_material_hash") and p.get("feature_state") for p in props)

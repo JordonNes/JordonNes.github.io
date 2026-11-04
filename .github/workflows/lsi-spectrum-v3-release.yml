@@ -29,7 +29,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-        with: {ref: master, fetch-depth: 0}
+        with: {ref: master, fetch-depth: 1}
       - uses: actions/setup-node@v6
         with: {node-version: '22'}
       - uses: actions/setup-python@v7
@@ -65,7 +65,7 @@ jobs:
         run: |
           python - <<'PY'
           import json
-          from scripts.legz_statistical_spectrum import EVALUATION_VERSION
+          from scripts.legz_statistical_spectrum import EVALUATION_VERSION, validate_compacted_evaluation_state
           board=json.load(open('data/qc_prop_board.json',encoding='utf-8'))
           state=json.load(open('data/lsi_evaluation_state.json',encoding='utf-8'))
           assert board.get('evaluation_engine')==EVALUATION_VERSION, f"Evaluation engine drift: board={board.get('evaluation_engine')} code={EVALUATION_VERSION}"
@@ -74,7 +74,7 @@ jobs:
           ids={r.get('evaluation_id') for r in state.get('records',[]) if r.get('evaluation_id')}
           assert props, 'QC prop board has no props to evaluate'
           assert all(p.get('evaluation_id') and p.get('evaluation_material_hash') and p.get('feature_state') for p in props)
-          assert all(p.get('evaluation_id') in ids for p in props)
+          validate_compacted_evaluation_state(props,state)
           evaluated=[p for p in props if p.get('evaluation_status')=='LJ_EVALUATED']
           waiting=[p for p in props if p.get('evaluation_status')=='AWAITING_LJ_EVALUATION']
           assert all(p.get('ljpc') is not None for p in evaluated)
@@ -159,7 +159,7 @@ jobs:
           # master is authoritative for code/UI and unrelated projects. Never
           # rebase multi-megabyte generated JSON against a moving branch.
           for attempt in 1 2 3 4 5; do
-            git fetch origin master
+            git fetch --depth=1 origin master
             git reset --hard origin/master
             for p in "${outputs[@]}"; do
               if [ -e "$snapshot/$p" ]; then

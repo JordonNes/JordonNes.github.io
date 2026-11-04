@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: master
-          fetch-depth: 0
+          fetch-depth: 1
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -80,7 +80,7 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           cp data/current_game_moneylines.json /tmp/gw-current-game-moneylines.json
           for attempt in 1 2 3 4 5; do
-            git fetch origin master
+            git fetch --depth=1 origin master
             git reset --hard origin/master
             cp /tmp/gw-current-game-moneylines.json data/current_game_moneylines.json
             python scripts/lsi_publish_future_board.py

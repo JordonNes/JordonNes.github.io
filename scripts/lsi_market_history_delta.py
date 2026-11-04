@@ -12,9 +12,9 @@ Commands:
                      and existing deltas, then write only new rows to bounded delta files.
 """
 from __future__ import annotations
-import csv, sys
+import csv, sys, json, sqlite3, os
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
@@ -54,80 +54,87 @@ def key(row):
     if sid: return ("snapshot_id",sid)
     return tuple(sorted((k,str(v or "")) for k,v in row.items()))
 
+def schema(path):
+    if not path.exists() or not path.stat().st_size:return []
+    with path.open(newline="",encoding="utf-8-sig") as fh:
+        return list(csv.DictReader(fh).fieldnames or [])
+
+def stream(path):
+    if path.exists() and path.stat().st_size:
+        with path.open(newline="",encoding="utf-8-sig") as fh:
+            yield from csv.DictReader(fh)
+
+def index_at(path):
+    db=sqlite3.connect(path)
+    db.execute("PRAGMA journal_mode=OFF")
+    db.execute("PRAGMA synchronous=OFF")
+    db.execute("PRAGMA cache_size=-16384")
+    db.execute("CREATE TABLE seen (k TEXT PRIMARY KEY) WITHOUT ROWID")
+    return db
+
+def remember(db,row):
+    k=json.dumps(key(row),ensure_ascii=False,separators=(",",":"))
+    return db.execute("INSERT OR IGNORE INTO seen VALUES (?)",(k,)).rowcount==1
+
 def merge():
-    existing=[p for p in delta_paths() if p.exists() and p.stat().st_size]
-    if not existing:
-        print("market history delta: nothing to merge")
-        return
-    fields, base_rows=rows(BASE)
-    delta_parts=[rows(p) for p in existing]
-    fields=fields or next((f for f,_ in delta_parts if f), [])
-    if not fields:
-        print("market history delta: no schema")
-        return
-    seen={key(r) for r in base_rows}
-    added=0
-    with BASE.open("a",newline="",encoding="utf-8") as fh:
-        w=csv.DictWriter(fh,fieldnames=fields,extrasaction="ignore")
-        if BASE.stat().st_size==0: w.writeheader()
-        for _,delta_rows in delta_parts:
-            for r in delta_rows:
-                k=key(r)
-                if k in seen: continue
-                w.writerow(r); seen.add(k); added+=1
-    print(f"market history delta merge: added={added} delta_rows={sum(len(rs) for _,rs in delta_parts)}")
+    parts=delta_paths()
+    if not parts:
+        print("market history delta: nothing to merge");return
+    fields=schema(BASE) or next((schema(p) for p in parts if schema(p)),[])
+    if not fields:return
+    DATA.mkdir(parents=True,exist_ok=True)
+    with TemporaryDirectory(prefix="history-merge-",dir=DATA) as tmp:
+        db=index_at(Path(tmp)/"seen.sqlite")
+        for row in stream(BASE):remember(db,row)
+        added=0
+        with BASE.open("a",newline="",encoding="utf-8") as fh:
+            w=csv.DictWriter(fh,fieldnames=fields,extrasaction="ignore")
+            if BASE.stat().st_size==0:w.writeheader()
+            for part in parts:
+                for row in stream(part):
+                    if remember(db,row):w.writerow(row);added+=1
+        db.close()
+    print(f"market history delta merge: added={added}")
 
 def split(generated_path):
     generated=Path(generated_path)
-    fields, base_rows=rows(BASE)
-    existing_delta_paths=delta_paths()
-    delta_parts=[rows(p) for p in existing_delta_paths]
-    gfields, gen_rows=rows(generated)
-    fields=fields or next((f for f,_ in delta_parts if f), []) or gfields
-    if not fields:
-        raise SystemExit("No market-history schema found")
-    known={key(r) for r in base_rows}
-    out=[]
-    seen_delta=set()
-    for _,prior_delta in delta_parts:
-        for r in prior_delta:
-            k=key(r)
-            if k in known or k in seen_delta: continue
-            out.append(r); seen_delta.add(k)
-    prior_count=len(out)
-    new=0
-    for r in gen_rows:
-        k=key(r)
-        if k in known or k in seen_delta: continue
-        out.append(r); seen_delta.add(k); new+=1
-    DELTA.parent.mkdir(parents=True,exist_ok=True)
-    part=0
-    fh=None
-    try:
-        for r in out:
-            if fh is None or fh.tell()>=MAX_DELTA_BYTES:
-                if fh is not None: fh.close()
-                target=delta_path(part+1)
-                fh=target.open("w",newline="",encoding="utf-8")
-                w=csv.DictWriter(fh,fieldnames=fields,extrasaction="ignore")
-                w.writeheader()
-                part+=1
-            w.writerow(r)
-        if fh is None:
-            with DELTA.open("w",newline="",encoding="utf-8") as empty:
-                csv.DictWriter(empty,fieldnames=fields).writeheader()
-    finally:
-        if fh is not None: fh.close()
-    for stale in existing_delta_paths:
+    parts=delta_paths()
+    fields=schema(BASE) or next((schema(p) for p in parts if schema(p)),[]) or schema(generated)
+    if not fields:raise SystemExit("No market-history schema found")
+    DATA.mkdir(parents=True,exist_ok=True)
+    # Stream rows once; a disk-backed exact-key index bounds memory regardless
+    # of accumulated history. Stage every shard before replacing published files.
+    with TemporaryDirectory(prefix="history-split-",dir=DATA) as tmp:
+        tmp=Path(tmp);db=index_at(tmp/"seen.sqlite")
+        base_count=0
+        for row in stream(BASE):remember(db,row);base_count+=1
+        prior_count=0;new=0;part=0;fh=None;staged=[]
         try:
-            idx=1 if stale.name=="market_history_delta.csv" else int(stale.stem.rsplit("_",1)[1])
-        except (ValueError, IndexError):
-            continue
-        if idx>part and stale.exists(): stale.unlink()
-    for p in delta_paths():
-        if p.exists() and p.stat().st_size>=95*1024*1024:
-            raise SystemExit(f"Market history partition too large for safe GitHub publication: {p}")
-    print(f"market history delta split: base_rows={len(base_rows)} prior_delta={prior_count} new={new} persisted_delta={len(out)} parts={part or 1}")
+            for source,is_new in [(p,False) for p in parts]+[(generated,True)]:
+                for row in stream(source):
+                    if not remember(db,row):continue
+                    if fh is None or fh.tell()>=MAX_DELTA_BYTES:
+                        if fh is not None:fh.close()
+                        part+=1;target=tmp/delta_path(part).name;staged.append(target)
+                        fh=target.open("w",newline="",encoding="utf-8")
+                        w=csv.DictWriter(fh,fieldnames=fields,extrasaction="ignore");w.writeheader()
+                    w.writerow(row)
+                    if is_new:new+=1
+                    else:prior_count+=1
+            if fh is None:
+                target=tmp/DELTA.name;staged.append(target)
+                with target.open("w",newline="",encoding="utf-8") as empty:
+                    csv.DictWriter(empty,fieldnames=fields).writeheader()
+        finally:
+            if fh is not None:fh.close()
+            db.close()
+        for p in staged:
+            if p.stat().st_size>=95*1024*1024:raise SystemExit(f"Oversized history shard: {p.name}")
+        keep={p.name for p in staged}
+        for p in staged:os.replace(p,DATA/p.name)
+        for p in parts:
+            if p.name not in keep:p.unlink()
+    print(f"market history delta split: base_rows={base_count} prior_delta={prior_count} new={new} parts={len(staged)}")
 
 def main():
     if len(sys.argv)<2: raise SystemExit("usage: lsi_market_history_delta.py merge | split GENERATED")
