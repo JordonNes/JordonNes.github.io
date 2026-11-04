@@ -44,4 +44,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/fiba_verified_fixtures.js
           git commit -m "Refresh independently verified FIBA men/women schedules"
-          git push
+          # The LJDP market publisher also writes to master. A normal concurrent
+          # update is not a failed FIBA fetch; replay this data-only commit safely.
+          for attempt in 1 2 3 4; do
+            git fetch origin master
+            git rebase origin/master || { git rebase --abort; echo "Conflicting FIBA data update; no overwrite."; exit 1; }
+            if git push origin HEAD:master; then exit 0; fi
+            sleep 3
+          done
+          echo "Unable to push after concurrent updates; preserving repository state."
+          exit 1
