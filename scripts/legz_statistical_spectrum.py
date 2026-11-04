@@ -484,6 +484,44 @@ def compact_evaluation_state(records_by_id, latest, current_ids):
     }
     return kept,clean_latest
 
+
+def validate_compacted_evaluation_state(props, state):
+    """Validate all canonical QC evaluations against the bounded live cache.
+
+    Every evaluated prop retains complete individualized evidence on qc_prop_board.
+    Only the best entries per event carry a duplicate feature record in the
+    reusable live-state cache; latest_by_key holds each identity's current
+    evaluation id and material hash. A compacted-out record is NOT an error.
+    """
+    records=state.get("records") or []
+    by_id={str(r.get("evaluation_id")):r for r in records if r.get("evaluation_id")}
+    latest=state.get("latest_by_key") or {}
+    assert state.get("schema_version")=="LSI-EVALUATION-STATE-1"
+    assert state.get("record_count")==len(records)==len(by_id), "Duplicate or inconsistent retained state records"
+    assert state.get("latest_key_count")==len(latest), "Material-hash index count mismatch"
+    expected={}
+    for p in props:
+        key=str(p.get("evaluation_key") or "")
+        eid=str(p.get("evaluation_id") or "")
+        material=str(p.get("evaluation_material_hash") or "")
+        assert key and eid and material and p.get("feature_state"), "Canonical QC evaluation lost its feature evidence"
+        expected[key]=(eid,material)  # The latest observation of any duplicate exact market wins.
+        cached=by_id.get(eid)
+        if cached is not None:
+            assert cached.get("material_hash")==material, "Retained evaluation cache has mismatched material hash"
+            assert cached.get("evaluation_key")==key, "Retained evaluation cache has mismatched identity key"
+    for key,(eid,material) in expected.items():
+        index=latest.get(key) or {}
+        assert index.get("evaluation_id")==eid, "Latest evaluation ID index drift for "+key
+        assert index.get("material_hash")==material, "Latest material-hash index drift for "+key
+    # A maximum of 24 retained records per game is the intentional budget.
+    from collections import Counter
+    groups=Counter((str(r.get("league") or ""),str(r.get("event_id") or "")) for r in records)
+    assert all(n<=24 for n in groups.values()), "Compacted cache exceeded 24 records per event"
+    return {"canonical_props":len(props),"retained_records":len(records),
+            "hash_index_keys":len(latest),"verified_current_keys":len(expected)}
+
+
 def historical_results():
     out=defaultdict(list)
     # Settled L&J predictions remain useful exact-market evidence.
