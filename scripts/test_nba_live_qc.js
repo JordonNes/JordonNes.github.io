@@ -47,7 +47,7 @@ async function evaluate(at,validSource=true,customBoard=null){
   assert.match(t.html,/Total points/);
   assert.match(t.html,/Point spread/);
   assert.match(t.html,/Winning margin/);
-  assert.match(t.html,/NOT LJPC/);
+  assert.match(t.html,/ESPN forecasts and unverified market quotes are context, not L&J predictions/);
   assert.match(t.html,/Philadelphia 76ers @ Detroit Pistons/);
   assert.match(t.html,/Los Angeles Lakers @ Sacramento Kings/);
   assert.match(t.meta,/REGULAR SEASON ACTIVE/);
