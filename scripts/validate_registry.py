@@ -10,8 +10,19 @@ registry=json.loads((root/'data/prediction_registry.json').read_text(encoding='u
 predictions=registry.get('predictions',[])
 errors=[]
 market_path=root/'data/market_history.csv'
-market_rows=list(csv.DictReader(market_path.open(newline='',encoding='utf-8-sig'))) if market_path.exists() else []
-snapshots={r.get('snapshot_id'):r for r in market_rows if r.get('snapshot_id')}
+wanted={sid for p in predictions for sid in (p.get('source_snapshot_ids') or [])}
+snapshots={}
+# The immutable base does not include subsequently persisted source observations.
+# Resolve required IDs across all delta shards without loading millions of rows.
+for path in [market_path,*sorted((root/'data').glob('market_history_delta*.csv'))]:
+    if not path.exists():continue
+    with path.open(newline='',encoding='utf-8-sig') as source:
+        for row in csv.DictReader(source):
+            if row.get('snapshot_id') in wanted:snapshots[row['snapshot_id']]=row
+current=root/'data/current_game_moneylines.json'
+if current.exists():
+    for row in json.loads(current.read_text(encoding='utf-8')).get('rows',[]):
+        if row.get('snapshot_id') in wanted:snapshots[row['snapshot_id']]=row
 
 def stamp(value):
     try:return datetime.fromisoformat(str(value).replace('Z','+00:00'))
