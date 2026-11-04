@@ -64,12 +64,12 @@ LEAGUE_MAP={
     "NCAA_Basketball":"NCAAB",
 }
 
-# Nine documented free bookmakers plus two DFS operators requested for capability
-# discovery. A free key will simply filter unavailable/restricted books and return
-# a notice; no paid capability is assumed.
+# Request only the documented Amateur-tier bookmakers. Requesting Underdog here
+# returns HTTP 400 on the connected free tier, aborting all near-event refreshes.
+# PrizePicks and Underdog are instead acquired by the separate ParlayAPI adapter.
 REQUESTED_BOOKS=[
     "draftkings","fanduel","betmgm","caesars","espnbet","bovada",
-    "unibet","pointsbet","williamhill","underdog",
+    "unibet","pointsbet","williamhill",
 ]
 
 MARKET_FIELDS=[
@@ -655,7 +655,7 @@ def main():
         "next_cursor_present":bool(payload.get("nextCursor")),
         "intentionally_not_autopaged":True,
         "notice":payload.get("notice"),
-        "capability_probe":"Underdog requested alongside the nine documented Amateur books; provider response/notice determines whether this key can see it.",
+        "capability_probe":"Amateur-tier SGO bookmakers only; Underdog and PrizePicks are acquired separately via ParlayAPI.",
         "last_diagnostics":diagnostics,
         "market_history_rows_added":history_added,
         "usage_after":usage_after,
