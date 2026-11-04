@@ -1,0 +1,31 @@
+name: LSI Published Payload Budget Gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/lsi_publish_future_board.py'
+      - 'scripts/test_lsi_public_payload_budget.py'
+      - '.github/workflows/lsi-payload-budget-ci.yml'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          filter: blob:none
+          sparse-checkout: |
+            scripts/legz_statistical_spectrum.py
+            scripts/lsi_publish_future_board.py
+            scripts/test_lsi_public_payload_budget.py
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Verify syntax and bounded publication contract
+        run: |
+          python -m py_compile scripts/legz_statistical_spectrum.py scripts/lsi_publish_future_board.py scripts/test_lsi_public_payload_budget.py
+          python scripts/test_lsi_public_payload_budget.py
