@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-11-03T12:49:48.112960+00:00",
+  "checked_at_utc": "2026-11-04T23:37:09.398354+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -9,8 +9,8 @@
   ],
   "credit_cycle_started_at": "2026-10-26T06:01:29.625639+00:00",
   "league_last_success_utc": {
-    "NFL": "2026-11-02T09:13:25.740617+00:00",
-    "NCAA_Football": "2026-11-03T10:08:37.808430+00:00",
+    "NFL": "2026-11-04T23:37:09.398354+00:00",
+    "NCAA_Football": "2026-11-04T23:37:09.398354+00:00",
     "MLB": "2026-10-15T17:17:15.751049+00:00",
     "NHL": "2026-11-03T12:49:48.112960+00:00",
     "WNBA": "2026-10-15T00:26:56.392440+00:00",
@@ -25,46 +25,50 @@
     "max_sport_calls_per_run": 3
   },
   "status": "OK",
-  "credits_estimated_this_cycle": 24,
-  "provider_reported_remaining": 814,
+  "credits_estimated_this_cycle": 30,
+  "provider_reported_remaining": 688,
   "requested_leagues": [
+    "NFL",
     "NCAA_Football",
+    "NBA",
     "NHL",
     "NCAA_Basketball"
   ],
   "refreshed_leagues": [
-    "NCAA_Basketball",
-    "NHL"
+    "NCAA_Football",
+    "NFL"
   ],
   "authoritative_complete_leagues": [
-    "NCAA_Basketball",
-    "NHL"
+    "NCAA_Football",
+    "NFL"
   ],
   "diagnostics": {
-    "NHL": {
+    "NFL": {
       "status": "OK",
-      "raw_rows": 2266,
-      "normalized_side_offers": 3920,
+      "raw_rows": 3336,
+      "normalized_side_offers": 4106,
       "result_has_more": false,
       "result_truncated": false,
       "result_truncated_hint": null,
       "result_degraded": null,
-      "provider_reported_remaining": 817
+      "provider_reported_remaining": 694
     },
-    "NCAA_Basketball": {
+    "NCAA_Football": {
       "status": "OK",
-      "raw_rows": 0,
-      "normalized_side_offers": 0,
+      "raw_rows": 4998,
+      "normalized_side_offers": 4472,
       "result_has_more": false,
       "result_truncated": false,
       "result_truncated_hint": null,
       "result_degraded": null,
-      "provider_reported_remaining": 814
+      "provider_reported_remaining": 688
     }
   },
-  "errors": {},
-  "raw_side_offers": 3920,
-  "consolidated_exact_poms": 3730,
-  "market_history_rows_added": 3920,
+  "errors": {
+    "NBA": "HTTP 502: {\"type\":\"https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-502/\",\"title\":\"Error 502: Bad gateway\",\"status\":502,\"detail\":\"The origin web server returned an invalid or incomplete response to Cloudflare. This typically indicates the origin is overloaded or misconfigured.\",\"instance\":\"a55771ea6b8554d0\",\"error_code\":502,\"error_name\":\"origin_bad_gateway\",\"error_category\":\"origin\",\"ray_id\":\"a55771ea6b8554d0\",\"timestamp\":\"2026-11-04T23:37:12Z\",\"zone\":\"parlay-api.com\",\"cloudflare_error\":true,\"retryable\":true,\"retry_after\":60,\"owner_action_required\":"
+  },
+  "raw_side_offers": 8578,
+  "consolidated_exact_poms": 7685,
+  "market_history_rows_added": 8578,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }
