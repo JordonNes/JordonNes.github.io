@@ -101,7 +101,9 @@ permissions:
 
 concurrency:
   group: lsi-market-writer
-  cancel-in-progress: false
+  # A one-time, explicitly tagged manual recovery supersedes an older stalled
+  # run. Ordinary scheduled publication never interrupts an active writer.
+  cancel-in-progress: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[ljdp-full-refresh]') }}
 
 jobs:
   clock:
