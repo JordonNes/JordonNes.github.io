@@ -2,7 +2,36 @@
 'use strict';
 const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
 const source=fs.readFileSync('nba_live_qc.js','utf8');
-const snapshot=JSON.parse(fs.readFileSync('data/espn_event_intelligence.json','utf8'));
+// Immutable schedule test fixture: future ESPN refreshes must not rewrite test history.
+const rawFixtures=[
+ ['PHI','Philadelphia 76ers','DET','Detroit Pistons','2026-11-05T00:00:00Z'],
+ ['ATL','Atlanta Hawks','WAS','Washington Wizards','2026-11-05T00:00:00Z'],
+ ['MIL','Milwaukee Bucks','BOS','Boston Celtics','2026-11-05T00:30:00Z'],
+ ['CHA','Charlotte Hornets','BKN','Brooklyn Nets','2026-11-05T00:30:00Z'],
+ ['CHI','Chicago Bulls','NYK','New York Knicks','2026-11-05T00:30:00Z'],
+ ['IND','Indiana Pacers','MEM','Memphis Grizzlies','2026-11-05T01:00:00Z'],
+ ['UTA','Utah Jazz','NOP','New Orleans Pelicans','2026-11-05T01:00:00Z'],
+ ['CLE','Cleveland Cavaliers','OKC','Oklahoma City Thunder','2026-11-05T01:00:00Z'],
+ ['MIN','Minnesota Timberwolves','HOU','Houston Rockets','2026-11-05T01:30:00Z'],
+ ['TOR','Toronto Raptors','DEN','Denver Nuggets','2026-11-05T02:00:00Z'],
+ ['POR','Portland Trail Blazers','PHX','Phoenix Suns','2026-11-05T02:00:00Z'],
+ ['DAL','Dallas Mavericks','SAS','San Antonio Spurs','2026-11-05T02:30:00Z'],
+ ['LAL','Los Angeles Lakers','SAC','Sacramento Kings','2026-11-05T03:00:00Z'],
+ ['MIA','Miami Heat','LAC','LA Clippers','2026-11-05T03:30:00Z'],
+ ['ORL','Orlando Magic','PHX','Phoenix Suns','2026-11-06T02:00:00Z'],
+ ['MIA','Miami Heat','GSW','Golden State Warriors','2026-11-06T03:00:00Z'],
+ ...Array.from({length:8},(_,i)=>['AWAY'+i,'Test Away '+i,'HOME'+i,'Test Home '+i,'2026-11-07T00:00:00Z'])
+];
+const snapshot={
+ source:'ESPN_PUBLIC',generated_at_utc:'2026-11-04T19:00:00Z',
+ events:rawFixtures.map(([awayAbbr,awayName,homeAbbr,homeName,start],i)=>({
+   league:'NBA',event_id:i===0?'401909922':'TEST'+i,start_utc:start,
+   status:'STATUS_SCHEDULED',source:'ESPN_PUBLIC',teams:[
+    {home_away:'away',display_name:awayName,abbreviation:awayAbbr},
+    {home_away:'home',display_name:homeName,abbreviation:homeAbbr}
+   ],predictor:null,odds:[]
+ }))
+};
 const html=fs.readFileSync('NBA.html','utf8');
 assert.match(html,/renderLJSport\('NBA'\);<\/script><script src="nba_live_qc.js/);
 async function evaluate(at,validSource=true,customBoard=null){
