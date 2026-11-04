@@ -128,7 +128,11 @@ def canonical_prop(p):
     # POMs must correspond to an externally observed exact market expression.
     publishable=bool(verified and explicit is not None)
     return {
+      "market_class":"PLAYER_PROP",
       "participant":p.get("participant"),
+      "retrieved_at":p.get("retrieved_at") or p.get("market_observed_at_pt"),
+      "market_live":p.get("market_live"),
+      "market_suspended":p.get("market_suspended"),
       "market_key":p.get("market_key") or p.get("market"),
       "market":p.get("market"),
       "threshold":p.get("threshold"),
