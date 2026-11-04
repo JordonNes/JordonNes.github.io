@@ -199,6 +199,8 @@ def load_game_markets():
         eid=str(row.get("event_id") or "").strip()
         participant=str(row.get("participant") or row.get("selection") or "").strip()
         if not eid or not participant: return
+        observed=parse(row.get("collected_at_pt"))
+        if observed is None or observed>NOW+timedelta(minutes=1) or NOW-observed>timedelta(hours=6): return
         key=(eid,participant.lower(),str(row.get("source") or ""))
         stamp=str(row.get("collected_at_pt") or "")
         if key not in latest or stamp>=str(latest[key].get("collected_at_pt") or ""):
@@ -236,6 +238,15 @@ def load_game_markets():
         best=max(rows,key=lambda x:x[0])
         out.setdefault(eid,[]).append({
           "event_id":eid,
+          "market_class":"GAME_ML",
+          "market":"game_winner",
+          "side":"Yes",
+          "retrieved_at":best[2].get("collected_at_pt"),
+          "source_snapshot_ids":[best[2]["snapshot_id"]] if best[2].get("snapshot_id") else [],
+          "market_live":True,
+          "market_suspended":False,
+          "market_verified":bool(best[2].get("snapshot_id")),
+          "market_verification":"EXACT_MARKET_MATCH" if best[2].get("snapshot_id") else "UNVERIFIED",
           "league":str(best[2].get("league") or ""),
           "event_start_pt":str(best[2].get("event_start_pt") or ""),
           "participant":participant,
@@ -276,7 +287,7 @@ def game_eval_key(event,row):
 GAME_EVAL_FIELDS=(
     "provisional_probability","performance_probability","legz_baseline","jinx_input",
     "ljpc","lj_confidence","legz_value","pom_value","evaluation_status","evaluation_id",
-    "evaluation_material_hash","evaluation_version","feature_state","model","evaluation_reason"
+    "evaluation_material_hash","evaluation_version","evaluated_at_utc","feature_state","model","evaluation_reason"
 )
 
 def load_previous_game_evaluations():

@@ -124,7 +124,7 @@ jobs:
           SCHEDULE_EXPR: ${{ github.event.schedule }}
           # Ordinary pushes are DISCOVERY; canonical publication identity comes
           # only from the six scheduled PT checkpoints or an explicit manual stage.
-          PUSH_STAGE: DISCOVERY
+          PUSH_STAGE: ${{ contains(github.event.head_commit.message, '[ljdp-full-refresh]') && 'MASTER_PUBLICATION' || 'DISCOVERY' }}
         run: |
           python scripts/lsi_checkpoint_clock.py \
             --event-name "${{ github.event_name }}" \
@@ -142,7 +142,7 @@ jobs:
       PYTHONPATH: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v7
-        with: {ref: master, fetch-depth: 0}
+        with: {ref: master, fetch-depth: 1}
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
       - name: Merge incremental market-history delta into runtime base
@@ -563,7 +563,7 @@ jobs:
           # is authoritative for code/UI. Overlay the generated snapshot on top of the
           # newest master instead of rebasing million-line generated JSON commits.
           for attempt in 1 2 3 4 5; do
-            git fetch origin master
+            git fetch --depth=1 origin master
             git reset --hard origin/master
             # Keep the oversized legacy market_history.csv as an immutable base.
             # Persist only observations not already present in base/prior delta.
@@ -623,7 +623,7 @@ jobs:
               # Do not treat a successful transport response as publication success.
               # Re-fetch master and require the remote ref to contain the exact commit
               # produced by this run before the pipeline can report success.
-              git fetch origin master
+              git fetch --depth=1 origin master
               REMOTE_SHA="$(git rev-parse origin/master)"
               if [ "$REMOTE_SHA" = "$LOCAL_SHA" ]; then
                 echo "LSI publication verified on master: $LOCAL_SHA"

@@ -270,6 +270,7 @@ def main():
                   "legz_value":round(evidence_strength,1),
                   "pom_value":round(math.sqrt(max(1,evidence_strength)*max(1,ljpc)),1),
                   "evaluation_status":"LJ_EVALUATED",
+                  "evaluated_at_utc":datetime.now(timezone.utc).isoformat(),
                   "evaluation_id":"GW-"+h[:24],
                   "evaluation_material_hash":h,
                   "evaluation_version":"LEGZ_GAME_SPECTRUM_2",

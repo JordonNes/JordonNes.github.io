@@ -45,7 +45,8 @@
     const home=normalize(e.home),away=normalize(e.away);
     // Match ONLY exact FIBA abbreviations, not a fuzzy team name that may belong
     // to a different team or international competition.
-    return sameId || (!!home&&!!away&&home===normalize(x.home)&&away===normalize(x.away));
+    const day=String(e.commence_time||e.event_start_pt||'').slice(0,10);
+    return sameId || (day===x.date && !!home&&!!away&&home===normalize(x.home)&&away===normalize(x.away));
   };
   function exactMarket(p,x){
     const event=board.find(e=>matchGame(e,x));
@@ -58,7 +59,11 @@
     if(!matches)return false;
     if(String(p.evaluation_status||'').toUpperCase()!=='LJ_EVALUATED')return false;
     if(!(Number(p.ljpc)>0&&Number(p.ljpc)<=100&&p.evaluated_at_utc))return false;
-    if(!p.source_snapshot_ids?.length||!p.market_live||p.market_suspended)return false;
+    if(!p.evaluation_id||!p.evaluation_material_hash||p.synthetic||p.model_generated)return false;
+    if(p.market_verified!==true||p.market_verification!=='EXACT_MARKET_MATCH')return false;
+    const evaluated=Date.parse(p.evaluated_at_utc);
+    if(!Number.isFinite(evaluated)||evaluated>Date.now()+60000||Date.now()-evaluated>6*3600000)return false;
+    if(!p.source_snapshot_ids?.length||p.market_live===false||p.market_suspended)return false;
     const checked=Date.parse(p.retrieved_at||p.market_observed_at_pt||'');
     if(!Number.isFinite(checked)||Date.now()-checked>6*3600000||checked>Date.now()+60000)return false;
     if(!String(p.book||p.market_source||'').trim())return false;
@@ -66,14 +71,19 @@
     return true;
   }
   function selections(x){
-    return registry.filter(p=>exactMarket(p,x))
+    const event=board.find(e=>matchGame(e,x));
+    const seen=new Set();
+    return [...registry,...(event?.props||[]),...(event?.game_markets||[])].filter(p=>{
+      const key=[p.participant||p.selection,p.market_class,p.market,p.side,p.threshold??p.current_line].join('|');
+      if(!exactMarket(p,x)||seen.has(key))return false;seen.add(key);return true;
+    })
       .sort((a,b)=>(Number(b.pom_value)||0)-(Number(a.pom_value)||0));
   }
   const verifiedMap=new Map(future.map(e=>[e.id,selections(e)]));
   const allVerified=future.flatMap(x=>(verifiedMap.get(x.id)||[]).map(p=>({game:x,p})));
   allVerified.sort((a,b)=>(Number(b.p.pom_value)||0)-(Number(a.p.pom_value)||0));
   const fmtDate=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
-  const fmtLine=p=>[p.selection||p.pick||p.market||p.market_class,p.book||p.market_source,p.price?'Price '+p.price:'',p.ljpc+'% LJPC'].filter(Boolean).join(' • ');
+  const fmtLine=p=>[p.participant||p.selection||p.pick,p.side,p.market||p.market_class,p.threshold??p.current_line,p.book||p.market_source,p.price==null?'':'Price '+p.price,p.ljpc+'% LJPC'].filter(v=>v!==undefined&&v!==null&&v!=='').join(' • ');
   const banner='<div class="fiba-freshness '+(stale?'fiba-stale':'')+'"><b>'+(stale?'SCHEDULE SNAPSHOT STALE':'SCHEDULE SOURCE VERIFIED')+'</b> • FIBA official fixture snapshot checked '+html(F.verifiedOn||'unknown')+' • '+future.length+' games dated today or later in this published snapshot. '+(stale?'Reverify matchups, times and completed games at the official source.':'Tipoff time zones and in-progress states are not independently confirmed.')+' No market/odds are implied by fixture verification.</div>';
   // Twenty real game targets, a balanced men/women allocation. It becomes
   // actionable only when a market exists and an evaluated LJPC is available.
@@ -83,7 +93,7 @@
   // A single verified market must not collapse the 20 Piece down to one card.
   const promoted=[],selected=new Set();
   for(const e of allVerified){
-    if(selected.has(e.game.id))continue;
+    
     promoted.push(e);selected.add(e.game.id);
     if(promoted.length===20)break;
   }
@@ -102,7 +112,7 @@
       return '<div class="fiba-market-row"><span>'+html(m.name)+'</span><b>'+(candidates.length?html(fmtLine(candidates[0])):'Market not verified • no line/price')+'</b></div>';
     }).join('');
     const player=(verifiedMap.get(game.id)||[]).filter(p=>String(p.market_class||'').toUpperCase()==='PLAYER_PROP');
-    return '<article class="fiba-game-qc" data-fiba-id="'+html(game.id)+'"><div class="fiba-game-top"><div><span class="fiba-label">'+html(game.track.toUpperCase())+' • '+html(game.competition)+' • Group '+html(game.group)+'</span><h4>'+html(game.home)+' <small>HOME</small> vs '+html(game.away)+' <small>AWAY</small></h4><p>'+fmtDate(game.date)+' • FIBA displayed time '+html(game.publishedTime)+' (timezone unverified)</p></div><span class="fiba-watch">'+(game.date===currentDay?'GAME DAY • STATUS UNVERIFIED':'PRE-GAME WATCH')+'</span></div><div class="fiba-market-grid">'+marketItems+'</div><div class="fiba-qc-bottom"><span>Player props: '+(player.length?player.length+' evaluated':'Unavailable')+' • LJPC: '+((verifiedMap.get(game.id)||[]).length?'see verified markets':'not published')+'</span>'+link('Official matchup schedule',game.source)+'</div></article>';
+    return '<article class="fiba-game-qc" data-fiba-id="'+html(game.id)+'"><div class="fiba-game-top"><div><span class="fiba-label">'+html(game.track.toUpperCase())+' • '+html(game.competition)+' • Group '+html(game.group)+'</span><h4>'+html(game.home)+' <small>HOME</small> vs '+html(game.away)+' <small>AWAY</small></h4><p>'+fmtDate(game.date)+' • FIBA displayed time '+html(game.publishedTime)+' (timezone unverified)</p></div><span class="fiba-watch">'+(game.date===currentDay?'GAME DAY • STATUS UNVERIFIED':'PRE-GAME WATCH')+'</span></div><div class="fiba-market-grid">'+marketItems+'</div>'+(player.length?'<h4>Evaluated player props</h4>'+player.map(p=>'<div class="fiba-player-prop">'+html(fmtLine(p))+'</div>').join(''):'')+'<div class="fiba-qc-bottom"><span>Player props: '+(player.length?player.length+' evaluated':'Unavailable')+' • LJPC: '+((verifiedMap.get(game.id)||[]).length?'see verified markets':'not published')+'</span>'+link('Official matchup schedule',game.source)+'</div></article>';
   };
   const currentComps={
     men:[
@@ -141,3 +151,4 @@
   document.head.appendChild(css);
   window.LJ_FIBA_QC_STATUS={snapshotDate:F.verifiedOn||null,today:currentDay,snapshotStale:stale,futureFixtures:future.length,gameDay:future.filter(x=>x.date===currentDay).length,men:byTrack('men').length,women:byTrack('women').length,watchlistSlots:twentySlots.length,verifiedSelections:allVerified.length,mode:allVerified.length?'MARKET_VERIFIED_PARTIAL':'FIXTURE_WATCHLIST_ONLY'};
 })();
+

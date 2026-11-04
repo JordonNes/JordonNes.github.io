@@ -81,7 +81,7 @@
     const age=Number(p?.stale_market_age_hours);
     const freshness=String(p?.market_freshness||"").toUpperCase();
     if(status!=="LJ_EVALUATED"||!p.evaluated_at_utc||!safety.fresh(p.evaluated_at_utc))return false;
-    if(!p.evaluation_id||!p.evaluation_material_hash||!Number(p.ljpc)||Number(p.ljpc)>100)return false;
+    if(!p.evaluation_id||!p.evaluation_material_hash||!(Number(p.ljpc)>0)||Number(p.ljpc)>100)return false;
     if(p.synthetic||p.model_generated||p.market_live===false||p.market_suspended===true)return false;
     if(p.market_verified!==true||p.market_verification!=="EXACT_MARKET_MATCH")return false;
     if(!String(p.book||p.market_source||"").trim()||!Array.isArray(p.source_snapshot_ids)||!p.source_snapshot_ids.length)return false;
@@ -102,7 +102,7 @@
     const items=[...boardCandidates,...fromRegistry];
     const seen=new Set();
     return items.filter(p=>{
-      const id=[p.prediction_id,p.event_id,p.participant,p.market,p.side,p.threshold].join("|");
+      const id=[p.participant||p.selection,p.market_class,p.market,p.side,p.threshold??p.current_line].join("|");
       if(seen.has(id)||!marketLine(p,g))return false;
       seen.add(id);return true;
     }).sort((a,b)=>(Number(b.pom_value)||0)-(Number(a.pom_value)||0));
@@ -111,7 +111,7 @@
   const allPicks=future.flatMap(g=>(picks.get(g.id)||[]).map(p=>({game:g,p})))
     .sort((a,b)=>(Number(b.p.pom_value)||0)-(Number(a.p.pom_value)||0));
   const distinct=[],taken=new Set();
-  for(const p of allPicks){if(taken.has(p.game.id))continue;distinct.push(p);taken.add(p.game.id);if(distinct.length===20)break;}
+  for(const p of allPicks){distinct.push(p);taken.add(p.game.id);if(distinct.length===20)break;}
   const pending=future.filter(g=>!taken.has(g.id)).slice(0,20-distinct.length);
   const slots=[...distinct.map(x=>({...x,approved:true})),...pending.map((game,i)=>({game,watchMarket:gameLabels[(i+distinct.length)%4][1]}))];
   const marketText=p=>[p.participant||p.selection||p.pick||"",p.side||"",p.market||p.market_class||"",p.threshold==null?"":String(p.threshold),p.book||p.market_source,p.price==null?"":"price "+p.price,"LJPC "+Number(p.ljpc).toFixed(1)+"%"].filter(Boolean).join(" • ");
@@ -128,8 +128,10 @@
   }).join("");
   const gameCard=g=>{
     const start=new Date(g.start), live=(g.start<=stamp);
-    const playerCount=(picks.get(g.id)||[]).filter(p=>p.market_class==="PLAYER_PROP").length;
-    return '<article class="nba-qc-card" data-event-id="'+esc(g.id)+'"><div class="nba-card-head"><div><small>'+esc(formattedDay(start))+' • '+esc(formattedTime(start))+' • ID '+esc(g.id)+'</small><h3>'+humanMatch(g)+'</h3></div><span class="nba-state">'+(live?"TIPOFF PASSED — STATUS NOT LIVE-VERIFIED":"PREGAME")+'</span></div><div class="nba-markets">'+marketRows(g)+'</div>'+marketEvidence(g)+'<div class="nba-meta">Evaluated player props: '+playerCount+' • Game-side LJPC: '+(picks.get(g.id)?.filter(p=>p.market_class!=="PLAYER_PROP").length||0)+' • Schedule: '+esc(g.source)+'</div></article>';
+    const playerPicks=(picks.get(g.id)||[]).filter(p=>p.market_class==="PLAYER_PROP");
+    const playerCount=playerPicks.length;
+    const playerRows=playerPicks.map(p=>'<div class="nba-player-prop">'+esc(marketText(p))+'</div>').join("");
+    return '<article class="nba-qc-card" data-event-id="'+esc(g.id)+'"><div class="nba-card-head"><div><small>'+esc(formattedDay(start))+' • '+esc(formattedTime(start))+' • ID '+esc(g.id)+'</small><h3>'+humanMatch(g)+'</h3></div><span class="nba-state">'+(live?"TIPOFF PASSED — STATUS NOT LIVE-VERIFIED":"PREGAME")+'</span></div><div class="nba-markets">'+marketRows(g)+'</div>'+marketEvidence(g)+(playerRows?'<h4>Evaluated player props</h4>'+playerRows:'')+'<div class="nba-meta">Evaluated player props: '+playerCount+' • Game-side LJPC: '+(picks.get(g.id)?.filter(p=>p.market_class!=="PLAYER_PROP").length||0)+' • Schedule: '+esc(g.source)+'</div></article>';
   };
   const twentyCard=(x,i)=>'<div class="nba-piece-item"><strong>#'+(i+1)+'</strong><div><b>'+humanMatch(x.game)+'</b><small>'+esc(formattedDay(new Date(x.game.start)))+' • '+esc(formattedTime(new Date(x.game.start)))+'</small><div>'+(x.approved?'<span class="nba-approved">'+esc(marketText(x.p))+'</span>':'<b>'+esc(x.watchMarket)+'</b> • <span class="nba-muted">Market / line / LJPC pending</span>')+'</div></div></div>';
   const warning=source.status==="FALLBACK_BOARD"?"ESPN schedule fetch unavailable — rolling-board fallback only":sourceFresh?"ESPN schedule refreshed "+esc(source.generated_at_utc):"ESPN schedule snapshot aging — verify today's slate";
@@ -146,6 +148,12 @@
     if(/PER-GAME QUICKIES|NBA QUICKIE|NBA DAILY PREDICTIONS/i.test(h))x.remove();
   });
   anchor.insertAdjacentHTML("afterend",top+twenty+qc);
+  const statusStamp=root.querySelector('.current-status-section .section-head .muted');
+  if(statusStamp)statusStamp.textContent='Prediction snapshot: '+(board.generated_at_utc||'unavailable');
+  const statusCount=root.querySelector('.current-status-section .chip');
+  if(statusCount)statusCount.textContent='NBA • '+games.length+' scheduled QCs • '+allPicks.length+' verified markets';
+  const footer=root.querySelector('.footer');
+  if(footer)footer.textContent='LEGZ & JINX • Prediction snapshot '+(board.generated_at_utc||'unavailable')+' • LJPC is an estimated hit probability';
   const meta=root.querySelector('.topbar .meta');
   if(meta)meta.textContent="NBA 2026–27 • REGULAR SEASON ACTIVE • ESPN SNAPSHOT "+(source.generated_at_utc||"UNAVAILABLE");
   const css=document.createElement("style");
@@ -153,3 +161,4 @@
   document.head.appendChild(css);
   window.LJ_NBA_QC_STATUS={generatedAt:source.generated_at_utc||null,sourceStatus:source.status,sourceFresh,loadedGames:games.length,todayGames:today.length,upcomingGames:future.length,watchlistSlots:slots.length,verifiedLJPC:distinct.length,boardAgeHours:Number.isFinite(boardAgeHours)?Number(boardAgeHours.toFixed(1)):null};
 })();
+

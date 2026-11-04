@@ -104,9 +104,18 @@ async function evaluate(at,validSource=true,customBoard=null){
   assert.equal(withPick.status.verifiedLJPC,1,'One exact evaluated POM can enter 20 Piece');
   assert.equal(withPick.status.watchlistSlots,20,'A partial verified slate must retain 20 visible opportunity slots');
   assert.match(withPick.html,/Verified Test Player/);
+  assert.match(withPick.html,/nba-player-prop/,'QC renders actual player selections');
+  const multiple=JSON.parse(JSON.stringify(freshBoard));
+  multiple.events[0].props.push({...good,participant:'Second Verified Player',evaluation_id:'second-eval'});
+  const multi=await evaluate('2026-11-04T19:55:00Z',true,multiple);
+  assert.equal(multi.status.verifiedLJPC,2,'Two valid props from one game can fill two 20 Piece slots');
+  multiple.events[0].props[1].evaluated_at_utc='2026-11-03T19:10:00Z';
+  const stale=await evaluate('2026-11-04T19:55:00Z',true,multiple);
+  assert.equal(stale.status.verifiedLJPC,1,'Expired evaluations excluded');
   const invalidBoard=JSON.parse(JSON.stringify(freshBoard));
   invalidBoard.events[0].props[0].market_verified=false;
   const invalid=await evaluate('2026-11-04T19:55:00Z',true,invalidBoard);
   assert.equal(invalid.status.verifiedLJPC,0,'Never promote a non-verified threshold to LJPC');
   console.log('PASS NBA game QCs: 14 game-day events, 20-slot queue, verified POM promotion, rollover and source-outage safeguards.');
 })().catch(e=>{console.error(e);process.exit(1)});
+
