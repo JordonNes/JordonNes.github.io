@@ -42,6 +42,7 @@ on:
       - 'scripts/test_lsi_league_scheduler.py'
       - 'scripts/test_legz_material_hash.py'
       - 'scripts/legz_statistical_spectrum.py'
+      - 'scripts/test_lsi_public_payload_budget.py'
       - 'scripts/lsi_signal_engine.py'
       - 'scripts/test_lsi_signal_engine.py'
       - 'scripts/test_ncaa_history_continuity.py'
@@ -187,6 +188,7 @@ jobs:
           python scripts/test_sportsgameodds_adapter.py
           PYTHONPATH="$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/scripts" python scripts/test_lsi_league_scheduler.py
           python scripts/test_legz_material_hash.py
+          python scripts/test_lsi_public_payload_budget.py
           node --check lsi_registry_bridge.js
       - name: Verify ESPN sports-truth adapter
         run: python scripts/test_espn_intelligence_adapter.py
