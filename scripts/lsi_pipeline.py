@@ -117,7 +117,8 @@ def load_markets():
 
 
 def live_qc_predictions(board, snapshots, now):
-    from lsi_publish_future_board import bounded_event_props, exact_market_verified
+    from lsi_publish_future_board import bounded_event_props, exact_market_verified, annotate_market_freshness
+    annotate_market_freshness(board,snapshots)
     out=[]
     for event in board.get("events") or []:
         start=parse_dt(event.get("commence_time") or event.get("event_start_pt"))

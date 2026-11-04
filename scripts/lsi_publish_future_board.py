@@ -67,6 +67,47 @@ def horizon_for(league):
             if special>end:end=special
     return end
 
+def annotate_market_freshness(payload, snapshots=None):
+    """Date exact selected quotes from immutable source rows, never model time."""
+    props=[p for e in payload.get("events",[]) for p in e.get("props",[]) if not (p.get("synthetic") or p.get("model_generated"))]
+    if snapshots is None:
+        wanted={sid for p in props for sid in (p.get("source_snapshot_ids") or [])}
+        snapshots={}
+        for path in [DATA/"market_history.csv",*sorted(DATA.glob("market_history_delta*.csv"))]:
+            if not path.exists():continue
+            with path.open(newline="",encoding="utf-8-sig") as fh:
+                for row in csv.DictReader(fh):
+                    if row.get("snapshot_id") in wanted:snapshots[row["snapshot_id"]]=row
+    def name(v):return "".join(c for c in str(v or "").lower() if c.isalnum())
+    for p in props:
+        book=name(str(p.get("best_book") or p.get("book") or "").rsplit(":",1)[-1])
+        price=number(p.get("best_price") if p.get("best_price") is not None else p.get("price"))
+        matches=[]
+        for sid in p.get("source_snapshot_ids") or []:
+            row=snapshots.get(sid) or {};observed=parse(row.get("collected_at_pt"))
+            if observed is None:continue
+            if name(str(row.get("source") or "").rsplit(":",1)[-1])!=book:continue
+            if number(row.get("price"))!=price:continue
+            if name(row.get("participant"))!=name(p.get("participant")):continue
+            if number(row.get("threshold"))!=number(p.get("threshold")):continue
+            if name(row.get("side"))!=name(p.get("side")):continue
+            if name(row.get("market")) not in {name(p.get("market")),name(p.get("market_key"))}:continue
+            matches.append((observed,sid,row))
+        if not matches:
+            p["market_freshness"]="STALE_RECHECK_REQUIRED"
+            p["market_verification_reason"]="Selected exact book/price has no matching immutable quote timestamp"
+            continue
+        observed,sid,row=max(matches,key=lambda x:x[0])
+        age=(NOW-observed).total_seconds()/3600
+        p["retrieved_at"]=observed.isoformat()
+        p["stale_market_age_hours"]=round(age,4)
+        p["market_freshness"]="FRESH" if -1/60<=age<=6 else "STALE_RECHECK_REQUIRED"
+        p["market_live"]=str(row.get("status") or "OPEN").upper() in {"OPEN","ACTIVE",""}
+        p["market_suspended"]=not p["market_live"]
+        p["market_quote_snapshot_id"]=sid
+    return payload
+
+
 def exact_market_verified(p):
     """Only exact, currently acquired POM thresholds may become actionable."""
     snaps=[str(x).strip() for x in (p.get("source_snapshot_ids") or []) if str(x).strip()]
@@ -370,6 +411,7 @@ def game_markets_for_event(event, by_event):
 def main():
     previous_game_evaluations=load_previous_game_evaluations()
     src=json.loads(SRC.read_text(encoding="utf-8")) if SRC.exists() else {"events":[]}
+    annotate_market_freshness(src)
     source_events=list(src.get("events") or [])
 
     # GAME_ML publication must not depend on the player-prop sweep.  The fast
