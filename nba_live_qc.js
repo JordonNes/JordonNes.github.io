@@ -77,12 +77,17 @@
     return {favorite:favorite.display_name,percentage:Math.max(home,away)};
   };
   const marketLine=(p,g)=>{
-    const t=Date.parse(p?.retrieved_at||p?.market_observed_at_pt||p?.evaluated_at_utc||"");
     const status=String(p?.evaluation_status||"").toUpperCase();
-    if(status!=="LJ_EVALUATED"||!p.evaluated_at_utc||!safety.fresh(p.evaluated_at_utc)||!Number.isFinite(t)||!safety.fresh(new Date(t).toISOString()))return false;
-    if(!(Number(p.ljpc)>0&&Number(p.ljpc)<=100))return false;
-    if(!String(p.book||p.market_source||"").trim()||!p.market_live||p.market_suspended)return false;
-    if(!p.source_snapshot_ids?.length||!(g.start>stamp))return false;
+    const age=Number(p?.stale_market_age_hours);
+    const freshness=String(p?.market_freshness||"").toUpperCase();
+    if(status!=="LJ_EVALUATED"||!p.evaluated_at_utc||!safety.fresh(p.evaluated_at_utc))return false;
+    if(!p.evaluation_id||!p.evaluation_material_hash||!Number(p.ljpc)||Number(p.ljpc)>100)return false;
+    if(p.synthetic||p.model_generated||p.market_live===false||p.market_suspended===true)return false;
+    if(p.market_verified!==true||p.market_verification!=="EXACT_MARKET_MATCH")return false;
+    if(!String(p.book||p.market_source||"").trim()||!Array.isArray(p.source_snapshot_ids)||!p.source_snapshot_ids.length)return false;
+    if(!(g.start>stamp)||boardAgeHours>6||freshness==="STALE_RECHECK_REQUIRED"||(Number.isFinite(age)&&p.stale_market_age_hours!=null&&age>6))return false;
+    const seen=Date.parse(p.retrieved_at||p.market_observed_at_pt||"");
+    if(Number.isFinite(seen)&&!safety.fresh(new Date(seen).toISOString()))return false;
     const cls=String(p.market_class||p.marketClass||"").toUpperCase();
     if(!["PLAYER_PROP",...safety.gameMarket].includes(cls))return false;
     if(["GAME_TOTAL","SPREAD","WINNING_MARGIN","TEAM_TOTAL"].includes(cls)&&
