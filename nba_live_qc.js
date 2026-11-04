@@ -7,7 +7,7 @@
   const root=document.querySelector(".sport-nba");if(!root)return;
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const now=new Date(),stamp=now.getTime(),PT="America/Los_Angeles";
-  const pacificDay=d=>new Intl.DateTimeFormat("en-CA",{timeZone:PT,year:"numeric",month:"2-digit",day:"2-digit"}).format(d).replace(/\//g,"-");
+  const pacificDay=d=>{const p=new Intl.DateTimeFormat("en-US",{timeZone:PT,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(d);const x=k=>p.find(q=>q.type===k)?.value||"";return x("year")+"-"+x("month")+"-"+x("day");};
   const formattedDay=d=>new Intl.DateTimeFormat("en-US",{timeZone:PT,month:"short",day:"numeric",weekday:"short"}).format(d);
   const formattedTime=d=>new Intl.DateTimeFormat("en-US",{timeZone:PT,hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(d);
   const board=window.LJ_FUTURE_MARKET_BOARD||{};
