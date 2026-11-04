@@ -1,6 +1,6 @@
 {
   "schema_version": "LJ-ISPY-PATTERN-LIBRARY-2",
-  "generated_at_utc": "2026-11-03T12:55:11.638357+00:00",
+  "generated_at_utc": "2026-11-04T22:21:56.375461+00:00",
   "policy": "Validated recurring analog patterns persist independently of current sportsbook availability.",
   "patterns": [
     {
@@ -966,6 +966,82 @@
       "times_observed": 1
     },
     {
+      "pattern_key": "343676a5786f8756",
+      "league": "NFL",
+      "title": "NO — wins the game",
+      "outcome": "wins the game",
+      "outcome_code": "WIN",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -3.066513358743396,
+          "display": "-3.07"
+        },
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "low",
+          "value": -0.9670491758878242,
+          "display": "-0.97"
+        },
+        {
+          "feature": "rest_diff",
+          "label": "rest differential",
+          "direction": "high",
+          "value": 7.0,
+          "display": "7.00"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "direction": "near typical",
+          "value": 199.8,
+          "display": "199.80"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "direction": "near typical",
+          "value": 6.9799999999999995,
+          "display": "6.98"
+        }
+      ],
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
+      "last_signal_id": "ISPY-F40E100F7DDF8D1229",
+      "last_evidence": {
+        "observed_rate_pct": 19.45,
+        "baseline_rate_pct": 53.11,
+        "lift_pp": -33.66,
+        "effective_sample_size": 24.36,
+        "mean_similarity_pct": 74.49,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": -29.76,
+      "max_abs_lift_pp": 33.66,
+      "observed_event_ids": [
+        "2026_09_CLE_NO"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        }
+      ],
+      "first_seen_utc": "2026-11-02T02:32:20.542975+00:00",
+      "times_observed": 1
+    },
+    {
       "pattern_key": "78bc553d6e044a54",
       "league": "NFL",
       "title": "DET — finishes at least 10% below its entering passing-yard form",
@@ -1415,7 +1491,7 @@
           "display": "14%"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-ED0BE96CE50DDC78BC",
       "last_evidence": {
         "observed_rate_pct": 67.76,
@@ -1898,7 +1974,7 @@
           "display": "25%"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-75D762E8831E51AB79",
       "last_evidence": {
         "observed_rate_pct": 65.92,
@@ -2259,6 +2335,86 @@
       "times_observed": 1
     },
     {
+      "pattern_key": "1ff4cce71bc88aea",
+      "league": "NFL",
+      "title": "KC — wins the game",
+      "outcome": "wins the game",
+      "outcome_code": "WIN",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 4.43189038384543,
+          "display": "4.43"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "high",
+          "value": 0.461800105319153,
+          "display": "0.46"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "near typical",
+          "value": 145.4,
+          "display": "145.40"
+        },
+        {
+          "feature": "focus_secondary_activity_l5",
+          "label": "secondary disruption proxy",
+          "direction": "high",
+          "value": 7.6,
+          "display": "7.60"
+        },
+        {
+          "feature": "opp_win_pct",
+          "label": "opponent win rate",
+          "direction": "low",
+          "value": 0.25,
+          "display": "25%"
+        }
+      ],
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
+      "last_signal_id": "ISPY-6F8B08936D67309F82",
+      "last_evidence": {
+        "observed_rate_pct": 83.61,
+        "baseline_rate_pct": 53.11,
+        "lift_pp": 30.5,
+        "effective_sample_size": 24.69,
+        "mean_similarity_pct": 75.89,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 30.5,
+      "max_abs_lift_pp": 30.5,
+      "observed_event_ids": [
+        "2026_09_NYJ_KC"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-11-02T02:32:20.542975+00:00",
+      "times_observed": 1
+    },
+    {
       "pattern_key": "e4eb973df6e0477f",
       "league": "NFL",
       "title": "BAL — wins the game",
@@ -2508,86 +2664,6 @@
         }
       ],
       "first_seen_utc": "2026-10-18T17:43:23.131529+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "1ff4cce71bc88aea",
-      "league": "NFL",
-      "title": "KC — wins the game",
-      "outcome": "wins the game",
-      "outcome_code": "WIN",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "high",
-          "value": 4.43189038384543,
-          "display": "4.43"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "high",
-          "value": 0.461800105319153,
-          "display": "0.46"
-        },
-        {
-          "feature": "opp_rush_allowed_l5",
-          "label": "opponent rush-defense allowance",
-          "direction": "near typical",
-          "value": 145.4,
-          "display": "145.40"
-        },
-        {
-          "feature": "focus_secondary_activity_l5",
-          "label": "secondary disruption proxy",
-          "direction": "high",
-          "value": 7.6,
-          "display": "7.60"
-        },
-        {
-          "feature": "opp_win_pct",
-          "label": "opponent win rate",
-          "direction": "low",
-          "value": 0.25,
-          "display": "25%"
-        }
-      ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
-      "last_signal_id": "ISPY-6F8B08936D67309F82",
-      "last_evidence": {
-        "observed_rate_pct": 79.84,
-        "baseline_rate_pct": 53.11,
-        "lift_pp": 26.73,
-        "effective_sample_size": 24.67,
-        "mean_similarity_pct": 75.95,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": 30.17,
-      "max_abs_lift_pp": 30.17,
-      "observed_event_ids": [
-        "2026_09_NYJ_KC"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
-        }
-      ],
-      "first_seen_utc": "2026-11-02T02:32:20.542975+00:00",
       "times_observed": 1
     },
     {
@@ -2929,82 +3005,6 @@
         }
       ],
       "first_seen_utc": "2026-10-25T23:13:17.757229+00:00",
-      "times_observed": 1
-    },
-    {
-      "pattern_key": "343676a5786f8756",
-      "league": "NFL",
-      "title": "NO — wins the game",
-      "outcome": "wins the game",
-      "outcome_code": "WIN",
-      "conditions": [
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -3.066513358743396,
-          "display": "-3.07"
-        },
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "low",
-          "value": -0.9670491758878242,
-          "display": "-0.97"
-        },
-        {
-          "feature": "rest_diff",
-          "label": "rest differential",
-          "direction": "high",
-          "value": 7.0,
-          "display": "7.00"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "direction": "near typical",
-          "value": 199.8,
-          "display": "199.80"
-        },
-        {
-          "feature": "opp_front7_activity_l5",
-          "label": "opponent front-seven activity proxy",
-          "direction": "near typical",
-          "value": 6.9799999999999995,
-          "display": "6.98"
-        }
-      ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
-      "last_signal_id": "ISPY-F40E100F7DDF8D1229",
-      "last_evidence": {
-        "observed_rate_pct": 23.34,
-        "baseline_rate_pct": 53.11,
-        "lift_pp": -29.76,
-        "effective_sample_size": 24.35,
-        "mean_similarity_pct": 74.54,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": -29.76,
-      "max_abs_lift_pp": 29.77,
-      "observed_event_ids": [
-        "2026_09_CLE_NO"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        }
-      ],
-      "first_seen_utc": "2026-11-02T02:32:20.542975+00:00",
       "times_observed": 1
     },
     {
@@ -4780,14 +4780,14 @@
           "display": "3.57"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-96D2D11217BD1434FD",
       "last_evidence": {
-        "observed_rate_pct": 28.33,
+        "observed_rate_pct": 28.28,
         "baseline_rate_pct": 53.11,
-        "lift_pp": -24.77,
+        "lift_pp": -24.82,
         "effective_sample_size": 24.81,
-        "mean_similarity_pct": 73.22,
+        "mean_similarity_pct": 73.24,
         "stability_score": 1.0
       },
       "max_lift_pp": -24.65,
@@ -5506,14 +5506,14 @@
           "display": "304.8 yds"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-20C5640E221BC01C27",
       "last_evidence": {
-        "observed_rate_pct": 24.29,
+        "observed_rate_pct": 24.34,
         "baseline_rate_pct": 51.55,
-        "lift_pp": -27.26,
+        "lift_pp": -27.22,
         "effective_sample_size": 24.73,
-        "mean_similarity_pct": 71.33,
+        "mean_similarity_pct": 71.24,
         "stability_score": 1.0
       },
       "max_lift_pp": -27.21,
@@ -5760,7 +5760,7 @@
           "display": "76.40"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-5133BAA50C392E6C05",
       "last_evidence": {
         "observed_rate_pct": 65.08,
@@ -5848,14 +5848,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-F12C5D2E7022415923",
       "last_evidence": {
-        "observed_rate_pct": 23.63,
+        "observed_rate_pct": 20.26,
         "baseline_rate_pct": 43.79,
-        "lift_pp": -20.16,
-        "effective_sample_size": 24.75,
-        "mean_similarity_pct": 70.86,
+        "lift_pp": -23.53,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 70.68,
         "stability_score": 1.0
       },
       "max_lift_pp": -20.16,
@@ -6080,17 +6080,17 @@
           "display": "27.4"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-91AA1697DD82C50312",
       "last_evidence": {
-        "observed_rate_pct": 26.93,
+        "observed_rate_pct": 26.94,
         "baseline_rate_pct": 46.58,
-        "lift_pp": -19.66,
-        "effective_sample_size": 24.78,
-        "mean_similarity_pct": 75.64,
+        "lift_pp": -19.64,
+        "effective_sample_size": 24.79,
+        "mean_similarity_pct": 75.61,
         "stability_score": 1.0
       },
-      "max_lift_pp": -19.66,
+      "max_lift_pp": -19.64,
       "max_abs_lift_pp": 27.02,
       "observed_event_ids": [
         "2026_09_NYJ_KC"
@@ -6160,7 +6160,7 @@
           "display": "76.40"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-F258C8CF02B1EDD06B",
       "last_evidence": {
         "observed_rate_pct": 19.04,
@@ -8081,17 +8081,17 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-B62CEF07D0512ABAA2",
       "last_evidence": {
         "observed_rate_pct": 30.56,
         "baseline_rate_pct": 53.11,
-        "lift_pp": -22.55,
-        "effective_sample_size": 24.55,
-        "mean_similarity_pct": 71.31,
+        "lift_pp": -22.54,
+        "effective_sample_size": 24.56,
+        "mean_similarity_pct": 71.14,
         "stability_score": 1.0
       },
-      "max_lift_pp": -22.55,
+      "max_lift_pp": -22.54,
       "max_abs_lift_pp": 25.81,
       "observed_event_ids": [
         "2026_09_NYG_PHI"
@@ -9318,7 +9318,7 @@
           "display": "74.2 yds"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-45A6A3317FA7EC3CD1",
       "last_evidence": {
         "observed_rate_pct": 27.97,
@@ -11023,7 +11023,7 @@
           "display": "14%"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-1A3E57A639B52E50EA",
       "last_evidence": {
         "observed_rate_pct": 17.23,
@@ -11350,7 +11350,7 @@
           "display": "-7.00"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-2953B48B6F977EAA71",
       "last_evidence": {
         "observed_rate_pct": 59.88,
@@ -11673,7 +11673,7 @@
           "display": "7.00"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-F0D2A073B7F45263BD",
       "last_evidence": {
         "observed_rate_pct": 15.43,
@@ -12413,14 +12413,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-0FE5FD76913942C249",
       "last_evidence": {
-        "observed_rate_pct": 69.09,
+        "observed_rate_pct": 65.55,
         "baseline_rate_pct": 46.58,
-        "lift_pp": 22.51,
-        "effective_sample_size": 24.75,
-        "mean_similarity_pct": 70.86,
+        "lift_pp": 18.97,
+        "effective_sample_size": 24.78,
+        "mean_similarity_pct": 70.68,
         "stability_score": 1.0
       },
       "max_lift_pp": 23.56,
@@ -12903,7 +12903,7 @@
           "display": "74.2 yds"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-45E37DE7A9996B2000",
       "last_evidence": {
         "observed_rate_pct": 57.66,
@@ -12979,7 +12979,7 @@
           "display": "279.6 yds"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-3A61C6A3BB565F4271",
       "last_evidence": {
         "observed_rate_pct": 16.01,
@@ -13567,14 +13567,14 @@
           "display": "25%"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-72FA8E2512501F061F",
       "last_evidence": {
-        "observed_rate_pct": 58.18,
+        "observed_rate_pct": 58.38,
         "baseline_rate_pct": 39.34,
-        "lift_pp": 18.85,
-        "effective_sample_size": 24.67,
-        "mean_similarity_pct": 75.95,
+        "lift_pp": 19.05,
+        "effective_sample_size": 24.69,
+        "mean_similarity_pct": 75.89,
         "stability_score": 0.75
       },
       "max_lift_pp": 23.16,
@@ -14534,14 +14534,14 @@
           "display": "27.4"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-F8BE0DA36164814062",
       "last_evidence": {
-        "observed_rate_pct": 24.59,
+        "observed_rate_pct": 24.58,
         "baseline_rate_pct": 43.79,
-        "lift_pp": -19.2,
-        "effective_sample_size": 24.78,
-        "mean_similarity_pct": 75.64,
+        "lift_pp": -19.21,
+        "effective_sample_size": 24.79,
+        "mean_similarity_pct": 75.61,
         "stability_score": 1.0
       },
       "max_lift_pp": -19.2,
@@ -15093,17 +15093,17 @@
           "display": "3.57"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-861D8D2CA6AB4F5E94",
       "last_evidence": {
-        "observed_rate_pct": 16.89,
+        "observed_rate_pct": 16.93,
         "baseline_rate_pct": 35.61,
-        "lift_pp": -18.72,
+        "lift_pp": -18.69,
         "effective_sample_size": 24.81,
-        "mean_similarity_pct": 73.22,
+        "mean_similarity_pct": 73.24,
         "stability_score": 0.75
       },
-      "max_lift_pp": -18.72,
+      "max_lift_pp": -18.69,
       "max_abs_lift_pp": 22.72,
       "observed_event_ids": [
         "2026_09_DEN_CAR"
@@ -15721,14 +15721,14 @@
           "display": "140.60"
         }
       ],
-      "last_seen_utc": "2026-11-03T12:55:11.638357+00:00",
+      "last_seen_utc": "2026-11-04T22:21:56.375461+00:00",
       "last_signal_id": "ISPY-F9F9CE24CD2A82D32C",
       "last_evidence": {
-        "observed_rate_pct": 60.52,
+        "observed_rate_pct": 53.15,
         "baseline_rate_pct": 38.1,
-        "lift_pp": 22.43,
-        "effective_sample_size": 24.69,
-        "mean_similarity_pct": 74.68,
+        "lift_pp": 15.05,
+        "effective_sample_size": 24.71,
+        "mean_similarity_pct": 74.64,
         "stability_score": 1.0
       },
       "max_lift_pp": 22.45,
