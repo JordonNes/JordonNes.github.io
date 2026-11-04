@@ -450,15 +450,34 @@ def load_evaluation_state():
     return payload
 
 def compact_evaluation_state(records_by_id, latest, current_ids):
-    """Keep full live records for the current board; keep lightweight latest hashes for dedup."""
+    """Bound live re-use cache by event without discarding statistical evaluations.
+
+    Every current offered POM remains evaluated on the canonical QC board; this
+    state file is only a speed/cache layer. Its full feature records may be
+    recreated when an omitted market next needs to be evaluated. The permanent
+    immutable archive and material hashes are not deleted.
+    """
+    from collections import defaultdict
+    per_event_limit=24
     keep_ids={str(x) for x in (current_ids or set()) if x}
-    kept={
-        eid:records_by_id[eid]
-        for eid in keep_ids
-        if eid in records_by_id
-    }
-    # latest_by_key is intentionally broader than records: it is the compact material-hash
-    # index that lets a previously seen POM reuse its evaluation identity when it reappears.
+    groups=defaultdict(list)
+    for eid in keep_ids:
+        rec=records_by_id.get(eid)
+        if not isinstance(rec,dict): continue
+        group=(str(rec.get("league") or ""),str(rec.get("event_id") or ""))
+        groups[group].append((eid,rec))
+    kept={}
+    for group,rows in groups.items():
+        rows.sort(key=lambda pair:(
+            str(pair[1].get("evaluation_status") or "")=="LJ_EVALUATED",
+            float(pair[1].get("pom_value") or 0),
+            float(pair[1].get("ljpc") or 0),
+            str(pair[1].get("evaluated_at_utc") or ""),
+        ),reverse=True)
+        for eid,rec in rows[:per_event_limit]:
+            kept[eid]=rec
+    # Latest material hashes survive even when verbose feature payload is
+    # compacted; a missing cached record simply triggers recalculation.
     clean_latest={
         key:value for key,value in (latest or {}).items()
         if isinstance(value,dict) and value.get("evaluation_id") and value.get("material_hash")
