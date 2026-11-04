@@ -114,7 +114,10 @@ jobs:
       scheduled_for_pt: ${{ steps.resolve.outputs.scheduled_for_pt }}
     steps:
       - uses: actions/checkout@v7
-        with: {ref: master}
+        with:
+          ref: master
+          filter: blob:none
+          sparse-checkout: scripts/lsi_checkpoint_clock.py
       - name: Resolve delay-safe Pacific checkpoint
         id: resolve
         shell: bash
@@ -143,7 +146,10 @@ jobs:
       PYTHONPATH: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v7
-        with: {ref: master, fetch-depth: 0}
+        with:
+          ref: master
+          fetch-depth: 1
+          filter: blob:none
       - uses: actions/setup-python@v7
         with: {python-version: '3.12'}
       - name: Merge incremental market-history delta into runtime base
