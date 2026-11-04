@@ -485,6 +485,36 @@ def compact_evaluation_state(records_by_id, latest, current_ids):
     return kept,clean_latest
 
 
+def compact_qc_evidence(payload):
+    """Remove only equal duplicate objects; keep canonical evidence on each prop.
+
+    Distributions remain at spectrum.distribution; full projections remain at
+    player_projection; context remains at feature_state.context. JSON pointers
+    document where duplicate feature copies were consolidated.
+    """
+    for event in payload.get("events") or []:
+        for prop in event.get("props") or []:
+            feature=prop.get("feature_state") or {}
+            perf=feature.get("performance") or {}
+            spectrum=prop.get("spectrum") or {}
+            dist=spectrum.get("distribution")
+            projection=prop.get("player_projection")
+            if dist is not None and perf.get("distribution")==dist:
+                perf.pop("distribution",None)
+                perf["distribution_ref"]="#/spectrum/distribution"
+            if projection is not None and perf.get("player_projection")==projection:
+                perf.pop("player_projection",None)
+                perf["player_projection_ref"]="#/player_projection"
+            if projection is not None and spectrum.get("player_projection")==projection:
+                spectrum.pop("player_projection",None)
+                spectrum["player_projection_ref"]="#/player_projection"
+            if spectrum.get("jinx_context") is not None and spectrum["jinx_context"]==feature.get("context"):
+                spectrum.pop("jinx_context",None)
+                spectrum["jinx_context_ref"]="#/feature_state/context"
+    payload["evidence_storage_policy"]="Equal duplicate evidence objects consolidated via prop-local JSON pointers; distribution, projection, context, evaluation identity and material hashes remain complete."
+    return payload
+
+
 def validate_compacted_evaluation_state(props, state):
     """Validate all canonical QC evaluations against the bounded live cache.
 
@@ -1414,7 +1444,11 @@ def main():
     # qc_prop_board is a machine artifact consumed by Python/JS. Keep it minified:
     # the fully evaluated board can contain thousands of POMs and pretty JSON alone
     # adds tens of MiB to every GitHub Pages deployment.
-    BOARD.write_text(json.dumps(payload,separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
+    compact_qc_evidence(payload)
+    board_text=json.dumps(payload,separators=(",",":"),ensure_ascii=False)+"\n"
+    if len(board_text.encode("utf-8"))>=95*1024*1024:
+        raise SystemExit("Canonical QC board exceeds 95 MiB after evidence deduplication; publication stopped before Git push")
+    BOARD.write_text(board_text,encoding="utf-8")
     before_compaction=len(records_by_id)
     records_by_id,latest=compact_evaluation_state(records_by_id,latest,current_evaluation_ids)
     state_payload={

@@ -76,3 +76,21 @@ assert out["feature_state"]["context"]["analyst_review"]["research_expected"] is
 assert out["spectrum"] is None
 assert not out["provider_offers"],"Large raw ladders belong on canonical QC state, not public board"
 print("PASS budget guard: bounded current live reuse, 24 diverse event POMs, intact LJPC/provenance, compact browser payload.")
+
+# Large QC publications retain evidence once rather than several equal copies.
+from legz_statistical_spectrum import compact_qc_evidence
+import copy,json
+projection={"projected_output":23.2,"detail":[3]*100}
+distribution={"n":20,"player_projection":projection,"history":[4]*100}
+context={"jinx_delta":0,"signals":["source"]}
+prop={"evaluation_id":"e1","evaluation_material_hash":"h1","player_projection":projection,
+      "feature_state":{"performance":{"distribution":distribution,"player_projection":projection},"context":context},
+      "spectrum":{"distribution":distribution,"player_projection":projection,"jinx_context":context}}
+original=copy.deepcopy(prop);board={"events":[{"props":[prop]}]};before=len(json.dumps(board))
+compact_qc_evidence(board)
+assert prop["spectrum"]["distribution"]==original["feature_state"]["performance"]["distribution"]
+assert prop["player_projection"]==original["player_projection"]
+assert prop["feature_state"]["context"]==original["spectrum"]["jinx_context"]
+assert prop["evaluation_id"]=="e1" and prop["evaluation_material_hash"]=="h1"
+assert len(json.dumps(board))<before
+print("PASS QC evidence deduplication preserves all unique statistical evidence and evaluation identity")
