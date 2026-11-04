@@ -54,6 +54,7 @@ async function evaluate(at,validSource=true,customBoard=null){
     static now(){return Date.parse(at);}
   }
   const context={window:{
+    LJ_Season_Status:{evaluate:()=>({season:'2026–27',phase:'REGULAR SEASON ACTIVE'})},
     LJ_FUTURE_MARKET_BOARD:customBoard||{generated_at_utc:'2026-11-04T16:25:11Z',events:[]},
     LSI_PR:{predictions:[]}
   },document,fetch:async()=>({ok:validSource,status:validSource?200:503,json:async()=>snapshot}),Date:Clock,Intl,console};

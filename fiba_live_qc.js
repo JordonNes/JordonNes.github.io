@@ -55,7 +55,7 @@
     if(!Number.isFinite(start)||start<=Date.now())return false;
     const marketClass=String(p.market_class||p.marketClass||'').toUpperCase();
     if(!['GAME_ML','GAME_TOTAL','SPREAD','WINNING_MARGIN','PLAYER_PROP'].includes(marketClass))return false;
-    const matches=String(p.event_id||p.eventId||'')===String(event.id||event.event_id||'');
+    const matches=String(p.event_id||p.eventId||'')===String(event.source_event_id||event.id||event.event_id||'');
     if(!matches)return false;
     if(String(p.evaluation_status||'').toUpperCase()!=='LJ_EVALUATED')return false;
     if(!(Number(p.ljpc)>0&&Number(p.ljpc)<=100&&p.evaluated_at_utc))return false;

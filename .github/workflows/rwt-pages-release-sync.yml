@@ -6,7 +6,7 @@ on:
     branches: [master]
     paths: ['_config.yml', 'NBA.html', 'FIBA.html', 'nba_live_qc.js', 'fiba_live_qc.js', '.github/workflows/rwt-pages-release-sync.yml']
   workflow_run:
-    workflows: ["LSI Daily Predictions Pipeline", "LSI Game Winner Refresh", "LSI Spectrum v3 Release"]
+    workflows: ["LSI Daily Predictions Pipeline", "LSI Game Winner Refresh", "LSI Spectrum v3 Release", "pages build and deployment"]
     types: [completed]
   schedule:
     - cron: '*/15 * * * *'
@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: rwt-pages-release-sync
@@ -32,6 +33,13 @@ jobs:
         run: |
           set -euo pipefail
           repo="$GITHUB_REPOSITORY"
+          # Let the current Pages release finish before moving its source ref.
+          # A later completion event (or scheduled sync) publishes any newer head.
+          active="$(gh api "repos/$repo/actions/runs?branch=rwt-pages-release&per_page=30" --jq '[.workflow_runs[] | select(.name == "pages build and deployment" and (.status == "queued" or .status == "in_progress" or .status == "waiting"))] | length')"
+          if [ "$active" -gt 0 ]; then
+            echo "Pages deployment active; preserving its immutable release snapshot."
+            exit 0
+          fi
           source_sha="$(gh api "repos/$repo/git/ref/heads/master" --jq '.object.sha')"
           release_sha="$(gh api "repos/$repo/git/ref/heads/rwt-pages-release" --jq '.object.sha')"
           if [ "$source_sha" = "$release_sha" ]; then
