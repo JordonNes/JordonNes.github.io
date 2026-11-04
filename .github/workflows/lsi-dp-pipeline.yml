@@ -123,7 +123,9 @@ jobs:
           SCHEDULE_EXPR: ${{ github.event.schedule }}
           # Ordinary pushes are DISCOVERY; canonical publication identity comes
           # only from the six scheduled PT checkpoints or an explicit manual stage.
-          PUSH_STAGE: DISCOVERY
+          # Explicit one-time user-authorized complete publication. Ordinary pushes
+          # remain DISCOVERY, so routine commits never consume a master cycle.
+          PUSH_STAGE: ${{ contains(github.event.head_commit.message, '[ljdp-full-refresh]') && 'MASTER_PUBLICATION' || 'DISCOVERY' }}
         run: |
           python scripts/lsi_checkpoint_clock.py \
             --event-name "${{ github.event_name }}" \
