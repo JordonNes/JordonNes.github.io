@@ -5,6 +5,58 @@
    2026-09-05: statusGrid data literals refreshed only; presentation structure unchanged. */
 (() => {
   const D = window.LJ_DATA;
+  // LJ_SEASON_INTELLIGENCE_V1: calendar phase is separate from a given day's game slate.
+  // Windows are sourced from each league's 2026-27 published calendar.
+  // Unpublished future seasons must remain UNVERIFIED; never label them OFFSEASON.
+  const LJ_SEASON_WINDOWS={
+    NBA:{label:"2026-27",start:"2026-10-20",regularEnd:"2027-04-11",end:"2027-06-30",source:"NBA 2026-27 schedule"},
+    NHL:{label:"2026-27",start:"2026-09-29",regularEnd:"2027-04-10",end:"2027-06-30",source:"NHL 2026-27 schedule"},
+    NFL:{label:"2026-27",start:"2026-09-10",regularEnd:"2027-01-10",end:"2027-02-28",source:"NFL 2026-27 season"},
+    NCAA_Football:{label:"2026-27",start:"2026-08-22",regularEnd:"2026-12-31",end:"2027-01-31",source:"NCAA football 2026 season"},
+    NCAA_Basketball:{label:"2026-27",start:"2026-11-01",regularEnd:"2027-03-14",end:"2027-04-05",source:"NCAA basketball 2026-27 season"},
+    WNBA:{label:"2026",start:"2026-05-01",regularEnd:"2026-09-26",end:"2026-10-31",source:"WNBA 2026 playoffs"},
+    MLB:{label:"2026",start:"2026-03-01",regularEnd:"2026-09-30",end:"2026-10-28",source:"MLB 2026 World Series"}
+  };
+  const LJ_EVENT_LEAGUES=new Set(["Tennis","MMA","Boxing","FIBA","FIBA_Men","FIBA_Women"]);
+  const ljPtDay=(input=new Date())=>{
+    const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(input);
+    const field=x=>parts.find(p=>p.type===x)?.value||"";
+    return field("year")+"-"+field("month")+"-"+field("day");
+  };
+  function ljSeasonPhase(league,at=new Date(),events=window.LJ_FUTURE_MARKET_BOARD?.events||[]){
+    const day=ljPtDay(at),now=at.getTime(),calendar=LJ_SEASON_WINDOWS[league];
+    const upcoming=(Array.isArray(events)?events:[])
+      .filter(e=>e&&e.league===league&&Number.isFinite(Date.parse(e.commence_time))&&Date.parse(e.commence_time)>now)
+      .sort((a,b)=>Date.parse(a.commence_time)-Date.parse(b.commence_time));
+    const next=upcoming[0]||null,nextDay=next?ljPtDay(new Date(next.commence_time)):"";
+    let phase="CALENDAR UNVERIFIED";
+    if(calendar){
+      if(day<calendar.start)phase="NOT STARTED";
+      else if(day<=calendar.regularEnd)phase="REGULAR SEASON ACTIVE";
+      else if(day<=calendar.end)phase="POSTSEASON WINDOW";
+      else phase="SEASON COMPLETE";
+    }else if(LJ_EVENT_LEAGUES.has(league))phase="EVENT CALENDAR";
+    // A future fixture after a completed window requires a calendar update.
+    if(next&&calendar&&day>calendar.end)phase="NEW SEASON - CALENDAR UPDATE REQUIRED";
+    const note=next
+      ?"Next LSI-listed event "+nextDay+": "+(next.away||"Event")+" @ "+(next.home||next.league)+"."
+      :"No future fixture in the current LSI feed; that does not establish an offseason.";
+    return {league,phase,season:calendar?.label||"",day,nextDay,note,upcoming:upcoming.length,source:calendar?.source||"event calendar"};
+  }
+  function ljRefreshSeasonStatuses(at=new Date()){
+    if(!D?.sports)return;
+    const events=window.LJ_FUTURE_MARKET_BOARD?.events||[];
+    for(const [league,s] of Object.entries(D.sports)){
+      if(!s||(!LJ_SEASON_WINDOWS[league]&&!LJ_EVENT_LEAGUES.has(league)))continue;
+      const status=ljSeasonPhase(league,at,events);
+      s.seasonStatus=status;
+      s.meta=league.replace(/_/g," ")+" - "+status.phase+" - "+status.day;
+      s.chips=[[status.phase,status.phase.includes("ACTIVE")?"green":"purple"],[status.season||"EVENT-BASED","gold"]];
+      s.description=(status.season?status.season+" "+league.replace(/_/g," ")+" - ":"")+status.phase+". "+status.note+" Only current, exact market-verified and L&J-evaluated props may be published as picks.";
+    }
+  }
+  window.LJ_Season_Status={evaluate:ljSeasonPhase,refresh:ljRefreshSeasonStatuses,windows:LJ_SEASON_WINDOWS};
+  ljRefreshSeasonStatuses();
   const esc = v => String(v ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const cls = v => String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
   let ACTIVE_SPORT_KEY="";
@@ -773,21 +825,15 @@
     }
   }
   function statusGrid(){
-    const map = [
-      ["MLB","ACTIVE TODAY","3 upcoming games • 2 early games closed/live • player props refreshed"],
-      ["NCAA_Football","ACTIVE TODAY","Florida A&M at Miami • current player-prop board refreshed"],
-      ["Tennis","ACTIVE TODAY","Professional tennis slate • current matchup sweep"],
-      ["FIBA","ACTIVE / UPCOMING","Men’s Intercontinental Cup live • Women’s WBL Americas next • competition-aware hub"],
-      ["MMA","NEXT EVENT","MMA method/round props market-gated"],
-      ["Boxing","NEXT: SEP 12","Garcia-Benn card • exact fight props market-gated"],
-      ["WNBA","CALENDAR WATCH","No Sep 10 club game independently verified"],
-      ["NFL","ACTIVE TODAY","49ers-Rams • current player props refreshed • final inactive gate"],
-      ["NBA","OFFSEASON","No stale game/prop slate"],
-      ["NHL","OFFSEASON","No stale game/prop slate"],
-      ["NCAA_Basketball","OFFSEASON","Market activation awaits season slate"]
-    ];
-    const file = {MLB:"MLB.html",NCAA_Football:"NCAA_Football.html",Tennis:"Tennis.html",FIBA:"FIBA.html",MMA:"MMA.html",Boxing:"Boxing.html",WNBA:"WNBA.html",NFL:"NFL.html",NBA:"NBA.html",NHL:"NHL.html",NCAA_Basketball:"NCAA_Basketball.html"};
-    return `<section class="section current-status-section"><div class="section-head"><h2>CURRENT STATUS</h2><span class="muted">${esc(D.updated)}</span></div>${lsiPipelinePanel("")}<div class="quickie-grid">${map.map(([k,state,note])=>{const s=D.sports?.[k]; if(!s) return ""; return `<div class="ticket"><div class="ticket-h ${/ACTIVE/.test(state)?"sns":/WATCH|NEXT/.test(state)?"purple":"normal"}">${s.icon||""} ${esc(k.replace(/_/g," "))} • ${esc(state)}</div><ul><li>${esc(note)}</li><li>LEGZ HOT TOP + JINX Winners + 20 Piece retained</li><li>Approved QC layout retained</li></ul><div class="note"><a href="${file[k]}">Open page →</a></div></div>`;}).join("")}</div></section>`;
+    const files={MLB:"MLB.html",NCAA_Football:"NCAA_Football.html",Tennis:"Tennis.html",FIBA:"FIBA.html",MMA:"MMA.html",Boxing:"Boxing.html",WNBA:"WNBA.html",NFL:"NFL.html",NBA:"NBA.html",NHL:"NHL.html",NCAA_Basketball:"NCAA_Basketball.html"};
+    const keys=["MLB","NFL","WNBA","NCAA_Football","Tennis","FIBA","MMA","Boxing","NBA","NHL","NCAA_Basketball"];
+    const tiles=keys.map(key=>{
+      const s=D.sports?.[key];if(!s)return "";
+      const st=s.seasonStatus||ljSeasonPhase(key);
+      const style=/ACTIVE/.test(st.phase)?"sns":/UNVERIFIED|REQUIRED/.test(st.phase)?"normal":"purple";
+      return '<div class="ticket"><div class="ticket-h '+style+'">'+(s.icon||"")+" "+esc(key.replace(/_/g," "))+" - "+esc(st.phase)+'</div><ul><li>'+esc(st.season||"Event calendar")+" - "+esc(st.note)+"</li><li>"+(s.hotTop||[]).length+" HOT TOP - "+(s.twenty||[]).length+" 20 PIECE entries</li><li>Market and roster freshness gates apply</li></ul><div class=\"note\"><a href=\""+files[key]+"\">Open page</a></div></div>";
+    }).join("");
+    return '<section class="section current-status-section"><div class="section-head"><h2>CURRENT STATUS</h2><span class="muted">'+esc(D.updated)+'</span></div>'+lsiPipelinePanel("")+'<div class="quickie-grid">'+tiles+'</div></section>';
   }
   function footer(extra=""){
     return `<div class="footer">LEGZ &amp; JINX • ${esc(D.updated)} • Current markets only • LJPC is an estimated hit probability, not a guarantee${extra?` • ${esc(extra)}`:""}</div>`;
