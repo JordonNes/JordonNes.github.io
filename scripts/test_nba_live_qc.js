@@ -5,7 +5,7 @@ const source=fs.readFileSync('nba_live_qc.js','utf8');
 const snapshot=JSON.parse(fs.readFileSync('data/espn_event_intelligence.json','utf8'));
 const html=fs.readFileSync('NBA.html','utf8');
 assert.match(html,/renderLJSport\('NBA'\);<\/script><script src="nba_live_qc.js/);
-async function evaluate(at,validSource=true){
+async function evaluate(at,validSource=true,customBoard=null){
   const inserted=[];
   const anchor={insertAdjacentHTML(place,contents){assert.equal(place,'afterend');inserted.push(contents)}};
   const meta={textContent:''};
@@ -25,7 +25,7 @@ async function evaluate(at,validSource=true){
     static now(){return Date.parse(at);}
   }
   const context={window:{
-    LJ_FUTURE_MARKET_BOARD:{generated_at_utc:'2026-11-04T16:25:11Z',events:[]},
+    LJ_FUTURE_MARKET_BOARD:customBoard||{generated_at_utc:'2026-11-04T16:25:11Z',events:[]},
     LSI_PR:{predictions:[]}
   },document,fetch:async()=>({ok:validSource,status:validSource?200:503,json:async()=>snapshot}),Date:Clock,Intl,console};
   vm.createContext(context);
@@ -57,5 +57,27 @@ async function evaluate(at,validSource=true){
   const outage=await evaluate('2026-11-04T19:55:00Z',false);
   assert.equal(outage.status.sourceStatus,'FALLBACK_BOARD','Never silently claim live ESPN feed when HTTP failed');
   assert.equal(outage.status.watchlistSlots,0,'Empty rolling fallback yields no fictional entries');
-  console.log('PASS NBA game QCs: 14 game-day events, 20-piece watchlist, market abstention, rollover and source outage.');
+  const good={
+    market_class:'PLAYER_PROP',participant:'Verified Test Player',market:'Points',
+    threshold:20.5,side:'Over',book:'DraftKings',price:-110,
+    evaluation_status:'LJ_EVALUATED',ljpc:67.2,pom_value:69,
+    evaluation_id:'eval-test',evaluation_material_hash:'hash-test',
+    evaluated_at_utc:'2026-11-04T19:10:00Z',
+    market_verified:true,market_verification:'EXACT_MARKET_MATCH',
+    market_freshness:'FRESH',stale_market_age_hours:0.5,
+    source_snapshot_ids:['verified-snapshot-1']
+  };
+  const freshBoard={generated_at_utc:'2026-11-04T19:30:00Z',events:[{
+    league:'NBA',source_event_id:'401909922',commence_time:'2026-11-05T00:00Z',
+    props:[good],game_markets:[]
+  }]};
+  const withPick=await evaluate('2026-11-04T19:55:00Z',true,freshBoard);
+  assert.equal(withPick.status.verifiedLJPC,1,'One exact evaluated POM can enter 20 Piece');
+  assert.equal(withPick.status.watchlistSlots,20,'A partial verified slate must retain 20 visible opportunity slots');
+  assert.match(withPick.html,/Verified Test Player/);
+  const invalidBoard=JSON.parse(JSON.stringify(freshBoard));
+  invalidBoard.events[0].props[0].market_verified=false;
+  const invalid=await evaluate('2026-11-04T19:55:00Z',true,invalidBoard);
+  assert.equal(invalid.status.verifiedLJPC,0,'Never promote a non-verified threshold to LJPC');
+  console.log('PASS NBA game QCs: 14 game-day events, 20-slot queue, verified POM promotion, rollover and source-outage safeguards.');
 })().catch(e=>{console.error(e);process.exit(1)});
