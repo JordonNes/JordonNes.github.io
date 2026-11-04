@@ -1,0 +1,25 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const context={window:{},console};
+vm.createContext(context);
+vm.runInContext(fs.readFileSync('ljrecapaudit.js','utf8'),context);
+const audit=context.window.LJRecapAudit;
+assert.equal(audit.stats([{grade:'HIT'},{grade:'MISS'},{grade:'UNGRADED'},{grade:'VOID'}]).rate,50);
+assert.equal(audit.unique([{outcome:'a',grade:'UNGRADED'},{outcome:'a',grade:'HIT'}]).length,1);
+assert.equal(audit.unique([{outcome:'a',grade:'UNGRADED'},{outcome:'a',grade:'HIT'}])[0].grade,'HIT');
+assert.equal(audit.ticketGrade(['HIT','UNGRADED']),'UNGRADED');
+assert.equal(audit.ticketGrade(['MISS','UNGRADED']),'MISS');
+assert.equal(audit.ticketGrade(['VOID','PUSH']),'VOID');
+assert.equal(audit.ticketGrade(['HIT','VOID']),'HIT');
+// Execute only parser definitions, never mutate a real ledger in this test.
+const capture=fs.readFileSync('scripts/lsi_snapshot_suggestions.js','utf8').split('const ledger=readLedger();')[0];
+const parser={require,console,__dirname:require('node:path').resolve('scripts')};
+vm.createContext(parser);
+vm.runInContext(capture+'\nglobalThis.parse=parsePlayerText;globalThis.structure=structuredSuggestion;',parser);
+assert.equal(parser.parse('Example OVER 4.5 Receptions • MARKET CONSENSUS 80%').ljpc,null);
+assert.equal(parser.parse('Example OVER 4.5 Receptions • STAT 50% • LJPC 72%').ljpc,72);
+const parsed=parser.parse('Example OVER 4.5 Receptions • STAT 50%');
+const rec=parser.structure(null,{...parsed,league:'NFL',market_class:'PLAYER_PROP',event_id:'g'},'text','QC_NORMAL','NFL.html','label','2026-11-03','2026-11-03T00:00:00Z');
+assert.equal(rec.ljpc,null);
+console.log('Recap renderer and capture parser assertions passed');

@@ -23,6 +23,12 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+try:
+    from .lsi_suggestion_store import load_ledger
+except ImportError:
+    from lsi_suggestion_store import load_ledger
+
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 PT = ZoneInfo("America/Los_Angeles")
@@ -151,10 +157,7 @@ def read_results():
 
 def load_suggestion_predictions():
     """Convert immutable website suggestion records into settlement-compatible predictions."""
-    try:
-        payload=json.loads(SUGGESTIONS.read_text(encoding="utf-8"))
-    except Exception:
-        return [], 0, 0
+    payload=load_ledger(SUGGESTIONS)
     raw=payload.get("suggestions") or []
     out=[]
     for s in raw:
@@ -936,3 +939,4 @@ def main():
 
 if __name__=="__main__":
     main()
+

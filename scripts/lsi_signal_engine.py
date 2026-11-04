@@ -28,6 +28,11 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+try:
+    from .lsi_suggestion_store import load_ledger
+except ImportError:
+    from lsi_suggestion_store import load_ledger
+
 ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
 BOARD=DATA/"qc_prop_board.json"
@@ -382,7 +387,7 @@ def read_settled_suggestion_rows():
     """Unique immutable website POM outcomes joined to verified settlement results."""
     if not SUGGESTIONS.exists() or not RESULTS.exists():
         return []
-    ledger=load_json(SUGGESTIONS,{"suggestions":[]})
+    ledger=load_ledger(SUGGESTIONS)
     grades={}
     try:
         with RESULTS.open(newline="",encoding="utf-8-sig") as fh:

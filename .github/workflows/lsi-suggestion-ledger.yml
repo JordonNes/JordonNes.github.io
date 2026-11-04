@@ -15,6 +15,10 @@ on:
     paths:
       - 'scripts/lsi_snapshot_suggestions.js'
       - 'scripts/lsi_build_recaps.py'
+      - 'scripts/lsi_recap_audit.py'
+      - 'scripts/test_lsi_recap_audit.py'
+      - 'data/dp/**'
+      - 'data/qc_ticket_registry.json'
       - 'ljdata.js'
       - 'nflrefresh.js'
       - 'ncaarefresh.js'
@@ -64,8 +68,11 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Test recap audit rules
+        run: python -m unittest scripts/test_lsi_recap_audit.py
+
       - name: Capture committed LJDP publication state
-        run: node scripts/lsi_snapshot_suggestions.js
+        run: node --max-old-space-size=3072 scripts/lsi_snapshot_suggestions.js
 
       - name: Validate immutable suggestion ledger
         run: |
@@ -74,7 +81,8 @@ jobs:
           from pathlib import Path
           p=Path('data/suggestion_ledger.json')
           assert p.exists(), 'suggestion_ledger.json missing'
-          d=json.loads(p.read_text(encoding='utf-8'))
+          from scripts.lsi_suggestion_store import load_ledger
+          d=load_ledger(p)
           assert d.get('schema_version')=='LSI-SUGGESTION-LEDGER-2', d.get('schema_version')
           rows=d.get('suggestions') or []
           eligible=[r for r in rows if r.get('accuracy_eligible') is True]
@@ -113,10 +121,10 @@ jobs:
             echo "Ledger attempt ${attempt}: remote=$(git rev-parse --short origin/master) local=$(git rev-parse --short HEAD)"
             if [ "$attempt" -gt 1 ]; then
               git reset --hard origin/master
-              node scripts/lsi_snapshot_suggestions.js
+              node --max-old-space-size=3072 scripts/lsi_snapshot_suggestions.js
               python scripts/lsi_build_recaps.py
             fi
-            git add data/suggestion_ledger.json data/suggestion_accuracy.json ljrecapdata.js
+            git add data/suggestion_ledger.json data/suggestions data/qc_card_ledger.json data/recaps data/suggestion_accuracy.json ljrecapdata.js
             if git diff --cached --quiet; then
               echo 'Publication ledger already current.'
               exit 0
@@ -128,3 +136,4 @@ jobs:
           done
           echo "::error::Ledger publication exhausted five commit/push attempts; see each attempted remote SHA and GitHub rejection above."
           exit 1
+

@@ -10,6 +10,11 @@ from collections import defaultdict
 from datetime import datetime,timezone
 from pathlib import Path
 
+try:
+    from .lsi_suggestion_store import load_ledger
+except ImportError:
+    from lsi_suggestion_store import load_ledger
+
 ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
 LEDGER=DATA/"suggestion_ledger.json"
@@ -102,7 +107,7 @@ def legz_summary(records):
     }
 
 def main():
-    payload=json.loads(LEDGER.read_text(encoding="utf-8")) if LEDGER.exists() else {"suggestions":[]}
+    payload=load_ledger(LEDGER)
     results=read_results()
     eligible=[
       s for s in payload.get("suggestions") or []

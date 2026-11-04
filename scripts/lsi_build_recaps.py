@@ -13,6 +13,12 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+try:
+    from .lsi_suggestion_store import load_ledger
+except ImportError:
+    from lsi_suggestion_store import load_ledger
+
+
 ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"data"
 PT=ZoneInfo("America/Los_Angeles")
@@ -283,8 +289,9 @@ def build_sport(key,preds,results,player_rows,ctx_records,target):
     }
 
 def main():
+    from lsi_recap_audit import build as build_audit
     registry=read_json(REGISTRY,{"predictions":[]})
-    suggestion_rows=(read_json(SUGGESTIONS,{"suggestions":[]}).get("suggestions") or [])
+    suggestion_rows=(load_ledger(SUGGESTIONS).get("suggestions") or [])
     eligible_suggestions=[s for s in suggestion_rows if s.get("capture_validity")=="VALID" and s.get("accuracy_eligible") is not False]
     suggestion_preds=[suggestion_as_prediction(s) for s in eligible_suggestions]
     preds=suggestion_preds if suggestion_preds else (registry.get("predictions") or [])
@@ -292,6 +299,7 @@ def main():
     results={r.get("prediction_id"):r for r in result_rows if r.get("prediction_id")}
     player_rows=read_csv(PLAYER_CONTEXT)
     ctx_records=(read_json(CONTEXT_REGISTRY,{"records":[]}).get("records") or [])
+    build_audit(ROOT,suggestion_rows,results,SPORTS)
     target=datetime.now(PT).date()-timedelta(days=1)
     sports={k:build_sport(k,preds,results,player_rows,ctx_records,target) for k in SPORTS}
     payload={"schema_version":"LJ-RECAP-AUTO-3","priorDate":dstr(datetime.combine(target,datetime.min.time())),
@@ -313,3 +321,4 @@ def main():
     print(json.dumps({"target":str(target),"predictions":sum(len(s["ledger"]) for s in sports.values()),"settled":sum(int(s["summary"]["hits"])+int(s["summary"]["misses"]) for s in sports.values())},sort_keys=True))
 
 if __name__=="__main__": main()
+

@@ -127,7 +127,13 @@
       const ledger=await lr.json();
       const resultRows=rr.ok?csv(await rr.text()):[];
       state.results=new Map(resultRows.map(r=>[r.prediction_id,r]));
-      state.ledger=(ledger.suggestions||[]);
+      const archives=await Promise.all((ledger.archive_files||[]).map(async name=>{
+        if(!/^suggestions\/[0-9-]+\.json$/.test(name))throw new Error('Invalid publication archive');
+        const response=await fetch('data/'+name,{cache:'no-store'});
+        if(!response.ok)throw new Error('Publication archive unavailable');
+        return response.json();
+      }));
+      state.ledger=[...(ledger.suggestions||[]),...archives.flatMap(x=>x.suggestions||[])];
       state.calibration=cr.ok?await cr.json():null;
       state.accountability=ar.ok?await ar.json():null;
       state.loaded=true;

@@ -36,7 +36,7 @@ const numeric=v=>{
 };
 const pct=v=>{
   const raw=n(v);
-  const labeled=raw.match(/\bLJPC\s*(\d+(?:\.\d+)?)\s*%/i);
+  const labeled=raw.match(/(?:\bLJPC|L&J)\s*(\d+(?:\.\d+)?)\s*%/i);
   if(labeled) return Number(labeled[1]);
   const exact=raw.match(/^\s*(\d+(?:\.\d+)?)\s*%?\s*$/);
   return exact?Number(exact[1]):(Number.isFinite(Number(v))?Number(v):null);
@@ -68,33 +68,35 @@ function ptDate(d=new Date()){
   const get=k=>parts.find(x=>x.type===k)?.value||'';
   return `${get('year')}-${get('month')}-${get('day')}`;
 }
-function evaluatePublication(){
+function evaluatePublication(page){
   // Evaluate the publication stack once. Re-reading the large future-board and
   // prediction-registry payload for every league is both slow and unnecessary.
-  const order=[
-    'ljdata.js','nflrefresh.js','ncaarefresh.js','tennisrefresh.js','dailyrefresh.js',
-    'morningrefresh.js','middayrefresh.js','lsi_native_refresh.js',
-    'data/dp/ALL.js','lsi_registry_bridge.js',
-    'sep19_morning_refresh.js','sep19_midday_guard.js'
-  ];
+  const html=fs.readFileSync(path.join(ROOT,page),'utf8');
+  const order=[...html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)]
+    .map(m=>m[1].split('?')[0].replace(/^\.\//,''));
   const context={console,setTimeout:()=>0,clearTimeout:()=>{},setInterval:()=>0,clearInterval:()=>{}};
   context.window=context;
   context.document={querySelector:()=>null,querySelectorAll:()=>[]};
   context.addEventListener=()=>{};
   vm.createContext(context);
   for(const src of order){
-    if(!SAFE.has(src)) continue;
+    if(!SAFE.has(src) && !/^data\/dp\/[A-Za-z_]+\.js$/.test(src)) continue;
     const file=path.join(ROOT,src);
     if(fs.existsSync(file)) vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:src});
   }
   return context;
 }
 function readLedger(){
-  try{
-    const x=JSON.parse(fs.readFileSync(OUT,'utf8'));
-    if(Array.isArray(x.suggestions)) return x;
-  }catch(_){}
-  return {schema_version:'LSI-SUGGESTION-LEDGER-2',suggestions:[]};
+  if(!fs.existsSync(OUT)) return {schema_version:'LSI-SUGGESTION-LEDGER-2',suggestions:[]};
+  const x=JSON.parse(fs.readFileSync(OUT,'utf8'));
+  if(!Array.isArray(x.suggestions)) throw new Error('Invalid publication ledger');
+  const seen=new Set(x.suggestions.map(r=>r.suggestion_id));
+  for(const name of x.archive_files||[]){
+    if(!/^suggestions\/[0-9-]+\.json$/.test(name)) throw new Error('Invalid archive reference: '+name);
+    const shard=JSON.parse(fs.readFileSync(path.join(path.dirname(OUT),name),'utf8'));
+    for(const row of shard.suggestions||[]) if(!seen.has(row.suggestion_id)){x.suggestions.push(row);seen.add(row.suggestion_id);}
+  }
+  return x;
 }
 function parsePlayerText(text,participantHint=''){
   const raw=n(text);
@@ -112,6 +114,7 @@ function parsePlayerText(text,participantHint=''){
     market='Anytime TD';
     if(!participant) participant=raw.split(/ANYTIME\s+TD|TOUCHDOWN\s+SCORER/i)[0].trim();
   }
+  participant=participant.replace(/\s+\([A-Z0-9]{2,5}\)$/,'');
   const pb=priceBook(raw), pair=componentPair(raw);
   return {participant,side,threshold,market,ljpc:pct(raw),price:pb.price,book:pb.book,pom_type:pomTypeFromText(raw),legz_confidence:pair.legz,jinx_input:pair.jinx};
 }
@@ -230,7 +233,7 @@ function structuredSuggestion(c,hint,display,placement,page,publication,date,now
   const eventId=explicitEventId||(!eventAmbiguous?inferredEventId:'');
   const price=hint.price!==undefined&&hint.price!==null&&hint.price!==''?Number(hint.price):null;
   const book=n(hint.book);
-  const ljpc=Number.isFinite(Number(hint.ljpc))?Number(hint.ljpc):null;
+  const ljpc=hint.ljpc!==null&&hint.ljpc!==undefined&&hint.ljpc!==''&&Number.isFinite(Number(hint.ljpc))?Number(hint.ljpc):null;
   const selection=n(hint.selection||src.selection||display);
   const core=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side),threshold??'',book,price??'',ljpc??''];
   const outcome=[date,hint.league||src.league||'',marketClass,eventId,norm(participant),norm(market),norm(side),threshold??''];
@@ -273,7 +276,16 @@ for(const s of ledger.suggestions){
   }
 }
 const existing=new Map(ledger.suggestions.map(x=>[x.suggestion_id,x]));
+const eventStarts=new Map(ledger.suggestions.filter(x=>x.event_id&&x.event_start_pt).map(x=>[x.league+'|'+x.event_id,x.event_start_pt]));
+let eventAliases={};
+try{eventAliases=JSON.parse(fs.readFileSync(path.join(ROOT,'data','settlement_aliases.json'),'utf8')).events||{};}catch(_){}
 const observedIds=new Set();
+const families=new Map();
+for(const row of ledger.suggestions) families.set(row.publication_date_pt+'|'+row.family_key,row);
+const CARD_OUT=path.join(ROOT,'data','qc_card_ledger.json');
+let cardLedger;
+try{cardLedger=JSON.parse(fs.readFileSync(CARD_OUT,'utf8'));}catch(_){cardLedger={schema_version:'LSI-QC-CARDS-1',cards:[]};}
+const cardIds=new Set(cardLedger.cards.map(c=>c.id));
 let added=0,seen=0;
 
 function mergeRecord(rec){
@@ -284,7 +296,7 @@ function mergeRecord(rec){
     if(Number(rec.capture_schema_version||0)>=2){
       prior.capture_schema_version=2;
       prior.capture_validity=rec.capture_validity;
-      prior.accuracy_eligible=rec.capture_validity==='VALID'&&rec.structure_status==='STRUCTURED';
+      prior.accuracy_eligible=rec.capture_validity==='VALID'&&rec.structure_status==='STRUCTURED'&&rec.ljpc!==null;
       prior.event_match_status=rec.event_match_status;
       prior.event_match_score=rec.event_match_score;
       prior.event_match_candidates=rec.event_match_candidates;
@@ -311,22 +323,20 @@ function mergeRecord(rec){
   }
   rec.currently_displayed=true;
   rec.removed_at_utc=null;
-  rec.accuracy_eligible=rec.capture_validity==='VALID'&&rec.structure_status==='STRUCTURED';
-  const priorVersions=ledger.suggestions.filter(x=>x.publication_date_pt===rec.publication_date_pt&&x.family_key===rec.family_key);
-  if(priorVersions.length){
-    priorVersions.sort((a,b)=>String(a.first_seen_at_utc).localeCompare(String(b.first_seen_at_utc)));
-    const old=priorVersions[priorVersions.length-1];
-    rec.supersedes_suggestion_id=old.suggestion_id;
-    old.superseded_by_suggestion_id=rec.suggestion_id;
-  }else rec.supersedes_suggestion_id=null;
+  rec.accuracy_eligible=rec.capture_validity==='VALID'&&rec.structure_status==='STRUCTURED'&&rec.ljpc!==null;
+  const familyKey=rec.publication_date_pt+'|'+rec.family_key;
+  const old=families.get(familyKey);
+  if(old){rec.supersedes_suggestion_id=old.suggestion_id;old.superseded_by_suggestion_id=rec.suggestion_id;}
+  else rec.supersedes_suggestion_id=null;
+  families.set(familyKey,rec);
   ledger.suggestions.push(rec);existing.set(rec.suggestion_id,rec);added++;
 }
 
-const ctx=evaluatePublication();
-const D=ctx.window.LJ_DATA;
-const allCandidates=candidateRows(ctx);
 for(const [page,league] of Object.entries(PAGES)){
   if(!fs.existsSync(path.join(ROOT,page))) continue;
+  const ctx=evaluatePublication(page);
+  const D=ctx.window.LJ_DATA;
+  const allCandidates=candidateRows(ctx);
   const sport=D?.sports?.[league];
   if(!sport) continue;
   const candidates=allCandidates.filter(x=>x.league===league);
@@ -338,7 +348,9 @@ for(const [page,league] of Object.entries(PAGES)){
     const merged={...hint,...parsed,league,market_class:cls};
     if(hint.ljpc!==undefined&&hint.ljpc!==null) merged.ljpc=pct(hint.ljpc);
     const candidate=matchCandidate(candidates,merged);
-    mergeRecord(structuredSuggestion(candidate,merged,display,placement,page,publication,date,now));
+    const rec=structuredSuggestion(candidate,merged,display,placement,page,publication,date,now);
+    mergeRecord(rec);
+    return rec.suggestion_id;
   };
 
   for(const row of sport.hotTop||[]){
@@ -359,20 +371,53 @@ for(const [page,league] of Object.entries(PAGES)){
   }
   for(const q of sport.qcs||[]){
     const eventId=q._propEventId||null,eventStart=q._propEventStartPt||null;
+    const cardGroups=[];
     const gameParsed=parseMoneyline(q.winner||'');
     if(q.winner&&q.conf&&!NON_ACTION.test(String(q.winner))){
-      record('QC_GAME_WINNER',`${n(q.winner)} ML • LJPC ${n(q.conf)} • ${n(q.market)}`,{
+      const winnerText=`${n(q.winner)} ML • LJPC ${n(q.conf)} • ${n(q.market)}`;
+      const winnerId=record('QC_GAME_WINNER',`${n(q.winner)} ML • LJPC ${n(q.conf)} • ${n(q.market)}`,{
         market_class:'GAME_ML',event_id:eventId,event_start_pt:eventStart,away:q.away||'',home:q.home||'',
         participant:gameParsed.participant||q.winner,price:gameParsed.price,book:gameParsed.book||'',ljpc:q.conf,selection:q.winner
       });
+      cardGroups.push({name:'QC_GAME_WINNER',legs:[{text:winnerText,suggestion_id:winnerId||null}]});
     }
     const groups=[
       ['QC_HOT_TOP',q.hot],['QC_SNS1_GOBLIN1',q.sns1],['QC_SNS2_GOBLIN2',q.sns2],
       ['QC_NORMAL',q.normal],['QC_AGGRESSIVE_DEMON',q.demon]
     ];
     for(const [placement,items] of groups){
-      for(const item of Array.isArray(items)?items:[]) record(placement,n(item),{event_id:eventId,event_start_pt:eventStart,away:q.away||'',home:q.home||''});
+      const legs=(Array.isArray(items)?items:[]).map(item=>({text:n(item),suggestion_id:record(placement,n(item),{event_id:eventId,event_start_pt:eventStart,away:q.away||'',home:q.home||''})||null}));
+      cardGroups.push({name:placement,legs});
     }
+    const card={date,league,page,event_id:eventId,event_start:eventStart,matchup:[q.away,q.home].filter(Boolean).join(' @ '),winner:q.winner||'',winner_ljpc:q.conf||null,groups:cardGroups};
+    const id=hash('QCC-',[JSON.stringify(card)]);
+    if(!cardIds.has(id)){cardLedger.cards.push({id,captured_at:now,...card});cardIds.add(id);}
+  }
+}
+
+// One-time recovery of exact previously captured ticket legs after the POM
+// capture gap. This restores published text, never an inferred historical line.
+let legacyTickets=[];
+try{legacyTickets=JSON.parse(fs.readFileSync(path.join(ROOT,'data','qc_ticket_registry.json'),'utf8')).tickets||[];}catch(_){}
+for(const t of legacyTickets){
+  const originalDate=ptDate(new Date(t.captured_at_utc));
+  for(const text of t.legs||[]){
+    if(!text||NON_ACTION.test(text)) continue;
+    const parsed=parsePlayerText(text);
+    let eventStart=eventStarts.get(t.league+'|'+t.event_id)||eventAliases[t.event_id]?.provider_event_start||null;
+    if(!eventStart && /[A-Za-z]{3,}\s+\d{1,2}/.test(t.event_time||'') && /P[DS]T/.test(t.event_time||'')){
+      const raw=String(t.event_time).replace(/,?/g,'');
+      const parsedTime=Date.parse(raw+' '+originalDate.slice(0,4));
+      if(Number.isFinite(parsedTime)) eventStart=new Date(parsedTime).toISOString();
+    }
+    const hint={...parsed,league:t.league,market_class:'PLAYER_PROP',event_id:t.event_id,event_start_pt:eventStart,away:t.away,home:t.home};
+    const rec=structuredSuggestion(null,hint,text,'QC_'+t.tier,t.page,t.publication_label,originalDate,t.captured_at_utc);
+    if(existing.has(rec.suggestion_id)) continue;
+    rec.source_kind='EXACT_ARCHIVED_QC_TICKET';
+    rec.source_snapshot_ids=[t.ticket_id];
+    rec.currently_displayed=false;
+    mergeRecord(rec);
+    existing.get(rec.suggestion_id).currently_displayed=false;
   }
 }
 
@@ -391,5 +436,30 @@ ledger.policy='Every exact POM or Game Winner displayed on an LJDP sport page is
 ledger.accuracy_policy='Primary suggestion accuracy may count immutable suggestion versions. outcome_key is also retained so analytics can report unique-outcome accuracy without double-counting the same exact event/participant/market/side/threshold shown in multiple placements.';
 ledger.suggestions.sort((a,b)=>String(a.first_seen_at_utc).localeCompare(String(b.first_seen_at_utc))||String(a.suggestion_id).localeCompare(String(b.suggestion_id)));
 fs.mkdirSync(path.dirname(OUT),{recursive:true});
-fs.writeFileSync(OUT,JSON.stringify(ledger,null,2)+'\n');
-console.log(`Suggestion ledger: observed=${seen} added=${added} total=${ledger.suggestions.length}`);
+// Bound each durable Git blob by publication day. All original records remain
+// available to every history consumer via archive_files; never truncate history.
+const daily=new Map();
+for(const row of ledger.suggestions){
+  const day=row.publication_date_pt||'UNKNOWN';
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(day)) throw new Error('Unusable publication day: '+day);
+  if(!daily.has(day))daily.set(day,[]);
+  daily.get(day).push(row);
+}
+fs.mkdirSync(path.join(ROOT,'data','suggestions'),{recursive:true});
+const writeChanged=(file,payload)=>{
+  const text=JSON.stringify(payload)+'\n';
+  if(Buffer.byteLength(text)>95*1024*1024) throw new Error('Publication shard exceeds safe blob size: '+file);
+  if(!fs.existsSync(file)||fs.readFileSync(file,'utf8')!==text)fs.writeFileSync(file,text);
+};
+ledger.archive_files=[];
+for(const [day,suggestions] of [...daily].sort((a,b)=>a[0].localeCompare(b[0]))){
+  if(day===date)continue;
+  const name='suggestions/'+day+'.json';
+  writeChanged(path.join(ROOT,'data',name),{schema_version:'LSI-SUGGESTION-LEDGER-2',publication_date_pt:day,suggestions});
+  ledger.archive_files.push(name);
+}
+ledger.suggestions=daily.get(date)||[];
+writeChanged(OUT,ledger);
+fs.writeFileSync(CARD_OUT,JSON.stringify(cardLedger)+'\n');
+console.log(`Suggestion ledger: observed=${seen} added=${added} total=${ledger.suggestion_count}`);
+
