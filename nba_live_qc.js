@@ -53,6 +53,47 @@
       predictor:null,odds:[]
     }));
   }
+  // Join provider event IDs only through an exact tipoff and known team aliases.
+  // This keeps ESPN schedule cards connected to provider-specific player POMs.
+  const teamKey=v=>String(v||"").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const teamAliases=new Map();
+  for(const event of source.events)for(const t of event.teams||[]){
+    if(!t.display_name)continue;
+    const canonical=teamKey(t.display_name);
+    for(const alias of [t.display_name,t.abbreviation,t.short_display_name]){
+      const key=teamKey(alias);if(!key)continue;
+      const old=teamAliases.get(key);teamAliases.set(key,old&&old!==canonical?null:canonical);
+    }
+  }
+  const canonicalTeam=(name,aliases=[])=>{
+    const ids=new Set([name,...aliases].map(teamKey).map(k=>teamAliases.get(k)).filter(Boolean));
+    return ids.size===1?[...ids][0]:teamKey(name);
+  };
+  const eventKey=(start,away,home)=>[Date.parse(start),away,home].join("|");
+  const boardByMatch=new Map();
+  for(const b of boardEvents){
+    const key=eventKey(b.commence_time,canonicalTeam(b.away,b.away_aliases),canonicalTeam(b.home,b.home_aliases));
+    if(!boardByMatch.has(key))boardByMatch.set(key,[]);boardByMatch.get(key).push(b);
+  }
+  const scheduleKeys=new Set(source.events.map(e=>eventKey(e.start_utc,
+    canonicalTeam((e.teams||[]).find(t=>t.home_away==='away')?.display_name),
+    canonicalTeam((e.teams||[]).find(t=>t.home_away==='home')?.display_name))));
+  if(boardAgeHours<=6)for(const b of boardEvents){
+    const away=canonicalTeam(b.away,b.away_aliases),home=canonicalTeam(b.home,b.home_aliases);
+    const key=eventKey(b.commence_time,away,home),id=String(b.source_event_id||b.event_id||'');
+    if(!id||scheduleKeys.has(key)||!safety.future(b)||!b.away||!b.home)continue;
+    if(![...teamAliases.values()].includes(away)||![...teamAliases.values()].includes(home))continue;
+    scheduleKeys.add(key);
+    source.events.push({event_id:id,start_utc:b.commence_time,source:b.source||'LJDP sourced game inventory',status:'SCHEDULED',teams:[
+      {home_away:'away',display_name:b.away},{home_away:'home',display_name:b.home}
+    ]});
+  }
+  const joinedBoard=e=>{
+    const home=(e.teams||[]).find(t=>t.home_away==='home')||{},away=(e.teams||[]).find(t=>t.home_away==='away')||{};
+    const matches=[boardMap.get(String(e.event_id)),...(boardByMatch.get(eventKey(e.start_utc,canonicalTeam(away.display_name),canonicalTeam(home.display_name)))||[])].filter(Boolean);
+    return matches.length?{source_event_ids:matches.map(b=>String(b.source_event_id||b.event_id||'')),
+      props:matches.flatMap(b=>b.props||[]),game_markets:matches.flatMap(b=>b.game_markets||[])}:null;
+  };
   const sourceTime=Date.parse(source.generated_at_utc||"");
   const ageHours=Number.isFinite(sourceTime)?(stamp-sourceTime)/3600000:Infinity;
   const sourceFresh=source.status==="LOADED"&&ageHours>=0&&ageHours<=12;
@@ -62,7 +103,7 @@
     const id=String(e.event_id||"");
     const home=(e.teams||[]).find(x=>x.home_away==="home")||{};
     const away=(e.teams||[]).find(x=>x.home_away==="away")||{};
-    return {id,start,home,away,predictor:e.predictor||null,providerStatus:e.status||"",source:e.source||"ESPN_PUBLIC",board:boardMap.get(id)||null};
+    return {id,start,home,away,predictor:e.predictor||null,providerStatus:e.status||"",source:e.source||"ESPN_PUBLIC",board:joinedBoard(e)};
   }).filter(e=>e.id&&Number.isFinite(e.start)&&e.start>stamp-3*3600000&&e.home.display_name&&e.away.display_name&&!seen.has(e.id)&&seen.add(e.id))
     .sort((a,b)=>a.start-b.start||a.id.localeCompare(b.id));
   const future=games.filter(g=>g.start>stamp);
@@ -99,7 +140,7 @@
   const validFor=g=>{
     const boardCandidates=[...(g.board?.props||[]),...(g.board?.game_markets||[])];
     const fromRegistry=registry.filter(p=>
-      p.league==="NBA"&&String(p.event_id||"")===g.id);
+      p.league==="NBA"&&[g.id,...(g.board?.source_event_ids||[])].includes(String(p.event_id||"")));
     const items=[...boardCandidates,...fromRegistry];
     const seen=new Set();
     return items.filter(p=>{

@@ -105,6 +105,15 @@ async function evaluate(at,validSource=true,customBoard=null){
   assert.equal(withPick.status.verifiedLJPC,1,'One exact evaluated POM can enter 20 Piece');
   assert.equal(withPick.status.watchlistSlots,20,'A partial verified slate must retain 20 visible opportunity slots');
   assert.match(withPick.html,/Verified Test Player/);
+  const providerBoard=JSON.parse(JSON.stringify(freshBoard));
+  providerBoard.events[0].source_event_id='PL-provider';
+  providerBoard.events[0].away='Philadelphia 76ers';providerBoard.events[0].home='Detroit Pistons';
+  const joined=await evaluate('2026-11-04T19:55:00Z',true,providerBoard);
+  assert.equal(joined.status.verifiedLJPC,1,'Provider ID joins through exact teams and tipoff');
+  assert.equal(joined.status.todayGames,14,'Provider aliases do not duplicate fixtures');
+  providerBoard.events[0].commence_time='2026-11-06T00:00Z';
+  const wrongTime=await evaluate('2026-11-04T19:55:00Z',true,providerBoard);
+  assert.equal(wrongTime.status.todayGames,14,'A different tipoff cannot attach to today’s matchup');
   assert.match(withPick.html,/nba-player-prop/,'QC renders actual player selections');
   const multiple=JSON.parse(JSON.stringify(freshBoard));
   multiple.events[0].props.push({...good,participant:'Second Verified Player',evaluation_id:'second-eval'});
