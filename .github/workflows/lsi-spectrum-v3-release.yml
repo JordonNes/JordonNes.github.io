@@ -52,7 +52,6 @@ jobs:
           node --check /tmp/quickie-inline.js
 
       - name: Merge verified override evidence
-        if: github.event_name != 'workflow_run'
         run: |
           python scripts/test_verified_market_identity.py
           python scripts/lsi_apply_verified_overrides.py
@@ -62,11 +61,9 @@ jobs:
         run: python scripts/legz_synthetic_book.py
 
       - name: Validate forecast-first player-prop ladder
-        if: github.event_name != 'workflow_run'
         run: python scripts/legz_prop_ladder_test.py
 
       - name: Execute Spectrum v3 from durable cache
-        if: github.event_name != 'workflow_run'
         env:
           LSI_FAST_RUNTIME: 'true'
         run: python scripts/legz_statistical_spectrum.py

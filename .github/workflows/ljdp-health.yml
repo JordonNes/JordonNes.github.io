@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-        with: {ref: rwt-pages-release}
+        with: {ref: "${{ github.event.workflow_run.head_sha || 'rwt-pages-release' }}"}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - name: Validate registry and publication wiring
@@ -82,6 +82,7 @@ jobs:
           wait_for_file_match https://jordonnes.github.io/nba_live_qc.js nba_live_qc.js /tmp/nba-qc.js "NBA QC renderer"
           wait_for_file_match https://jordonnes.github.io/fiba_live_qc.js fiba_live_qc.js /tmp/fiba-qc.js "FIBA QC renderer"
           wait_for_file_match https://jordonnes.github.io/data/dp/NBA.js data/dp/NBA.js /tmp/nba-data.js "NBA display data"
+          wait_for_file_match https://jordonnes.github.io/data/fiba_verified_fixtures.js data/fiba_verified_fixtures.js /tmp/fiba-fixtures.js "FIBA fixture data"
           test -s /tmp/future.json && test -s /tmp/future.js && test -s /tmp/moneylines.json
           grep -q 'LEGZ &amp; JINX — Daily Predictions' /tmp/ljdp.html
           grep -q 'provenance_policy' /tmp/registry.json
