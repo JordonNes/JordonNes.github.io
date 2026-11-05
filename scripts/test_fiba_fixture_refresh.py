@@ -22,3 +22,9 @@ assert w[0]["home"]=="OVA" and w[1]["home"]=="GALA",w
 assert not parse_fixtures(MEN,"men","FIBA Europe Cup",u,date(2026,11,30))
 assert len({x["id"] for x in m+w})==4
 print("PASS FIBA schedule parser: official shortcode pairs, correct dates, no invented markets, expiry.")
+
+from datetime import date
+text="First Round · Group A AAA AAA BBB BBB TBC Second Round · Group B CCC CCC DDD DDD Wed, Nov 11 18:00"
+rows=parse_fixtures(text,'women','2027 Women’s EuroBasket Qualifiers','https://www.fiba.basketball/',date(2026,11,4))
+assert len(rows)==1 and rows[0]['home']=='CCC',rows
+print('PASS qualifier stages and fixture-boundary protection')

@@ -114,6 +114,11 @@ async function evaluate(at,validSource=true,customBoard=null){
   providerBoard.events[0].commence_time='2026-11-06T00:00Z';
   const wrongTime=await evaluate('2026-11-04T19:55:00Z',true,providerBoard);
   assert.equal(wrongTime.status.todayGames,14,'A different tipoff cannot attach to today’s matchup');
+  providerBoard.events[0].source_event_id='KX-NBA-CLOSING-TIME';
+  providerBoard.events[0].game_markets=[{...good,market_class:'GAME_ML'}];
+  const closingTime=await evaluate('2026-11-04T19:55:00Z',true,providerBoard);
+  assert.equal(closingTime.status.loadedGames,24,'Exchange closing times cannot create extra scheduled games');
+
   assert.match(withPick.html,/nba-player-prop/,'QC renders actual player selections');
   const multiple=JSON.parse(JSON.stringify(freshBoard));
   multiple.events[0].props.push({...good,participant:'Second Verified Player',evaluation_id:'second-eval'});

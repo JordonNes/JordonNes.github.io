@@ -18,12 +18,19 @@ import urllib.request
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"data/fiba_verified_fixtures.js"
 SOURCES={
+    ("men","2027 World Cup Qualifiers — Africa"):"https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-african-qualifiers",
+    ("men","2027 World Cup Qualifiers — Americas"):"https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-americas-qualifiers",
+    ("men","2027 World Cup Qualifiers — Asia"):"https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
+    ("men","2027 World Cup Qualifiers — Europe"):"https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-european-qualifiers",
+    ("men","Basketball Champions League"):"https://www.championsleague.basketball/en",
+    ("women","2027 Women’s EuroBasket Qualifiers"):"https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
     ("men","FIBA Europe Cup"):"https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
     ("women","EuroCup Women"):"https://www.fiba.basketball/en/events/eurocup-women-26-27",
     ("women","EuroLeague Women"):"https://www.fiba.basketball/en/events/euroleague-women-26-27",
@@ -32,11 +39,11 @@ MONTHS={v:i for i,v in enumerate("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov De
 # Official FIBA schedule markup repeats each team's shortcode in text.
 # Do not guess teams from locations or unrelated page text.
 GAME_RE=re.compile(
-  r"(?:Regular\s+Season(?:\s*-\s*First\s+Round)?\s*[·\-]\s*"
+  r"(?:(?:Regular\s+Season(?:\s*-\s*First\s+Round)?|First\s+Round|Second\s+Round|Hosts)\s*[·\-]\s*"
   r"(?:Group\s+(?P<group>[A-Z])|First\s+Round(?:\s*[·\-]\s*Group\s+(?P<group2>[A-Z]))?)\s+)"
   r"(?P<home>[A-Z0-9]{2,10})\s+(?P=home)\s+"
   r"(?P<away>[A-Z0-9]{2,10})\s+(?P=away)\s+"
-  r".{0,115}?(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s+"
+  r"(?:(?!Regular\s+Season|First\s+Round|Second\s+Round|Hosts\s*[·\-]|Final).){0,115}?(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s+"
   r"(?P<month>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+"
   r"(?P<day>\d{1,2})\s+(?P<clock>\d{1,2}:\d{2})\b",re.I
 )
@@ -69,7 +76,7 @@ def acquire(url):
       "Accept":"text/html,application/xhtml+xml"})
     with urllib.request.urlopen(request,timeout=35) as resp:
         final_url=resp.geturl()
-        if not final_url.startswith("https://www.fiba.basketball/"):
+        if urlparse(final_url).scheme!="https" or urlparse(final_url).hostname not in {"www.fiba.basketball","www.championsleague.basketball"}:
             raise ValueError("Unexpected redirect: "+final_url)
         raw=resp.read(7_000_000).decode("utf-8","replace")
     soup=BeautifulSoup(raw,"html.parser")
@@ -83,12 +90,12 @@ def run():
     if override:clock_date=date.fromisoformat(override)
     evidence=[]
     failures=[]
+    source_checks=[]
     for (track,comp),url in SOURCES.items():
         try:
             raw=acquire(url)
             fixtures=parse_fixtures(raw,track,comp,url,clock_date)
-            if not fixtures:
-                failures.append({"competition":comp,"reason":"NO UPCOMING OFFICIAL MATCHES PARSED"})
+            source_checks.append({"competition":comp,"source":url,"parsed_fixtures":len(fixtures),"status":"FIXTURES_VERIFIED" if fixtures else "NO_UPCOMING_FIXTURES_PARSED"})
             evidence.extend(fixtures)
             print(f"{comp}: {len(fixtures)} parsed future fixtures",flush=True)
         except Exception as exc:
@@ -106,7 +113,7 @@ def run():
       "schema":"FIBA-FIXTURE-SNAPSHOT-1","verifiedOn":clock_date.isoformat(),
       "publishedBy":"LJDP scheduled official FIBA calendar fetch",
       "warning":"Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
-      "sources":list(SOURCES.values()),"events":evidence
+      "sources":list(SOURCES.values()),"sourceChecks":source_checks,"events":evidence
     }
     body="/* Official FIBA fixture-only import. No generated betting lines or model predictions. */\nwindow.LJ_FIBA_FIXTURES="+json.dumps(payload,ensure_ascii=False,indent=2)+";\n"
     if OUT.read_text(encoding="utf-8")!=body:

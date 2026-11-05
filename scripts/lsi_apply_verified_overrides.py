@@ -55,20 +55,19 @@ def scrub_prop(raw):
 
 def match_event(events, override):
     ost=parse(override.get("commence_time"))
-    oa=aliases(override)
-    best=None
+    def role_aliases(e,role):
+        return {norm(v) for v in [e.get(role),*(e.get(role+"_aliases") or [])] if v}
+    candidates=[]
     for e in events:
-        if str(e.get("league") or "") != str(override.get("league") or ""):
-            continue
+        if str(e.get("league") or "")!=str(override.get("league") or ""):continue
         est=parse(e.get("commence_time"))
-        if ost and est and abs((ost-est).total_seconds())>45*60:
-            continue
-        overlap=len(oa & aliases(e))
-        if overlap<=0:
-            continue
-        if best is None or overlap>best[0]:
-            best=(overlap,e)
-    return best[1] if best else None
+        if not ost or not est or ost!=est:continue
+        if not (role_aliases(e,"away") & role_aliases(override,"away")):continue
+        if not (role_aliases(e,"home") & role_aliases(override,"home")):continue
+        candidates.append(e)
+    exact=[e for e in candidates if str(e.get("source_event_id"))==str(override.get("source_event_id"))]
+    return exact[0] if len(exact)==1 else candidates[0] if len(candidates)==1 else None
+
 
 def main():
     if not BOARD.exists() or not OVERRIDES.exists():

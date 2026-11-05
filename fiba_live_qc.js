@@ -22,11 +22,11 @@
   const byTrack=track=>future.filter(x=>x.track===track);
   const sources={
     'FIBA Europe Cup':'https://www.fiba.basketball/en/events/fiba-europe-cup-26-27',
-    'Basketball Champions League':'https://www.fiba.basketball/en/events/basketball-champions-league-26-27',
+    'Basketball Champions League':'https://www.championsleague.basketball/en',
     '2027 World Cup Qualifiers':'https://www.fiba.basketball/en/events',
     'EuroCup Women':'https://www.fiba.basketball/en/events/eurocup-women-26-27',
     'EuroLeague Women':'https://www.fiba.basketball/en/events/euroleague-women-26-27',
-    '2027 Women’s EuroBasket Qualifiers':'https://www.fiba.basketball/en/events'
+    '2027 Women’s EuroBasket Qualifiers':'https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers'
   };
   const link=(label,url)=>'<a href="'+html(url)+'" target="_blank" rel="noopener noreferrer">'+html(label)+'</a>';
   const classes=[
@@ -42,6 +42,10 @@
   const matchGame=(e,x)=>{
     if(!fibaLeague(e.league||e.sport))return false;
     const sameId=e.fiba_fixture_id===x.id;
+    const league=String(e.league||e.sport||'').toLowerCase();
+    const track=e.track||(/women/.test(league)?'women':/men/.test(league)?'men':null);
+    if(track&&track!==x.track)return false;
+    if(!sameId&&!track)return false;
     const home=normalize(e.home),away=normalize(e.away);
     // Match ONLY exact FIBA abbreviations, not a fuzzy team name that may belong
     // to a different team or international competition.
@@ -133,7 +137,10 @@
     const node=document.querySelector('#'+key+'.track');
     if(!node)return;
     const next=byTrack(key);
-    const comps=currentComps[key].map(([name,state])=>'<div class="fiba-current-comp"><b>'+html(name)+'</b><span>'+html(state)+'</span>'+link('FIBA source',sources[name])+'</div>').join('');
+    const comps=currentComps[key].map(([name,state])=>{
+      const imported=next.some(e=>e.competition===name||(name==='2027 World Cup Qualifiers'&&e.competition.startsWith(name)));
+      state=imported?'Upcoming official fixtures in feed':stale?'Source snapshot stale':'No upcoming fixtures imported';
+      return '<div class="fiba-current-comp"><b>'+html(name)+'</b><span>'+html(state)+'</span>'+link('FIBA source',sources[name])+'</div>';}).join('');
     node.innerHTML='<div class="section-head"><h2>'+(key==='men'?'MEN’S FIBA':'WOMEN’S FIBA')+'</h2><span class="fiba-muted">'+next.length+' source-listed games on or after today</span></div><div class="fiba-current-comps">'+comps+'</div><h3>PER-GAME QC • '+key.toUpperCase()+'</h3><p class="fiba-muted">Each game includes winner, total, spread and winning-margin market families. A verified fixture is not a verified betting line. No side, threshold or probability is invented.</p><div class="fiba-qc-list">'+(next.length?next.map(gamesHtml).join(''):'<p>No source-confirmed future fixtures in the current snapshot. Verify the FIBA calendar before publishing any QC picks.</p>')+'</div>';
   }
   const nav=root.querySelector('.sport-nav');

@@ -53,7 +53,9 @@ jobs:
 
       - name: Merge verified override evidence
         if: github.event_name != 'workflow_run'
-        run: python scripts/lsi_apply_verified_overrides.py
+        run: |
+          python scripts/test_verified_market_identity.py
+          python scripts/lsi_apply_verified_overrides.py
 
       - name: Generate LEGZ Synthetic Book fallback
         if: github.event_name != 'workflow_run'

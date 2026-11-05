@@ -34,6 +34,10 @@ jobs:
         run: python scripts/test_fiba_fixture_refresh.py
       - name: Verify upcoming matches against official FIBA schedules
         run: python scripts/refresh_fiba_fixture_schedule.py
+      - uses: actions/setup-node@v6
+        with: {node-version: '22'}
+      - name: Validate every refreshed FIBA game card
+        run: node scripts/test_fiba_live_qc.js
       - name: Publish only official, successfully verified fixture changes
         run: |
           if git diff --quiet -- data/fiba_verified_fixtures.js; then

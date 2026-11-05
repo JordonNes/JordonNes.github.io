@@ -43,7 +43,7 @@
   }catch(err){
     source.status="FALLBACK_BOARD";
     // Fallback remains clearly labeled and never raises synthetic market data to LJPC.
-    source.events=[...boardMap.values()].map(e=>({
+    source.events=[...boardMap.values()].filter(e=>/^(?:PL-\d+|\d+)$/.test(String(e.source_event_id||e.event_id||''))&&(e.game_markets||[]).length).map(e=>({
       event_id:e.source_event_id||e.event_id,start_utc:e.commence_time,
       source:"LJDP rolling board",
       status:"UNVERIFIED",teams:[
@@ -82,6 +82,7 @@
     const away=canonicalTeam(b.away,b.away_aliases),home=canonicalTeam(b.home,b.home_aliases);
     const key=eventKey(b.commence_time,away,home),id=String(b.source_event_id||b.event_id||'');
     if(!id||scheduleKeys.has(key)||!safety.future(b)||!b.away||!b.home)continue;
+    if(!(/^(?:PL-\d+|\d+)$/.test(id))||!(b.game_markets||[]).length)continue;
     if(![...teamAliases.values()].includes(away)||![...teamAliases.values()].includes(home))continue;
     scheduleKeys.add(key);
     source.events.push({event_id:id,start_utc:b.commence_time,source:b.source||'LJDP sourced game inventory',status:'SCHEDULED',teams:[
@@ -153,10 +154,13 @@
   const allPicks=future.flatMap(g=>(picks.get(g.id)||[]).map(p=>({game:g,p})))
     .sort((a,b)=>(Number(b.p.pom_value)||0)-(Number(a.p.pom_value)||0));
   const distinct=[],taken=new Set();
-  const gameSides=new Set();
+  const gameSides=new Set(),playerSides=new Set();
   for(const p of allPicks){
     const cls=String(p.p.market_class||"");
     const key=p.game.id+"|"+cls;
+    const playerKey=[p.game.id,p.p.participant,p.p.market_key||p.p.market,p.p.threshold].join("|");
+    if(cls==="PLAYER_PROP"&&playerSides.has(playerKey))continue;
+    if(cls==="PLAYER_PROP")playerSides.add(playerKey);
     if(cls!=="PLAYER_PROP"&&gameSides.has(key))continue;
     if(cls!=="PLAYER_PROP")gameSides.add(key);
     distinct.push(p);taken.add(p.game.id);if(distinct.length===20)break;
