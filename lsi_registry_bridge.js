@@ -922,6 +922,54 @@
     populateGameQc(e.league,q);
     return q;
   };
+  const nhlTeamKey=team=>norm(n(team).normalize('NFD').replace(/[\u0300-\u036f]/g,''));
+  const nhlTeamMatches=(shortName,fullName)=>{
+    const key=nhlTeamKey(shortName), full=nhlTeamKey(fullName);
+    return Boolean(key) && (full===key || full.startsWith(key+' '));
+  };
+  function nhlDailyWinners(events){
+    const today=ptCalendarSerial(nowMs);
+    const slate=new Map();
+    for(const event of events){
+      const id=n(event.source_event_id);
+      // NHL schedule IDs encode the season, game type and game number.
+      if(!/^20\d{2}0[1-4]\d{4}$/.test(id) || ptCalendarSerial(eventStartMs(event))!==today) continue;
+      const group=slate.get(id)||[];
+      group.push(event);
+      slate.set(id,group);
+    }
+
+    const rows=[];
+    for(const scheduleRows of slate.values()){
+      const schedule=scheduleRows[0];
+      const start=eventStartMs(schedule);
+      const providerIds=new Set(scheduleRows.flatMap(e=>(e.game_markets||[]).map(m=>n(m.event_id))).filter(Boolean));
+      const linked=events.filter(e=>eventStartMs(e)===start
+        && providerIds.has(n(e.source_event_id))
+        && nhlTeamMatches(schedule.away,e.away) && nhlTeamMatches(schedule.home,e.home));
+      const matchup=linked[0]||schedule;
+      const offers=[...linked,...scheduleRows].flatMap(e=>e.game_markets||[])
+        .filter(m=>isCurrentGameMl(m) && m.market_verified===true && !isStaleProp(m)
+          && m.market_live!==false && m.market_suspended!==true && m.evaluation_id
+          && m.evaluation_material_hash && m.source_snapshot_ids?.length
+          && n(m.selection||m.participant) && priceLabel(m.price)!=='price recheck');
+      const pick=offers.sort((a,b)=>formalLjpcOf(b)-formalLjpcOf(a))[0];
+      if(!pick) continue;
+      const winner=pick.selection||pick.participant;
+      const price=priceLabel(pick.price);
+      const baseline=Number(pick.market_baseline_probability ?? pick.provisional_probability ?? pick.market_probability);
+      rows.push([
+        `${matchup.away} @ ${matchup.home}`,
+        `${winner} ML • ${price}`,
+        pct(formalLjpcOf(pick)),
+        `GAME ODDS • ${winner} ${price}`,
+        Number.isFinite(baseline)&&baseline>0 ? pct(baseline) : '??%',
+        legzComponent(pick),jinxComponent(pick),fmtEventTime(schedule),marketSourceTooltip(pick)
+      ]);
+    }
+    return rows;
+  }
+
   Object.entries(D.sports).forEach(([league,s])=>{
     const future=(B?.events||[])
       .filter(e=>e.league===league && isUpcomingEvent(e) && isCurrentNflWeekEvent(e))
@@ -1093,6 +1141,12 @@
     }
     s.qcs=deduped;
     if(league==="NFL") s.qcTitle="PER-GAME QUICKIES — NFL CURRENT TUESDAY–MONDAY WEEK";
+
+    if(league==="NHL"){
+      s.winners=nhlDailyWinners(future);
+      s._winnersFromCurrentSlate=true;
+      return;
+    }
 
     // Game Winners must be current-event L&J predictions with an explicit confidence.
     // Market-only/provisional baselines never enter the Game Winners list.

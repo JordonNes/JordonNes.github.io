@@ -313,7 +313,7 @@
     return `<div class="headliner-card jinx-winners-card"><div class="card-title gold"><span>${esc(label)}</span><span>MONEYLINE ONLY</span></div>${mlOnly.length ? `<ul class="headliner-list gw-list">${mlOnly.map(renderWinner).join("")}</ul>` : `<div class="status-panel"><b>NO CURRENT JINX MONEYLINE</b><p>No current L&J-evaluated moneyline prediction is published for this section.</p></div>`}</div>`;
   }
   function ensureGameWinners(s){
-    if(!s) return;
+    if(!s || s._winnersFromCurrentSlate) return;
     const existing=Array.isArray(s.winners)?s.winners:[];
     const seen=new Set(existing.map(r=>String(r?.[0]||'').toLowerCase()));
     const derived=[];
