@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-11-05T11:21:21.194290+00:00",
+  "checked_at_utc": "2026-11-05T19:04:05.946983+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -9,12 +9,12 @@
   ],
   "credit_cycle_started_at": "2026-10-26T06:01:29.625639+00:00",
   "league_last_success_utc": {
-    "NFL": "2026-11-05T09:16:49.294610+00:00",
+    "NFL": "2026-11-05T19:04:05.946983+00:00",
     "NCAA_Football": "2026-11-05T09:16:49.294610+00:00",
     "MLB": "2026-11-05T00:08:14.701717+00:00",
-    "NHL": "2026-11-05T00:08:14.701717+00:00",
+    "NHL": "2026-11-05T19:04:05.946983+00:00",
     "WNBA": "2026-11-05T01:05:25.458149+00:00",
-    "NBA": "2026-11-05T00:08:14.701717+00:00",
+    "NBA": "2026-11-05T19:04:05.946983+00:00",
     "NCAA_Basketball": "2026-11-05T11:21:21.194290+00:00"
   },
   "zero_dollar_policy": {
@@ -25,32 +25,60 @@
     "max_sport_calls_per_run": 3
   },
   "status": "OK",
-  "credits_estimated_this_cycle": 54,
-  "provider_reported_remaining": 649,
+  "credits_estimated_this_cycle": 63,
+  "provider_reported_remaining": 640,
   "requested_leagues": [
+    "NFL",
+    "NCAA_Football",
+    "NBA",
+    "NHL",
     "NCAA_Basketball"
   ],
   "refreshed_leagues": [
-    "NCAA_Basketball"
+    "NBA",
+    "NFL",
+    "NHL"
   ],
   "authoritative_complete_leagues": [
-    "NCAA_Basketball"
+    "NBA",
+    "NFL",
+    "NHL"
   ],
   "diagnostics": {
-    "NCAA_Basketball": {
+    "NBA": {
       "status": "OK",
-      "raw_rows": 696,
-      "normalized_side_offers": 1199,
+      "raw_rows": 809,
+      "normalized_side_offers": 1613,
       "result_has_more": false,
       "result_truncated": false,
       "result_truncated_hint": null,
       "result_degraded": null,
-      "provider_reported_remaining": 649
+      "provider_reported_remaining": 646
+    },
+    "NHL": {
+      "status": "OK",
+      "raw_rows": 2091,
+      "normalized_side_offers": 3889,
+      "result_has_more": false,
+      "result_truncated": false,
+      "result_truncated_hint": null,
+      "result_degraded": null,
+      "provider_reported_remaining": 643
+    },
+    "NFL": {
+      "status": "OK",
+      "raw_rows": 4055,
+      "normalized_side_offers": 4878,
+      "result_has_more": false,
+      "result_truncated": false,
+      "result_truncated_hint": null,
+      "result_degraded": null,
+      "provider_reported_remaining": 640
     }
   },
   "errors": {},
-  "raw_side_offers": 1199,
-  "consolidated_exact_poms": 1199,
-  "market_history_rows_added": 1199,
+  "raw_side_offers": 10380,
+  "consolidated_exact_poms": 9259,
+  "market_history_rows_added": 10380,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }

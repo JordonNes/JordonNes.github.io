@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SPORTSGAMEODDS-1",
-  "checked_at_utc": "2026-11-05T11:21:43.868579+00:00",
+  "checked_at_utc": "2026-11-05T19:04:46.990982+00:00",
   "provider": "SportsGameOdds",
   "role": "SECONDARY_MARKET_VERIFICATION",
   "policy": "Preserve canonical POM source; enrich only exact existing POMs with independent fair/consensus/book evidence.",
@@ -9,18 +9,41 @@
     "max_events_per_run": 20,
     "monthly_entity_reserve": 300
   },
-  "status": "SKIPPED_TTL",
-  "last_success_utc": "2026-11-05T09:17:19.667415+00:00",
-  "usage": {
+  "usage_before": {
     "tier": "amateur",
     "is_active": true,
     "monthly_max_entities": 2500.0,
     "monthly_current_entities": 317.0
   },
+  "status": "OK",
+  "last_success_utc": "2026-11-05T19:04:46.990982+00:00",
+  "requested_leagues": [
+    "NBA",
+    "NCAAB",
+    "NCAAF",
+    "NFL",
+    "NHL"
+  ],
+  "requested_bookmakers": [
+    "draftkings",
+    "fanduel",
+    "betmgm",
+    "caesars",
+    "espnbet",
+    "bovada",
+    "unibet",
+    "pointsbet",
+    "williamhill"
+  ],
+  "events_returned": 20,
+  "next_cursor_present": true,
+  "intentionally_not_autopaged": true,
+  "notice": null,
+  "capability_probe": "Amateur-tier SGO bookmakers only; Underdog and PrizePicks are acquired separately via ParlayAPI.",
   "last_diagnostics": {
     "matched_events": 22,
-    "matched_props": 193,
-    "exact_book_observations": 490,
+    "matched_props": 252,
+    "exact_book_observations": 1152,
     "observed_bookmakers": [
       "betmgm",
       "bovada",
@@ -29,5 +52,18 @@
       "espnbet",
       "fanduel"
     ]
+  },
+  "market_history_rows_added": 1152,
+  "usage_after": {
+    "tier": "amateur",
+    "is_active": true,
+    "monthly_max_entities": 2500.0,
+    "monthly_current_entities": 337.0
+  },
+  "usage": {
+    "tier": "amateur",
+    "is_active": true,
+    "monthly_max_entities": 2500.0,
+    "monthly_current_entities": 337.0
   }
 }
