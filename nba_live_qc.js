@@ -167,7 +167,7 @@
   }
   const pending=future.filter(g=>!taken.has(g.id)).slice(0,20-distinct.length);
   const slots=[...distinct.map(x=>({...x,approved:true})),...pending.map((game,i)=>({game,watchMarket:gameLabels[(i+distinct.length)%4][1]}))];
-  const marketText=p=>[p.participant||p.selection||p.pick||"",p.side||"",p.market||p.market_class||"",p.threshold==null?"":String(p.threshold),p.book||p.market_source,p.price==null?"":"price "+p.price,"LJPC "+Number(p.ljpc).toFixed(1)+"%"].filter(Boolean).join(" • ");
+  const marketText=p=>[p.participant||p.selection||p.pick||"",p.side||"",p.market||p.market_class||"",p.threshold==null?"":String(p.threshold),p.book||p.market_source,p.price==null?"":"price "+p.price,"LJPC "+Number(p.ljpc).toFixed(1)+"%",Number.isFinite(Date.parse(p.retrieved_at||""))?"Quote "+formattedDay(new Date(p.retrieved_at))+" "+formattedTime(new Date(p.retrieved_at)):""].filter(Boolean).join(" • ");
   const marketEvidence=g=>{
     const m=g.board?.game_markets||[];
     if(boardAgeHours>8||!(g.start>stamp))return "";
