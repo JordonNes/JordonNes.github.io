@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-11-04T23:37:09.398354+00:00",
+  "checked_at_utc": "2026-11-05T00:08:14.701717+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -11,10 +11,10 @@
   "league_last_success_utc": {
     "NFL": "2026-11-04T23:37:09.398354+00:00",
     "NCAA_Football": "2026-11-04T23:37:09.398354+00:00",
-    "MLB": "2026-10-15T17:17:15.751049+00:00",
-    "NHL": "2026-11-03T12:49:48.112960+00:00",
+    "MLB": "2026-11-05T00:08:14.701717+00:00",
+    "NHL": "2026-11-05T00:08:14.701717+00:00",
     "WNBA": "2026-10-15T00:26:56.392440+00:00",
-    "NBA": "2026-10-14T22:17:06.406685+00:00",
+    "NBA": "2026-11-05T00:08:14.701717+00:00",
     "NCAA_Basketball": "2026-11-03T12:49:48.112960+00:00"
   },
   "zero_dollar_policy": {
@@ -25,50 +25,59 @@
     "max_sport_calls_per_run": 3
   },
   "status": "OK",
-  "credits_estimated_this_cycle": 30,
-  "provider_reported_remaining": 688,
+  "credits_estimated_this_cycle": 39,
+  "provider_reported_remaining": 679,
   "requested_leagues": [
-    "NFL",
     "NCAA_Football",
+    "MLB",
     "NBA",
     "NHL",
     "NCAA_Basketball"
   ],
   "refreshed_leagues": [
-    "NCAA_Football",
-    "NFL"
+    "MLB",
+    "NBA",
+    "NHL"
   ],
   "authoritative_complete_leagues": [
-    "NCAA_Football",
-    "NFL"
+    "MLB",
+    "NHL"
   ],
   "diagnostics": {
-    "NFL": {
+    "NBA": {
       "status": "OK",
-      "raw_rows": 3336,
-      "normalized_side_offers": 4106,
+      "raw_rows": 5461,
+      "normalized_side_offers": 10454,
       "result_has_more": false,
-      "result_truncated": false,
-      "result_truncated_hint": null,
+      "result_truncated": true,
+      "result_truncated_hint": "Returned 5461 rows. At least one book in this query writes more prop rows per hour than one query reads, so this response was built from that book's most recent writes only and can be missing props, and whole games, that the book is still pricing. Narrowing with ?markets= brings more of that book's board inside the read window. Treat this header as the authority on completeness: x-result-has-more and the row count describe what was read, not the whole market.",
       "result_degraded": null,
-      "provider_reported_remaining": 694
+      "provider_reported_remaining": 685
     },
-    "NCAA_Football": {
+    "MLB": {
       "status": "OK",
-      "raw_rows": 4998,
-      "normalized_side_offers": 4472,
+      "raw_rows": 0,
+      "normalized_side_offers": 0,
       "result_has_more": false,
       "result_truncated": false,
       "result_truncated_hint": null,
       "result_degraded": null,
-      "provider_reported_remaining": 688
+      "provider_reported_remaining": 682
+    },
+    "NHL": {
+      "status": "OK",
+      "raw_rows": 1779,
+      "normalized_side_offers": 3438,
+      "result_has_more": false,
+      "result_truncated": false,
+      "result_truncated_hint": null,
+      "result_degraded": null,
+      "provider_reported_remaining": 679
     }
   },
-  "errors": {
-    "NBA": "HTTP 502: {\"type\":\"https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-502/\",\"title\":\"Error 502: Bad gateway\",\"status\":502,\"detail\":\"The origin web server returned an invalid or incomplete response to Cloudflare. This typically indicates the origin is overloaded or misconfigured.\",\"instance\":\"a55771ea6b8554d0\",\"error_code\":502,\"error_name\":\"origin_bad_gateway\",\"error_category\":\"origin\",\"ray_id\":\"a55771ea6b8554d0\",\"timestamp\":\"2026-11-04T23:37:12Z\",\"zone\":\"parlay-api.com\",\"cloudflare_error\":true,\"retryable\":true,\"retry_after\":60,\"owner_action_required\":"
-  },
-  "raw_side_offers": 8578,
-  "consolidated_exact_poms": 7685,
-  "market_history_rows_added": 8578,
+  "errors": {},
+  "raw_side_offers": 13892,
+  "consolidated_exact_poms": 13890,
+  "market_history_rows_added": 13892,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }
