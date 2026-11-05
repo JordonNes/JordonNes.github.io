@@ -2,16 +2,16 @@
   "archive_branch": "lsi-archive",
   "archive_files": {
     "context_history": {
-      "bytes": 23948342,
+      "bytes": 24132896,
       "files": 1,
-      "max_file_bytes": 23948342,
-      "records": 18475
+      "max_file_bytes": 24132896,
+      "records": 18615
     },
     "evaluation_state_history": {
-      "bytes": 1783533395,
+      "bytes": 1802404020,
       "files": 96,
       "max_file_bytes": 28682221,
-      "records": 231948
+      "records": 234030
     },
     "evaluation_state_history_legacy": {
       "bytes": 79685259,
@@ -20,28 +20,28 @@
       "records": 34135
     },
     "event_history": {
-      "bytes": 16926314,
+      "bytes": 17149371,
       "files": 1,
-      "max_file_bytes": 16926314,
-      "records": 18537
+      "max_file_bytes": 17149371,
+      "records": 18780
     },
     "market_history": {
-      "bytes": 1583857126,
+      "bytes": 1584102285,
       "files": 192,
       "max_file_bytes": 16977489,
-      "records": 1365182
+      "records": 1365386
     },
     "prediction_history": {
-      "bytes": 7497716,
+      "bytes": 14625035,
       "files": 1,
-      "max_file_bytes": 7497716,
-      "records": 768
+      "max_file_bytes": 14625035,
+      "records": 1382
     },
     "publication_history": {
-      "bytes": 4247003004,
+      "bytes": 4340654612,
       "files": 96,
       "max_file_bytes": 94370321,
-      "records": 54122
+      "records": 55182
     },
     "publication_history_legacy": {
       "bytes": 99924802,
@@ -56,29 +56,29 @@
       "records": 23087
     },
     "settlement_history": {
-      "bytes": 28472890,
+      "bytes": 29044947,
       "files": 1,
-      "max_file_bytes": 28472890,
-      "records": 292
+      "max_file_bytes": 29044947,
+      "records": 294
     }
   },
   "counts": {
-    "context_history": 18475,
-    "evaluation_state_history": 231948,
+    "context_history": 18615,
+    "evaluation_state_history": 234030,
     "evaluation_state_history_legacy": 34135,
-    "event_history": 18537,
-    "market_history": 1365182,
-    "prediction_history": 768,
-    "publication_history": 54122,
+    "event_history": 18780,
+    "market_history": 1365386,
+    "prediction_history": 1382,
+    "publication_history": 55182,
     "publication_history_legacy": 2456,
     "result_history": 23087,
-    "settlement_history": 292
+    "settlement_history": 294
   },
   "entity_counts": {
     "books": 39,
-    "events": 1605,
-    "markets": 264,
-    "participants": 6160
+    "events": 1600,
+    "markets": 266,
+    "participants": 6195
   },
   "evaluation_state_sharding": {
     "hash_buckets": 32,
@@ -86,27 +86,27 @@
     "legacy_file": "evaluation_state_history.jsonl remains read-only historical data",
     "reason": "Preserve immutable evaluation history without allowing one archive file to exceed GitHub limits."
   },
-  "generated_at_utc": "2026-11-05T00:08:42.630358+00:00",
+  "generated_at_utc": "2026-11-05T01:06:28.859920+00:00",
   "market_sharding": {
     "hash_buckets": 32,
     "layout": "market_history/YYYY-MM/<dataset>-<00..31>.jsonl",
     "reason": "Keep high-volume immutable history below repository file-size limits."
   },
   "new_records": {
-    "context_registry": 25,
-    "evaluation_state": 2421,
+    "context_registry": 4,
+    "evaluation_state": 2082,
     "event_inventory": 243,
     "lsi_market": 0,
     "oddspapi_market": 0,
-    "prediction_registry": 690,
+    "prediction_registry": 614,
     "prediction_source": 0,
-    "propline_intelligence": 22208,
-    "qc_prop_board": 1070,
+    "propline_intelligence": 204,
+    "qc_prop_board": 1060,
     "results": 0,
-    "rotowire_context": 25,
+    "rotowire_context": 4,
     "settlement_aliases": 1,
     "settlement_status": 1,
-    "weather_history": 133
+    "weather_history": 132
   },
   "phase": "MEMORY_ONLY",
   "publication_state_sharding": {
@@ -116,5 +116,5 @@
     "reason": "Preserve immutable publication snapshots without allowing one archive file to exceed GitHub limits."
   },
   "schema_version": "LSI-ARCHIVE-MANIFEST-1",
-  "source_commit": "15a820788cb6301d769f5a4fa18fa879ee815ebb"
+  "source_commit": "ad3defc0b943082d435cb908b32d4872d9fe9c86"
 }
