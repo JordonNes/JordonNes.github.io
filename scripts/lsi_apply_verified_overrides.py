@@ -66,7 +66,9 @@ def match_event(events, override):
         if not (role_aliases(e,"home") & role_aliases(override,"home")):continue
         candidates.append(e)
     exact=[e for e in candidates if str(e.get("source_event_id"))==str(override.get("source_event_id"))]
-    return exact[0] if len(exact)==1 else candidates[0] if len(candidates)==1 else None
+    if override.get("source_event_id"):
+        return exact[0] if len(exact)==1 else None
+    return candidates[0] if len(candidates)==1 else None
 
 
 def main():
