@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-PARLAYAPI-RETAIL-1",
-  "checked_at_utc": "2026-11-05T00:08:14.701717+00:00",
+  "checked_at_utc": "2026-11-05T01:05:25.458149+00:00",
   "provider": "ParlayAPI",
   "retail_sources": [
     "PrizePicks",
@@ -13,9 +13,9 @@
     "NCAA_Football": "2026-11-04T23:37:09.398354+00:00",
     "MLB": "2026-11-05T00:08:14.701717+00:00",
     "NHL": "2026-11-05T00:08:14.701717+00:00",
-    "WNBA": "2026-10-15T00:26:56.392440+00:00",
+    "WNBA": "2026-11-05T01:05:25.458149+00:00",
     "NBA": "2026-11-05T00:08:14.701717+00:00",
-    "NCAA_Basketball": "2026-11-03T12:49:48.112960+00:00"
+    "NCAA_Basketball": "2026-11-05T01:05:25.458149+00:00"
   },
   "zero_dollar_policy": {
     "monthly_credit_cap": 900,
@@ -25,36 +25,24 @@
     "max_sport_calls_per_run": 3
   },
   "status": "OK",
-  "credits_estimated_this_cycle": 39,
-  "provider_reported_remaining": 679,
+  "credits_estimated_this_cycle": 45,
+  "provider_reported_remaining": 673,
   "requested_leagues": [
     "NCAA_Football",
-    "MLB",
     "NBA",
-    "NHL",
+    "WNBA",
     "NCAA_Basketball"
   ],
   "refreshed_leagues": [
-    "MLB",
-    "NBA",
-    "NHL"
+    "NCAA_Basketball",
+    "WNBA"
   ],
   "authoritative_complete_leagues": [
-    "MLB",
-    "NHL"
+    "NCAA_Basketball",
+    "WNBA"
   ],
   "diagnostics": {
-    "NBA": {
-      "status": "OK",
-      "raw_rows": 5461,
-      "normalized_side_offers": 10454,
-      "result_has_more": false,
-      "result_truncated": true,
-      "result_truncated_hint": "Returned 5461 rows. At least one book in this query writes more prop rows per hour than one query reads, so this response was built from that book's most recent writes only and can be missing props, and whole games, that the book is still pricing. Narrowing with ?markets= brings more of that book's board inside the read window. Treat this header as the authority on completeness: x-result-has-more and the row count describe what was read, not the whole market.",
-      "result_degraded": null,
-      "provider_reported_remaining": 685
-    },
-    "MLB": {
+    "WNBA": {
       "status": "OK",
       "raw_rows": 0,
       "normalized_side_offers": 0,
@@ -62,22 +50,22 @@
       "result_truncated": false,
       "result_truncated_hint": null,
       "result_degraded": null,
-      "provider_reported_remaining": 682
+      "provider_reported_remaining": 676
     },
-    "NHL": {
+    "NCAA_Basketball": {
       "status": "OK",
-      "raw_rows": 1779,
-      "normalized_side_offers": 3438,
+      "raw_rows": 453,
+      "normalized_side_offers": 779,
       "result_has_more": false,
       "result_truncated": false,
       "result_truncated_hint": null,
       "result_degraded": null,
-      "provider_reported_remaining": 679
+      "provider_reported_remaining": 673
     }
   },
   "errors": {},
-  "raw_side_offers": 13892,
-  "consolidated_exact_poms": 13890,
-  "market_history_rows_added": 13892,
+  "raw_side_offers": 779,
+  "consolidated_exact_poms": 779,
+  "market_history_rows_added": 779,
   "policy": "Exact retail POMs only. Provider projection classes are preserved. DFS normalized comparison prices never masquerade as native sportsbook odds."
 }
