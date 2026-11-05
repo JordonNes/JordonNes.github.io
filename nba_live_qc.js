@@ -1,4 +1,4 @@
-/* LJDP NBA season game QCs + 20 Piece (ESPN schedule and exact sourced market states).
+/* LJDP NBA player props, game winners and per-game QCs (ESPN schedule and exact sourced market states).
  * Last-generation September dailyrefresh content is not trustworthy for current NBA.
  * No invented tipoffs, players, prices, totals, spreads or LJPC.
  */
@@ -13,7 +13,7 @@
   const board=window.LJ_FUTURE_MARKET_BOARD||{};
   const boardEvents=Array.isArray(board.events)?board.events.filter(e=>e.league==="NBA"):[];
   const boardGenerated=Date.parse(board.generated_at_utc||"");
-  const boardAgeHours=Number.isFinite(boardGenerated)?Math.max(0,(stamp-boardGenerated)/3600000):Infinity;
+  const boardAgeHours=Number.isFinite(boardGenerated)?(stamp-boardGenerated)/3600000:Infinity;
   const season=window.LJ_Season_Status?.evaluate("NBA",now,boardEvents)||{season:"",phase:"CALENDAR UNVERIFIED"};
   const boardMap=new Map();
   boardEvents.forEach(x=>{
@@ -78,7 +78,7 @@
   const scheduleKeys=new Set(source.events.map(e=>eventKey(e.start_utc,
     canonicalTeam((e.teams||[]).find(t=>t.home_away==='away')?.display_name),
     canonicalTeam((e.teams||[]).find(t=>t.home_away==='home')?.display_name))));
-  if(boardAgeHours<=6)for(const b of boardEvents){
+  if(boardAgeHours>=-1/60&&boardAgeHours<=6)for(const b of boardEvents){
     const away=canonicalTeam(b.away,b.away_aliases),home=canonicalTeam(b.home,b.home_aliases);
     const key=eventKey(b.commence_time,away,home),id=String(b.source_event_id||b.event_id||'');
     if(!id||scheduleKeys.has(key)||!safety.future(b)||!b.away||!b.home)continue;
@@ -129,7 +129,7 @@
     if(p.price==null||p.price===""||!Number.isFinite(Number(p.price))||Number(p.price)===0)return false;
     if(p.market_verified!==true||p.market_verification!=="EXACT_MARKET_MATCH")return false;
     if(!String(p.book||p.market_source||"").trim()||!Array.isArray(p.source_snapshot_ids)||!p.source_snapshot_ids.length)return false;
-    if(!(g.start>stamp)||boardAgeHours>6||freshness==="STALE_RECHECK_REQUIRED"||(Number.isFinite(age)&&p.stale_market_age_hours!=null&&age>6))return false;
+    if(!(g.start>stamp)||boardAgeHours< -1/60||boardAgeHours>6||freshness==="STALE_RECHECK_REQUIRED"||(Number.isFinite(age)&&p.stale_market_age_hours!=null&&age>6))return false;
     const seen=Date.parse(p.retrieved_at||p.market_observed_at_pt||"");
     if(Number.isFinite(seen)&&!safety.fresh(new Date(seen).toISOString()))return false;
     const cls=String(p.market_class||p.marketClass||"").toUpperCase();
@@ -151,23 +151,34 @@
     }).sort((a,b)=>(Number(b.pom_value)||0)-(Number(a.pom_value)||0));
   };
   const picks=new Map(future.map(g=>[g.id,validFor(g)]));
-  const allPicks=future.flatMap(g=>(picks.get(g.id)||[]).map(p=>({game:g,p})))
-    .sort((a,b)=>(Number(b.p.pom_value)||0)-(Number(a.p.pom_value)||0));
-  const distinct=[],taken=new Set();
-  const gameSides=new Set(),playerSides=new Set();
-  for(const p of allPicks){
-    const cls=String(p.p.market_class||"");
-    const key=p.game.id+"|"+cls;
-    const playerKey=[p.game.id,p.p.participant,p.p.market_key||p.p.market,p.p.threshold].join("|");
-    if(cls==="PLAYER_PROP"&&playerSides.has(playerKey))continue;
-    if(cls==="PLAYER_PROP")playerSides.add(playerKey);
-    if(cls!=="PLAYER_PROP"&&gameSides.has(key))continue;
-    if(cls!=="PLAYER_PROP")gameSides.add(key);
-    distinct.push(p);taken.add(p.game.id);if(distinct.length===20)break;
-  }
-  const pending=future.filter(g=>!taken.has(g.id)).slice(0,20-distinct.length);
-  const slots=[...distinct.map(x=>({...x,approved:true})),...pending.map((game,i)=>({game,watchMarket:gameLabels[(i+distinct.length)%4][1]}))];
-  const marketText=p=>[p.participant||p.selection||p.pick||"",p.side||"",p.market||p.market_class||"",p.threshold==null?"":String(p.threshold),p.book||p.market_source,p.price==null?"":"price "+p.price,"LJPC "+Number(p.ljpc).toFixed(1)+"%",Number.isFinite(Date.parse(p.retrieved_at||""))?"Quote "+formattedDay(new Date(p.retrieved_at))+" "+formattedTime(new Date(p.retrieved_at)):""].filter(Boolean).join(" • ");
+  const slateDay=future.length ? pacificDay(new Date(future[0].start)) : day;
+  const slate=future.filter(g=>pacificDay(new Date(g.start))===slateDay);
+  const isPlayerProp=p=>p.market_class==="PLAYER_PROP"&&Boolean(String(p.participant||"").trim());
+  const rankedProps=slate.flatMap(game=>(picks.get(game.id)||[])
+    .filter(isPlayerProp).map(p=>({game,p})))
+    .sort((a,b)=>(Number(b.p.pom_value)||0)-(Number(a.p.pom_value)||0)||b.p.ljpc-a.p.ljpc);
+  const rankedPlayers=new Set();
+  const twentyProps=rankedProps.filter(({p})=>{
+    const player=teamKey(p.participant);
+    if(rankedPlayers.has(player))return false;
+    rankedPlayers.add(player);
+    return true;
+  }).slice(0,20);
+  const winners=new Map(future.map(g=>[g.id,(picks.get(g.id)||[])
+    .filter(p=>p.market_class==="GAME_ML"&&String(p.participant||p.selection||"").trim()&&
+      [g.home,g.away].some(t=>[t.display_name,t.abbreviation,t.short_display_name]
+        .some(name=>name&&canonicalTeam(name)===canonicalTeam(p.participant||p.selection))))
+    .sort((a,b)=>b.ljpc-a.ljpc||b.pom_value-a.pom_value)[0]]));
+  const marketText=p=>{
+    const participant=p.participant||p.selection||p.pick||"";
+    const price=Number(p.price);
+    const odds=(price>=100?"+":"")+p.price;
+    const line=p.threshold??p.current_line;
+    const selection=p.market_class==="GAME_ML"?participant:[participant,p.market,p.side,line].filter(v=>v!=null&&v!=="").join(" ");
+    const observed=Date.parse(p.retrieved_at||p.market_observed_at_pt||"");
+    const quoteTime=Number.isFinite(observed)?"Quote "+formattedDay(new Date(observed))+" "+formattedTime(new Date(observed)):"";
+    return [selection,"LJPC "+Number(p.ljpc).toFixed(1)+"%",odds,p.book||p.market_source,quoteTime].filter(Boolean).join(" • ");
+  };
   const marketEvidence=g=>{
     const m=g.board?.game_markets||[];
     if(boardAgeHours>8||!(g.start>stamp))return "";
@@ -176,21 +187,25 @@
   };
   const pc=g=>proba(g)?'<span class="nba-predictor">ESPN matchup projection: '+esc(proba(g).favorite)+" "+proba(g).percentage.toFixed(1)+'% (NOT LJPC)</span>':"ESPN forecast unavailable";
   const marketRows=g=>gameLabels.map(([k,label])=>{
-    const p=(picks.get(g.id)||[]).find(x=>String(x.market_class||"").toUpperCase()===k);
+    const p=k==="GAME_ML"?winners.get(g.id):(picks.get(g.id)||[]).find(x=>String(x.market_class||"").toUpperCase()===k);
     return '<div class="nba-market"><span>'+esc(label)+'</span><b>'+(p?esc(marketText(p)):k==="GAME_ML"?pc(g)+" • No evaluated bookmaker pick":"Exact side and line not verified")+'</b></div>';
   }).join("");
   const gameCard=g=>{
     const start=new Date(g.start), live=(g.start<=stamp);
-    const playerPicks=(picks.get(g.id)||[]).filter(p=>p.market_class==="PLAYER_PROP");
+    const playerPicks=(picks.get(g.id)||[]).filter(isPlayerProp).slice(0,6);
     const playerCount=playerPicks.length;
     const playerRows=playerPicks.map(p=>'<div class="nba-player-prop">'+esc(marketText(p))+'</div>').join("");
-    return '<article class="nba-qc-card" data-event-id="'+esc(g.id)+'"><div class="nba-card-head"><div><small>'+esc(formattedDay(start))+' • '+esc(formattedTime(start))+' • ID '+esc(g.id)+'</small><h3>'+humanMatch(g)+'</h3></div><span class="nba-state">'+(live?"TIPOFF PASSED — STATUS NOT LIVE-VERIFIED":"PREGAME")+'</span></div><div class="nba-markets">'+marketRows(g)+'</div>'+marketEvidence(g)+(playerRows?'<h4>Evaluated player props</h4>'+playerRows:'')+'<div class="nba-meta">Evaluated player props: '+playerCount+' • Game-side LJPC: '+(picks.get(g.id)?.filter(p=>p.market_class!=="PLAYER_PROP").length||0)+' • Schedule: '+esc(g.source)+'</div></article>';
+    return '<article class="nba-qc-card" data-event-id="'+esc(g.id)+'"><div class="nba-card-head"><div><small>'+esc(formattedDay(start))+' • '+esc(formattedTime(start))+' • ID '+esc(g.id)+'</small><h3>'+humanMatch(g)+'</h3></div><span class="nba-state">'+(live?"TIPOFF PASSED — STATUS NOT LIVE-VERIFIED":"PREGAME")+'</span></div><div class="nba-markets">'+marketRows(g)+'</div>'+marketEvidence(g)+(playerRows?'<h4>LEGZ Player Hot Top</h4>'+playerRows:'<p class="nba-muted">No verified player props published for this matchup.</p>')+'<div class="nba-meta">Evaluated player props: '+playerCount+' • Game-side LJPC: '+(picks.get(g.id)?.filter(p=>p.market_class!=="PLAYER_PROP").length||0)+' • Schedule: '+esc(g.source)+'</div></article>';
   };
-  const twentyCard=(x,i)=>'<div class="nba-piece-item"><strong>#'+(i+1)+'</strong><div><b>'+humanMatch(x.game)+'</b><small>'+esc(formattedDay(new Date(x.game.start)))+' • '+esc(formattedTime(new Date(x.game.start)))+'</small><div>'+(x.approved?'<span class="nba-approved">'+esc(marketText(x.p))+'</span>':'<b>'+esc(x.watchMarket)+'</b> • <span class="nba-muted">Market / line / LJPC pending</span>')+'</div></div></div>';
-  const warning=source.status==="FALLBACK_BOARD"?"ESPN schedule fetch unavailable — rolling-board fallback only":sourceFresh?"ESPN schedule refreshed "+esc(source.generated_at_utc):"ESPN schedule snapshot aging — verify today's slate";
-  const top='<section class="section nba-live-intel"><div class="section-head"><h2>NBA CURRENT SLATE &amp; MARKET READINESS</h2><span class="nba-muted">'+esc(warning)+'</span></div><p>'+esc(season.season)+' '+esc(season.phase)+'. '+today.length+' scheduled games dated today (Pacific) • '+future.length+' upcoming fixtures in loaded window. ESPN forecasts and unverified market quotes are context, not L&J predictions.</p><div class="nba-banner"><b>'+distinct.length+'/20 verified LJPC selections.</b> No player prop or game-side probability is fabricated. Current sports data ≠ current betting lines.</div></section>';
-  const twenty='<section class="section nba-piece"><div class="section-head"><h2>NBA 20 PIECE</h2><span class="nba-muted">'+distinct.length+'/20 evaluated and source-verified; '+pending.length+' watchlist opportunities</span></div><p>'+(distinct.length?"Evaluated entries are sorted by POM; other slots remain research watchlist entries.":"WATCHLIST ONLY — "+slots.length+" future games; evaluated markets are unavailable.")+'</p><div class="nba-piece-grid">'+slots.map(twentyCard).join("")+'</div></section>';
-  const qc='<section class="section nba-current-qc"><div class="section-head"><h2>PER-GAME NBA QUICKIE CARDS</h2><span class="nba-muted">'+games.length+' fixtures (including the last three hours)</span></div><p>Winner, total, spread and winning-margin markets are tracked per game. Only verified markets with current model evaluations show LJPC.</p><div class="nba-qc-grid">'+games.map(gameCard).join("")+'</div></section>';
+  const quote=p=>'<span class="nba-approved">'+esc(marketText(p))+'</span>';
+  const gameTime=g=>esc(formattedDay(new Date(g.start)))+' • '+esc(formattedTime(new Date(g.start)));
+  const summaryCard=(g,headline,detail,rank="")=>'<article class="nba-piece-item">'+(rank?'<strong>'+rank+'</strong>':'')+'<div><b>'+headline+'</b><small>'+gameTime(g)+'</small><div>'+detail+'</div></div></article>';
+  const warning=source.status==="FALLBACK_BOARD"?"Schedule fallback is unverified":sourceFresh?"ESPN schedule refreshed "+source.generated_at_utc:"ESPN schedule snapshot aging";
+  const slateLabel=slate.length ? formattedDay(new Date(slate[0].start)) : "No upcoming slate loaded";
+  const top='<section class="section nba-live-intel"><div class="section-head"><h2>NBA CURRENT SLATE</h2><span class="nba-muted">'+esc(warning)+'</span></div><p>'+esc(season.season)+' '+esc(season.phase)+'. '+today.length+' games dated today (Pacific). The 20 Piece and Game Winners show the next slate with upcoming games.</p></section>';
+  const twenty='<section class="section nba-piece" aria-labelledby="nba-piece-title"><div class="section-head"><h2 id="nba-piece-title">NBA 20 PIECE · PLAYER PROPS</h2><span class="nba-muted">'+esc(slateLabel)+' • '+twentyProps.length+'/20 verified player props</span></div>'+(twentyProps.length?'<div class="nba-piece-grid">'+twentyProps.map(({game,p},i)=>summaryCard(game,esc(p.participant),humanMatch(game)+'<br>'+quote(p),'#'+(i+1))).join("")+'</div>':'<div class="nba-banner">No verified, evaluated NBA player props are published for this slate.</div>')+'</section>';
+  const gameWinners='<section class="section nba-winners" aria-labelledby="nba-winners-title"><div class="section-head"><h2 id="nba-winners-title">NBA GAME WINNERS</h2><span class="nba-muted">'+esc(slateLabel)+' • '+slate.filter(g=>winners.get(g.id)).length+'/'+slate.length+' evaluated winners</span></div><p>Pregame moneyline picks with verified quotes. ESPN forecasts are labeled separately when available.</p>'+(slate.length?'<div class="nba-piece-grid">'+slate.map(g=>summaryCard(g,humanMatch(g),winners.get(g.id)?quote(winners.get(g.id)):'<span class="nba-muted">No evaluated winner</span><br>'+pc(g))).join("")+'</div>':'<p class="nba-muted">No upcoming matchups loaded.</p>')+'</section>';
+  const qc='<section class="section nba-current-qc" aria-labelledby="nba-qc-title"><div class="section-head"><h2 id="nba-qc-title">PER-GAME NBA QUICKIE CARDS</h2><span class="nba-muted">'+games.length+' matchups in the loaded schedule</span></div><p>Each matchup has its own card with game markets and available evaluated player props.</p>'+(games.length?'<div class="nba-qc-grid">'+games.map(gameCard).join("")+'</div>':'<p class="nba-muted">No matchups loaded.</p>')+'</section>';
   const anchor=root.querySelector('.lsi-readiness-section')||root.querySelector('.hero');
   if(!anchor)return;
   // Stale September headliners and game QCs are superseded by this sourced slate.
@@ -200,18 +215,18 @@
     const h=x.querySelector('.section-head h2')?.textContent||"";
     if(/PER-GAME QUICKIES|NBA QUICKIE|NBA DAILY PREDICTIONS/i.test(h))x.remove();
   });
-  anchor.insertAdjacentHTML("afterend",top+twenty+qc);
+  anchor.insertAdjacentHTML("afterend",top+twenty+gameWinners+qc);
   const statusStamp=root.querySelector('.sport-micro-status .section-head .muted')||root.querySelector('.current-status-section .section-head .muted');
   if(statusStamp)statusStamp.textContent='Prediction snapshot: '+(board.generated_at_utc||'unavailable');
   const statusCount=root.querySelector('.sport-micro-status .micro-status-bar')||root.querySelector('.current-status-section .chip');
-  if(statusCount)statusCount.textContent='NBA • '+season.phase+' • '+games.length+' game QCs • '+distinct.length+'/20 verified selections';
+  if(statusCount)statusCount.textContent='NBA • '+season.phase+' • '+games.length+' game QCs • '+twentyProps.length+'/20 verified player props';
   const footer=root.querySelector('.footer');
   if(footer)footer.textContent='LEGZ & JINX • Prediction snapshot '+(board.generated_at_utc||'unavailable')+' • LJPC is an estimated hit probability';
   const meta=root.querySelector('.topbar .meta');
   if(meta)meta.textContent="NBA "+season.season+" • "+season.phase+" • ESPN SNAPSHOT "+(source.generated_at_utc||"UNAVAILABLE");
   const css=document.createElement("style");
-  css.textContent='.nba-banner{border:1px solid rgba(95,231,155,.32);border-radius:10px;padding:10px;margin-top:10px;background:rgba(95,231,155,.07)}.nba-muted,.nba-qc-card small,.nba-piece-item small,.nba-meta{font-size:.78rem;color:#abb8cb}.nba-piece-grid,.nba-qc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}.nba-piece-item{display:flex;gap:12px;padding:13px;border:1px solid rgba(255,255,255,.13);border-radius:13px;background:rgba(255,255,255,.035)}.nba-piece-item>strong{color:#ffd966}.nba-piece-item small{display:block;margin:3px 0}.nba-approved{color:#90e8af}.nba-qc-card{border:1px solid rgba(255,255,255,.14);border-radius:15px;background:rgba(0,0,0,.16);padding:14px}.nba-card-head{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}.nba-card-head h3{font-size:1.02rem;margin:5px 0 9px}.nba-state{font-size:.64rem;color:#ffd966;border:1px solid #b79550;border-radius:7px;padding:5px}.nba-market{display:grid;grid-template-columns:42% auto;gap:9px;padding:9px 0;border-top:1px solid rgba(255,255,255,.08);font-size:.79rem}.nba-market b{font-weight:600;color:#cad2db}.nba-source-note{font-size:.73rem;color:#ceb786;margin:9px 0;padding:8px;background:rgba(236,187,97,.06)}.nba-predictor{color:#c2d4eb}.nba-meta{margin-top:9px}@media(max-width:640px){.nba-piece-grid,.nba-qc-grid{grid-template-columns:1fr}.nba-market{grid-template-columns:1fr}.nba-card-head{flex-direction:column}}';
+  css.textContent='.nba-banner{border:1px solid rgba(95,231,155,.32);border-radius:10px;padding:10px;margin-top:10px;background:rgba(95,231,155,.07)}.nba-muted,.nba-qc-card small,.nba-piece-item small,.nba-meta{font-size:.78rem;color:#abb8cb}.nba-piece-grid,.nba-qc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}.nba-piece-item{display:flex;gap:12px;padding:13px;border:1px solid rgba(255,255,255,.13);border-radius:13px;background:rgba(255,255,255,.035)}.nba-piece-item>strong{color:#ffd966}.nba-piece-item small{display:block;margin:3px 0}.nba-approved{color:#90e8af}.nba-qc-card{border:1px solid rgba(255,255,255,.14);border-radius:15px;background:rgba(0,0,0,.16);padding:14px}.nba-card-head{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}.nba-card-head h3{font-size:1.02rem;margin:5px 0 9px}.nba-state{font-size:.64rem;color:#ffd966;border:1px solid #b79550;border-radius:7px;padding:5px}.nba-market{display:grid;grid-template-columns:42% auto;gap:9px;padding:9px 0;border-top:1px solid rgba(255,255,255,.08);font-size:.79rem}.nba-market b{font-weight:600;color:#cad2db}.nba-source-note{font-size:.73rem;color:#ceb786;margin:9px 0;padding:8px;background:rgba(236,187,97,.06)}.nba-predictor{color:#c2d4eb}.nba-meta{margin-top:9px}@media(max-width:640px){.nba-piece-grid,.nba-qc-grid{grid-template-columns:1fr}.nba-market{grid-template-columns:1fr}.nba-card-head{flex-direction:column}}';
   document.head.appendChild(css);
-  window.LJ_NBA_QC_STATUS={generatedAt:source.generated_at_utc||null,sourceStatus:source.status,sourceFresh,loadedGames:games.length,todayGames:today.length,upcomingGames:future.length,watchlistSlots:slots.length,verifiedLJPC:distinct.length,boardAgeHours:Number.isFinite(boardAgeHours)?Number(boardAgeHours.toFixed(1)):null};
+  window.LJ_NBA_QC_STATUS={generatedAt:source.generated_at_utc||null,sourceStatus:source.status,sourceFresh,loadedGames:games.length,todayGames:today.length,upcomingGames:future.length,watchlistSlots:0,verifiedLJPC:twentyProps.length,boardAgeHours:Number.isFinite(boardAgeHours)?Number(boardAgeHours.toFixed(1)):null};
 })();
 

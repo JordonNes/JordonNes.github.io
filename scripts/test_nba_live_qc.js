@@ -69,15 +69,15 @@ async function evaluate(at,validSource=true,customBoard=null){
   assert.equal(s.todayGames,14,'All fourteen Nov 4 games must be on the NBA page');
   assert.ok(s.loadedGames>=14,'Schedule is populated');
   assert.equal(s.verifiedLJPC,0,'ESPN forecast is NOT LJPC');
-  assert.equal(s.watchlistSlots,20,'20 unique game watchlist entries');
+  assert.equal(s.watchlistSlots,0,'The 20 Piece does not fill empty prop slots with games');
   assert.equal((t.html.match(/class="nba-qc-card"/g)||[]).length,s.loadedGames);
-  assert.equal((t.html.match(/class="nba-piece-item"/g)||[]).length,20);
+  assert.equal((t.html.match(/class="nba-piece-item"/g)||[]).length,s.todayGames);
   assert.match(t.html,/GAME/); // game market labels
   assert.match(t.html,/Game winner \/ Moneyline/);
   assert.match(t.html,/Total points/);
   assert.match(t.html,/Point spread/);
   assert.match(t.html,/Winning margin/);
-  assert.match(t.html,/ESPN forecasts and unverified market quotes are context, not L&J predictions/);
+  assert.match(t.html,/No verified, evaluated NBA player props are published for this slate/);
   assert.match(t.html,/Philadelphia 76ers @ Detroit Pistons/);
   assert.match(t.html,/Los Angeles Lakers @ Sacramento Kings/);
   assert.match(t.meta,/REGULAR SEASON ACTIVE/);
@@ -103,8 +103,21 @@ async function evaluate(at,validSource=true,customBoard=null){
   }]};
   const withPick=await evaluate('2026-11-04T19:55:00Z',true,freshBoard);
   assert.equal(withPick.status.verifiedLJPC,1,'One exact evaluated POM can enter 20 Piece');
-  assert.equal(withPick.status.watchlistSlots,20,'A partial verified slate must retain 20 visible opportunity slots');
+  assert.equal(withPick.status.watchlistSlots,0,'A partial verified slate shows only the actual props');
   assert.match(withPick.html,/Verified Test Player/);
+  const mixed=JSON.parse(JSON.stringify(freshBoard));
+  mixed.events[0].game_markets.push(
+    {...good,market_class:'GAME_ML',market:'Game Winner',participant:'Detroit Pistons',ljpc:55,pom_value:90},
+    {...good,market_class:'GAME_ML',market:'Game Winner',participant:'Philadelphia 76ers',ljpc:62,pom_value:80}
+  );
+  const separated=await evaluate('2026-11-04T19:55:00Z',true,mixed);
+  const section=(name)=>separated.html.match(new RegExp('<section class="section '+name+'".*?</section>'))[0];
+  assert.equal(separated.status.verifiedLJPC,1);
+  assert.match(section('nba-piece'),/Verified Test Player/);
+  assert.doesNotMatch(section('nba-piece'),/Game Winner|LJPC 62\.0%/);
+  assert.match(section('nba-winners'),/Philadelphia 76ers.*LJPC 62\.0%/);
+  assert.doesNotMatch(section('nba-winners'),/Verified Test Player|LJPC 55\.0%/);
+  assert.match(section('nba-current-qc'),/LJPC 62\.0%.*Verified Test Player/);
   const providerBoard=JSON.parse(JSON.stringify(freshBoard));
   providerBoard.events[0].source_event_id='PL-provider';
   providerBoard.events[0].away='Philadelphia 76ers';providerBoard.events[0].home='Detroit Pistons';
@@ -131,6 +144,6 @@ async function evaluate(at,validSource=true,customBoard=null){
   invalidBoard.events[0].props[0].market_verified=false;
   const invalid=await evaluate('2026-11-04T19:55:00Z',true,invalidBoard);
   assert.equal(invalid.status.verifiedLJPC,0,'Never promote a non-verified threshold to LJPC');
-  console.log('PASS NBA game QCs: 14 game-day events, 20-slot queue, verified POM promotion, rollover and source-outage safeguards.');
+  console.log('PASS NBA game QCs: separate player props and winners, verified POM promotion, rollover and source-outage safeguards.');
 })().catch(e=>{console.error(e);process.exit(1)});
 
