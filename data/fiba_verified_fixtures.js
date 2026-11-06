@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-05",
+  "verifiedOn": "2026-11-06",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
