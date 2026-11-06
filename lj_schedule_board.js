@@ -36,6 +36,21 @@ export function scheduleBoard(board, snapshot, league, now=Date.now()){
       &&p.evaluation_material_hash&&p.source_snapshot_ids?.length
       &&(p.book||p.market_source)&&Number.isFinite(Number(p.price))&&Number(p.price)!==0
       &&Number(p.ljpc)>0&&Number(p.ljpc)<=100;
+    const moneylines=new Map();
+    const otherMarkets=[];
+    for(const p of matching.flatMap(e=>e.game_markets||[]).filter(verified)){
+      if(p.market_class!=="GAME_ML"){
+        otherMarkets.push(p);
+        continue;
+      }
+      const label=[p.selection||p.participant];
+      const side=matches(awayKeys,label)?away:matches(homeKeys,label)?home:null;
+      if(!side) continue;
+      const prior=moneylines.get(side.display_name);
+      if(!prior||Number(p.ljpc)>Number(prior.ljpc)){
+        moneylines.set(side.display_name,{...p,participant:side.display_name,selection:side.display_name});
+      }
+    }
     events.push({
       league,source_event_id:String(fixture.event_id),commence_time:fixture.start_utc,
       away:away.display_name,home:home.display_name,source:"ESPN schedule",
@@ -43,8 +58,7 @@ export function scheduleBoard(board, snapshot, league, now=Date.now()){
       away_aliases:[away.abbreviation,away.short_display_name].filter(Boolean),
       home_aliases:[home.abbreviation,home.short_display_name].filter(Boolean),
       props:matching.flatMap(e=>e.props||[]).filter(p=>p.market_class==="PLAYER_PROP"&&verified(p)),
-      game_markets:matching.flatMap(e=>e.game_markets||[]).filter(p=>verified(p)&&
-        (p.market_class!=="GAME_ML"||matches([...awayKeys,...homeKeys],[p.selection||p.participant]))),
+      game_markets:[...moneylines.values(),...otherMarkets],
     });
   }
   return {...board,events:[...(board.events||[]).filter(e=>e.league!==league),...events]};
@@ -63,7 +77,8 @@ if(typeof document!=="undefined"){
     window.LJ_FUTURE_MARKET_BOARD=scheduleBoard(window.LJ_FUTURE_MARKET_BOARD||{},{events:[]},league);
   }
   window.LJ_SCHEDULE_LEAGUE=league;
-  await import("./lsi_registry_bridge.js?v=20261106-schedule1");
+  window.LJApplyRegistry();
+  window.LJ_Season_Status.refresh();
   window.renderLJSport(league);
   await import("./recaplink.js?v=20260917-microstatus1");
   await import("./quickielink.js?v=20260917-master1");

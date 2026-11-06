@@ -1,6 +1,10 @@
 /* LEGZ & JINX — canonical Prediction Registry + per-game QC prop bridge.
    Data-only bridge. It may populate QC ticket content, but it does not change the locked QC layout. */
-(()=>{
+(function applyRegistry(){
+  if(document.documentElement?.dataset.scheduleLeague&&!window.LJ_SCHEDULE_LEAGUE){
+    window.LJApplyRegistry=applyRegistry;
+    return;
+  }
   const D=window.LJ_DATA, R=window.LSI_PR||{predictions:[]}, RAW=window.LJ_QC_PROP_BOARD, B=window.LJ_FUTURE_MARKET_BOARD||RAW;
   if(!D?.sports) return;
   if(!Array.isArray(R.predictions)) R.predictions=[];
