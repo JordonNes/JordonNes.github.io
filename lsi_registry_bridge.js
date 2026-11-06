@@ -397,7 +397,7 @@
         legzComponent(p),jinxComponent(p),league
       ],`PROP|${key}`,pv);
     }
-    for(const p of (gameByLeague[league]||[])){
+    for(const p of (league===window.LJ_SCHEDULE_LEAGUE?[]:gameByLeague[league]||[])){
       const lj=formalLjpcOf(p);
       const hasCurrentOffer=p?.price!==null&&p?.price!==undefined&&p?.price!==''
         && (p?.provenance||[]).some(x=>x?.source);
@@ -411,7 +411,7 @@
         `${price} • MONEYLINE POM • POM Value ${pomValueOf(p).toFixed(1)} • ${source(p)}`
       ],`ML|${norm(p.event_id)}|${norm(participant)}`,pomValueOf(p));
     }
-    for(const e of (B?.events||[]).filter(x=>x.league===league&&isUpcomingEvent(x))){
+    for(const e of (B?.events||[]).filter(x=>x.league===league&&league!==window.LJ_SCHEDULE_LEAGUE&&isUpcomingEvent(x))){
       for(const g of (e.game_markets||[]).filter(isCurrentGameMl)){
         const participant=g.selection||g.participant;
         const price=priceLabel(g.price,g.book||'');
@@ -560,13 +560,16 @@
 
   const boardCandidatesByLeague=new Map(),boardMatchCache=new Map();
   function findBoardEvent(league,q){
-    const key=JSON.stringify([league,norm(q.away),norm(q.home)]);
+    const key=JSON.stringify([league,q._propEventId,norm(q.away),norm(q.home)]);
     if(boardMatchCache.has(key)) return boardMatchCache.get(key);
     const result=findBoardEventUncached(league,q);
     boardMatchCache.set(key,result);
     return result;
   }
   function findBoardEventUncached(league,q){
+    if(league===window.LJ_SCHEDULE_LEAGUE){
+      return (B?.events||[]).find(e=>e.league===league&&e.source_event_id===q._propEventId)||null;
+    }
     let candidates=boardCandidatesByLeague.get(league);
     if(!candidates){ candidates=[
       ...(B?.events||[]).filter(e=>e.league===league && isUpcomingEvent(e) && isCurrentNflWeekEvent(e)).map(e=>({...e,_priority:0})),
@@ -989,7 +992,8 @@
     // Never let an empty or partial acquisition board erase the published DP slate.
     // The refresh layer is the durable weekly/day schedule; the registry bridge only
     // enriches it with newly acquired events/props/odds.
-    const existing=Array.isArray(s.qcs)?s.qcs:[];
+    const scheduleBound=league===window.LJ_SCHEDULE_LEAGUE;
+    const existing=!scheduleBound&&Array.isArray(s.qcs)?s.qcs:[];
     // Sanitize every retained pregame shell, even when current acquisition has no
     // matching board event. Game-side ML/NRFI/YRFI content is never a player prop.
     const sanitizeLegacyQc=q=>{
@@ -1051,6 +1055,7 @@
       const bid=String(b?._propEventId||B.ev?.source_event_id||B.ev?.event_id||'').trim().toLowerCase();
       // Provider/canonical event identity is stronger than display orientation.
       // Some sources reverse home/away or vary doubles-team ordering.
+      if(scheduleBound) return Boolean(aid&&aid===bid);
       if(aid&&bid&&aid===bid) return true;
       const awayMatch=A.away.some(x=>aliasHit(x,B.away)) || B.away.some(x=>aliasHit(x,A.away));
       const homeMatch=A.home.some(x=>aliasHit(x,B.home)) || B.home.some(x=>aliasHit(x,A.home));
@@ -1142,7 +1147,7 @@
     s.qcs=deduped;
     if(league==="NFL") s.qcTitle="PER-GAME QUICKIES — NFL CURRENT TUESDAY–MONDAY WEEK";
 
-    if(league==="NHL"){
+    if(league==="NHL"&&!scheduleBound){
       s.winners=nhlDailyWinners(future);
       s._winnersFromCurrentSlate=true;
       return;
@@ -1154,6 +1159,7 @@
     const qcWinnerSeen=new Set();
     for(const q of deduped){
       const event=findBoardEvent(league,q);
+      if(scheduleBound&&league==="NHL"&&ptCalendarSerial(eventStartMs(event))!==ptCalendarSerial(nowMs)) continue;
       const confNum=Number(String(q?.conf||'').replace(/[^0-9.]/g,''));
       if(!event || !q?.winner || !Number.isFinite(confNum) || confNum<=0 || q?._winnerProvisional || !/\bML\b|MONEYLINE/i.test(String(q.winner))) continue;
       const key=String(event.source_event_id||exactKey(q));
@@ -1181,6 +1187,7 @@
     // QC set. Earlier registry/static rows remain provenance, not an alternate
     // publication path that can duplicate or override the current matchup.
     s.winners=qcWinners;
+    if(scheduleBound) s._winnersFromCurrentSlate=true;
   });
 
   window.LJ_QC_PROP_STATUS={

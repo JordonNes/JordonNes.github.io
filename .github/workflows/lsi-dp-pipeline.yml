@@ -148,6 +148,9 @@ jobs:
       - name: Merge incremental market-history delta into runtime base
         run: python scripts/lsi_market_history_delta.py merge
       - name: Reuse durable game lines before detailed prop acquisition
+        # A rejected preliminary board leaves the prior board intact. Fresh
+        # acquisition can still restore coverage before the final publication gate.
+        continue-on-error: true
         run: |
           # The hourly near-event gate owns high-frequency due checks. Before any
           # detailed prop sweep, reuse the durable last-known-good game-line artifact

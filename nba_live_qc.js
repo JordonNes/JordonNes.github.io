@@ -75,30 +75,18 @@
     const key=eventKey(b.commence_time,canonicalTeam(b.away,b.away_aliases),canonicalTeam(b.home,b.home_aliases));
     if(!boardByMatch.has(key))boardByMatch.set(key,[]);boardByMatch.get(key).push(b);
   }
-  const scheduleKeys=new Set(source.events.map(e=>eventKey(e.start_utc,
-    canonicalTeam((e.teams||[]).find(t=>t.home_away==='away')?.display_name),
-    canonicalTeam((e.teams||[]).find(t=>t.home_away==='home')?.display_name))));
-  if(boardAgeHours>=-1/60&&boardAgeHours<=6)for(const b of boardEvents){
-    const away=canonicalTeam(b.away,b.away_aliases),home=canonicalTeam(b.home,b.home_aliases);
-    const key=eventKey(b.commence_time,away,home),id=String(b.source_event_id||b.event_id||'');
-    if(!id||scheduleKeys.has(key)||!safety.future(b)||!b.away||!b.home)continue;
-    if(!(/^(?:PL-\d+|\d+)$/.test(id))||!(b.game_markets||[]).length)continue;
-    if(![...teamAliases.values()].includes(away)||![...teamAliases.values()].includes(home))continue;
-    scheduleKeys.add(key);
-    source.events.push({event_id:id,start_utc:b.commence_time,source:b.source||'LJDP sourced game inventory',status:'SCHEDULED',teams:[
-      {home_away:'away',display_name:b.away},{home_away:'home',display_name:b.home}
-    ]});
-  }
   const joinedBoard=e=>{
     const home=(e.teams||[]).find(t=>t.home_away==='home')||{},away=(e.teams||[]).find(t=>t.home_away==='away')||{};
-    const matches=[boardMap.get(String(e.event_id)),...(boardByMatch.get(eventKey(e.start_utc,canonicalTeam(away.display_name),canonicalTeam(home.display_name)))||[])].filter(Boolean);
+    const matched=boardByMatch.get(eventKey(e.start_utc,canonicalTeam(away.display_name),canonicalTeam(home.display_name)))||[];
+    const byId=boardMap.get(String(e.event_id));
+    const matches=byId&&!byId.away&&!byId.home&&Date.parse(byId.commence_time)===Date.parse(e.start_utc)?[...matched,byId]:matched;
     return matches.length?{source_event_ids:matches.map(b=>String(b.source_event_id||b.event_id||'')),
       props:matches.flatMap(b=>b.props||[]),game_markets:matches.flatMap(b=>b.game_markets||[])}:null;
   };
   const sourceTime=Date.parse(source.generated_at_utc||"");
   const ageHours=Number.isFinite(sourceTime)?(stamp-sourceTime)/3600000:Infinity;
   const sourceFresh=source.status==="LOADED"&&ageHours>=0&&ageHours<=12;
-  const seen=new Set();
+  const seen=new Set(),seenMatchups=new Set();
   const games=source.events.map(e=>{
     const start=Date.parse(e.start_utc||"");
     const id=String(e.event_id||"");
@@ -106,8 +94,9 @@
     const away=(e.teams||[]).find(x=>x.home_away==="away")||{};
     return {id,start,home,away,predictor:e.predictor||null,providerStatus:e.status||"",source:e.source||"ESPN_PUBLIC",board:joinedBoard(e)};
   }).filter(e=>e.id&&Number.isFinite(e.start)&&e.start>stamp-3*3600000&&e.home.display_name&&e.away.display_name&&!seen.has(e.id)&&seen.add(e.id))
-    .sort((a,b)=>a.start-b.start||a.id.localeCompare(b.id));
-  const future=games.filter(g=>g.start>stamp);
+    .sort((a,b)=>a.start-b.start||a.id.localeCompare(b.id))
+    .filter(e=>{const key=eventKey(e.start,...[canonicalTeam(e.away.display_name),canonicalTeam(e.home.display_name)].sort());return !seenMatchups.has(key)&&seenMatchups.add(key);});
+  const future=games.filter(g=>g.start>stamp&&!/POSTPONED|CANCELED|SUSPENDED|DELAYED|FINAL|IN_PROGRESS/.test(g.providerStatus));
   const day=pacificDay(now);
   const today=games.filter(g=>pacificDay(new Date(g.start))===day);
   const humanMatch=g=>esc(g.away.display_name)+" @ "+esc(g.home.display_name);

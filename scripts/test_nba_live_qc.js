@@ -129,6 +129,13 @@ async function evaluate(at,validSource=true,customBoard=null){
   assert.equal(wrongTime.status.todayGames,14,'A different tipoff cannot attach to today’s matchup');
   providerBoard.events[0].source_event_id='KX-NBA-CLOSING-TIME';
   providerBoard.events[0].game_markets=[{...good,market_class:'GAME_ML'}];
+  const reversed=JSON.parse(JSON.stringify(freshBoard));
+  reversed.events.push({...reversed.events[0],source_event_id:'PL-12345',
+    away:'Detroit Pistons',home:'Philadelphia 76ers',props:[],
+    game_markets:[{...good,market_class:'GAME_ML',participant:'Detroit Pistons'}]});
+  const authoritative=await evaluate('2026-11-04T19:55:00Z',true,reversed);
+  assert.equal(authoritative.status.todayGames,14,'Reversed provider rows cannot add a second QC');
+  assert.equal(authoritative.status.verifiedLJPC,1);
   const closingTime=await evaluate('2026-11-04T19:55:00Z',true,providerBoard);
   assert.equal(closingTime.status.loadedGames,24,'Exchange closing times cannot create extra scheduled games');
 

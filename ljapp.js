@@ -576,9 +576,9 @@
   function visibleQcRows(rows){
     return (rows||[]).filter(r=>qcStatusOnly(r)||qcHasPublishedPregame(r));
   }
-  function qcs(title,rows){
-    const visible=visibleQcRows(rows);
-    if(!visible.length) return "";
+  function qcs(title,rows,showSchedule=false){
+    const visible=showSchedule?(rows||[]):visibleQcRows(rows);
+    if(!visible.length) return showSchedule?'<section class="section"><div class="section-head"><h2>PER-GAME QUICKIE CARDS</h2></div><p>No upcoming matchups in the published schedule.</p></section>':"";
     return `<section class="section"><div class="section-head"><h2>${esc(title || "PER-GAME QUICKIES")}</h2><span class="muted">Published pregame QCs remain visible through actual kickoff • once live, frozen JINX game odds + locked HOT TOP + box score remain</span></div><div class="qc-list">${visible.map((r,i)=>qcRow(r,i)).join("")}</div>${rules()}<div class="layout-seal">QC PRESENTATION LOCK • published pregame intelligence persists until the event actually starts</div></section>`;
   }
   function nflDayBucket(row){
@@ -965,7 +965,7 @@
     const eid=row.dataset.eventId;
     if(eid){
       const direct=events.find(e=>String(e.id)===String(eid));
-      if(direct) return direct;
+      if(direct||ACTIVE_SPORT_KEY===window.LJ_SCHEDULE_LEAGUE) return direct||null;
     }
     const away=row.dataset.away,home=row.dataset.home;
     return events.find(e=>{
@@ -1262,12 +1262,14 @@
     if (!s) throw new Error(`Unknown L&J sport: ${key}`);
     ensureGameWinners(s);
     document.title = `LEGZ & JINX — ${s.title}`;
-    const quickies = s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : key==="NCAA_Football" ? cfbQcs(s.qcTitle,s.qcs) : qcs(s.qcTitle,s.qcs));
+    const scheduleBound=key===window.LJ_SCHEDULE_LEAGUE;
+    const quickies = !scheduleBound&&s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : key==="NCAA_Football" ? cfbQcs(s.qcTitle,s.qcs) : qcs(scheduleBound?"PER-GAME NHL QUICKIE CARDS":s.qcTitle,s.qcs,scheduleBound));
     const headliners=headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel);
     const twentyPiece=twenty(s.twenty,s.twentyNote,false,key);
     // Sport page order is locked: L&J Headliners → 20 Piece → Per-Game QCs.
     // NFL follows the same publication architecture as every other DP page.
-    const content=`${headliners}${twentyPiece}${quickies}`;
+    const gameWinners=scheduleBound?`<section class="section"><div class="section-head"><h2>${key} GAME WINNERS</h2><span class="muted">${key==="NFL"?"Current Tuesday–Monday week":"Today's Pacific slate"}</span></div>${winners(s.winners)}</section>`:"";
+    const content=scheduleBound?`${twentyPiece}${gameWinners}${quickies}`:`${headliners}${twentyPiece}${quickies}`;
     document.getElementById("app").innerHTML = `<div class="page sport-page sport-${cls(key)}">${topbar(s.meta)}${hero(`${s.icon} ${s.kicker}`,`LEGZ & JINX — ${s.title}`,s.description,s.chips)}${nav()}${lsiPipelinePanel(key)}${content}${footer("QC layout locked")}</div>`;
     setTimeout(()=>{hydrateGameStates(key);loadLsiPipelineStatus(key);loadISpyHighlights(key);},0);
   };
