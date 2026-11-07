@@ -8,11 +8,11 @@
   "trading_enabled": false,
   "execution_verified": false,
   "net_profit_validated": false,
-  "source_rows": 340,
-  "strict_verified_rows": 340,
+  "source_rows": 355,
+  "strict_verified_rows": 355,
   "rejected_rows": 0,
   "rejection_counts": {},
-  "training_cutoff_utc": "2026-10-16T01:20:00.000Z",
+  "training_cutoff_utc": "2026-10-16T14:50:00.000Z",
   "training_tickers": [
     "KXSILVER15M-26OCT081415-15",
     "KXSILVER15M-26OCT081430-30",
@@ -253,28 +253,43 @@
     "KXSILVER15M-26OCT152030-30",
     "KXSILVER15M-26OCT152045-45",
     "KXSILVER15M-26OCT152100-00",
-    "KXSILVER15M-26OCT152115-15"
+    "KXSILVER15M-26OCT152115-15",
+    "KXSILVER15M-26OCT152130-30",
+    "KXSILVER15M-26OCT152145-45",
+    "KXSILVER15M-26OCT152200-00",
+    "KXSILVER15M-26OCT152215-15",
+    "KXSILVER15M-26OCT152230-30",
+    "KXSILVER15M-26OCT152245-45",
+    "KXSILVER15M-26OCT152300-00",
+    "KXSILVER15M-26OCT152315-15",
+    "KXSILVER15M-26OCT152330-30",
+    "KXSILVER15M-26OCT152345-45",
+    "KXSILVER15M-26OCT160945-45",
+    "KXSILVER15M-26OCT161000-00",
+    "KXSILVER15M-26OCT161015-15",
+    "KXSILVER15M-26OCT161030-30",
+    "KXSILVER15M-26OCT161045-45"
   ],
-  "training_rows": 240,
+  "training_rows": 255,
   "bins": [
     {
-      "n": 5,
+      "n": 6,
       "yes": 2
     },
     {
-      "n": 28,
-      "yes": 6
-    },
-    {
-      "n": 27,
+      "n": 29,
       "yes": 6
     },
     {
       "n": 29,
-      "yes": 9
+      "yes": 7
     },
     {
-      "n": 30,
+      "n": 32,
+      "yes": 11
+    },
+    {
+      "n": 32,
       "yes": 11
     },
     {
@@ -282,20 +297,20 @@
       "yes": 24
     },
     {
-      "n": 26,
-      "yes": 18
-    },
-    {
-      "n": 29,
-      "yes": 23
-    },
-    {
-      "n": 22,
+      "n": 27,
       "yes": 19
     },
     {
-      "n": 6,
-      "yes": 6
+      "n": 30,
+      "yes": 24
+    },
+    {
+      "n": 25,
+      "yes": 22
+    },
+    {
+      "n": 7,
+      "yes": 7
     }
   ],
   "alpha": 24,
@@ -311,25 +326,25 @@
     "audit_version": 2,
     "holdout_training_frozen": true,
     "series_ticker": "KXSILVER15M",
-    "source_samples": 340,
-    "verified_settlement_timestamp_rows": 340,
+    "source_samples": 355,
+    "verified_settlement_timestamp_rows": 355,
     "label_availability_fully_verified": true,
-    "evaluable_forecasts": 280,
+    "evaluable_forecasts": 295,
     "earliest_asof_utc": "2026-10-08T18:05:00.000Z",
-    "latest_asof_utc": "2026-10-30T20:50:00.000Z",
+    "latest_asof_utc": "2026-11-06T21:50:00.000Z",
     "historical_source_observations_only": true,
-    "tuning_samples": 180,
+    "tuning_samples": 195,
     "holdout_samples": 100,
     "selected_model": "market",
     "tuning_brier": {
-      "market": 0.197586,
-      "bucket": 0.202356,
-      "shrink85": 0.198834
+      "market": 0.19421,
+      "bucket": 0.198346,
+      "shrink85": 0.195747
     },
     "holdout_brier": {
-      "market": 0.185063,
-      "bucket": 0.1906,
-      "shrink85": 0.186268
+      "market": 0.186859,
+      "bucket": 0.19379,
+      "shrink85": 0.188026
     },
     "holdout_improvement_brier": 0,
     "improvement_95pct_block_interval": [
@@ -341,9 +356,9 @@
     "warning": "Even a historical positive locked holdout is not sufficient for live signals: forward tests, fees, liquidity, regime consistency, and risk policy remain unverified."
   },
   "warning": "Historical gate only. No live probability may be advertised as validated; prospective performance and execution economics remain unverified.",
-  "source_dataset_sha256": "b819f5b4c2824d6303714578f95f3e48cad5bf54a4d34219866e8b92fcc6842c",
-  "frozen_training_sha256": "bd716247a78686c55abc99a146aab978b0a8010f61b1cf2980773f48ab965633",
+  "source_dataset_sha256": "b810245fae02907f904fed4fd1cf50783399c339675fc7dcdddbd6f5758dbce7",
+  "frozen_training_sha256": "ef6b43705be8377e1ea692f41f53d95967a4150c7f82a88ab6993579c0243b58",
   "engine_sha256": "d54850cdfa02eb681e9fe61de93341c26e0cdda3ba0de17ccc8b370b0a1d2eb9",
-  "artifact_id": "damilola-calibration-r1-KXSILVER15M-d44a688ea245f7588dfd",
-  "built_at_utc": "2026-11-07T15:49:20.237Z"
+  "artifact_id": "damilola-calibration-r1-KXSILVER15M-37bf8eb2ce7045d3ca3f",
+  "built_at_utc": "2026-11-07T20:22:30.642Z"
 }
