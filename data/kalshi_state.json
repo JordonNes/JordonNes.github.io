@@ -1,15 +1,16 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-11-08T18:51:21.319657+00:00",
+  "checked_at_utc": "2026-11-08T21:11:13.919943+00:00",
   "status": "OK",
-  "raw_market_count": 3536,
-  "normalized_props": 250,
-  "history_rows_added": 247,
+  "raw_market_count": 4704,
+  "normalized_props": 211,
+  "history_rows_added": 157,
   "skip_reasons": {
-    "ambiguous_matchup": 29,
-    "ambiguous_participant_threshold": 98,
-    "ok": 250,
-    "unknown_sport": 3007,
+    "ambiguous_matchup": 143,
+    "ambiguous_participant_threshold": 1147,
+    "not_upcoming": 41,
+    "ok": 211,
+    "unknown_sport": 3010,
     "unsupported_market": 152
   },
   "skip_samples": {
@@ -64,58 +65,71 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
+    },
+    "not_upcoming": {
+      "ticker": "KXNHLPTS-26NOV08FLABOS-BOSCMCAVOY73-1",
+      "event_ticker": "KXNHLPTS-26NOV08FLABOS",
+      "series_ticker": "KXNHLPTS",
+      "event_title": "Florida vs Boston: Points",
+      "title": "Charlie McAvoy: 1+ points",
+      "subtitle": null,
+      "yes_sub_title": "Charlie McAvoy: 1+",
+      "primary_participant_key": "hockey_player",
+      "floor_strike": 0.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-11-08T21:00:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBHRDERBY500",
-      "KXUFCOCCUR",
-      "KXNBAH2HTEAM3PT",
-      "KXNCAAF2PT",
-      "KXNFLTEAMDPTS",
+      "KXMLBKS",
+      "KXUFCWHITEHOUSE",
+      "KXNBAPR",
+      "KXNCAAFFIRSTTDTEAM",
+      "KXNFLSEASONPASSTDS",
       "KXNHLPTS",
       "KXATPACES",
-      "KXWNBA3PTCONTEST",
-      "KXMLBSB",
-      "KXUFCWHITEHOUSE",
-      "KXNBALADDER3PT",
-      "KXNCAAFFIRSTTDTEAM",
-      "KXNFLMOSTRSHYDS",
-      "KXNHLANYGOAL",
-      "KXWTAACES",
-      "KXWNBAAST",
-      "KXMLBHRDERBYVELO",
-      "KXNBASTOCKS",
-      "KXNCAAFTEAMTO",
-      "KXNFLPASSYDSPROT",
-      "KXNHL4NATIONS",
       "KXWNBA3PT",
-      "KXMLBTOTAL",
-      "KXNBASERIESASTLEADER",
+      "KXMLBHRR",
+      "KXUFCOCCUR",
+      "KXNBAPLAYOFFPTS",
+      "KXNCAAFTOTAL",
+      "KXNFLPASSYDSH2H",
+      "KXNHLF10G",
+      "KXWTAACES",
+      "KXWNBAPTS",
+      "KXMLBHRDERBYLONGEST",
+      "KXNBAH2HPRA",
+      "KXNCAAFTOTALFG",
+      "KXNFLESCALATORREC",
+      "KXNHLGOAL",
+      "KXWNBA3PTCONTEST",
+      "KXMLBASGHR",
+      "KXNBASERIES3PMLEADER",
       "KXNCAAFTEAMRSHATT",
-      "KXNFLESCALATORRECYDS",
-      "KXNHLTEAMTOTAL",
-      "KXWNBA40PTS",
-      "KXMLBPLAYOFFHRS",
-      "KXNBAREBPROT",
-      "KXNCAAFTEAMFG",
-      "KXNFLRECYDSPROT",
+      "KXNFLRACE",
       "KXNHLSEASONGOALS",
       "KXWNBAREB",
-      "KXMLBHRR",
-      "KXNBAESCALATOR3PT",
+      "KXMLBWALKOFFS",
+      "KXNBAH2H3PT",
       "KXNCAAFTEAMTOTAL",
-      "KXNFLPASSYDSH2H",
-      "KXNHLPLAYOFFGOALS",
+      "KXNFLFF50PTS",
+      "KXNHLSEASONPPTS",
       "KXWNBA3PTROUND",
-      "KXMLBASGHR",
-      "KXNBACELEBRITY3PT",
-      "KXNCAAFTOTALFG",
-      "KXNFLSEASONRECYDS",
-      "KXNHLSERIESTOTALGOALS",
-      "KXWNBAPTS",
-      "KXMLBRBI"
+      "KXMLBRBI",
+      "KXNBASERIESREBLEADER",
+      "KXNCAAFTEAMFG",
+      "KXNFLLONGFG",
+      "KXNHLTOTAL",
+      "KXWNBAAST",
+      "KXMLBTB",
+      "KXNBASUMMERPTS",
+      "KXNCAAFTEAMRECYDS",
+      "KXNFLTOTAL",
+      "KXNHLSEASONPTS",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBPLAYOFFHRS"
     ],
     "by_league": {
       "Boxing": 1,
@@ -167,19 +181,19 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBY500": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYVELO": {
+    "KXMLBHRDERBYLONGEST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXMLBHRR": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBKS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -197,61 +211,55 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBSB": {
+    "KXMLBTB": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBTOTAL": {
+    "KXMLBWALKOFFS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBACELEBRITY3PT": {
+    "KXNBAH2H3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAESCALATOR3PT": {
+    "KXNBAH2HPRA": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAH2HTEAM3PT": {
+    "KXNBAPLAYOFFPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBALADDER3PT": {
+    "KXNBAPR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAREBPROT": {
+    "KXNBASERIES3PMLEADER": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASERIESASTLEADER": {
+    "KXNBASERIESREBLEADER": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASTOCKS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAF2PT": {
+    "KXNBASUMMERPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -269,13 +277,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMRSHATT": {
+    "KXNCAAFTEAMRECYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMTO": {
+    "KXNCAAFTEAMRSHATT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -287,32 +295,47 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
+    "KXNCAAFTOTAL": {
+      "raw": 1083,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 1083
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNCAAFTOTAL-26NOV10KENTBGSU-26",
+          "event_ticker": "KXNCAAFTOTAL-26NOV10KENTBGSU",
+          "event_title": "Kent St. vs Bowling Green: Total Points",
+          "title": "Full Game: Over 25.5 points scored",
+          "subtitle": null,
+          "yes_sub_title": "Over 25.5 points",
+          "primary_participant_key": null,
+          "floor_strike": 25.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-11T03:00:00Z"
+        }
+      }
+    },
     "KXNCAAFTOTALFG": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLESCALATORRECYDS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLMOSTRSHYDS": {
-      "raw": 62,
+    "KXNFLESCALATORREC": {
+      "raw": 53,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 62
+        "ambiguous_participant_threshold": 53
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNFLMOSTRSHYDS-26NOV08CLENO-NOAKAMARA41",
-          "event_ticker": "KXNFLMOSTRSHYDS-26NOV08CLENO",
-          "event_title": "Cleveland vs New Orleans: Most Rushing Yards",
-          "title": "Alvin Kamara: most rushing yards in the CLE vs NO game",
+          "ticker": "KXNFLESCALATORREC-26NOV08CLENO-NOCOLAVE12",
+          "event_ticker": "KXNFLESCALATORREC-26NOV08CLENO",
+          "event_title": "Cleveland vs New Orleans: Receptions Escalator",
+          "title": "Chris Olave Receptions Escalator",
           "subtitle": null,
-          "yes_sub_title": "Alvin Kamara",
+          "yes_sub_title": "Chris Olave",
           "primary_participant_key": "football_player",
           "floor_strike": null,
           "functional_strike": null,
@@ -320,76 +343,105 @@
         }
       }
     },
+    "KXNFLFF50PTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLLONGFG": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXNFLPASSYDSH2H": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLPASSYDSPROT": {
+    "KXNFLRACE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLRECYDSPROT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLSEASONRECYDS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLTEAMDPTS": {
-      "raw": 32,
+    "KXNFLSEASONPASSTDS": {
+      "raw": 114,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 32
+        "ambiguous_matchup": 114
       },
       "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLTEAMDPTS-LEAST27-ARI",
-          "event_ticker": "KXNFLTEAMDPTS-LEAST27",
-          "event_title": "Pro Football Team to Allow the Fewest Points",
-          "title": "Will Arizona allow the fewest points scored?",
-          "subtitle": "Arizona",
-          "yes_sub_title": "Arizona",
-          "primary_participant_key": null,
-          "floor_strike": null,
+        "ambiguous_matchup": {
+          "ticker": "KXNFLSEASONPASSTDS-27C20-LJACKSON8",
+          "event_ticker": "KXNFLSEASONPASSTDS-27C20",
+          "event_title": "Pro Football: 20+ Passing Touchdowns Season",
+          "title": "Will Lamar Jackson record 20+ passing touchdowns during the 2026-27 Pro Football regular season?",
+          "subtitle": null,
+          "yes_sub_title": "Lamar Jackson",
+          "primary_participant_key": "football_player",
+          "floor_strike": 19.5,
           "functional_strike": null,
-          "occurrence_datetime": "2027-01-11T15:00:00Z"
+          "occurrence_datetime": "2027-01-31T15:00:00Z"
         }
       }
     },
-    "KXNHL4NATIONS": {
+    "KXNFLTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLANYGOAL": {
-      "raw": 0,
+    "KXNHLF10G": {
+      "raw": 7,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 7
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLF10G-26NOV08TBWPG-Y",
+          "event_ticker": "KXNHLF10G-26NOV08TBWPG",
+          "event_title": "Tampa Bay vs Winnipeg: Goal in First 10 Minutes",
+          "title": "Either team to score in the first 10 minutes",
+          "subtitle": null,
+          "yes_sub_title": "Goal in first 10 min",
+          "primary_participant_key": null,
+          "floor_strike": 1,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-09T02:00:00Z"
+        }
+      }
     },
-    "KXNHLPLAYOFFGOALS": {
+    "KXNHLGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNHLPTS": {
-      "raw": 250,
-      "normalized": 250,
+      "raw": 252,
+      "normalized": 211,
       "skip_reasons": {
-        "ok": 250
+        "not_upcoming": 41,
+        "ok": 211
       },
-      "skip_samples": {}
+      "skip_samples": {
+        "not_upcoming": {
+          "ticker": "KXNHLPTS-26NOV08FLABOS-BOSCMCAVOY73-1",
+          "event_ticker": "KXNHLPTS-26NOV08FLABOS",
+          "event_title": "Florida vs Boston: Points",
+          "title": "Charlie McAvoy: 1+ points",
+          "subtitle": null,
+          "yes_sub_title": "Charlie McAvoy: 1+",
+          "primary_participant_key": "hockey_player",
+          "floor_strike": 0.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-08T21:00:00Z"
+        }
+      }
     },
     "KXNHLSEASONGOALS": {
       "raw": 0,
@@ -397,13 +449,19 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLSERIESTOTALGOALS": {
+    "KXNHLSEASONPPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLTEAMTOTAL": {
+    "KXNHLSEASONPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -433,13 +491,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBA3PTROUND": {
+    "KXWNBA3PTCONTESTOU": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBA40PTS": {
+    "KXWNBA3PTROUND": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -471,7 +529,7 @@
     }
   },
   "leagues": {
-    "NHL": 250
+    "NHL": 211
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
