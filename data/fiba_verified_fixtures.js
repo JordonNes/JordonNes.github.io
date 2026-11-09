@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-08",
+  "verifiedOn": "2026-11-09",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
@@ -31,7 +31,7 @@ window.LJ_FIBA_FIXTURES={
     {
       "competition": "2027 World Cup Qualifiers — Asia",
       "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
-      "parsed_fixtures": 10,
+      "parsed_fixtures": 12,
       "status": "FIXTURES_VERIFIED"
     },
     {
@@ -1767,6 +1767,20 @@ window.LJ_FIBA_FIXTURES={
       "marketStatus": "NOT_VERIFIED"
     },
     {
+      "id": "FIBA-2026-11-25-EUROCUPWOMEN-PANAS-HGJ",
+      "track": "women",
+      "competition": "EuroCup Women",
+      "date": "2026-11-25",
+      "publishedTime": "18:30",
+      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
+      "home": "PANAS",
+      "away": "HGJ",
+      "group": "E",
+      "source": "https://www.fiba.basketball/en/events/eurocup-women-26-27",
+      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
+      "marketStatus": "NOT_VERIFIED"
+    },
+    {
       "id": "FIBA-2026-11-25-EUROCUPWOMEN-ASHD-ESBVA",
       "track": "women",
       "competition": "EuroCup Women",
@@ -1804,20 +1818,6 @@ window.LJ_FIBA_FIXTURES={
       "home": "GIR",
       "away": "MONT",
       "group": "K",
-      "source": "https://www.fiba.basketball/en/events/eurocup-women-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-25-EUROCUPWOMEN-PANAS-HGJ",
-      "track": "women",
-      "competition": "EuroCup Women",
-      "date": "2026-11-25",
-      "publishedTime": "19:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "PANAS",
-      "away": "HGJ",
-      "group": "E",
       "source": "https://www.fiba.basketball/en/events/eurocup-women-26-27",
       "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
       "marketStatus": "NOT_VERIFIED"
@@ -1861,6 +1861,20 @@ window.LJ_FIBA_FIXTURES={
       "away": "NBF",
       "group": "G",
       "source": "https://www.fiba.basketball/en/events/eurocup-women-26-27",
+      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
+      "marketStatus": "NOT_VERIFIED"
+    },
+    {
+      "id": "FIBA-2026-11-26-2027WORLDCUPQUALIFIERSASIA-KSA-CHN",
+      "track": "men",
+      "competition": "2027 World Cup Qualifiers — Asia",
+      "date": "2026-11-26",
+      "publishedTime": "13:00",
+      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
+      "home": "KSA",
+      "away": "CHN",
+      "group": "F",
+      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
       "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
       "marketStatus": "NOT_VERIFIED"
     },
@@ -2341,6 +2355,20 @@ window.LJ_FIBA_FIXTURES={
       "marketStatus": "NOT_VERIFIED"
     },
     {
+      "id": "FIBA-2026-11-29-2027WORLDCUPQUALIFIERSASIA-QAT-JPN",
+      "track": "men",
+      "competition": "2027 World Cup Qualifiers — Asia",
+      "date": "2026-11-29",
+      "publishedTime": "13:00",
+      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
+      "home": "QAT",
+      "away": "JPN",
+      "group": "F",
+      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
+      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
+      "marketStatus": "NOT_VERIFIED"
+    },
+    {
       "id": "FIBA-2026-11-29-2027WORLDCUPQUALIFIERSEUROPE-GEO-POR",
       "track": "men",
       "competition": "2027 World Cup Qualifiers — Europe",
@@ -2355,14 +2383,14 @@ window.LJ_FIBA_FIXTURES={
       "marketStatus": "NOT_VERIFIED"
     },
     {
-      "id": "FIBA-2026-11-29-2027WORLDCUPQUALIFIERSASIA-QAT-JPN",
+      "id": "FIBA-2026-11-29-2027WORLDCUPQUALIFIERSASIA-KSA-KOR",
       "track": "men",
       "competition": "2027 World Cup Qualifiers — Asia",
       "date": "2026-11-29",
       "publishedTime": "16:00",
       "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "QAT",
-      "away": "JPN",
+      "home": "KSA",
+      "away": "KOR",
       "group": "F",
       "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
       "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
