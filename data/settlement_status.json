@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-11-09T00:21:24.337982+00:00",
+  "generated_at_utc": "2026-11-09T00:31:54.092751+00:00",
   "source_registry_generated_at_utc": "2026-11-09T00:19:43.598615+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -48,60 +48,562 @@
   "predictions_in_registry": 33,
   "website_suggestions_recorded": 75039,
   "website_suggestions_structured_for_settlement": 65813,
-  "settlement_population_total": 3963,
-  "settled_predictions": 30614,
-  "settlement_rate_pct": 772.5,
+  "settlement_population_total": 65846,
+  "settled_predictions": 30913,
+  "settlement_rate_pct": 46.95,
   "run_counts": {
-    "already_settled": 1509,
-    "AMBIGUOUS_EVENT": 301,
-    "PENDING_EVENT": 1806,
-    "UNSUPPORTED_PLAYER_MARKET": 141,
-    "PLAYER_NOT_IN_BOXSCORE": 199,
-    "TEAM_UNRESOLVED": 7
+    "already_settled": 30582,
+    "AMBIGUOUS_EVENT": 2248,
+    "PENDING_EVENT": 2724,
+    "settled": 299,
+    "UNSUPPORTED_PLAYER_MARKET": 9112,
+    "PLAYER_NOT_IN_BOXSCORE": 19601,
+    "PLAYER_PROP_PROVIDER_PENDING": 27,
+    "TD_STATS_UNAVAILABLE": 33,
+    "NO_EVENT_CANDIDATES": 728,
+    "TEAM_UNRESOLVED": 323,
+    "EVENT_NOT_FOUND": 55,
+    "PARTICIPANT_UNRESOLVED": 6,
+    "UNGRADED_MARKET_RULE": 8,
+    "SPECIAL_WINNER_UNRESOLVED": 100
   },
   "by_league": {
+    "MLB": {
+      "PLAYER_NOT_IN_BOXSCORE": 4370,
+      "UNSUPPORTED_PLAYER_MARKET": 3346,
+      "NO_EVENT_CANDIDATES": 473,
+      "AMBIGUOUS_EVENT": 100,
+      "already_settled": 1025,
+      "TEAM_UNRESOLVED": 18,
+      "PENDING_EVENT": 61,
+      "EVENT_NOT_FOUND": 20
+    },
     "MMA": {
       "PENDING_EVENT": 16,
-      "AMBIGUOUS_EVENT": 4
+      "PLAYER_PROP_PROVIDER_PENDING": 27,
+      "already_settled": 172,
+      "EVENT_NOT_FOUND": 31,
+      "SPECIAL_WINNER_UNRESOLVED": 100,
+      "PARTICIPANT_UNRESOLVED": 4,
+      "AMBIGUOUS_EVENT": 23
     },
     "NBA": {
-      "PENDING_EVENT": 585,
-      "already_settled": 207,
-      "PLAYER_NOT_IN_BOXSCORE": 7,
-      "UNSUPPORTED_PLAYER_MARKET": 32
+      "PENDING_EVENT": 841,
+      "already_settled": 2349,
+      "PLAYER_NOT_IN_BOXSCORE": 1675,
+      "UNSUPPORTED_PLAYER_MARKET": 205,
+      "TEAM_UNRESOLVED": 13,
+      "AMBIGUOUS_EVENT": 24
     },
     "NCAA_Basketball": {
-      "AMBIGUOUS_EVENT": 193,
-      "PENDING_EVENT": 103,
-      "already_settled": 110,
-      "UNSUPPORTED_PLAYER_MARKET": 11
+      "AMBIGUOUS_EVENT": 566,
+      "PENDING_EVENT": 114,
+      "already_settled": 648,
+      "UNSUPPORTED_PLAYER_MARKET": 67,
+      "PLAYER_NOT_IN_BOXSCORE": 41
     },
     "NCAA_Football": {
-      "already_settled": 561,
-      "PENDING_EVENT": 271,
-      "AMBIGUOUS_EVENT": 89,
-      "TEAM_UNRESOLVED": 7,
-      "UNSUPPORTED_PLAYER_MARKET": 33,
-      "PLAYER_NOT_IN_BOXSCORE": 143
+      "already_settled": 11815,
+      "PENDING_EVENT": 301,
+      "AMBIGUOUS_EVENT": 1333,
+      "PLAYER_NOT_IN_BOXSCORE": 2920,
+      "UNSUPPORTED_PLAYER_MARKET": 2080,
+      "TEAM_UNRESOLVED": 201,
+      "TD_STATS_UNAVAILABLE": 26
     },
     "NFL": {
-      "already_settled": 295,
-      "PENDING_EVENT": 268,
-      "UNSUPPORTED_PLAYER_MARKET": 24,
-      "PLAYER_NOT_IN_BOXSCORE": 29
+      "already_settled": 5187,
+      "PENDING_EVENT": 464,
+      "settled": 299,
+      "UNSUPPORTED_PLAYER_MARKET": 1784,
+      "PLAYER_NOT_IN_BOXSCORE": 7202,
+      "TD_STATS_UNAVAILABLE": 7,
+      "NO_EVENT_CANDIDATES": 188,
+      "TEAM_UNRESOLVED": 18
     },
     "NHL": {
-      "PENDING_EVENT": 563,
-      "already_settled": 336,
-      "PLAYER_NOT_IN_BOXSCORE": 20,
-      "UNSUPPORTED_PLAYER_MARKET": 41
+      "PENDING_EVENT": 927,
+      "already_settled": 7769,
+      "PLAYER_NOT_IN_BOXSCORE": 2968,
+      "UNSUPPORTED_PLAYER_MARKET": 1524,
+      "TEAM_UNRESOLVED": 73,
+      "UNGRADED_MARKET_RULE": 8,
+      "AMBIGUOUS_EVENT": 28
     },
     "Tennis": {
-      "AMBIGUOUS_EVENT": 15
+      "AMBIGUOUS_EVENT": 174,
+      "PARTICIPANT_UNRESOLVED": 2,
+      "already_settled": 4
+    },
+    "WNBA": {
+      "UNSUPPORTED_PLAYER_MARKET": 106,
+      "already_settled": 1613,
+      "PLAYER_NOT_IN_BOXSCORE": 425,
+      "NO_EVENT_CANDIDATES": 67,
+      "EVENT_NOT_FOUND": 4
     }
   },
-  "recent_settlements": [],
+  "recent_settlements": [
+    {
+      "prediction_id": "SUG-abfb25ab8dcd5dc4adaa4d82",
+      "league": "NFL",
+      "selection": "Kirk Cousins OVER 0.5 Passing TDs • GOBLIN • L5 AVG 2 • L&J PROJ 2.1 • POM Value 85.7 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873047",
+      "source": "ESPN_PUBLIC:401873047:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-b12a9c8dbce9c0867fd2dff4",
+      "league": "NFL",
+      "selection": "Tank Dell OVER 15.5 Receiving Yards • NORMAL • L5 AVG 46.6 • L&J PROJ 49.1 • POM Value 85.6 • STAT 0% • LJPC 94% ⟦L=94;J=0⟧ 🕵️",
+      "actual_result": "105",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-b261b72f6d5c2ab826653a21",
+      "league": "NFL",
+      "selection": "Xavier Hutchinson OVER 1.5 Receptions • GOBLIN • L5 AVG 3 • L&J PROJ 3 • POM Value 83.9 • STAT 0% • LJPC 98.3% ⟦L=98.3;J=0⟧ 🕵️",
+      "actual_result": "3",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-b7d58552a38276086fb4ad69",
+      "league": "NFL",
+      "selection": "Omarion Hampton UNDER 18.5 Rushing Attempts • DEMON • L5 AVG 10.8 • L&J PROJ 11.3 • POM Value 90.3 • STAT 0% • LJPC 97.8% ⟦L=97.8;J=0⟧",
+      "actual_result": "13",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ca1bf86dd2a922f0c4c9fb44",
+      "league": "NFL",
+      "selection": "Keaton Mitchell OVER 3.5 Rushing Attempts • NORMAL • L5 AVG 6 • L&J PROJ 5.7 • POM Value 78.8 • STAT 0% • LJPC 75.4% ⟦L=79.4;J=-4⟧",
+      "actual_result": "7",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-cedf2a799bb98985e416a5de",
+      "league": "NFL",
+      "selection": "Trey McBride OVER 5.5 Receptions • GOBLIN • L5 AVG 8 • L&J PROJ 8.1 • POM Value 84.9 • STAT 0% • LJPC 98.6% ⟦L=98.6;J=0⟧",
+      "actual_result": "7",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d1c123054cf34e97371af8e6",
+      "league": "NFL",
+      "selection": "Houston ML • -250 PROPLINE:PSK",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-d9311e4d146e5d1a0fbd2780",
+      "league": "NFL",
+      "selection": "Tre Tucker UNDER 7.5 Receptions • DEMON • L5 AVG 3.6 • L&J PROJ 3.6 • POM Value 92.3 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401873047",
+      "source": "ESPN_PUBLIC:401873047:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e2c41de168147ff1c46561a9",
+      "league": "NFL",
+      "selection": "Christian McCaffrey UNDER 17.5 Rushing Attempts • DEMON • L5 AVG 12.8 • L&J PROJ 12.5 • POM Value 86.6 • STAT 0% • LJPC 91.8% ⟦L=95.8;J=-4⟧ 🕵️",
+      "actual_result": "18",
+      "grade": "LOSS",
+      "provider_event_id": "401873047",
+      "source": "ESPN_PUBLIC:401873047:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e38ed8ec9607397865660f55",
+      "league": "NFL",
+      "selection": "Justin Herbert UNDER 2.5 Passing TDs • DEMON • L5 AVG 0.6 • L&J PROJ 0.6 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f1d79a4d1158517b7486def1",
+      "league": "NFL",
+      "selection": "Tyler Allgeier UNDER 5.5 Receptions • DEMON • L5 AVG 2.6 • L&J PROJ 2.7 • POM Value 90.7 • STAT 0% • LJPC 95% ⟦L=99;J=-4⟧",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f66f5b89b2055124bdc903a5",
+      "league": "NFL",
+      "selection": "Kimani Vidal UNDER 2.5 Receptions • DEMON • L5 AVG 1.8 • L&J PROJ 1.7 • POM Value 84.4 • STAT 0% • LJPC 82.9% ⟦L=82.9;J=0⟧",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f737f9f2e30b28d354e27809",
+      "league": "NFL",
+      "selection": "Trey McBride OVER 4.5 Receptions • GOBLIN • L5 AVG 8 • L&J PROJ 8.1 • POM Value 85.8 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "7",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f82ff90e4aec4a054088a9da",
+      "league": "NFL",
+      "selection": "Justin Herbert UNDER 1.5 Passing TDs • NORMAL • L5 AVG 0.6 • L&J PROJ 0.6 • POM Value 85.5 • STAT 0% • LJPC 93.8% ⟦L=93.8;J=0⟧",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f97b4ae9c21c11061ab459ec",
+      "league": "NFL",
+      "selection": "C.J. Stroud OVER 0.5 Passing TDs • GOBLIN • L5 AVG 1.8 • L&J PROJ 1.7 • POM Value 83.9 • STAT 0% • LJPC 96.5% ⟦L=96.5;J=0⟧",
+      "actual_result": "5",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f99677614f5d37968ea01d97",
+      "league": "NFL",
+      "selection": "Jordan Watkins UNDER 3.5 Receptions • DEMON • L5 AVG 2 • L&J PROJ 1.9 • POM Value 91.7 • STAT 0% • LJPC 98.2% ⟦L=98.2;J=0⟧ 🕵️",
+      "actual_result": "4",
+      "grade": "LOSS",
+      "provider_event_id": "401873047",
+      "source": "ESPN_PUBLIC:401873047:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-471eda94307c08b437e54aa7",
+      "league": "NFL",
+      "selection": "Jordan Watkins OVER 0.5 Receptions • GOBLIN • L5 AVG 2 • L&J PROJ 1.9 • POM Value 84.5 • STAT 0% • LJPC 96.6% ⟦L=96.6;J=0⟧ 🕵️",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401873047",
+      "source": "ESPN_PUBLIC:401873047:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-fa19445ffc2b26eb1b823004",
+      "league": "NFL",
+      "selection": "SF 49ers ML • -455 PROPLINE:Codere MX",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873047",
+      "source": "ESPN_PUBLIC:401873047:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-8633b82381ba79ee1632f281",
+      "league": "NFL",
+      "selection": "SF 49ers ML • -455 PROPLINE:Codere MX",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873047",
+      "source": "ESPN_PUBLIC:401873047:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-bd4a598b8f09aaeafa38adb0",
+      "league": "NFL",
+      "selection": "Houston Texans ML • -222 PROPLINE:Superbet RO",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-191895aadd41e6a99ccbe02e",
+      "league": "NFL",
+      "selection": "SEA Seahawks ML • -417 PROPLINE:PlayAlberta",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-9f20d45d6b2531cad35b6b30",
+      "league": "NFL",
+      "selection": "Houston Texans ML • -222 PROPLINE:Superbet RO",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-27d7b2e8e6cf955db9176cf2",
+      "league": "NFL",
+      "selection": "HOU Texans ML • -238 PROPLINE:DraftKings",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-0c6a685349f37b99b12d2d95",
+      "league": "NFL",
+      "selection": "Xavier Hutchinson UNDER 5.5 Receptions • DEMON • L5 AVG 3 • L&J PROJ 3 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "3",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-11836e4c6ed41c74c7f8c4db",
+      "league": "NFL",
+      "selection": "Jaxon Smith-Njigba UNDER 12.5 Receptions • DEMON • L5 AVG 7.4 • L&J PROJ 7.6 • POM Value 90.8 • STAT 0% • LJPC 96.1% ⟦L=98.1;J=-2⟧",
+      "actual_result": "7",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-1edf5929e944ebf1a609bc20",
+      "league": "NFL",
+      "selection": "Kimani Vidal UNDER 4.5 Receptions • DEMON • L5 AVG 1.8 • L&J PROJ 1.7 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-21f61bc63ba01f988fb54ced",
+      "league": "NFL",
+      "selection": "Elijah Higgins UNDER 5.5 Receptions • DEMON • L5 AVG 2.6 • L&J PROJ 2.5 • POM Value 91.8 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-2c705a963458d57c00dea522",
+      "league": "NFL",
+      "selection": "Justin Herbert UNDER 274.5 Passing Yards • DEMON • L5 AVG 199.4 • L&J PROJ 199 • POM Value 91.0 • STAT 0% • LJPC 97.3% ⟦L=97.3;J=0⟧",
+      "actual_result": "193",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-304dc9129f092ce7a2b6bb9b",
+      "league": "NFL",
+      "selection": "Zach Charbonnet UNDER 18.5 Rushing Attempts • DEMON • L5 AVG 10.4 • L&J PROJ 10.2 • POM Value 89.3 • STAT 0% • LJPC 94% ⟦L=96;J=-2⟧",
+      "actual_result": "16",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-383919a67410f45444619477",
+      "league": "NFL",
+      "selection": "Trey McBride UNDER 12.5 Receptions • DEMON • L5 AVG 8 • L&J PROJ 8.1 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "7",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-3b04b93114fae90cbd3dbcef",
+      "league": "NFL",
+      "selection": "Justin Herbert UNDER 2.5 Passing TDs • DEMON • L5 AVG 0.6 • L&J PROJ 0.6 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-40922e1559594131590bccca",
+      "league": "NFL",
+      "selection": "Kayshon Boutte UNDER 4.5 Receptions • DEMON • L5 AVG 2.2 • L&J PROJ 2.2 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-412740b7425e7811fb8d366c",
+      "league": "NFL",
+      "selection": "AJ Barner UNDER 5.5 Receptions • DEMON • L5 AVG 2.6 • L&J PROJ 2.6 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-790e7e357930a9dfddb371bc",
+      "league": "NFL",
+      "selection": "Tory Horton UNDER 4.5 Receptions • DEMON • L5 AVG 1.6 • L&J PROJ 1.6 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-7b5f46bf4a61b5983b5a8251",
+      "league": "NFL",
+      "selection": "Drew Lock UNDER 3.5 Passing TDs • DEMON • L5 AVG 1.4 • L&J PROJ 1.3 • POM Value 85.0 • STAT 0% • LJPC 83.7% ⟦L=95.7;J=-12⟧ 🕵️",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-7e2bab062af3a9aea46c758a",
+      "league": "NFL",
+      "selection": "Simi Fehoko UNDER 1.5 Receptions • DEMON • L5 AVG 0.2 • L&J PROJ 0.2 • POM Value 90.5 • STAT 0% • LJPC 97.5% ⟦L=97.5;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-8b316425c50add3a8c5106ba",
+      "league": "NFL",
+      "selection": "Cooper Kupp UNDER 6.5 Receptions • DEMON • L5 AVG 2.2 • L&J PROJ 2.2 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
+      "actual_result": "3",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-91f9d874d301e6f285d3316d",
+      "league": "NFL",
+      "selection": "C.J. Stroud UNDER 3.5 Passing TDs • DEMON • L5 AVG 1.8 • L&J PROJ 1.7 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-9cf1b4a27ab7733b0b322445",
+      "league": "NFL",
+      "selection": "Elijah Higgins UNDER 3.5 Receptions • DEMON • L5 AVG 2.6 • L&J PROJ 2.5 • POM Value 89.5 • STAT 0% • LJPC 94.9% ⟦L=94.9;J=0⟧",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-b1181caf433663bec65691b7",
+      "league": "NFL",
+      "selection": "Justin Herbert UNDER 1.5 Passing TDs • NORMAL • L5 AVG 0.6 • L&J PROJ 0.6 • POM Value 85.5 • STAT 0% • LJPC 93.8% ⟦L=93.8;J=0⟧",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ba55d617edbe3bdb76d244f5",
+      "league": "NFL",
+      "selection": "Nico Collins UNDER 7.5 Receptions • DEMON • L5 AVG 4.8 • L&J PROJ 4.6 • POM Value 90.0 • STAT 0% • LJPC 95.7% ⟦L=95.7;J=0⟧",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-c68665df37f77411cef0e892",
+      "league": "NFL",
+      "selection": "HOU Texans ML • -245 PROPLINE:DraftKings",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-cbdd2b8fb88eff2f730b3202",
+      "league": "NFL",
+      "selection": "Dalton Schultz UNDER 5.5 Receptions • DEMON • L5 AVG 3.4 • L&J PROJ 3.8 • POM Value 86.9 • STAT 0% • LJPC 90.2% ⟦L=95.5;J=-5.3⟧",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d1301a6b83518e542076ec6e",
+      "league": "NFL",
+      "selection": "Tory Horton UNDER 3.5 Receptions • DEMON • L5 AVG 1.6 • L&J PROJ 1.6 • POM Value 90.7 • STAT 0% • LJPC 96.8% ⟦L=96.8;J=0⟧ 🕵️",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f3adccaf7269398c1973b84f",
+      "league": "NFL",
+      "selection": "Tank Dell OVER 15.5 Receiving Yards • NORMAL • L5 AVG 46.6 • L&J PROJ 49.1 • POM Value 85.6 • STAT 0% • LJPC 94% ⟦L=94;J=0⟧",
+      "actual_result": "105",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-5738db54cf928af46f206c73",
+      "league": "NFL",
+      "selection": "Dalton Schultz UNDER 5.5 Receptions • DEMON • L5 AVG 3.4 • L&J PROJ 3.8 • POM Value 86.4 • STAT 0% • LJPC 89% ⟦L=95.5;J=-6.5⟧",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-26ec3aaae4c94e5ed3481e25",
+      "league": "NFL",
+      "selection": "SEA Seahawks ML • -435 PROPLINE:PlayAlberta",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-30174401b91697dacf7ea28e",
+      "league": "NFL",
+      "selection": "Houston ML • -270 PROPLINE:Betika",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-1b6278ba1113d24b96d4cc00",
+      "league": "NFL",
+      "selection": "Seattle ML • -500 PROPLINE:Betika",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873048",
+      "source": "ESPN_PUBLIC:401873048:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-b203f969fd94c001b65c67a2",
+      "league": "NFL",
+      "selection": "Texans ML • -233 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401873046",
+      "source": "ESPN_PUBLIC:401873046:FINAL_SCORE_ML"
+    }
+  ],
   "unresolved": [
+    {
+      "prediction_id": "SUG-211f6ecb133f79ecec08b43c",
+      "league": "NCAA_Football",
+      "event_id": "401856883",
+      "provider_event_id": "401856883",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
     {
       "prediction_id": "SUG-283112cce3fc7750ad539020",
       "league": "NCAA_Basketball",
@@ -236,7 +738,7 @@
       "event_id": "PL-633776",
       "provider_event_id": "401909946",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_HALFTIME"
+      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-50cdc71f98d5aee693105c93",
@@ -579,14 +1081,6 @@
         "token_hits": 0,
         "time_delta_hours": 3.0
       }
-    },
-    {
-      "prediction_id": "SUG-b203f969fd94c001b65c67a2",
-      "league": "NFL",
-      "event_id": "PL-53175",
-      "provider_event_id": "401873046",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-bb9d19850f94e8294c16ad27",
@@ -1266,7 +1760,7 @@
       "event_id": "PL-633776",
       "provider_event_id": "401909946",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_HALFTIME"
+      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-5df23473d61bd0f0e5637815",
