@@ -1,15 +1,14 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-11-09T02:38:18.713400+00:00",
+  "checked_at_utc": "2026-11-09T08:21:53.074032+00:00",
   "status": "OK",
-  "raw_market_count": 6508,
-  "normalized_props": 303,
-  "history_rows_added": 291,
+  "raw_market_count": 3243,
+  "normalized_props": 6,
+  "history_rows_added": 6,
   "skip_reasons": {
     "ambiguous_matchup": 29,
-    "ambiguous_participant_threshold": 2989,
-    "no_current_yes_price": 25,
-    "ok": 303,
+    "ambiguous_participant_threshold": 46,
+    "ok": 6,
     "unknown_sport": 3010,
     "unsupported_market": 152
   },
@@ -65,71 +64,58 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
-    },
-    "no_current_yes_price": {
-      "ticker": "KXNFLRECPROT-26NOV08TBCHI-CHILBURDEN10-10",
-      "event_ticker": "KXNFLRECPROT-26NOV08TBCHI",
-      "series_ticker": "KXNFLRECPROT",
-      "event_title": "Tampa Bay vs Chicago: Receptions",
-      "title": "Luther Burden III: 10+ receptions (Protected)",
-      "subtitle": null,
-      "yes_sub_title": "Luther Burden III: 10+",
-      "primary_participant_key": "football_player",
-      "floor_strike": 9.5,
-      "functional_strike": null,
-      "occurrence_datetime": "2026-11-09T04:20:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBHRDERBYQUAL",
-      "KXUFCOCCUR",
-      "KXNBASERIESASTLEADER",
-      "KXNCAAFTOTAL",
-      "KXNFLFFPTSSEASON",
+      "KXMLBASGHIT",
+      "KXUFCWHITEHOUSE",
+      "KXNBABENCHPTS",
+      "KXNCAAFTEAMFG",
+      "KXNFLMOSTRSHYDS",
       "KXNHLPTS",
       "KXATPACES",
-      "KXWNBAAST",
-      "KXMLBTOTAL",
-      "KXUFCWHITEHOUSE",
-      "KXNBARA",
-      "KXNCAAFTEAMFG",
-      "KXNFLFG",
-      "KXNHLPLAYOFFGOALS",
-      "KXWTAACES",
-      "KXWNBAREB",
-      "KXMLBHR",
-      "KXNBAPTSALLGAMES",
+      "KXWNBA40PTS",
+      "KXMLBKS",
+      "KXUFCOCCUR",
+      "KXNBASERIESREBLEADER",
       "KXNCAAF1HTEAMTOTAL",
-      "KXNFLFF40PTS",
-      "KXNHLSERIESTOTALGOALS",
-      "KXWNBAPTS",
-      "KXMLBRBI",
-      "KXNBAH2H3PT",
-      "KXNCAAFTEAMRSHATT",
-      "KXNFLTEAMTO",
-      "KXNHLSERIESTOTALGOAL",
-      "KXWNBAH2HPTS",
-      "KXMLBSB",
-      "KXNBASTOCK",
-      "KXNCAAFTEAMREC",
-      "KXNFLRECPROT",
-      "KXNHLTOTAL",
-      "KXWNBA3PTCONTESTOU",
-      "KXMLBHRDERBYTOT",
-      "KXNBAPR",
-      "KXNCAAFTEAMTOTAL",
-      "KXNFLCAREERRECYDS",
-      "KXNHLANYGOAL",
-      "KXWNBA3PT",
-      "KXMLBASGHR",
-      "KXNBAESCALATOR3PT",
-      "KXNCAAF2PT",
-      "KXNFLRECYDSRECORD",
+      "KXNFLRACE",
       "KXNHLF10G",
+      "KXWTAACES",
       "KXWNBA3PTCONTEST",
-      "KXMLBHRDERBYFIN"
+      "KXMLBHRDERBYVELO",
+      "KXNBAPTSLEADER",
+      "KXNCAAFTEAMTO",
+      "KXNFLRRYDS",
+      "KXNHL4NATIONS",
+      "KXWNBA3PT",
+      "KXMLBPLAYOFFHRS",
+      "KXNBASTL",
+      "KXNCAAFTOTALFG",
+      "KXNFLLONGFG",
+      "KXNHLTOTAL",
+      "KXWNBA3PTROUND",
+      "KXMLBHA",
+      "KXNBASERIESPTSSPREAD",
+      "KXNCAAFTEAMRSHYDS",
+      "KXNFLCAREERPASSTDS",
+      "KXNHLANYGOAL",
+      "KXWNBAPTS",
+      "KXMLBHRDERBYDISTANCE",
+      "KXNBAASTPROT",
+      "KXNCAAF2PT",
+      "KXNFLRECPROT",
+      "KXNHLSEASONGOALS",
+      "KXWNBAH2HPTS",
+      "KXMLBHRDERBYFIN",
+      "KXNBAPLAYOFFPTS",
+      "KXNCAAFFIRSTTDTEAM",
+      "KXNFLASSCOACH",
+      "KXNHLGOAL",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBTOTAL"
     ],
     "by_league": {
       "Boxing": 1,
@@ -144,7 +130,8 @@
     },
     "forced": [
       "KXNHLPTS"
-    ]
+    ],
+    "error": "HTTP Error 429: Too Many Requests"
   },
   "targeted_series_diagnostics": {
     "KXATPACES": {
@@ -174,13 +161,19 @@
         }
       }
     },
-    "KXMLBASGHR": {
+    "KXMLBASGHIT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHR": {
+    "KXMLBHA": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBHRDERBYDISTANCE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -192,25 +185,19 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYQUAL": {
+    "KXMLBHRDERBYVELO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYTOT": {
+    "KXMLBKS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBRBI": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBSB": {
+    "KXMLBPLAYOFFHRS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -222,63 +209,61 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAESCALATOR3PT": {
-      "raw": 16,
+    "KXNBAASTPROT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBABENCHPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAPLAYOFFPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAPTSLEADER": {
+      "raw": 13,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 16
+        "ambiguous_participant_threshold": 13
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNBAESCALATOR3PT-26NOV08BKNDAL-BKNJRANDLE30",
-          "event_ticker": "KXNBAESCALATOR3PT-26NOV08BKNDAL",
-          "event_title": "Brooklyn vs Dallas: Threes Escalator",
-          "title": "Julius Randle player threes escalator",
+          "ticker": "KXNBAPTSLEADER-26NOV09SASPHX-PHXOIGHODARO11",
+          "event_ticker": "KXNBAPTSLEADER-26NOV09SASPHX",
+          "event_title": "San Antonio vs Phoenix: Points Leader",
+          "title": "Oso Ighodaro: Points leader",
           "subtitle": null,
-          "yes_sub_title": "Julius Randle",
-          "primary_participant_key": "basketball_player",
+          "yes_sub_title": "Oso Ighodaro",
+          "primary_participant_key": null,
           "floor_strike": null,
           "functional_strike": null,
-          "occurrence_datetime": "2026-11-09T03:30:00Z"
+          "occurrence_datetime": "2026-11-10T05:00:00Z"
         }
       }
     },
-    "KXNBAH2H3PT": {
+    "KXNBASERIESPTSSPREAD": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPR": {
+    "KXNBASERIESREBLEADER": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPTSALLGAMES": {
+    "KXNBASTL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBARA": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASERIESASTLEADER": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASTOCK": {
-      "raw": 24,
-      "normalized": 24,
-      "skip_reasons": {
-        "ok": 24
-      },
       "skip_samples": {}
     },
     "KXNCAAF1HTEAMTOTAL": {
@@ -293,150 +278,111 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
+    "KXNCAAFFIRSTTDTEAM": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXNCAAFTEAMFG": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMREC": {
+    "KXNCAAFTEAMRSHYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMRSHATT": {
+    "KXNCAAFTEAMTO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMTOTAL": {
-      "raw": 1528,
+    "KXNCAAFTOTALFG": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLASSCOACH": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLCAREERPASSTDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLLONGFG": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLMOSTRSHYDS": {
+      "raw": 4,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1528
+        "ambiguous_participant_threshold": 4
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTEAMTOTAL-26NOV10OHIOMOH-MOH10",
-          "event_ticker": "KXNCAAFTEAMTOTAL-26NOV10OHIOMOH",
-          "event_title": "Ohio vs Miami (OH): Team Total",
-          "title": "Miami (OH) over 9.5 points scored",
+          "ticker": "KXNFLMOSTRSHYDS-26NOV09BUFMIN-MINAJONES33",
+          "event_ticker": "KXNFLMOSTRSHYDS-26NOV09BUFMIN",
+          "event_title": "Buffalo vs Minnesota: Most Rushing Yards",
+          "title": "Aaron Jones Sr.: most rushing yards in the BUF vs MIN game",
           "subtitle": null,
-          "yes_sub_title": "Miami (OH) over 9.5 points",
-          "primary_participant_key": null,
-          "floor_strike": 9.5,
+          "yes_sub_title": "Aaron Jones Sr.",
+          "primary_participant_key": "football_player",
+          "floor_strike": null,
           "functional_strike": null,
-          "occurrence_datetime": "2026-11-11T04:00:00Z"
+          "occurrence_datetime": "2026-11-10T04:15:00Z"
         }
       }
     },
-    "KXNCAAFTOTAL": {
-      "raw": 1273,
+    "KXNFLRACE": {
+      "raw": 15,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1273
+        "ambiguous_participant_threshold": 15
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTOTAL-26NOV10KENTBGSU-26",
-          "event_ticker": "KXNCAAFTOTAL-26NOV10KENTBGSU",
-          "event_title": "Kent St. vs Bowling Green: Total Points",
-          "title": "Full Game: Over 25.5 points scored",
+          "ticker": "KXNFLRACE-26NOV09BUFMIN-10-MIN",
+          "event_ticker": "KXNFLRACE-26NOV09BUFMIN-10",
+          "event_title": "Buffalo vs Minnesota: Race to 10 Points",
+          "title": "Will Minnesota reach 10 points first?",
           "subtitle": null,
-          "yes_sub_title": "Over 25.5 points",
+          "yes_sub_title": "Minnesota",
           "primary_participant_key": null,
-          "floor_strike": 25.5,
+          "floor_strike": null,
           "functional_strike": null,
-          "occurrence_datetime": "2026-11-11T03:00:00Z"
-        }
-      }
-    },
-    "KXNFLCAREERRECYDS": {
-      "raw": 10,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 10
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNFLCAREERRECYDS-MEVANS-14000",
-          "event_ticker": "KXNFLCAREERRECYDS-MEVANS",
-          "event_title": "Mike Evans Career Regular Season Receiving Yards",
-          "title": "Mike Evans: 14,000+ Receiving Yards",
-          "subtitle": null,
-          "yes_sub_title": "14,000+ receiving yards",
-          "primary_participant_key": null,
-          "floor_strike": 13999.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2040-03-01T15:00:00Z"
-        }
-      }
-    },
-    "KXNFLFF40PTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLFFPTSSEASON": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLFG": {
-      "raw": 14,
-      "normalized": 3,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 11,
-        "ok": 3
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLFG-26NOV08TBCHI-CHI2",
-          "event_ticker": "KXNFLFG-26NOV08TBCHI",
-          "event_title": "Tampa Bay vs Chicago: Team Field Goals",
-          "title": "Chicago: 2+ Field Goals",
-          "subtitle": null,
-          "yes_sub_title": "Chicago: 2+",
-          "primary_participant_key": null,
-          "floor_strike": 1.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-09T04:20:00Z"
+          "occurrence_datetime": "2026-11-10T04:15:00Z"
         }
       }
     },
     "KXNFLRECPROT": {
-      "raw": 172,
-      "normalized": 147,
-      "skip_reasons": {
-        "no_current_yes_price": 25,
-        "ok": 147
-      },
-      "skip_samples": {
-        "no_current_yes_price": {
-          "ticker": "KXNFLRECPROT-26NOV08TBCHI-CHILBURDEN10-10",
-          "event_ticker": "KXNFLRECPROT-26NOV08TBCHI",
-          "event_title": "Tampa Bay vs Chicago: Receptions",
-          "title": "Luther Burden III: 10+ receptions (Protected)",
-          "subtitle": null,
-          "yes_sub_title": "Luther Burden III: 10+",
-          "primary_participant_key": "football_player",
-          "floor_strike": 9.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-09T04:20:00Z"
-        }
-      }
-    },
-    "KXNFLRECYDSRECORD": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLTEAMTO": {
+    "KXNFLRRYDS": {
+      "raw": 6,
+      "normalized": 6,
+      "skip_reasons": {
+        "ok": 6
+      },
+      "skip_samples": {}
+    },
+    "KXNHL4NATIONS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -449,10 +395,10 @@
       "skip_samples": {}
     },
     "KXNHLF10G": {
-      "raw": 9,
+      "raw": 10,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 9
+        "ambiguous_participant_threshold": 10
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
@@ -469,52 +415,29 @@
         }
       }
     },
-    "KXNHLPLAYOFFGOALS": {
+    "KXNHLGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNHLPTS": {
-      "raw": 129,
-      "normalized": 129,
-      "skip_reasons": {
-        "ok": 129
-      },
-      "skip_samples": {}
-    },
-    "KXNHLSERIESTOTALGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLSERIESTOTALGOALS": {
+    "KXNHLSEASONGOALS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNHLTOTAL": {
-      "raw": 148,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 148
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNHLTOTAL-26NOV08NJTOR-2",
-          "event_ticker": "KXNHLTOTAL-26NOV08NJTOR",
-          "event_title": "New Jersey vs Toronto: Total Goals",
-          "title": "Full Game: Over 1.5 goals scored",
-          "subtitle": null,
-          "yes_sub_title": "Over 1.5 goals scored",
-          "primary_participant_key": null,
-          "floor_strike": 1.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-09T03:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXUFCOCCUR": {
       "raw": 0,
@@ -546,7 +469,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAAST": {
+    "KXWNBA3PTROUND": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXWNBA40PTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -564,12 +493,6 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAREB": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
     "KXWTAACES": {
       "raw": 0,
       "normalized": 0,
@@ -578,9 +501,7 @@
     }
   },
   "leagues": {
-    "NBA": 24,
-    "NFL": 150,
-    "NHL": 129
+    "NFL": 6
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
