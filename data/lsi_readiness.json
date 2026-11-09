@@ -1,35 +1,38 @@
 {
   "schema_version": "LSI-READINESS-1",
-  "generated_at_utc": "2026-11-09T08:35:44.800687+00:00",
-  "ready_for_deterministic_operation": true,
+  "generated_at_utc": "2026-11-09T09:36:49.969238+00:00",
+  "ready_for_deterministic_operation": false,
   "full_history_program_complete": true,
   "current_ljpc": {
-    "status": "PASS",
-    "known_events_inside_t48": 547,
-    "acquired_props": 401,
-    "evaluated_props": 401,
+    "status": "SLA_BREACH",
+    "known_events_inside_t48": 489,
+    "acquired_props": 1347,
+    "evaluated_props": 1324,
     "stale_props": 0,
-    "coverage_pct": 100.0,
-    "blockers": {}
+    "coverage_pct": 98.29,
+    "blockers": {
+      "No reliable forecast-first player projection (minimum 3 completed observations) or no acquired performance evidence; market probability retained as evidence only.": 23,
+      "MARKET_SWEEP_UNRESOLVED_INSIDE_T48": 2
+    }
   },
   "qc_board": {
-    "generated_at_utc": "2026-11-09T08:25:24.130526+00:00",
-    "age_hours": 0.17,
-    "events": 851,
+    "generated_at_utc": "2026-11-09T09:32:02.644513+00:00",
+    "age_hours": 0.08,
+    "events": 1032,
     "by_league": {
+      "NBA": {
+        "events": 114,
+        "props": 1401,
+        "evaluated": 1374,
+        "awaiting": 27,
+        "coverage_pct": 98.07
+      },
       "NHL": {
-        "events": 52,
-        "props": 166,
-        "evaluated": 166,
+        "events": 142,
+        "props": 131,
+        "evaluated": 131,
         "awaiting": 0,
         "coverage_pct": 100.0
-      },
-      "NBA": {
-        "events": 57,
-        "props": 1963,
-        "evaluated": 1940,
-        "awaiting": 23,
-        "coverage_pct": 98.83
       },
       "NCAA_Basketball": {
         "events": 144,
@@ -39,14 +42,14 @@
         "coverage_pct": 41.11
       },
       "NFL": {
-        "events": 16,
-        "props": 802,
-        "evaluated": 782,
-        "awaiting": 20,
-        "coverage_pct": 97.51
+        "events": 31,
+        "props": 1215,
+        "evaluated": 1198,
+        "awaiting": 17,
+        "coverage_pct": 98.6
       },
       "Tennis": {
-        "events": 404,
+        "events": 356,
         "props": 0,
         "evaluated": 0,
         "awaiting": 0,
@@ -60,7 +63,7 @@
         "coverage_pct": 0.0
       },
       "NCAA_Football": {
-        "events": 130,
+        "events": 197,
         "props": 0,
         "evaluated": 0,
         "awaiting": 0,
@@ -76,9 +79,9 @@
     }
   },
   "future_board": {
-    "generated_at_utc": "2026-11-09T08:35:43.796279+00:00",
-    "age_hours": 0.0,
-    "events": 848
+    "generated_at_utc": "2026-11-09T09:29:59.842734+00:00",
+    "age_hours": 0.11,
+    "events": 806
   },
   "history_coverage": {
     "MLB": {
@@ -216,11 +219,11 @@
   },
   "market_source_health": {
     "propline": {
-      "tracked_events": 1489,
-      "last_success_utc": "2026-11-09T08:22:38.210677+00:00",
-      "age_hours": 0.22,
+      "tracked_events": 1492,
+      "last_success_utc": "2026-11-09T09:32:02.644513+00:00",
+      "age_hours": 0.08,
       "status": "HEALTHY",
-      "checked_at_utc": "2026-11-09T08:22:38.210677+00:00",
+      "checked_at_utc": "2026-11-09T09:32:02.644513+00:00",
       "last_error": null,
       "rate_limits": 0,
       "auth_errors": 0
@@ -244,6 +247,13 @@
     "telemetry_days": 48
   },
   "blockers": [
+    {
+      "type": "T48_LJPC_SLA",
+      "detail": {
+        "No reliable forecast-first player projection (minimum 3 completed observations) or no acquired performance evidence; market probability retained as evidence only.": 23,
+        "MARKET_SWEEP_UNRESOLVED_INSIDE_T48": 2
+      }
+    },
     {
       "type": "THE_ODDS_API_NO_SUCCESS_STATE",
       "note": "No successful event state has been recorded yet."
