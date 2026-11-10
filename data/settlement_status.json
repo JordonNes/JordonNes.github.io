@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-11-10T04:04:36.059285+00:00",
+  "generated_at_utc": "2026-11-10T04:19:51.357468+00:00",
   "source_registry_generated_at_utc": "2026-11-10T04:02:33.514339+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -48,55 +48,529 @@
   "predictions_in_registry": 240,
   "website_suggestions_recorded": 77883,
   "website_suggestions_structured_for_settlement": 68216,
-  "settlement_population_total": 4446,
-  "settled_predictions": 32154,
-  "settlement_rate_pct": 723.21,
+  "settlement_population_total": 68456,
+  "settled_predictions": 32201,
+  "settlement_rate_pct": 47.04,
   "run_counts": {
-    "already_settled": 1237,
-    "PENDING_EVENT": 2644,
-    "AMBIGUOUS_EVENT": 355,
-    "PLAYER_NOT_IN_BOXSCORE": 60,
-    "UNSUPPORTED_PLAYER_MARKET": 150
+    "already_settled": 32122,
+    "PENDING_EVENT": 3646,
+    "AMBIGUOUS_EVENT": 2485,
+    "PLAYER_NOT_IN_BOXSCORE": 19649,
+    "UNSUPPORTED_PLAYER_MARKET": 9226,
+    "PLAYER_PROP_PROVIDER_PENDING": 27,
+    "TD_STATS_UNAVAILABLE": 33,
+    "NO_EVENT_CANDIDATES": 728,
+    "TEAM_UNRESOLVED": 323,
+    "EVENT_NOT_FOUND": 55,
+    "PARTICIPANT_UNRESOLVED": 6,
+    "UNGRADED_MARKET_RULE": 8,
+    "SPECIAL_WINNER_UNRESOLVED": 100,
+    "SUMMARY_ERROR": 1,
+    "settled": 47
   },
   "by_league": {
+    "MLB": {
+      "PLAYER_NOT_IN_BOXSCORE": 4370,
+      "UNSUPPORTED_PLAYER_MARKET": 3346,
+      "NO_EVENT_CANDIDATES": 473,
+      "AMBIGUOUS_EVENT": 100,
+      "already_settled": 1025,
+      "TEAM_UNRESOLVED": 18,
+      "PENDING_EVENT": 61,
+      "EVENT_NOT_FOUND": 20
+    },
     "MMA": {
-      "PENDING_EVENT": 32
+      "PENDING_EVENT": 36,
+      "PLAYER_PROP_PROVIDER_PENDING": 27,
+      "already_settled": 172,
+      "EVENT_NOT_FOUND": 31,
+      "SPECIAL_WINNER_UNRESOLVED": 100,
+      "PARTICIPANT_UNRESOLVED": 4,
+      "AMBIGUOUS_EVENT": 23
     },
     "NBA": {
-      "PENDING_EVENT": 592,
-      "already_settled": 471,
-      "PLAYER_NOT_IN_BOXSCORE": 24,
-      "UNSUPPORTED_PLAYER_MARKET": 53
+      "PENDING_EVENT": 850,
+      "already_settled": 2927,
+      "PLAYER_NOT_IN_BOXSCORE": 1694,
+      "UNSUPPORTED_PLAYER_MARKET": 254,
+      "SUMMARY_ERROR": 1,
+      "TEAM_UNRESOLVED": 13,
+      "AMBIGUOUS_EVENT": 24,
+      "settled": 26
     },
     "NCAA_Basketball": {
-      "AMBIGUOUS_EVENT": 330,
-      "PENDING_EVENT": 145,
-      "already_settled": 155,
-      "UNSUPPORTED_PLAYER_MARKET": 21,
-      "PLAYER_NOT_IN_BOXSCORE": 4
+      "AMBIGUOUS_EVENT": 786,
+      "PENDING_EVENT": 168,
+      "already_settled": 763,
+      "UNSUPPORTED_PLAYER_MARKET": 85,
+      "PLAYER_NOT_IN_BOXSCORE": 45
     },
     "NCAA_Football": {
-      "already_settled": 5,
-      "PENDING_EVENT": 1083,
-      "AMBIGUOUS_EVENT": 10
+      "already_settled": 11815,
+      "PENDING_EVENT": 1202,
+      "AMBIGUOUS_EVENT": 1341,
+      "PLAYER_NOT_IN_BOXSCORE": 2920,
+      "UNSUPPORTED_PLAYER_MARKET": 2080,
+      "TEAM_UNRESOLVED": 201,
+      "TD_STATS_UNAVAILABLE": 26
     },
     "NFL": {
-      "already_settled": 333,
-      "PENDING_EVENT": 143,
-      "PLAYER_NOT_IN_BOXSCORE": 19,
-      "UNSUPPORTED_PLAYER_MARKET": 29
+      "already_settled": 5751,
+      "PENDING_EVENT": 267,
+      "PLAYER_NOT_IN_BOXSCORE": 7222,
+      "UNSUPPORTED_PLAYER_MARKET": 1806,
+      "TD_STATS_UNAVAILABLE": 7,
+      "NO_EVENT_CANDIDATES": 188,
+      "TEAM_UNRESOLVED": 18
     },
     "NHL": {
-      "PENDING_EVENT": 649,
-      "already_settled": 273,
-      "UNSUPPORTED_PLAYER_MARKET": 47,
-      "PLAYER_NOT_IN_BOXSCORE": 13
+      "PENDING_EVENT": 1062,
+      "already_settled": 8052,
+      "UNSUPPORTED_PLAYER_MARKET": 1549,
+      "TEAM_UNRESOLVED": 73,
+      "PLAYER_NOT_IN_BOXSCORE": 2973,
+      "UNGRADED_MARKET_RULE": 8,
+      "AMBIGUOUS_EVENT": 28,
+      "settled": 21
     },
     "Tennis": {
-      "AMBIGUOUS_EVENT": 15
+      "AMBIGUOUS_EVENT": 183,
+      "PARTICIPANT_UNRESOLVED": 2,
+      "already_settled": 4
+    },
+    "WNBA": {
+      "UNSUPPORTED_PLAYER_MARKET": 106,
+      "already_settled": 1613,
+      "PLAYER_NOT_IN_BOXSCORE": 425,
+      "NO_EVENT_CANDIDATES": 67,
+      "EVENT_NOT_FOUND": 4
     }
   },
-  "recent_settlements": [],
+  "recent_settlements": [
+    {
+      "prediction_id": "SUG-8da16fd91914a979eef7d093",
+      "league": "NHL",
+      "selection": "Oilers ML • -170 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-046e95096e408544f300aba6",
+      "league": "NHL",
+      "selection": "Oilers ML • -163 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-93157afb6055b7484fa67c0f",
+      "league": "NHL",
+      "selection": "Oilers ML • -163 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-fe499047614d4e80cc4211e4",
+      "league": "NHL",
+      "selection": "Oilers ML • -163 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7392476c5de6af8edccccc8f",
+      "league": "NHL",
+      "selection": "Oilers ML • -163 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-925039ab10eb34b44ed8127f",
+      "league": "NHL",
+      "selection": "Oilers ML • -163 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-acaed7732d1e1951e0beb670",
+      "league": "NHL",
+      "selection": "Oilers ML • -150 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-a6f93972d4238ca392744e63",
+      "league": "NHL",
+      "selection": "Oilers ML • -150 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-84ae283d4fe926b619570f0c",
+      "league": "NHL",
+      "selection": "Oilers ML • -150 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-dcad5c01914e6b76399e4667",
+      "league": "NHL",
+      "selection": "Oilers ML • -150 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-25c32df13388e48d6afebfb0",
+      "league": "NHL",
+      "selection": "Edmonton ML • -150 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-c8ea5b145d6e26e6eb175ee4",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -257 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ed63913aa01cc53b99ac125f",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -426 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-3c0dba2f7acf8eb21e874455",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -285 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-b7061a4c4f2fe3ce3861ed2f",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -203 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-d9fc826fbeca06f6c6f9dcc4",
+      "league": "NHL",
+      "selection": "Oilers ML • -144 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-311468045571b9752dcd423b",
+      "league": "NHL",
+      "selection": "Oilers ML • -144 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-4f042f081db73e3f06fe2053",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -285 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-735961df367ce946554cca06",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -203 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-dc8c1934199be8ad548294fa",
+      "league": "NHL",
+      "selection": "Oilers ML • -144 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-28f3c6225c045221cdef0ef6",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -133 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7a72393a90a10d185fe89079",
+      "league": "NHL",
+      "selection": "Edmonton ML • -150 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-dccddd9b3b697ff5110aa5e8",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -223 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-26f25795fdc3d6a019524962",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -122 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-0ec38d9b26dfe2851c1d633b",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -223 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-317b39f7686229cd9adbf51d",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -122 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-3d0c1b1298dfbe537444fe7d",
+      "league": "NHL",
+      "selection": "Oilers ML • -150 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-83b33a527f551f64c5deec67",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -127 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-1e395e5bb84379fc41abacc1",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -203 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-a67c87224413f8b363c00478",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -245 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-3fd96cbf328a0c87fa4ee212",
+      "league": "NHL",
+      "selection": "Oilers ML • -144 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-93572af848d393ded013e7ba",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -245 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ea063f8658cbcbc09d3aaba9",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -203 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-93c4d564a7bda107919d56db",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -194 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-bfff96ac8a7bfe7a2844d3c5",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -194 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-943bd02049d96b025edb952d",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -170 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-da91331679e90b928d4c6cb2",
+      "league": "NHL",
+      "selection": "Edmonton ML • -150 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-eaa65d6725799951247cf8e9",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -213 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-5f5acbf467b78270499c9663",
+      "league": "NHL",
+      "selection": "Edmonton ML • -150 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7272427f6d359376dfd16dce",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -144 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ce1e0c0cebfb3aa1115d7e58",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -203 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-857a6a0b216ab5cacfc05e99",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -194 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-c84217e899bc0077e1d25b4a",
+      "league": "NHL",
+      "selection": "Oilers ML • -144 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ac51682b92c15b51bfe2d831",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -194 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-051920246239b85306255f57",
+      "league": "NBA",
+      "selection": "Houston Rockets ML • -194 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909957",
+      "source": "ESPN_PUBLIC:401909957:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-432280ed8658cc7f1f4440bf",
+      "league": "NHL",
+      "selection": "Oilers ML • -144 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892680",
+      "source": "ESPN_PUBLIC:401892680:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ebf8c32a87687adc22cbb8ac",
+      "league": "NBA",
+      "selection": "Dallas Mavericks ML • -144 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909956",
+      "source": "ESPN_PUBLIC:401909956:FINAL_SCORE_ML"
+    }
+  ],
   "unresolved": [
     {
       "prediction_id": "SUG-1344dd49241ca9cc4b9fc438",
@@ -244,7 +718,7 @@
       "event_id": "2026020284",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-3039e84ab34e1fad2c4fef76",
@@ -280,7 +754,7 @@
       "event_id": "2026020284",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-3323dc7719ca8464503044a4",
@@ -288,7 +762,7 @@
       "event_id": "2026020284",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-354ea3814ddbdc499b542812",
@@ -410,7 +884,7 @@
       "event_id": "PL-646642",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-51c83132352e8a1d1f965cba",
@@ -518,7 +992,7 @@
       "event_id": "PL-646642",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-653df00a7ae64e26b3b1d4c5",
@@ -526,7 +1000,7 @@
       "event_id": "2026020284",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-68d1228d01cc365bbb7fb30d",
@@ -730,7 +1204,7 @@
       "event_id": "PL-646642",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-91eb2c439bf30a1dab95db76",
@@ -814,7 +1288,7 @@
       "event_id": "2026020284",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-a2975498b7804e0df450afc8",
@@ -822,7 +1296,7 @@
       "event_id": "PL-646642",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-a365774009f2b5c5867dd826",
@@ -898,7 +1372,7 @@
       "event_id": "PL-646642",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-b6fe6c145fdf266bb362f26f",
@@ -914,7 +1388,7 @@
       "event_id": "PL-646642",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-bdfe76b89692defb074b3ce1",
@@ -982,7 +1456,7 @@
       "event_id": "2026020284",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-d321ccf1b2a5d629bb9dfb33",
@@ -1102,7 +1576,7 @@
       "event_id": "PL-646642",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-f26957a831d0657eed2f34b6",
@@ -1194,7 +1668,7 @@
       "event_id": "PL-646642",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-5fc3564b094020117413dfec",
@@ -1226,7 +1700,7 @@
       "event_id": "2026020284",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-b925a131de3ac0f08cbb5f39",
@@ -1672,7 +2146,7 @@
       "event_id": "2026020284",
       "provider_event_id": "401892681",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-d22007d7c53b3f2025898587",
@@ -1712,7 +2186,7 @@
       "event_id": "PL-641560",
       "provider_event_id": "401909959",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_HALFTIME"
     },
     {
       "prediction_id": "SUG-dcbe4cab9fce56b243309d70",
