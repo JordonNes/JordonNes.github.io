@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-09",
+  "verifiedOn": "2026-11-10",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
@@ -43,7 +43,7 @@ window.LJ_FIBA_FIXTURES={
     {
       "competition": "Basketball Champions League",
       "source": "https://www.championsleague.basketball/en",
-      "parsed_fixtures": 48,
+      "parsed_fixtures": 46,
       "status": "FIXTURES_VERIFIED"
     },
     {
@@ -72,34 +72,6 @@ window.LJ_FIBA_FIXTURES={
     }
   ],
   "events": [
-    {
-      "id": "FIBA-2026-11-10-BASKETBALLCHAMPIONSLEAGUE-SAB-TS",
-      "track": "men",
-      "competition": "Basketball Champions League",
-      "date": "2026-11-10",
-      "publishedTime": "16:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "SAB",
-      "away": "TS",
-      "group": "A",
-      "source": "https://www.championsleague.basketball/en",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-10-BASKETBALLCHAMPIONSLEAGUE-HOLO-VEC",
-      "track": "men",
-      "competition": "Basketball Champions League",
-      "date": "2026-11-10",
-      "publishedTime": "17:30",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "HOLO",
-      "away": "VEC",
-      "group": "F",
-      "source": "https://www.championsleague.basketball/en",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
     {
       "id": "FIBA-2026-11-10-BASKETBALLCHAMPIONSLEAGUE-SBB-ALBA",
       "track": "men",
@@ -2327,28 +2299,28 @@ window.LJ_FIBA_FIXTURES={
       "marketStatus": "NOT_VERIFIED"
     },
     {
-      "id": "FIBA-2026-11-29-2027WORLDCUPQUALIFIERSASIA-JOR-AUS",
+      "id": "FIBA-2026-11-29-2027WORLDCUPQUALIFIERSASIA-IRI-PHI",
       "track": "men",
       "competition": "2027 World Cup Qualifiers — Asia",
       "date": "2026-11-29",
       "publishedTime": "09:00",
       "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "JOR",
-      "away": "AUS",
+      "home": "IRI",
+      "away": "PHI",
       "group": "E",
       "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
       "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
       "marketStatus": "NOT_VERIFIED"
     },
     {
-      "id": "FIBA-2026-11-29-2027WORLDCUPQUALIFIERSASIA-IRI-PHI",
+      "id": "FIBA-2026-11-29-2027WORLDCUPQUALIFIERSASIA-JOR-AUS",
       "track": "men",
       "competition": "2027 World Cup Qualifiers — Asia",
       "date": "2026-11-29",
       "publishedTime": "12:00",
       "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "IRI",
-      "away": "PHI",
+      "home": "JOR",
+      "away": "AUS",
       "group": "E",
       "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
       "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
