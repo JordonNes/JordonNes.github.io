@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-11-11T03:24:01.126612+00:00",
+  "generated_at_utc": "2026-11-11T03:31:25.816269+00:00",
   "source_registry_generated_at_utc": "2026-11-11T03:21:59.519954+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -48,59 +48,600 @@
   "predictions_in_registry": 214,
   "website_suggestions_recorded": 81636,
   "website_suggestions_structured_for_settlement": 71607,
-  "settlement_population_total": 5442,
-  "settled_predictions": 33126,
-  "settlement_rate_pct": 608.71,
+  "settlement_population_total": 71821,
+  "settled_predictions": 33384,
+  "settlement_rate_pct": 46.48,
   "run_counts": {
-    "already_settled": 846,
-    "PENDING_EVENT": 3691,
-    "AMBIGUOUS_EVENT": 594,
-    "UNSUPPORTED_PLAYER_MARKET": 216,
-    "PLAYER_NOT_IN_BOXSCORE": 95
+    "already_settled": 33094,
+    "PENDING_EVENT": 5113,
+    "AMBIGUOUS_EVENT": 2852,
+    "UNSUPPORTED_PLAYER_MARKET": 9442,
+    "settled": 258,
+    "PLAYER_NOT_IN_BOXSCORE": 19782,
+    "PLAYER_PROP_PROVIDER_PENDING": 27,
+    "TD_STATS_UNAVAILABLE": 33,
+    "NO_EVENT_CANDIDATES": 728,
+    "TEAM_UNRESOLVED": 323,
+    "EVENT_NOT_FOUND": 55,
+    "PARTICIPANT_UNRESOLVED": 6,
+    "UNGRADED_MARKET_RULE": 8,
+    "SPECIAL_WINNER_UNRESOLVED": 100
   },
   "by_league": {
+    "MLB": {
+      "PLAYER_NOT_IN_BOXSCORE": 4370,
+      "UNSUPPORTED_PLAYER_MARKET": 3346,
+      "NO_EVENT_CANDIDATES": 473,
+      "AMBIGUOUS_EVENT": 100,
+      "already_settled": 1025,
+      "TEAM_UNRESOLVED": 18,
+      "PENDING_EVENT": 61,
+      "EVENT_NOT_FOUND": 20
+    },
     "MMA": {
-      "PENDING_EVENT": 22
+      "PENDING_EVENT": 46,
+      "PLAYER_PROP_PROVIDER_PENDING": 27,
+      "already_settled": 172,
+      "EVENT_NOT_FOUND": 31,
+      "SPECIAL_WINNER_UNRESOLVED": 100,
+      "PARTICIPANT_UNRESOLVED": 4,
+      "AMBIGUOUS_EVENT": 23
     },
     "NBA": {
-      "PENDING_EVENT": 915,
-      "already_settled": 207,
-      "PLAYER_NOT_IN_BOXSCORE": 20,
-      "UNSUPPORTED_PLAYER_MARKET": 41,
-      "AMBIGUOUS_EVENT": 1
+      "PENDING_EVENT": 1260,
+      "already_settled": 3091,
+      "settled": 98,
+      "UNSUPPORTED_PLAYER_MARKET": 289,
+      "PLAYER_NOT_IN_BOXSCORE": 1704,
+      "AMBIGUOUS_EVENT": 25,
+      "TEAM_UNRESOLVED": 13
     },
     "NCAA_Basketball": {
-      "PENDING_EVENT": 203,
-      "AMBIGUOUS_EVENT": 377,
-      "already_settled": 229,
-      "UNSUPPORTED_PLAYER_MARKET": 34,
-      "PLAYER_NOT_IN_BOXSCORE": 50
+      "PENDING_EVENT": 215,
+      "AMBIGUOUS_EVENT": 949,
+      "already_settled": 990,
+      "UNSUPPORTED_PLAYER_MARKET": 118,
+      "PLAYER_NOT_IN_BOXSCORE": 95,
+      "settled": 21
     },
     "NCAA_Football": {
-      "already_settled": 33,
-      "AMBIGUOUS_EVENT": 160,
-      "PENDING_EVENT": 1522,
-      "UNSUPPORTED_PLAYER_MARKET": 65
+      "already_settled": 11843,
+      "AMBIGUOUS_EVENT": 1495,
+      "PENDING_EVENT": 1954,
+      "UNSUPPORTED_PLAYER_MARKET": 2145,
+      "PLAYER_NOT_IN_BOXSCORE": 2920,
+      "TEAM_UNRESOLVED": 201,
+      "TD_STATS_UNAVAILABLE": 26
     },
     "NFL": {
-      "already_settled": 57,
-      "PENDING_EVENT": 384,
-      "UNSUPPORTED_PLAYER_MARKET": 4,
-      "PLAYER_NOT_IN_BOXSCORE": 17
+      "already_settled": 5908,
+      "PENDING_EVENT": 389,
+      "PLAYER_NOT_IN_BOXSCORE": 7283,
+      "UNSUPPORTED_PLAYER_MARKET": 1819,
+      "TD_STATS_UNAVAILABLE": 7,
+      "NO_EVENT_CANDIDATES": 188,
+      "TEAM_UNRESOLVED": 18
     },
     "NHL": {
-      "AMBIGUOUS_EVENT": 38,
-      "PENDING_EVENT": 645,
-      "already_settled": 320,
-      "UNSUPPORTED_PLAYER_MARKET": 72,
-      "PLAYER_NOT_IN_BOXSCORE": 8
+      "AMBIGUOUS_EVENT": 66,
+      "PENDING_EVENT": 1188,
+      "already_settled": 8448,
+      "UNSUPPORTED_PLAYER_MARKET": 1619,
+      "PLAYER_NOT_IN_BOXSCORE": 2985,
+      "TEAM_UNRESOLVED": 73,
+      "UNGRADED_MARKET_RULE": 8,
+      "settled": 139
     },
     "Tennis": {
-      "AMBIGUOUS_EVENT": 18
+      "AMBIGUOUS_EVENT": 194,
+      "PARTICIPANT_UNRESOLVED": 2,
+      "already_settled": 4
+    },
+    "WNBA": {
+      "UNSUPPORTED_PLAYER_MARKET": 106,
+      "already_settled": 1613,
+      "PLAYER_NOT_IN_BOXSCORE": 425,
+      "NO_EVENT_CANDIDATES": 67,
+      "EVENT_NOT_FOUND": 4
     }
   },
-  "recent_settlements": [],
+  "recent_settlements": [
+    {
+      "prediction_id": "SUG-0ecc2fe332cb58be1a6aff90",
+      "league": "NHL",
+      "selection": "Florida ML • -108 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892686",
+      "source": "ESPN_PUBLIC:401892686:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-4006c31a3d36d14c54600f7e",
+      "league": "NHL",
+      "selection": "Senators ML • -117 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892685",
+      "source": "ESPN_PUBLIC:401892685:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-43bcae59d701d41993870d13",
+      "league": "NHL",
+      "selection": "New Jersey ML • -170 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892688",
+      "source": "ESPN_PUBLIC:401892688:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-aee842423558a3c92a9b47c7",
+      "league": "NBA",
+      "selection": "Philadelphia 76ers ML • -104 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-20c3632efdf53c7a514a01f0",
+      "league": "NHL",
+      "selection": "Colorado ML • -163 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892683",
+      "source": "ESPN_PUBLIC:401892683:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-c9e83fb73e4238f35d700584",
+      "league": "NBA",
+      "selection": "Philadelphia 76ers ML • -104 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-1d154793ed2f004c4e5306a5",
+      "league": "NBA",
+      "selection": "Philadelphia 76ers ML • -104 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-5108a3af7243d6f0bc6d5f62",
+      "league": "NHL",
+      "selection": "Colorado ML • -156 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892683",
+      "source": "ESPN_PUBLIC:401892683:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-795f5551472da8b9b01f6a73",
+      "league": "NHL",
+      "selection": "Senators ML • -117 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892685",
+      "source": "ESPN_PUBLIC:401892685:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-4b6d74da899caed7a2f4c963",
+      "league": "NHL",
+      "selection": "Colorado ML • -156 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892683",
+      "source": "ESPN_PUBLIC:401892683:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-59c35712867eb7d86316d32c",
+      "league": "NBA",
+      "selection": "Philadelphia 76ers ML • -101 PROPLINE:Strendus",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-5c5b22f764e3a7bb5120baed",
+      "league": "NHL",
+      "selection": "Senators ML • -117 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892685",
+      "source": "ESPN_PUBLIC:401892685:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-a945f787dd4d82c5f281adba",
+      "league": "NHL",
+      "selection": "Minnesota ML • -113 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892684",
+      "source": "ESPN_PUBLIC:401892684:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-adbdfa8c29414fffc67730f7",
+      "league": "NHL",
+      "selection": "New Jersey ML • -170 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892688",
+      "source": "ESPN_PUBLIC:401892688:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-db1af11cf2059d04a809c520",
+      "league": "NHL",
+      "selection": "Panthers ML • -104 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892686",
+      "source": "ESPN_PUBLIC:401892686:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-f18d76067ca272187f19e2d5",
+      "league": "NCAA_Basketball",
+      "selection": "Illinois Fighting Illini ML • -125",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401913527",
+      "source": "ESPN_PUBLIC:401913527:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-feb957f8ed8db4329f88147f",
+      "league": "NCAA_Basketball",
+      "selection": "Illinois Fighting Illini ML • -125 PROPLINE:Fanatics",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401913527",
+      "source": "ESPN_PUBLIC:401913527:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-5f9725d7449f6411d30dde53",
+      "league": "NHL",
+      "selection": "New Jersey ML • -170 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892688",
+      "source": "ESPN_PUBLIC:401892688:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-1627dcdd02380ae387d3f1ba",
+      "league": "NHL",
+      "selection": "Panthers ML • -104 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892686",
+      "source": "ESPN_PUBLIC:401892686:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-24760cb4a4d141bf1f018bbb",
+      "league": "NBA",
+      "selection": "Philadelphia 76ers ML • -101 PROPLINE:Strendus",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-5c83e74a8a0d5c201f39284a",
+      "league": "NHL",
+      "selection": "Colorado ML • -156 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892683",
+      "source": "ESPN_PUBLIC:401892683:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7b9e5f500f276eb8b64377b3",
+      "league": "NHL",
+      "selection": "New Jersey ML • -170 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892688",
+      "source": "ESPN_PUBLIC:401892688:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-032ea1f0b9578bb88101c874",
+      "league": "NHL",
+      "selection": "New Jersey ML • -163 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892688",
+      "source": "ESPN_PUBLIC:401892688:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-06cf785bc47cdefb896ee26c",
+      "league": "NBA",
+      "selection": "Philadelphia 76ers ML • -101 PROPLINE:Strendus",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-70afed7fdd6f121085ab7dbd",
+      "league": "NBA",
+      "selection": "Knicks ML • -614 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909960",
+      "source": "ESPN_PUBLIC:401909960:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-b99fe46142ba99b39f6bb42d",
+      "league": "NHL",
+      "selection": "Colorado ML • -163 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892683",
+      "source": "ESPN_PUBLIC:401892683:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-c13d18ce4801823fffc1bd10",
+      "league": "NCAA_Basketball",
+      "selection": "Illinois ML • -132 PROPLINE:Courtside",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401913527",
+      "source": "ESPN_PUBLIC:401913527:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-08fe033bc2d42eb1cd7cc6f7",
+      "league": "NBA",
+      "selection": "Philadelphia 76ers ML • -101 PROPLINE:Strendus",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-04638f76f302298a818ef4a9",
+      "league": "NBA",
+      "selection": "PHI 76ers ML • -109 PROPLINE:DraftKings",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-fdba1520ec21f432482ec62d",
+      "league": "NBA",
+      "selection": "PHI 76ers ML • +100 PROPLINE:PlayAlberta",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-70e0bd365ecd3947e1f01fdf",
+      "league": "NBA",
+      "selection": "PHI 76ers ML • +104 PROPLINE:PlayAlberta",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-5bb7a0d7ed3d58b1be85ed3a",
+      "league": "NBA",
+      "selection": "BOS Celtics ML • -114 PROPLINE:Codere MX",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-3af874c77af3504d9982de12",
+      "league": "NBA",
+      "selection": "Sam Hauser UNDER 0.5 Steals • NORMAL • L5 AVG 0.4 • L&J PROJ 0.3 • POM Value 70.4 • STAT 0% • LJPC 62.5% ⟦L=62.5;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-3dc46adbf506ffa57965135a",
+      "league": "NBA",
+      "selection": "Mitchell Robinson OVER 11.5 Points Rebounds Assists • NORMAL • L5 AVG 14.2 • L&J PROJ 13.8 • POM Value 72.8 • STAT 0% • LJPC 68.8% ⟦L=72.8;J=-4⟧ 🕵️",
+      "actual_result": "2",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-49963988a5940ae804c22c1b",
+      "league": "NBA",
+      "selection": "Derrick White UNDER 3.5 Rebounds • NORMAL • L5 AVG 3 • L&J PROJ 3.1 • POM Value 71.2 • STAT 0% • LJPC 62.3% ⟦L=62.3;J=0⟧ 🕵️",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-787c588b2af869c33c3549b4",
+      "league": "NBA",
+      "selection": "Over 6.5 Rebounds 🕵️",
+      "actual_result": "8",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-7c10c56780f56cb4d4059250",
+      "league": "NBA",
+      "selection": "LeBron James UNDER 1.5 Steals • NORMAL • L5 AVG 1.2 • L&J PROJ 1.3 • POM Value 74.4 • STAT 0% • LJPC 69% ⟦L=69;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-7e04ca401ff5fc6f7660eb6e",
+      "league": "NBA",
+      "selection": "Tyrese Maxey OVER 23.5 Points • NORMAL • L5 AVG 25.4 • L&J PROJ 25.5 • POM Value 70.8 • STAT 0% • LJPC 62.9% ⟦L=62.9;J=0⟧ 🕵️",
+      "actual_result": "24",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-8695c245ff1103f90dee5727",
+      "league": "NBA",
+      "selection": "Payton Pritchard OVER 2.5 Rebounds • NORMAL • L5 AVG 4.4 • L&J PROJ 4 • POM Value 74.9 • STAT 0% • LJPC 70.8% ⟦L=74.8;J=-4⟧ 🕵️",
+      "actual_result": "6",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-95c34c1031f34df308455aa6",
+      "league": "NBA",
+      "selection": "Jayson Tatum OVER 6.5 Assists • NORMAL • L5 AVG 7.6 • L&J PROJ 7.5 • POM Value 73.0 • STAT 0% • LJPC 66.2% ⟦L=78.2;J=-12⟧ 🕵️",
+      "actual_result": "4",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-9c9b91fdc700142a4988d850",
+      "league": "NBA",
+      "selection": "Derrick White OVER 0.5 Steals • NORMAL • L5 AVG 1.4 • L&J PROJ 1.4 • POM Value 84.2 • STAT 0% • LJPC 92.1% ⟦L=92.1;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a17501e4500667bd06c62b42",
+      "league": "NBA",
+      "selection": "Payton Pritchard OVER 3.5 Assists • NORMAL • L5 AVG 4 • L&J PROJ 4.1 • POM Value 71.8 • STAT 0% • LJPC 64.2% ⟦L=68.2;J=-4⟧ 🕵️",
+      "actual_result": "5",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a37de3a5c9b16e70995ed02c",
+      "league": "NBA",
+      "selection": "Joel Embiid UNDER 19.5 Points • NORMAL • L5 AVG 15 • L&J PROJ 16.5 • POM Value 72.0 • STAT 0% • LJPC 68.2% ⟦L=68.2;J=0⟧ 🕵️",
+      "actual_result": "16",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a64b19776c100585eae24990",
+      "league": "NBA",
+      "selection": "Paul George OVER 1.5 Steals • NORMAL • L5 AVG 2.4 • L&J PROJ 2.3 • POM Value 75.1 • STAT 0% • LJPC 67.5% ⟦L=79.5;J=-12⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-aa1628a562842b154d2d55b8",
+      "league": "NBA",
+      "selection": "Jaylen Brown OVER 0.5 Steals • NORMAL • L5 AVG 1.2 • L&J PROJ 1.1 • POM Value 76.4 • STAT 0% • LJPC 75.7% ⟦L=87.7;J=-12⟧ 🕵️",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d2917e3f2407bd336b31937c",
+      "league": "NBA",
+      "selection": "Under 0.5 Steals 🕵️",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d3706ef3193ce80a397264e3",
+      "league": "NBA",
+      "selection": "Tyrese Maxey OVER 0.5 Steals • NORMAL • L5 AVG 1 • L&J PROJ 1.1 • POM Value 74.8 • STAT 0% • LJPC 69.1% ⟦L=69.1;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d605165cae53b5107adfc5de",
+      "league": "NBA",
+      "selection": "BOS Celtics ML • -115 PROPLINE:Elabet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-eb1a391a32783e2cbf6113c9",
+      "league": "NBA",
+      "selection": "Payton Pritchard UNDER 12.5 Points • NORMAL • L5 AVG 9 • L&J PROJ 10.6 • POM Value 73.8 • STAT 0% • LJPC 75% ⟦L=80.5;J=-5.6⟧ 🕵️",
+      "actual_result": "18",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-52587814df15dd9dcdbbd55f",
+      "league": "NBA",
+      "selection": "Payton Pritchard UNDER 12.5 Points • NORMAL • L5 AVG 9 • L&J PROJ 10.6 • POM Value 73.1 • STAT 0% • LJPC 73.4% ⟦L=80.5;J=-7.1⟧ 🕵️",
+      "actual_result": "18",
+      "grade": "LOSS",
+      "provider_event_id": "401909961",
+      "source": "ESPN_PUBLIC:401909961:BOX_SCORE"
+    }
+  ],
   "unresolved": [
+    {
+      "prediction_id": "SUG-a2ec5d1e9b64cb1312effde1",
+      "league": "NHL",
+      "event_id": "401892726",
+      "provider_event_id": "401892726",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-a3261ac48a89dee235524b5d",
+      "league": "NCAA_Football",
+      "event_id": "PL-648909",
+      "provider_event_id": "401866463",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-a3d33ec73fdc02312cdb718e",
+      "league": "NCAA_Football",
+      "event_id": "PL-681267",
+      "provider_event_id": "401860914",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-a4cf7ebcdd63613e07734b15",
+      "league": "NCAA_Basketball",
+      "market": "Assists",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-a56c62041ba6c45ea3133704",
+      "league": "NBA",
+      "event_id": "PL-642855",
+      "provider_event_id": "401909963",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_HALFTIME"
+    },
+    {
+      "prediction_id": "SUG-a62854c260d494c262637bf1",
+      "league": "NCAA_Basketball",
+      "market": "Rebounds",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
     {
       "prediction_id": "SUG-a688aaa677be008cfc7cc8fd",
       "league": "NCAA_Football",
@@ -130,14 +671,6 @@
       "league": "NCAA_Basketball",
       "market": "Points 🕵️",
       "reason": "PLAYER_NOT_IN_BOXSCORE"
-    },
-    {
-      "prediction_id": "SUG-aa1628a562842b154d2d55b8",
-      "league": "NBA",
-      "event_id": "PL-646675",
-      "provider_event_id": "401909961",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-aa8223443f3e407e4cab6134",
@@ -468,30 +1001,6 @@
       }
     },
     {
-      "prediction_id": "SUG-d2917e3f2407bd336b31937c",
-      "league": "NBA",
-      "event_id": "PL-646675",
-      "provider_event_id": "401909961",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-d3706ef3193ce80a397264e3",
-      "league": "NBA",
-      "event_id": "PL-646675",
-      "provider_event_id": "401909961",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
-      "prediction_id": "SUG-d605165cae53b5107adfc5de",
-      "league": "NBA",
-      "event_id": "PL-646675",
-      "provider_event_id": "401909961",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
       "prediction_id": "SUG-d6af0aa94929f74b3cb851ab",
       "league": "NCAA_Basketball",
       "event_id": "PL-719185",
@@ -640,14 +1149,6 @@
       "league": "NBA",
       "market": "Threes",
       "reason": "UNSUPPORTED_PLAYER_MARKET"
-    },
-    {
-      "prediction_id": "SUG-eb1a391a32783e2cbf6113c9",
-      "league": "NBA",
-      "event_id": "PL-646675",
-      "provider_event_id": "401909961",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-ecb7f7c6971fe534ba43f192",
@@ -884,14 +1385,6 @@
       "league": "NCAA_Basketball",
       "market": "Turnovers",
       "reason": "UNSUPPORTED_PLAYER_MARKET"
-    },
-    {
-      "prediction_id": "SUG-52587814df15dd9dcdbbd55f",
-      "league": "NBA",
-      "event_id": "PL-646675",
-      "provider_event_id": "401909961",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-526cd0f730de1c0c29498a91",
