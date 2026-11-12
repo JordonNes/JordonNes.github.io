@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-11",
+  "verifiedOn": "2026-11-12",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
@@ -43,19 +43,19 @@ window.LJ_FIBA_FIXTURES={
     {
       "competition": "Basketball Champions League",
       "source": "https://www.championsleague.basketball/en",
-      "parsed_fixtures": 41,
+      "parsed_fixtures": 40,
       "status": "FIXTURES_VERIFIED"
     },
     {
       "competition": "2027 Women’s EuroBasket Qualifiers",
       "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "parsed_fixtures": 28,
+      "parsed_fixtures": 27,
       "status": "FIXTURES_VERIFIED"
     },
     {
       "competition": "FIBA Europe Cup",
       "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "parsed_fixtures": 102,
+      "parsed_fixtures": 97,
       "status": "FIXTURES_VERIFIED"
     },
     {
@@ -72,104 +72,6 @@ window.LJ_FIBA_FIXTURES={
     }
   ],
   "events": [
-    {
-      "id": "FIBA-2026-11-11-BASKETBALLCHAMPIONSLEAGUE-UCAM-BAM",
-      "track": "men",
-      "competition": "Basketball Champions League",
-      "date": "2026-11-11",
-      "publishedTime": "19:30",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "UCAM",
-      "away": "BAM",
-      "group": "D",
-      "source": "https://www.championsleague.basketball/en",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-11-FIBAEUROPECUP-BCO-LEV",
-      "track": "men",
-      "competition": "FIBA Europe Cup",
-      "date": "2026-11-11",
-      "publishedTime": "19:30",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "BCO",
-      "away": "LEV",
-      "group": "B",
-      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-11-FIBAEUROPECUP-LION-LANL",
-      "track": "men",
-      "competition": "FIBA Europe Cup",
-      "date": "2026-11-11",
-      "publishedTime": "19:30",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "LION",
-      "away": "LANL",
-      "group": "G",
-      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-11-FIBAEUROPECUP-SLB-BEARS",
-      "track": "men",
-      "competition": "FIBA Europe Cup",
-      "date": "2026-11-11",
-      "publishedTime": "20:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "SLB",
-      "away": "BEARS",
-      "group": "G",
-      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-12-FIBAEUROPECUP-GEN-EROK",
-      "track": "men",
-      "competition": "FIBA Europe Cup",
-      "date": "2026-11-12",
-      "publishedTime": "15:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "GEN",
-      "away": "EROK",
-      "group": "C",
-      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-12-2027WOMENSEUROBASKETQUALIFIERS-LTU-FIN",
-      "track": "women",
-      "competition": "2027 Women’s EuroBasket Qualifiers",
-      "date": "2026-11-12",
-      "publishedTime": "16:30",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "LTU",
-      "away": "FIN",
-      "group": "H",
-      "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-12-FIBAEUROPECUP-PARNU-KERAV",
-      "track": "men",
-      "competition": "FIBA Europe Cup",
-      "date": "2026-11-12",
-      "publishedTime": "17:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "PARNU",
-      "away": "KERAV",
-      "group": "D",
-      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
     {
       "id": "FIBA-2026-11-12-2027WOMENSEUROBASKETQUALIFIERS-BEL-SWE",
       "track": "women",
