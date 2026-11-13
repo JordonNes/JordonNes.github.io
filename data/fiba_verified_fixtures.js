@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-12",
+  "verifiedOn": "2026-11-13",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
@@ -49,7 +49,7 @@ window.LJ_FIBA_FIXTURES={
     {
       "competition": "2027 Women’s EuroBasket Qualifiers",
       "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "parsed_fixtures": 27,
+      "parsed_fixtures": 26,
       "status": "FIXTURES_VERIFIED"
     },
     {
@@ -72,20 +72,6 @@ window.LJ_FIBA_FIXTURES={
     }
   ],
   "events": [
-    {
-      "id": "FIBA-2026-11-12-2027WOMENSEUROBASKETQUALIFIERS-BEL-SWE",
-      "track": "women",
-      "competition": "2027 Women’s EuroBasket Qualifiers",
-      "date": "2026-11-12",
-      "publishedTime": "19:30",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "BEL",
-      "away": "SWE",
-      "group": "H",
-      "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
     {
       "id": "FIBA-2026-11-14-2027WOMENSEUROBASKETQUALIFIERS-NED-SRB",
       "track": "women",
@@ -801,6 +787,20 @@ window.LJ_FIBA_FIXTURES={
       "marketStatus": "NOT_VERIFIED"
     },
     {
+      "id": "FIBA-2026-11-18-FIBAEUROPECUP-BASHK-MCR",
+      "track": "men",
+      "competition": "FIBA Europe Cup",
+      "date": "2026-11-18",
+      "publishedTime": "18:00",
+      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
+      "home": "BASHK",
+      "away": "MCR",
+      "group": "F",
+      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
+      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
+      "marketStatus": "NOT_VERIFIED"
+    },
+    {
       "id": "FIBA-2026-11-18-FIBAEUROPECUP-KING-BCV",
       "track": "men",
       "competition": "FIBA Europe Cup",
@@ -866,20 +866,6 @@ window.LJ_FIBA_FIXTURES={
       "home": "SCP",
       "away": "CRA",
       "group": "C",
-      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-18-FIBAEUROPECUP-BASHK-MCR",
-      "track": "men",
-      "competition": "FIBA Europe Cup",
-      "date": "2026-11-18",
-      "publishedTime": "20:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "BASHK",
-      "away": "MCR",
-      "group": "F",
       "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
       "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
       "marketStatus": "NOT_VERIFIED"
