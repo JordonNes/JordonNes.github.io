@@ -49,7 +49,7 @@ window.LJ_FIBA_FIXTURES={
     {
       "competition": "2027 Women’s EuroBasket Qualifiers",
       "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "parsed_fixtures": 15,
+      "parsed_fixtures": 14,
       "status": "FIXTURES_VERIFIED"
     },
     {
@@ -72,20 +72,6 @@ window.LJ_FIBA_FIXTURES={
     }
   ],
   "events": [
-    {
-      "id": "FIBA-2026-11-14-2027WOMENSEUROBASKETQUALIFIERS-ISR-TUR",
-      "track": "women",
-      "competition": "2027 Women’s EuroBasket Qualifiers",
-      "date": "2026-11-14",
-      "publishedTime": "17:40",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "ISR",
-      "away": "TUR",
-      "group": "I",
-      "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
     {
       "id": "FIBA-2026-11-15-2027WOMENSEUROBASKETQUALIFIERS-FIN-LTU",
       "track": "women",
