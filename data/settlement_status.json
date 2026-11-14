@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-11-14T23:07:25.642503+00:00",
+  "generated_at_utc": "2026-11-14T23:18:38.480368+00:00",
   "source_registry_generated_at_utc": "2026-11-14T23:04:53.214467+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -48,63 +48,571 @@
   "predictions_in_registry": 9,
   "website_suggestions_recorded": 94202,
   "website_suggestions_structured_for_settlement": 83061,
-  "settlement_population_total": 3815,
-  "settled_predictions": 39977,
-  "settlement_rate_pct": 1047.89,
+  "settlement_population_total": 83070,
+  "settled_predictions": 40060,
+  "settlement_rate_pct": 48.22,
   "run_counts": {
-    "already_settled": 828,
-    "PENDING_EVENT": 2398,
-    "PARTICIPANT_UNRESOLVED": 12,
-    "AMBIGUOUS_EVENT": 227,
-    "UNSUPPORTED_PLAYER_MARKET": 203,
-    "PLAYER_NOT_IN_BOXSCORE": 122,
-    "TD_STATS_UNAVAILABLE": 2,
-    "TEAM_UNRESOLVED": 23
+    "already_settled": 39934,
+    "PENDING_EVENT": 6973,
+    "PARTICIPANT_UNRESOLVED": 42,
+    "AMBIGUOUS_EVENT": 3380,
+    "UNSUPPORTED_PLAYER_MARKET": 10647,
+    "settled": 83,
+    "PLAYER_NOT_IN_BOXSCORE": 20616,
+    "TD_STATS_UNAVAILABLE": 43,
+    "TEAM_UNRESOLVED": 434,
+    "PLAYER_PROP_PROVIDER_PENDING": 27,
+    "NO_EVENT_CANDIDATES": 728,
+    "EVENT_NOT_FOUND": 55,
+    "UNGRADED_MARKET_RULE": 8,
+    "SPECIAL_WINNER_UNRESOLVED": 100
   },
   "by_league": {
+    "MLB": {
+      "PLAYER_NOT_IN_BOXSCORE": 4370,
+      "UNSUPPORTED_PLAYER_MARKET": 3346,
+      "NO_EVENT_CANDIDATES": 473,
+      "AMBIGUOUS_EVENT": 100,
+      "already_settled": 1025,
+      "TEAM_UNRESOLVED": 18,
+      "PENDING_EVENT": 61,
+      "EVENT_NOT_FOUND": 20
+    },
     "MMA": {
-      "PARTICIPANT_UNRESOLVED": 12,
-      "already_settled": 15,
-      "PENDING_EVENT": 6
+      "PARTICIPANT_UNRESOLVED": 40,
+      "already_settled": 230,
+      "PENDING_EVENT": 6,
+      "PLAYER_PROP_PROVIDER_PENDING": 27,
+      "EVENT_NOT_FOUND": 31,
+      "SPECIAL_WINNER_UNRESOLVED": 100,
+      "AMBIGUOUS_EVENT": 23
     },
     "NBA": {
-      "PENDING_EVENT": 420,
-      "already_settled": 286,
-      "UNSUPPORTED_PLAYER_MARKET": 47,
-      "PLAYER_NOT_IN_BOXSCORE": 14
+      "PENDING_EVENT": 817,
+      "already_settled": 5615,
+      "UNSUPPORTED_PLAYER_MARKET": 592,
+      "PLAYER_NOT_IN_BOXSCORE": 1837,
+      "TEAM_UNRESOLVED": 30,
+      "AMBIGUOUS_EVENT": 25
     },
     "NCAA_Basketball": {
-      "already_settled": 58,
-      "AMBIGUOUS_EVENT": 106,
-      "PENDING_EVENT": 77,
-      "UNSUPPORTED_PLAYER_MARKET": 1,
-      "TEAM_UNRESOLVED": 10
+      "already_settled": 1432,
+      "AMBIGUOUS_EVENT": 1220,
+      "PENDING_EVENT": 103,
+      "UNSUPPORTED_PLAYER_MARKET": 187,
+      "PLAYER_NOT_IN_BOXSCORE": 72,
+      "TEAM_UNRESOLVED": 18
     },
     "NCAA_Football": {
-      "already_settled": 403,
-      "PENDING_EVENT": 1102,
-      "UNSUPPORTED_PLAYER_MARKET": 145,
-      "AMBIGUOUS_EVENT": 109,
-      "PLAYER_NOT_IN_BOXSCORE": 107,
-      "TD_STATS_UNAVAILABLE": 2,
-      "TEAM_UNRESOLVED": 13
+      "already_settled": 13718,
+      "PENDING_EVENT": 3301,
+      "UNSUPPORTED_PLAYER_MARKET": 2805,
+      "settled": 83,
+      "AMBIGUOUS_EVENT": 1751,
+      "PLAYER_NOT_IN_BOXSCORE": 3377,
+      "TD_STATS_UNAVAILABLE": 36,
+      "TEAM_UNRESOLVED": 249
     },
     "NFL": {
-      "already_settled": 4,
-      "PENDING_EVENT": 258
+      "already_settled": 6017,
+      "PENDING_EVENT": 1472,
+      "PLAYER_NOT_IN_BOXSCORE": 7297,
+      "UNSUPPORTED_PLAYER_MARKET": 1819,
+      "TD_STATS_UNAVAILABLE": 7,
+      "NO_EVENT_CANDIDATES": 188,
+      "TEAM_UNRESOLVED": 18
     },
     "NHL": {
-      "PENDING_EVENT": 535,
-      "already_settled": 62,
-      "UNSUPPORTED_PLAYER_MARKET": 10,
-      "PLAYER_NOT_IN_BOXSCORE": 1
+      "PENDING_EVENT": 1213,
+      "already_settled": 10280,
+      "TEAM_UNRESOLVED": 101,
+      "UNSUPPORTED_PLAYER_MARKET": 1792,
+      "PLAYER_NOT_IN_BOXSCORE": 3238,
+      "UNGRADED_MARKET_RULE": 8,
+      "AMBIGUOUS_EVENT": 48
     },
     "Tennis": {
-      "AMBIGUOUS_EVENT": 12
+      "AMBIGUOUS_EVENT": 213,
+      "PARTICIPANT_UNRESOLVED": 2,
+      "already_settled": 4
+    },
+    "WNBA": {
+      "UNSUPPORTED_PLAYER_MARKET": 106,
+      "already_settled": 1613,
+      "PLAYER_NOT_IN_BOXSCORE": 425,
+      "NO_EVENT_CANDIDATES": 67,
+      "EVENT_NOT_FOUND": 4
     }
   },
-  "recent_settlements": [],
+  "recent_settlements": [
+    {
+      "prediction_id": "SUG-fd9cf4cedfb3b3b71f865bb8",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -135 PROPLINE:Bet99",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-0bdaffe05442af00d5344dca",
+      "league": "NCAA_Football",
+      "selection": "Mario Craver UNDER 3.5 Receptions • NORMAL • L5 AVG 3 • L&J PROJ 3.4 • POM Value 66.6 • STAT 0% • LJPC 52.1% ⟦L=54.4;J=-2.3⟧ 🕵️",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-1eaa22f4b52a1636e9fde9d6",
+      "league": "NCAA_Football",
+      "selection": "DeSean Bishop OVER 0.5 Anytime TD • NORMAL • L5 AVG 1.8 • L&J PROJ 1.6 • POM Value 86.8 • STAT 0% • LJPC 96.5% ⟦L=96.5;J=0⟧",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-36565b21976585700ac40aed",
+      "league": "NCAA_Football",
+      "selection": "Marcel Reed UNDER 186.5 Passing Yards • NORMAL • L5 AVG 180.2 • L&J PROJ 179.1 • POM Value 70.3 • STAT 0% • LJPC 57.9% ⟦L=57.9;J=0⟧",
+      "actual_result": "71",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-4b4bfdea2b239fd16371aae0",
+      "league": "NCAA_Football",
+      "selection": "George MacIntyre UNDER 0.5 Passing TDs • NORMAL • L5 AVG 0.2 • L&J PROJ 0.2 • POM Value 78.9 • STAT 0% • LJPC 77.1% ⟦L=77.1;J=0⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-4e3a40acca3e453bbb711f40",
+      "league": "NCAA_Football",
+      "selection": "George MacIntyre OVER 161.5 Passing Yards • NORMAL • L5 AVG 158.2 • L&J PROJ 144.1 • POM Value 57.5 • STAT 0% • LJPC 37.2% ⟦L=37.2;J=0⟧",
+      "actual_result": "109",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-572213cb402772e2906284d9",
+      "league": "NCAA_Football",
+      "selection": "Braylon Staley OVER 39.5 Receiving Yards • NORMAL • L5 AVG 35.4 • L&J PROJ 36.6 • POM Value 65.7 • STAT 0% • LJPC 51.9% ⟦L=51.9;J=0⟧",
+      "actual_result": "34",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-5856ba71618802cafb8d15f7",
+      "league": "NCAA_Football",
+      "selection": "Isaiah Horton UNDER 3.5 Receptions • NORMAL • L5 AVG 2.6 • L&J PROJ 2.8 • POM Value 77.2 • STAT 0% • LJPC 73.5% ⟦L=73.5;J=0⟧ 🕵️",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-68a728fe7bd3e96fb9e19afb",
+      "league": "NCAA_Football",
+      "selection": "Marcel Reed UNDER 0.5 Passing TDs • NORMAL • L5 AVG 0.4 • L&J PROJ 0.6 • POM Value 65.9 • STAT 0% • LJPC 52.6% ⟦L=54.8;J=-2.3⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-765a6eaed90022c5315b3955",
+      "league": "NCAA_Football",
+      "selection": "Mike Matthews OVER 50.5 Receiving Yards • NORMAL • L5 AVG 61 • L&J PROJ 60.9 • POM Value 73.5 • STAT 0% • LJPC 66.2% ⟦L=66.2;J=0⟧",
+      "actual_result": "42",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-85a079dd9b0230c77726cac0",
+      "league": "NCAA_Football",
+      "selection": "Mike Matthews UNDER 4.5 Receptions • NORMAL • L5 AVG 4.6 • L&J PROJ 4.4 • POM Value 68.0 • STAT 0% • LJPC 59.6% ⟦L=59.6;J=0⟧",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-dc92b3c050e8dfd3a522f069",
+      "league": "NCAA_Football",
+      "selection": "George MacIntyre UNDER 161.5 Passing Yards • NORMAL • L5 AVG 158.2 • L&J PROJ 144.1 • POM Value 71.7 • STAT 0% • LJPC 62.8% ⟦L=62.8;J=0⟧",
+      "actual_result": "109",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-b1bfc9b6f2389f3c18a4f760",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -133 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ed888a1106bc6a7eb32ac176",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -133 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-69e600eb988ac6203d0cc236",
+      "league": "NCAA_Football",
+      "selection": "Isaiah Horton UNDER 41.5 Receiving Yards • NORMAL • L5 AVG 35.8 • L&J PROJ 36.9 • POM Value 71.8 • STAT 0% • LJPC 65.2% ⟦L=65.3;J=0⟧ 🕵️",
+      "actual_result": "5",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-86bb9812b7fd1de061b30040",
+      "league": "NCAA_Football",
+      "selection": "Mario Craver UNDER 34.5 Receiving Yards • NORMAL • L5 AVG 23.4 • L&J PROJ 28.6 • POM Value 72.7 • STAT 0% • LJPC 66% ⟦L=69.9;J=-3.9⟧ 🕵️",
+      "actual_result": "49",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-9c50d0fb99d16bddc0e212c7",
+      "league": "NCAA_Football",
+      "selection": "Marcel Reed UNDER 183.5 Passing Yards • NORMAL • L5 AVG 180.2 • L&J PROJ 179.1 • POM Value 69.4 • STAT 0% • LJPC 56.3% ⟦L=56.3;J=0⟧",
+      "actual_result": "71",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d4939b843b1c477f708922ed",
+      "league": "NCAA_Football",
+      "selection": "Braylon Staley UNDER 4.5 Receptions • NORMAL • L5 AVG 4.4 • L&J PROJ 4.2 • POM Value 69.6 • STAT 0% • LJPC 59.2% ⟦L=59.2;J=0⟧",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-5b06f8afdad33907041c679b",
+      "league": "NCAA_Football",
+      "selection": "Mario Craver UNDER 3.5 Receptions • NORMAL • L5 AVG 3 • L&J PROJ 3.4 • POM Value 66.2 • STAT 0% • LJPC 51.4% ⟦L=54.4;J=-3⟧ 🕵️",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-63dd60398da292af773bece3",
+      "league": "NCAA_Football",
+      "selection": "Marcel Reed UNDER 0.5 Passing TDs • NORMAL • L5 AVG 0.4 • L&J PROJ 0.6 • POM Value 65.5 • STAT 0% • LJPC 51.8% ⟦L=54.8;J=-3⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ef172efb553429086293b602",
+      "league": "NCAA_Football",
+      "selection": "Mario Craver UNDER 34.5 Receiving Yards • NORMAL • L5 AVG 23.4 • L&J PROJ 28.6 • POM Value 72.1 • STAT 0% • LJPC 64.7% ⟦L=69.9;J=-5.2⟧ 🕵️",
+      "actual_result": "49",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-6744207ea2667b13f02a3e4a",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -135 PROPLINE:Bet99",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-c546213335d3bf173f7388ef",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -127 PROPLINE:BetRivers",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-0931ef5207ca3da0a8bf316c",
+      "league": "NCAA_Football",
+      "selection": "Mario Craver UNDER 34.5 Receiving Yards • NORMAL • L5 AVG 23.4 • L&J PROJ 28.6 • POM Value 74.0 • STAT 0% • LJPC 68.6% ⟦L=69.9;J=-1.3⟧ 🕵️",
+      "actual_result": "49",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-194c48a01a4e779b734d514f",
+      "league": "NCAA_Football",
+      "selection": "Marcel Reed UNDER 183.5 Passing Yards • NORMAL • L5 AVG 180.2 • L&J PROJ 179.1 • POM Value 69.4 • STAT 0% • LJPC 56.3% ⟦L=56.3;J=0⟧",
+      "actual_result": "71",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-3179de2f18a247cbe89e1792",
+      "league": "NCAA_Football",
+      "selection": "George MacIntyre UNDER 165.5 Passing Yards • NORMAL • L5 AVG 158.2 • L&J PROJ 144.1 • POM Value 72.6 • STAT 0% • LJPC 64.2% ⟦L=64.2;J=0⟧",
+      "actual_result": "109",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-47ef4ffb58b9ef59f91ddfd8",
+      "league": "NCAA_Football",
+      "selection": "DeSean Bishop OVER 0.5 Anytime TD • NORMAL • L5 AVG 1.8 • L&J PROJ 1.6 • POM Value 86.8 • STAT 0% • LJPC 96.5% ⟦L=96.5;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-4f0624cb9c549d2c8ef3fe24",
+      "league": "NCAA_Football",
+      "selection": "Isaiah Horton UNDER 3.5 Receptions • NORMAL • L5 AVG 2.6 • L&J PROJ 2.8 • POM Value 77.2 • STAT 0% • LJPC 73.5% ⟦L=73.5;J=0⟧ 🕵️",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-5e47e67ddc602015401ecb35",
+      "league": "NCAA_Football",
+      "selection": "Isaiah Horton UNDER 41.5 Receiving Yards • NORMAL • L5 AVG 35.8 • L&J PROJ 36.9 • POM Value 71.8 • STAT 0% • LJPC 65.2% ⟦L=65.3;J=0⟧ 🕵️",
+      "actual_result": "5",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-5f98a7baafd7a791ec9f248a",
+      "league": "NCAA_Football",
+      "selection": "Braylon Staley OVER 39.5 Receiving Yards • NORMAL • L5 AVG 35.4 • L&J PROJ 36.6 • POM Value 65.7 • STAT 0% • LJPC 51.9% ⟦L=51.9;J=0⟧",
+      "actual_result": "34",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-7ca78e60a0b85db3b830d13a",
+      "league": "NCAA_Football",
+      "selection": "DeSean Bishop OVER 25.5 Rushing Attempts • NORMAL • L5 AVG 28.4 • L&J PROJ 25.5 • POM Value 62.1 • STAT 0% • LJPC 48.6% ⟦L=50;J=-1.4⟧ 🕵️",
+      "actual_result": "34",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-96582247ff3034113788efac",
+      "league": "NCAA_Football",
+      "selection": "Mario Craver UNDER 3.5 Receptions • NORMAL • L5 AVG 3 • L&J PROJ 3.4 • POM Value 67.4 • STAT 0% • LJPC 53.6% ⟦L=54.4;J=-0.8⟧ 🕵️",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-9d83b53151429da2e4a497f0",
+      "league": "NCAA_Football",
+      "selection": "Marcel Reed UNDER 0.5 Passing TDs • NORMAL • L5 AVG 0.4 • L&J PROJ 0.6 • POM Value 66.7 • STAT 0% • LJPC 54.1% ⟦L=54.8;J=-0.8⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ae1d83ecf6c2c788c3e3b833",
+      "league": "NCAA_Football",
+      "selection": "Mike Matthews OVER 50.5 Receiving Yards • NORMAL • L5 AVG 61 • L&J PROJ 60.9 • POM Value 73.5 • STAT 0% • LJPC 66.2% ⟦L=66.2;J=0⟧",
+      "actual_result": "42",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-c07163b57521eecfb97bde27",
+      "league": "NCAA_Football",
+      "selection": "George MacIntyre UNDER 0.5 Passing TDs • NORMAL • L5 AVG 0.2 • L&J PROJ 0.2 • POM Value 78.9 • STAT 0% • LJPC 77.1% ⟦L=77.1;J=0⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-dd88bea956d44fec5f96b12a",
+      "league": "NCAA_Football",
+      "selection": "Braylon Staley UNDER 4.5 Receptions • NORMAL • L5 AVG 4.4 • L&J PROJ 4.2 • POM Value 69.6 • STAT 0% • LJPC 59.2% ⟦L=59.2;J=0⟧",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e08effaf59c7306120a3b670",
+      "league": "NCAA_Football",
+      "selection": "Mike Matthews UNDER 4.5 Receptions • NORMAL • L5 AVG 4.6 • L&J PROJ 4.4 • POM Value 68.0 • STAT 0% • LJPC 59.6% ⟦L=59.6;J=0⟧",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ecc8715057236824d2ca68ad",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -127 PROPLINE:BetRivers",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-011b18fdb143a1fc6e683df7",
+      "league": "NCAA_Football",
+      "selection": "DeSean Bishop OVER 25.5 Rushing Attempts • NORMAL • L5 AVG 28.4 • L&J PROJ 25.5 • POM Value 61.3 • STAT 0% • LJPC 47.1% ⟦L=50;J=-2.8⟧ 🕵️",
+      "actual_result": "34",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-0f911c640d0324536a2f750d",
+      "league": "NCAA_Football",
+      "selection": "Mario Craver UNDER 3.5 Receptions • NORMAL • L5 AVG 3 • L&J PROJ 3.4 • POM Value 67.0 • STAT 0% • LJPC 52.9% ⟦L=54.4;J=-1.5⟧ 🕵️",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-767ba931e025cdf88d8f41e3",
+      "league": "NCAA_Football",
+      "selection": "Marcel Reed UNDER 0.5 Passing TDs • NORMAL • L5 AVG 0.4 • L&J PROJ 0.6 • POM Value 66.3 • STAT 0% • LJPC 53.3% ⟦L=54.8;J=-1.5⟧",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-be9d24e4485ed96d5a1eed19",
+      "league": "NCAA_Football",
+      "selection": "Mario Craver UNDER 34.5 Receiving Yards • NORMAL • L5 AVG 23.4 • L&J PROJ 28.6 • POM Value 73.3 • STAT 0% • LJPC 67.3% ⟦L=69.9;J=-2.6⟧ 🕵️",
+      "actual_result": "49",
+      "grade": "LOSS",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-11e2fbbb39c6d63c0181fa3d",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -129 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-8daf8d03d890b0d00d32bb28",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -128 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-406f9cbbd894cc5b1b897a15",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -130 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-79eaa6634c6d7e1ae1d855a5",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -129 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-69b4e66d99741d7e257bab27",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -122 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-3e19d279822694c86f171d27",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -112 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-cf29ea1e7ab5dbd32af5f70a",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -107 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-15299c05130e175b60455650",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Volunteers ML • -107 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856888",
+      "source": "ESPN_PUBLIC:401856888:FINAL_SCORE_ML"
+    }
+  ],
   "unresolved": [
+    {
+      "prediction_id": "SUG-6eb0304213417f31d049aa6c",
+      "league": "NHL",
+      "event_id": "2026020314",
+      "provider_event_id": "401892710",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
+    {
+      "prediction_id": "SUG-6f9b30484c8a40e68300aec8",
+      "league": "NHL",
+      "event_id": "2026020324",
+      "provider_event_id": "401892719",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_SCHEDULED"
+    },
     {
       "prediction_id": "SUG-70446c2c2f72cd478e57f862",
       "league": "NHL",
@@ -529,7 +1037,7 @@
       "event_id": "PL-680284",
       "provider_event_id": "401862828",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_HALFTIME"
+      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-b3297f061475528d7bf3a439",
@@ -1025,7 +1533,7 @@
       "event_id": "PL-680358",
       "provider_event_id": "401856883",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-5c8ca28f10f0e4ac1d8c3846",
@@ -1081,7 +1589,7 @@
       "event_id": "PL-680363",
       "provider_event_id": "401856886",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_HALFTIME"
     },
     {
       "prediction_id": "SUG-8a3f389759557b89bdf9633b",
@@ -1162,14 +1670,6 @@
       "provider_event_id": "401909987",
       "reason": "PENDING_EVENT",
       "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-cf29ea1e7ab5dbd32af5f70a",
-      "league": "NCAA_Football",
-      "event_id": "401856888",
-      "provider_event_id": "401856888",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-d09227548eed339b42552297",
@@ -1618,14 +2118,6 @@
       "state": "STATUS_IN_PROGRESS"
     },
     {
-      "prediction_id": "SUG-15299c05130e175b60455650",
-      "league": "NCAA_Football",
-      "event_id": "PL-87198",
-      "provider_event_id": "401856888",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
-    },
-    {
       "prediction_id": "SUG-270d5ed6f9f2b6b0846c3a62",
       "league": "NCAA_Football",
       "event_id": "PL-680364",
@@ -1693,7 +2185,7 @@
       "event_id": "PL-680281",
       "provider_event_id": "401856883",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     }
   ],
   "influence_effect": "NONE"
