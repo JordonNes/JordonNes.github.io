@@ -1,16 +1,17 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-11-15T09:50:00.600865+00:00",
+  "checked_at_utc": "2026-11-15T17:34:56.678017+00:00",
   "status": "OK",
-  "raw_market_count": 4353,
-  "normalized_props": 246,
-  "history_rows_added": 228,
+  "raw_market_count": 8782,
+  "normalized_props": 215,
+  "history_rows_added": 215,
   "skip_reasons": {
-    "ambiguous_matchup": 343,
-    "ambiguous_participant_threshold": 518,
-    "ok": 246,
+    "ambiguous_matchup": 151,
+    "ambiguous_participant_threshold": 5202,
+    "not_upcoming": 7,
+    "ok": 215,
     "unknown_sport": 3055,
-    "unsupported_market": 191
+    "unsupported_market": 152
   },
   "skip_samples": {
     "unknown_sport": {
@@ -64,58 +65,71 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
+    },
+    "not_upcoming": {
+      "ticker": "KXNCAAFTEAMRECYDS-26NOV14MISSOKLA-MISS175",
+      "event_ticker": "KXNCAAFTEAMRECYDS-26NOV14MISSOKLA",
+      "series_ticker": "KXNCAAFTEAMRECYDS",
+      "event_title": "Ole Miss vs Oklahoma: Team Receiving Yards",
+      "title": "Ole Miss: 175+ receiving yards",
+      "subtitle": null,
+      "yes_sub_title": "Ole Miss: 175+",
+      "primary_participant_key": null,
+      "floor_strike": 174.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-11-15T00:15:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBHRDERBYMATCHUP",
-      "KXUFCOCCUR",
-      "KXNBAH2HPTS",
+      "KXMLBHRDERBYOU",
+      "KXUFCWHITEHOUSE",
+      "KXNBAPR",
       "KXNCAAFTEAMRSHATT",
-      "KXNFLLONGESTREC",
+      "KXNFLSEASONRSHYDS",
       "KXNHLPTS",
       "KXATPACES",
-      "KXWNBA3PTCONTESTOU",
-      "KXMLBHRDERBYQUAL",
-      "KXUFCWHITEHOUSE",
-      "KXNBAPA",
-      "KXNCAAFTEAMREC",
-      "KXNFLRSHATT",
-      "KXNHLANYGOAL",
-      "KXWTAACES",
-      "KXWNBAREB",
-      "KXMLBASGHIT",
-      "KXNBAESCALATORPTS",
-      "KXNCAAFTEAMFG",
-      "KXNFLSEASONRECYDS",
-      "KXNHLFIRSTGOAL",
-      "KXWNBA40PTS",
-      "KXMLBPLAYOFFHRS",
-      "KXNBAONE3PT",
-      "KXNCAAFTOTAL",
-      "KXNFLRRYDSPROT",
-      "KXNHLSERIESTOTALGOALS",
       "KXWNBA3PT",
-      "KXMLBRBI",
-      "KXNBAH2HPRA",
-      "KXNCAAF2PT",
-      "KXNFLESCALATORRSHYDS",
-      "KXNHLSAVES",
-      "KXWNBA3PTCONTEST",
-      "KXMLBOUTS",
-      "KXNBASERIESASTLEADER",
-      "KXNCAAFTOTALFG",
-      "KXNFLSEASONPASSTDS",
-      "KXNHLGOAL",
-      "KXWNBA3PTROUND",
-      "KXMLBASGHR",
-      "KXNBALADDERPTS",
-      "KXNCAAFGO",
-      "KXNFLFIRSTTDTEAM",
+      "KXMLBTOTAL",
+      "KXUFCOCCUR",
+      "KXNBATOTALPRECISE",
+      "KXNCAAFTEAMRECYDS",
+      "KXNFLLONGESTFG",
       "KXNHLTEAMTOTAL",
-      "KXWNBAPTS",
-      "KXMLBHRDERBYSEMI"
+      "KXWTAACES",
+      "KXWNBAAST",
+      "KXMLBHRDERBYDISTANCE",
+      "KXNBALADDERPTS",
+      "KXNCAAFTEAMRSHYDS",
+      "KXNFLANYTD",
+      "KXNHLTOTAL",
+      "KXWNBA3PTCONTEST",
+      "KXMLBHRR",
+      "KXNBASERIES3PMLEADER",
+      "KXNCAAFTEAMFG",
+      "KXNFLWEEKMOSTRSHYDS",
+      "KXNHLF10G",
+      "KXWNBA40PTS",
+      "KXMLBHRDERBYVELO",
+      "KXNBASERIESPTSLEADER",
+      "KXNCAAFTEAMTO",
+      "KXNFL60YARDFGS",
+      "KXNHL4NATIONS",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBPLAYOFFHRS",
+      "KXNBARACE",
+      "KXNCAAFTEAMTOTAL",
+      "KXNFLCAREERPASSTDS",
+      "KXNHLANYGOAL",
+      "KXWNBA3PTROUND",
+      "KXMLBOUTS",
+      "KXNBA30PTSTREAK",
+      "KXNCAAF1HTEAMTOTAL",
+      "KXNFLRSHYDSH2H",
+      "KXNHLSEASONPTS",
+      "KXWNBAH2HPTS",
+      "KXMLBHRDERBYFORECAST"
     ],
     "by_league": {
       "Boxing": 1,
@@ -160,31 +174,31 @@
         }
       }
     },
-    "KXMLBASGHIT": {
+    "KXMLBHRDERBYDISTANCE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBASGHR": {
+    "KXMLBHRDERBYFORECAST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYMATCHUP": {
+    "KXMLBHRDERBYOU": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYQUAL": {
+    "KXMLBHRDERBYVELO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYSEMI": {
+    "KXMLBHRR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -202,44 +216,32 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBRBI": {
+    "KXMLBTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAESCALATORPTS": {
-      "raw": 13,
+    "KXNBA30PTSTREAK": {
+      "raw": 6,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 13
+        "ambiguous_participant_threshold": 6
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNBAESCALATORPTS-26NOV15INDPHI-PHIVEDGECOMBE77",
-          "event_ticker": "KXNBAESCALATORPTS-26NOV15INDPHI",
-          "event_title": "Indiana vs Philadelphia: Points Escalator",
-          "title": "VJ Edgecombe player points escalator",
+          "ticker": "KXNBA30PTSTREAK-26NOV10LDONCIC77-10",
+          "event_ticker": "KXNBA30PTSTREAK-26NOV10LDONCIC77",
+          "event_title": "How many consecutive games will Luka Doncic score 30+ points?",
+          "title": "Luka Doncic Consecutive Games Scoring 30+ Points: 10+ games",
           "subtitle": null,
-          "yes_sub_title": "VJ Edgecombe",
-          "primary_participant_key": "basketball_player",
-          "floor_strike": null,
+          "yes_sub_title": "10+ games",
+          "primary_participant_key": null,
+          "floor_strike": 10,
           "functional_strike": null,
-          "occurrence_datetime": "2026-11-15T21:00:00Z"
+          "occurrence_datetime": "2027-04-30T14:00:00Z"
         }
       }
-    },
-    "KXNBAH2HPRA": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBAH2HPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
     },
     "KXNBALADDERPTS": {
       "raw": 0,
@@ -247,50 +249,86 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAONE3PT": {
-      "raw": 6,
+    "KXNBAPR": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBARACE": {
+      "raw": 102,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 6
+        "ambiguous_participant_threshold": 102
       },
       "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNBAONE3PT-27-MROBINSON4",
-          "event_ticker": "KXNBAONE3PT-27",
-          "event_title": "Players to Make One Three-Pointer this Season",
-          "title": "Mitchell Robinson to make at least 1 three-pointer",
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNBARACE-26NOV15INDPHI-10-IND",
+          "event_ticker": "KXNBARACE-26NOV15INDPHI-10",
+          "event_title": "Indiana vs Philadelphia: Race to 10 Points",
+          "title": "Indiana reaches 10 points first",
           "subtitle": null,
-          "yes_sub_title": "Mitchell Robinson",
+          "yes_sub_title": "Indiana",
           "primary_participant_key": null,
-          "floor_strike": 0.5,
+          "floor_strike": null,
           "functional_strike": null,
-          "occurrence_datetime": "2027-06-30T14:00:00Z"
+          "occurrence_datetime": "2026-11-15T21:00:00Z"
         }
       }
     },
-    "KXNBAPA": {
+    "KXNBASERIES3PMLEADER": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASERIESASTLEADER": {
+    "KXNBASERIESPTSLEADER": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAF2PT": {
-      "raw": 0,
+    "KXNBATOTALPRECISE": {
+      "raw": 4454,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 4454
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNBATOTALPRECISE-26NOV15INDPHI-100",
+          "event_ticker": "KXNBATOTALPRECISE-26NOV15INDPHI",
+          "event_title": "Indiana vs Philadelphia: Total Points",
+          "title": "Full Game: Over 99.5 points scored",
+          "subtitle": null,
+          "yes_sub_title": "Over 99.5 points",
+          "primary_participant_key": null,
+          "floor_strike": 99.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-15T21:00:00Z"
+        }
+      }
     },
-    "KXNCAAFGO": {
-      "raw": 0,
+    "KXNCAAF1HTEAMTOTAL": {
+      "raw": 17,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 17
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNCAAF1HTEAMTOTAL-26NOV14MISSOKLA-OKLA3",
+          "event_ticker": "KXNCAAF1HTEAMTOTAL-26NOV14MISSOKLA",
+          "event_title": "Ole Miss vs Oklahoma: 1st Half Team Total",
+          "title": "Oklahoma over 2.5 1H points scored",
+          "subtitle": null,
+          "yes_sub_title": "Oklahoma over 2.5 points",
+          "primary_participant_key": null,
+          "floor_strike": 2.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-15T00:15:00Z"
+        }
+      }
     },
     "KXNCAAFTEAMFG": {
       "raw": 0,
@@ -298,11 +336,39 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMREC": {
-      "raw": 0,
+    "KXNCAAFTEAMRECYDS": {
+      "raw": 14,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 7,
+        "not_upcoming": 7
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNCAAFTEAMRECYDS-26NOV14MISSOKLA-OKLA175",
+          "event_ticker": "KXNCAAFTEAMRECYDS-26NOV14MISSOKLA",
+          "event_title": "Ole Miss vs Oklahoma: Team Receiving Yards",
+          "title": "Oklahoma: 175+ receiving yards",
+          "subtitle": null,
+          "yes_sub_title": "Oklahoma: 175+",
+          "primary_participant_key": null,
+          "floor_strike": 174.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-15T00:15:00Z"
+        },
+        "not_upcoming": {
+          "ticker": "KXNCAAFTEAMRECYDS-26NOV14MISSOKLA-MISS175",
+          "event_ticker": "KXNCAAFTEAMRECYDS-26NOV14MISSOKLA",
+          "event_title": "Ole Miss vs Oklahoma: Team Receiving Yards",
+          "title": "Ole Miss: 175+ receiving yards",
+          "subtitle": null,
+          "yes_sub_title": "Ole Miss: 175+",
+          "primary_participant_key": null,
+          "floor_strike": 174.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-15T00:15:00Z"
+        }
+      }
     },
     "KXNCAAFTEAMRSHATT": {
       "raw": 0,
@@ -310,132 +376,113 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTOTAL": {
-      "raw": 402,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 402
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTOTAL-26NOV14VALPSTET-37",
-          "event_ticker": "KXNCAAFTOTAL-26NOV14VALPSTET",
-          "event_title": "Valparaiso vs Stetson: Total Points",
-          "title": "Full Game: Over 36.5 points scored",
-          "subtitle": null,
-          "yes_sub_title": "Over 36.5 points",
-          "primary_participant_key": null,
-          "floor_strike": 36.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-14T21:00:00Z"
-        }
-      }
-    },
-    "KXNCAAFTOTALFG": {
+    "KXNCAAFTEAMRSHYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLESCALATORRSHYDS": {
-      "raw": 29,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 29
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLESCALATORRSHYDS-26NOV15NEDET-DETJGIBBS0",
-          "event_ticker": "KXNFLESCALATORRSHYDS-26NOV15NEDET",
-          "event_title": "New England vs Detroit: Rushing Yards Escalator",
-          "title": "Jahmyr Gibbs Rushing Yards Escalator",
-          "subtitle": null,
-          "yes_sub_title": "Jahmyr Gibbs",
-          "primary_participant_key": "football_player",
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-15T17:30:00Z"
-        }
-      }
-    },
-    "KXNFLFIRSTTDTEAM": {
-      "raw": 39,
-      "normalized": 0,
-      "skip_reasons": {
-        "unsupported_market": 39
-      },
-      "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXNFLFIRSTTDTEAM-26NOV15NEDET-DET",
-          "event_ticker": "KXNFLFIRSTTDTEAM-26NOV15NEDET",
-          "event_title": "New England vs Detroit: First Team to Score a TD",
-          "title": "Detroit scores first TD",
-          "subtitle": null,
-          "yes_sub_title": "Detroit",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-15T17:30:00Z"
-        }
-      }
-    },
-    "KXNFLLONGESTREC": {
+    "KXNCAAFTEAMTO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLRRYDSPROT": {
-      "raw": 114,
-      "normalized": 114,
-      "skip_reasons": {
-        "ok": 114
-      },
-      "skip_samples": {}
-    },
-    "KXNFLRSHATT": {
-      "raw": 132,
-      "normalized": 132,
-      "skip_reasons": {
-        "ok": 132
-      },
-      "skip_samples": {}
-    },
-    "KXNFLSEASONPASSTDS": {
-      "raw": 113,
+    "KXNCAAFTEAMTOTAL": {
+      "raw": 21,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 113
+        "ambiguous_participant_threshold": 21
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNCAAFTEAMTOTAL-26NOV14MISSOKLA-OKLA10",
+          "event_ticker": "KXNCAAFTEAMTOTAL-26NOV14MISSOKLA",
+          "event_title": "Ole Miss vs Oklahoma: Team Total",
+          "title": "Oklahoma over 9.5 points scored",
+          "subtitle": null,
+          "yes_sub_title": "Oklahoma over 9.5 points",
+          "primary_participant_key": null,
+          "floor_strike": 9.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-15T00:15:00Z"
+        }
+      }
+    },
+    "KXNFL60YARDFGS": {
+      "raw": 6,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_matchup": 6
       },
       "skip_samples": {
         "ambiguous_matchup": {
-          "ticker": "KXNFLSEASONPASSTDS-27C20-LJACKSON8",
-          "event_ticker": "KXNFLSEASONPASSTDS-27C20",
-          "event_title": "Pro Football: 20+ Passing Touchdowns Season",
-          "title": "Will Lamar Jackson record 20+ passing touchdowns during the 2026-27 Pro Football regular season?",
+          "ticker": "KXNFL60YARDFGS-27-6",
+          "event_ticker": "KXNFL60YARDFGS-27",
+          "event_title": "Number of 60+ Yard Field Goals this Season",
+          "title": "Number of 60+ yard made field goals in 2026-27 regular season: 6+",
           "subtitle": null,
-          "yes_sub_title": "Lamar Jackson",
-          "primary_participant_key": "football_player",
-          "floor_strike": 19.5,
+          "yes_sub_title": "6+ field goals",
+          "primary_participant_key": null,
+          "floor_strike": 6,
           "functional_strike": null,
           "occurrence_datetime": "2027-01-31T15:00:00Z"
         }
       }
     },
-    "KXNFLSEASONRECYDS": {
-      "raw": 195,
+    "KXNFLANYTD": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLCAREERPASSTDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLLONGESTFG": {
+      "raw": 4,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 195
+        "ambiguous_participant_threshold": 4
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNFLLONGESTFG-27-66",
+          "event_ticker": "KXNFLLONGESTFG-27",
+          "event_title": "Longest Field Goal in the Regular Season",
+          "title": "Longest field goal in 2026-27 regular season: 66+ yards",
+          "subtitle": null,
+          "yes_sub_title": "66+ yards",
+          "primary_participant_key": null,
+          "floor_strike": 66,
+          "functional_strike": null,
+          "occurrence_datetime": "2027-01-31T15:00:00Z"
+        }
+      }
+    },
+    "KXNFLRSHYDSH2H": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLSEASONRSHYDS": {
+      "raw": 116,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_matchup": 116
       },
       "skip_samples": {
         "ambiguous_matchup": {
-          "ticker": "KXNFLSEASONRECYDS-27C1000-JCHASE1",
-          "event_ticker": "KXNFLSEASONRECYDS-27C1000",
-          "event_title": "Pro Football: 1000+ Receiving Yards Season",
-          "title": "Will Ja'Marr Chase record 1000+ receiving yards during 2026-27 Pro Football regular season?",
-          "subtitle": "Ja'Marr Chase",
-          "yes_sub_title": "Ja'Marr Chase",
+          "ticker": "KXNFLSEASONRSHYDS-27C1000-BROBINSON7",
+          "event_ticker": "KXNFLSEASONRSHYDS-27C1000",
+          "event_title": "Pro Football: 1000+ Rushing Yards Season",
+          "title": "Will Bijan Robinson record 1000+ rushing yards during 2026-27 Pro Football regular season?",
+          "subtitle": "Bijan Robinson",
+          "yes_sub_title": "Bijan Robinson",
           "primary_participant_key": "football_player",
           "floor_strike": 999.5,
           "functional_strike": null,
@@ -443,41 +490,88 @@
         }
       }
     },
+    "KXNFLWEEKMOSTRSHYDS": {
+      "raw": 28,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 28
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNFLWEEKMOSTRSHYDS-26W10-WASJDANIELS5",
+          "event_ticker": "KXNFLWEEKMOSTRSHYDS-26W10",
+          "event_title": "Pro Football Week 10: Most Rushing Yards",
+          "title": "Jayden Daniels: most rushing yards in Pro Football Week 10",
+          "subtitle": null,
+          "yes_sub_title": "Jayden Daniels",
+          "primary_participant_key": "football_player",
+          "floor_strike": null,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-17T01:15:00Z"
+        }
+      }
+    },
+    "KXNHL4NATIONS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXNHLANYGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLFIRSTGOAL": {
-      "raw": 0,
+    "KXNHLF10G": {
+      "raw": 7,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLGOAL": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 7
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLF10G-26NOV15EDMPHI-Y",
+          "event_ticker": "KXNHLF10G-26NOV15EDMPHI",
+          "event_title": "Edmonton vs Philadelphia: Goal in First 10 Minutes",
+          "title": "Either team to score in the first 10 minutes",
+          "subtitle": null,
+          "yes_sub_title": "Goal in first 10 min",
+          "primary_participant_key": null,
+          "floor_strike": 1,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-16T03:30:00Z"
+        }
+      }
     },
     "KXNHLPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
+      "raw": 215,
+      "normalized": 215,
+      "skip_reasons": {
+        "ok": 215
+      },
       "skip_samples": {}
     },
-    "KXNHLSAVES": {
-      "raw": 0,
+    "KXNHLSEASONPTS": {
+      "raw": 320,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLSERIESTOTALGOALS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 320
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLSEASONPTS-27ANA-70",
+          "event_ticker": "KXNHLSEASONPTS-27ANA",
+          "event_title": "NHL: ANA Ducks Total Points",
+          "title": "Will the ANA Ducks NHL team earn at least 70 points in the 2026-27 regular season?",
+          "subtitle": null,
+          "yes_sub_title": "70+ points",
+          "primary_participant_key": null,
+          "floor_strike": 70,
+          "functional_strike": null,
+          "occurrence_datetime": "2027-04-18T14:00:00Z"
+        }
+      }
     },
     "KXNHLTEAMTOTAL": {
       "raw": 70,
@@ -493,6 +587,27 @@
           "title": "Philadelphia over 1.5 goals scored",
           "subtitle": null,
           "yes_sub_title": "Philadelphia over 1.5",
+          "primary_participant_key": null,
+          "floor_strike": 1.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-16T03:30:00Z"
+        }
+      }
+    },
+    "KXNHLTOTAL": {
+      "raw": 162,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 162
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLTOTAL-26NOV15EDMPHI-2",
+          "event_ticker": "KXNHLTOTAL-26NOV15EDMPHI",
+          "event_title": "Edmonton vs Philadelphia: Total Goals",
+          "title": "Full Game: Over 1.5 goals scored",
+          "subtitle": null,
+          "yes_sub_title": "Over 1.5 goals scored",
           "primary_participant_key": null,
           "floor_strike": 1.5,
           "functional_strike": null,
@@ -542,13 +657,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAPTS": {
+    "KXWNBAAST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAREB": {
+    "KXWNBAH2HPTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -562,7 +677,7 @@
     }
   },
   "leagues": {
-    "NFL": 246
+    "NHL": 215
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
