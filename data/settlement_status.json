@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-11-15T01:39:11.647143+00:00",
+  "generated_at_utc": "2026-11-15T01:47:18.040049+00:00",
   "source_registry_generated_at_utc": "2026-11-15T01:37:03.492700+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -48,62 +48,554 @@
   "predictions_in_registry": 9,
   "website_suggestions_recorded": 94223,
   "website_suggestions_structured_for_settlement": 83080,
-  "settlement_population_total": 3834,
-  "settled_predictions": 40366,
-  "settlement_rate_pct": 1052.84,
+  "settlement_population_total": 83089,
+  "settled_predictions": 41015,
+  "settlement_rate_pct": 49.36,
   "run_counts": {
-    "already_settled": 1106,
-    "PENDING_EVENT": 2014,
-    "PARTICIPANT_UNRESOLVED": 12,
-    "AMBIGUOUS_EVENT": 228,
-    "UNSUPPORTED_PLAYER_MARKET": 203,
-    "TEAM_UNRESOLVED": 33,
-    "PLAYER_NOT_IN_BOXSCORE": 236,
-    "TD_STATS_UNAVAILABLE": 2
+    "already_settled": 40323,
+    "PENDING_EVENT": 5772,
+    "PARTICIPANT_UNRESOLVED": 42,
+    "AMBIGUOUS_EVENT": 3381,
+    "UNSUPPORTED_PLAYER_MARKET": 10647,
+    "TEAM_UNRESOLVED": 476,
+    "PLAYER_NOT_IN_BOXSCORE": 20838,
+    "TD_STATS_UNAVAILABLE": 43,
+    "PLAYER_PROP_PROVIDER_PENDING": 27,
+    "NO_EVENT_CANDIDATES": 728,
+    "EVENT_NOT_FOUND": 55,
+    "UNGRADED_MARKET_RULE": 8,
+    "SPECIAL_WINNER_UNRESOLVED": 100,
+    "settled": 649
   },
   "by_league": {
+    "MLB": {
+      "PLAYER_NOT_IN_BOXSCORE": 4370,
+      "UNSUPPORTED_PLAYER_MARKET": 3346,
+      "NO_EVENT_CANDIDATES": 473,
+      "AMBIGUOUS_EVENT": 100,
+      "already_settled": 1025,
+      "TEAM_UNRESOLVED": 18,
+      "PENDING_EVENT": 61,
+      "EVENT_NOT_FOUND": 20
+    },
     "MMA": {
-      "PARTICIPANT_UNRESOLVED": 12,
-      "already_settled": 15,
-      "PENDING_EVENT": 6
+      "PARTICIPANT_UNRESOLVED": 40,
+      "already_settled": 230,
+      "PENDING_EVENT": 6,
+      "PLAYER_PROP_PROVIDER_PENDING": 27,
+      "EVENT_NOT_FOUND": 31,
+      "SPECIAL_WINNER_UNRESOLVED": 100,
+      "AMBIGUOUS_EVENT": 23
     },
     "NBA": {
-      "PENDING_EVENT": 420,
-      "already_settled": 286,
-      "UNSUPPORTED_PLAYER_MARKET": 47,
-      "PLAYER_NOT_IN_BOXSCORE": 14
+      "PENDING_EVENT": 817,
+      "already_settled": 5615,
+      "UNSUPPORTED_PLAYER_MARKET": 592,
+      "PLAYER_NOT_IN_BOXSCORE": 1837,
+      "TEAM_UNRESOLVED": 30,
+      "AMBIGUOUS_EVENT": 25
     },
     "NCAA_Basketball": {
-      "already_settled": 58,
-      "AMBIGUOUS_EVENT": 106,
-      "PENDING_EVENT": 77,
-      "UNSUPPORTED_PLAYER_MARKET": 1,
-      "TEAM_UNRESOLVED": 10
+      "already_settled": 1432,
+      "AMBIGUOUS_EVENT": 1220,
+      "PENDING_EVENT": 103,
+      "UNSUPPORTED_PLAYER_MARKET": 187,
+      "PLAYER_NOT_IN_BOXSCORE": 72,
+      "TEAM_UNRESOLVED": 18
     },
     "NCAA_Football": {
-      "already_settled": 668,
-      "PENDING_EVENT": 727,
-      "UNSUPPORTED_PLAYER_MARKET": 145,
-      "TEAM_UNRESOLVED": 23,
-      "AMBIGUOUS_EVENT": 109,
-      "PLAYER_NOT_IN_BOXSCORE": 221,
-      "TD_STATS_UNAVAILABLE": 2
+      "already_settled": 14071,
+      "PENDING_EVENT": 2132,
+      "UNSUPPORTED_PLAYER_MARKET": 2805,
+      "TEAM_UNRESOLVED": 291,
+      "AMBIGUOUS_EVENT": 1751,
+      "PLAYER_NOT_IN_BOXSCORE": 3599,
+      "TD_STATS_UNAVAILABLE": 36,
+      "settled": 649
     },
     "NFL": {
-      "already_settled": 4,
-      "PENDING_EVENT": 258
+      "already_settled": 6017,
+      "PENDING_EVENT": 1472,
+      "PLAYER_NOT_IN_BOXSCORE": 7297,
+      "UNSUPPORTED_PLAYER_MARKET": 1819,
+      "TD_STATS_UNAVAILABLE": 7,
+      "NO_EVENT_CANDIDATES": 188,
+      "TEAM_UNRESOLVED": 18
     },
     "NHL": {
-      "PENDING_EVENT": 526,
-      "already_settled": 75,
-      "UNSUPPORTED_PLAYER_MARKET": 10,
-      "PLAYER_NOT_IN_BOXSCORE": 1
+      "PENDING_EVENT": 1181,
+      "already_settled": 10316,
+      "TEAM_UNRESOLVED": 101,
+      "UNSUPPORTED_PLAYER_MARKET": 1792,
+      "PLAYER_NOT_IN_BOXSCORE": 3238,
+      "UNGRADED_MARKET_RULE": 8,
+      "AMBIGUOUS_EVENT": 48
     },
     "Tennis": {
-      "AMBIGUOUS_EVENT": 13
+      "AMBIGUOUS_EVENT": 214,
+      "PARTICIPANT_UNRESOLVED": 2,
+      "already_settled": 4
+    },
+    "WNBA": {
+      "UNSUPPORTED_PLAYER_MARKET": 106,
+      "already_settled": 1613,
+      "PLAYER_NOT_IN_BOXSCORE": 425,
+      "NO_EVENT_CANDIDATES": 67,
+      "EVENT_NOT_FOUND": 4
     }
   },
-  "recent_settlements": [],
+  "recent_settlements": [
+    {
+      "prediction_id": "SUG-0c837be7b9369c2cf2ca527c",
+      "league": "NCAA_Football",
+      "selection": "West Virginia Mountaineers ML • -137 PROPLINE:SX Bet",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856861",
+      "source": "ESPN_PUBLIC:401856861:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7e5948f7818de6a27c97d45d",
+      "league": "NCAA_Football",
+      "selection": "Indiana Hoosiers ML • -310 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858518",
+      "source": "ESPN_PUBLIC:401858518:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-92824cc68e2484e4b49fe1ca",
+      "league": "NCAA_Football",
+      "selection": "Jacksonville State Gamecocks ML • -267 PROPLINE:SX Bet",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401870752",
+      "source": "ESPN_PUBLIC:401870752:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-f8c70f1eafb62481a3d70e86",
+      "league": "NCAA_Football",
+      "selection": "Oregon Ducks ML • -385 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858523",
+      "source": "ESPN_PUBLIC:401858523:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-03ae9c2a5fe5e4c4fb1e34a7",
+      "league": "NCAA_Football",
+      "selection": "Cayden Lee OVER 54.5 Receiving Yards • NORMAL • L5 AVG 84.6 • L&J PROJ 86.8 • POM Value 86.8 • STAT 0% • LJPC 97% ⟦L=97;J=0⟧ 🕵️",
+      "actual_result": "44",
+      "grade": "LOSS",
+      "provider_event_id": "401856883",
+      "source": "ESPN_PUBLIC:401856883:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-0675d2ab7c9ee285cc0db0f3",
+      "league": "NCAA_Football",
+      "selection": "Donovan Olugbode OVER 50.5 Receiving Yards • NORMAL • L5 AVG 73 • L&J PROJ 74.4 • POM Value 74.4 • STAT 0% • LJPC 69.2% ⟦L=69.2;J=0⟧ 🕵️",
+      "actual_result": "67",
+      "grade": "WIN",
+      "provider_event_id": "401856883",
+      "source": "ESPN_PUBLIC:401856883:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-169518d13f4f5010ca0bceed",
+      "league": "NCAA_Football",
+      "selection": "Byrum Brown UNDER 205.5 Passing Yards • NORMAL • L5 AVG 168.8 • L&J PROJ 176.6 • POM Value 80.2 • STAT 0% • LJPC 90.9% ⟦L=92.7;J=-1.8⟧ 🕵️",
+      "actual_result": "232",
+      "grade": "LOSS",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-1728608c1ee8aa91a75d8a71",
+      "league": "NCAA_Football",
+      "selection": "Dakorien Moore OVER 59.5 Receiving Yards • NORMAL • L5 AVG 73.4 • L&J PROJ 68 • POM Value 67.4 • STAT 0% • LJPC 57.3% ⟦L=57.3;J=0⟧ 🕵️",
+      "actual_result": "101",
+      "grade": "WIN",
+      "provider_event_id": "401858523",
+      "source": "ESPN_PUBLIC:401858523:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-237966155524499e85d52ce5",
+      "league": "NCAA_Football",
+      "selection": "Fluff Bothwell OVER 14.5 Receiving Yards • NORMAL • L5 AVG 24.8 • L&J PROJ 22.4 • POM Value 72.5 • STAT 0% • LJPC 64% ⟦L=64;J=0⟧ 🕵️",
+      "actual_result": "14",
+      "grade": "LOSS",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-2ffb6ce2aeebb975d087e140",
+      "league": "NCAA_Football",
+      "selection": "Jordan Faison OVER 57.5 Receiving Yards • NORMAL • L5 AVG 67 • L&J PROJ 65.7 • POM Value 70.6 • STAT 0% • LJPC 58.5% ⟦L=58.5;J=0⟧ 🕵️",
+      "actual_result": "41",
+      "grade": "LOSS",
+      "provider_event_id": "401858294",
+      "source": "ESPN_PUBLIC:401858294:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-30774d6b9c18bf22ec97388d",
+      "league": "NCAA_Football",
+      "selection": "Da'Shawn Martin UNDER 37.5 Receiving Yards • NORMAL • L5 AVG 51.8 • L&J PROJ 46.7 • POM Value 63.5 • STAT 0% • LJPC 50.3% ⟦L=50.3;J=0⟧ 🕵️",
+      "actual_result": "59",
+      "grade": "LOSS",
+      "provider_event_id": "401858295",
+      "source": "ESPN_PUBLIC:401858295:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-3fabb09bee97219e477257a9",
+      "league": "NCAA_Football",
+      "selection": "Javarius Green OVER 38.5 Receiving Yards • NORMAL • L5 AVG 38 • L&J PROJ 35 • POM Value 59.8 • STAT 0% • LJPC 40.3% ⟦L=40.3;J=0⟧ 🕵️",
+      "actual_result": "13",
+      "grade": "LOSS",
+      "provider_event_id": "401858294",
+      "source": "ESPN_PUBLIC:401858294:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-49cda18de0f9356348fddbb6",
+      "league": "NCAA_Football",
+      "selection": "Brandon Smith OVER 0.5 Anytime TD • NORMAL • L5 AVG 0.6 • L&J PROJ 0.7 • POM Value 71.9 • STAT 0% • LJPC 60% ⟦L=60;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858523",
+      "source": "ESPN_PUBLIC:401858523:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-4f8d575840731ae771c553c9",
+      "league": "NCAA_Football",
+      "selection": "Jaden Greathouse OVER 24.5 Receiving Yards • NORMAL • L5 AVG 43.6 • L&J PROJ 40 • POM Value 72.9 • STAT 0% • LJPC 62.9% ⟦L=62.9;J=0⟧ 🕵️",
+      "actual_result": "46",
+      "grade": "WIN",
+      "provider_event_id": "401858294",
+      "source": "ESPN_PUBLIC:401858294:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-5140088ac8abe4af7b59dfe9",
+      "league": "NCAA_Football",
+      "selection": "King Miller OVER 5.5 Receiving Yards • NORMAL • L5 AVG 9.8 • L&J PROJ 9.8 • POM Value 88.2 • STAT 0% • LJPC 97.6% ⟦L=97.6;J=0⟧ 🕵️",
+      "actual_result": "19",
+      "grade": "WIN",
+      "provider_event_id": "401858518",
+      "source": "ESPN_PUBLIC:401858518:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-5e70b06ffa72afde579d5642",
+      "league": "NCAA_Football",
+      "selection": "Oregon Ducks ML • -394 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858523",
+      "source": "ESPN_PUBLIC:401858523:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-62e936efa8423eda0eb10ff2",
+      "league": "NCAA_Football",
+      "selection": "Marquis Johnson OVER 44.5 Receiving Yards • NORMAL • L5 AVG 36 • L&J PROJ 36.4 • POM Value 57.7 • STAT 0% • LJPC 37.2% ⟦L=37.2;J=0⟧ 🕵️",
+      "actual_result": "9",
+      "grade": "LOSS",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-65470a31a3619a053b6bb5f1",
+      "league": "NCAA_Football",
+      "selection": "Austin Simmons OVER 192.5 Passing Yards • NORMAL • L5 AVG 251.4 • L&J PROJ 249.4 • POM Value 74.9 • STAT 0% • LJPC 69.6% ⟦L=69.6;J=0⟧ 🕵️",
+      "actual_result": "175",
+      "grade": "LOSS",
+      "provider_event_id": "401856883",
+      "source": "ESPN_PUBLIC:401856883:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-694639ea66751cfe5c820cdd",
+      "league": "NCAA_Football",
+      "selection": "Texas State Bobcats ML • -335 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401860916",
+      "source": "ESPN_PUBLIC:401860916:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-698b8a7ae50c890596f1400a",
+      "league": "NCAA_Football",
+      "selection": "Mason Mini OVER 24.5 Receiving Yards • NORMAL • L5 AVG 23.2 • L&J PROJ 25.3 • POM Value 64.0 • STAT 0% • LJPC 47.7% ⟦L=47.7;J=0⟧ 🕵️",
+      "actual_result": "6",
+      "grade": "LOSS",
+      "provider_event_id": "401858295",
+      "source": "ESPN_PUBLIC:401858295:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-75eb5862dbb828e6a8def4e0",
+      "league": "NCAA_Football",
+      "selection": "Evan Stewart OVER 34.5 Receiving Yards • NORMAL • L5 AVG 64 • L&J PROJ 66 • POM Value 89.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
+      "actual_result": "38",
+      "grade": "WIN",
+      "provider_event_id": "401858523",
+      "source": "ESPN_PUBLIC:401858523:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-7ca119439f4ebfb71e3cc407",
+      "league": "NCAA_Football",
+      "selection": "Jeremiah McClellan OVER 21.5 Receiving Yards • NORMAL • L5 AVG 59.8 • L&J PROJ 57.1 • POM Value 68.0 • STAT 0% • LJPC 58.4% ⟦L=62.4;J=-4⟧ 🕵️",
+      "actual_result": "105",
+      "grade": "WIN",
+      "provider_event_id": "401858523",
+      "source": "ESPN_PUBLIC:401858523:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-8fbc11a857f569d3c7c4760a",
+      "league": "NCAA_Football",
+      "selection": "Sanfrisco Magee OVER 39.5 Receiving Yards • NORMAL • L5 AVG 52.6 • L&J PROJ 52.3 • POM Value 73.8 • STAT 0% • LJPC 65.5% ⟦L=65.5;J=0⟧ 🕵️",
+      "actual_result": "34",
+      "grade": "LOSS",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-96150060455c11dd6b897fff",
+      "league": "NCAA_Football",
+      "selection": "Javarius Green UNDER 38.5 Receiving Yards • NORMAL • L5 AVG 38 • L&J PROJ 35 • POM Value 70.5 • STAT 0% • LJPC 59.7% ⟦L=59.7;J=0⟧ 🕵️",
+      "actual_result": "13",
+      "grade": "WIN",
+      "provider_event_id": "401858294",
+      "source": "ESPN_PUBLIC:401858294:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-9d78d6879dce2f0eaaf61077",
+      "league": "NCAA_Football",
+      "selection": "Isaiah Marshall UNDER 229.5 Passing Yards • NORMAL • L5 AVG 213.4 • L&J PROJ 213.3 • POM Value 72.8 • STAT 0% • LJPC 66.6% ⟦L=66.6;J=0⟧ 🕵️",
+      "actual_result": "152",
+      "grade": "WIN",
+      "provider_event_id": "401856861",
+      "source": "ESPN_PUBLIC:401856861:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-9e0d3d96e2c6b47132917e4f",
+      "league": "NCAA_Football",
+      "selection": "Indiana Hoosiers ML • -304 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858518",
+      "source": "ESPN_PUBLIC:401858518:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-a1376a748adb4d4bd53d96e7",
+      "league": "NCAA_Football",
+      "selection": "Anthony Evans III UNDER 63.5 Receiving Yards • NORMAL • L5 AVG 60.6 • L&J PROJ 64.4 • POM Value 68.5 • STAT 0% • LJPC 60% ⟦L=60;J=0⟧ 🕵️",
+      "actual_result": "89",
+      "grade": "LOSS",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a274768c9970a49613752fa4",
+      "league": "NCAA_Football",
+      "selection": "Cam Pickett OVER 39.5 Receiving Yards • NORMAL • L5 AVG 61 • L&J PROJ 55 • POM Value 65.1 • STAT 0% • LJPC 51.8% ⟦L=51.8;J=0⟧ 🕵️",
+      "actual_result": "29",
+      "grade": "LOSS",
+      "provider_event_id": "401856861",
+      "source": "ESPN_PUBLIC:401856861:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a2d2d46e9fc760f51e04d93d",
+      "league": "NCAA_Football",
+      "selection": "Jordan Faison UNDER 57.5 Receiving Yards • NORMAL • L5 AVG 67 • L&J PROJ 65.7 • POM Value 61.1 • STAT 0% • LJPC 41.5% ⟦L=41.5;J=0⟧ 🕵️",
+      "actual_result": "41",
+      "grade": "WIN",
+      "provider_event_id": "401858294",
+      "source": "ESPN_PUBLIC:401858294:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a4166d879e2259619abd3a49",
+      "league": "NCAA_Football",
+      "selection": "Georgia Bulldogs ML • -684 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856883",
+      "source": "ESPN_PUBLIC:401856883:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-a477cf0e1c3f171ca96b8567",
+      "league": "NCAA_Football",
+      "selection": "Prince Strachan OVER 44.5 Receiving Yards • NORMAL • L5 AVG 68 • L&J PROJ 63.5 • POM Value 71.3 • STAT 0% • LJPC 64.4% ⟦L=64.3;J=0⟧ 🕵️",
+      "actual_result": "17",
+      "grade": "LOSS",
+      "provider_event_id": "401856861",
+      "source": "ESPN_PUBLIC:401856861:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a51a7545a7cb64e5bb709ad5",
+      "league": "NCAA_Football",
+      "selection": "Over 28.5 Receiving Yards 🕵️",
+      "actual_result": "11",
+      "grade": "LOSS",
+      "provider_event_id": "401858295",
+      "source": "ESPN_PUBLIC:401858295:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ad76056d40b23532718d7c26",
+      "league": "NCAA_Football",
+      "selection": "Chase Hendricks OVER 59.5 Receiving Yards • NORMAL • L5 AVG 66.6 • L&J PROJ 65.6 • POM Value 71.2 • STAT 0% • LJPC 60% ⟦L=60;J=0⟧ 🕵️",
+      "actual_result": "32",
+      "grade": "LOSS",
+      "provider_event_id": "401858295",
+      "source": "ESPN_PUBLIC:401858295:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-b5d8af96d8c0642df3168fb0",
+      "league": "NCAA_Football",
+      "selection": "Micah Gilbert UNDER 36.5 Receiving Yards • NORMAL • L5 AVG 38.8 • L&J PROJ 43 • POM Value 65.8 • STAT 0% • LJPC 55.9% ⟦L=55.9;J=0⟧ 🕵️",
+      "actual_result": "86",
+      "grade": "LOSS",
+      "provider_event_id": "401858294",
+      "source": "ESPN_PUBLIC:401858294:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-bc59d68c0fbe57bee0b97bb9",
+      "league": "NCAA_Football",
+      "selection": "Jaron-Keawe Sagapolutele UNDER 239.5 Passing Yards • NORMAL • L5 AVG 177 • L&J PROJ 190.2 • POM Value 71.8 • STAT 0% • LJPC 65.5% ⟦L=77.5;J=-12⟧ 🕵️",
+      "actual_result": "141",
+      "grade": "WIN",
+      "provider_event_id": "401858295",
+      "source": "ESPN_PUBLIC:401858295:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-c1727e0b95b390625f5f274a",
+      "league": "NCAA_Football",
+      "selection": "Nik McMillan OVER 49.5 Receiving Yards • NORMAL • L5 AVG 54.2 • L&J PROJ 56.1 • POM Value 72.3 • STAT 0% • LJPC 61.2% ⟦L=61.2;J=0⟧ 🕵️",
+      "actual_result": "44",
+      "grade": "LOSS",
+      "provider_event_id": "401856861",
+      "source": "ESPN_PUBLIC:401856861:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ca789f1fd9a41a137dc0b4e0",
+      "league": "NCAA_Football",
+      "selection": "Marquis Johnson UNDER 44.5 Receiving Yards • NORMAL • L5 AVG 36 • L&J PROJ 36.4 • POM Value 72.0 • STAT 0% • LJPC 62.8% ⟦L=62.8;J=0⟧ 🕵️",
+      "actual_result": "9",
+      "grade": "WIN",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-cc431ebf043b4f7543116eee",
+      "league": "NCAA_Football",
+      "selection": "Carson Bruhn UNDER 20.5 Receiving Yards • NORMAL • L5 AVG 24.4 • L&J PROJ 24 • POM Value 66.5 • STAT 0% • LJPC 56.9% ⟦L=56.9;J=0⟧ 🕵️",
+      "actual_result": "27",
+      "grade": "LOSS",
+      "provider_event_id": "401856861",
+      "source": "ESPN_PUBLIC:401856861:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-dc9c7c494e5d3bd51ecbccbb",
+      "league": "NCAA_Football",
+      "selection": "Nahzae Cox Over 39.5 Receiving Yards 🕵️",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401856861",
+      "source": "ESPN_PUBLIC:401856861:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e1e47861e0f0440ff7c5915a",
+      "league": "NCAA_Football",
+      "selection": "Keshaun Singleton UNDER 56.5 Receiving Yards • NORMAL • L5 AVG 44.6 • L&J PROJ 48.5 • POM Value 71.6 • STAT 0% • LJPC 61.5% ⟦L=61.5;J=0⟧ 🕵️",
+      "actual_result": "103",
+      "grade": "LOSS",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f0bb0bea343a84dc8a058535",
+      "league": "NCAA_Football",
+      "selection": "Nick Marsh UNDER 4.5 Receptions • NORMAL • L5 AVG 4.4 • L&J PROJ 4.3 • POM Value 69.4 • STAT 0% • LJPC 56.3% ⟦L=56.3;J=0⟧",
+      "actual_result": "4",
+      "grade": "WIN",
+      "provider_event_id": "401858518",
+      "source": "ESPN_PUBLIC:401858518:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f2f2a04b20984100acb7b538",
+      "league": "NCAA_Football",
+      "selection": "Virginia Cavaliers ML • -382 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858295",
+      "source": "ESPN_PUBLIC:401858295:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-f753606f0a771e599213b0c3",
+      "league": "NCAA_Football",
+      "selection": "Beau Pribula UNDER 170.5 Passing Yards • NORMAL • L5 AVG 158.8 • L&J PROJ 163.7 • POM Value 72.9 • STAT 0% • LJPC 66.6% ⟦L=66.6;J=0⟧ 🕵️",
+      "actual_result": "146",
+      "grade": "WIN",
+      "provider_event_id": "401858295",
+      "source": "ESPN_PUBLIC:401858295:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-fcfdc85469772895ff63186c",
+      "league": "NCAA_Football",
+      "selection": "Jacksonville State Gamecocks ML • -270 PROPLINE:SX Bet",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401870752",
+      "source": "ESPN_PUBLIC:401870752:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-d749f06e60e33d707703ff8b",
+      "league": "NCAA_Football",
+      "selection": "Byrum Brown UNDER 205.5 Passing Yards • NORMAL • L5 AVG 168.8 • L&J PROJ 176.6 • POM Value 79.5 • STAT 0% • LJPC 89.1% ⟦L=92.7;J=-3.6⟧ 🕵️",
+      "actual_result": "232",
+      "grade": "LOSS",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-af58cacaf36c7b7d9082240f",
+      "league": "NCAA_Football",
+      "selection": "Byrum Brown UNDER 205.5 Passing Yards • NORMAL • L5 AVG 168.8 • L&J PROJ 176.6 • POM Value 78.7 • STAT 0% • LJPC 87.2% ⟦L=92.7;J=-5.4⟧ 🕵️",
+      "actual_result": "232",
+      "grade": "LOSS",
+      "provider_event_id": "401856886",
+      "source": "ESPN_PUBLIC:401856886:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-b99567336d16871f5382b627",
+      "league": "NCAA_Football",
+      "selection": "Dakorien Moore OVER 4.5 Receptions • NORMAL • L5 AVG 6.8 • L&J PROJ 6.1 • POM Value 71.4 • STAT 0% • LJPC 72.9% ⟦L=76.9;J=-4⟧ 🕵️",
+      "actual_result": "7",
+      "grade": "WIN",
+      "provider_event_id": "401858523",
+      "source": "ESPN_PUBLIC:401858523:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-343463d84d15e3d23d6fd8e2",
+      "league": "NCAA_Football",
+      "selection": "Tulane ML • +130 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401862828",
+      "source": "ESPN_PUBLIC:401862828:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-96690f7faac4d82884d2684c",
+      "league": "NCAA_Football",
+      "selection": "Indiana Hoosiers ML • -306 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858518",
+      "source": "ESPN_PUBLIC:401858518:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ce24873a3e5dea7eb0d25e98",
+      "league": "NCAA_Football",
+      "selection": "Georgia Bulldogs ML • -692 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856883",
+      "source": "ESPN_PUBLIC:401856883:FINAL_SCORE_ML"
+    }
+  ],
   "unresolved": [
     {
       "prediction_id": "SUG-60958d25e6192d202b4b6100",
@@ -139,7 +631,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-67e2712289e51fa5fec59e52",
@@ -155,7 +647,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-685a48923ba65a6d24e61ed1",
@@ -187,7 +679,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-6ca8428dde1b257f86b98728",
@@ -195,7 +687,7 @@
       "event_id": "2026020322",
       "provider_event_id": "401892717",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-6de7c158260d3ca3dc98739d",
@@ -203,7 +695,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-6ea0c7ca8d9594bf57a83ce1",
@@ -219,7 +711,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-6f9b30484c8a40e68300aec8",
@@ -235,7 +727,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-70b05b53625401e141aa15d1",
@@ -243,7 +735,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-71352444ccf8788b0f9fd409",
@@ -251,7 +743,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-71884f2495a5fcac5c4ab61f",
@@ -259,7 +751,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-72465aafe3a1fa2dfd3261b2",
@@ -289,7 +781,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-78a2ac693834cbc9084b16c4",
@@ -297,7 +789,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-78f4a4c7ba3009720ea1c833",
@@ -325,7 +817,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-7da215ed5f43b67b8ee1a904",
@@ -333,7 +825,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-7e814b9b5de2c04eeb9b9508",
@@ -403,7 +895,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-85c23aca7f02ffd615d21f7a",
@@ -419,7 +911,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-89a3f7206cbac0581049f450",
@@ -427,7 +919,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-8f6fc41055696a428ffd3d2a",
@@ -435,7 +927,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-90c1944e07c25afbcc3ac7fb",
@@ -467,7 +959,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-955558dd53fa2a5781ab2d2b",
@@ -483,7 +975,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-97a54b5b6aedfa33829afb85",
@@ -511,7 +1003,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-9aaf2b4ee68a287008c34605",
@@ -551,7 +1043,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-9f629890e3e9ed27b6958c79",
@@ -559,7 +1051,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-a62727a2428297b4cda1de31",
@@ -575,7 +1067,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-a969c1c03104b87a1e5bbd89",
@@ -583,7 +1075,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-a9f5fbfb05f66a6654b58805",
@@ -597,7 +1089,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-b08b39793b8c569fd35047c3",
@@ -605,7 +1097,7 @@
       "event_id": "401892715",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-b2110a3a69ecdda9e3f31aea",
@@ -613,7 +1105,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-b3297f061475528d7bf3a439",
@@ -629,7 +1121,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-b5978bb07138f970d05edf1b",
@@ -659,7 +1151,7 @@
       "event_id": "2026020320",
       "provider_event_id": "401892716",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-bce6b02662ac3e1b279a66db",
@@ -667,7 +1159,7 @@
       "event_id": "PL-692182",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-bea6f0b6c49ad55ff2eb332e",
@@ -691,7 +1183,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-c3441caa62531fdd88661f62",
@@ -699,7 +1191,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-c42f91b929d854d4c9680a0b",
@@ -715,7 +1207,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-ccd91fa545805da826186323",
@@ -747,7 +1239,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-d42416c3895089627d83b79c",
@@ -771,7 +1263,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-d7785d13344c7d615b24bb1a",
@@ -809,7 +1301,7 @@
       "event_id": "401892715",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-deb05e0c76a802baf958cb4c",
@@ -841,7 +1333,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-e8887df3faa4fdf22dd554e9",
@@ -865,7 +1357,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-eca28beb915fbc0a89c3fbdc",
@@ -879,7 +1371,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-ef42bbb2d4bbfedf145e25a4",
@@ -917,7 +1409,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-f7271478668eba1a47648146",
@@ -941,7 +1433,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-fa4bc3863cb26ef2b39b5dde",
@@ -973,7 +1465,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-fdec7f682978bd19da7d412a",
@@ -989,7 +1481,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-17bb330b4cfb2a5c22586126",
@@ -997,7 +1489,7 @@
       "event_id": "PL-697669",
       "provider_event_id": "401909983",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_END_PERIOD"
+      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-3104f2b64a43830c81e4c0bf",
@@ -1093,7 +1585,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-7caa7c08442c15cac232fb88",
@@ -1147,7 +1639,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-a635f9429bfea2fbe7370ca3",
@@ -1271,7 +1763,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-1974462ee9853d3850735373",
@@ -1279,7 +1771,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-262e517c9846202c7cce29e5",
@@ -1287,7 +1779,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-267a7c0d79f56c96fa98f3b6",
@@ -1295,7 +1787,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-29fd6f7543292d6eface3efc",
@@ -1303,7 +1795,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-365315e9447501ab5c9c0198",
@@ -1333,7 +1825,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-5e68eded1f0a0c007c3e25e5",
@@ -1349,7 +1841,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-61354841f61f80f29d7c7d9c",
@@ -1371,7 +1863,7 @@
       "event_id": "PL-692182",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-7444307de58a61ae0059035a",
@@ -1379,7 +1871,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-75b9ed2dc6402a439aa8b17a",
@@ -1387,7 +1879,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-a985c28f3166e56fe4a633a2",
@@ -1395,7 +1887,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-aab11e9be1c0c3f4d02d3926",
@@ -1411,7 +1903,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-b158ece380fb7a9430b8e8c6",
@@ -1419,7 +1911,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-b5d49758b93458a442cdf3b5",
@@ -1435,7 +1927,7 @@
       "event_id": "401892715",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-c6d6280a7c046954b3656312",
@@ -1443,7 +1935,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-d1bf0ec83d50a6c22c17824a",
@@ -1451,7 +1943,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-d38632518da42a031802d33d",
@@ -1459,7 +1951,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-d81d4ecba2e06cb8dbff5304",
@@ -1479,7 +1971,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-e571707ded08f0b81ab0162c",
@@ -1487,7 +1979,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-e6e92a8517501491781a03ca",
@@ -1495,7 +1987,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-e90beb9a169ad42bee62023d",
@@ -1503,7 +1995,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-eaff9c0c03ed1bb820efb68a",
@@ -1511,7 +2003,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-f3da5c552adbdcccc9dc7c9e",
@@ -1519,7 +2011,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-0fae4ce9860af2c2e2480f10",
@@ -1541,7 +2033,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-2bf15fea67e89f7fb7fcb1fc",
@@ -1549,7 +2041,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-2ea3c845c0f18863352e9549",
@@ -1581,7 +2073,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-425c3cf4d5388ee1197003ee",
@@ -1589,7 +2081,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-5e50191a4e5a14d661d52076",
@@ -1597,7 +2089,7 @@
       "event_id": "2026020314",
       "provider_event_id": "401892710",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-6be472175102d3e474aabd2f",
@@ -1625,7 +2117,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-ca8b5a9d2f91c10752db2099",
@@ -1633,7 +2125,7 @@
       "event_id": "2026020313",
       "provider_event_id": "401892709",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-e58f730702e4601cd05d3f66",
@@ -1641,7 +2133,7 @@
       "event_id": "2026020319",
       "provider_event_id": "401892715",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_IN_PROGRESS"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-270d5ed6f9f2b6b0846c3a62",
