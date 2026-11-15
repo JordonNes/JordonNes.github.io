@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-14",
+  "verifiedOn": "2026-11-15",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
@@ -49,7 +49,7 @@ window.LJ_FIBA_FIXTURES={
     {
       "competition": "2027 Women’s EuroBasket Qualifiers",
       "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "parsed_fixtures": 14,
+      "parsed_fixtures": 12,
       "status": "FIXTURES_VERIFIED"
     },
     {
@@ -72,34 +72,6 @@ window.LJ_FIBA_FIXTURES={
     }
   ],
   "events": [
-    {
-      "id": "FIBA-2026-11-15-2027WOMENSEUROBASKETQUALIFIERS-FIN-LTU",
-      "track": "women",
-      "competition": "2027 Women’s EuroBasket Qualifiers",
-      "date": "2026-11-15",
-      "publishedTime": "14:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "FIN",
-      "away": "LTU",
-      "group": "H",
-      "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-15-2027WOMENSEUROBASKETQUALIFIERS-SWE-BEL",
-      "track": "women",
-      "competition": "2027 Women’s EuroBasket Qualifiers",
-      "date": "2026-11-15",
-      "publishedTime": "15:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "SWE",
-      "away": "BEL",
-      "group": "H",
-      "source": "https://www.fiba.basketball/en/events/fiba-womens-eurobasket-2027-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
     {
       "id": "FIBA-2026-11-17-2027WOMENSEUROBASKETQUALIFIERS-UKR-FRA",
       "track": "women",
