@@ -1,6 +1,6 @@
 {
   "schema_version": "LJ-ISPY-CANDIDATES-2",
-  "generated_at_utc": "2026-11-15T00:17:29.437751+00:00",
+  "generated_at_utc": "2026-11-15T10:01:50.984621+00:00",
   "engine": "JINX_COMBINED_DISCOVERY_2",
   "candidate_count": 60,
   "signals": [
@@ -1904,14 +1904,14 @@
         {
           "feature": "temperature_f",
           "label": "temperature",
-          "value": 31.0,
-          "display": "31°F"
+          "value": 30.1,
+          "display": "30°F"
         },
         {
           "feature": "wind_mph",
           "label": "wind",
-          "value": 13.9,
-          "display": "13.9 mph"
+          "value": 13.0,
+          "display": "13.0 mph"
         },
         {
           "feature": "rain_in",
@@ -1934,18 +1934,18 @@
         {
           "feature": "wind_gust_mph",
           "label": "wind gust",
-          "value": 21.7,
-          "display": "21.7 mph"
+          "value": 20.6,
+          "display": "20.6 mph"
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.68,
-      "mean_similarity_pct": 74.55,
+      "effective_sample_size": 24.67,
+      "mean_similarity_pct": 74.56,
       "closest_similarity_pct": 78.31,
-      "observed_rate_pct": 14.66,
+      "observed_rate_pct": 14.78,
       "baseline_rate_pct": 38.03,
       "baseline_sample_size": 965,
-      "lift_pp": -23.37,
+      "lift_pp": -23.26,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -1954,18 +1954,18 @@
           "n": 5
         },
         "10": {
-          "rate_pct": 0.0,
-          "lift_pp": -38.03,
+          "rate_pct": 9.8,
+          "lift_pp": -28.23,
           "n": 10
         },
         "25": {
-          "rate_pct": 14.66,
-          "lift_pp": -23.37,
+          "rate_pct": 14.78,
+          "lift_pp": -23.26,
           "n": 25
         },
         "50": {
-          "rate_pct": 18.91,
-          "lift_pp": -19.12,
+          "rate_pct": 18.98,
+          "lift_pp": -19.05,
           "n": 50
         }
       },
@@ -2031,7 +2031,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 14.7% of the time versus a 38.0% contextual baseline. The top-25 analog neighborhood averages 74.5% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 14.8% of the time versus a 38.0% contextual baseline. The top-25 analog neighborhood averages 74.6% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -2568,6 +2568,254 @@
       }
     },
     {
+      "signal_id": "ISPY-5903705C7167043899",
+      "pattern_key": "33dc4a4291dfc090",
+      "status": "VALIDATED",
+      "direction": "SUPPORT",
+      "league": "NFL",
+      "focus_team": "DET",
+      "opponent": "NE",
+      "title": "DET — finishes at least 10% below its entering passing-yard form",
+      "outcome_code": "PASS_BELOW_FORM",
+      "outcome": "finishes at least 10% below its entering passing-yard form",
+      "cohort_definition": "Games most similar to this measured state: passing efficiency 6.70, rushing efficiency -2.86, opponent pass-defense allowance 286.80, rush-defense allowance 80.20.",
+      "conditions": [
+        {
+          "feature": "focus_passing_epa_l5",
+          "label": "passing efficiency",
+          "direction": "high",
+          "value": 6.695065237005939,
+          "display": "6.70"
+        },
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -2.8565948963061873,
+          "display": "-2.86"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "direction": "high",
+          "value": 286.8,
+          "display": "286.80"
+        },
+        {
+          "feature": "focus_rush_allowed_l5",
+          "label": "rush-defense allowance",
+          "direction": "low",
+          "value": 80.2,
+          "display": "80.20"
+        },
+        {
+          "feature": "opp_pass_yards_l5",
+          "label": "opponent passing form",
+          "direction": "high",
+          "value": 289.8,
+          "display": "289.8 yds"
+        }
+      ],
+      "current_state": [
+        {
+          "feature": "focus_rush_yards_l5",
+          "label": "team rushing form",
+          "value": 132.0,
+          "display": "132.0 yds"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "value": 268.6,
+          "display": "268.6 yds"
+        },
+        {
+          "feature": "opp_pass_allowed_l5",
+          "label": "opponent pass-defense allowance",
+          "value": 286.8,
+          "display": "286.80"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "value": 121.6,
+          "display": "121.6 yds"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "value": 7.039999999999999,
+          "display": "7.04"
+        },
+        {
+          "feature": "opp_front7_activity_l5",
+          "label": "opponent front-seven activity proxy",
+          "value": 7.38,
+          "display": "7.38"
+        },
+        {
+          "feature": "postseason_pressure_proxy",
+          "label": "postseason-pressure proxy",
+          "value": 0.3864705882352942,
+          "display": "39%"
+        },
+        {
+          "feature": "temperature_f",
+          "label": "temperature",
+          "value": 30.1,
+          "display": "30°F"
+        },
+        {
+          "feature": "wind_mph",
+          "label": "wind",
+          "value": 13.0,
+          "display": "13.0 mph"
+        },
+        {
+          "feature": "rain_in",
+          "label": "rain",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_in",
+          "label": "precipitation",
+          "value": 0.0,
+          "display": "0.0 in"
+        },
+        {
+          "feature": "precipitation_probability",
+          "label": "precipitation probability",
+          "value": 0.0,
+          "display": "0.0%"
+        },
+        {
+          "feature": "wind_gust_mph",
+          "label": "wind gust",
+          "value": 20.6,
+          "display": "20.6 mph"
+        }
+      ],
+      "sample_size": 25,
+      "effective_sample_size": 24.67,
+      "mean_similarity_pct": 74.56,
+      "closest_similarity_pct": 78.31,
+      "observed_rate_pct": 60.3,
+      "baseline_rate_pct": 37.82,
+      "baseline_sample_size": 965,
+      "lift_pp": 22.47,
+      "stability_score": 0.75,
+      "neighborhoods": {
+        "5": {
+          "rate_pct": 40.4,
+          "lift_pp": 2.58,
+          "n": 5
+        },
+        "10": {
+          "rate_pct": 59.0,
+          "lift_pp": 21.18,
+          "n": 10
+        },
+        "25": {
+          "rate_pct": 60.3,
+          "lift_pp": 22.47,
+          "n": 25
+        },
+        "50": {
+          "rate_pct": 44.83,
+          "lift_pp": 7.0,
+          "n": 50
+        }
+      },
+      "analogs": [
+        {
+          "game_id": "2024_13_ARI_MIN",
+          "label": "2024-12-01 MIN vs ARI",
+          "similarity_pct": 78.3,
+          "outcome_occurred": true,
+          "focus_score": 23.0,
+          "opp_score": 22.0,
+          "pass_yards": 235.0,
+          "rush_yards": 68.0
+        },
+        {
+          "game_id": "2024_14_ATL_MIN",
+          "label": "2024-12-08 MIN vs ATL",
+          "similarity_pct": 78.1,
+          "outcome_occurred": false,
+          "focus_score": 42.0,
+          "opp_score": 21.0,
+          "pass_yards": 347.0,
+          "rush_yards": 115.0
+        },
+        {
+          "game_id": "2019_10_MIN_DAL",
+          "label": "2019-11-10 DAL vs MIN",
+          "similarity_pct": 76.7,
+          "outcome_occurred": false,
+          "focus_score": 24.0,
+          "opp_score": 28.0,
+          "pass_yards": 397.0,
+          "rush_yards": 50.0
+        },
+        {
+          "game_id": "2020_10_SF_NO",
+          "label": "2020-11-15 NO vs SF",
+          "similarity_pct": 76.0,
+          "outcome_occurred": true,
+          "focus_score": 27.0,
+          "opp_score": 13.0,
+          "pass_yards": 139.0,
+          "rush_yards": 114.0
+        },
+        {
+          "game_id": "2023_10_DET_LAC",
+          "label": "2023-11-12 DET vs LAC",
+          "similarity_pct": 75.9,
+          "outcome_occurred": false,
+          "focus_score": 41.0,
+          "opp_score": 38.0,
+          "pass_yards": 333.0,
+          "rush_yards": 200.0
+        }
+      ],
+      "current_matches": [
+        {
+          "event_id": "2026_10_NE_DET",
+          "label": "New England Patriots @ Detroit Lions",
+          "focus_team": "DET",
+          "opponent": "NE"
+        }
+      ],
+      "recommended_poms": [],
+      "actionable_now": false,
+      "interpretation": "Across the closest historical analogs, this outcome occurred 60.3% of the time versus a 37.8% contextual baseline. The top-25 analog neighborhood averages 74.6% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "method": {
+        "similarity": "weighted mixed-feature Gower-like distance",
+        "neighborhood": "top 25 of top 50 historical analogs",
+        "raw_sample_gate": false,
+        "effective_sample_required": true
+      }
+    },
+    {
       "signal_id": "ISPY-59045602DDE199F777",
       "pattern_key": "6c70e3343196440b",
       "status": "VALIDATED",
@@ -2662,14 +2910,14 @@
         {
           "feature": "temperature_f",
           "label": "temperature",
-          "value": 31.0,
-          "display": "31°F"
+          "value": 30.1,
+          "display": "30°F"
         },
         {
           "feature": "wind_mph",
           "label": "wind",
-          "value": 13.9,
-          "display": "13.9 mph"
+          "value": 13.0,
+          "display": "13.0 mph"
         },
         {
           "feature": "rain_in",
@@ -2692,8 +2940,8 @@
         {
           "feature": "wind_gust_mph",
           "label": "wind gust",
-          "value": 21.7,
-          "display": "21.7 mph"
+          "value": 20.6,
+          "display": "20.6 mph"
         }
       ],
       "sample_size": 25,
@@ -2722,8 +2970,8 @@
           "n": 25
         },
         "50": {
-          "rate_pct": 13.64,
-          "lift_pp": -20.87,
+          "rate_pct": 13.67,
+          "lift_pp": -20.84,
           "n": 50
         }
       },
@@ -3021,254 +3269,6 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
-        }
-      ],
-      "method": {
-        "similarity": "weighted mixed-feature Gower-like distance",
-        "neighborhood": "top 25 of top 50 historical analogs",
-        "raw_sample_gate": false,
-        "effective_sample_required": true
-      }
-    },
-    {
-      "signal_id": "ISPY-5903705C7167043899",
-      "pattern_key": "33dc4a4291dfc090",
-      "status": "VALIDATED",
-      "direction": "SUPPORT",
-      "league": "NFL",
-      "focus_team": "DET",
-      "opponent": "NE",
-      "title": "DET — finishes at least 10% below its entering passing-yard form",
-      "outcome_code": "PASS_BELOW_FORM",
-      "outcome": "finishes at least 10% below its entering passing-yard form",
-      "cohort_definition": "Games most similar to this measured state: passing efficiency 6.70, rushing efficiency -2.86, opponent pass-defense allowance 286.80, rush-defense allowance 80.20.",
-      "conditions": [
-        {
-          "feature": "focus_passing_epa_l5",
-          "label": "passing efficiency",
-          "direction": "high",
-          "value": 6.695065237005939,
-          "display": "6.70"
-        },
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -2.8565948963061873,
-          "display": "-2.86"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "direction": "high",
-          "value": 286.8,
-          "display": "286.80"
-        },
-        {
-          "feature": "focus_rush_allowed_l5",
-          "label": "rush-defense allowance",
-          "direction": "low",
-          "value": 80.2,
-          "display": "80.20"
-        },
-        {
-          "feature": "opp_pass_yards_l5",
-          "label": "opponent passing form",
-          "direction": "high",
-          "value": 289.8,
-          "display": "289.8 yds"
-        }
-      ],
-      "current_state": [
-        {
-          "feature": "focus_rush_yards_l5",
-          "label": "team rushing form",
-          "value": 132.0,
-          "display": "132.0 yds"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "value": 268.6,
-          "display": "268.6 yds"
-        },
-        {
-          "feature": "opp_pass_allowed_l5",
-          "label": "opponent pass-defense allowance",
-          "value": 286.8,
-          "display": "286.80"
-        },
-        {
-          "feature": "opp_rush_yards_l5",
-          "label": "opponent rushing form",
-          "value": 121.6,
-          "display": "121.6 yds"
-        },
-        {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "value": 7.039999999999999,
-          "display": "7.04"
-        },
-        {
-          "feature": "opp_front7_activity_l5",
-          "label": "opponent front-seven activity proxy",
-          "value": 7.38,
-          "display": "7.38"
-        },
-        {
-          "feature": "postseason_pressure_proxy",
-          "label": "postseason-pressure proxy",
-          "value": 0.3864705882352942,
-          "display": "39%"
-        },
-        {
-          "feature": "temperature_f",
-          "label": "temperature",
-          "value": 31.0,
-          "display": "31°F"
-        },
-        {
-          "feature": "wind_mph",
-          "label": "wind",
-          "value": 13.9,
-          "display": "13.9 mph"
-        },
-        {
-          "feature": "rain_in",
-          "label": "rain",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_in",
-          "label": "precipitation",
-          "value": 0.0,
-          "display": "0.0 in"
-        },
-        {
-          "feature": "precipitation_probability",
-          "label": "precipitation probability",
-          "value": 0.0,
-          "display": "0.0%"
-        },
-        {
-          "feature": "wind_gust_mph",
-          "label": "wind gust",
-          "value": 21.7,
-          "display": "21.7 mph"
-        }
-      ],
-      "sample_size": 25,
-      "effective_sample_size": 24.68,
-      "mean_similarity_pct": 74.55,
-      "closest_similarity_pct": 78.31,
-      "observed_rate_pct": 59.95,
-      "baseline_rate_pct": 37.82,
-      "baseline_sample_size": 965,
-      "lift_pp": 22.13,
-      "stability_score": 0.75,
-      "neighborhoods": {
-        "5": {
-          "rate_pct": 40.4,
-          "lift_pp": 2.58,
-          "n": 5
-        },
-        "10": {
-          "rate_pct": 59.3,
-          "lift_pp": 21.47,
-          "n": 10
-        },
-        "25": {
-          "rate_pct": 59.95,
-          "lift_pp": 22.13,
-          "n": 25
-        },
-        "50": {
-          "rate_pct": 43.02,
-          "lift_pp": 5.19,
-          "n": 50
-        }
-      },
-      "analogs": [
-        {
-          "game_id": "2024_13_ARI_MIN",
-          "label": "2024-12-01 MIN vs ARI",
-          "similarity_pct": 78.3,
-          "outcome_occurred": true,
-          "focus_score": 23.0,
-          "opp_score": 22.0,
-          "pass_yards": 235.0,
-          "rush_yards": 68.0
-        },
-        {
-          "game_id": "2024_14_ATL_MIN",
-          "label": "2024-12-08 MIN vs ATL",
-          "similarity_pct": 78.1,
-          "outcome_occurred": false,
-          "focus_score": 42.0,
-          "opp_score": 21.0,
-          "pass_yards": 347.0,
-          "rush_yards": 115.0
-        },
-        {
-          "game_id": "2019_10_MIN_DAL",
-          "label": "2019-11-10 DAL vs MIN",
-          "similarity_pct": 76.7,
-          "outcome_occurred": false,
-          "focus_score": 24.0,
-          "opp_score": 28.0,
-          "pass_yards": 397.0,
-          "rush_yards": 50.0
-        },
-        {
-          "game_id": "2020_10_SF_NO",
-          "label": "2020-11-15 NO vs SF",
-          "similarity_pct": 76.0,
-          "outcome_occurred": true,
-          "focus_score": 27.0,
-          "opp_score": 13.0,
-          "pass_yards": 139.0,
-          "rush_yards": 114.0
-        },
-        {
-          "game_id": "2023_10_DET_LAC",
-          "label": "2023-11-12 DET vs LAC",
-          "similarity_pct": 75.9,
-          "outcome_occurred": false,
-          "focus_score": 41.0,
-          "opp_score": 38.0,
-          "pass_yards": 333.0,
-          "rush_yards": 200.0
-        }
-      ],
-      "current_matches": [
-        {
-          "event_id": "2026_10_NE_DET",
-          "label": "New England Patriots @ Detroit Lions",
-          "focus_team": "DET",
-          "opponent": "NE"
-        }
-      ],
-      "recommended_poms": [],
-      "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 60.0% of the time versus a 37.8% contextual baseline. The top-25 analog neighborhood averages 74.5% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        },
-        {
-          "source": "OPEN_METEO",
-          "detail": "current event-hour weather measurements"
         }
       ],
       "method": {
@@ -4330,8 +4330,8 @@
         {
           "feature": "precipitation_probability",
           "label": "precipitation probability",
-          "value": 5.0,
-          "display": "5.0%"
+          "value": 6.0,
+          "display": "6.0%"
         },
         {
           "feature": "wind_gust_mph",
@@ -6366,14 +6366,14 @@
         {
           "feature": "temperature_f",
           "label": "temperature",
-          "value": 31.0,
-          "display": "31°F"
+          "value": 30.1,
+          "display": "30°F"
         },
         {
           "feature": "wind_mph",
           "label": "wind",
-          "value": 13.9,
-          "display": "13.9 mph"
+          "value": 13.0,
+          "display": "13.0 mph"
         },
         {
           "feature": "rain_in",
@@ -6396,18 +6396,18 @@
         {
           "feature": "wind_gust_mph",
           "label": "wind gust",
-          "value": 21.7,
-          "display": "21.7 mph"
+          "value": 20.6,
+          "display": "20.6 mph"
         }
       ],
       "sample_size": 25,
       "effective_sample_size": 24.71,
       "mean_similarity_pct": 74.28,
       "closest_similarity_pct": 77.23,
-      "observed_rate_pct": 27.75,
+      "observed_rate_pct": 27.73,
       "baseline_rate_pct": 46.22,
       "baseline_sample_size": 965,
-      "lift_pp": -18.47,
+      "lift_pp": -18.49,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -6421,13 +6421,13 @@
           "n": 10
         },
         "25": {
-          "rate_pct": 27.75,
-          "lift_pp": -18.47,
+          "rate_pct": 27.73,
+          "lift_pp": -18.49,
           "n": 25
         },
         "50": {
-          "rate_pct": 30.7,
-          "lift_pp": -15.52,
+          "rate_pct": 30.71,
+          "lift_pp": -15.51,
           "n": 50
         }
       },
@@ -7701,14 +7701,14 @@
         {
           "feature": "temperature_f",
           "label": "temperature",
-          "value": 31.0,
-          "display": "31°F"
+          "value": 30.1,
+          "display": "30°F"
         },
         {
           "feature": "wind_mph",
           "label": "wind",
-          "value": 13.9,
-          "display": "13.9 mph"
+          "value": 13.0,
+          "display": "13.0 mph"
         },
         {
           "feature": "rain_in",
@@ -7731,18 +7731,18 @@
         {
           "feature": "wind_gust_mph",
           "label": "wind gust",
-          "value": 21.7,
-          "display": "21.7 mph"
+          "value": 20.6,
+          "display": "20.6 mph"
         }
       ],
       "sample_size": 25,
-      "effective_sample_size": 24.68,
-      "mean_similarity_pct": 74.55,
+      "effective_sample_size": 24.67,
+      "mean_similarity_pct": 74.56,
       "closest_similarity_pct": 78.31,
-      "observed_rate_pct": 23.97,
+      "observed_rate_pct": 24.1,
       "baseline_rate_pct": 40.31,
       "baseline_sample_size": 965,
-      "lift_pp": -16.34,
+      "lift_pp": -16.21,
       "stability_score": 1.0,
       "neighborhoods": {
         "5": {
@@ -7751,18 +7751,18 @@
           "n": 5
         },
         "10": {
-          "rate_pct": 9.43,
-          "lift_pp": -30.88,
+          "rate_pct": 9.5,
+          "lift_pp": -30.81,
           "n": 10
         },
         "25": {
-          "rate_pct": 23.97,
-          "lift_pp": -16.34,
+          "rate_pct": 24.1,
+          "lift_pp": -16.21,
           "n": 25
         },
         "50": {
-          "rate_pct": 29.68,
-          "lift_pp": -10.63,
+          "rate_pct": 27.78,
+          "lift_pp": -12.53,
           "n": 50
         }
       },
@@ -7828,7 +7828,7 @@
       ],
       "recommended_poms": [],
       "actionable_now": false,
-      "interpretation": "Across the closest historical analogs, this outcome occurred 24.0% of the time versus a 40.3% contextual baseline. The top-25 analog neighborhood averages 74.5% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
+      "interpretation": "Across the closest historical analogs, this outcome occurred 24.1% of the time versus a 40.3% contextual baseline. The top-25 analog neighborhood averages 74.6% similarity with effective sample 24.7. This is an association in comparable game states, not proof that any single condition causes the outcome.",
       "provenance": [
         {
           "source": "NFLVERSE_SCHEDULES",
@@ -11604,8 +11604,8 @@
         {
           "feature": "precipitation_probability",
           "label": "precipitation probability",
-          "value": 5.0,
-          "display": "5.0%"
+          "value": 6.0,
+          "display": "6.0%"
         },
         {
           "feature": "wind_gust_mph",
@@ -11852,8 +11852,8 @@
         {
           "feature": "precipitation_probability",
           "label": "precipitation probability",
-          "value": 5.0,
-          "display": "5.0%"
+          "value": 6.0,
+          "display": "6.0%"
         },
         {
           "feature": "wind_gust_mph",
@@ -12355,8 +12355,8 @@
         {
           "feature": "precipitation_probability",
           "label": "precipitation probability",
-          "value": 5.0,
-          "display": "5.0%"
+          "value": 6.0,
+          "display": "6.0%"
         },
         {
           "feature": "wind_gust_mph",
@@ -12603,8 +12603,8 @@
         {
           "feature": "precipitation_probability",
           "label": "precipitation probability",
-          "value": 5.0,
-          "display": "5.0%"
+          "value": 6.0,
+          "display": "6.0%"
         },
         {
           "feature": "wind_gust_mph",
@@ -13059,8 +13059,8 @@
         {
           "feature": "precipitation_probability",
           "label": "precipitation probability",
-          "value": 5.0,
-          "display": "5.0%"
+          "value": 6.0,
+          "display": "6.0%"
         },
         {
           "feature": "wind_gust_mph",
@@ -13491,14 +13491,14 @@
         {
           "feature": "temperature_f",
           "label": "temperature",
-          "value": 31.0,
-          "display": "31°F"
+          "value": 30.1,
+          "display": "30°F"
         },
         {
           "feature": "wind_mph",
           "label": "wind",
-          "value": 13.9,
-          "display": "13.9 mph"
+          "value": 13.0,
+          "display": "13.0 mph"
         },
         {
           "feature": "rain_in",
@@ -13521,15 +13521,15 @@
         {
           "feature": "wind_gust_mph",
           "label": "wind gust",
-          "value": 21.7,
-          "display": "21.7 mph"
+          "value": 20.6,
+          "display": "20.6 mph"
         }
       ],
       "sample_size": 25,
       "effective_sample_size": 24.71,
       "mean_similarity_pct": 74.28,
       "closest_similarity_pct": 77.23,
-      "observed_rate_pct": 29.07,
+      "observed_rate_pct": 29.08,
       "baseline_rate_pct": 36.17,
       "baseline_sample_size": 965,
       "lift_pp": -7.09,
@@ -13546,13 +13546,13 @@
           "n": 10
         },
         "25": {
-          "rate_pct": 29.07,
+          "rate_pct": 29.08,
           "lift_pp": -7.09,
           "n": 25
         },
         "50": {
           "rate_pct": 24.37,
-          "lift_pp": -11.8,
+          "lift_pp": -11.79,
           "n": 50
         }
       },
