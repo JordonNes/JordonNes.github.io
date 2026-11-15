@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-11-15T07:42:56.146636+00:00",
+  "generated_at_utc": "2026-11-15T07:58:56.735096+00:00",
   "source_registry_generated_at_utc": "2026-11-15T01:37:03.492700+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -48,140 +48,503 @@
   "predictions_in_registry": 9,
   "website_suggestions_recorded": 94224,
   "website_suggestions_structured_for_settlement": 83081,
-  "settlement_population_total": 3835,
-  "settled_predictions": 42324,
-  "settlement_rate_pct": 1103.62,
+  "settlement_population_total": 83090,
+  "settled_predictions": 43385,
+  "settlement_rate_pct": 52.21,
   "run_counts": {
-    "already_settled": 1454,
-    "PENDING_EVENT": 991,
-    "PARTICIPANT_UNRESOLVED": 12,
-    "settled": 509,
-    "AMBIGUOUS_EVENT": 229,
-    "UNSUPPORTED_PLAYER_MARKET": 243,
-    "TEAM_UNRESOLVED": 33,
-    "PLAYER_NOT_IN_BOXSCORE": 362,
-    "TD_STATS_UNAVAILABLE": 2
+    "already_settled": 42281,
+    "PENDING_EVENT": 2964,
+    "PARTICIPANT_UNRESOLVED": 42,
+    "AMBIGUOUS_EVENT": 3382,
+    "UNSUPPORTED_PLAYER_MARKET": 10693,
+    "TEAM_UNRESOLVED": 499,
+    "PLAYER_NOT_IN_BOXSCORE": 21207,
+    "TD_STATS_UNAVAILABLE": 43,
+    "PLAYER_PROP_PROVIDER_PENDING": 27,
+    "NO_EVENT_CANDIDATES": 728,
+    "EVENT_NOT_FOUND": 55,
+    "UNGRADED_MARKET_RULE": 8,
+    "SPECIAL_WINNER_UNRESOLVED": 100,
+    "settled": 1061
   },
   "by_league": {
+    "MLB": {
+      "PLAYER_NOT_IN_BOXSCORE": 4370,
+      "UNSUPPORTED_PLAYER_MARKET": 3346,
+      "NO_EVENT_CANDIDATES": 473,
+      "AMBIGUOUS_EVENT": 100,
+      "already_settled": 1025,
+      "TEAM_UNRESOLVED": 18,
+      "PENDING_EVENT": 61,
+      "EVENT_NOT_FOUND": 20
+    },
     "MMA": {
-      "PARTICIPANT_UNRESOLVED": 12,
-      "already_settled": 15,
-      "PENDING_EVENT": 6
+      "PARTICIPANT_UNRESOLVED": 40,
+      "already_settled": 230,
+      "PENDING_EVENT": 6,
+      "PLAYER_PROP_PROVIDER_PENDING": 27,
+      "EVENT_NOT_FOUND": 31,
+      "SPECIAL_WINNER_UNRESOLVED": 100,
+      "AMBIGUOUS_EVENT": 23
     },
     "NBA": {
-      "PENDING_EVENT": 243,
-      "settled": 82,
-      "already_settled": 344,
-      "UNSUPPORTED_PLAYER_MARKET": 67,
-      "PLAYER_NOT_IN_BOXSCORE": 31
+      "PENDING_EVENT": 521,
+      "already_settled": 5806,
+      "UNSUPPORTED_PLAYER_MARKET": 612,
+      "PLAYER_NOT_IN_BOXSCORE": 1854,
+      "TEAM_UNRESOLVED": 30,
+      "AMBIGUOUS_EVENT": 25,
+      "settled": 68
     },
     "NCAA_Basketball": {
-      "already_settled": 58,
-      "AMBIGUOUS_EVENT": 106,
-      "PENDING_EVENT": 77,
-      "UNSUPPORTED_PLAYER_MARKET": 1,
-      "TEAM_UNRESOLVED": 10
+      "already_settled": 1432,
+      "AMBIGUOUS_EVENT": 1220,
+      "PENDING_EVENT": 103,
+      "UNSUPPORTED_PLAYER_MARKET": 187,
+      "PLAYER_NOT_IN_BOXSCORE": 72,
+      "TEAM_UNRESOLVED": 18
     },
     "NCAA_Football": {
-      "already_settled": 783,
-      "settled": 377,
-      "PENDING_EVENT": 124,
-      "UNSUPPORTED_PLAYER_MARKET": 148,
-      "TEAM_UNRESOLVED": 23,
-      "AMBIGUOUS_EVENT": 109,
-      "PLAYER_NOT_IN_BOXSCORE": 329,
-      "TD_STATS_UNAVAILABLE": 2
+      "already_settled": 15381,
+      "PENDING_EVENT": 224,
+      "UNSUPPORTED_PLAYER_MARKET": 2814,
+      "TEAM_UNRESOLVED": 305,
+      "AMBIGUOUS_EVENT": 1751,
+      "PLAYER_NOT_IN_BOXSCORE": 3950,
+      "TD_STATS_UNAVAILABLE": 36,
+      "settled": 873
     },
     "NFL": {
-      "already_settled": 4,
-      "PENDING_EVENT": 258
+      "already_settled": 6017,
+      "PENDING_EVENT": 1472,
+      "PLAYER_NOT_IN_BOXSCORE": 7297,
+      "UNSUPPORTED_PLAYER_MARKET": 1819,
+      "TD_STATS_UNAVAILABLE": 7,
+      "NO_EVENT_CANDIDATES": 188,
+      "TEAM_UNRESOLVED": 18
     },
     "NHL": {
-      "PENDING_EVENT": 283,
-      "settled": 50,
-      "already_settled": 250,
-      "UNSUPPORTED_PLAYER_MARKET": 27,
-      "PLAYER_NOT_IN_BOXSCORE": 2
+      "PENDING_EVENT": 577,
+      "already_settled": 10773,
+      "TEAM_UNRESOLVED": 110,
+      "UNSUPPORTED_PLAYER_MARKET": 1809,
+      "PLAYER_NOT_IN_BOXSCORE": 3239,
+      "UNGRADED_MARKET_RULE": 8,
+      "AMBIGUOUS_EVENT": 48,
+      "settled": 120
     },
     "Tennis": {
-      "AMBIGUOUS_EVENT": 14
+      "AMBIGUOUS_EVENT": 215,
+      "PARTICIPANT_UNRESOLVED": 2,
+      "already_settled": 4
+    },
+    "WNBA": {
+      "UNSUPPORTED_PLAYER_MARKET": 106,
+      "already_settled": 1613,
+      "PLAYER_NOT_IN_BOXSCORE": 425,
+      "NO_EVENT_CANDIDATES": 67,
+      "EVENT_NOT_FOUND": 4
     }
   },
   "recent_settlements": [
     {
-      "prediction_id": "SUG-d7745a7ddaac4a7f79827c83",
-      "league": "NHL",
-      "selection": "DAL Stars ML • -139 PROPLINE:Codere MX",
-      "actual_result": "1",
+      "prediction_id": "SUG-545ad0993a7b22f6ac48252d",
+      "league": "NCAA_Football",
+      "selection": "Jackson Harris OVER 0.5 Anytime TD • NORMAL • L5 AVG 1 • L&J PROJ 0.8 • POM Value 67.1 • STAT 0% • LJPC 54.8% ⟦L=54.8;J=0⟧",
+      "actual_result": "2",
       "grade": "WIN",
-      "provider_event_id": "401892717",
-      "source": "ESPN_PUBLIC:401892717:FINAL_SCORE_ML"
+      "provider_event_id": "401856885",
+      "source": "ESPN_PUBLIC:401856885:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-f3c2fe68798269fd949d5662",
+      "prediction_id": "SUG-5b96ddec602a5fc8984169eb",
       "league": "NCAA_Football",
-      "selection": "Penn State Nittany Lions ML • -333 PROPLINE:LiveScore Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401858524",
-      "source": "ESPN_PUBLIC:401858524:FINAL_SCORE_ML"
+      "selection": "Ethan Grunkemeyer OVER 271.5 Passing Yards • NORMAL • L5 AVG 283.8 • L&J PROJ 281 • POM Value 69.4 • STAT 0% • LJPC 56.3% ⟦L=56.3;J=0⟧ 🕵️",
+      "actual_result": "270",
+      "grade": "LOSS",
+      "provider_event_id": "401858299",
+      "source": "ESPN_PUBLIC:401858299:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-f9c424714512f8ff778db2ae",
+      "prediction_id": "SUG-5dd7a9cfc3ffb10c47387eae",
       "league": "NCAA_Football",
-      "selection": "New Mexico ML • -570 PROPLINE:ProphetX",
+      "selection": "South Carolina Gamecocks ML • -269 PROPLINE:SX Bet",
       "actual_result": "0",
       "grade": "LOSS",
-      "provider_event_id": "401864539",
-      "source": "ESPN_PUBLIC:401864539:FINAL_SCORE_ML"
+      "provider_event_id": "401856882",
+      "source": "ESPN_PUBLIC:401856882:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-ff66da1ab60a77b494606bea",
+      "prediction_id": "SUG-66209ed5846be0f09897fa85",
+      "league": "NCAA_Football",
+      "selection": "Tre Richardson OVER 59.5 Receiving Yards • NORMAL • L5 AVG 71.4 • L&J PROJ 74.3 • POM Value 66.4 • STAT 0% • LJPC 55.5% ⟦L=55.5;J=0⟧ 🕵️",
+      "actual_result": "23",
+      "grade": "LOSS",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-7092ad130158bd095cf30cc9",
       "league": "NHL",
-      "selection": "Anaheim Ducks ML • -111 PROPLINE:Betfair Exchange",
+      "selection": "CGY Flames ML • +140 PROPLINE:Fliff",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892720",
+      "source": "ESPN_PUBLIC:401892720:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7293aeae5a72622d316404a3",
+      "league": "NCAA_Football",
+      "selection": "Jojo Phillips OVER 15.5 Receiving Yards • NORMAL • L5 AVG 18.6 • L&J PROJ 17.8 • POM Value 70.6 • STAT 0% • LJPC 58.8% ⟦L=58.8;J=0⟧ 🕵️",
+      "actual_result": "23",
+      "grade": "WIN",
+      "provider_event_id": "401856858",
+      "source": "ESPN_PUBLIC:401856858:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-74fd1b2fe54e83162998375f",
+      "league": "NCAA_Football",
+      "selection": "Jordan Shipp OVER 73.5 Receiving Yards • NORMAL • L5 AVG 73.8 • L&J PROJ 72.8 • POM Value 65.7 • STAT 0% • LJPC 51.6% ⟦L=51.6;J=0⟧ 🕵️",
+      "actual_result": "61",
+      "grade": "LOSS",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-75a0cbff54a99ffa154394b2",
+      "league": "NCAA_Football",
+      "selection": "TreyShun Hurry OVER 38.5 Receiving Yards • NORMAL • L5 AVG 59.2 • L&J PROJ 57.1 • POM Value 73.1 • STAT 0% • LJPC 68.1% ⟦L=68.1;J=0⟧ 🕵️",
+      "actual_result": "33",
+      "grade": "LOSS",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-81b09e89ce1975bb62e61a3c",
+      "league": "NCAA_Football",
+      "selection": "Isaiah Mizell OVER 72.5 Receiving Yards • NORMAL • L5 AVG 128.8 • L&J PROJ 111.7 • POM Value 73.5 • STAT 0% • LJPC 73.7% ⟦L=74.5;J=-0.8⟧ 🕵️",
+      "actual_result": "115",
+      "grade": "WIN",
+      "provider_event_id": "401856864",
+      "source": "ESPN_PUBLIC:401856864:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-84b6ef1c67bbe5c608648b6f",
+      "league": "NCAA_Football",
+      "selection": "Jackson Harris OVER 5.5 Receptions • NORMAL • L5 AVG 7.2 • L&J PROJ 6.5 • POM Value 72.6 • STAT 0% • LJPC 67.8% ⟦L=68.8;J=-0.9⟧",
+      "actual_result": "8",
+      "grade": "WIN",
+      "provider_event_id": "401856885",
+      "source": "ESPN_PUBLIC:401856885:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-89e7443a22eca6322f0bc3f5",
+      "league": "NCAA_Football",
+      "selection": "Caden High UNDER 4.5 Receptions • NORMAL • L5 AVG 3.6 • L&J PROJ 3.7 • POM Value 73.1 • STAT 0% • LJPC 67.2% ⟦L=67.2;J=0⟧ 🕵️",
+      "actual_result": "5",
+      "grade": "LOSS",
+      "provider_event_id": "401858299",
+      "source": "ESPN_PUBLIC:401858299:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-8d8c5949806e0971aa14cb80",
+      "league": "NCAA_Football",
+      "selection": "Nico Brown UNDER 63.5 Receiving Yards • NORMAL • L5 AVG 47.8 • L&J PROJ 47.3 • POM Value 77.0 • STAT 0% • LJPC 73% ⟦L=73;J=0⟧ 🕵️",
+      "actual_result": "47",
+      "grade": "WIN",
+      "provider_event_id": "401858299",
+      "source": "ESPN_PUBLIC:401858299:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-8ff6dcc911d2cce78a786716",
+      "league": "NCAA_Football",
+      "selection": "Kyler Kasper OVER 49.5 Receiving Yards • NORMAL • L5 AVG 67 • L&J PROJ 59.8 • POM Value 67.7 • STAT 0% • LJPC 58.2% ⟦L=58.2;J=0⟧ 🕵️",
+      "actual_result": "17",
+      "grade": "LOSS",
+      "provider_event_id": "401856858",
+      "source": "ESPN_PUBLIC:401856858:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-99a9b2dc63c1144bf2d49100",
+      "league": "NCAA_Football",
+      "selection": "Jaleel Skinner OVER 24.5 Receiving Yards • NORMAL • L5 AVG 16.8 • L&J PROJ 23.7 • POM Value 57.0 • STAT 0% • LJPC 40% ⟦L=40;J=0⟧ 🕵️",
+      "actual_result": "25",
+      "grade": "WIN",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-a0a3baf5ef117e8ca2e308f5",
+      "league": "NCAA_Football",
+      "selection": "Lincoln Kienholz OVER 0.5 Anytime TD • NORMAL • L5 AVG 1 • L&J PROJ 1.1 • POM Value 72.4 • STAT 0% • LJPC 63.6% ⟦L=63.6;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-adfa3d1184151f380d62beb9",
+      "league": "NCAA_Football",
+      "selection": "Trey'Dez Green OVER 4.5 Receptions • NORMAL • L5 AVG 5.8 • L&J PROJ 5.7 • POM Value 71.2 • STAT 0% • LJPC 63.9% ⟦L=63.9;J=0⟧",
+      "actual_result": "5",
+      "grade": "WIN",
+      "provider_event_id": "401856885",
+      "source": "ESPN_PUBLIC:401856885:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-b290184249df62f829d47b3f",
+      "league": "NHL",
+      "selection": "ANA Ducks ML • -125 PROPLINE:Elabet",
       "actual_result": "0",
       "grade": "LOSS",
       "provider_event_id": "401892719",
       "source": "ESPN_PUBLIC:401892719:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-017c209489aa2eaa60c12e9c",
+      "prediction_id": "SUG-b2f8636853818fb96f8c380b",
       "league": "NCAA_Football",
-      "selection": "Utah Utes ML • -129 PROPLINE:SX Bet",
+      "selection": "North Dakota State Bison ML • -238 PROPLINE:Stoiximan",
       "actual_result": "1",
       "grade": "WIN",
-      "provider_event_id": "401856864",
-      "source": "ESPN_PUBLIC:401856864:FINAL_SCORE_ML"
+      "provider_event_id": "401864537",
+      "source": "ESPN_PUBLIC:401864537:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-233aa6c0ae1f0fc9ac3fe2b9",
-      "league": "NBA",
-      "selection": "Timberwolves ML • -809 PROPLINE:Polymarket",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401909984",
-      "source": "ESPN_PUBLIC:401909984:FINAL_SCORE_ML"
+      "prediction_id": "SUG-b7378a19f4687079a0a89ddb",
+      "league": "NCAA_Football",
+      "selection": "Caden High OVER 49.5 Receiving Yards • NORMAL • L5 AVG 38.6 • L&J PROJ 44.3 • POM Value 62.0 • STAT 0% • LJPC 44% ⟦L=44;J=0⟧ 🕵️",
+      "actual_result": "60",
+      "grade": "WIN",
+      "provider_event_id": "401858299",
+      "source": "ESPN_PUBLIC:401858299:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-25743189530778d1e1673bcf",
-      "league": "NBA",
-      "selection": "Pistons ML • -186 PROPLINE:Polymarket",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401909982",
-      "source": "ESPN_PUBLIC:401909982:FINAL_SCORE_ML"
+      "prediction_id": "SUG-bbebdd0cc45950655acb1aac",
+      "league": "NCAA_Football",
+      "selection": "Ryan Wingo OVER 48.5 Receiving Yards • NORMAL • L5 AVG 56.8 • L&J PROJ 56.6 • POM Value 73.5 • STAT 0% • LJPC 67.5% ⟦L=67.5;J=0⟧ 🕵️",
+      "actual_result": "68",
+      "grade": "WIN",
+      "provider_event_id": "401856885",
+      "source": "ESPN_PUBLIC:401856885:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-2a0064cd3e9a2e00d668e757",
+      "prediction_id": "SUG-bff22e455b5e447db6152cd3",
+      "league": "NCAA_Football",
+      "selection": "Andrew Rappleyea OVER 27.5 Receiving Yards • NORMAL • L5 AVG 38.8 • L&J PROJ 35.2 • POM Value 72.4 • STAT 0% • LJPC 69.5% ⟦L=69.5;J=0⟧ 🕵️",
+      "actual_result": "45",
+      "grade": "WIN",
+      "provider_event_id": "401858524",
+      "source": "ESPN_PUBLIC:401858524:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-c30a86b711e82e5ef736b920",
+      "league": "NCAA_Football",
+      "selection": "Que'Sean Brown OVER 0.5 Anytime TD • NORMAL • L5 AVG 0.6 • L&J PROJ 0.5 • POM Value 69.1 • STAT 0% • LJPC 56.7% ⟦L=56.7;J=0⟧ 🕵️",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858299",
+      "source": "ESPN_PUBLIC:401858299:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d0053149e90ff863dd37d442",
       "league": "NBA",
-      "selection": "Grizzlies ML • -186 PROPLINE:Polymarket",
+      "selection": "Memphis Grizzlies ML • -166 PROPLINE:SX Bet",
       "actual_result": "1",
       "grade": "WIN",
       "provider_event_id": "401909983",
       "source": "ESPN_PUBLIC:401909983:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-56acb2f785c0d234e36e02c2",
+      "prediction_id": "SUG-d495dacc8231a4cf33661317",
+      "league": "NCAA_Football",
+      "selection": "Billy Edwards Jr. UNDER 255.5 Passing Yards • NORMAL • L5 AVG 261.4 • L&J PROJ 252.5 • POM Value 67.9 • STAT 0% • LJPC 58.8% ⟦L=58.8;J=0⟧ 🕵️",
+      "actual_result": "120",
+      "grade": "WIN",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d4cff46d5968696bf300090b",
+      "league": "NCAA_Football",
+      "selection": "Ethan Grunkemeyer UNDER 2.5 Passing TDs • NORMAL • L5 AVG 2 • L&J PROJ 2 • POM Value 74.0 • STAT 0% • LJPC 67.6% ⟦L=67.6;J=0⟧ 🕵️",
+      "actual_result": "2",
+      "grade": "WIN",
+      "provider_event_id": "401858299",
+      "source": "ESPN_PUBLIC:401858299:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d67123dfce89ac106943e27a",
+      "league": "NCAA_Football",
+      "selection": "Jelani Thurman OVER 49.5 Receiving Yards • NORMAL • L5 AVG 58.4 • L&J PROJ 59.2 • POM Value 78.4 • STAT 0% • LJPC 75.3% ⟦L=75.3;J=0⟧ 🕵️",
+      "actual_result": "72",
+      "grade": "WIN",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-de213c9c81d395fa6068aa78",
+      "league": "NCAA_Football",
+      "selection": "Tulsa Golden Hurricane ML • -210 PROPLINE:Bet99",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401862826",
+      "source": "ESPN_PUBLIC:401862826:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-e0a892536cbbe4d32ff4cac4",
+      "league": "NCAA_Football",
+      "selection": "Lincoln Kienholz OVER 234.5 Passing Yards • NORMAL • L5 AVG 227.2 • L&J PROJ 237.6 • POM Value 68.5 • STAT 0% • LJPC 56.9% ⟦L=56.9;J=0⟧ 🕵️",
+      "actual_result": "154",
+      "grade": "LOSS",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e11021c33c374467808e1a0b",
+      "league": "NCAA_Football",
+      "selection": "Jordan Shipp OVER 0.5 Anytime TD • NORMAL • L5 AVG 0.8 • L&J PROJ 0.6 • POM Value 68.6 • STAT 0% • LJPC 66.6% ⟦L=66.5;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e8c8929755d842fea6c7522c",
+      "league": "NCAA_Football",
+      "selection": "Over 49.5 Receiving Yards 🕵️",
+      "actual_result": "72",
+      "grade": "WIN",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-e8cb20227d519dabac40a30a",
+      "league": "NCAA_Football",
+      "selection": "TreyShun Hurry OVER 0.5 Anytime TD • NORMAL • L5 AVG 0.4 • L&J PROJ 0.3 • POM Value 54.8 • STAT 0% • LJPC 34.1% ⟦L=34.1;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ebd034d5629cd2f1781ab43e",
+      "league": "NCAA_Football",
+      "selection": "Bear Bachmeier OVER 233.5 Passing Yards • NORMAL • L5 AVG 263.6 • L&J PROJ 248.4 • POM Value 69.9 • STAT 0% • LJPC 65.6% ⟦L=66.9;J=-1.3⟧",
+      "actual_result": "104",
+      "grade": "LOSS",
+      "provider_event_id": "401856858",
+      "source": "ESPN_PUBLIC:401856858:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f0083fcd453af38f6feb8683",
+      "league": "NCAA_Football",
+      "selection": "Jelani Thurman OVER 0.5 Anytime TD • NORMAL • L5 AVG 1 • L&J PROJ 1 • POM Value 68.8 • STAT 0% • LJPC 56.8% ⟦L=56.8;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-f1160fdeac26ceebe34ff3e0",
+      "league": "NCAA_Football",
+      "selection": "Ethan Grunkemeyer OVER 0.5 Anytime TD • NORMAL • L5 AVG 0.8 • L&J PROJ 0.8 • POM Value 73.3 • STAT 0% • LJPC 72.7% ⟦L=72.7;J=0⟧ 🕵️",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858299",
+      "source": "ESPN_PUBLIC:401858299:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-2175e35c5bb9f01c050ed06e",
+      "league": "NCAA_Football",
+      "selection": "Bear Bachmeier OVER 233.5 Passing Yards • NORMAL • L5 AVG 263.6 • L&J PROJ 248.4 • POM Value 69.3 • STAT 0% • LJPC 64.4% ⟦L=66.9;J=-2.5⟧",
+      "actual_result": "104",
+      "grade": "LOSS",
+      "provider_event_id": "401856858",
+      "source": "ESPN_PUBLIC:401856858:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-ba2aaff807f3e1300e0fc8e3",
+      "league": "NCAA_Football",
+      "selection": "Isaiah Mizell OVER 72.5 Receiving Yards • NORMAL • L5 AVG 128.8 • L&J PROJ 111.7 • POM Value 73.2 • STAT 0% • LJPC 72.9% ⟦L=74.5;J=-1.6⟧ 🕵️",
+      "actual_result": "115",
+      "grade": "WIN",
+      "provider_event_id": "401856864",
+      "source": "ESPN_PUBLIC:401856864:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d4c4a1fc4ed0ccaddc31049b",
+      "league": "NCAA_Football",
+      "selection": "Dilin Jones OVER 3.5 Receptions • NORMAL • L5 AVG 5.6 • L&J PROJ 4.8 • POM Value 71.0 • STAT 0% • LJPC 68.9% ⟦L=70.4;J=-1.5⟧",
+      "actual_result": "3",
+      "grade": "LOSS",
+      "provider_event_id": "401856885",
+      "source": "ESPN_PUBLIC:401856885:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-d9fc1717fb119beaa5de4e99",
+      "league": "NCAA_Football",
+      "selection": "Jackson Harris OVER 5.5 Receptions • NORMAL • L5 AVG 7.2 • L&J PROJ 6.5 • POM Value 72.2 • STAT 0% • LJPC 66.9% ⟦L=68.8;J=-1.9⟧",
+      "actual_result": "8",
+      "grade": "WIN",
+      "provider_event_id": "401856885",
+      "source": "ESPN_PUBLIC:401856885:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-5e90491e465fe566cd8f0c57",
+      "league": "NCAA_Football",
+      "selection": "Javon Tracy UNDER 46.5 Receiving Yards • NORMAL • L5 AVG 40.8 • L&J PROJ 44.7 • POM Value 68.0 • STAT 0% • LJPC 59.2% ⟦L=61.5;J=-2.3⟧ 🕵️",
+      "actual_result": "51",
+      "grade": "LOSS",
+      "provider_event_id": "401858524",
+      "source": "ESPN_PUBLIC:401858524:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-391abc76839a0cd6f66a1f04",
+      "league": "NCAA_Football",
+      "selection": "Caleb Hawkins OVER 42.5 Receiving Yards • NORMAL • L5 AVG 76.2 • L&J PROJ 66.7 • POM Value 69.1 • STAT 0% • LJPC 69.5% ⟦L=73.2;J=-3.6⟧",
+      "actual_result": "52",
+      "grade": "WIN",
+      "provider_event_id": "401856863",
+      "source": "ESPN_PUBLIC:401856863:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-4129078c0f5c60d2c8c0618d",
+      "league": "NBA",
+      "selection": "Memphis Grizzlies ML • -170 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401909983",
+      "source": "ESPN_PUBLIC:401909983:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-4737af039fdb9cf9d1d2f1b3",
+      "league": "NCAA_Football",
+      "selection": "Javon Tracy UNDER 46.5 Receiving Yards • NORMAL • L5 AVG 40.8 • L&J PROJ 44.7 • POM Value 67.6 • STAT 0% • LJPC 58.5% ⟦L=61.5;J=-3.1⟧ 🕵️",
+      "actual_result": "51",
+      "grade": "LOSS",
+      "provider_event_id": "401858524",
+      "source": "ESPN_PUBLIC:401858524:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-7fb86fbf8279470c058fd4fa",
+      "league": "NCAA_Football",
+      "selection": "Louisville Cardinals ML • -169 PROPLINE:SX Bet",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858298",
+      "source": "ESPN_PUBLIC:401858298:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-8f60062b917348f8e900df9f",
+      "league": "NBA",
+      "selection": "Minnesota Timberwolves ML • -614 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401909984",
+      "source": "ESPN_PUBLIC:401909984:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-91c58230cce1563acb333b4d",
       "league": "NCAA_Football",
       "selection": "South Carolina Gamecocks ML • -300 PROPLINE:Bet99",
       "actual_result": "0",
@@ -190,373 +553,49 @@
       "source": "ESPN_PUBLIC:401856882:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-610ce37d8e438d18c52ec290",
+      "prediction_id": "SUG-a9a8bff76ca4048e21c01f40",
       "league": "NCAA_Football",
-      "selection": "Penn State Nittany Lions ML • -333 PROPLINE:LiveScore Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401858524",
-      "source": "ESPN_PUBLIC:401858524:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-7ce114503720a4242a78643f",
-      "league": "NHL",
-      "selection": "Utah Mammoth ML • -190 PROPLINE:Novig",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401892718",
-      "source": "ESPN_PUBLIC:401892718:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-90fd05a66ed69291439aa174",
-      "league": "NCAA_Football",
-      "selection": "Wyoming Cowboys ML • -283 PROPLINE:SX Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401864540",
-      "source": "ESPN_PUBLIC:401864540:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-afe6d9ce23433911560c0bff",
-      "league": "NCAA_Football",
-      "selection": "Virginia Tech ML • -667 PROPLINE:Betfair Exchange",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401858299",
-      "source": "ESPN_PUBLIC:401858299:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-b5dc32754398dbfefafaa9fe",
-      "league": "NHL",
-      "selection": "CGY Flames ML • +150 PROPLINE:Hard Rock Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401892720",
-      "source": "ESPN_PUBLIC:401892720:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-b7535a82c59a55cfcc547a22",
-      "league": "NHL",
-      "selection": "Dallas Stars ML • -132 PROPLINE:Betfair Exchange",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401892717",
-      "source": "ESPN_PUBLIC:401892717:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-e4668a7013b7db0635987c58",
-      "league": "NCAA_Football",
-      "selection": "North Dakota State Bison ML • -250 PROPLINE:Stoiximan",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401864537",
-      "source": "ESPN_PUBLIC:401864537:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-02c85eb915e29f5a233df47e",
-      "league": "NHL",
-      "selection": "Adam Pelech UNDER 0.5 Goals • DEMON • L5 AVG 0 • L&J PROJ 0 • POM Value 90.9 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-0cdacd1062a6b915c5e08d48",
-      "league": "NCAA_Football",
-      "selection": "Utah Utes ML • -116 PROPLINE:SX Bet",
+      "selection": "Utah Utes ML • -127 PROPLINE:SX Bet",
       "actual_result": "1",
       "grade": "WIN",
       "provider_event_id": "401856864",
       "source": "ESPN_PUBLIC:401856864:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-16c910f12d6593576e410f5e",
-      "league": "NHL",
-      "selection": "Casey Cizikas UNDER 0.5 Goals • DEMON • L5 AVG 0 • L&J PROJ 0 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-21f3e726f8affae18a70768d",
-      "league": "NHL",
-      "selection": "Kyle Palmieri UNDER 0.5 Goals • DEMON • L5 AVG 0 • L&J PROJ 0 • POM Value 90.9 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-249da35ac6409ce9c141e3ae",
-      "league": "NHL",
-      "selection": "Anaheim Ducks ML • -111 PROPLINE:Betfair Exchange",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-31eb515cd298fab0e833bd8c",
-      "league": "NBA",
-      "selection": "Grizzlies ML • -186 PROPLINE:Polymarket",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401909983",
-      "source": "ESPN_PUBLIC:401909983:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-3aec5129340c5a00267a1b79",
+      "prediction_id": "SUG-28a31d39c7c8d04b0d3b2154",
       "league": "NCAA_Football",
-      "selection": "Utah State Aggies ML • -137 PROPLINE:SX Bet",
-      "actual_result": "0",
+      "selection": "Javon Tracy UNDER 46.5 Receiving Yards • NORMAL • L5 AVG 40.8 • L&J PROJ 44.7 • POM Value 67.2 • STAT 0% • LJPC 57.7% ⟦L=61.5;J=-3.9⟧ 🕵️",
+      "actual_result": "51",
       "grade": "LOSS",
-      "provider_event_id": "401860915",
-      "source": "ESPN_PUBLIC:401860915:FINAL_SCORE_ML"
+      "provider_event_id": "401858524",
+      "source": "ESPN_PUBLIC:401858524:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-60958d25e6192d202b4b6100",
-      "league": "NHL",
-      "selection": "Emil Heineman UNDER 0.5 Goals • DEMON • L5 AVG 0 • L&J PROJ 0 • POM Value 92.2 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-64da2f1516f09f4bbb44c2cb",
+      "prediction_id": "SUG-f32e5030fb8b859aebedd932",
       "league": "NCAA_Football",
-      "selection": "Virginia Tech ML • -669 PROPLINE:Kalshi",
+      "selection": "South Carolina Gamecocks ML • -303 PROPLINE:PlayAlberta",
       "actual_result": "0",
       "grade": "LOSS",
-      "provider_event_id": "401858299",
-      "source": "ESPN_PUBLIC:401858299:FINAL_SCORE_ML"
+      "provider_event_id": "401856882",
+      "source": "ESPN_PUBLIC:401856882:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-685a48923ba65a6d24e61ed1",
-      "league": "NBA",
-      "selection": "Timberwolves ML • -809 PROPLINE:Polymarket",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401909984",
-      "source": "ESPN_PUBLIC:401909984:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-6ca8428dde1b257f86b98728",
-      "league": "NHL",
-      "selection": "Dallas Stars ML • -131 PROPLINE:SX Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401892717",
-      "source": "ESPN_PUBLIC:401892717:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-6f9b30484c8a40e68300aec8",
-      "league": "NHL",
-      "selection": "Logan Stanley UNDER 0.5 Goals • DEMON • L5 AVG 0 • L&J PROJ 0 • POM Value 92.4 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-7e814b9b5de2c04eeb9b9508",
-      "league": "NHL",
-      "selection": "Under 0.5 Goals",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-803008fa2e7f04269e35134f",
-      "league": "NHL",
-      "selection": "Tony DeAngelo UNDER 0.5 Goals • DEMON • L5 AVG 0 • L&J PROJ 0 • POM Value 92.5 • STAT 0% • LJPC 99% ⟦L=99;J=0⟧ 🕵️",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-9bbe7dee02d000c6636d0846",
+      "prediction_id": "SUG-d1ad790c0d39a29c282c63f5",
       "league": "NCAA_Football",
-      "selection": "Penn State Nittany Lions ML • -385 PROPLINE:SX Bet",
-      "actual_result": "1",
+      "selection": "Darius Taylor Over 17.5 Receiving Yards 🕵️",
+      "actual_result": "85",
       "grade": "WIN",
       "provider_event_id": "401858524",
-      "source": "ESPN_PUBLIC:401858524:FINAL_SCORE_ML"
+      "source": "ESPN_PUBLIC:401858524:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-9ca87b442851e321c81a68c1",
-      "league": "NBA",
-      "selection": "Pistons ML • -186 PROPLINE:Polymarket",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401909982",
-      "source": "ESPN_PUBLIC:401909982:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-bea6f0b6c49ad55ff2eb332e",
-      "league": "NHL",
-      "selection": "Victor Eklund OVER 0.5 Goals • DEMON • L5 AVG 1 • L&J PROJ 0.8 • POM Value 81.3 • STAT 0% • LJPC 88.1% ⟦L=88.1;J=0⟧",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-c42f91b929d854d4c9680a0b",
-      "league": "NHL",
-      "selection": "Anthony Duclair UNDER 0.5 Goals • DEMON • L5 AVG 0.2 • L&J PROJ 0.2 • POM Value 84.4 • STAT 0% • LJPC 79.9% ⟦L=79.9;J=0⟧",
-      "actual_result": "0",
-      "grade": "WIN",
-      "provider_event_id": "401892719",
-      "source": "ESPN_PUBLIC:401892719:BOX_SCORE"
-    },
-    {
-      "prediction_id": "SUG-dbf90fe826fa4d9b82332f71",
+      "prediction_id": "SUG-282ebfd63e4380186b3a156e",
       "league": "NCAA_Football",
-      "selection": "New Mexico ML • -641 PROPLINE:Polymarket US",
-      "actual_result": "0",
+      "selection": "Javon Tracy UNDER 46.5 Receiving Yards • NORMAL • L5 AVG 40.8 • L&J PROJ 44.7 • POM Value 66.8 • STAT 0% • LJPC 56.9% ⟦L=61.5;J=-4.6⟧ 🕵️",
+      "actual_result": "51",
       "grade": "LOSS",
-      "provider_event_id": "401864539",
-      "source": "ESPN_PUBLIC:401864539:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-e8887df3faa4fdf22dd554e9",
-      "league": "NCAA_Football",
-      "selection": "Wyoming Cowboys ML • -274 PROPLINE:SX Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401864540",
-      "source": "ESPN_PUBLIC:401864540:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-f816fe236e814ed0e264ec89",
-      "league": "NCAA_Football",
-      "selection": "Tulsa Golden Hurricane ML • -213 PROPLINE:Stoiximan",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401862826",
-      "source": "ESPN_PUBLIC:401862826:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-fbf6172dff95fbc0fd77b7cf",
-      "league": "NHL",
-      "selection": "CGY Flames ML • +155 PROPLINE:Hard Rock Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401892720",
-      "source": "ESPN_PUBLIC:401892720:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-17bb330b4cfb2a5c22586126",
-      "league": "NBA",
-      "selection": "Grizzlies ML • -178 PROPLINE:Polymarket",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401909983",
-      "source": "ESPN_PUBLIC:401909983:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-32f7a3c62b6fd0a71c5fa593",
-      "league": "NBA",
-      "selection": "Timberwolves ML • -900 PROPLINE:Polymarket",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401909984",
-      "source": "ESPN_PUBLIC:401909984:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-80027f76b7afb2ef9e38fba1",
-      "league": "NCAA_Football",
-      "selection": "Penn State Nittany Lions ML • -385 PROPLINE:SX Bet",
-      "actual_result": "1",
-      "grade": "WIN",
       "provider_event_id": "401858524",
-      "source": "ESPN_PUBLIC:401858524:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-9791af348561adf03e0246b9",
-      "league": "NCAA_Football",
-      "selection": "Wyoming Cowboys ML • -267 PROPLINE:SX Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401864540",
-      "source": "ESPN_PUBLIC:401864540:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-afd7be69d102c07832f516bc",
-      "league": "NCAA_Football",
-      "selection": "Utah Utes ML • -111 PROPLINE:SX Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401856864",
-      "source": "ESPN_PUBLIC:401856864:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-f49fc41839056685947affaf",
-      "league": "NCAA_Football",
-      "selection": "Louisville Cardinals ML • -166 PROPLINE:SX Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401858298",
-      "source": "ESPN_PUBLIC:401858298:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-f6a9e44e06db05e5e76c0820",
-      "league": "NCAA_Football",
-      "selection": "New Mexico ML • -660 PROPLINE:ProphetX",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401864539",
-      "source": "ESPN_PUBLIC:401864539:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-270d5ed6f9f2b6b0846c3a62",
-      "league": "NCAA_Football",
-      "selection": "Iowa Hawkeyes ML • -769 PROPLINE:PlayAlberta",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401858519",
-      "source": "ESPN_PUBLIC:401858519:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-8858fe9c1fb2cf95ad1e947b",
-      "league": "NCAA_Football",
-      "selection": "Texas Tech ML • +150 PROPLINE:Polymarket",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401856863",
-      "source": "ESPN_PUBLIC:401856863:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-be8090526ef0cddda197d3bb",
-      "league": "NCAA_Football",
-      "selection": "Iowa Hawkeyes ML • -769",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401858519",
-      "source": "ESPN_PUBLIC:401858519:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-d583c4699b6894bf3e580afc",
-      "league": "NCAA_Football",
-      "selection": "Louisville Cardinals ML • -166 PROPLINE:SX Bet",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401858298",
-      "source": "ESPN_PUBLIC:401858298:FINAL_SCORE_ML"
-    },
-    {
-      "prediction_id": "SUG-dee2b5fb5861d1a313561f53",
-      "league": "NCAA_Football",
-      "selection": "Virginia Tech ML • -669 PROPLINE:Kalshi",
-      "actual_result": "0",
-      "grade": "LOSS",
-      "provider_event_id": "401858299",
-      "source": "ESPN_PUBLIC:401858299:FINAL_SCORE_ML"
+      "source": "ESPN_PUBLIC:401858524:BOX_SCORE"
     }
   ],
   "unresolved": [
