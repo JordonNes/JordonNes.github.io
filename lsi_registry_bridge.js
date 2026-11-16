@@ -670,6 +670,7 @@
       projectedOutput:Number.isFinite(Number(projectionOf(p)?.projected_output))?Number(projectionOf(p).projected_output):null,
       projectionDistanceSigma:Number.isFinite(Number(projectionOf(p)?.distance_sigma))?Number(projectionOf(p).distance_sigma):null,
       pomType:tier,
+      lineProfile:lineProfileClass(p),
       stale,
       sourceMode:evaluated?'LJ_EVALUATED_OVERRIDE':'AWAITING_LJ_EVALUATION'
     };
@@ -872,6 +873,10 @@
     const nextSns2=asStrings(finalSns2);
     const nextNormal=asStrings(finalNormal);
     const nextDemon=asStrings(finalDemon);
+    if(league==="NBA"){
+      const troll=diverseTake(actionablePool.filter(c=>c.lineProfile==="TROLL"),6,0);
+      q.troll=troll.length>=MIN_QC_LEGS?asStrings(troll):[];
+    }
     q.hot=nextHot.length?nextHot:lockedHot;
     q.sns1=nextSns1.length?nextSns1:lockedSns1;
     q.sns2=nextSns2.length?nextSns2:lockedSns2;
@@ -1163,7 +1168,7 @@
     const qcWinnerSeen=new Set();
     for(const q of deduped){
       const event=findBoardEvent(league,q);
-      if(scheduleBound&&league==="NHL"&&ptCalendarSerial(eventStartMs(event))!==ptCalendarSerial(nowMs)) continue;
+      if(scheduleBound&&(league==="NHL"||league==="NBA")&&ptCalendarSerial(eventStartMs(event))!==ptCalendarSerial(nowMs)) continue;
       const confNum=Number(String(q?.conf||'').replace(/[^0-9.]/g,''));
       if(!event || !q?.winner || !Number.isFinite(confNum) || confNum<=0 || q?._winnerProvisional || !/\bML\b|MONEYLINE/i.test(String(q.winner))) continue;
       const key=String(event.source_event_id||exactKey(q));

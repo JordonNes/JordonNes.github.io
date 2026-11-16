@@ -490,6 +490,9 @@
     const placeholder=(label,kind,extraClass)=>`<div class="qc-cell qc-ticket ${extraClass} qc-pending"><div class="qc-ticket-h ${kind}">${esc(label)}</div><div class="qc-foot">No qualified executable POM parlay currently meets this mode's publication gate.</div></div>`;
     if(hot.length) cells.push(`<div class="qc-cell qc-hot"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list">${hot.map((x,i)=>`<p class="pom-row ${isWatch(x)?"qc-watch":""}">${renderQcLeg(x,i+1)}</p>`).join("")}</div></div>`);
     else if(pregame) cells.push(`<div class="qc-cell qc-hot qc-pending"><h4>LEGZ PLAYER HOT TOP</h4><div class="qc-hot-list"><p>Awaiting qualified evaluated POMs.</p></div></div>`);
+    if(ACTIVE_SPORT_KEY==="NBA"&&pregame){
+      cells.push(qcTicketCell("TROLL","sns sns1",r.troll,"qc-troll")||placeholder("TROLL","sns sns1","qc-troll"));
+    }
     const s1=qcTicketCell("SNS / GOBLIN 1","sns sns1",sns1,"qc-sns1"); cells.push(s1||placeholder("SNS / GOBLIN 1","sns sns1","qc-sns1"));
     const s2=qcTicketCell("SNS / GOBLIN 2","sns sns2",sns2,"qc-sns2"); cells.push(s2||placeholder("SNS / GOBLIN 2","sns sns2","qc-sns2"));
     const n=qcTicketCell("NORMAL / MARKET","normal",normal,"qc-normal"); cells.push(n||placeholder("NORMAL / MARKET","normal","qc-normal"));
@@ -1263,7 +1266,7 @@
     ensureGameWinners(s);
     document.title = `LEGZ & JINX — ${s.title}`;
     const scheduleBound=key===window.LJ_SCHEDULE_LEAGUE;
-    const quickies = !scheduleBound&&s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : key==="NCAA_Football" ? cfbQcs(s.qcTitle,s.qcs) : qcs(scheduleBound?"PER-GAME NHL QUICKIE CARDS":s.qcTitle,s.qcs,scheduleBound));
+    const quickies = !scheduleBound&&s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : key==="NCAA_Football" ? cfbQcs(s.qcTitle,s.qcs) : qcs(scheduleBound?`PER-GAME ${key} QUICKIE CARDS`:s.qcTitle,s.qcs,scheduleBound));
     const headliners=headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel);
     const twentyPiece=twenty(s.twenty,s.twentyNote,false,key);
     // Sport page order is locked: L&J Headliners → 20 Piece → Per-Game QCs.

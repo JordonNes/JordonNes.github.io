@@ -33,7 +33,21 @@ const snapshot={
  }))
 };
 const html=fs.readFileSync('NBA.html','utf8');
-assert.match(html,/renderLJSport\('NBA'\);<\/script><script src="nba_live_qc.js/);
+assert.match(html, /data-schedule-league="NBA"/);
+assert.match(html, /<script type="module" src="lj_schedule_board\.js/);
+assert.doesNotMatch(html, /<script src="nba_live_qc\.js/);
+const app=fs.readFileSync('ljapp.js','utf8');
+const window={LJ_SCHEDULE_LEAGUE:'NBA',LJ_DATA:{nav:[],sports:{NBA:{
+  title:'NBA',qcs:[{away:'Philadelphia 76ers',home:'Detroit Pistons'}],
+  winners:[['Philadelphia 76ers @ Detroit Pistons','Detroit Pistons ML • -110','60%']]
+}}}};
+const target={innerHTML:''};
+vm.runInNewContext(app,{window,document:{getElementById:()=>target},setTimeout:()=>{}});
+window.renderLJSport('NBA');
+for(const label of ['20 PIECE','NBA GAME WINNERS','PER-GAME NBA QUICKIE CARDS','LEGZ PLAYER HOT TOP','TROLL','SNS / GOBLIN 1','SNS / GOBLIN 2','AGGRESSIVE / DEMON']){
+  assert.ok(target.innerHTML.includes(label), 'Missing shared NBA section: '+label);
+}
+assert.match(target.innerHTML,/data-away="Philadelphia 76ers" data-home="Detroit Pistons"/);
 async function evaluate(at,validSource=true,customBoard=null){
   const inserted=[];
   const anchor={insertAdjacentHTML(place,contents){assert.equal(place,'afterend');inserted.push(contents)}};

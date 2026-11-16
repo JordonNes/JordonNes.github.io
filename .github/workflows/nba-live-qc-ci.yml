@@ -5,6 +5,9 @@ on:
     branches: [master]
     paths:
       - 'NBA.html'
+      - 'ljapp.js'
+      - 'lj_schedule_board.js'
+      - 'lsi_registry_bridge.js'
       - 'nba_live_qc.js'
       - 'scripts/test_nba_live_qc.js'
       - '.github/workflows/nba-live-qc-ci.yml'
@@ -20,6 +23,7 @@ jobs:
           filter: blob:none
           sparse-checkout: |
             NBA.html
+            ljapp.js
             nba_live_qc.js
             scripts/test_nba_live_qc.js
             data/espn_event_intelligence.json
