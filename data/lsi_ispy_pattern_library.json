@@ -1,6 +1,6 @@
 {
   "schema_version": "LJ-ISPY-PATTERN-LIBRARY-2",
-  "generated_at_utc": "2026-11-16T13:49:59.558840+00:00",
+  "generated_at_utc": "2026-11-16T19:28:53.358288+00:00",
   "policy": "Validated recurring analog patterns persist independently of current sportsbook availability.",
   "patterns": [
     {
@@ -1427,14 +1427,14 @@
           "display": "7.65"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-B1ECFBC1FCF89BD2E7",
       "last_evidence": {
-        "observed_rate_pct": 80.51,
+        "observed_rate_pct": 69.09,
         "baseline_rate_pct": 46.04,
-        "lift_pp": 34.48,
-        "effective_sample_size": 24.67,
-        "mean_similarity_pct": 71.77,
+        "lift_pp": 23.05,
+        "effective_sample_size": 24.75,
+        "mean_similarity_pct": 71.91,
         "stability_score": 1.0
       },
       "max_lift_pp": 34.48,
@@ -1455,6 +1455,10 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "first_seen_utc": "2026-11-15T20:03:37.451227+00:00",
@@ -2715,14 +2719,14 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-B3C60562254920F2EE",
       "last_evidence": {
-        "observed_rate_pct": 10.81,
+        "observed_rate_pct": 7.5,
         "baseline_rate_pct": 35.43,
-        "lift_pp": -24.61,
+        "lift_pp": -27.93,
         "effective_sample_size": 24.51,
-        "mean_similarity_pct": 73.1,
+        "mean_similarity_pct": 73.05,
         "stability_score": 1.0
       },
       "max_lift_pp": -24.61,
@@ -2743,6 +2747,10 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "first_seen_utc": "2026-11-16T00:31:02.994271+00:00",
@@ -3600,17 +3608,17 @@
           "display": "yes"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-E30C313A5E4C938775",
       "last_evidence": {
-        "observed_rate_pct": 22.39,
+        "observed_rate_pct": 22.84,
         "baseline_rate_pct": 46.04,
-        "lift_pp": -23.65,
+        "lift_pp": -23.2,
         "effective_sample_size": 24.51,
-        "mean_similarity_pct": 73.1,
+        "mean_similarity_pct": 73.05,
         "stability_score": 1.0
       },
-      "max_lift_pp": -23.65,
+      "max_lift_pp": -23.2,
       "max_abs_lift_pp": 30.72,
       "observed_event_ids": [
         "2026_11_MIA_BUF"
@@ -3628,6 +3636,10 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "first_seen_utc": "2026-11-16T00:31:02.994271+00:00",
@@ -4972,6 +4984,93 @@
       "times_observed": 1
     },
     {
+      "pattern_key": "3d6fe5598d14792a",
+      "league": "NFL",
+      "title": "DEN — finishes at least 10% above its entering passing-yard form",
+      "outcome": "finishes at least 10% above its entering passing-yard form",
+      "outcome_code": "PASS_SURGE",
+      "conditions": [
+        {
+          "feature": "focus_rushing_epa_l5",
+          "label": "rushing efficiency",
+          "direction": "low",
+          "value": -2.280644018879744,
+          "display": "-2.28"
+        },
+        {
+          "feature": "focus_front7_activity_l5",
+          "label": "front-seven activity proxy",
+          "direction": "high",
+          "value": 8.84,
+          "display": "8.84"
+        },
+        {
+          "feature": "opp_rush_yards_l5",
+          "label": "opponent rushing form",
+          "direction": "low",
+          "value": 54.0,
+          "display": "54.0 yds"
+        },
+        {
+          "feature": "opp_rush_allowed_l5",
+          "label": "opponent rush-defense allowance",
+          "direction": "high",
+          "value": 164.6,
+          "display": "164.60"
+        },
+        {
+          "feature": "focus_pass_yards_l5",
+          "label": "team passing form",
+          "direction": "low",
+          "value": 182.2,
+          "display": "182.2 yds"
+        },
+        {
+          "feature": "division_game",
+          "label": "division game",
+          "direction": "yes",
+          "value": 1,
+          "display": "yes"
+        }
+      ],
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
+      "last_signal_id": "ISPY-AAFED38A97F3C6EBB4",
+      "last_evidence": {
+        "observed_rate_pct": 65.54,
+        "baseline_rate_pct": 36.15,
+        "lift_pp": 29.4,
+        "effective_sample_size": 24.52,
+        "mean_similarity_pct": 69.82,
+        "stability_score": 1.0
+      },
+      "max_lift_pp": 29.4,
+      "max_abs_lift_pp": 29.4,
+      "observed_event_ids": [
+        "2026_11_LV_DEN"
+      ],
+      "distinct_current_events": 1,
+      "provenance": [
+        {
+          "source": "NFLVERSE_SCHEDULES",
+          "detail": "scores, division, rest, roof, temperature, wind and market total"
+        },
+        {
+          "source": "NFLVERSE_TEAM_WEEKLY",
+          "detail": "offense and defensive activity measurements"
+        },
+        {
+          "source": "LSI_FUTURE_MARKET_BOARD",
+          "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
+        }
+      ],
+      "first_seen_utc": "2026-11-15T21:56:02.612400+00:00",
+      "times_observed": 1
+    },
+    {
       "pattern_key": "d0f4fe977648d15b",
       "league": "NFL",
       "title": "CLE — wins the game",
@@ -5139,89 +5238,6 @@
       "times_observed": 1
     },
     {
-      "pattern_key": "3d6fe5598d14792a",
-      "league": "NFL",
-      "title": "DEN — finishes at least 10% above its entering passing-yard form",
-      "outcome": "finishes at least 10% above its entering passing-yard form",
-      "outcome_code": "PASS_SURGE",
-      "conditions": [
-        {
-          "feature": "focus_rushing_epa_l5",
-          "label": "rushing efficiency",
-          "direction": "low",
-          "value": -2.280644018879744,
-          "display": "-2.28"
-        },
-        {
-          "feature": "focus_front7_activity_l5",
-          "label": "front-seven activity proxy",
-          "direction": "high",
-          "value": 8.84,
-          "display": "8.84"
-        },
-        {
-          "feature": "opp_rush_yards_l5",
-          "label": "opponent rushing form",
-          "direction": "low",
-          "value": 54.0,
-          "display": "54.0 yds"
-        },
-        {
-          "feature": "opp_rush_allowed_l5",
-          "label": "opponent rush-defense allowance",
-          "direction": "high",
-          "value": 164.6,
-          "display": "164.60"
-        },
-        {
-          "feature": "focus_pass_yards_l5",
-          "label": "team passing form",
-          "direction": "low",
-          "value": 182.2,
-          "display": "182.2 yds"
-        },
-        {
-          "feature": "division_game",
-          "label": "division game",
-          "direction": "yes",
-          "value": 1,
-          "display": "yes"
-        }
-      ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
-      "last_signal_id": "ISPY-AAFED38A97F3C6EBB4",
-      "last_evidence": {
-        "observed_rate_pct": 65.14,
-        "baseline_rate_pct": 36.15,
-        "lift_pp": 28.99,
-        "effective_sample_size": 24.55,
-        "mean_similarity_pct": 69.33,
-        "stability_score": 1.0
-      },
-      "max_lift_pp": 28.99,
-      "max_abs_lift_pp": 28.99,
-      "observed_event_ids": [
-        "2026_11_LV_DEN"
-      ],
-      "distinct_current_events": 1,
-      "provenance": [
-        {
-          "source": "NFLVERSE_SCHEDULES",
-          "detail": "scores, division, rest, roof, temperature, wind and market total"
-        },
-        {
-          "source": "NFLVERSE_TEAM_WEEKLY",
-          "detail": "offense and defensive activity measurements"
-        },
-        {
-          "source": "LSI_FUTURE_MARKET_BOARD",
-          "detail": "current event and evaluated offered POMs"
-        }
-      ],
-      "first_seen_utc": "2026-11-15T21:56:02.612400+00:00",
-      "times_observed": 1
-    },
-    {
       "pattern_key": "d3020e77a554d03d",
       "league": "NFL",
       "title": "NYG — finishes at least 10% below its entering passing-yard form",
@@ -5352,14 +5368,14 @@
           "display": "8.40"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-DD6A7C37A75C1400EC",
       "last_evidence": {
-        "observed_rate_pct": 25.52,
+        "observed_rate_pct": 25.18,
         "baseline_rate_pct": 53.76,
-        "lift_pp": -28.24,
-        "effective_sample_size": 24.59,
-        "mean_similarity_pct": 72.23,
+        "lift_pp": -28.58,
+        "effective_sample_size": 24.63,
+        "mean_similarity_pct": 72.21,
         "stability_score": 1.0
       },
       "max_lift_pp": -25.18,
@@ -5380,6 +5396,10 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "first_seen_utc": "2026-11-15T20:03:37.451227+00:00",
@@ -6874,17 +6894,17 @@
           "display": "82.00"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-D1A5C9107177DDEFBC",
       "last_evidence": {
-        "observed_rate_pct": 18.48,
+        "observed_rate_pct": 22.49,
         "baseline_rate_pct": 46.04,
-        "lift_pp": -27.56,
-        "effective_sample_size": 24.71,
-        "mean_similarity_pct": 73.77,
+        "lift_pp": -23.54,
+        "effective_sample_size": 24.76,
+        "mean_similarity_pct": 73.98,
         "stability_score": 1.0
       },
-      "max_lift_pp": -23.56,
+      "max_lift_pp": -23.54,
       "max_abs_lift_pp": 27.56,
       "observed_event_ids": [
         "2026_11_NO_CHI"
@@ -6902,6 +6922,10 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "first_seen_utc": "2026-11-16T00:31:02.994271+00:00",
@@ -9092,14 +9116,14 @@
           "display": "4.16"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-2FAF88C05CB218AD4A",
       "last_evidence": {
-        "observed_rate_pct": 63.02,
+        "observed_rate_pct": 52.26,
         "baseline_rate_pct": 36.56,
-        "lift_pp": 26.46,
-        "effective_sample_size": 24.73,
-        "mean_similarity_pct": 75.05,
+        "lift_pp": 15.7,
+        "effective_sample_size": 24.75,
+        "mean_similarity_pct": 75.16,
         "stability_score": 1.0
       },
       "max_lift_pp": 26.46,
@@ -9120,6 +9144,10 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "first_seen_utc": "2026-11-16T02:38:42.047005+00:00",
@@ -9501,15 +9529,15 @@
           "display": "194.40"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-38FE24718113669A86",
       "last_evidence": {
-        "observed_rate_pct": 35.93,
+        "observed_rate_pct": 35.69,
         "baseline_rate_pct": 53.76,
-        "lift_pp": -17.83,
-        "effective_sample_size": 24.69,
-        "mean_similarity_pct": 73.33,
-        "stability_score": 1.0
+        "lift_pp": -18.06,
+        "effective_sample_size": 24.79,
+        "mean_similarity_pct": 72.98,
+        "stability_score": 0.75
       },
       "max_lift_pp": -17.83,
       "max_abs_lift_pp": 26.31,
@@ -9529,6 +9557,10 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "first_seen_utc": "2026-11-15T21:56:02.612400+00:00",
@@ -10335,7 +10367,7 @@
           "display": "197.6 yds"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-F91894D44D855AC7B2",
       "last_evidence": {
         "observed_rate_pct": 20.22,
@@ -11248,7 +11280,7 @@
           "display": "-0.88"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-774F5A44C491D9E4E7",
       "last_evidence": {
         "observed_rate_pct": 68.85,
@@ -15810,14 +15842,14 @@
           "display": "78%"
         }
       ],
-      "last_seen_utc": "2026-11-16T13:49:59.558840+00:00",
+      "last_seen_utc": "2026-11-16T19:28:53.358288+00:00",
       "last_signal_id": "ISPY-C901C378B3F51233B5",
       "last_evidence": {
-        "observed_rate_pct": 77.33,
+        "observed_rate_pct": 69.59,
         "baseline_rate_pct": 53.76,
-        "lift_pp": 23.57,
-        "effective_sample_size": 24.79,
-        "mean_similarity_pct": 73.55,
+        "lift_pp": 15.83,
+        "effective_sample_size": 24.85,
+        "mean_similarity_pct": 73.73,
         "stability_score": 1.0
       },
       "max_lift_pp": 23.57,
@@ -15838,6 +15870,10 @@
         {
           "source": "LSI_FUTURE_MARKET_BOARD",
           "detail": "current event and evaluated offered POMs"
+        },
+        {
+          "source": "OPEN_METEO",
+          "detail": "current event-hour weather measurements"
         }
       ],
       "first_seen_utc": "2026-11-16T02:38:42.047005+00:00",
