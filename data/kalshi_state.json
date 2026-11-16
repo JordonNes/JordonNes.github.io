@@ -1,17 +1,16 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-11-16T10:18:51.682522+00:00",
+  "checked_at_utc": "2026-11-16T20:52:03.142206+00:00",
   "status": "OK",
-  "raw_market_count": 4897,
-  "normalized_props": 50,
-  "history_rows_added": 50,
+  "raw_market_count": 3550,
+  "normalized_props": 129,
+  "history_rows_added": 129,
   "skip_reasons": {
-    "ambiguous_matchup": 249,
-    "ambiguous_participant_threshold": 1320,
-    "no_current_yes_price": 6,
-    "ok": 50,
-    "unknown_sport": 3056,
-    "unsupported_market": 216
+    "ambiguous_matchup": 224,
+    "ambiguous_participant_threshold": 18,
+    "ok": 129,
+    "unknown_sport": 3027,
+    "unsupported_market": 152
   },
   "skip_samples": {
     "unknown_sport": {
@@ -65,71 +64,58 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
-    },
-    "no_current_yes_price": {
-      "ticker": "KXNBASTOCKPROT-26NOV16GSWNOP-GSWDGREEN23-2",
-      "event_ticker": "KXNBASTOCKPROT-26NOV16GSWNOP",
-      "series_ticker": "KXNBASTOCKPROT",
-      "event_title": "Golden State vs New Orleans: Steals + Blocks",
-      "title": "Draymond Green: 2+ combined steals and blocks",
-      "subtitle": null,
-      "yes_sub_title": "Draymond Green: 2+",
-      "primary_participant_key": "basketball_player",
-      "floor_strike": 1.5,
-      "functional_strike": null,
-      "occurrence_datetime": "2026-11-17T04:00:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBWALKOFFS",
-      "KXUFCOCCUR",
-      "KXNBASTOCKPROT",
-      "KXNCAAFTEAMREC",
-      "KXNFL2PTCONV",
-      "KXNHLPTS",
-      "KXWTAACES",
-      "KXWNBA40PTS",
-      "KXMLBHR",
-      "KXUFCWHITEHOUSE",
-      "KXNBAH2HPTSMARGIN",
-      "KXNCAAFTOTAL",
-      "KXNFLSEASONRSHYDS",
-      "KXNHLPSEASONGOALS",
-      "KXATPACES",
-      "KXWNBAPTS",
       "KXMLBHRDERBYMATCHUP",
-      "KXNBASERIESPTSSPREAD",
-      "KXNCAAFTEAMRECYDS",
-      "KXNFLTEAMTOTAL",
-      "KXNHLGOAL",
-      "KXWNBAREB",
-      "KXMLBHA",
-      "KXNBA30PTSTREAK",
-      "KXNCAAF2PT",
-      "KXNFLTEAMPTS",
-      "KXNHLSEASONGOALS",
-      "KXWNBAH2HPTS",
-      "KXMLBSEASONHR",
-      "KXNBAWHATTEND",
+      "KXUFCOCCUR",
+      "KXNBAPTSPRECISE",
+      "KXNCAAFTEAMRSHYDS",
+      "KXNFLSEASONRECYDS",
+      "KXNHLPTS",
+      "KXATPACES",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBOUTS",
+      "KXUFCWHITEHOUSE",
+      "KXNBALADDER3PT",
       "KXNCAAFTEAMFG",
+      "KXNFL1HTOTAL",
+      "KXNHLAST",
+      "KXWTAACES",
+      "KXWNBAREB",
+      "KXMLBTOTAL",
+      "KXNBAPTSPROT",
+      "KXNCAAFGO",
+      "KXNFLRECPROT",
+      "KXNHLSEASONPTS",
+      "KXWNBAPTS",
+      "KXMLBASGHR",
+      "KXNBACELEBRITY3PT",
+      "KXNCAAFTEAMTO",
+      "KXNFLPASSTDS",
+      "KXNHLGOAL",
+      "KXWNBA40PTS",
+      "KXMLBHRDERBY500",
+      "KXNBAREB",
+      "KXNCAAF2PT",
+      "KXNFLPASSATT",
+      "KXNHLSEASONGOALS",
+      "KXWNBAAST",
+      "KXMLBHRDERBYFORECAST",
+      "KXNBA3PEAT",
+      "KXNCAAFTEAMTOTAL",
+      "KXNFLGAMETO",
+      "KXNHLSEASONPPTS",
+      "KXWNBAH2HPTS",
+      "KXMLBPLAYOFFHRS",
+      "KXNBAPR",
+      "KXNCAAFTEAMREC",
       "KXNFLPASSCOMP",
       "KXNHLSAVE",
-      "KXWNBAAST",
-      "KXMLBKS",
-      "KXNBAESCALATORPTS",
-      "KXNCAAFOCCUR",
-      "KXNFLFFPTSSEASON",
-      "KXNHLAST",
-      "KXWNBA3PTROUND",
-      "KXMLBASGHIT",
-      "KXNBASTOCK",
-      "KXNCAAF1HTEAMTOTAL",
-      "KXNFLSEASONRUSHYDS",
-      "KXNHLFIRSTGOAL",
-      "KXWNBA3PT",
-      "KXMLBHRDERBYFIN"
+      "KXWNBA3PTCONTEST",
+      "KXMLBHRDERBYVELO"
     ],
     "by_league": {
       "Boxing": 1,
@@ -144,7 +130,8 @@
     },
     "forced": [
       "KXNHLPTS"
-    ]
+    ],
+    "error": "HTTP Error 429: Too Many Requests"
   },
   "targeted_series_diagnostics": {
     "KXATPACES": {
@@ -174,25 +161,19 @@
         }
       }
     },
-    "KXMLBASGHIT": {
+    "KXMLBASGHR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHA": {
+    "KXMLBHRDERBY500": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHR": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYFIN": {
+    "KXMLBHRDERBYFORECAST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -204,115 +185,67 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBKS": {
+    "KXMLBHRDERBYVELO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBSEASONHR": {
+    "KXMLBOUTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBWALKOFFS": {
+    "KXMLBPLAYOFFHRS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBA30PTSTREAK": {
-      "raw": 6,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 6
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBA30PTSTREAK-26NOV10LDONCIC77-10",
-          "event_ticker": "KXNBA30PTSTREAK-26NOV10LDONCIC77",
-          "event_title": "How many consecutive games will Luka Doncic score 30+ points?",
-          "title": "Luka Doncic Consecutive Games Scoring 30+ Points: 10+ games",
-          "subtitle": null,
-          "yes_sub_title": "10+ games",
-          "primary_participant_key": null,
-          "floor_strike": 10,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-04-30T14:00:00Z"
-        }
-      }
-    },
-    "KXNBAESCALATORPTS": {
+    "KXMLBTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAH2HPTSMARGIN": {
+    "KXNBA3PEAT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASERIESPTSSPREAD": {
+    "KXNBACELEBRITY3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASTOCK": {
-      "raw": 25,
-      "normalized": 25,
-      "skip_reasons": {
-        "ok": 25
-      },
+    "KXNBALADDER3PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASTOCKPROT": {
-      "raw": 25,
-      "normalized": 19,
-      "skip_reasons": {
-        "no_current_yes_price": 6,
-        "ok": 19
-      },
-      "skip_samples": {
-        "no_current_yes_price": {
-          "ticker": "KXNBASTOCKPROT-26NOV16GSWNOP-GSWDGREEN23-2",
-          "event_ticker": "KXNBASTOCKPROT-26NOV16GSWNOP",
-          "event_title": "Golden State vs New Orleans: Steals + Blocks",
-          "title": "Draymond Green: 2+ combined steals and blocks",
-          "subtitle": null,
-          "yes_sub_title": "Draymond Green: 2+",
-          "primary_participant_key": "basketball_player",
-          "floor_strike": 1.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-17T04:00:00Z"
-        }
-      }
-    },
-    "KXNBAWHATTEND": {
-      "raw": 1,
+    "KXNBAPR": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 1
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBAWHATTEND-26NYK-Y",
-          "event_ticker": "KXNBAWHATTEND-26NYK",
-          "event_title": "Will the New York Pro Basketball team visit the White House?",
-          "title": "Will the New York Pro Basketball team visit the White House before Dec 31, 2026?",
-          "subtitle": null,
-          "yes_sub_title": "New York Pro Basketball team to visit the White House",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-12-31T15:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
-    "KXNCAAF1HTEAMTOTAL": {
+    "KXNBAPTSPRECISE": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAPTSPROT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAREB": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -324,7 +257,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFOCCUR": {
+    "KXNCAAFGO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -342,115 +275,38 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMRECYDS": {
+    "KXNCAAFTEAMRSHYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTOTAL": {
-      "raw": 1254,
+    "KXNCAAFTEAMTO": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAFTEAMTOTAL": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFL1HTOTAL": {
+      "raw": 14,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1254
+        "ambiguous_participant_threshold": 14
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTOTAL-26NOV17EMUWMU-27",
-          "event_ticker": "KXNCAAFTOTAL-26NOV17EMUWMU",
-          "event_title": "Eastern Michigan vs Western Michigan: Total Points",
-          "title": "Full Game: Over 26.5 points scored",
+          "ticker": "KXNFL1HTOTAL-26NOV16LACBAL-4",
+          "event_ticker": "KXNFL1HTOTAL-26NOV16LACBAL",
+          "event_title": "Los Angeles C vs Baltimore: 1st Half Total",
+          "title": "Will there be over 3.5 1H points scored?",
           "subtitle": null,
-          "yes_sub_title": "Over 26.5 points",
-          "primary_participant_key": null,
-          "floor_strike": 26.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-18T02:00:00Z"
-        }
-      }
-    },
-    "KXNFL2PTCONV": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLFFPTSSEASON": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLPASSCOMP": {
-      "raw": 6,
-      "normalized": 6,
-      "skip_reasons": {
-        "ok": 6
-      },
-      "skip_samples": {}
-    },
-    "KXNFLSEASONRSHYDS": {
-      "raw": 116,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 116
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNFLSEASONRSHYDS-27C1000-BROBINSON7",
-          "event_ticker": "KXNFLSEASONRSHYDS-27C1000",
-          "event_title": "Pro Football: 1000+ Rushing Yards Season",
-          "title": "Will Bijan Robinson record 1000+ rushing yards during 2026-27 Pro Football regular season?",
-          "subtitle": "Bijan Robinson",
-          "yes_sub_title": "Bijan Robinson",
-          "primary_participant_key": "football_player",
-          "floor_strike": 999.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-01-31T15:00:00Z"
-        }
-      }
-    },
-    "KXNFLSEASONRUSHYDS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLTEAMPTS": {
-      "raw": 64,
-      "normalized": 0,
-      "skip_reasons": {
-        "unsupported_market": 64
-      },
-      "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXNFLTEAMPTS-LEAST27-ARI",
-          "event_ticker": "KXNFLTEAMPTS-LEAST27",
-          "event_title": "Pro Football Lowest Scoring Team",
-          "title": "Will Arizona be the lowest scoring team?",
-          "subtitle": "Arizona",
-          "yes_sub_title": "Arizona",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-01-11T15:00:00Z"
-        }
-      }
-    },
-    "KXNFLTEAMTOTAL": {
-      "raw": 55,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 55
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLTEAMTOTAL-26NOV16LACBAL-BAL4",
-          "event_ticker": "KXNFLTEAMTOTAL-26NOV16LACBAL",
-          "event_title": "Los Angeles C vs Baltimore: Team Total",
-          "title": "Baltimore over 3.5 points scored",
-          "subtitle": null,
-          "yes_sub_title": "Baltimore over 3.5 points",
+          "yes_sub_title": "Over 3.5 points",
           "primary_participant_key": null,
           "floor_strike": 3.5,
           "functional_strike": null,
@@ -458,16 +314,63 @@
         }
       }
     },
-    "KXNHLAST": {
+    "KXNFLGAMETO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLFIRSTGOAL": {
+    "KXNFLPASSATT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLPASSCOMP": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLPASSTDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLRECPROT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLSEASONRECYDS": {
+      "raw": 195,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_matchup": 195
+      },
+      "skip_samples": {
+        "ambiguous_matchup": {
+          "ticker": "KXNFLSEASONRECYDS-27C1000-JCHASE1",
+          "event_ticker": "KXNFLSEASONRECYDS-27C1000",
+          "event_title": "Pro Football: 1000+ Receiving Yards Season",
+          "title": "Will Ja'Marr Chase record 1000+ receiving yards during 2026-27 Pro Football regular season?",
+          "subtitle": "Ja'Marr Chase",
+          "yes_sub_title": "Ja'Marr Chase",
+          "primary_participant_key": "football_player",
+          "floor_strike": 999.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2027-01-31T15:00:00Z"
+        }
+      }
+    },
+    "KXNHLAST": {
+      "raw": 54,
+      "normalized": 54,
+      "skip_reasons": {
+        "ok": 54
+      },
       "skip_samples": {}
     },
     "KXNHLGOAL": {
@@ -476,31 +379,12 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLPSEASONGOALS": {
-      "raw": 17,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 17
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNHLPSEASONGOALS-27AOVECHKIN8-15",
-          "event_ticker": "KXNHLPSEASONGOALS-27AOVECHKIN8",
-          "event_title": "Alex Ovechkin: Regular Season Goals",
-          "title": "Alex Ovechkin: 15+ goals in 2026-27 NHL regular season?",
-          "subtitle": "Alex Ovechkin",
-          "yes_sub_title": "15+ goals",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": 14.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-04-11T14:00:00Z"
-        }
-      }
-    },
     "KXNHLPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
+      "raw": 75,
+      "normalized": 75,
+      "skip_reasons": {
+        "ok": 75
+      },
       "skip_samples": {}
     },
     "KXNHLSAVE": {
@@ -510,25 +394,22 @@
       "skip_samples": {}
     },
     "KXNHLSEASONGOALS": {
-      "raw": 87,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 87
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNHLSEASONGOALS-27C20-PKANE88",
-          "event_ticker": "KXNHLSEASONGOALS-27C20",
-          "event_title": "NHL: 20+ Goals Season",
-          "title": "Patrick Kane: 20+ goals in 2026-27 NHL regular season?",
-          "subtitle": "Patrick Kane:: CHI Blackhawks",
-          "yes_sub_title": "Patrick Kane",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": 19.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-04-11T14:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLSEASONPPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLSEASONPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXUFCOCCUR": {
       "raw": 0,
@@ -542,13 +423,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBA3PT": {
+    "KXWNBA3PTCONTEST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBA3PTROUND": {
+    "KXWNBA3PTCONTESTOU": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -592,8 +473,7 @@
     }
   },
   "leagues": {
-    "NBA": 44,
-    "NFL": 6
+    "NHL": 129
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
