@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-18",
+  "verifiedOn": "2026-11-19",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
@@ -55,7 +55,7 @@ window.LJ_FIBA_FIXTURES={
     {
       "competition": "FIBA Europe Cup",
       "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "parsed_fixtures": 74,
+      "parsed_fixtures": 73,
       "status": "FIXTURES_VERIFIED"
     },
     {
@@ -72,20 +72,6 @@ window.LJ_FIBA_FIXTURES={
     }
   ],
   "events": [
-    {
-      "id": "FIBA-2026-11-19-FIBAEUROPECUP-LEV-ZIE",
-      "track": "men",
-      "competition": "FIBA Europe Cup",
-      "date": "2026-11-19",
-      "publishedTime": "18:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "LEV",
-      "away": "ZIE",
-      "group": "B",
-      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
     {
       "id": "FIBA-2026-11-25-EUROLEAGUEWOMEN-EKSK-TBB",
       "track": "women",
