@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-11-19T21:55:54.644763+00:00",
+  "generated_at_utc": "2026-11-20T03:40:19.518484+00:00",
   "source_registry_generated_at_utc": "2026-11-19T13:58:37.654472+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -49,16 +49,17 @@
   "website_suggestions_recorded": 94224,
   "website_suggestions_structured_for_settlement": 83081,
   "settlement_population_total": 83258,
-  "settled_predictions": 45845,
-  "settlement_rate_pct": 55.06,
+  "settled_predictions": 45965,
+  "settlement_rate_pct": 55.21,
   "run_counts": {
     "already_settled": 45784,
-    "PENDING_EVENT": 323,
+    "settled": 120,
+    "UNSUPPORTED_PLAYER_MARKET": 10775,
+    "PLAYER_NOT_IN_BOXSCORE": 21348,
     "AMBIGUOUS_EVENT": 3502,
     "PARTICIPANT_UNRESOLVED": 42,
     "TEAM_UNRESOLVED": 537,
-    "UNSUPPORTED_PLAYER_MARKET": 10762,
-    "PLAYER_NOT_IN_BOXSCORE": 21347,
+    "PENDING_EVENT": 189,
     "TD_STATS_UNAVAILABLE": 43,
     "PLAYER_PROP_PROVIDER_PENDING": 27,
     "NO_EVENT_CANDIDATES": 728,
@@ -87,10 +88,11 @@
       "AMBIGUOUS_EVENT": 23
     },
     "NBA": {
-      "PENDING_EVENT": 85,
+      "settled": 35,
+      "UNSUPPORTED_PLAYER_MARKET": 616,
       "already_settled": 6320,
+      "PENDING_EVENT": 46,
       "TEAM_UNRESOLVED": 44,
-      "UNSUPPORTED_PLAYER_MARKET": 612,
       "PLAYER_NOT_IN_BOXSCORE": 1854,
       "AMBIGUOUS_EVENT": 25
     },
@@ -120,11 +122,12 @@
       "NO_EVENT_CANDIDATES": 188
     },
     "NHL": {
-      "PENDING_EVENT": 122,
+      "settled": 85,
+      "UNSUPPORTED_PLAYER_MARKET": 1818,
+      "PLAYER_NOT_IN_BOXSCORE": 3240,
       "already_settled": 11358,
+      "PENDING_EVENT": 27,
       "TEAM_UNRESOLVED": 124,
-      "UNSUPPORTED_PLAYER_MARKET": 1809,
-      "PLAYER_NOT_IN_BOXSCORE": 3239,
       "UNGRADED_MARKET_RULE": 8,
       "AMBIGUOUS_EVENT": 48
     },
@@ -141,45 +144,618 @@
       "EVENT_NOT_FOUND": 4
     }
   },
-  "recent_settlements": [],
+  "recent_settlements": [
+    {
+      "prediction_id": "SUG-c5865ab08760fec66dbaf2ba",
+      "league": "NHL",
+      "selection": "Hurricanes ML • -300 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892747",
+      "source": "ESPN_PUBLIC:401892747:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-e52f7659afe79e0b0918f307",
+      "league": "NHL",
+      "selection": "Lightning ML • -156 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892744",
+      "source": "ESPN_PUBLIC:401892744:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-fbc7753effcaf3705e935ff6",
+      "league": "NHL",
+      "selection": "Jets ML • -144 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892749",
+      "source": "ESPN_PUBLIC:401892749:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-09bdc3e05e0b5ef2e44c27c9",
+      "league": "NHL",
+      "selection": "Carolina ML • -257 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892747",
+      "source": "ESPN_PUBLIC:401892747:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-801d3378d8cfb274f82cb7d9",
+      "league": "NHL",
+      "selection": "Senators ML • -186 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892743",
+      "source": "ESPN_PUBLIC:401892743:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-4a0b258ac7d4df02473bc436",
+      "league": "NHL",
+      "selection": "Maple Leafs ML • -133 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892742",
+      "source": "ESPN_PUBLIC:401892742:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-57035a9fb8473e65a0c74927",
+      "league": "NHL",
+      "selection": "Montreal ML • +233 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892747",
+      "source": "ESPN_PUBLIC:401892747:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-63e33dd63813c8e6684f16f1",
+      "league": "NHL",
+      "selection": "Columbus ML • -163 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892748",
+      "source": "ESPN_PUBLIC:401892748:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-12719cba82c260994142b2f1",
+      "league": "NHL",
+      "selection": "Columbus ML • -163 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892748",
+      "source": "ESPN_PUBLIC:401892748:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-457abd18355845ccb5110c3a",
+      "league": "NHL",
+      "selection": "Jets ML • -144 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892749",
+      "source": "ESPN_PUBLIC:401892749:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-2e51981d8b72263f0bc4da9c",
+      "league": "NBA",
+      "selection": "Minnesota Timberwolves ML • -117 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401910021",
+      "source": "ESPN_PUBLIC:401910021:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-6275bc9158f84e9ab6962ac5",
+      "league": "NBA",
+      "selection": "Portland Trail Blazers ML • -900 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401910020",
+      "source": "ESPN_PUBLIC:401910020:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-922f39a0886218a3ca6c04c7",
+      "league": "NBA",
+      "selection": "Golden State Warriors ML • -150 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401910019",
+      "source": "ESPN_PUBLIC:401910019:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-06c09446f3ffab7735279195",
+      "league": "NHL",
+      "selection": "Jets ML • -133 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892749",
+      "source": "ESPN_PUBLIC:401892749:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-0951bb1477a8fef9f403833c",
+      "league": "NBA",
+      "selection": "Portland Trail Blazers ML • -900 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401910020",
+      "source": "ESPN_PUBLIC:401910020:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-0eb3bf56681ebf47c59fa34d",
+      "league": "NHL",
+      "selection": "Senators ML • -203 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892743",
+      "source": "ESPN_PUBLIC:401892743:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-1b660051e906a1bc05e04003",
+      "league": "NHL",
+      "selection": "Blues ML • +108 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892745",
+      "source": "ESPN_PUBLIC:401892745:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-24c76aa1ab029336a7cdbb4e",
+      "league": "NBA",
+      "selection": "Golden State Warriors ML • -150 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401910019",
+      "source": "ESPN_PUBLIC:401910019:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-5ccdb3e08941168c0ad60f83",
+      "league": "NHL",
+      "selection": "Capitals ML • -150 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892746",
+      "source": "ESPN_PUBLIC:401892746:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-60f04512c3d50d16c15fd68f",
+      "league": "NBA",
+      "selection": "Minnesota Timberwolves ML • -117 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401910021",
+      "source": "ESPN_PUBLIC:401910021:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-95e2caa32c090ad6f8513206",
+      "league": "NHL",
+      "selection": "Blue Jackets ML • -144 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892748",
+      "source": "ESPN_PUBLIC:401892748:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ae7624fa4d50df3c53b982f0",
+      "league": "NHL",
+      "selection": "Maple Leafs ML • -144 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892742",
+      "source": "ESPN_PUBLIC:401892742:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-bc2a657c61727b6300a0e354",
+      "league": "NHL",
+      "selection": "Hurricanes ML • -317 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892747",
+      "source": "ESPN_PUBLIC:401892747:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-e674480f92b2fc7907adf533",
+      "league": "NHL",
+      "selection": "Lightning ML • -156 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892744",
+      "source": "ESPN_PUBLIC:401892744:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-094a355a9a5578ef6a24f690",
+      "league": "NBA",
+      "selection": "Golden State Warriors ML • -150 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401910019",
+      "source": "ESPN_PUBLIC:401910019:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-bd4adae4a96b7e75b748c237",
+      "league": "NBA",
+      "selection": "Minnesota Timberwolves ML • -117 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401910021",
+      "source": "ESPN_PUBLIC:401910021:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-d2b41f0bfd441b6dc1eda9c9",
+      "league": "NBA",
+      "selection": "Portland Trail Blazers ML • -900 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401910020",
+      "source": "ESPN_PUBLIC:401910020:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-1c33b8948f428a55719f96a1",
+      "league": "NHL",
+      "selection": "Blues ML • -108 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892745",
+      "source": "ESPN_PUBLIC:401892745:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-38f5bf47366b3df94481d622",
+      "league": "NHL",
+      "selection": "Jets ML • -144 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892749",
+      "source": "ESPN_PUBLIC:401892749:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-49afa5602e1063b2a4976a2e",
+      "league": "NHL",
+      "selection": "Blue Jackets ML • -156 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892748",
+      "source": "ESPN_PUBLIC:401892748:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-4b73ed91921573ef88d2b856",
+      "league": "NBA",
+      "selection": "San Antonio Spurs ML • -1567 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401910022",
+      "source": "ESPN_PUBLIC:401910022:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-847574e481d87fd105762490",
+      "league": "NHL",
+      "selection": "Senators ML • -186 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892743",
+      "source": "ESPN_PUBLIC:401892743:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-96f86aaec448a87c1abf4246",
+      "league": "NHL",
+      "selection": "Maple Leafs ML • -127 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892742",
+      "source": "ESPN_PUBLIC:401892742:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-a0688ff4066df4accb265643",
+      "league": "NHL",
+      "selection": "Tampa Bay ML • -163 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892744",
+      "source": "ESPN_PUBLIC:401892744:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ba1c18734050af5ef04c3c50",
+      "league": "NHL",
+      "selection": "Capitals ML • -144 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892746",
+      "source": "ESPN_PUBLIC:401892746:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-dafabbffe912ad0b7d985ed7",
+      "league": "NHL",
+      "selection": "Hurricanes ML • -300 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892747",
+      "source": "ESPN_PUBLIC:401892747:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-41f7a679f1a21afa623d2e1b",
+      "league": "NHL",
+      "selection": "Jets ML • -144 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892749",
+      "source": "ESPN_PUBLIC:401892749:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-44941c74d60c56675b8a4f66",
+      "league": "NHL",
+      "selection": "Lightning ML • -156 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892744",
+      "source": "ESPN_PUBLIC:401892744:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-aafd760e825d15915fe0a184",
+      "league": "NHL",
+      "selection": "Senators ML • -186 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892743",
+      "source": "ESPN_PUBLIC:401892743:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-d911fb138dcdb020627a2371",
+      "league": "NHL",
+      "selection": "Maple Leafs ML • -127 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892742",
+      "source": "ESPN_PUBLIC:401892742:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-f41232f45bb3fa0f4a9df679",
+      "league": "NHL",
+      "selection": "Blues ML • -108 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892745",
+      "source": "ESPN_PUBLIC:401892745:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-f675044a7ee1feee0ed64a69",
+      "league": "NHL",
+      "selection": "Capitals ML • -144 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892746",
+      "source": "ESPN_PUBLIC:401892746:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ff87b25524d29b28df1cfaca",
+      "league": "NHL",
+      "selection": "Blue Jackets ML • -156 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892748",
+      "source": "ESPN_PUBLIC:401892748:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-b9bdadcd886400c64c396049",
+      "league": "NHL",
+      "selection": "Capitals ML • -156 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892746",
+      "source": "ESPN_PUBLIC:401892746:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-0fb03004bf11e3a9e1e76908",
+      "league": "NHL",
+      "selection": "Carolina ML • -270 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892747",
+      "source": "ESPN_PUBLIC:401892747:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-59ceff46fd3746de375cb398",
+      "league": "NHL",
+      "selection": "Senators ML • -178 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892743",
+      "source": "ESPN_PUBLIC:401892743:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-67e2712289e51fa5fec59e52",
+      "league": "NHL",
+      "selection": "Capitals ML • -156 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892746",
+      "source": "ESPN_PUBLIC:401892746:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-e2c3795c539832f71bd237bb",
+      "league": "NHL",
+      "selection": "St. Louis ML • +108 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892745",
+      "source": "ESPN_PUBLIC:401892745:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7caa7c08442c15cac232fb88",
+      "league": "NHL",
+      "selection": "Washington ML • -133 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892746",
+      "source": "ESPN_PUBLIC:401892746:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-bc0da5c0f474b93a265778a1",
+      "league": "NHL",
+      "selection": "Maple Leafs ML • -122 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401892742",
+      "source": "ESPN_PUBLIC:401892742:FINAL_SCORE_ML"
+    }
+  ],
   "unresolved": [
+    {
+      "prediction_id": "SUG-9f77655d040c27295a87522c",
+      "league": "NBA",
+      "market": "Points",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-a66a07a4cc125d6b57463d9d",
+      "league": "NCAA_Football",
+      "event_id": "PAPI-8630b4d50f3cc97b",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 18.0,
+        "second_score": 17.5,
+        "token_hits": 0,
+        "time_delta_hours": 0.0
+      }
+    },
+    {
+      "prediction_id": "SUG-aad29976f8ddbbfed859dbeb",
+      "league": "NCAA_Football",
+      "event_id": "PAPI-8630b4d50f3cc97b",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 18.0,
+        "second_score": 17.5,
+        "token_hits": 0,
+        "time_delta_hours": 0.0
+      }
+    },
+    {
+      "prediction_id": "SUG-ab50cb1505528342837d1398",
+      "league": "NBA",
+      "market": "Threes",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-d99f8cb912409a9598206ca3",
+      "league": "NBA",
+      "market": "Steals",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-fd66156e4b674ab0bee2705e",
+      "league": "NBA",
+      "market": "Threes",
+      "reason": "UNSUPPORTED_PLAYER_MARKET"
+    },
+    {
+      "prediction_id": "SUG-0ddd650f386cd61c5e2f3530",
+      "league": "MMA",
+      "market": "Moneyline",
+      "reason": "PARTICIPANT_UNRESOLVED"
+    },
+    {
+      "prediction_id": "SUG-199d841e75910fe333593985",
+      "league": "NCAA_Basketball",
+      "event_id": "PL-725860",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 6.0,
+        "second_score": 6.0,
+        "token_hits": 0,
+        "time_delta_hours": 0.0
+      }
+    },
+    {
+      "prediction_id": "SUG-25fc64dc82f7d699fc95985b",
+      "league": "NCAA_Football",
+      "event_id": "PL-681270",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 18.0,
+        "second_score": 6.0,
+        "token_hits": 0,
+        "time_delta_hours": 0.0
+      }
+    },
+    {
+      "prediction_id": "SUG-2ea942cd622f6e1733bdf5ec",
+      "league": "NCAA_Basketball",
+      "event_id": "PL-729643",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 12,
+        "second_score": 5.0,
+        "token_hits": 0,
+        "time_delta_hours": 21.5
+      }
+    },
+    {
+      "prediction_id": "SUG-2f979ee51559a9555c4f45b5",
+      "league": "NCAA_Football",
+      "market": "Player Anytime Td",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-31e691f6ef9bf70f9b815b72",
+      "league": "NCAA_Football",
+      "event_id": "PAPI-53bbfcfcc2b91797",
+      "reason": "AMBIGUOUS_EVENT",
+      "detail": {
+        "top_score": 6.0,
+        "second_score": 6.0,
+        "token_hits": 0,
+        "time_delta_hours": 0.0
+      }
+    },
+    {
+      "prediction_id": "SUG-37f232c47946f66b4bb4edcc",
+      "league": "NCAA_Football",
+      "market": "Passing TDs 🕵️",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-4e8883064bb5e3f5de0ee227",
+      "league": "NHL",
+      "event_id": "401892750",
+      "provider_event_id": "401892750",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_IN_PROGRESS"
+    },
+    {
+      "prediction_id": "SUG-56ef899956426cc129ae7e47",
+      "league": "NHL",
+      "event_id": "PL-734465",
+      "provider_event_id": "401892751",
+      "reason": "PENDING_EVENT",
+      "state": "STATUS_IN_PROGRESS"
+    },
+    {
+      "prediction_id": "SUG-5d32861f5a38332c172476b0",
+      "league": "NCAA_Football",
+      "market": "Receptions 🕵️",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-5ea73ddd5021427d6e4386b8",
+      "league": "NCAA_Football",
+      "market": "Passing Yards 🕵️",
+      "reason": "PLAYER_NOT_IN_BOXSCORE"
+    },
+    {
+      "prediction_id": "SUG-63293485527ac21c4b28ace5",
+      "league": "NFL",
+      "market": "Moneyline",
+      "reason": "TEAM_UNRESOLVED"
+    },
+    {
+      "prediction_id": "SUG-6d85128722437d8020b593ea",
+      "league": "NCAA_Basketball",
+      "market": "Moneyline",
+      "reason": "TEAM_UNRESOLVED"
+    },
     {
       "prediction_id": "SUG-7b8494f98e0c000ca2f119c0",
       "league": "NCAA_Football",
       "market": "Moneyline",
       "reason": "TEAM_UNRESOLVED"
-    },
-    {
-      "prediction_id": "SUG-847574e481d87fd105762490",
-      "league": "NHL",
-      "event_id": "401892743",
-      "provider_event_id": "401892743",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-96f86aaec448a87c1abf4246",
-      "league": "NHL",
-      "event_id": "PL-734472",
-      "provider_event_id": "401892742",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-a0688ff4066df4accb265643",
-      "league": "NHL",
-      "event_id": "PL-722069",
-      "provider_event_id": "401892744",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-ba1c18734050af5ef04c3c50",
-      "league": "NHL",
-      "event_id": "PL-734468",
-      "provider_event_id": "401892746",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-c2be9c1a4c58e78e50e48d4f",
@@ -193,21 +769,13 @@
       "event_id": "401892752",
       "provider_event_id": "401892752",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-d8587a9a5b298fee7238c5a7",
       "league": "NCAA_Football",
       "market": "Receptions 🕵️",
       "reason": "PLAYER_NOT_IN_BOXSCORE"
-    },
-    {
-      "prediction_id": "SUG-dafabbffe912ad0b7d985ed7",
-      "league": "NHL",
-      "event_id": "401892747",
-      "provider_event_id": "401892747",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-97cee34b45afb47c69332d51",
@@ -293,29 +861,13 @@
       "event_id": "2026020357",
       "provider_event_id": "401892752",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-4131f6e5515e7aab5f92bece",
       "league": "NFL",
       "market": "Passing TDs",
       "reason": "PLAYER_NOT_IN_BOXSCORE"
-    },
-    {
-      "prediction_id": "SUG-41f7a679f1a21afa623d2e1b",
-      "league": "NHL",
-      "event_id": "2026020354",
-      "provider_event_id": "401892749",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-44941c74d60c56675b8a4f66",
-      "league": "NHL",
-      "event_id": "2026020349",
-      "provider_event_id": "401892744",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-4efa579f5a65385a916a57ba",
@@ -329,7 +881,7 @@
       "event_id": "2026020356",
       "provider_event_id": "401892751",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-635b15a8783b01e02b207410",
@@ -446,14 +998,6 @@
       }
     },
     {
-      "prediction_id": "SUG-aafd760e825d15915fe0a184",
-      "league": "NHL",
-      "event_id": "2026020348",
-      "provider_event_id": "401892743",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
       "prediction_id": "SUG-ab5c0b8ebe221e1733b80da7",
       "league": "NFL",
       "market": "Receptions",
@@ -496,14 +1040,6 @@
       "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
-      "prediction_id": "SUG-d911fb138dcdb020627a2371",
-      "league": "NHL",
-      "event_id": "2026020347",
-      "provider_event_id": "401892742",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
       "prediction_id": "SUG-df9d2a2f225e95cab2f7ecb2",
       "league": "NFL",
       "market": "Receptions",
@@ -533,37 +1069,13 @@
       "event_id": "2026020355",
       "provider_event_id": "401892750",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f41232f45bb3fa0f4a9df679",
-      "league": "NHL",
-      "event_id": "2026020350",
-      "provider_event_id": "401892745",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
-      "prediction_id": "SUG-f675044a7ee1feee0ed64a69",
-      "league": "NHL",
-      "event_id": "2026020351",
-      "provider_event_id": "401892746",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-fdc221331efa94dad58a8ca9",
       "league": "NFL",
       "market": "Receptions",
       "reason": "PLAYER_NOT_IN_BOXSCORE"
-    },
-    {
-      "prediction_id": "SUG-ff87b25524d29b28df1cfaca",
-      "league": "NHL",
-      "event_id": "2026020353",
-      "provider_event_id": "401892748",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-5b0b67862f3797132320b6ce",
@@ -812,14 +1324,6 @@
       "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
-      "prediction_id": "SUG-b9bdadcd886400c64c396049",
-      "league": "NHL",
-      "event_id": "2026020351",
-      "provider_event_id": "401892746",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
       "prediction_id": "SUG-bb4ce9e170fcc278a31299d8",
       "league": "NCAA_Football",
       "market": "Player Rush Yds",
@@ -1030,14 +1534,6 @@
       "reason": "UNSUPPORTED_PLAYER_MARKET"
     },
     {
-      "prediction_id": "SUG-0fb03004bf11e3a9e1e76908",
-      "league": "NHL",
-      "event_id": "401892747",
-      "provider_event_id": "401892747",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
       "prediction_id": "SUG-123d9a001c4a168571bdb533",
       "league": "NCAA_Football",
       "event_id": "PL-681270",
@@ -1179,21 +1675,13 @@
       "event_id": "2026020355",
       "provider_event_id": "401892750",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-5785df99ff4da398d1ba20ed",
       "league": "NFL",
       "market": "Moneyline",
       "reason": "TEAM_UNRESOLVED"
-    },
-    {
-      "prediction_id": "SUG-59ceff46fd3746de375cb398",
-      "league": "NHL",
-      "event_id": "2026020348",
-      "provider_event_id": "401892743",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-6626f57ecb68d65dc3b0fc1c",
@@ -1212,14 +1700,6 @@
       "league": "NHL",
       "market": "Assists",
       "reason": "UNSUPPORTED_PLAYER_MARKET"
-    },
-    {
-      "prediction_id": "SUG-67e2712289e51fa5fec59e52",
-      "league": "NHL",
-      "event_id": "2026020351",
-      "provider_event_id": "401892746",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-6de7c158260d3ca3dc98739d",
@@ -1332,14 +1812,6 @@
       "reason": "PLAYER_NOT_IN_BOXSCORE"
     },
     {
-      "prediction_id": "SUG-e2c3795c539832f71bd237bb",
-      "league": "NHL",
-      "event_id": "2026020350",
-      "provider_event_id": "401892745",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
       "prediction_id": "SUG-e8fb697f8a24bf62b63bc949",
       "league": "NBA",
       "event_id": "401909305",
@@ -1397,7 +1869,7 @@
       "event_id": "2026020357",
       "provider_event_id": "401892752",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "state": "STATUS_END_PERIOD"
     },
     {
       "prediction_id": "SUG-6f8b9a14b9de6ceb77561917",
@@ -1406,26 +1878,10 @@
       "reason": "TEAM_UNRESOLVED"
     },
     {
-      "prediction_id": "SUG-7caa7c08442c15cac232fb88",
-      "league": "NHL",
-      "event_id": "2026020351",
-      "provider_event_id": "401892746",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
-    },
-    {
       "prediction_id": "SUG-893f060951dd5046b65aad6f",
       "league": "NCAA_Football",
       "market": "Moneyline",
       "reason": "TEAM_UNRESOLVED"
-    },
-    {
-      "prediction_id": "SUG-bc0da5c0f474b93a265778a1",
-      "league": "NHL",
-      "event_id": "2026020347",
-      "provider_event_id": "401892742",
-      "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
     },
     {
       "prediction_id": "SUG-c797e2bee9fc77e6f3551b33",
@@ -1439,7 +1895,7 @@
       "event_id": "2026020355",
       "provider_event_id": "401892750",
       "reason": "PENDING_EVENT",
-      "state": "STATUS_SCHEDULED"
+      "state": "STATUS_IN_PROGRESS"
     },
     {
       "prediction_id": "SUG-e19555e5439afc8cc678407c",
