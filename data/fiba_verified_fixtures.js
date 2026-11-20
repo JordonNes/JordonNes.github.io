@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-19",
+  "verifiedOn": "2026-11-20",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
@@ -101,6 +101,20 @@ window.LJ_FIBA_FIXTURES={
       "marketStatus": "NOT_VERIFIED"
     },
     {
+      "id": "FIBA-2026-11-25-EUROCUPWOMEN-OSFP-1KS",
+      "track": "women",
+      "competition": "EuroCup Women",
+      "date": "2026-11-25",
+      "publishedTime": "16:30",
+      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
+      "home": "OSFP",
+      "away": "1KS",
+      "group": "D",
+      "source": "https://www.fiba.basketball/en/events/eurocup-women-26-27",
+      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
+      "marketStatus": "NOT_VERIFIED"
+    },
+    {
       "id": "FIBA-2026-11-25-EUROCUPWOMEN-BJK-DSK",
       "track": "women",
       "competition": "EuroCup Women",
@@ -138,20 +152,6 @@ window.LJ_FIBA_FIXTURES={
       "home": "KPB",
       "away": "CCE",
       "group": "G",
-      "source": "https://www.fiba.basketball/en/events/eurocup-women-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-25-EUROCUPWOMEN-OSFP-1KS",
-      "track": "women",
-      "competition": "EuroCup Women",
-      "date": "2026-11-25",
-      "publishedTime": "17:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "OSFP",
-      "away": "1KS",
-      "group": "D",
       "source": "https://www.fiba.basketball/en/events/eurocup-women-26-27",
       "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
       "marketStatus": "NOT_VERIFIED"
