@@ -1,16 +1,17 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-11-20T13:29:53.182124+00:00",
+  "checked_at_utc": "2026-11-21T02:50:04.774431+00:00",
   "status": "OK",
-  "raw_market_count": 4755,
-  "normalized_props": 19,
-  "history_rows_added": 19,
+  "raw_market_count": 3750,
+  "normalized_props": 431,
+  "history_rows_added": 431,
   "skip_reasons": {
-    "ambiguous_matchup": 38,
-    "ambiguous_participant_threshold": 1469,
-    "ok": 19,
-    "unknown_sport": 3074,
-    "unsupported_market": 155
+    "ambiguous_matchup": 29,
+    "ambiguous_participant_threshold": 55,
+    "no_current_yes_price": 3,
+    "ok": 431,
+    "unknown_sport": 3076,
+    "unsupported_market": 156
   },
   "skip_samples": {
     "unknown_sport": {
@@ -64,58 +65,71 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
+    },
+    "no_current_yes_price": {
+      "ticker": "KXNFLRRYDSPROT-26NOV23CINWAS-CINCBROWN30-95",
+      "event_ticker": "KXNFLRRYDSPROT-26NOV23CINWAS",
+      "series_ticker": "KXNFLRRYDSPROT",
+      "event_title": "Cincinnati vs Washington: Rushing + Receiving Yards",
+      "title": "Chase Brown: 95+ rushing and receiving yards combined (protected)",
+      "subtitle": null,
+      "yes_sub_title": "Chase Brown: 95+",
+      "primary_participant_key": "football_player",
+      "floor_strike": 94.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-11-24T04:15:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBHRDERBYFIN",
+      "KXMLBPLAYOFFHRS",
       "KXUFCWHITEHOUSE",
-      "KXNBASERIESREBLEADER",
-      "KXNCAAFOCCUR",
-      "KXNFLTEAMTO",
+      "KXNBALADDER3PT",
+      "KXNCAAFGO",
+      "KXNFLBOTH",
       "KXNHLPTS",
       "KXATPACES",
-      "KXWNBA3PT",
-      "KXMLBPLAYOFFHRS",
-      "KXUFCOCCUR",
-      "KXNBAH2HPTS",
-      "KXNCAAFTEAMTOTAL",
-      "KXNFLRSHYDSPRECISE",
-      "KXNHLPSEASONPOINTS",
-      "KXWTAACES",
-      "KXWNBA3PTROUND",
-      "KXMLBHRDERBY500",
-      "KXNBASTOCK",
-      "KXNCAAF1HTEAMTOTAL",
-      "KXNFLSEASONPASSYDS",
-      "KXNHLGOAL",
-      "KXWNBA3PTCONTEST",
-      "KXMLBSEASONHR",
-      "KXNBASERIESASTLEADER",
-      "KXNCAAFTEAMFG",
-      "KXNFLTEAMDPTS",
-      "KXNHLSEASONGOALS",
-      "KXWNBAAST",
-      "KXMLBSB",
-      "KXNBA3PT",
-      "KXNCAAF2PT",
-      "KXNFLPASSCOMP",
-      "KXNHLTEAMTOTAL",
       "KXWNBAREB",
-      "KXMLBHRDERBYMATCHUP",
-      "KXNBALADDERPTS",
-      "KXNCAAFTEAMREC",
-      "KXNFLCAREERPASSTDS",
-      "KXNHLSERIESTOTALGOALS",
-      "KXWNBAPTS",
-      "KXMLBOUTS",
-      "KXNBABENCHPTS",
-      "KXNCAAFTEAMRSHYDS",
-      "KXNFLCAREERPASSYDS",
-      "KXNHLSAVE",
+      "KXMLBTOTAL",
+      "KXUFCOCCUR",
+      "KXNBAH2H3PT",
+      "KXNCAAFTEAMFG",
+      "KXNFLRRYDSPROT",
+      "KXNHLFIRSTGOAL",
+      "KXWTAACES",
       "KXWNBAH2HPTS",
-      "KXMLBHRDERBYVELO"
+      "KXMLBRBI",
+      "KXNBAAST",
+      "KXNCAAFTEAMRECYDS",
+      "KXNFLPASSATT",
+      "KXNHLPSEASONPOINTS",
+      "KXWNBA3PTCONTEST",
+      "KXMLBALLSTARHR",
+      "KXNBATOTALPRECISE",
+      "KXNCAAFTEAMREC",
+      "KXNFLRRYDS",
+      "KXNHLANYGOAL",
+      "KXWNBA3PTROUND",
+      "KXMLBSERIESHR",
+      "KXNBAFIRST50PTS",
+      "KXNCAAF2PT",
+      "KXNFLFF40PTS",
+      "KXNHLGOAL",
+      "KXWNBA3PT",
+      "KXMLBTB",
+      "KXNBACELEBRITY3PT",
+      "KXNCAAFTEAMTO",
+      "KXNFL1HTOTAL",
+      "KXNHLTEAMTOTAL",
+      "KXWNBAPTS",
+      "KXMLBWALKOFFS",
+      "KXNBAREBPROT",
+      "KXNCAAFFIRSTTDTEAM",
+      "KXNFLTOTAL",
+      "KXNHLSAVES",
+      "KXWNBAAST",
+      "KXMLBHRDERBYFORECAST"
     ],
     "by_league": {
       "Boxing": 1,
@@ -161,31 +175,13 @@
         }
       }
     },
-    "KXMLBHRDERBY500": {
+    "KXMLBALLSTARHR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYFIN": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYMATCHUP": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYVELO": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBOUTS": {
+    "KXMLBHRDERBYFORECAST": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -197,63 +193,89 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBSB": {
+    "KXMLBRBI": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBSEASONHR": {
+    "KXMLBSERIESHR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBA3PT": {
+    "KXMLBTB": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBABENCHPTS": {
+    "KXMLBTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAH2HPTS": {
+    "KXMLBWALKOFFS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBALADDERPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASERIESASTLEADER": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASERIESREBLEADER": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBASTOCK": {
-      "raw": 19,
-      "normalized": 19,
+    "KXNBAAST": {
+      "raw": 341,
+      "normalized": 338,
       "skip_reasons": {
-        "ok": 19
+        "ambiguous_participant_threshold": 3,
+        "ok": 338
       },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNBAAST-26NOV20PHXUTA-UTAABAILEY19-2",
+          "event_ticker": "KXNBAAST-26NOV20PHXUTA",
+          "event_title": "Phoenix vs Utah: Assists",
+          "title": "Ace Bailey: 2+ assists",
+          "subtitle": null,
+          "yes_sub_title": "Ace Bailey: 2+",
+          "primary_participant_key": "basketball_player",
+          "floor_strike": 1.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-21T05:30:00Z"
+        }
+      }
+    },
+    "KXNBACELEBRITY3PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAF1HTEAMTOTAL": {
+    "KXNBAFIRST50PTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAH2H3PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBALADDER3PT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAREBPROT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBATOTALPRECISE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -265,7 +287,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFOCCUR": {
+    "KXNCAAFFIRSTTDTEAM": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAFGO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -283,85 +311,98 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMRSHYDS": {
+    "KXNCAAFTEAMRECYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMTOTAL": {
-      "raw": 1465,
+    "KXNCAAFTEAMTO": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFL1HTOTAL": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLBOTH": {
+      "raw": 48,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1465
+        "ambiguous_participant_threshold": 48
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTEAMTOTAL-26NOV20ISUUCF-UCF14",
-          "event_ticker": "KXNCAAFTEAMTOTAL-26NOV20ISUUCF",
-          "event_title": "Iowa St. vs UCF: Team Total",
-          "title": "UCF over 13.5 points scored",
+          "ticker": "KXNFLBOTH-26NOV22ARIKC-14",
+          "event_ticker": "KXNFLBOTH-26NOV22ARIKC",
+          "event_title": "Arizona vs Kansas City: Both Teams to Score",
+          "title": "Both teams score at least 14 points",
           "subtitle": null,
-          "yes_sub_title": "UCF over 13.5 points",
+          "yes_sub_title": "14+ points",
           "primary_participant_key": null,
-          "floor_strike": 13.5,
+          "floor_strike": 14,
           "functional_strike": null,
-          "occurrence_datetime": "2026-11-21T02:00:00Z"
+          "occurrence_datetime": "2026-11-22T21:00:00Z"
         }
       }
     },
-    "KXNFLCAREERPASSTDS": {
+    "KXNFLFF40PTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLCAREERPASSYDS": {
-      "raw": 13,
+    "KXNFLPASSATT": {
+      "raw": 0,
       "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLRRYDS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLRRYDSPROT": {
+      "raw": 96,
+      "normalized": 93,
       "skip_reasons": {
-        "ambiguous_matchup": 13
+        "no_current_yes_price": 3,
+        "ok": 93
       },
       "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNFLCAREERPASSYDS-PMAHOMES-40000",
-          "event_ticker": "KXNFLCAREERPASSYDS-PMAHOMES",
-          "event_title": "Patrick Mahomes Career Regular Season Passing Yards",
-          "title": "Patrick Mahomes: 40,000+ Passing Yards",
+        "no_current_yes_price": {
+          "ticker": "KXNFLRRYDSPROT-26NOV23CINWAS-CINCBROWN30-95",
+          "event_ticker": "KXNFLRRYDSPROT-26NOV23CINWAS",
+          "event_title": "Cincinnati vs Washington: Rushing + Receiving Yards",
+          "title": "Chase Brown: 95+ rushing and receiving yards combined (protected)",
           "subtitle": null,
-          "yes_sub_title": "40,000+ passing yards",
-          "primary_participant_key": null,
-          "floor_strike": 39999.5,
+          "yes_sub_title": "Chase Brown: 95+",
+          "primary_participant_key": "football_player",
+          "floor_strike": 94.5,
           "functional_strike": null,
-          "occurrence_datetime": "2040-03-01T15:00:00Z"
+          "occurrence_datetime": "2026-11-24T04:15:00Z"
         }
       }
     },
-    "KXNFLPASSCOMP": {
+    "KXNFLTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLRSHYDSPRECISE": {
+    "KXNHLANYGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLSEASONPASSYDS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLTEAMDPTS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNFLTEAMTO": {
+    "KXNHLFIRSTGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -374,25 +415,10 @@
       "skip_samples": {}
     },
     "KXNHLPSEASONPOINTS": {
-      "raw": 9,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 9
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNHLPSEASONPOINTS-27CMCDAVID97-120",
-          "event_ticker": "KXNHLPSEASONPOINTS-27CMCDAVID97",
-          "event_title": "Connor McDavid: Regular Season Points",
-          "title": "Connor McDavid: 120+ Points in 2026-27 NHL regular season?",
-          "subtitle": "Connor McDavid",
-          "yes_sub_title": "120+ Points",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": 119.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-04-11T14:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNHLPTS": {
       "raw": 0,
@@ -400,19 +426,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLSAVE": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLSEASONGOALS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLSERIESTOTALGOALS": {
+    "KXNHLSAVES": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -486,7 +500,8 @@
     }
   },
   "leagues": {
-    "NBA": 19
+    "NBA": 338,
+    "NFL": 93
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
