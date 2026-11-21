@@ -1,6 +1,6 @@
 {
   "schema_version": "LSI-SETTLEMENT-1",
-  "generated_at_utc": "2026-11-21T18:14:19.488842+00:00",
+  "generated_at_utc": "2026-11-21T23:36:38.429708+00:00",
   "source_registry_generated_at_utc": "2026-11-21T12:26:03.959477+00:00",
   "policy": "Final verified data only. Ambiguous event/player/market mappings remain pending or ungraded.",
   "providers": {
@@ -49,18 +49,18 @@
   "website_suggestions_recorded": 94224,
   "website_suggestions_structured_for_settlement": 83081,
   "settlement_population_total": 83383,
-  "settled_predictions": 46042,
-  "settlement_rate_pct": 55.22,
+  "settled_predictions": 46097,
+  "settlement_rate_pct": 55.28,
   "run_counts": {
-    "already_settled": 45941,
+    "already_settled": 45947,
     "AMBIGUOUS_EVENT": 3641,
-    "PENDING_EVENT": 143,
+    "UNSUPPORTED_PLAYER_MARKET": 10774,
+    "PLAYER_NOT_IN_BOXSCORE": 21350,
+    "settled": 55,
     "PARTICIPANT_UNRESOLVED": 42,
     "TEAM_UNRESOLVED": 540,
-    "UNSUPPORTED_PLAYER_MARKET": 10762,
-    "PLAYER_NOT_IN_BOXSCORE": 21347,
     "TD_STATS_UNAVAILABLE": 43,
-    "settled": 6,
+    "PENDING_EVENT": 73,
     "PLAYER_PROP_PROVIDER_PENDING": 27,
     "NO_EVENT_CANDIDATES": 728,
     "EVENT_NOT_FOUND": 55,
@@ -80,8 +80,7 @@
     },
     "MMA": {
       "PARTICIPANT_UNRESOLVED": 40,
-      "already_settled": 230,
-      "settled": 6,
+      "already_settled": 236,
       "PLAYER_PROP_PROVIDER_PENDING": 27,
       "EVENT_NOT_FOUND": 31,
       "SPECIAL_WINNER_UNRESOLVED": 100,
@@ -93,7 +92,7 @@
       "TEAM_UNRESOLVED": 44,
       "UNSUPPORTED_PLAYER_MARKET": 612,
       "PLAYER_NOT_IN_BOXSCORE": 1854,
-      "PENDING_EVENT": 1
+      "settled": 1
     },
     "NCAA_Basketball": {
       "already_settled": 1535,
@@ -105,11 +104,12 @@
     "NCAA_Football": {
       "already_settled": 16418,
       "AMBIGUOUS_EVENT": 1818,
-      "PENDING_EVENT": 56,
-      "UNSUPPORTED_PLAYER_MARKET": 2814,
+      "UNSUPPORTED_PLAYER_MARKET": 2821,
+      "PLAYER_NOT_IN_BOXSCORE": 3964,
       "TEAM_UNRESOLVED": 308,
-      "PLAYER_NOT_IN_BOXSCORE": 3961,
-      "TD_STATS_UNAVAILABLE": 36
+      "TD_STATS_UNAVAILABLE": 36,
+      "settled": 34,
+      "PENDING_EVENT": 12
     },
     "NFL": {
       "already_settled": 7281,
@@ -121,11 +121,11 @@
       "NO_EVENT_CANDIDATES": 188
     },
     "NHL": {
-      "PENDING_EVENT": 25,
+      "settled": 20,
+      "UNSUPPORTED_PLAYER_MARKET": 1814,
       "AMBIGUOUS_EVENT": 72,
       "already_settled": 11455,
       "TEAM_UNRESOLVED": 124,
-      "UNSUPPORTED_PLAYER_MARKET": 1809,
       "PLAYER_NOT_IN_BOXSCORE": 3239,
       "UNGRADED_MARKET_RULE": 8
     },
@@ -144,58 +144,454 @@
   },
   "recent_settlements": [
     {
-      "prediction_id": "SUG-5e37eda05b702423dd81e0de",
-      "league": "MMA",
-      "selection": "Diyar Nurgozhay ML",
+      "prediction_id": "LIVE-lse-7a6f858b175f9b7573f1d3fc",
+      "league": "NHL",
+      "selection": "Owen Michaels Under 0.5 Player Goals",
       "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401934356",
-      "source": "ESPN_PUBLIC:401934356:FINAL_WINNER_FLAG"
+      "grade": "LOSS",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-9f41b2be536b11c54ec3827d",
-      "league": "MMA",
-      "selection": "Diyar Nurgozhay ML • -265",
-      "actual_result": "1",
+      "prediction_id": "LIVE-lse-4447f1189fac5c66575e64d5",
+      "league": "NHL",
+      "selection": "Jason Dickinson Under 0.5 Player Goals",
+      "actual_result": "0",
       "grade": "WIN",
-      "provider_event_id": "401934356",
-      "source": "ESPN_PUBLIC:401934356:FINAL_WINNER_FLAG"
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
     },
     {
-      "prediction_id": "SUG-d159c3ec0624def300555778",
-      "league": "MMA",
-      "selection": "Alik Lorenz ML",
+      "prediction_id": "LIVE-lse-8dbe1395cca706f9629530e9",
+      "league": "NHL",
+      "selection": "Mathieu Joseph Under 0.5 Player Goals",
+      "actual_result": "1",
+      "grade": "LOSS",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-59a4f40e73cd17f81652780f",
+      "league": "NHL",
+      "selection": "Filip Hallander Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-bcf8d4eac37f8f6c591dd195",
+      "league": "NHL",
+      "selection": "Shayne Gostisbehere Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-29af2e4a0de3847b4b1864a8",
+      "league": "NHL",
+      "selection": "Eric Robinson Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-e9d0e36988a0766ebc0d16e8",
+      "league": "NHL",
+      "selection": "Colton Dach Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-e9f22a97b5b3b7d1a627363a",
+      "league": "NHL",
+      "selection": "Zach Hyman Under 3.5 Player Shots On Goal",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-d219dd26df55287094985fdf",
+      "league": "NHL",
+      "selection": "William Carrier Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-b97c7ddf2a167b4991c00211",
+      "league": "NHL",
+      "selection": "Kasperi Kapanen Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-e995d4f19cc789b089e08534",
+      "league": "NHL",
+      "selection": "Jordan Martinook Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-5e9db8cb17897a38cbf2f2ec",
+      "league": "NHL",
+      "selection": "Jordan Staal Under 0.5 Player Goals",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-75a6c7a838bcf2c7e9fbe24e",
+      "league": "NHL",
+      "selection": "Seth Jarvis Under 3.5 Player Shots On Goal",
+      "actual_result": "0",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "LIVE-lse-5de5078f3ee5252c779aaf52",
+      "league": "NHL",
+      "selection": "Taylor Hall Under 0.5 Player Goals",
+      "actual_result": "1",
+      "grade": "LOSS",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:BOX_SCORE"
+    },
+    {
+      "prediction_id": "SUG-098efe199dbc65fa7119d8c1",
+      "league": "NCAA_Football",
+      "selection": "Northwestern ML • -144",
       "actual_result": "0",
       "grade": "LOSS",
-      "provider_event_id": "401934356",
-      "source": "ESPN_PUBLIC:401934356:FINAL_WINNER_FLAG"
+      "provider_event_id": "401858530",
+      "source": "ESPN_PUBLIC:401858530:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-180820df16e887d1cc5f8cf8",
-      "league": "MMA",
-      "selection": "Diyar Nurgozhay ML",
-      "actual_result": "1",
-      "grade": "WIN",
-      "provider_event_id": "401934356",
-      "source": "ESPN_PUBLIC:401934356:FINAL_WINNER_FLAG"
-    },
-    {
-      "prediction_id": "SUG-736755caaaef2f632ea95ca4",
-      "league": "MMA",
-      "selection": "Alik Lorenz ML",
+      "prediction_id": "SUG-50a567fbdef650ef4babbe57",
+      "league": "NCAA_Football",
+      "selection": "Syracuse ML • -186",
       "actual_result": "0",
       "grade": "LOSS",
-      "provider_event_id": "401934356",
-      "source": "ESPN_PUBLIC:401934356:FINAL_WINNER_FLAG"
+      "provider_event_id": "401858309",
+      "source": "ESPN_PUBLIC:401858309:FINAL_SCORE_ML"
     },
     {
-      "prediction_id": "SUG-75ab4b34546412c9894d5195",
-      "league": "MMA",
-      "selection": "Diyar Nurgozhay ML • -265",
+      "prediction_id": "SUG-7d69c63226bc43332178bb6f",
+      "league": "NCAA_Football",
+      "selection": "Ole Miss ML • -99900 PROPLINE:Polymarket",
       "actual_result": "1",
       "grade": "WIN",
-      "provider_event_id": "401934356",
-      "source": "ESPN_PUBLIC:401934356:FINAL_WINNER_FLAG"
+      "provider_event_id": "401856749",
+      "source": "ESPN_PUBLIC:401856749:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-e2316c6265476669f9d5fe26",
+      "league": "NCAA_Football",
+      "selection": "Syracuse ML • -186 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858309",
+      "source": "ESPN_PUBLIC:401858309:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-e4045b79861bf039b0947523",
+      "league": "NCAA_Football",
+      "selection": "Northwestern ML • -144 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858530",
+      "source": "ESPN_PUBLIC:401858530:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-5fc9db22ec4f50b4df89106e",
+      "league": "NBA",
+      "selection": "Philadelphia 76ers ML • -900 PROPLINE:Polymarket US",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401910023",
+      "source": "ESPN_PUBLIC:401910023:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-1bb3fb20fcc22e6af715ba8a",
+      "league": "NCAA_Football",
+      "selection": "Ohio State ML • -178 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858531",
+      "source": "ESPN_PUBLIC:401858531:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-6f3c780b474d60727adeef49",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Tech ML • +525",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856750",
+      "source": "ESPN_PUBLIC:401856750:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-78a6cc47aeb15626a8d399cf",
+      "league": "NCAA_Football",
+      "selection": "Northwestern ML • -144 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858530",
+      "source": "ESPN_PUBLIC:401858530:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7916eba72c9681c445ede9a1",
+      "league": "NCAA_Football",
+      "selection": "Syracuse ML • -160",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858309",
+      "source": "ESPN_PUBLIC:401858309:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-7d5e1025ebcc6821136c5871",
+      "league": "NCAA_Football",
+      "selection": "Syracuse ML • -160 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858309",
+      "source": "ESPN_PUBLIC:401858309:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-88695bd5d4098c7c3654683e",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Tech ML • +525 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856750",
+      "source": "ESPN_PUBLIC:401856750:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-b16fbae322a546cb2d14a494",
+      "league": "NCAA_Football",
+      "selection": "Delaware ML • -194 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401871077",
+      "source": "ESPN_PUBLIC:401871077:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-bb9a16d9a3663db503e62c13",
+      "league": "NCAA_Football",
+      "selection": "Jacksonville St. ML • -525 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401871079",
+      "source": "ESPN_PUBLIC:401871079:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-bc911ae5032dee21f480a9ec",
+      "league": "NHL",
+      "selection": "Carolina ML • -186 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401892754",
+      "source": "ESPN_PUBLIC:401892754:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-e6eb6a27ced2edab2c1119f0",
+      "league": "NCAA_Football",
+      "selection": "Wake Forest ML",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401858310",
+      "source": "ESPN_PUBLIC:401858310:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-ef3fa33a5b865d462262e859",
+      "league": "NCAA_Football",
+      "selection": "Northwestern ML • -144",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858530",
+      "source": "ESPN_PUBLIC:401858530:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-204854a7661b8a8755db4aea",
+      "league": "NCAA_Football",
+      "selection": "Ole Miss ML • -99900 PROPLINE:Polymarket",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401856749",
+      "source": "ESPN_PUBLIC:401856749:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-0db64036e12da6c82deb4baf",
+      "league": "NCAA_Football",
+      "selection": "Northwestern ML • -144 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858530",
+      "source": "ESPN_PUBLIC:401858530:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-24f57eaa559a8f4b7db65dbc",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Tech ML • +376 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856750",
+      "source": "ESPN_PUBLIC:401856750:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-68052447a4007b51e5294123",
+      "league": "NCAA_Football",
+      "selection": "Syracuse ML • -160 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858309",
+      "source": "ESPN_PUBLIC:401858309:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-745b68fb59654f81ece26752",
+      "league": "NCAA_Football",
+      "selection": "Northwestern ML • -144",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858530",
+      "source": "ESPN_PUBLIC:401858530:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-76be96cc6098e7ff9207e1ab",
+      "league": "NCAA_Football",
+      "selection": "Delaware ML • -203 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401871077",
+      "source": "ESPN_PUBLIC:401871077:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-9c7b8364a51fb5db552a58ba",
+      "league": "NCAA_Football",
+      "selection": "Ohio State ML • -203 PROPLINE:Polymarket",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858531",
+      "source": "ESPN_PUBLIC:401858531:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-b3db8cc8729578ec1cacf613",
+      "league": "NCAA_Football",
+      "selection": "Syracuse ML • -160",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858309",
+      "source": "ESPN_PUBLIC:401858309:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-609e1e5f7e39a6948e46c3d4",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Tech ML • +376",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856750",
+      "source": "ESPN_PUBLIC:401856750:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-8dd5e60497f3d953b190343b",
+      "league": "NCAA_Football",
+      "selection": "Delaware ML • -203 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401871077",
+      "source": "ESPN_PUBLIC:401871077:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-9e1c80d9c75fd8e1200a046b",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Tech ML • +376 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856750",
+      "source": "ESPN_PUBLIC:401856750:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-1f2dbee0e40fba76e9dfb382",
+      "league": "NCAA_Football",
+      "selection": "Florida International ML • -156 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401871078",
+      "source": "ESPN_PUBLIC:401871078:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-8a542f15cebbd45c91116ce4",
+      "league": "NCAA_Football",
+      "selection": "Florida International ML • -156",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401871078",
+      "source": "ESPN_PUBLIC:401871078:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-12230c6fa17b1c967e41221f",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Tech ML • +376",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856750",
+      "source": "ESPN_PUBLIC:401856750:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-2bf59e3b7f4b3be56da2420d",
+      "league": "NCAA_Football",
+      "selection": "Jacksonville St. ML • -525 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401871079",
+      "source": "ESPN_PUBLIC:401871079:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-756e90e8bba239ada90321a6",
+      "league": "NCAA_Football",
+      "selection": "Syracuse ML • -160",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858309",
+      "source": "ESPN_PUBLIC:401858309:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-90d8eb141c51f0c78d4a4e8d",
+      "league": "NCAA_Football",
+      "selection": "Syracuse ML • -160 PROPLINE:Polymarket US",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401858309",
+      "source": "ESPN_PUBLIC:401858309:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-d580590ece2e5821393a8278",
+      "league": "NCAA_Football",
+      "selection": "Delaware ML • -203 PROPLINE:Kalshi",
+      "actual_result": "1",
+      "grade": "WIN",
+      "provider_event_id": "401871077",
+      "source": "ESPN_PUBLIC:401871077:FINAL_SCORE_ML"
+    },
+    {
+      "prediction_id": "SUG-e47f3bc69345d6089884b5aa",
+      "league": "NCAA_Football",
+      "selection": "Tennessee Tech ML • +376 PROPLINE:Kalshi",
+      "actual_result": "0",
+      "grade": "LOSS",
+      "provider_event_id": "401856750",
+      "source": "ESPN_PUBLIC:401856750:FINAL_SCORE_ML"
     }
   ],
   "unresolved": [
