@@ -1,16 +1,17 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-11-21T11:36:44.813628+00:00",
+  "checked_at_utc": "2026-11-22T07:20:44.065313+00:00",
   "status": "OK",
-  "raw_market_count": 3938,
-  "normalized_props": 242,
-  "history_rows_added": 241,
+  "raw_market_count": 3866,
+  "normalized_props": 247,
+  "history_rows_added": 247,
   "skip_reasons": {
     "ambiguous_matchup": 29,
-    "ambiguous_participant_threshold": 399,
-    "ok": 242,
-    "unknown_sport": 3076,
-    "unsupported_market": 192
+    "ambiguous_participant_threshold": 344,
+    "no_current_yes_price": 7,
+    "ok": 247,
+    "unknown_sport": 3083,
+    "unsupported_market": 156
   },
   "skip_samples": {
     "unknown_sport": {
@@ -64,58 +65,71 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
+    },
+    "no_current_yes_price": {
+      "ticker": "KXNFLPASSYDSPROT-26NOV22TBDET-TBJDANIELS10-125",
+      "event_ticker": "KXNFLPASSYDSPROT-26NOV22TBDET",
+      "series_ticker": "KXNFLPASSYDSPROT",
+      "event_title": "Tampa Bay vs Detroit: Passing Yards",
+      "title": "Jalon Daniels: 125+ passing yards (Protected)",
+      "subtitle": null,
+      "yes_sub_title": "Jalon Daniels: 125+",
+      "primary_participant_key": "football_player",
+      "floor_strike": 124.5,
+      "functional_strike": null,
+      "occurrence_datetime": "2026-11-22T21:00:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBHIT",
+      "KXMLBWALKOFFS",
       "KXUFCWHITEHOUSE",
-      "KXNBAPTSLEADER",
-      "KXNCAAFOCCUR",
-      "KXNFLBOTH",
+      "KXNBARACE",
+      "KXNCAAFTOTALFG",
+      "KXNFLPASSYDSPROT",
       "KXNHLPTS",
       "KXWTAACES",
-      "KXWNBAPTS",
-      "KXMLBHRR",
-      "KXUFCOCCUR",
-      "KXNBARACE",
-      "KXNCAAFTEAMRECYDS",
-      "KXNFLPASSCOMP",
-      "KXNHLSAVES",
-      "KXATPACES",
-      "KXWNBAAST",
-      "KXMLBHRDERBYDISTANCE",
-      "KXNBASERIESREBLEADER",
-      "KXNCAAFTEAMTO",
-      "KXNFLFIRSTTDTEAM",
-      "KXNHLFIRSTGOAL",
-      "KXWNBA3PTCONTESTOU",
-      "KXMLBHRDERBYTOT",
-      "KXNBAH2HTEAM3PT",
-      "KXNCAAFTEAMRSHATT",
-      "KXNFLPASSTDS",
-      "KXNHLSERIESTOTALGOAL",
       "KXWNBA3PTROUND",
-      "KXMLBHRDERBYMATCHUP",
+      "KXMLBRBI",
+      "KXUFCOCCUR",
       "KXNBAH2H3PT",
-      "KXNCAAFTOTALFG",
-      "KXNFLRSHYDSH2H",
-      "KXNHLSEASONGOALS",
+      "KXNCAAFTOTAL",
+      "KXNFLBOTH",
+      "KXNHLGAMELOCATION",
+      "KXATPACES",
       "KXWNBA3PTCONTEST",
-      "KXMLBHRDERBYSEMI",
-      "KXNBAAST",
-      "KXNCAAFGO",
-      "KXNFL2PTCONV",
-      "KXNHLSAVE",
-      "KXWNBAH2HPTS",
       "KXMLBKS",
       "KXNBAESCALATORPTS",
-      "KXNCAAFTOTAL",
-      "KXNFLRECYDS",
-      "KXNHLGAMELOCATION",
+      "KXNCAAFTEAMREC",
+      "KXNFL1HTOTAL",
+      "KXNHLSAVE",
+      "KXWNBA3PTCONTESTOU",
+      "KXMLBSEASONHR",
+      "KXNBASERIESASTLEADER",
+      "KXNCAAF1HTEAMTOTAL",
+      "KXNFLTEAMTO",
+      "KXNHLPLAYOFFGOALS",
+      "KXWNBAAST",
+      "KXMLBHRR",
+      "KXNBA3PTALLGAMES",
+      "KXNCAAFFIRSTTDTEAM",
+      "KXNFLPASSATT",
+      "KXNHLF10G",
       "KXWNBA3PT",
-      "KXMLBHRDERBYVELO"
+      "KXMLBHRDERBYSEMI",
+      "KXNBA3PTPROT",
+      "KXNCAAFTEAMFG",
+      "KXNFLSEASONRUSHYDS",
+      "KXNHLSEASONGOALS",
+      "KXWNBAH2HPTS",
+      "KXMLBHIT",
+      "KXNBAASTPROT",
+      "KXNCAAFTEAMRECYDS",
+      "KXNFLRSHYDSPRECISE",
+      "KXNHLPSEASONPOINTS",
+      "KXWNBAREB",
+      "KXMLBHR"
     ],
     "by_league": {
       "Boxing": 1,
@@ -167,31 +181,13 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHRDERBYDISTANCE": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYMATCHUP": {
+    "KXMLBHR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXMLBHRDERBYSEMI": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYTOT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYVELO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -209,7 +205,37 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAAST": {
+    "KXMLBRBI": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBSEASONHR": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBWALKOFFS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBA3PTALLGAMES": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBA3PTPROT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNBAASTPROT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -227,111 +253,83 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAH2HTEAM3PT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNBAPTSLEADER": {
-      "raw": 59,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 59
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNBAPTSLEADER-26NOV21MILPHI-PHIVEDGECOMBE77",
-          "event_ticker": "KXNBAPTSLEADER-26NOV21MILPHI",
-          "event_title": "Milwaukee vs Philadelphia: Points Leader",
-          "title": "VJ Edgecombe: Points leader",
-          "subtitle": null,
-          "yes_sub_title": "VJ Edgecombe",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-21T21:00:00Z"
-        }
-      }
-    },
     "KXNBARACE": {
-      "raw": 78,
+      "raw": 102,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 78
+        "ambiguous_participant_threshold": 102
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNBARACE-26NOV21MILPHI-10-MIL",
-          "event_ticker": "KXNBARACE-26NOV21MILPHI-10",
-          "event_title": "Milwaukee vs Philadelphia: Race to 10 Points",
-          "title": "Milwaukee reaches 10 points first",
+          "ticker": "KXNBARACE-26NOV22DETATL-10-DET",
+          "event_ticker": "KXNBARACE-26NOV22DETATL-10",
+          "event_title": "Detroit vs Atlanta: Race to 10 Points",
+          "title": "Detroit reaches 10 points first",
           "subtitle": null,
-          "yes_sub_title": "Milwaukee",
+          "yes_sub_title": "Detroit",
           "primary_participant_key": null,
           "floor_strike": null,
           "functional_strike": null,
-          "occurrence_datetime": "2026-11-21T21:00:00Z"
+          "occurrence_datetime": "2026-11-22T23:30:00Z"
         }
       }
     },
-    "KXNBASERIESREBLEADER": {
+    "KXNBASERIESASTLEADER": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFGO": {
+    "KXNCAAF1HTEAMTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFOCCUR": {
+    "KXNCAAFFIRSTTDTEAM": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAFTEAMFG": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAFTEAMREC": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNCAAFTEAMRECYDS": {
-      "raw": 84,
-      "normalized": 21,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 63,
-        "ok": 21
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNCAAFTEAMRECYDS-26NOV21LSUTENN-TENN100",
-          "event_ticker": "KXNCAAFTEAMRECYDS-26NOV21LSUTENN",
-          "event_title": "LSU vs Tennessee: Team Receiving Yards",
-          "title": "Tennessee: 100+ receiving yards",
-          "subtitle": null,
-          "yes_sub_title": "Tennessee: 100+",
-          "primary_participant_key": null,
-          "floor_strike": 99.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-21T23:30:00Z"
-        }
-      }
-    },
-    "KXNCAAFTEAMRSHATT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAFTEAMTO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNCAAFTOTAL": {
-      "raw": 0,
+      "raw": 190,
       "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 190
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNCAAFTOTAL-26NOV21OKSTASU-46",
+          "event_ticker": "KXNCAAFTOTAL-26NOV21OKSTASU",
+          "event_title": "Oklahoma St. vs Arizona St.: Total Points",
+          "title": "Full Game: Over 45.5 points scored",
+          "subtitle": null,
+          "yes_sub_title": "Over 45.5 points",
+          "primary_participant_key": null,
+          "floor_strike": 45.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-22T06:15:00Z"
+        }
+      }
     },
     "KXNCAAFTOTALFG": {
       "raw": 0,
@@ -339,7 +337,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFL2PTCONV": {
+    "KXNFL1HTOTAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -366,73 +364,57 @@
         }
       }
     },
-    "KXNFLFIRSTTDTEAM": {
-      "raw": 36,
+    "KXNFLPASSATT": {
+      "raw": 0,
       "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLPASSYDSPROT": {
+      "raw": 218,
+      "normalized": 211,
       "skip_reasons": {
-        "unsupported_market": 36
+        "no_current_yes_price": 7,
+        "ok": 211
       },
       "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXNFLFIRSTTDTEAM-26NOV22ARIKC-KC",
-          "event_ticker": "KXNFLFIRSTTDTEAM-26NOV22ARIKC",
-          "event_title": "Arizona vs Kansas City: First Team to Score a TD",
-          "title": "Kansas City scores first TD",
+        "no_current_yes_price": {
+          "ticker": "KXNFLPASSYDSPROT-26NOV22TBDET-TBJDANIELS10-125",
+          "event_ticker": "KXNFLPASSYDSPROT-26NOV22TBDET",
+          "event_title": "Tampa Bay vs Detroit: Passing Yards",
+          "title": "Jalon Daniels: 125+ passing yards (Protected)",
           "subtitle": null,
-          "yes_sub_title": "Kansas City",
-          "primary_participant_key": null,
-          "floor_strike": null,
+          "yes_sub_title": "Jalon Daniels: 125+",
+          "primary_participant_key": "football_player",
+          "floor_strike": 124.5,
           "functional_strike": null,
           "occurrence_datetime": "2026-11-22T21:00:00Z"
         }
       }
     },
-    "KXNFLPASSCOMP": {
-      "raw": 69,
-      "normalized": 69,
-      "skip_reasons": {
-        "ok": 69
-      },
-      "skip_samples": {}
-    },
-    "KXNFLPASSTDS": {
+    "KXNFLRSHYDSPRECISE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLRECYDS": {
+    "KXNFLSEASONRUSHYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLRSHYDSH2H": {
+    "KXNFLTEAMTO": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLFIRSTGOAL": {
-      "raw": 147,
+    "KXNHLF10G": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 147
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNHLFIRSTGOAL-26NOV21EDMCAR-EDMAFORMENTON26",
-          "event_ticker": "KXNHLFIRSTGOAL-26NOV21EDMCAR",
-          "event_title": "Edmonton vs Carolina: First Goalscorer",
-          "title": "Alex Formenton: First Goalscorer",
-          "subtitle": null,
-          "yes_sub_title": "Alex Formenton",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-21T21:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNHLGAMELOCATION": {
       "raw": 1,
@@ -455,11 +437,23 @@
         }
       }
     },
+    "KXNHLPLAYOFFGOALS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLPSEASONPOINTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXNHLPTS": {
-      "raw": 152,
-      "normalized": 152,
+      "raw": 36,
+      "normalized": 36,
       "skip_reasons": {
-        "ok": 152
+        "ok": 36
       },
       "skip_samples": {}
     },
@@ -469,19 +463,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNHLSAVES": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
     "KXNHLSEASONGOALS": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNHLSERIESTOTALGOAL": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -535,7 +517,7 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAPTS": {
+    "KXWNBAREB": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -549,9 +531,8 @@
     }
   },
   "leagues": {
-    "NCAA_Football": 21,
-    "NFL": 69,
-    "NHL": 152
+    "NFL": 211,
+    "NHL": 36
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
