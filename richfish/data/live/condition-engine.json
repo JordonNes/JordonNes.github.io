@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.2",
-  "generatedAt": "2026-11-24T22:32:11.984Z",
+  "generatedAt": "2026-11-24T23:22:52.076Z",
   "engine": {
     "name": "RICHFISH Condition Engine",
     "version": "0.2.2",
@@ -10,11 +10,11 @@
   },
   "sourceStatus": {
     "noaaAvailable": true,
-    "noaaGeneratedAt": "2026-11-24T22:31:18.286Z",
+    "noaaGeneratedAt": "2026-11-24T23:22:07.011Z",
     "usgsAvailable": true,
-    "usgsGeneratedAt": "2026-11-24T22:31:31.892Z",
+    "usgsGeneratedAt": "2026-11-24T23:22:19.708Z",
     "sfbofsAvailable": true,
-    "sfbofsGeneratedAt": "2026-11-24T22:32:01.991681+00:00",
+    "sfbofsGeneratedAt": "2026-11-24T23:22:43.588508+00:00",
     "sfbofsModelCycle": "2026-11-24T21:00:00+00:00",
     "sfbofsModelFreshness": "fresh",
     "sfbofsForecastHorizonStatus": "complete",
@@ -33,26 +33,26 @@
       "observations": {
         "noaaStationId": "9414863",
         "noaaStationName": "Richmond, CA",
-        "waterLevelFt": 3.802,
+        "waterLevelFt": 2.329,
         "waterTemperatureF": 60.1,
         "salinityPsu": null,
-        "windMph": 3.69,
-        "windDirection": "NW",
-        "windDegreesFrom": 313,
+        "windMph": 1.17,
+        "windDirection": "ESE",
+        "windDegreesFrom": 120,
         "tide": {
           "trend": "falling",
           "nextTurnType": "low",
           "nextTurnAt": "2026-11-24 17:44",
-          "minutesToTurn": 192,
-          "phaseFraction": 0.565
+          "minutesToTurn": 142,
+          "phaseFraction": 0.678
         },
         "freshwater": {
           "stationId": "USGS-11447650",
-          "value": 9560,
+          "value": 7290,
           "unit": "ft^3/s",
-          "observedAt": "2026-11-24T21:15:00+00:00",
+          "observedAt": "2026-11-24T22:15:00+00:00",
           "freshnessStatus": "fresh",
-          "ageMinutes": 77,
+          "ageMinutes": 67,
           "baseline31dMean": null,
           "ratioTo31dMean": null,
           "approvalStatus": "Provisional",
@@ -110,9 +110,9 @@
           "modelCycle": "2026-11-24T21:00:00+00:00",
           "modelFreshness": "fresh",
           "trend": {
-            "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-            "deltaKnots": -0.054,
-            "direction": "steady"
+            "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+            "deltaKnots": -0.551,
+            "direction": "weakening"
           },
           "forecastSeries": [
             {
@@ -238,13 +238,13 @@
           "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
         },
         "windCurrentInteraction": {
-          "difficultyIndex": 5.1,
+          "difficultyIndex": 0.3,
           "category": "low",
-          "windDegreesFrom": 313,
-          "windTowardDegreesTrue": 133,
+          "windDegreesFrom": 120,
+          "windTowardDegreesTrue": 300,
           "currentTowardDegreesTrue": 318,
-          "angularDifferenceDegrees": 175,
-          "relationship": "opposing"
+          "angularDifferenceDegrees": 18,
+          "relationship": "following"
         }
       },
       "operational": {
@@ -264,41 +264,41 @@
           "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
         },
         "windCurrentInteraction": {
-          "difficultyIndex": 5.1,
+          "difficultyIndex": 0.3,
           "category": "low",
-          "windDegreesFrom": 313,
-          "windTowardDegreesTrue": 133,
+          "windDegreesFrom": 120,
+          "windTowardDegreesTrue": 300,
           "currentTowardDegreesTrue": 318,
-          "angularDifferenceDegrees": 175,
-          "relationship": "opposing"
+          "angularDifferenceDegrees": 18,
+          "relationship": "following"
         },
         "currentTrend": {
-          "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-          "deltaKnots": -0.054,
-          "direction": "steady"
+          "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+          "deltaKnots": -0.551,
+          "direction": "weakening"
         }
       },
       "species": {
         "striped-bass": {
           "siteFit": 82,
-          "conditionFit": 94.2,
+          "conditionFit": 91.1,
           "dataConfidence": 84.5,
-          "recommendationScore": 81.7,
+          "recommendationScore": 80.5,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 97.9,
+              "score": 84.8,
               "weight": 0.2,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 17:44",
-                "minutesToTurn": 192,
-                "phaseFraction": 0.565
+                "minutesToTurn": 142,
+                "phaseFraction": 0.678
               }
             },
             {
@@ -319,7 +319,7 @@
             },
             {
               "id": "wind",
-              "value": 3.69,
+              "value": 1.17,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -333,11 +333,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -360,9 +360,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": -0.054,
-                  "direction": "steady"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": -0.551,
+                  "direction": "weakening"
                 },
                 "currentStrength": {
                   "index": 27,
@@ -380,13 +380,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 5.1,
+                  "difficultyIndex": 0.3,
                   "category": "low",
-                  "windDegreesFrom": 313,
-                  "windTowardDegreesTrue": 133,
+                  "windDegreesFrom": 120,
+                  "windTowardDegreesTrue": 300,
                   "currentTowardDegreesTrue": 318,
-                  "angularDifferenceDegrees": 175,
-                  "relationship": "opposing"
+                  "angularDifferenceDegrees": 18,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.2791304886341095,
@@ -416,7 +416,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 0.811,
               "towardDegreesTrue": 318,
               "towardCardinal": "NW",
@@ -426,7 +426,7 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.757,
               "towardDegreesTrue": 318,
               "towardCardinal": "NW",
@@ -435,12 +435,12 @@
               "shearCategory": "very-high"
             },
             {
-              "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
-              "speedKnots": 0.26,
-              "towardDegreesTrue": 138,
-              "towardCardinal": "SE",
-              "currentFit": 31.4,
+              "validTime": "2026-11-25T23:00:00+00:00",
+              "hoursAhead": 23.6,
+              "speedKnots": 0.716,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
               "shearIndex": 100,
               "shearCategory": "very-high"
             }
@@ -452,24 +452,24 @@
         },
         "california-halibut": {
           "siteFit": 69,
-          "conditionFit": 89.9,
+          "conditionFit": 93.9,
           "dataConfidence": 77.5,
-          "recommendationScore": 72,
+          "recommendationScore": 73.4,
           "availableFactorWeight": 0.75,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 49.4,
+              "score": 69.6,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 17:44",
-                "minutesToTurn": 192,
-                "phaseFraction": 0.565
+                "minutesToTurn": 142,
+                "phaseFraction": 0.678
               }
             },
             {
@@ -490,7 +490,7 @@
             },
             {
               "id": "wind",
-              "value": 3.69,
+              "value": 1.17,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -504,11 +504,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -531,9 +531,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": -0.054,
-                  "direction": "steady"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": -0.551,
+                  "direction": "weakening"
                 },
                 "currentStrength": {
                   "index": 27,
@@ -551,13 +551,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 5.1,
+                  "difficultyIndex": 0.3,
                   "category": "low",
-                  "windDegreesFrom": 313,
-                  "windTowardDegreesTrue": 133,
+                  "windDegreesFrom": 120,
+                  "windTowardDegreesTrue": 300,
                   "currentTowardDegreesTrue": 318,
-                  "angularDifferenceDegrees": 175,
-                  "relationship": "opposing"
+                  "angularDifferenceDegrees": 18,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.2791304886341095,
@@ -587,7 +587,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 0.811,
               "towardDegreesTrue": 318,
               "towardCardinal": "NW",
@@ -597,7 +597,7 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.757,
               "towardDegreesTrue": 318,
               "towardCardinal": "NW",
@@ -607,7 +607,7 @@
             },
             {
               "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
+              "hoursAhead": 5.6,
               "speedKnots": 0.26,
               "towardDegreesTrue": 138,
               "towardCardinal": "SE",
@@ -623,24 +623,24 @@
         },
         "starry-flounder": {
           "siteFit": 64,
-          "conditionFit": 80.4,
+          "conditionFit": 83,
           "dataConfidence": 77.5,
-          "recommendationScore": 66.6,
+          "recommendationScore": 67.5,
           "availableFactorWeight": 0.75,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 2.1,
+              "score": 15.2,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 17:44",
-                "minutesToTurn": 192,
-                "phaseFraction": 0.565
+                "minutesToTurn": 142,
+                "phaseFraction": 0.678
               }
             },
             {
@@ -661,7 +661,7 @@
             },
             {
               "id": "wind",
-              "value": 3.69,
+              "value": 1.17,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -675,11 +675,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -702,9 +702,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": -0.054,
-                  "direction": "steady"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": -0.551,
+                  "direction": "weakening"
                 },
                 "currentStrength": {
                   "index": 27,
@@ -722,13 +722,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 5.1,
+                  "difficultyIndex": 0.3,
                   "category": "low",
-                  "windDegreesFrom": 313,
-                  "windTowardDegreesTrue": 133,
+                  "windDegreesFrom": 120,
+                  "windTowardDegreesTrue": 300,
                   "currentTowardDegreesTrue": 318,
-                  "angularDifferenceDegrees": 175,
-                  "relationship": "opposing"
+                  "angularDifferenceDegrees": 18,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.2791304886341095,
@@ -758,7 +758,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 0.811,
               "towardDegreesTrue": 318,
               "towardCardinal": "NW",
@@ -768,7 +768,7 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.757,
               "towardDegreesTrue": 318,
               "towardCardinal": "NW",
@@ -778,7 +778,7 @@
             },
             {
               "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
+              "hoursAhead": 5.6,
               "speedKnots": 0.26,
               "towardDegreesTrue": 138,
               "towardCardinal": "SE",
@@ -794,24 +794,24 @@
         },
         "white-sturgeon": {
           "siteFit": 48,
-          "conditionFit": 94.1,
+          "conditionFit": 90.2,
           "dataConfidence": 84.5,
-          "recommendationScore": 65.8,
+          "recommendationScore": 64.4,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 97.9,
+              "score": 84.8,
               "weight": 0.25,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 17:44",
-                "minutesToTurn": 192,
-                "phaseFraction": 0.565
+                "minutesToTurn": 142,
+                "phaseFraction": 0.678
               }
             },
             {
@@ -832,7 +832,7 @@
             },
             {
               "id": "wind",
-              "value": 3.69,
+              "value": 1.17,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -846,11 +846,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -873,9 +873,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": -0.054,
-                  "direction": "steady"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": -0.551,
+                  "direction": "weakening"
                 },
                 "currentStrength": {
                   "index": 27,
@@ -893,13 +893,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 5.1,
+                  "difficultyIndex": 0.3,
                   "category": "low",
-                  "windDegreesFrom": 313,
-                  "windTowardDegreesTrue": 133,
+                  "windDegreesFrom": 120,
+                  "windTowardDegreesTrue": 300,
                   "currentTowardDegreesTrue": 318,
-                  "angularDifferenceDegrees": 175,
-                  "relationship": "opposing"
+                  "angularDifferenceDegrees": 18,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.2791304886341095,
@@ -929,7 +929,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 0.811,
               "towardDegreesTrue": 318,
               "towardCardinal": "NW",
@@ -939,7 +939,7 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.757,
               "towardDegreesTrue": 318,
               "towardCardinal": "NW",
@@ -948,12 +948,12 @@
               "shearCategory": "very-high"
             },
             {
-              "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
-              "speedKnots": 0.26,
-              "towardDegreesTrue": 138,
-              "towardCardinal": "SE",
-              "currentFit": 84,
+              "validTime": "2026-11-25T23:00:00+00:00",
+              "hoursAhead": 23.6,
+              "speedKnots": 0.716,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "currentFit": 100,
               "shearIndex": 100,
               "shearCategory": "very-high"
             }
@@ -977,26 +977,26 @@
       "observations": {
         "noaaStationId": "9415102",
         "noaaStationName": "Martinez-Amorco Pier, CA",
-        "waterLevelFt": 5.584,
+        "waterLevelFt": 4.488,
         "waterTemperatureF": null,
         "salinityPsu": null,
-        "windMph": 5.64,
-        "windDirection": "NE",
-        "windDegreesFrom": 40,
+        "windMph": 2.33,
+        "windDirection": "ENE",
+        "windDegreesFrom": 61,
         "tide": {
           "trend": "falling",
           "nextTurnType": "low",
           "nextTurnAt": "2026-11-24 19:50",
-          "minutesToTurn": 318,
-          "phaseFraction": 0.336
+          "minutesToTurn": 268,
+          "phaseFraction": 0.441
         },
         "freshwater": {
           "stationId": "USGS-11447650",
-          "value": 9560,
+          "value": 7290,
           "unit": "ft^3/s",
-          "observedAt": "2026-11-24T21:15:00+00:00",
+          "observedAt": "2026-11-24T22:15:00+00:00",
           "freshnessStatus": "fresh",
-          "ageMinutes": 77,
+          "ageMinutes": 67,
           "baseline31dMean": null,
           "ratioTo31dMean": null,
           "approvalStatus": "Provisional",
@@ -1054,9 +1054,9 @@
           "modelCycle": "2026-11-24T21:00:00+00:00",
           "modelFreshness": "fresh",
           "trend": {
-            "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-            "deltaKnots": 0.249,
-            "direction": "strengthening"
+            "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+            "deltaKnots": -0.103,
+            "direction": "weakening"
           },
           "forecastSeries": [
             {
@@ -1182,13 +1182,13 @@
           "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
         },
         "windCurrentInteraction": {
-          "difficultyIndex": 3.9,
+          "difficultyIndex": 1,
           "category": "low",
-          "windDegreesFrom": 40,
-          "windTowardDegreesTrue": 220,
+          "windDegreesFrom": 61,
+          "windTowardDegreesTrue": 241,
           "currentTowardDegreesTrue": 276.7,
-          "angularDifferenceDegrees": 56.7,
-          "relationship": "crossing"
+          "angularDifferenceDegrees": 35.7,
+          "relationship": "following"
         }
       },
       "operational": {
@@ -1208,41 +1208,41 @@
           "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
         },
         "windCurrentInteraction": {
-          "difficultyIndex": 3.9,
+          "difficultyIndex": 1,
           "category": "low",
-          "windDegreesFrom": 40,
-          "windTowardDegreesTrue": 220,
+          "windDegreesFrom": 61,
+          "windTowardDegreesTrue": 241,
           "currentTowardDegreesTrue": 276.7,
-          "angularDifferenceDegrees": 56.7,
-          "relationship": "crossing"
+          "angularDifferenceDegrees": 35.7,
+          "relationship": "following"
         },
         "currentTrend": {
-          "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-          "deltaKnots": 0.249,
-          "direction": "strengthening"
+          "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+          "deltaKnots": -0.103,
+          "direction": "weakening"
         }
       },
       "species": {
         "striped-bass": {
           "siteFit": 85,
-          "conditionFit": 89.1,
+          "conditionFit": 92.6,
           "dataConfidence": 70.5,
-          "recommendationScore": 76,
+          "recommendationScore": 77.1,
           "availableFactorWeight": 0.65,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 87,
+              "score": 98.3,
               "weight": 0.2,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 19:50",
-                "minutesToTurn": 318,
-                "phaseFraction": 0.336
+                "minutesToTurn": 268,
+                "phaseFraction": 0.441
               }
             },
             {
@@ -1263,7 +1263,7 @@
             },
             {
               "id": "wind",
-              "value": 5.64,
+              "value": 2.33,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -1277,11 +1277,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -1304,9 +1304,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": 0.249,
-                  "direction": "strengthening"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": -0.103,
+                  "direction": "weakening"
                 },
                 "currentStrength": {
                   "index": 20.8,
@@ -1324,13 +1324,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 3.9,
+                  "difficultyIndex": 1,
                   "category": "low",
-                  "windDegreesFrom": 40,
-                  "windTowardDegreesTrue": 220,
+                  "windDegreesFrom": 61,
+                  "windTowardDegreesTrue": 241,
                   "currentTowardDegreesTrue": 276.7,
-                  "angularDifferenceDegrees": 56.7,
-                  "relationship": "crossing"
+                  "angularDifferenceDegrees": 35.7,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.3187142610549927,
@@ -1360,7 +1360,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 0.624,
               "towardDegreesTrue": 276.7,
               "towardCardinal": "W",
@@ -1370,7 +1370,7 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.873,
               "towardDegreesTrue": 276.7,
               "towardCardinal": "W",
@@ -1380,7 +1380,7 @@
             },
             {
               "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
+              "hoursAhead": 5.6,
               "speedKnots": 0.521,
               "towardDegreesTrue": 276.7,
               "towardCardinal": "W",
@@ -1396,24 +1396,24 @@
         },
         "starry-flounder": {
           "siteFit": 70,
-          "conditionFit": 71,
+          "conditionFit": 67.2,
           "dataConfidence": 56.5,
-          "recommendationScore": 61.6,
+          "recommendationScore": 60.6,
           "availableFactorWeight": 0.45,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 13,
+              "score": 1.7,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 19:50",
-                "minutesToTurn": 318,
-                "phaseFraction": 0.336
+                "minutesToTurn": 268,
+                "phaseFraction": 0.441
               }
             },
             {
@@ -1434,7 +1434,7 @@
             },
             {
               "id": "wind",
-              "value": 5.64,
+              "value": 2.33,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -1448,11 +1448,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -1475,9 +1475,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": 0.249,
-                  "direction": "strengthening"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": -0.103,
+                  "direction": "weakening"
                 },
                 "currentStrength": {
                   "index": 20.8,
@@ -1495,13 +1495,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 3.9,
+                  "difficultyIndex": 1,
                   "category": "low",
-                  "windDegreesFrom": 40,
-                  "windTowardDegreesTrue": 220,
+                  "windDegreesFrom": 61,
+                  "windTowardDegreesTrue": 241,
                   "currentTowardDegreesTrue": 276.7,
-                  "angularDifferenceDegrees": 56.7,
-                  "relationship": "crossing"
+                  "angularDifferenceDegrees": 35.7,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.3187142610549927,
@@ -1530,8 +1530,18 @@
           ],
           "bestCurrentWindows": [
             {
+              "validTime": "2026-11-25T23:00:00+00:00",
+              "hoursAhead": 23.6,
+              "speedKnots": 0.419,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "currentFit": 100,
+              "shearIndex": 76,
+              "shearCategory": "very-high"
+            },
+            {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 0.624,
               "towardDegreesTrue": 276.7,
               "towardCardinal": "W",
@@ -1541,18 +1551,8 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.873,
-              "towardDegreesTrue": 276.7,
-              "towardCardinal": "W",
-              "currentFit": 100,
-              "shearIndex": 73,
-              "shearCategory": "high"
-            },
-            {
-              "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
-              "speedKnots": 0.521,
               "towardDegreesTrue": 276.7,
               "towardCardinal": "W",
               "currentFit": 100,
@@ -1567,24 +1567,24 @@
         },
         "white-sturgeon": {
           "siteFit": 55,
-          "conditionFit": 88.9,
+          "conditionFit": 93,
           "dataConfidence": 74,
-          "recommendationScore": 65,
+          "recommendationScore": 66.3,
           "availableFactorWeight": 0.7,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 87,
+              "score": 98.3,
               "weight": 0.25,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 19:50",
-                "minutesToTurn": 318,
-                "phaseFraction": 0.336
+                "minutesToTurn": 268,
+                "phaseFraction": 0.441
               }
             },
             {
@@ -1605,7 +1605,7 @@
             },
             {
               "id": "wind",
-              "value": 5.64,
+              "value": 2.33,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -1619,11 +1619,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -1646,9 +1646,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": 0.249,
-                  "direction": "strengthening"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": -0.103,
+                  "direction": "weakening"
                 },
                 "currentStrength": {
                   "index": 20.8,
@@ -1666,13 +1666,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 3.9,
+                  "difficultyIndex": 1,
                   "category": "low",
-                  "windDegreesFrom": 40,
-                  "windTowardDegreesTrue": 220,
+                  "windDegreesFrom": 61,
+                  "windTowardDegreesTrue": 241,
                   "currentTowardDegreesTrue": 276.7,
-                  "angularDifferenceDegrees": 56.7,
-                  "relationship": "crossing"
+                  "angularDifferenceDegrees": 35.7,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.3187142610549927,
@@ -1701,8 +1701,18 @@
           ],
           "bestCurrentWindows": [
             {
+              "validTime": "2026-11-25T23:00:00+00:00",
+              "hoursAhead": 23.6,
+              "speedKnots": 0.419,
+              "towardDegreesTrue": 276.7,
+              "towardCardinal": "W",
+              "currentFit": 100,
+              "shearIndex": 76,
+              "shearCategory": "very-high"
+            },
+            {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 0.624,
               "towardDegreesTrue": 276.7,
               "towardCardinal": "W",
@@ -1712,18 +1722,8 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.873,
-              "towardDegreesTrue": 276.7,
-              "towardCardinal": "W",
-              "currentFit": 100,
-              "shearIndex": 73,
-              "shearCategory": "high"
-            },
-            {
-              "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
-              "speedKnots": 0.521,
               "towardDegreesTrue": 276.7,
               "towardCardinal": "W",
               "currentFit": 100,
@@ -1750,26 +1750,26 @@
       "observations": {
         "noaaStationId": "9414863",
         "noaaStationName": "Richmond, CA",
-        "waterLevelFt": 3.802,
+        "waterLevelFt": 2.329,
         "waterTemperatureF": 60.1,
         "salinityPsu": null,
-        "windMph": 3.69,
-        "windDirection": "NW",
-        "windDegreesFrom": 313,
+        "windMph": 1.17,
+        "windDirection": "ESE",
+        "windDegreesFrom": 120,
         "tide": {
           "trend": "falling",
           "nextTurnType": "low",
           "nextTurnAt": "2026-11-24 17:44",
-          "minutesToTurn": 192,
-          "phaseFraction": 0.565
+          "minutesToTurn": 142,
+          "phaseFraction": 0.678
         },
         "freshwater": {
           "stationId": "USGS-11447650",
-          "value": 9560,
+          "value": 7290,
           "unit": "ft^3/s",
-          "observedAt": "2026-11-24T21:15:00+00:00",
+          "observedAt": "2026-11-24T22:15:00+00:00",
           "freshnessStatus": "fresh",
-          "ageMinutes": 77,
+          "ageMinutes": 67,
           "baseline31dMean": null,
           "ratioTo31dMean": null,
           "approvalStatus": "Provisional",
@@ -1827,9 +1827,9 @@
           "modelCycle": "2026-11-24T21:00:00+00:00",
           "modelFreshness": "fresh",
           "trend": {
-            "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-            "deltaKnots": 0.065,
-            "direction": "steady"
+            "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+            "deltaKnots": 0.092,
+            "direction": "strengthening"
           },
           "forecastSeries": [
             {
@@ -1955,13 +1955,13 @@
           "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
         },
         "windCurrentInteraction": {
-          "difficultyIndex": 0.1,
+          "difficultyIndex": 0,
           "category": "low",
-          "windDegreesFrom": 313,
-          "windTowardDegreesTrue": 133,
+          "windDegreesFrom": 120,
+          "windTowardDegreesTrue": 300,
           "currentTowardDegreesTrue": 334.9,
-          "angularDifferenceDegrees": 158.1,
-          "relationship": "opposing"
+          "angularDifferenceDegrees": 34.9,
+          "relationship": "following"
         }
       },
       "operational": {
@@ -1981,41 +1981,41 @@
           "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
         },
         "windCurrentInteraction": {
-          "difficultyIndex": 0.1,
+          "difficultyIndex": 0,
           "category": "low",
-          "windDegreesFrom": 313,
-          "windTowardDegreesTrue": 133,
+          "windDegreesFrom": 120,
+          "windTowardDegreesTrue": 300,
           "currentTowardDegreesTrue": 334.9,
-          "angularDifferenceDegrees": 158.1,
-          "relationship": "opposing"
+          "angularDifferenceDegrees": 34.9,
+          "relationship": "following"
         },
         "currentTrend": {
-          "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-          "deltaKnots": 0.065,
-          "direction": "steady"
+          "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+          "deltaKnots": 0.092,
+          "direction": "strengthening"
         }
       },
       "species": {
         "striped-bass": {
           "siteFit": 75,
-          "conditionFit": 70.7,
+          "conditionFit": 67.6,
           "dataConfidence": 84.5,
-          "recommendationScore": 69.5,
+          "recommendationScore": 68.3,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 97.9,
+              "score": 84.8,
               "weight": 0.2,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 17:44",
-                "minutesToTurn": 192,
-                "phaseFraction": 0.565
+                "minutesToTurn": 142,
+                "phaseFraction": 0.678
               }
             },
             {
@@ -2036,7 +2036,7 @@
             },
             {
               "id": "wind",
-              "value": 3.69,
+              "value": 1.17,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -2050,11 +2050,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -2077,9 +2077,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": 0.065,
-                  "direction": "steady"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": 0.092,
+                  "direction": "strengthening"
                 },
                 "currentStrength": {
                   "index": 0.4,
@@ -2097,13 +2097,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 0.1,
+                  "difficultyIndex": 0,
                   "category": "low",
-                  "windDegreesFrom": 313,
-                  "windTowardDegreesTrue": 133,
+                  "windDegreesFrom": 120,
+                  "windTowardDegreesTrue": 300,
                   "currentTowardDegreesTrue": 334.9,
-                  "angularDifferenceDegrees": 158.1,
-                  "relationship": "opposing"
+                  "angularDifferenceDegrees": 34.9,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.002678878838196397,
@@ -2132,8 +2132,18 @@
           ],
           "bestCurrentWindows": [
             {
+              "validTime": "2026-11-25T23:00:00+00:00",
+              "hoursAhead": 23.6,
+              "speedKnots": 0.09,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "currentFit": 0,
+              "shearIndex": 78,
+              "shearCategory": "very-high"
+            },
+            {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 0.012,
               "towardDegreesTrue": 334.9,
               "towardCardinal": "NNW",
@@ -2143,23 +2153,13 @@
             },
             {
               "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
+              "hoursAhead": 5.6,
               "speedKnots": 0.104,
               "towardDegreesTrue": 334.9,
               "towardCardinal": "NNW",
               "currentFit": 0,
               "shearIndex": 55,
               "shearCategory": "high"
-            },
-            {
-              "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
-              "speedKnots": 0.077,
-              "towardDegreesTrue": 334.9,
-              "towardCardinal": "NNW",
-              "currentFit": 0,
-              "shearIndex": 47,
-              "shearCategory": "moderate"
             }
           ],
           "activeCaveats": [
@@ -2169,24 +2169,24 @@
         },
         "california-halibut": {
           "siteFit": 77,
-          "conditionFit": 63.2,
+          "conditionFit": 67.3,
           "dataConfidence": 77.5,
-          "recommendationScore": 66.1,
+          "recommendationScore": 67.5,
           "availableFactorWeight": 0.75,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 49.4,
+              "score": 69.6,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 17:44",
-                "minutesToTurn": 192,
-                "phaseFraction": 0.565
+                "minutesToTurn": 142,
+                "phaseFraction": 0.678
               }
             },
             {
@@ -2207,7 +2207,7 @@
             },
             {
               "id": "wind",
-              "value": 3.69,
+              "value": 1.17,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -2221,11 +2221,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -2248,9 +2248,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": 0.065,
-                  "direction": "steady"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": 0.092,
+                  "direction": "strengthening"
                 },
                 "currentStrength": {
                   "index": 0.4,
@@ -2268,13 +2268,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 0.1,
+                  "difficultyIndex": 0,
                   "category": "low",
-                  "windDegreesFrom": 313,
-                  "windTowardDegreesTrue": 133,
+                  "windDegreesFrom": 120,
+                  "windTowardDegreesTrue": 300,
                   "currentTowardDegreesTrue": 334.9,
-                  "angularDifferenceDegrees": 158.1,
-                  "relationship": "opposing"
+                  "angularDifferenceDegrees": 34.9,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.002678878838196397,
@@ -2304,7 +2304,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
+              "hoursAhead": 5.6,
               "speedKnots": 0.104,
               "towardDegreesTrue": 334.9,
               "towardCardinal": "NNW",
@@ -2313,24 +2313,24 @@
               "shearCategory": "high"
             },
             {
+              "validTime": "2026-11-25T23:00:00+00:00",
+              "hoursAhead": 23.6,
+              "speedKnots": 0.09,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "currentFit": 20,
+              "shearIndex": 78,
+              "shearCategory": "very-high"
+            },
+            {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.077,
               "towardDegreesTrue": 334.9,
               "towardCardinal": "NNW",
               "currentFit": 13.5,
               "shearIndex": 47,
               "shearCategory": "moderate"
-            },
-            {
-              "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
-              "speedKnots": 0.012,
-              "towardDegreesTrue": 334.9,
-              "towardCardinal": "NNW",
-              "currentFit": 0,
-              "shearIndex": 56,
-              "shearCategory": "high"
             }
           ],
           "activeCaveats": [
@@ -2340,24 +2340,24 @@
         },
         "starry-flounder": {
           "siteFit": 58,
-          "conditionFit": 62.8,
+          "conditionFit": 65.4,
           "dataConfidence": 77.5,
-          "recommendationScore": 57.9,
+          "recommendationScore": 58.8,
           "availableFactorWeight": 0.75,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 2.1,
+              "score": 15.2,
               "weight": 0.15,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 17:44",
-                "minutesToTurn": 192,
-                "phaseFraction": 0.565
+                "minutesToTurn": 142,
+                "phaseFraction": 0.678
               }
             },
             {
@@ -2378,7 +2378,7 @@
             },
             {
               "id": "wind",
-              "value": 3.69,
+              "value": 1.17,
               "score": 100,
               "weight": 0.15,
               "source": "NOAA CO-OPS observed wind",
@@ -2392,11 +2392,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11447650",
-                "value": 9560,
+                "value": 7290,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:15:00+00:00",
+                "observedAt": "2026-11-24T22:15:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 77,
+                "ageMinutes": 67,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -2419,9 +2419,9 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": 0.065,
-                  "direction": "steady"
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": 0.092,
+                  "direction": "strengthening"
                 },
                 "currentStrength": {
                   "index": 0.4,
@@ -2439,13 +2439,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 0.1,
+                  "difficultyIndex": 0,
                   "category": "low",
-                  "windDegreesFrom": 313,
-                  "windTowardDegreesTrue": 133,
+                  "windDegreesFrom": 120,
+                  "windTowardDegreesTrue": 300,
                   "currentTowardDegreesTrue": 334.9,
-                  "angularDifferenceDegrees": 158.1,
-                  "relationship": "opposing"
+                  "angularDifferenceDegrees": 34.9,
+                  "relationship": "following"
                 },
                 "eastCell": {
                   "value": -0.002678878838196397,
@@ -2475,7 +2475,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
+              "hoursAhead": 5.6,
               "speedKnots": 0.104,
               "towardDegreesTrue": 334.9,
               "towardCardinal": "NNW",
@@ -2484,23 +2484,23 @@
               "shearCategory": "high"
             },
             {
+              "validTime": "2026-11-25T23:00:00+00:00",
+              "hoursAhead": 23.6,
+              "speedKnots": 0.09,
+              "towardDegreesTrue": 154.9,
+              "towardCardinal": "SSE",
+              "currentFit": 90,
+              "shearIndex": 78,
+              "shearCategory": "very-high"
+            },
+            {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 0.077,
               "towardDegreesTrue": 334.9,
               "towardCardinal": "NNW",
               "currentFit": 77,
               "shearIndex": 47,
-              "shearCategory": "moderate"
-            },
-            {
-              "validTime": "2026-11-25T11:00:00+00:00",
-              "hoursAhead": 12.5,
-              "speedKnots": 0.039,
-              "towardDegreesTrue": 334.9,
-              "towardCardinal": "NNW",
-              "currentFit": 39,
-              "shearIndex": 33,
               "shearCategory": "moderate"
             }
           ],
@@ -2524,26 +2524,26 @@
       "observations": {
         "noaaStationId": "9415144",
         "noaaStationName": "Port Chicago, CA",
-        "waterLevelFt": 5.581,
+        "waterLevelFt": 4.58,
         "waterTemperatureF": 57.2,
         "salinityPsu": null,
-        "windMph": 6.03,
+        "windMph": 5.05,
         "windDirection": "ENE",
-        "windDegreesFrom": 67,
+        "windDegreesFrom": 62,
         "tide": {
           "trend": "falling",
           "nextTurnType": "low",
           "nextTurnAt": "2026-11-24 20:28",
-          "minutesToTurn": 356,
-          "phaseFraction": 0.276
+          "minutesToTurn": 306,
+          "phaseFraction": 0.378
         },
         "freshwater": {
           "stationId": "USGS-11455420",
-          "value": -105000,
+          "value": -87300,
           "unit": "ft^3/s",
-          "observedAt": "2026-11-24T21:30:00+00:00",
+          "observedAt": "2026-11-24T22:30:00+00:00",
           "freshnessStatus": "fresh",
-          "ageMinutes": 62,
+          "ageMinutes": 52,
           "baseline31dMean": null,
           "ratioTo31dMean": null,
           "approvalStatus": "Provisional",
@@ -2601,8 +2601,8 @@
           "modelCycle": "2026-11-24T21:00:00+00:00",
           "modelFreshness": "fresh",
           "trend": {
-            "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-            "deltaKnots": 0.689,
+            "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+            "deltaKnots": 0.518,
             "direction": "strengthening"
           },
           "forecastSeries": [
@@ -2729,13 +2729,13 @@
           "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
         },
         "windCurrentInteraction": {
-          "difficultyIndex": 5.8,
+          "difficultyIndex": 5.5,
           "category": "low",
-          "windDegreesFrom": 67,
-          "windTowardDegreesTrue": 247,
+          "windDegreesFrom": 62,
+          "windTowardDegreesTrue": 242,
           "currentTowardDegreesTrue": 288.9,
-          "angularDifferenceDegrees": 41.9,
-          "relationship": "following"
+          "angularDifferenceDegrees": 46.9,
+          "relationship": "crossing"
         }
       },
       "operational": {
@@ -2755,41 +2755,41 @@
           "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
         },
         "windCurrentInteraction": {
-          "difficultyIndex": 5.8,
+          "difficultyIndex": 5.5,
           "category": "low",
-          "windDegreesFrom": 67,
-          "windTowardDegreesTrue": 247,
+          "windDegreesFrom": 62,
+          "windTowardDegreesTrue": 242,
           "currentTowardDegreesTrue": 288.9,
-          "angularDifferenceDegrees": 41.9,
-          "relationship": "following"
+          "angularDifferenceDegrees": 46.9,
+          "relationship": "crossing"
         },
         "currentTrend": {
-          "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-          "deltaKnots": 0.689,
+          "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+          "deltaKnots": 0.518,
           "direction": "strengthening"
         }
       },
       "species": {
         "striped-bass": {
           "siteFit": 79,
-          "conditionFit": 89.1,
+          "conditionFit": 93,
           "dataConfidence": 84.5,
-          "recommendationScore": 78.3,
+          "recommendationScore": 79.8,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 76.2,
+              "score": 92.7,
               "weight": 0.2,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 20:28",
-                "minutesToTurn": 356,
-                "phaseFraction": 0.276
+                "minutesToTurn": 306,
+                "phaseFraction": 0.378
               }
             },
             {
@@ -2810,7 +2810,7 @@
             },
             {
               "id": "wind",
-              "value": 6.03,
+              "value": 5.05,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -2824,11 +2824,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11455420",
-                "value": -105000,
+                "value": -87300,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:30:00+00:00",
+                "observedAt": "2026-11-24T22:30:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 62,
+                "ageMinutes": 52,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -2851,8 +2851,8 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": 0.689,
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": 0.518,
                   "direction": "strengthening"
                 },
                 "currentStrength": {
@@ -2871,13 +2871,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 5.8,
+                  "difficultyIndex": 5.5,
                   "category": "low",
-                  "windDegreesFrom": 67,
-                  "windTowardDegreesTrue": 247,
+                  "windDegreesFrom": 62,
+                  "windTowardDegreesTrue": 242,
                   "currentTowardDegreesTrue": 288.9,
-                  "angularDifferenceDegrees": 41.9,
-                  "relationship": "following"
+                  "angularDifferenceDegrees": 46.9,
+                  "relationship": "crossing"
                 },
                 "eastCell": {
                   "value": -0.5949411392211914,
@@ -2907,7 +2907,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 1.222,
               "towardDegreesTrue": 288.9,
               "towardCardinal": "WNW",
@@ -2917,7 +2917,7 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 1.911,
               "towardDegreesTrue": 288.9,
               "towardCardinal": "WNW",
@@ -2927,7 +2927,7 @@
             },
             {
               "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
+              "hoursAhead": 5.6,
               "speedKnots": 1.74,
               "towardDegreesTrue": 288.9,
               "towardCardinal": "WNW",
@@ -2943,24 +2943,24 @@
         },
         "white-sturgeon": {
           "siteFit": 52,
-          "conditionFit": 87.7,
+          "conditionFit": 92.6,
           "dataConfidence": 84.5,
-          "recommendationScore": 65.3,
+          "recommendationScore": 67.1,
           "availableFactorWeight": 0.85,
           "totalFactorWeight": 1,
           "factors": [
             {
               "id": "tide",
               "value": "falling",
-              "score": 76.2,
+              "score": 92.7,
               "weight": 0.25,
               "source": "NOAA CO-OPS tide predictions",
               "details": {
                 "trend": "falling",
                 "nextTurnType": "low",
                 "nextTurnAt": "2026-11-24 20:28",
-                "minutesToTurn": 356,
-                "phaseFraction": 0.276
+                "minutesToTurn": 306,
+                "phaseFraction": 0.378
               }
             },
             {
@@ -2981,7 +2981,7 @@
             },
             {
               "id": "wind",
-              "value": 6.03,
+              "value": 5.05,
               "score": 100,
               "weight": 0.1,
               "source": "NOAA CO-OPS observed wind",
@@ -2995,11 +2995,11 @@
               "source": "USGS discharge IV compared with DV baseline",
               "details": {
                 "stationId": "USGS-11455420",
-                "value": -105000,
+                "value": -87300,
                 "unit": "ft^3/s",
-                "observedAt": "2026-11-24T21:30:00+00:00",
+                "observedAt": "2026-11-24T22:30:00+00:00",
                 "freshnessStatus": "fresh",
-                "ageMinutes": 62,
+                "ageMinutes": 52,
                 "baseline31dMean": null,
                 "ratioTo31dMean": null,
                 "approvalStatus": "Provisional",
@@ -3022,8 +3022,8 @@
                 "validTime": "2026-11-24T23:00:00+00:00",
                 "modelCycle": "2026-11-24T21:00:00+00:00",
                 "trend": {
-                  "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                  "deltaKnots": 0.689,
+                  "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                  "deltaKnots": 0.518,
                   "direction": "strengthening"
                 },
                 "currentStrength": {
@@ -3042,13 +3042,13 @@
                   "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
                 },
                 "windCurrentInteraction": {
-                  "difficultyIndex": 5.8,
+                  "difficultyIndex": 5.5,
                   "category": "low",
-                  "windDegreesFrom": 67,
-                  "windTowardDegreesTrue": 247,
+                  "windDegreesFrom": 62,
+                  "windTowardDegreesTrue": 242,
                   "currentTowardDegreesTrue": 288.9,
-                  "angularDifferenceDegrees": 41.9,
-                  "relationship": "following"
+                  "angularDifferenceDegrees": 46.9,
+                  "relationship": "crossing"
                 },
                 "eastCell": {
                   "value": -0.5949411392211914,
@@ -3078,7 +3078,7 @@
           "bestCurrentWindows": [
             {
               "validTime": "2026-11-24T23:00:00+00:00",
-              "hoursAhead": 0.5,
+              "hoursAhead": -0.4,
               "speedKnots": 1.222,
               "towardDegreesTrue": 288.9,
               "towardCardinal": "WNW",
@@ -3088,7 +3088,7 @@
             },
             {
               "validTime": "2026-11-25T02:00:00+00:00",
-              "hoursAhead": 3.5,
+              "hoursAhead": 2.6,
               "speedKnots": 1.911,
               "towardDegreesTrue": 288.9,
               "towardCardinal": "WNW",
@@ -3098,7 +3098,7 @@
             },
             {
               "validTime": "2026-11-25T05:00:00+00:00",
-              "hoursAhead": 6.5,
+              "hoursAhead": 5.6,
               "speedKnots": 1.74,
               "towardDegreesTrue": 288.9,
               "towardCardinal": "WNW",
@@ -3121,24 +3121,24 @@
         "spotId": "point-pinole",
         "spotName": "Point Pinole Regional Shoreline",
         "siteFit": 82,
-        "conditionFit": 94.2,
+        "conditionFit": 91.1,
         "dataConfidence": 84.5,
-        "recommendationScore": 81.7,
+        "recommendationScore": 80.5,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 97.9,
+            "score": 84.8,
             "weight": 0.2,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 17:44",
-              "minutesToTurn": 192,
-              "phaseFraction": 0.565
+              "minutesToTurn": 142,
+              "phaseFraction": 0.678
             }
           },
           {
@@ -3159,7 +3159,7 @@
           },
           {
             "id": "wind",
-            "value": 3.69,
+            "value": 1.17,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -3173,11 +3173,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3200,9 +3200,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": -0.054,
-                "direction": "steady"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": -0.551,
+                "direction": "weakening"
               },
               "currentStrength": {
                 "index": 27,
@@ -3220,13 +3220,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 5.1,
+                "difficultyIndex": 0.3,
                 "category": "low",
-                "windDegreesFrom": 313,
-                "windTowardDegreesTrue": 133,
+                "windDegreesFrom": 120,
+                "windTowardDegreesTrue": 300,
                 "currentTowardDegreesTrue": 318,
-                "angularDifferenceDegrees": 175,
-                "relationship": "opposing"
+                "angularDifferenceDegrees": 18,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.2791304886341095,
@@ -3256,7 +3256,7 @@
         "bestCurrentWindows": [
           {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 0.811,
             "towardDegreesTrue": 318,
             "towardCardinal": "NW",
@@ -3266,7 +3266,7 @@
           },
           {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 0.757,
             "towardDegreesTrue": 318,
             "towardCardinal": "NW",
@@ -3275,12 +3275,12 @@
             "shearCategory": "very-high"
           },
           {
-            "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
-            "speedKnots": 0.26,
-            "towardDegreesTrue": 138,
-            "towardCardinal": "SE",
-            "currentFit": 31.4,
+            "validTime": "2026-11-25T23:00:00+00:00",
+            "hoursAhead": 23.6,
+            "speedKnots": 0.716,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
             "shearIndex": 100,
             "shearCategory": "very-high"
           }
@@ -3294,24 +3294,24 @@
         "spotId": "sherman-island",
         "spotName": "Sherman Island",
         "siteFit": 79,
-        "conditionFit": 89.1,
+        "conditionFit": 93,
         "dataConfidence": 84.5,
-        "recommendationScore": 78.3,
+        "recommendationScore": 79.8,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 76.2,
+            "score": 92.7,
             "weight": 0.2,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 20:28",
-              "minutesToTurn": 356,
-              "phaseFraction": 0.276
+              "minutesToTurn": 306,
+              "phaseFraction": 0.378
             }
           },
           {
@@ -3332,7 +3332,7 @@
           },
           {
             "id": "wind",
-            "value": 6.03,
+            "value": 5.05,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -3346,11 +3346,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11455420",
-              "value": -105000,
+              "value": -87300,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:30:00+00:00",
+              "observedAt": "2026-11-24T22:30:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 62,
+              "ageMinutes": 52,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3373,8 +3373,8 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": 0.689,
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": 0.518,
                 "direction": "strengthening"
               },
               "currentStrength": {
@@ -3393,13 +3393,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 5.8,
+                "difficultyIndex": 5.5,
                 "category": "low",
-                "windDegreesFrom": 67,
-                "windTowardDegreesTrue": 247,
+                "windDegreesFrom": 62,
+                "windTowardDegreesTrue": 242,
                 "currentTowardDegreesTrue": 288.9,
-                "angularDifferenceDegrees": 41.9,
-                "relationship": "following"
+                "angularDifferenceDegrees": 46.9,
+                "relationship": "crossing"
               },
               "eastCell": {
                 "value": -0.5949411392211914,
@@ -3429,7 +3429,7 @@
         "bestCurrentWindows": [
           {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 1.222,
             "towardDegreesTrue": 288.9,
             "towardCardinal": "WNW",
@@ -3439,7 +3439,7 @@
           },
           {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 1.911,
             "towardDegreesTrue": 288.9,
             "towardCardinal": "WNW",
@@ -3449,7 +3449,7 @@
           },
           {
             "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
+            "hoursAhead": 5.6,
             "speedKnots": 1.74,
             "towardDegreesTrue": 288.9,
             "towardCardinal": "WNW",
@@ -3467,24 +3467,24 @@
         "spotId": "eckley-pier",
         "spotName": "Eckley Pier and Shoreline",
         "siteFit": 85,
-        "conditionFit": 89.1,
+        "conditionFit": 92.6,
         "dataConfidence": 70.5,
-        "recommendationScore": 76,
+        "recommendationScore": 77.1,
         "availableFactorWeight": 0.65,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 87,
+            "score": 98.3,
             "weight": 0.2,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 19:50",
-              "minutesToTurn": 318,
-              "phaseFraction": 0.336
+              "minutesToTurn": 268,
+              "phaseFraction": 0.441
             }
           },
           {
@@ -3505,7 +3505,7 @@
           },
           {
             "id": "wind",
-            "value": 5.64,
+            "value": 2.33,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -3519,11 +3519,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3546,9 +3546,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": 0.249,
-                "direction": "strengthening"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": -0.103,
+                "direction": "weakening"
               },
               "currentStrength": {
                 "index": 20.8,
@@ -3566,13 +3566,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 3.9,
+                "difficultyIndex": 1,
                 "category": "low",
-                "windDegreesFrom": 40,
-                "windTowardDegreesTrue": 220,
+                "windDegreesFrom": 61,
+                "windTowardDegreesTrue": 241,
                 "currentTowardDegreesTrue": 276.7,
-                "angularDifferenceDegrees": 56.7,
-                "relationship": "crossing"
+                "angularDifferenceDegrees": 35.7,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.3187142610549927,
@@ -3602,7 +3602,7 @@
         "bestCurrentWindows": [
           {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 0.624,
             "towardDegreesTrue": 276.7,
             "towardCardinal": "W",
@@ -3612,7 +3612,7 @@
           },
           {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 0.873,
             "towardDegreesTrue": 276.7,
             "towardCardinal": "W",
@@ -3622,7 +3622,7 @@
           },
           {
             "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
+            "hoursAhead": 5.6,
             "speedKnots": 0.521,
             "towardDegreesTrue": 276.7,
             "towardCardinal": "W",
@@ -3640,24 +3640,24 @@
         "spotId": "richmond-inner-harbor",
         "spotName": "Richmond Inner Harbor",
         "siteFit": 75,
-        "conditionFit": 70.7,
+        "conditionFit": 67.6,
         "dataConfidence": 84.5,
-        "recommendationScore": 69.5,
+        "recommendationScore": 68.3,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 97.9,
+            "score": 84.8,
             "weight": 0.2,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 17:44",
-              "minutesToTurn": 192,
-              "phaseFraction": 0.565
+              "minutesToTurn": 142,
+              "phaseFraction": 0.678
             }
           },
           {
@@ -3678,7 +3678,7 @@
           },
           {
             "id": "wind",
-            "value": 3.69,
+            "value": 1.17,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -3692,11 +3692,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3719,9 +3719,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": 0.065,
-                "direction": "steady"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": 0.092,
+                "direction": "strengthening"
               },
               "currentStrength": {
                 "index": 0.4,
@@ -3739,13 +3739,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 0.1,
+                "difficultyIndex": 0,
                 "category": "low",
-                "windDegreesFrom": 313,
-                "windTowardDegreesTrue": 133,
+                "windDegreesFrom": 120,
+                "windTowardDegreesTrue": 300,
                 "currentTowardDegreesTrue": 334.9,
-                "angularDifferenceDegrees": 158.1,
-                "relationship": "opposing"
+                "angularDifferenceDegrees": 34.9,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.002678878838196397,
@@ -3774,8 +3774,18 @@
         ],
         "bestCurrentWindows": [
           {
+            "validTime": "2026-11-25T23:00:00+00:00",
+            "hoursAhead": 23.6,
+            "speedKnots": 0.09,
+            "towardDegreesTrue": 154.9,
+            "towardCardinal": "SSE",
+            "currentFit": 0,
+            "shearIndex": 78,
+            "shearCategory": "very-high"
+          },
+          {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 0.012,
             "towardDegreesTrue": 334.9,
             "towardCardinal": "NNW",
@@ -3785,23 +3795,13 @@
           },
           {
             "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
+            "hoursAhead": 5.6,
             "speedKnots": 0.104,
             "towardDegreesTrue": 334.9,
             "towardCardinal": "NNW",
             "currentFit": 0,
             "shearIndex": 55,
             "shearCategory": "high"
-          },
-          {
-            "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
-            "speedKnots": 0.077,
-            "towardDegreesTrue": 334.9,
-            "towardCardinal": "NNW",
-            "currentFit": 0,
-            "shearIndex": 47,
-            "shearCategory": "moderate"
           }
         ],
         "activeCaveats": [
@@ -3815,24 +3815,24 @@
         "spotId": "point-pinole",
         "spotName": "Point Pinole Regional Shoreline",
         "siteFit": 69,
-        "conditionFit": 89.9,
+        "conditionFit": 93.9,
         "dataConfidence": 77.5,
-        "recommendationScore": 72,
+        "recommendationScore": 73.4,
         "availableFactorWeight": 0.75,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 49.4,
+            "score": 69.6,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 17:44",
-              "minutesToTurn": 192,
-              "phaseFraction": 0.565
+              "minutesToTurn": 142,
+              "phaseFraction": 0.678
             }
           },
           {
@@ -3853,7 +3853,7 @@
           },
           {
             "id": "wind",
-            "value": 3.69,
+            "value": 1.17,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -3867,11 +3867,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -3894,9 +3894,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": -0.054,
-                "direction": "steady"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": -0.551,
+                "direction": "weakening"
               },
               "currentStrength": {
                 "index": 27,
@@ -3914,13 +3914,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 5.1,
+                "difficultyIndex": 0.3,
                 "category": "low",
-                "windDegreesFrom": 313,
-                "windTowardDegreesTrue": 133,
+                "windDegreesFrom": 120,
+                "windTowardDegreesTrue": 300,
                 "currentTowardDegreesTrue": 318,
-                "angularDifferenceDegrees": 175,
-                "relationship": "opposing"
+                "angularDifferenceDegrees": 18,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.2791304886341095,
@@ -3950,7 +3950,7 @@
         "bestCurrentWindows": [
           {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 0.811,
             "towardDegreesTrue": 318,
             "towardCardinal": "NW",
@@ -3960,7 +3960,7 @@
           },
           {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 0.757,
             "towardDegreesTrue": 318,
             "towardCardinal": "NW",
@@ -3970,7 +3970,7 @@
           },
           {
             "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
+            "hoursAhead": 5.6,
             "speedKnots": 0.26,
             "towardDegreesTrue": 138,
             "towardCardinal": "SE",
@@ -3988,24 +3988,24 @@
         "spotId": "richmond-inner-harbor",
         "spotName": "Richmond Inner Harbor",
         "siteFit": 77,
-        "conditionFit": 63.2,
+        "conditionFit": 67.3,
         "dataConfidence": 77.5,
-        "recommendationScore": 66.1,
+        "recommendationScore": 67.5,
         "availableFactorWeight": 0.75,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 49.4,
+            "score": 69.6,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 17:44",
-              "minutesToTurn": 192,
-              "phaseFraction": 0.565
+              "minutesToTurn": 142,
+              "phaseFraction": 0.678
             }
           },
           {
@@ -4026,7 +4026,7 @@
           },
           {
             "id": "wind",
-            "value": 3.69,
+            "value": 1.17,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -4040,11 +4040,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4067,9 +4067,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": 0.065,
-                "direction": "steady"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": 0.092,
+                "direction": "strengthening"
               },
               "currentStrength": {
                 "index": 0.4,
@@ -4087,13 +4087,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 0.1,
+                "difficultyIndex": 0,
                 "category": "low",
-                "windDegreesFrom": 313,
-                "windTowardDegreesTrue": 133,
+                "windDegreesFrom": 120,
+                "windTowardDegreesTrue": 300,
                 "currentTowardDegreesTrue": 334.9,
-                "angularDifferenceDegrees": 158.1,
-                "relationship": "opposing"
+                "angularDifferenceDegrees": 34.9,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.002678878838196397,
@@ -4123,7 +4123,7 @@
         "bestCurrentWindows": [
           {
             "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
+            "hoursAhead": 5.6,
             "speedKnots": 0.104,
             "towardDegreesTrue": 334.9,
             "towardCardinal": "NNW",
@@ -4132,24 +4132,24 @@
             "shearCategory": "high"
           },
           {
+            "validTime": "2026-11-25T23:00:00+00:00",
+            "hoursAhead": 23.6,
+            "speedKnots": 0.09,
+            "towardDegreesTrue": 154.9,
+            "towardCardinal": "SSE",
+            "currentFit": 20,
+            "shearIndex": 78,
+            "shearCategory": "very-high"
+          },
+          {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 0.077,
             "towardDegreesTrue": 334.9,
             "towardCardinal": "NNW",
             "currentFit": 13.5,
             "shearIndex": 47,
             "shearCategory": "moderate"
-          },
-          {
-            "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
-            "speedKnots": 0.012,
-            "towardDegreesTrue": 334.9,
-            "towardCardinal": "NNW",
-            "currentFit": 0,
-            "shearIndex": 56,
-            "shearCategory": "high"
           }
         ],
         "activeCaveats": [
@@ -4163,24 +4163,24 @@
         "spotId": "point-pinole",
         "spotName": "Point Pinole Regional Shoreline",
         "siteFit": 64,
-        "conditionFit": 80.4,
+        "conditionFit": 83,
         "dataConfidence": 77.5,
-        "recommendationScore": 66.6,
+        "recommendationScore": 67.5,
         "availableFactorWeight": 0.75,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 2.1,
+            "score": 15.2,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 17:44",
-              "minutesToTurn": 192,
-              "phaseFraction": 0.565
+              "minutesToTurn": 142,
+              "phaseFraction": 0.678
             }
           },
           {
@@ -4201,7 +4201,7 @@
           },
           {
             "id": "wind",
-            "value": 3.69,
+            "value": 1.17,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -4215,11 +4215,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4242,9 +4242,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": -0.054,
-                "direction": "steady"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": -0.551,
+                "direction": "weakening"
               },
               "currentStrength": {
                 "index": 27,
@@ -4262,13 +4262,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 5.1,
+                "difficultyIndex": 0.3,
                 "category": "low",
-                "windDegreesFrom": 313,
-                "windTowardDegreesTrue": 133,
+                "windDegreesFrom": 120,
+                "windTowardDegreesTrue": 300,
                 "currentTowardDegreesTrue": 318,
-                "angularDifferenceDegrees": 175,
-                "relationship": "opposing"
+                "angularDifferenceDegrees": 18,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.2791304886341095,
@@ -4298,7 +4298,7 @@
         "bestCurrentWindows": [
           {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 0.811,
             "towardDegreesTrue": 318,
             "towardCardinal": "NW",
@@ -4308,7 +4308,7 @@
           },
           {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 0.757,
             "towardDegreesTrue": 318,
             "towardCardinal": "NW",
@@ -4318,7 +4318,7 @@
           },
           {
             "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
+            "hoursAhead": 5.6,
             "speedKnots": 0.26,
             "towardDegreesTrue": 138,
             "towardCardinal": "SE",
@@ -4336,24 +4336,24 @@
         "spotId": "eckley-pier",
         "spotName": "Eckley Pier and Shoreline",
         "siteFit": 70,
-        "conditionFit": 71,
+        "conditionFit": 67.2,
         "dataConfidence": 56.5,
-        "recommendationScore": 61.6,
+        "recommendationScore": 60.6,
         "availableFactorWeight": 0.45,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 13,
+            "score": 1.7,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 19:50",
-              "minutesToTurn": 318,
-              "phaseFraction": 0.336
+              "minutesToTurn": 268,
+              "phaseFraction": 0.441
             }
           },
           {
@@ -4374,7 +4374,7 @@
           },
           {
             "id": "wind",
-            "value": 5.64,
+            "value": 2.33,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -4388,11 +4388,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4415,9 +4415,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": 0.249,
-                "direction": "strengthening"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": -0.103,
+                "direction": "weakening"
               },
               "currentStrength": {
                 "index": 20.8,
@@ -4435,13 +4435,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 3.9,
+                "difficultyIndex": 1,
                 "category": "low",
-                "windDegreesFrom": 40,
-                "windTowardDegreesTrue": 220,
+                "windDegreesFrom": 61,
+                "windTowardDegreesTrue": 241,
                 "currentTowardDegreesTrue": 276.7,
-                "angularDifferenceDegrees": 56.7,
-                "relationship": "crossing"
+                "angularDifferenceDegrees": 35.7,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.3187142610549927,
@@ -4470,8 +4470,18 @@
         ],
         "bestCurrentWindows": [
           {
+            "validTime": "2026-11-25T23:00:00+00:00",
+            "hoursAhead": 23.6,
+            "speedKnots": 0.419,
+            "towardDegreesTrue": 276.7,
+            "towardCardinal": "W",
+            "currentFit": 100,
+            "shearIndex": 76,
+            "shearCategory": "very-high"
+          },
+          {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 0.624,
             "towardDegreesTrue": 276.7,
             "towardCardinal": "W",
@@ -4481,18 +4491,8 @@
           },
           {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 0.873,
-            "towardDegreesTrue": 276.7,
-            "towardCardinal": "W",
-            "currentFit": 100,
-            "shearIndex": 73,
-            "shearCategory": "high"
-          },
-          {
-            "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
-            "speedKnots": 0.521,
             "towardDegreesTrue": 276.7,
             "towardCardinal": "W",
             "currentFit": 100,
@@ -4509,24 +4509,24 @@
         "spotId": "richmond-inner-harbor",
         "spotName": "Richmond Inner Harbor",
         "siteFit": 58,
-        "conditionFit": 62.8,
+        "conditionFit": 65.4,
         "dataConfidence": 77.5,
-        "recommendationScore": 57.9,
+        "recommendationScore": 58.8,
         "availableFactorWeight": 0.75,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 2.1,
+            "score": 15.2,
             "weight": 0.15,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 17:44",
-              "minutesToTurn": 192,
-              "phaseFraction": 0.565
+              "minutesToTurn": 142,
+              "phaseFraction": 0.678
             }
           },
           {
@@ -4547,7 +4547,7 @@
           },
           {
             "id": "wind",
-            "value": 3.69,
+            "value": 1.17,
             "score": 100,
             "weight": 0.15,
             "source": "NOAA CO-OPS observed wind",
@@ -4561,11 +4561,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4588,9 +4588,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": 0.065,
-                "direction": "steady"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": 0.092,
+                "direction": "strengthening"
               },
               "currentStrength": {
                 "index": 0.4,
@@ -4608,13 +4608,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 0.1,
+                "difficultyIndex": 0,
                 "category": "low",
-                "windDegreesFrom": 313,
-                "windTowardDegreesTrue": 133,
+                "windDegreesFrom": 120,
+                "windTowardDegreesTrue": 300,
                 "currentTowardDegreesTrue": 334.9,
-                "angularDifferenceDegrees": 158.1,
-                "relationship": "opposing"
+                "angularDifferenceDegrees": 34.9,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.002678878838196397,
@@ -4644,7 +4644,7 @@
         "bestCurrentWindows": [
           {
             "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
+            "hoursAhead": 5.6,
             "speedKnots": 0.104,
             "towardDegreesTrue": 334.9,
             "towardCardinal": "NNW",
@@ -4653,23 +4653,23 @@
             "shearCategory": "high"
           },
           {
+            "validTime": "2026-11-25T23:00:00+00:00",
+            "hoursAhead": 23.6,
+            "speedKnots": 0.09,
+            "towardDegreesTrue": 154.9,
+            "towardCardinal": "SSE",
+            "currentFit": 90,
+            "shearIndex": 78,
+            "shearCategory": "very-high"
+          },
+          {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 0.077,
             "towardDegreesTrue": 334.9,
             "towardCardinal": "NNW",
             "currentFit": 77,
             "shearIndex": 47,
-            "shearCategory": "moderate"
-          },
-          {
-            "validTime": "2026-11-25T11:00:00+00:00",
-            "hoursAhead": 12.5,
-            "speedKnots": 0.039,
-            "towardDegreesTrue": 334.9,
-            "towardCardinal": "NNW",
-            "currentFit": 39,
-            "shearIndex": 33,
             "shearCategory": "moderate"
           }
         ],
@@ -4681,200 +4681,27 @@
     ],
     "white-sturgeon": [
       {
-        "spotId": "point-pinole",
-        "spotName": "Point Pinole Regional Shoreline",
-        "siteFit": 48,
-        "conditionFit": 94.1,
-        "dataConfidence": 84.5,
-        "recommendationScore": 65.8,
-        "availableFactorWeight": 0.85,
-        "totalFactorWeight": 1,
-        "factors": [
-          {
-            "id": "tide",
-            "value": "falling",
-            "score": 97.9,
-            "weight": 0.25,
-            "source": "NOAA CO-OPS tide predictions",
-            "details": {
-              "trend": "falling",
-              "nextTurnType": "low",
-              "nextTurnAt": "2026-11-24 17:44",
-              "minutesToTurn": 192,
-              "phaseFraction": 0.565
-            }
-          },
-          {
-            "id": "temperature",
-            "value": 60.1,
-            "score": 100,
-            "weight": 0.15,
-            "source": "NOAA CO-OPS observed water temperature",
-            "unit": "degF"
-          },
-          {
-            "id": "salinity",
-            "value": null,
-            "score": null,
-            "weight": 0.15,
-            "source": "NOAA CO-OPS observed salinity",
-            "unit": "PSU"
-          },
-          {
-            "id": "wind",
-            "value": 3.69,
-            "score": 100,
-            "weight": 0.1,
-            "source": "NOAA CO-OPS observed wind",
-            "unit": "mph"
-          },
-          {
-            "id": "freshwater",
-            "value": null,
-            "score": 70,
-            "weight": 0.15,
-            "source": "USGS discharge IV compared with DV baseline",
-            "details": {
-              "stationId": "USGS-11447650",
-              "value": 9560,
-              "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
-              "freshnessStatus": "fresh",
-              "ageMinutes": 77,
-              "baseline31dMean": null,
-              "ratioTo31dMean": null,
-              "approvalStatus": "Provisional",
-              "qualifier": null
-            }
-          },
-          {
-            "id": "current",
-            "value": 0.811,
-            "score": 100,
-            "weight": 0.2,
-            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
-            "unit": "knots",
-            "details": {
-              "speedKnots": 0.811,
-              "speedMph": 0.933,
-              "towardDegreesTrue": 318,
-              "towardCardinal": "NW",
-              "directionReference": "true-north",
-              "validTime": "2026-11-24T23:00:00+00:00",
-              "modelCycle": "2026-11-24T21:00:00+00:00",
-              "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": -0.054,
-                "direction": "steady"
-              },
-              "currentStrength": {
-                "index": 27,
-                "category": "moderate",
-                "speedKnots": 0.811
-              },
-              "currentShear": {
-                "index": 100,
-                "category": "very-high",
-                "radiusKm": 1.5,
-                "sampleCount": 32,
-                "p90VelocityGradientMpsPerKm": 0.759,
-                "p90DirectionDifferenceDegrees": 156.5,
-                "speedRangeKnots": 0.823,
-                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
-              },
-              "windCurrentInteraction": {
-                "difficultyIndex": 5.1,
-                "category": "low",
-                "windDegreesFrom": 313,
-                "windTowardDegreesTrue": 133,
-                "currentTowardDegreesTrue": 318,
-                "angularDifferenceDegrees": 175,
-                "relationship": "opposing"
-              },
-              "eastCell": {
-                "value": -0.2791304886341095,
-                "lat": 38.0071907043457,
-                "lon": -122.35026550292969,
-                "distanceKm": 0.829,
-                "latVariable": "latc",
-                "lonVariable": "lonc",
-                "indices": {
-                  "nele": 56010
-                }
-              },
-              "northCell": {
-                "value": 0.30997252464294434,
-                "lat": 38.0071907043457,
-                "lon": -122.35026550292969,
-                "distanceKm": 0.829,
-                "latVariable": "latc",
-                "lonVariable": "lonc",
-                "indices": {
-                  "nele": 56010
-                }
-              }
-            }
-          }
-        ],
-        "bestCurrentWindows": [
-          {
-            "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
-            "speedKnots": 0.811,
-            "towardDegreesTrue": 318,
-            "towardCardinal": "NW",
-            "currentFit": 100,
-            "shearIndex": 100,
-            "shearCategory": "very-high"
-          },
-          {
-            "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
-            "speedKnots": 0.757,
-            "towardDegreesTrue": 318,
-            "towardCardinal": "NW",
-            "currentFit": 100,
-            "shearIndex": 100,
-            "shearCategory": "very-high"
-          },
-          {
-            "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
-            "speedKnots": 0.26,
-            "towardDegreesTrue": 138,
-            "towardCardinal": "SE",
-            "currentFit": 84,
-            "shearIndex": 100,
-            "shearCategory": "very-high"
-          }
-        ],
-        "activeCaveats": [
-          "USGS discharge is provisional and subject to revision."
-        ],
-        "legalGate": "Always verify current CDFW season, possession, report-card and emergency rules before presenting a fish-now recommendation."
-      },
-      {
         "spotId": "sherman-island",
         "spotName": "Sherman Island",
         "siteFit": 52,
-        "conditionFit": 87.7,
+        "conditionFit": 92.6,
         "dataConfidence": 84.5,
-        "recommendationScore": 65.3,
+        "recommendationScore": 67.1,
         "availableFactorWeight": 0.85,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 76.2,
+            "score": 92.7,
             "weight": 0.25,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 20:28",
-              "minutesToTurn": 356,
-              "phaseFraction": 0.276
+              "minutesToTurn": 306,
+              "phaseFraction": 0.378
             }
           },
           {
@@ -4895,7 +4722,7 @@
           },
           {
             "id": "wind",
-            "value": 6.03,
+            "value": 5.05,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -4909,11 +4736,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11455420",
-              "value": -105000,
+              "value": -87300,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:30:00+00:00",
+              "observedAt": "2026-11-24T22:30:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 62,
+              "ageMinutes": 52,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -4936,8 +4763,8 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": 0.689,
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": 0.518,
                 "direction": "strengthening"
               },
               "currentStrength": {
@@ -4956,13 +4783,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 5.8,
+                "difficultyIndex": 5.5,
                 "category": "low",
-                "windDegreesFrom": 67,
-                "windTowardDegreesTrue": 247,
+                "windDegreesFrom": 62,
+                "windTowardDegreesTrue": 242,
                 "currentTowardDegreesTrue": 288.9,
-                "angularDifferenceDegrees": 41.9,
-                "relationship": "following"
+                "angularDifferenceDegrees": 46.9,
+                "relationship": "crossing"
               },
               "eastCell": {
                 "value": -0.5949411392211914,
@@ -4992,7 +4819,7 @@
         "bestCurrentWindows": [
           {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 1.222,
             "towardDegreesTrue": 288.9,
             "towardCardinal": "WNW",
@@ -5002,7 +4829,7 @@
           },
           {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 1.911,
             "towardDegreesTrue": 288.9,
             "towardCardinal": "WNW",
@@ -5012,7 +4839,7 @@
           },
           {
             "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
+            "hoursAhead": 5.6,
             "speedKnots": 1.74,
             "towardDegreesTrue": 288.9,
             "towardCardinal": "WNW",
@@ -5030,24 +4857,24 @@
         "spotId": "eckley-pier",
         "spotName": "Eckley Pier and Shoreline",
         "siteFit": 55,
-        "conditionFit": 88.9,
+        "conditionFit": 93,
         "dataConfidence": 74,
-        "recommendationScore": 65,
+        "recommendationScore": 66.3,
         "availableFactorWeight": 0.7,
         "totalFactorWeight": 1,
         "factors": [
           {
             "id": "tide",
             "value": "falling",
-            "score": 87,
+            "score": 98.3,
             "weight": 0.25,
             "source": "NOAA CO-OPS tide predictions",
             "details": {
               "trend": "falling",
               "nextTurnType": "low",
               "nextTurnAt": "2026-11-24 19:50",
-              "minutesToTurn": 318,
-              "phaseFraction": 0.336
+              "minutesToTurn": 268,
+              "phaseFraction": 0.441
             }
           },
           {
@@ -5068,7 +4895,7 @@
           },
           {
             "id": "wind",
-            "value": 5.64,
+            "value": 2.33,
             "score": 100,
             "weight": 0.1,
             "source": "NOAA CO-OPS observed wind",
@@ -5082,11 +4909,11 @@
             "source": "USGS discharge IV compared with DV baseline",
             "details": {
               "stationId": "USGS-11447650",
-              "value": 9560,
+              "value": 7290,
               "unit": "ft^3/s",
-              "observedAt": "2026-11-24T21:15:00+00:00",
+              "observedAt": "2026-11-24T22:15:00+00:00",
               "freshnessStatus": "fresh",
-              "ageMinutes": 77,
+              "ageMinutes": 67,
               "baseline31dMean": null,
               "ratioTo31dMean": null,
               "approvalStatus": "Provisional",
@@ -5109,9 +4936,9 @@
               "validTime": "2026-11-24T23:00:00+00:00",
               "modelCycle": "2026-11-24T21:00:00+00:00",
               "trend": {
-                "comparisonValidTime": "2026-11-25T02:00:00+00:00",
-                "deltaKnots": 0.249,
-                "direction": "strengthening"
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": -0.103,
+                "direction": "weakening"
               },
               "currentStrength": {
                 "index": 20.8,
@@ -5129,13 +4956,13 @@
                 "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
               },
               "windCurrentInteraction": {
-                "difficultyIndex": 3.9,
+                "difficultyIndex": 1,
                 "category": "low",
-                "windDegreesFrom": 40,
-                "windTowardDegreesTrue": 220,
+                "windDegreesFrom": 61,
+                "windTowardDegreesTrue": 241,
                 "currentTowardDegreesTrue": 276.7,
-                "angularDifferenceDegrees": 56.7,
-                "relationship": "crossing"
+                "angularDifferenceDegrees": 35.7,
+                "relationship": "following"
               },
               "eastCell": {
                 "value": -0.3187142610549927,
@@ -5164,8 +4991,18 @@
         ],
         "bestCurrentWindows": [
           {
+            "validTime": "2026-11-25T23:00:00+00:00",
+            "hoursAhead": 23.6,
+            "speedKnots": 0.419,
+            "towardDegreesTrue": 276.7,
+            "towardCardinal": "W",
+            "currentFit": 100,
+            "shearIndex": 76,
+            "shearCategory": "very-high"
+          },
+          {
             "validTime": "2026-11-24T23:00:00+00:00",
-            "hoursAhead": 0.5,
+            "hoursAhead": -0.4,
             "speedKnots": 0.624,
             "towardDegreesTrue": 276.7,
             "towardCardinal": "W",
@@ -5175,23 +5012,186 @@
           },
           {
             "validTime": "2026-11-25T02:00:00+00:00",
-            "hoursAhead": 3.5,
+            "hoursAhead": 2.6,
             "speedKnots": 0.873,
             "towardDegreesTrue": 276.7,
             "towardCardinal": "W",
             "currentFit": 100,
             "shearIndex": 73,
             "shearCategory": "high"
+          }
+        ],
+        "activeCaveats": [
+          "USGS discharge is provisional and subject to revision."
+        ],
+        "legalGate": "Always verify current CDFW season, possession, report-card and emergency rules before presenting a fish-now recommendation."
+      },
+      {
+        "spotId": "point-pinole",
+        "spotName": "Point Pinole Regional Shoreline",
+        "siteFit": 48,
+        "conditionFit": 90.2,
+        "dataConfidence": 84.5,
+        "recommendationScore": 64.4,
+        "availableFactorWeight": 0.85,
+        "totalFactorWeight": 1,
+        "factors": [
+          {
+            "id": "tide",
+            "value": "falling",
+            "score": 84.8,
+            "weight": 0.25,
+            "source": "NOAA CO-OPS tide predictions",
+            "details": {
+              "trend": "falling",
+              "nextTurnType": "low",
+              "nextTurnAt": "2026-11-24 17:44",
+              "minutesToTurn": 142,
+              "phaseFraction": 0.678
+            }
           },
           {
-            "validTime": "2026-11-25T05:00:00+00:00",
-            "hoursAhead": 6.5,
-            "speedKnots": 0.521,
-            "towardDegreesTrue": 276.7,
-            "towardCardinal": "W",
+            "id": "temperature",
+            "value": 60.1,
+            "score": 100,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed water temperature",
+            "unit": "degF"
+          },
+          {
+            "id": "salinity",
+            "value": null,
+            "score": null,
+            "weight": 0.15,
+            "source": "NOAA CO-OPS observed salinity",
+            "unit": "PSU"
+          },
+          {
+            "id": "wind",
+            "value": 1.17,
+            "score": 100,
+            "weight": 0.1,
+            "source": "NOAA CO-OPS observed wind",
+            "unit": "mph"
+          },
+          {
+            "id": "freshwater",
+            "value": null,
+            "score": 70,
+            "weight": 0.15,
+            "source": "USGS discharge IV compared with DV baseline",
+            "details": {
+              "stationId": "USGS-11447650",
+              "value": 7290,
+              "unit": "ft^3/s",
+              "observedAt": "2026-11-24T22:15:00+00:00",
+              "freshnessStatus": "fresh",
+              "ageMinutes": 67,
+              "baseline31dMean": null,
+              "ratioTo31dMean": null,
+              "approvalStatus": "Provisional",
+              "qualifier": null
+            }
+          },
+          {
+            "id": "current",
+            "value": 0.811,
+            "score": 100,
+            "weight": 0.2,
+            "source": "NOAA SFBOFS surface current via THREDDS/OPeNDAP",
+            "unit": "knots",
+            "details": {
+              "speedKnots": 0.811,
+              "speedMph": 0.933,
+              "towardDegreesTrue": 318,
+              "towardCardinal": "NW",
+              "directionReference": "true-north",
+              "validTime": "2026-11-24T23:00:00+00:00",
+              "modelCycle": "2026-11-24T21:00:00+00:00",
+              "trend": {
+                "comparisonValidTime": "2026-11-25T05:00:00+00:00",
+                "deltaKnots": -0.551,
+                "direction": "weakening"
+              },
+              "currentStrength": {
+                "index": 27,
+                "category": "moderate",
+                "speedKnots": 0.811
+              },
+              "currentShear": {
+                "index": 100,
+                "category": "very-high",
+                "radiusKm": 1.5,
+                "sampleCount": 32,
+                "p90VelocityGradientMpsPerKm": 0.759,
+                "p90DirectionDifferenceDegrees": 156.5,
+                "speedRangeKnots": 0.823,
+                "interpretation": "Model-scale current-shear/seam potential; not proof of a visible micro-scale shoreline seam."
+              },
+              "windCurrentInteraction": {
+                "difficultyIndex": 0.3,
+                "category": "low",
+                "windDegreesFrom": 120,
+                "windTowardDegreesTrue": 300,
+                "currentTowardDegreesTrue": 318,
+                "angularDifferenceDegrees": 18,
+                "relationship": "following"
+              },
+              "eastCell": {
+                "value": -0.2791304886341095,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              },
+              "northCell": {
+                "value": 0.30997252464294434,
+                "lat": 38.0071907043457,
+                "lon": -122.35026550292969,
+                "distanceKm": 0.829,
+                "latVariable": "latc",
+                "lonVariable": "lonc",
+                "indices": {
+                  "nele": 56010
+                }
+              }
+            }
+          }
+        ],
+        "bestCurrentWindows": [
+          {
+            "validTime": "2026-11-24T23:00:00+00:00",
+            "hoursAhead": -0.4,
+            "speedKnots": 0.811,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
             "currentFit": 100,
-            "shearIndex": 73,
-            "shearCategory": "high"
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-11-25T02:00:00+00:00",
+            "hoursAhead": 2.6,
+            "speedKnots": 0.757,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
+          },
+          {
+            "validTime": "2026-11-25T23:00:00+00:00",
+            "hoursAhead": 23.6,
+            "speedKnots": 0.716,
+            "towardDegreesTrue": 318,
+            "towardCardinal": "NW",
+            "currentFit": 100,
+            "shearIndex": 100,
+            "shearCategory": "very-high"
           }
         ],
         "activeCaveats": [
