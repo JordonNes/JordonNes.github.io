@@ -8,7 +8,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="rwt-theme.css?v=20261008-calendar" />
-</head>
+<style>
+.rwt-start{padding-top:22px!important;padding-bottom:10px!important}.rwt-intro h1{font-size:clamp(24px,3vw,36px);line-height:1.15;margin:8px 0}.rwt-intro p{font-size:14px;margin:6px 0 16px}.rwt-quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.rwt-quick a{display:flex;flex-direction:column;gap:4px;padding:13px;border:1px solid #345d67;border-radius:10px;background:#102c36;color:#e7f1ef;text-decoration:none}.rwt-quick small{font-size:12px;color:#b8d1d3}.rwt-more{margin:12px auto;border:1px solid #345d67;border-radius:10px;padding:12px}.rwt-more>summary{cursor:pointer;font-weight:700;font-size:15px;padding:8px}.rwt-more>.section{padding:12px 0!important}.home-page #frmap{padding-top:12px!important}.home-page #frmap h2{font-size:clamp(18px,2.2vw,25px)}.rwt-quick a:focus-visible,.rwt-more summary:focus-visible{outline:2px solid #ffd15c;outline-offset:3px}@media(max-width:600px){.rwt-quick{grid-template-columns:1fr}.rwt-quick a{padding:9px}}
+</style></head>
 <body class="home-page">
   <header class="topbar">
     <a href="../" aria-label="Back to JordonNes Digital Projects" style="display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(255,255,255,.18);border-radius:999px;color:#ffd15c;text-decoration:none;font:800 11px/1 Inter,Arial,sans-serif;letter-spacing:.08em;white-space:nowrap">⌂ JORDONNES</a>
@@ -18,43 +20,12 @@
     </a>
     <button class="nav-toggle" aria-label="Open navigation">☰</button>
     <nav>
-      <a href="#home">Tavern</a>
-      <a href="fishing-locations.html">Fishing Locations & Map</a>
-      <a href="fish-now.html">Fish Right Now</a>
-      
-      <a href="calendar.html">Fishing Calendar</a>
-      <a href="../kida/">Kida · Catch & Cook</a>
-      <a href="#documents">Field Library</a>
-      <a href="species-explorer.html">Species Explorer</a>
-      <a href="fishing-intelligence.html">Fishing Intelligence</a>
-      <a class="bootcamp-link" href="bootcamp/">101 Bootcamp</a>
-      <a href="#guide">Fishing Bible</a>
-      <a href="data-lab.html">Data Lab</a>
-      <a href="ask-ray.html">Ask Ray</a>
-      <a class="phase" href="#frmap">FRmap <small>LIVE WATER</small></a>
-    </nav>
+<a href="#frmap">Explore map</a><a href="fish-now.html">Fish now</a><a href="calendar.html">When to fish</a><a href="species-explorer.html">Species</a><a href="bootcamp/">Learn</a><a href="fishing-intelligence.html">Reports</a><a href="ask-ray.html">Ask Ray</a>
+</nav>
   </header>
 
   <main>
-    <section id="home" class="hero">
-      <div class="hero-overlay"></div><div class="ray-portrait" role="img" aria-label="Richmond Ray, veteran Bay fishing guide in his tavern"></div>
-      <div class="hero-content">
-        <span class="live-pill">● RICHFISH v0.4 · LIVE NEAR-ME FISHING INTELLIGENCE</span>
-        <p class="kicker">WELCOME TO</p>
-        <h1>RICH WATER</h1>
-        <h2>TAVERN</h2>
-        <p style="margin:.25rem 0 .4rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#ffd15c">Hosted by Richmond Ray · Powered by RICHFISH</p>
-        <p class="script">Pull up a stool. Let's figure out where the fish are.</p>
-        <p>Richmond-centered fishing intelligence for the shoreline, San Pablo Bay, Carquinez Strait, Suisun Bay, the Sacramento–San Joaquin Delta and nearby coast. Conditions, target species, local spots, rigs, field knowledge and transparent source tracking—organized the way an angler actually plans a trip.</p>
-        <div class="actions">
-          <a class="btn primary" href="#fish-now-live">Use my location · Fish near me</a>
-          <a class="btn" href="species-explorer.html">Browse target species</a>
-        </div>
-      </div>
-      <div class="hero-cards" id="condition-strip"></div>
-
-
-    </section>
+    <section id="home" class="shell rwt-start"><div class="rwt-intro"><div><span class="eyebrow">BAY &amp; DELTA · SALTWATER &amp; BRACKISH SHORELINE</span><h1>Know the water. Find the fish.</h1><p>Master the shore with Richmond Ray. Choose a question to get started.</p></div><div class="rwt-quick"><a href="calendar.html"><strong>When to fish</strong><small>Tides and fishing windows</small></a><a href="#frmap"><strong>Where to fish</strong><small>Explore shoreline locations</small></a><a href="species-explorer.html"><strong>How to catch it</strong><small>Species, bait and tactics</small></a></div></div><div id="condition-strip" hidden></div></section>
 
 
 
@@ -68,11 +39,11 @@
 <div class="section-heading"><div><span class="eyebrow">FR MAP 2.0 · RICHFISH INTELLIGENCE</span><h2>Pick a species. Find the water. Choose your spot.</h2></div><div class="section-actions"><a class="btn" href="frmap2.html" target="_blank" rel="noopener">Open full-screen FR Map 2.0 ↗</a><a class="btn" href="location-manager.html">Add / manage Fishing Spots ↗</a></div></div>
 <style>.rf-v2-frame{width:100%;height:1140px;border:1px solid #345d67;border-radius:14px;background:#071b24;display:block}.rf-trip-below{margin-top:18px}.rf-trip-below>.ray-trip-form{margin:0}@media(max-width:900px){.rf-v2-frame{height:1820px}}@media(max-width:620px){.rf-v2-frame{height:2200px}}</style>
 <iframe class="rf-v2-frame" src="frmap2.html" title="RichFish FR Map 2.0 - species opportunities and fishing spots" loading="lazy" allow="geolocation"></iframe>
-<div class="rf-trip-below"><div class="section-heading"><div><span class="eyebrow">RICHMOND RAY'S TRIP BUILDER</span><h2>Build out your full fishing trip</h2></div></div><form id="ray-trip-form" class="ray-trip-form" aria-label="Richmond Ray flexible fishing search">
+<details class="rf-trip-below rwt-more"><summary>Build a custom fishing trip</summary><div class="section-heading"><div><span class="eyebrow">RICHMOND RAY'S TRIP BUILDER</span><h2>Build out your full fishing trip</h2></div></div><form id="ray-trip-form" class="ray-trip-form" aria-label="Richmond Ray flexible fishing search">
           <div class="ray-trip-top"><strong>Ray's Trip Builder</strong><small>Give a little. Get the rest.</small></div>
           <div class="ray-trip-fields">
             <label>Bait available<select id="ray-trip-bait"><option value="">Ray chooses bait</option><optgroup label="Prepared / frozen"><option>Chicken liver</option><option>Shrimp</option><option>Anchovy</option><option>Squid</option><option>Sand flea</option><option>Artificial lure</option><option>Scented soft plastic</option><option>No bait</option></optgroup><optgroup label="Live bait"><option>Live pile worm</option><option>Live clam worm</option><option>Live smelt</option><option>Live shad</option><option>Live anchovy</option><option>Live sardine</option><option>Live shiner perch</option><option>Live mudsucker</option><option>Live mosquitofish</option></optgroup></select></label>
-            <label>Water type<select id="ray-trip-water"><option value="">Any water</option><option value="saltwater">Saltwater</option><option value="brackish">Brackish</option><option value="freshwater">Freshwater</option></select></label>
+            <label>Water type<select id="ray-trip-water"><option value="saltwater">Saltwater</option><option value="brackish">Brackish</option></select></label>
             <label>Method<select id="ray-trip-method"><option value="">Ray chooses method</option><option value="soak">Bait soak</option><option value="lure">Cast lure</option><option value="float">Float fishing</option></select></label>
             <label>Target<select id="ray-trip-target"><option value="">Ray chooses target</option></select></label>
             <label>Tide<select id="ray-trip-tide"><option value="">Any / Ray chooses</option><option value="flood">Incoming</option><option value="ebb">Outgoing</option><option value="slack">Slack</option></select></label>
@@ -80,10 +51,10 @@
           </div>
           <div class="ray-trip-actions"><button class="btn primary" type="submit">Find my fishing options</button><button class="btn" id="ray-trip-clear" type="button">Clear</button><a href="field-library.html">RICHFISH Field Library →</a><a href="fishing-intelligence.html#bait-knowledge">Pile &amp; clam worm bait guide →</a></div>
           <div id="ray-trip-results" aria-live="polite"></div>
-        </form></div>
+        </form></details>
 </section>
-    <div class="rwt-calendar-banner"><img src="../assets/rwt-calendar-header.png?v=f01efd07" alt="Richmond Ray, Kida and their dog fishing along the Richmond waterfront at sunset — Rich Water Tavern" width="1981" height="201"></div>
-    <section id="calendar" class="section shell fishing-calendar">
+    
+    <details class="shell rwt-more"><summary>Fishing calendar · tides and timing</summary><section id="calendar" class="section shell fishing-calendar">
       <div class="section-heading">
         <div>
           <span class="eyebrow">RICHFISH FISHING CALENDAR · TIDES + MOON + CALENDAR RATING</span>
@@ -141,26 +112,26 @@
       </div>
 
       <p class="notice">The 0–6 Calendar Rating is a general tide/lunar planning index, separate from the live Fish Now Activity Rating and not a catch probability. Weather, water conditions, species seasonality, community evidence, access, regulations and safety remain separate decision layers and can override a favorable calendar rating. Tides4Fishing is credited as a feature/workflow reference; numerical tide data come from NOAA CO-OPS.</p>
-    </section>
+    </section></details>
     
     <a class="rwt-kida-banner-link" href="../kida/" aria-label="Visit Kida's Catch and Cook Kitchen"><span class="sr-only">Visit Kida's Catch and Cook Kitchen</span></a>
     
-    <section id="documents" class="section shell">
+    <details class="shell rwt-more"><summary>Field library</summary><section id="documents" class="section shell">
       <div class="section-heading"><div><span class="eyebrow">THE FIELD LIBRARY</span><h2>Master guides, working datasets and operational references.</h2></div><span class="sync" id="doc-count"></span></div>
       <div id="document-grid" class="document-grid"></div>
       <p class="notice">The catalog identifies previously developed RICHFISH assets. Download controls activate as original files are imported into the repository or connected storage.</p>
-    </section>
+    </section></details>
 
-    <section id="guide" class="section shell alt">
+    <details class="shell rwt-more"><summary>Fishing Bible · shoreline skills</summary><section id="guide" class="section shell alt">
       <div class="section-heading"><div><span class="eyebrow">RICHMOND RAY'S FISHING BIBLE</span><h2>Field knowledge built to connect directly to spots, species and conditions.</h2></div><button class="btn" disabled>Master PDF pending import</button></div>
       <div class="guide-layout">
         <aside class="toc"><strong>Table of contents</strong><ol><li>Getting Started</li><li>Reading Water</li><li>Bay Shoreline Fishing</li><li class="active">Delta Water<ul><li>Tides & currents</li><li>Channels & cuts</li><li>Productive areas</li><li>Techniques & tactics</li></ul></li><li>Piers & Docks</li><li>Surf & Jetty</li><li>Rivers & Lakes</li><li>Species Behavior</li><li>Bait & Lure Selection</li><li>Rigs & Knots</li><li>Seasonal Patterns</li><li>Safety & Stewardship</li><li>Troubleshooting</li></ol></aside>
         <article class="guide-page"><span class="eyebrow">4. DELTA WATER</span><h3>Read movement before choosing tackle.</h3><p>The Delta is a system of moving water, channels, levee edges and forage migration. RICHFISH is being structured so each guide chapter can connect directly to relevant spots, species and conditions.</p><div class="principles"><div><b>Current</b><span>Locate seams and protected edges.</span></div><div><b>Depth</b><span>Match presentation to channel shape.</span></div><div><b>Forage</b><span>Follow shad, anchovy and smelt signals.</span></div><div><b>Access</b><span>Confirm legal, safe entry before travel.</span></div></div><blockquote>“Follow the bait, but verify the water, access and regulations before you follow the rumor.” — Richmond Ray</blockquote></article>
       </div>
-    </section>
+    </section></details>
 
 
-    <section id="ask-ray" class="section shell ask-ray-section">
+    <details class="shell rwt-more"><summary>Ask Richmond Ray</summary><section id="ask-ray" class="section shell ask-ray-section">
       <div class="section-heading">
         <div><span class="eyebrow">ASK RICHMOND RAY · LIVE AI</span><h2>Talk to the RICHFISH fishing guide.</h2></div>
         <span class="sync" id="ray-api-status">Checking backend…</span>
@@ -198,15 +169,15 @@
           <p class="notice">Ray's answer is planning guidance, not a catch guarantee. Verify current CDFW regulations, consumption advisories, legal access and field safety before fishing.</p>
         </article>
       </div>
-    </section>
+    </section></details>
 
-    <section id="sources" class="section shell">
+    <details class="shell rwt-more"><summary>Data lab · evidence and sources</summary><section id="sources" class="section shell">
       <div class="section-heading"><div><span class="eyebrow">BEHIND THE BAR · DATA LAB</span><h2>Know what Richmond Ray is relying on.</h2></div></div>
       <div id="source-grid" class="source-grid"></div>
-    </section>
+    </section></details>
 
 
-  </main>
+  <section class="shell rwt-more"><h2 style="font-size:18px">More from the Tavern</h2><p><a href="field-library.html">Field library</a> · <a href="data-lab.html">Data lab</a> · <a href="../kida/">Catch &amp; cook</a> · <a href="https://wildlife.ca.gov/Fishing/Ocean/Regulations">Current CDFW regulations</a></p><p>Freshwater fishing: separate experience planned. Existing freshwater research remains available in the species library.</p></section></main>
 
   <footer><strong>RICH WATER TAVERN · POWERED BY RICHFISH</strong><span>Fishing intelligence is educational. Always verify current regulations, advisories, access rules and conditions before fishing.</span></footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
