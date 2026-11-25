@@ -1,10 +1,148 @@
-(()=>{"use strict";
-const box=document.getElementById("home-tide-chart"),a=document.getElementById("tide-height"),b=document.getElementById("tide-coeff");if(!box)return;
-const H=3600000,zone="America/Los_Angeles",fmt=new Intl.DateTimeFormat("en-US",{timeZone:zone,weekday:"short",hour:"numeric",minute:"2-digit"}),time=t=>fmt.format(new Date(t));let mode=0,rows=[],now=Date.now();
-const date=t=>new Date(t).toISOString().slice(0,10).replace(/-/g,"");
-async function load(){now=Date.now();try{const p=new URLSearchParams({begin_date:date(now-36*H),end_date:date(now+36*H),station:"9414863",product:"predictions",datum:"MLLW",time_zone:"gmt",units:"english",interval:"6",format:"json",application:"RICHFISH"});const r=await fetch("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?"+p);const j=await r.json();if(!r.ok||!j.predictions)throw Error("NOAA predictions unavailable");rows=j.predictions.map(x=>[Date.parse(x.t.replace(" ","T")+"Z"),Number(x.v)]).filter(x=>x.every(Number.isFinite));draw()}catch(e){box.textContent="Richmond NOAA tide predictions unavailable. Please retry later."}}
-function draw(){a.setAttribute("aria-pressed",String(!mode));b.setAttribute("aria-pressed",String(!!mode));if(!rows.length)return;const start=now-24*H,end=now+24*H,rs=rows.filter(x=>x[0]>=start&&x[0]<=end);if(!rs.length)return;const lo=Math.floor(Math.min(...rs.map(x=>x[1]))),hi=Math.ceil(Math.max(...rs.map(x=>x[1]))),X=t=>50+(t-start)/(48*H)*900,Y=v=>190-(v-lo)/(hi-lo||1)*150;let svg='<svg viewBox="0 0 1000 230" role="img" aria-label="48 hour Richmond predicted tide heights"><rect width="1000" height="230" fill="#f7fafb"/>';for(let v=lo;v<=hi;v++)svg+='<path d="M50 '+Y(v)+'H950" stroke="#d2dce0"/><text x="8" y="'+(Y(v)+4)+'" font-size="12" fill="#263c48">'+v+' ft</text>';for(let i=0;i<=8;i++){let t=start+i*6*H;svg+='<text x="'+X(t)+'" y="212" text-anchor="middle" font-size="11" fill="#263c48">'+time(t)+'</text>'}let path=rs.map((r,i)=>(i?"L":"M")+X(r[0]).toFixed(1)+" "+Y(r[1]).toFixed(1)).join(" ");svg+='<path d="'+path+' L'+X(rs.at(-1)[0])+' 190 L'+X(rs[0][0])+' 190Z" fill="#b5ddeb" opacity=".7"/><path d="'+path+'" fill="none" stroke="#2387ae" stroke-width="2"/>';for(let i=1;i<rs.length-1;i++){let r=rs[i],prev=rs[i-1][1],next=rs[i+1][1];if((r[1]>prev&&r[1]>=next)||(r[1]<prev&&r[1]<=next)){let high=r[1]>prev;svg+='<circle cx="'+X(r[0])+'" cy="'+Y(r[1])+'" r="4" fill="'+(high?"#1678a0":"#a63d36")+'"/><text x="'+X(r[0])+'" y="'+(Y(r[1])+(high?-9:16))+'" text-anchor="middle" font-size="11" fill="#263c48">'+r[1].toFixed(1)+' ft</text>'}}svg+='<path d="M500 20V190" stroke="'+(mode?"#111":"#d32232")+'" stroke-width="3"/><text x="506" y="15" font-size="12" fill="#172b35">NOW</text></svg>';box.innerHTML=(mode?'<div style="padding:8px"><strong>Tidal coefficient unavailable</strong> — NOAA does not publish the referenced coefficient. Predicted heights shown below for context; no invented coefficient values. <a href="https://tides4fishing.com/tides/tidal-coefficient">Coefficient reference</a></div>':'')+svg+'<div style="padding:5px 12px;font-size:12px">NOAA Richmond 9414863 · predicted height above MLLW · Pacific time · ±24 hours</div>'}
-a.onclick=()=>{mode=0;draw()};b.onclick=()=>{mode=1;draw()};
-function lunar(){const out=document.getElementById("home-solunar");if(!window.SunCalc){out.textContent="Astronomical library unavailable.";return}const lat=37.935,lng=-122.347,d=new Date(),m=SunCalc.getMoonTimes(d,lat,lng),events=[];for(const [k,label] of [["rise","Moonrise"],["set","Moonset"]])if(m[k] instanceof Date&&Number.isFinite(+m[k]))events.push([label,+m[k],.5,"Minor"]);const base=Date.now();let samples=[];for(let t=base-12*H;t<=base+36*H;t+=5*60000)samples.push([t,SunCalc.getMoonPosition(new Date(t),lat,lng).altitude]);for(let i=1;i<samples.length-1;i++){let [t,v]=samples[i],p=samples[i-1][1],n=samples[i+1][1];if(t>=base&&t<base+24*H&&((v>p&&v>=n)||(v<p&&v<=n)))events.push([v>p?"Upper lunar transit":"Opposing lunar transit",t,1,"Major"])}out.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;padding:10px">'+events.sort((x,y)=>x[1]-y[1]).map(e=>'<div><strong>'+e[3]+' · '+e[0]+'</strong><br>'+time(e[1]-e[2]*H)+' – '+time(e[1]+e[2]*H)+'</div>').join("")+'</div><small>Approximate astronomical windows for Richmond; not measured fish activity.</small>'}
-load();lunar();setInterval(load,5*60000);
+(() => {
+  "use strict";
+
+  const chart = document.getElementById("home-tide-chart");
+  if (!chart) return;
+  const heightButton = document.getElementById("tide-height");
+  const coefficientButton = document.getElementById("tide-coeff");
+  const hour = 3600000;
+  const day = 24 * hour;
+  const timeZone = "America/Los_Angeles";
+  const time = new Intl.DateTimeFormat("en-US", {timeZone, weekday: "short", hour: "numeric", minute: "2-digit"});
+  const dateKey = new Intl.DateTimeFormat("en-CA", {timeZone, year: "numeric", month: "2-digit", day: "2-digit"});
+  const epoch = value => Date.parse(value.replace(" ", "T") + "Z");
+  let mode = "height";
+  let heights = [];
+  let coefficients = {};
+
+  async function predictions(now, days, interval) {
+    const utcDate = t => new Date(t).toISOString().slice(0, 10).replaceAll("-", "");
+    const params = new URLSearchParams({
+      begin_date: utcDate(now - days * day), end_date: utcDate(now + days * day),
+      station: "9414863", product: "predictions", datum: "MLLW", time_zone: "gmt",
+      units: "english", interval, format: "json", application: "RICHFISH"
+    });
+    const response = await fetch("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?" + params);
+    const result = await response.json();
+    if (!response.ok || !result.predictions?.length) throw new Error(result.error?.message || "NOAA predictions unavailable");
+    return result.predictions;
+  }
+
+  function localCoefficients(rows) {
+    const days = {};
+    for (const row of rows.slice(1, -1)) {
+      const key = dateKey.format(epoch(row.t));
+      (days[key] ??= []).push(Number(row.v));
+    }
+    const ranges = Object.entries(days).slice(1, -1).filter(([, values]) => values.length >= 2)
+      .map(([key, values]) => [key, Math.max(...values) - Math.min(...values)]);
+    const sorted = ranges.map(([, range]) => range).sort((a, b) => a - b);
+    const low = sorted[Math.floor((sorted.length - 1) * 0.1)];
+    const high = sorted[Math.floor((sorted.length - 1) * 0.9)];
+    if (!(high > low)) return {};
+    return Object.fromEntries(ranges.map(([key, range]) =>
+      [key, Math.round(100 * Math.max(0, Math.min(1, (range - low) / (high - low))))]));
+  }
+
+  function draw() {
+    const isHeight = mode === "height";
+    heightButton.setAttribute("aria-pressed", String(isHeight));
+    coefficientButton.setAttribute("aria-pressed", String(!isHeight));
+    const now = Date.now();
+    const start = now - day;
+    const end = now + day;
+    const points = isHeight
+      ? heights.filter(([t]) => t >= start && t <= end)
+      : Array.from({length: 289}, (_, i) => {
+          const t = start + i * (hour / 6);
+          return [t, coefficients[dateKey.format(t)]];
+        });
+    if (!points.length || points.some(([, value]) => !Number.isFinite(value))) {
+      chart.textContent = isHeight ? "Richmond tide height predictions unavailable." : "Richmond tidal coefficient data unavailable.";
+      return;
+    }
+
+    const values = points.map(([, value]) => value);
+    const min = isHeight ? Math.floor(Math.min(...values)) : 0;
+    const max = isHeight ? Math.ceil(Math.max(...values)) : 100;
+    const title = isHeight ? "48-hour Richmond tide height" : "48-hour Richmond local tidal coefficient";
+    const x = t => (50 + 900 * (t - start) / (2 * day)).toFixed(2);
+    const y = v => (190 - 150 * (v - min) / (max - min || 1)).toFixed(2);
+    let svg = `<svg viewBox="0 0 1000 230" role="img" aria-label="${title}, current time centered"><title>${title}</title>`;
+    const step = isHeight ? 1 : 25;
+    for (let v = min; v <= max; v += step) {
+      svg += `<path d="M50 ${y(v)}H950" stroke="#d2dce0"/><text x="8" y="${Number(y(v)) + 4}" font-size="13" fill="#263c48">${v}${isHeight ? " ft" : ""}</text>`;
+    }
+    for (let i = 0; i <= 4; i++) {
+      const t = start + i * 12 * hour;
+      svg += `<text x="${x(t)}" y="212" text-anchor="${i === 0 ? "start" : i === 4 ? "end" : "middle"}" font-size="14" fill="#263c48">${time.format(t)}</text>`;
+    }
+    const path = points.map(([t, v], i) => {
+      if (!i) return `M${x(t)} ${y(v)}`;
+      return isHeight ? `L${x(t)} ${y(v)}` : `H${x(t)}V${y(v)}`;
+    }).join("");
+    svg += `<path d="${path}V190H${x(points[0][0])}Z" fill="#b5ddeb"/><path d="${path}" fill="none" stroke="#2387ae" stroke-width="3"/>`;
+    if (isHeight) {
+      points.slice(1, -1).forEach(([t, v], i) => {
+        const prior = points[i][1], next = points[i + 2][1];
+        if ((v > prior && v >= next) || (v < prior && v <= next)) {
+          svg += `<circle cx="${x(t)}" cy="${y(v)}" r="4" fill="#1678a0"/><text x="${x(t)}" y="${Number(y(v)) + (v > prior ? -9 : 15)}" text-anchor="middle" font-size="12">${v.toFixed(1)} ft</text>`;
+        }
+      });
+    }
+    svg += '<path d="M500 20V190" stroke="#9c1733" stroke-width="3"/><text x="507" y="17" font-size="14" fill="#9c1733">NOW</text></svg>';
+    const basis = isHeight ? "Predicted height in feet above MLLW." :
+      "RICHFISH local index (0–100). Each Pacific day’s predicted range is scaled between the 10th and 90th percentiles of nearby Richmond tide ranges. NOAA supplies the heights.";
+    chart.innerHTML = svg + `<p>NOAA Richmond 9414863 · Pacific time · ±24 hours. ${basis}</p>`;
+  }
+
+  function renderSolunar() {
+    const out = document.getElementById("home-solunar");
+    if (!window.SunCalc) {
+      out.textContent = "Astronomical estimates unavailable.";
+      return;
+    }
+    const now = Date.now();
+    const end = now + day;
+    const lat = 37.935, lng = -122.347;
+    const events = [];
+    const add = (label, center, duration, type) => {
+      if (center + duration >= now && center - duration < end) events.push({label, center, duration, type});
+    };
+    const utcMidnight = Math.floor(now / day) * day;
+    for (let t = utcMidnight - day; t <= end + day; t += day) {
+      const moon = SunCalc.getMoonTimes(new Date(t), lat, lng, true);
+      if (moon.rise) add("Moonrise", +moon.rise, hour / 2, "Minor");
+      if (moon.set) add("Moonset", +moon.set, hour / 2, "Minor");
+    }
+    const step = 5 * 60000;
+    const altitude = t => SunCalc.getMoonPosition(new Date(t), lat, lng).altitude;
+    for (let t = now - hour; t <= end + hour; t += step) {
+      const value = altitude(t), before = altitude(t - step), after = altitude(t + step);
+      if (value > before && value >= after) add("Upper lunar transit", t, hour, "Major");
+      if (value < before && value <= after) add("Lower lunar transit", t, hour, "Major");
+    }
+    out.innerHTML = '<p>Approximate Richmond activity windows for the next 24 hours · Pacific time</p><ul>' +
+      events.sort((a, b) => a.center - b.center).map(({label, center, duration, type}) =>
+        `<li><strong>${type} · ${label}</strong><br>${time.format(center - duration)} – ${time.format(center + duration)}</li>`).join("") + "</ul>";
+  }
+
+  async function refresh() {
+    const now = Date.now();
+    const results = await Promise.allSettled([predictions(now, 1.5, "6"), predictions(now, 16, "hilo")]);
+    if (results[0].status === "fulfilled") {
+      heights = results[0].value.map(row => [epoch(row.t), Number(row.v)]).filter(point => point.every(Number.isFinite));
+    }
+    if (results[1].status === "fulfilled") coefficients = localCoefficients(results[1].value);
+    draw();
+  }
+
+  heightButton.addEventListener("click", () => {mode = "height"; draw();});
+  coefficientButton.addEventListener("click", () => {mode = "coefficient"; draw();});
+  document.querySelector(".rwt-tides details").addEventListener("toggle", event => {
+    if (event.currentTarget.open) renderSolunar();
+  });
+  refresh();
+  setInterval(() => {draw();}, 60000);
+  setInterval(refresh, hour);
 })();

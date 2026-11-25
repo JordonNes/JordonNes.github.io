@@ -117,7 +117,7 @@ top.forEach(function(x,i){var p=x.best.p,r=x.best.e;var win="Favor moving water 
 div.querySelector("button").onclick=function(){displaySpecies=x.s;el("species").value=x.s;refresh(false);map.setView(coords(p),15)};el("plan-results").appendChild(div)})}
 async function init(){
 if(!window.L){el("mapstatus").textContent="Mapping library unavailable";return}
-map=L.map(el("map"),{zoomControl:true,preferCanvas:true}).setView([37.918,-122.359],12);if(window.ResizeObserver)new ResizeObserver(function(){map.invalidateSize({pan:false})}).observe(el("map"));
+map=L.map(el("map"),{zoomControl:true,preferCanvas:true,scrollWheelZoom:false}).setView([37.918,-122.359],12);if(window.ResizeObserver)new ResizeObserver(function(){map.invalidateSize({pan:false})}).observe(el("map"));
 base=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"}).addTo(map);
 var baseFailures=0;base.on("tileerror",function(){baseFailures++;if(baseFailures===4){el("mapstatus").textContent="Basemap tiles unavailable; try refresh or network connection"}});base.on("tileload",function(){el("mapstatus").innerHTML='<span class="dot"></span>Map background loaded'});
 heatLayer=L.layerGroup();markerLayer=L.layerGroup().addTo(map);
