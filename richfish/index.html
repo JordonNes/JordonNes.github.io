@@ -15,6 +15,14 @@
 .home-page #frmap>.layout{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;align-items:stretch!important}
 .home-page #frmap .mapwrap{border:0!important;border-radius:0!important;margin:0!important;position:relative!important;align-self:stretch!important}
 .home-page #frmap #map{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;border-radius:0!important}
+</style><style>
+#frmap .layout{display:grid!important;grid-template-columns:minmax(280px,330px) minmax(0,1fr)!important;align-items:stretch!important;grid-template-rows:auto!important;height:auto!important;max-height:none!important;overflow:visible!important}
+#frmap .layout>.side{height:auto!important;max-height:none!important;overflow:visible!important;align-self:start!important}
+#frmap .layout>.mapwrap{position:relative!important;align-self:stretch!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:hidden!important;contain:size layout!important}
+#frmap #map{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;overflow:hidden!important;touch-action:none}
+#frmap .mapwrap .leaflet-container{overflow:hidden!important}
+@media(max-width:900px){#frmap .layout{grid-template-columns:1fr!important}#frmap .layout>.mapwrap{height:580px!important;min-height:580px!important;contain:layout!important}}
+@media(max-width:620px){#frmap .layout>.mapwrap{height:530px!important;min-height:530px!important}}
 </style></head>
 <body class="home-page">
   <header class="topbar">
@@ -234,6 +242,6 @@
   
   <script src="bait-intelligence.js" defer></script>
   <script src="app.js" defer></script>
-  <script src="trip-builder.js" defer></script><script src="water-opportunity.js" defer></script><script src="home-map.js" defer></script><script src="home-tides.js" defer></script>
+  <script src="trip-builder.js" defer></script><script src="water-opportunity.js" defer></script><script src="home-map.js?v=20261125-scrollfix" defer></script><script src="home-tides.js" defer></script>
 </body>
 </html>
