@@ -1,0 +1,169 @@
+(function(){
+"use strict";
+var SPECIES=["striped bass","california halibut","surfperch","english sole","starry flounder","largemouth bass","smallmouth bass","rainbow trout","channel catfish","bluegill"];
+var REGIONS=[
+["Richmond Inner Harbor",37.911,-122.352,14],["Ferry Point Pier",37.909,-122.391,15],["Crockett Waterfront",38.056,-122.229,14],
+["Eckley",38.053,-122.204,14],["Eckley–Port Costa",38.052,-122.193,14],["Port Costa",38.048,-122.184,14],
+["Little Bull Valley",38.035,-122.174,13],["Point Pinole",38.005,-122.346,13],["San Pablo Bay",38.011,-122.41,11],
+["Central Bay",37.85,-122.39,11],["Carquinez Strait",38.052,-122.227,12],["Suisun Bay",38.067,-122.08,11],
+["Sacramento–San Joaquin Delta",38.1,-121.8,10]
+];
+var STORE="richfish-location-manager-v1",PRIVATE_STORE="richfish-private-places-v1";var map,waterEngine=null,heatLayer,markerLayer,regionLayer,reportLayer,depthLayer,selectedPoint=null,seed=[],saved=[],privatePlaces=[],data=[],recentReport=null,displaySpecies="striped bass",displayRegion="",showHeat=true,showPins=true,showDepth=true,base;
+function el(id){return document.querySelector("#frmap").querySelector("[id=\""+id+"\"]")}function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(s){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]})}
+function norm(v){return String(v||"").toLowerCase().trim()}function slug(v){return norm(v).replace(/[^a-z0-9]+/g,"-")}
+function coords(p){var c=p.coordinates||p.coordinate;return c&&c.lat!==null&&c.lng!==null&&Number.isFinite(+c.lat)&&Number.isFinite(+c.lng)?[+c.lat,+c.lng]:null}
+function recentAreaNote(p){if(!recentReport)return "";var v=norm([p.region,p.area,p.name].join(" "));if(/port costa/.test(v))return "Oct 31 area-wide report: your party landed no striped bass using pile worms; another angler landed two undersized stripers. West parking-lot rocks repeatedly snagged hooks and weights. Casting coordinate not recorded.";if(/craneway|richmond inner harbor/.test(v))return "Oct 31, 7–8 AM: bait-catching search at the Craneway and Steps produced no bait. The separate Craneway Fishing Pier was not tested.";return ""}
+function baitFor(s,region){var w=window.RichFishBaitIntelligence,tip=w&&w.summary(s,region||displayRegion);if(tip&&tip.supported)return tip.line+" (PFIC source-derived; check local bait supply)";
+return {"striped bass":"Pile worms (small pieces), anchovies; swimbait near feeding fish","california halibut":"Anchovy or permitted live baitfish; bottom-oriented swimbait","surfperch":"Pile worms, shrimp","english sole":"Small bottom rig with worms/shrimp; species-specific pile worm evidence not established","starry flounder":"Pile worms or shrimp on a bottom rig","largemouth bass":"Soft-plastic worms, craw patterns, spinnerbaits","smallmouth bass":"Small jigs, soft plastics, craw imitations","rainbow trout":"Small spoons, spinners, bait where permitted","channel catfish":"Cut bait, worms or other permitted bottom bait","bluegill":"Small worms, tiny jigs"}[s]||"Check local bait reports"}
+function regionalName(p){return p.area||p.region||p.subregion||"Bay & Delta"}
+function speciesEvidence(p,s){var text=norm([p.note,p.name,p.habitat].join(" "));var target=norm([].concat(p.targets&&p.targets.primary||[],p.targets&&p.targets.secondary||[]).join(" "));var hit=false;
+if(s==="striped bass")hit=/striper|striped bass/.test(text);
+if(s==="california halibut")hit=/halibut/.test(text);
+if(s==="surfperch")hit=/perch/.test(text);
+if(s==="english sole")hit=/english sole|flatfish|sole/.test(text);
+if(s==="starry flounder")hit=/flounder/.test(text);
+if(s==="largemouth bass")hit=/largemouth/.test(text);
+if(s==="smallmouth bass")hit=/smallmouth/.test(text);
+if(s==="rainbow trout")hit=/rainbow trout|trout/.test(text);
+if(s==="channel catfish")hit=/catfish/.test(text);
+if(s==="bluegill")hit=/bluegill/.test(text);
+var targetHit=target.indexOf(s)!==-1||(s==="surfperch"&&target.indexOf("perch")!==-1)||(s==="california halibut"&&target.indexOf("halibut")!==-1);
+var noMatch=p.kind==="catch"&&!hit;var personal=p.kind==="catch"&&hit?100:p.kind==="sighting"&&hit?73:p.kind==="strike"&&hit?51:p.kind==="spot"&&hit?47:p.kind==="bait"&&hit?32:p.kind==="saved"?25:0;
+if(noMatch)personal=3;
+var community=p.kind==="community"&&hit?65:0;
+var knowledge=targetHit?90:hit?76:/(pier|shoreline|harbor|bay|cove|channel)/i.test([p.habitat,p.site_type,p.name].join(" "))?35:15;
+var score=Math.min(100,Math.round(.40*personal+.35*community+.25*knowledge));
+return {score:score,matched:hit||targetHit,personal:personal,community:community,knowledge:knowledge}}
+function candidate(p){if(p.kind==="bait"||p.kind==="private_place"||p.kind==="region_reference")return false;return p.kind==="spot"||p.kind==="catch"||p.kind==="sighting"||p.kind==="community"||p.kind==="strike"||p.kind==="saved"||p.kind==="casting_point"||p.kind==="specific_location"||p.kind==="location"||!!p.site_type}
+function ranked(s,region){return data.filter(function(p){return coords(p)&&candidate(p)&&(!region||regionMatches(p,region))}).map(function(p){return {p:p,e:speciesEvidence(p,s)}}).sort(function(a,b){return b.e.score-a.e.score})}
+function regionMatches(p,r){if(!r)return true;var reg=norm(r),loc=norm(regionalName(p));if([p.region,p.subregion,p.area,p.name].some(function(v){var x=norm(v);return x===reg||(x.length>5&&reg.length>5&&(x.indexOf(reg)>=0||reg.indexOf(x)>=0))}))return true;
+if(r==="Carquinez Strait")return /crockett|eckley|port costa|little bull|carquinez/.test(loc);
+if(r==="San Pablo Bay")return /pinole|san pablo|richmond/.test(loc);
+if(r==="Central Bay")return /ferry point|central bay|richmond/.test(loc);
+return false}
+function regionReference(region){var named=REGIONS.find(function(x){return x[0]===region});if(named)return [named[1],named[2]];
+var candidate=data.find(function(p){return regionMatches(p,region)&&coords(p)});return candidate?coords(candidate):[map.getCenter().lat,map.getCenter().lng]}
+function top3(region){var evidence=SPECIES.map(function(s){var best=ranked(s,region).filter(function(r){return r.e.matched&&r.e.score>=24}).slice(0,6);return{s:s,score:best.reduce(function(n,r){return n+r.e.score},0)/(best.length||1),count:best.length}}).filter(function(x){return x.count>0});
+var inferred=waterEngine?waterEngine.selectRegion(region,regionReference(region)):[],merged=new Map();
+inferred.forEach(function(x){merged.set(x.s,Object.assign({},x))});evidence.forEach(function(x){var prev=merged.get(x.s);merged.set(x.s,{s:x.s,score:prev?Math.max(x.score,Math.round(prev.score*.7+x.score*.3)):x.score,count:x.count,modelled:!!prev})});
+return Array.from(merged.values()).filter(function(x){return x.score>=22}).sort(function(a,b){return b.score-a.score}).slice(0,3)}
+
+function renderRecentReport(){var e=recentReport&&recentReport.events||[],elr=el("recent-report");if(!e.length){elr.textContent="No recent trip report.";return}
+elr.innerHTML="<b>Sat, Oct 31 · Richmond 7–8 AM / Port Costa 10 AM–2 PM</b><p>Four Craneway / Steps bait-search positions: no bait caught. Nearby Craneway Pier: <b>not attempted</b>. At Port Costa, you and Jed landed <b>zero stripers</b> with pile worms; another angler landed <b>two undersized stripers</b>. West-side rocks repeatedly snagged hooks and sinkers.</p><div class='small'>A no-catch trip is evidence of effort and conditions—not proof that fish were absent. The other angler's fish do not count as your catches.</div>";
+e.filter(function(x){return x.coordinates}).forEach(function(x){var c=[x.coordinates.lat,x.coordinates.lng],colour=x.outcome==="not_tested"?"#d5d7df":"#efb16d";L.circleMarker(c,{radius:6,color:colour,weight:2,fillColor:"#34576b",fillOpacity:.5}).addTo(reportLayer).bindPopup("<b>"+esc(x.place)+"</b><br>"+esc(x.outcome==="not_tested"?"Not attempted; no negative bait result":"Bait attempt — no bait caught")+".<br>"+esc(x.note||"")+"<br><small>Oct 31, 7–8 AM · same scouting trip</small>")})}
+function localSave(){try{var v=JSON.parse(localStorage.getItem(STORE)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}}
+function flatten(source){if(Array.isArray(source))return source;if(source&&Array.isArray(source.locations))return source.locations;return []}
+function readPrivate(){try{var v=JSON.parse(localStorage.getItem(PRIVATE_STORE)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}}
+function parsePrivateCoordinate(x){var c=x.coordinates;if(c&&Number.isFinite(Number(c.lat))&&Number.isFinite(Number(c.lng))&&c.lat!==null&&c.lng!==null)return {lat:Number(c.lat),lng:Number(c.lng)};var m=String(x.google_maps_url||"").match(/\/maps\/search\/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);return m?{lat:Number(m[1]),lng:Number(m[2])}:null}
+function importPrivateText(text){var parsed=JSON.parse(text);var list=Array.isArray(parsed)?parsed:parsed&&parsed.locations;if(!Array.isArray(list))throw Error("This JSON must contain a locations array.");
+var next=new Map(readPrivate().map(function(x){return [x.id,x]}));list.forEach(function(x){if(!x||!x.name)return;var u=String(x.google_maps_url||"");var id="private-"+slug(x.name)+"-"+slug(u.slice(-28));var c=parsePrivateCoordinate(x);next.set(id,{id:id,name:String(x.name),kind:"private_place",coordinates:c,region:String(x.name),site_type:(x.collections||[]).some(function(c){return /boat launch/i.test(c)})?"Boat launch / saved place":"Personal saved place",note:String(x.note||""),google_maps_url:u.startsWith("https://www.google.com/maps/")?u:"",source:"Private Google Maps saved-place import",visibility:"private",coordinate_basis:c?"Explicit coordinate saved in source URL":"Unresolved named place — no exact waypoint",targets:{primary:[],secondary:[]}})});
+var all=Array.from(next.values());localStorage.setItem(PRIVATE_STORE,JSON.stringify(all));return all.length}
+function renderPrivateList(){var q=norm(el("private-search").value),items=privatePlaces.filter(function(p){return norm(p.name+" "+p.site_type).includes(q)}),box=el("private-list");box.innerHTML="";
+el("private-count").textContent=privatePlaces.length+" saved · "+privatePlaces.filter(function(p){return !!coords(p)}).length+" pinned";
+items.slice(0,70).forEach(function(p){var b=document.createElement("button");b.type="button";b.className="rank";b.style.padding="7px";b.innerHTML="<strong>"+esc(p.name)+"</strong><div class='small'>"+(coords(p)?"Exact coordinate from saved Maps link":"Needs exact coordinate")+" · "+esc(p.site_type)+"</div>";b.onclick=function(){selectedPoint=p;var c=coords(p);if(c){map.setView(c,15);L.popup().setLatLng(c).setContent("<b>"+esc(p.name)+"</b><br>Private saved location. No catch has been reported here solely by saving the place.<br>"+esc(p.coordinate_basis)).openOn(map)}else{el("selection").innerHTML="<b>"+esc(p.name)+"</b><br>Named saved place; exact casting/boat-launch coordinates have not been supplied. Choose a point on the map to save a verified fishing waypoint."+(p.google_maps_url?"<br><a href='"+esc(p.google_maps_url)+"' target='_blank' rel='noopener'>Review original Google Maps place</a>":"");var region=REGIONS.find(function(x){return norm(x[0])===norm(p.name)});if(region)map.setView([region[1],region[2]],region[3])}};box.appendChild(b)});
+if(!items.length)box.innerHTML="<span class='small'>No saved places match. Use Import to restore your private Google Maps inventory.</span>";
+}
+function combine(){var baseById=new Map(seed.map(function(p){return [p.id,p]}));privatePlaces=readPrivate();privatePlaces.forEach(function(p){if(!p.id)return;var matching=Array.from(baseById.values()).find(function(x){return norm(x.name)===norm(p.name)&&String(x.source||"").toLowerCase().includes("google takeout")});if(matching){var c=coords(p),oldCoords=coords(matching);if(c&&!oldCoords)baseById.set(matching.id,Object.assign({},matching,{coordinates:{lat:c[0],lng:c[1]},coordinate_basis:"Private browser import; never published"}));return}baseById.set(p.id,p)});saved=localSave();saved.forEach(function(p){if(p.id)baseById.set(p.id,Object.assign({},baseById.get(p.id)||{},p,{kind:p.kind||"saved"}))});data=Array.from(baseById.values());renderInventory();el("data-count").textContent=data.filter(function(p){return coords(p)}).length+" mapped records, "+data.filter(function(p){return !coords(p)}).length+" named/unplaced records; "+saved.length+" locally saved/edited spots. Private imports never go to GitHub.";renderPrivateList()}
+function renderInventory(){var q=norm(el("inventory-search").value),rows=data.filter(function(p){return p.kind!=="private_place"&&p.kind!=="bait"&&(!displayRegion||regionMatches(p,displayRegion))&&norm([p.name,p.region,p.area,p.specific_location,p.kind].join(" ")).includes(q)}),box=el("inventory-list");box.innerHTML="";el("master-count").textContent=rows.length+" of "+data.filter(function(p){return p.kind!=="private_place"}).length;
+rows.slice(0,100).forEach(function(p){var c=coords(p),b=document.createElement("button");b.type="button";b.className="rank";b.style.padding="7px";
+b.innerHTML="<strong>"+esc(p.name)+"</strong><div class='small'>"+esc(regionalName(p))+" · "+esc(p.kind||"place")+" · "+(c?"Mapped":"Exact waypoint pending")+"</div>";
+b.onclick=function(){selectedPoint=p;if(c){map.setView(c,15);showSpotTargets(p);L.popup().setLatLng(c).setContent(popupHtml(p,displaySpecies)).openOn(map)}else{el("selection").innerHTML="<b>"+esc(p.name)+"</b><br>No exact coordinate available. This remains a named location, not a pin; select the precise spot on the map to add a waypoint.";var reg=REGIONS.find(function(x){return norm(x[0])===norm(p.name)});if(reg)map.setView([reg[1],reg[2]],reg[3])}};box.appendChild(b)});
+if(!rows.length)box.innerHTML="<span class='small'>No locations match this search and region.</span>";
+}
+function moon(d){var phase=((d.getTime()/86400000-10957.5)/29.53059%1+1)%1;return ["New","Waxing crescent","First quarter","Waxing gibbous","Full","Waning gibbous","Last quarter","Waning crescent"][Math.floor((phase+.0625)*8)%8]}
+function evidenceLabel(p){return p.kind==="private_place"?"Private saved place — no recorded catch":p.kind==="catch"?"Firsthand landed catch":p.kind==="community"?"Community report":p.kind==="sighting"?"Firsthand fish observation":p.kind==="strike"?"Firsthand strike, fish unconfirmed":p.kind==="bait"?"Bait collection / sighting":p.kind==="saved"?"Saved personal spot":"Fishing location"}
+function popupHtml(p,s){var e=speciesEvidence(p,s),ts=moon(new Date());return '<div class="pophead">'+esc(p.name)+'</div><div class="mini">'+esc(regionalName(p))+'</div><div class="poprule"></div><div class="popdata"><span>Target</span><b>'+esc(s)+'</b><span>Opportunity index</span><b>'+e.score+'/100</b><span>Moon</span><b>'+esc(ts)+'</b><span>Best window</span><b>Not computed</b><span>NOAA tides</span><b>Not loaded</b></div><div class="popfoot">'+esc((p.note||p.habitat||"Saved fishing location.")+(recentAreaNote(p)?" | "+recentAreaNote(p):""))+'</div><div class="popfoot">Bait: '+esc(baitFor(s,regionalName(p)))+'</div><div class="popfoot">'+esc(evidenceLabel(p))+' · approximate model ranking, not catch probability. *Check conditions.</div><button type="button" class="popbutton" data-save-id="'+esc(p.id)+'">Save / edit this fishing spot</button>'}
+function positionFor(p){return coords(p)}
+function makeGold(){return L.divIcon({html:'<div class="gold-marker">🐟</div>',className:"",iconSize:[31,31],iconAnchor:[15,15]})}
+function makeDot(p){return L.divIcon({html:'<div class="'+(p.kind==="bait"?"bait-marker":"spot-marker")+'"></div>',className:"",iconSize:[16,16],iconAnchor:[8,8]})}
+function savedIds(){return new Set(saved.map(function(p){return p.id}))}
+function drawPins(){markerLayer.clearLayers();if(!showPins)return;var points=displayRegion?data.filter(function(p){return regionMatches(p,displayRegion)}):data;
+points.forEach(function(p){var c=coords(p);if(!c)return;var m=L.marker(c,{icon:makeDot(p),zIndexOffset:0});m.bindPopup(popupHtml(p,displaySpecies),{maxWidth:285});m.on("click",function(){selectedPoint=p;showSpotTargets(p)});markerLayer.addLayer(m)})}
+function showSpotTargets(p){var top=SPECIES.map(function(s){return {s:s,e:speciesEvidence(p,s)}}).filter(function(x){return x.e.matched&&x.e.score>=20}).sort(function(a,b){return b.e.score-a.e.score}).slice(0,3);
+el("selection").innerHTML="<b>Selected: "+esc(p.name)+"</b><br>"+esc(evidenceLabel(p))+'<div class="small" style="margin:6px 0 4px">Top targets at this point:</div>';
+if(!top.length){el("selection").insertAdjacentHTML("beforeend","<div class=\"small\">No location-specific species evidence. A saved place is not proof of fish presence.</div>");return}top.forEach(function(v){var b=document.createElement("button");b.textContent=v.s+" · "+v.e.score;b.onclick=function(){el("species").value=v.s;displaySpecies=v.s;refresh(false)};el("selection").appendChild(b)})}
+function renderBaitTip(){var info=window.RichFishBaitIntelligence,box=el("bait-intel-tip"),status=el("bait-knowledge-status"),tip=info?.summary(displaySpecies,displayRegion);
+if(!info?.get()){box.textContent="Source data loading. Existing bait recommendations remain available.";status.textContent="Loading";return}
+status.textContent="Sourced: PFIC";
+if(!tip){box.textContent="No species-specific pile/clam worm guidance in this source for "+displaySpecies+". Ray will not invent a bait match.";return}
+var selected=info.bestFor(displaySpecies,displayRegion),line=tip.supported?"<b>"+esc(tip.line)+"</b>":"<b>"+esc(tip.line)+"</b>";
+box.innerHTML=line+"<div style='margin-top:5px'>"+esc(tip.evidence)+"</div>"+(tip.supported?"<div style='margin-top:5px'>Rig: "+esc(tip.rig_note)+"</div>":"")+
+"<div style='margin-top:7px'>Both worms have biting jaws. Keep live bait cool. Before collecting locally, verify legal take and Marine Protected Area restrictions.</div>"+
+"<div style='margin-top:7px'><em>Source: Pier Fishing in California · article date not supplied · not a live bite report or bait-shop inventory.</em></div>"}
+function renderRegionButtons(){var top=top3(displayRegion),box=el("top-fish");box.innerHTML="";if(!top.length){box.innerHTML="<span class=\"small\">No species-specific evidence for this region yet. Select a nearby region or add a fishing report.</span>";return}top.forEach(function(x){var b=document.createElement("button");b.type="button";b.className=x.s===displaySpecies?"active":"";b.textContent=x.s; b.onclick=function(){displaySpecies=x.s;el("species").value=x.s;refresh(false)};box.appendChild(b)})}
+function renderRanks(){var rows=ranked(displaySpecies,displayRegion).filter(function(x){return x.e.matched&&x.e.score>=20}).slice(0,10),box=el("rankings");box.innerHTML="";el("matchcount").textContent=rows.length+" evidenced";if(!rows.length)box.innerHTML="<span class=\"small\">No species-specific evidence in the selected region yet. Open the complete location inventory below to explore saved spots; they are not automatically predictions.</span>";rows.forEach(function(r,i){var p=r.p;var b=document.createElement("button");b.type="button";b.className="rank";b.innerHTML='<div class="meta"><span><b>'+(i+1)+'.</b> '+esc(regionalName(p))+'</span><b>'+r.e.score+'/100</b></div><strong>'+esc(p.name)+'</strong><div class="why">'+esc(evidenceLabel(p))+' · '+esc(((p.note||p.habitat||"Habitat suitability")+(recentAreaNote(p)?" | "+recentAreaNote(p):"")).slice(0,235))+'</div>';b.onclick=function(){map.setView(coords(p),15);selectedPoint=p;showSpotTargets(p);markerLayer.eachLayer(function(l){if(l.getLatLng&&l.getLatLng().lat===coords(p)[0]&&l.getLatLng().lng===coords(p)[1])l.openPopup()})};box.appendChild(b)})}
+function fWeight(p){var e=speciesEvidence(p,displaySpecies);return e.score}
+function renderWaterRecommendations(items,ready){
+var panel=el("water-recs");panel.innerHTML="";
+el("water-status").textContent=ready?"Mapped-water analysis":"No water coverage";
+if(!items||!items.length){panel.innerHTML="<span class='small'>"+(ready?"No distinct modeled water targets in this view. Change the species, region, or map extent. Unlisted waters still receive a habitat layer.":"Waterbody geometry unavailable; the basemap and saved locations remain usable.")+"</span>";return}
+items.forEach(function(item,i){var b=document.createElement("button");b.type="button";b.className="rank";b.innerHTML="<div class='meta'><span><b class='gold'>🐟 New water target "+(i+1)+"</b></span><b>"+item.score+"/100</b></div><strong>"+esc(item.water)+"</strong><div class='why'>"+esc(item.species)+" · "+esc(item.basis)+" · Not in your saved waypoint list · Shore access unverified</div>";b.onclick=function(){waterEngine.focus(item.lat,item.lng)};panel.appendChild(b)})}
+function drawHeat(){if(waterEngine){waterEngine.setVisible(showHeat);el("heat-title").textContent=displaySpecies+" · waterwide habitat opportunity";}else{el("heat-title").textContent=displaySpecies+" · water model loading"}el("heat-btn").classList.toggle("primary",showHeat)}
+function refresh(zoom){renderRegionButtons();renderBaitTip();renderRanks();renderInventory();drawHeat();drawPins();if(zoom&&displayRegion){var r=REGIONS.find(function(x){return x[0]===displayRegion});if(r){map.setView([r[1],r[2]],r[3])}else{var pts=data.filter(function(p){return regionMatches(p,displayRegion)&&coords(p)}).map(coords);if(pts.length){map.fitBounds(L.latLngBounds(pts),{padding:[30,30],maxZoom:13})}}}}
+function pickRegion(){displayRegion=el("region").value;selectedPoint=null;el("selection").textContent=displayRegion?"Select one of the top target buttons or click a mapped fishing spot.":"Choose a region or click any fishing point for target recommendations.";refresh(true)}
+function openForm(p,co){var c=co||coords(p)||map.getCenter();el("name").value=p&&p.name||"";el("area").value=p?regionalName(p):(displayRegion||"Richmond Inner Harbor");el("lat").value=Array.isArray(c)?c[0]:c.lat;el("lng").value=Array.isArray(c)?c[1]:c.lng;el("note").value=p&&(p.note||p.supportive_info&&p.supportive_info.bait)||"";el("save-error").textContent="";el("edit").dataset.id=p&&p.id||"";el("edit").classList.add("open")}
+function saveSpot(){var name=el("name").value.trim(),lat=+el("lat").value,lng=+el("lng").value;if(!name||!Number.isFinite(lat)||!Number.isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180){el("save-error").textContent="Enter a name and valid geographic coordinates.";return}
+var id=el("edit").dataset.id||"personal-"+slug(name)+"-"+Date.now(),old=data.find(function(p){return p.id===id})||{},area=el("area").value.trim(),note=el("note").value.trim();
+var rec=Object.assign({},old,{id:id,name:name,region:area,subregion:area,area:area,site_type:"Personal Fishing Spot",kind:"saved",coordinates:{lat:lat,lng:lng},habitat:note,note:note,targets:old.targets||{primary:[displaySpecies],secondary:[]},supportive_info:Object.assign({},old.supportive_info||{},{bait:note}),updated_at:new Date().toISOString()});
+var records=localSave(),i=records.findIndex(function(x){return x.id===id});if(i>=0)records[i]=rec;else records.push(rec);
+try{localStorage.setItem(STORE,JSON.stringify(records))}catch(e){el("save-error").textContent="Browser storage unavailable: "+e.message;return}el("edit").classList.remove("open");combine();refresh(false);map.setView([lat,lng],15);el("selection").textContent="Saved to this browser. Open Location Manager to edit or export your Fishing Spot list."}
+function formatDate(d){return d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}
+function plan(){var start=new Date(el("start").value),end=new Date(el("end").value);el("plan-errors").textContent="";el("plan-results").innerHTML="";
+if(!Number.isFinite(+start)||!Number.isFinite(+end)||end<=start){el("plan-errors").textContent="Enter a valid start and later end time.";return}
+if(end-start>14*86400000){el("plan-errors").textContent="Limit one trip to 14 days for this planner.";return}
+var choices=[],taken=new Set();for(var s of SPECIES){var best=ranked(s,displayRegion).find(function(x){return x.e.matched&&x.e.score>=25&&!taken.has(x.p.id)});if(best)choices.push({s:s,best:best})}
+choices.sort(function(a,b){return b.best.e.score-a.best.e.score});var top=choices.slice(0,2);if(top.length<2){el("plan-errors").textContent="Insufficient distinct mapped fishing sites with evidence in the selected region; widen your search.";return}
+top.forEach(function(x,i){var p=x.best.p,r=x.best.e;var win="Favor moving water and low-light periods during "+formatDate(start)+" – "+formatDate(end)+"; exact tide windows pending live NOAA data.";var div=document.createElement("div");div.className="plan-result";div.innerHTML="<h3>"+(i+1)+". "+esc(p.name)+"</h3><div class='small'>"+esc(regionalName(p))+" · "+r.score+"/100 relative evidence index</div><p><b>Target:</b> "+esc(x.s)+"<br><b>Bait:</b> "+esc(baitFor(x.s,regionalName(p)))+"</p><p class='small'>"+esc(win)+"</p><button type='button'>Show on map</button>";
+div.querySelector("button").onclick=function(){displaySpecies=x.s;el("species").value=x.s;refresh(false);map.setView(coords(p),15)};el("plan-results").appendChild(div)})}
+async function init(){
+if(!window.L){el("mapstatus").textContent="Mapping library unavailable";return}
+map=L.map(el("map"),{zoomControl:true,preferCanvas:true}).setView([37.918,-122.359],12);if(window.ResizeObserver)new ResizeObserver(function(){map.invalidateSize({pan:false})}).observe(el("map"));
+base=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"}).addTo(map);
+var baseFailures=0;base.on("tileerror",function(){baseFailures++;if(baseFailures===4){el("mapstatus").textContent="Basemap tiles unavailable; try refresh or network connection"}});base.on("tileload",function(){el("mapstatus").innerHTML='<span class="dot"></span>Map background loaded'});
+heatLayer=L.layerGroup();markerLayer=L.layerGroup().addTo(map);
+if(window.RichFishBaitIntelligence){RichFishBaitIntelligence.load("data/bait-intelligence.json").then(function(){renderBaitTip()}).catch(function(e){el("bait-knowledge-status").textContent="Source unavailable";console.warn("FRI bait knowledge:",e.message)})}
+if(window.RichFishWaterOpportunity){
+waterEngine=RichFishWaterOpportunity.create(map,{getSpecies:function(){return displaySpecies},getRegion:function(){return displayRegion},getPoints:function(){return data},onRecommendations:renderWaterRecommendations,onStatus:function(status){el("water-status").textContent=status}});
+waterEngine.load("data/water-coverage-v1.geojson").then(function(){refresh(false)}).catch(function(err){el("water-status").textContent="Hydrographic water data unavailable";console.warn("RichFish model:",err.message)});
+}else{el("water-status").textContent="Water model script unavailable";}
+reportLayer=L.layerGroup().addTo(map);regionLayer=L.layerGroup().addTo(map);map.createPane("bathypane");map.getPane("bathypane").style.zIndex=345;map.getPane("bathypane").style.pointerEvents="none";depthLayer=L.layerGroup().addTo(map);fetch("data/gebco-2026-bay-contours.geojson").then(function(r){if(!r.ok)throw Error("depth data unavailable");return r.json()}).then(function(g){L.geoJSON(g,{style:function(f){return {pane:"bathypane",color:"#23465b",weight:1.6,opacity:.65,dashArray:"5 3"}},onEachFeature:function(f,l){l.bindTooltip(String(Math.abs(f.properties.depth_m))+" m · GEBCO approximate depth",{sticky:true})}}).addTo(depthLayer)}).catch(function(e){console.warn("Optional bathymetry:",e.message)});
+var now=new Date(),tom=new Date(now);tom.setDate(now.getDate()+1);tom.setHours(11,30,0,0);var end=new Date(tom);end.setDate(end.getDate()+1);end.setHours(3,45,0,0);function localISO(d){var z=d.getTimezoneOffset()*60000;return new Date(d-z).toISOString().slice(0,16)}el("start").value=localISO(tom);el("end").value=localISO(end);
+REGIONS.forEach(function(r){var opt=document.createElement("option");opt.value=r[0];opt.textContent=r[0];el("region").appendChild(opt)});
+el("inventory-search").oninput=renderInventory;
+try{var results=await Promise.all([fetch("data/catalog/fishing-locations-master.json"),fetch("data/catalog/locations.json"),fetch("data/field-intelligence-2026-10.json"),fetch("data/inland-reference-waters.json"),fetch("data/field-reports-2026-10-31.json")]);if(results.slice(0,3).some(function(r){return !r.ok}))throw Error("Master fishing records could not load");
+var master=(await results[0].json()).locations||[],catalog=flatten(await results[1].json()),field=(await results[2].json()).points;
+var byId=new Map(catalog.map(function(p){return [p.id,p]}));
+master.forEach(function(m){var old=byId.get(m.id)||{};var c=m.coordinate||m.coordinates||old.coordinates||null;
+byId.set(m.id,Object.assign({},old,m,{coordinates:c,site_type:old.site_type||(m.kind==="casting_point"?"Casting point":m.kind==="specific_location"?"Specific location":"General area"),targets:old.targets||{primary:[],secondary:[]},coordinate_basis:m.coordinate_role||old.coordinate_basis||"unspecified",source:m.source||old.source}))});
+field=field.map(function(p){return Object.assign({},p,{region:p.area,site_type:"Field observation",targets:{primary:[],secondary:[]}})});
+seed=Array.from(byId.values()).concat(field);
+Array.from(new Set(master.map(function(x){return x.region}).filter(Boolean))).sort().forEach(function(name){if(!REGIONS.some(function(r){return r[0]===name})){var opt=document.createElement("option");opt.value=name;opt.textContent=name+" · master";el("region").appendChild(opt)}});
+if(results[3].ok){var refs=(await results[3].json()).regions||[];refs.forEach(function(p){if(!REGIONS.some(function(r){return norm(r[0])===norm(p.name)})){var z=p.name==="Shasta Lake"?10:12;REGIONS.push([p.name,p.coordinate.lat,p.coordinate.lng,z]);var opt=document.createElement("option");opt.value=p.name;opt.textContent=p.name+" · inland";el("region").appendChild(opt)}
+var r=L.circleMarker([p.coordinate.lat,p.coordinate.lng],{radius:7,weight:2,color:"#375d73",fillColor:"#e4edf1",fillOpacity:.7}).addTo(regionLayer);r.bindPopup("<b>"+esc(p.name)+"</b><br>Named waterbody reference, NOT a verified fishing waypoint.<br>"+esc(p.reference_type))})}
+if(results[4].ok){recentReport=await results[4].json();renderRecentReport()}
+combine();refresh(false);el("mapstatus").innerHTML='<span class="dot"></span>Full Fishing Master loaded';}
+catch(e){el("mapstatus").textContent="Data load error: "+e.message}
+el("species").onchange=function(){displaySpecies=el("species").value;refresh(false)};
+el("region").onchange=pickRegion;
+el("reset").onclick=function(){displayRegion="";el("region").value="";displaySpecies="striped bass";el("species").value=displaySpecies;map.setView([37.925,-122.35],11);refresh(false)};
+el("add").onclick=function(){openForm(null)};
+el("cancel").onclick=function(){el("edit").classList.remove("open")};
+el("save").onclick=saveSpot;
+el("depth-btn").onclick=function(){showDepth=!showDepth;if(showDepth)depthLayer.addTo(map);else map.removeLayer(depthLayer);el("depth-btn").classList.toggle("primary",showDepth)};
+el("heat-btn").onclick=function(){showHeat=!showHeat;drawHeat()};
+el("spots-btn").onclick=function(){showPins=!showPins;drawPins();el("spots-btn").classList.toggle("primary",showPins)};
+el("plan").onclick=plan;
+el("private-search").oninput=renderPrivateList;
+el("private-import-file").onchange=async function(e){var f=e.target.files&&e.target.files[0];if(!f)return;try{var n=importPrivateText(await f.text());el("private-status").textContent=n+" private named locations restored in this browser; nothing uploaded to the site.";combine();refresh(false);if(n)renderPrivateList()}catch(err){el("private-status").textContent="Import failed: "+err.message}e.target.value=""};
+map.on("click",function(e){
+if(waterEngine){var at=waterEngine.at(e.latlng);if(at){var targets=waterEngine.speciesAt(e.latlng);
+var area=at.feature.properties.name;el("selection").innerHTML="<b>Unlisted water point · "+esc(area)+"</b><br><span class='small'>Not a saved fishing spot. This is waterbody habitat, not a catch report or an access guarantee.</span><div class='small' style='margin:6px 0'>Potential targets at the selected water:</div>";
+targets.forEach(function(v){var b=document.createElement("button");b.type="button";b.textContent=v.species+" · "+v.score;b.onclick=function(){displaySpecies=v.species;el("species").value=v.species;refresh(false)};el("selection").appendChild(b)});
+if(!targets.length)el("selection").insertAdjacentHTML("beforeend","<span class='small'>No supported target in this waterbody for the currently modeled species.</span>");
+L.popup({maxWidth:295}).setLatLng(e.latlng).setContent('<div class="pophead">Richmond Ray · Water Opportunity</div><div class="poprule"></div><b>'+esc(displaySpecies)+' · '+at.score.score+'/100</b><div class="popfoot">'+esc(area)+' · '+esc(at.score.confidence)+'</div><div class="popfoot">Habitat suitability only; not a calibrated catch probability. Bait: '+esc(baitFor(displaySpecies,area))+'. Public shoreline access is unverified.</div>').openOn(map);return}}
+var p={id:"map-click",name:"Selected shoreline / map point",area:displayRegion||"Map selection",kind:"spot",coordinates:{lat:+e.latlng.lat.toFixed(6),lng:+e.latlng.lng.toFixed(6)},note:"Unverified selected point; no specific catch evidence."};selectedPoint=p;showSpotTargets(p);L.popup({maxWidth:275}).setLatLng(e.latlng).setContent(popupHtml(p,displaySpecies)).openOn(map)});
+document.body.addEventListener("click",function(e){var btn=e.target.closest("[data-save-id]");if(!btn)return;var id=btn.getAttribute("data-save-id"),p=id==="map-click"?selectedPoint:data.find(function(x){return x.id===id});if(p)openForm(p)});
+window.addEventListener("storage",function(e){if(e.key===STORE||e.key===PRIVATE_STORE){combine();refresh(false)}})
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
