@@ -1438,13 +1438,25 @@ def main():
             prop.update(result)
             if result["evaluation_status"]=="LJ_EVALUATED": evaluated+=1
             else: waiting+=1
+    # Keep evaluated research lines in their dedicated artifact. The canonical
+    # publication board only needs externally collected offers.
+    compact_qc_evidence(payload)
+    synthetic_events=[]; synthetic_count=0
+    for event in payload.get("events") or []:
+        props=[p for p in (event.get("props") or []) if p.get("synthetic") or p.get("model_generated")]
+        if not props: continue
+        event["props"]=[p for p in event["props"] if not (p.get("synthetic") or p.get("model_generated"))]
+        synthetic_count += len(props)
+        synthetic_events.append({"league":event.get("league"),"source_event_id":event.get("source_event_id") or event.get("event_id"),"commence_time":event.get("commence_time"),"away":event.get("away"),"home":event.get("home"),"away_aliases":event.get("away_aliases") or [],"home_aliases":event.get("home_aliases") or [],"source":"LEGZ_SYNTHETIC_BOOK","sweep_status":"LEGZ_SYNTHETIC_EVALUATED","props":props})
+    synthetic_payload={"schema_version":"LSI-LEGZ-SYNTHETIC-BOOK-1","generated_at_utc":datetime.now(timezone.utc).isoformat(),"stage":"POST_SPECTRUM_EVALUATED","policy":"Verified external POMs outrank synthetic lines. Synthetic rows are internal shadow-book thresholds and never external offers.","event_count":len(synthetic_events),"prop_count":synthetic_count,"events":synthetic_events}
+    external_props=[p for event in payload.get("events") or [] for p in event.get("props") or []]
+    external_evaluated=sum(p.get("evaluation_status")=="LJ_EVALUATED" for p in external_props)
     payload["evaluation_engine"]=EVALUATION_VERSION
-    payload["evaluation_summary"]={"evaluated":evaluated,"awaiting_evidence":waiting,"reused_unchanged":reused,"recomputed_changed":recomputed}
+    payload["evaluation_summary"]={"evaluated":external_evaluated,"awaiting_evidence":len(external_props)-external_evaluated,"reused_unchanged":sum(p.get("evaluation_reused") is True for p in external_props),"recomputed_changed":sum(p.get("evaluation_reused") is False for p in external_props)}
     payload["projection_summary"]=projection_summary
     # qc_prop_board is a machine artifact consumed by Python/JS. Keep it minified:
     # the fully evaluated board can contain thousands of POMs and pretty JSON alone
     # adds tens of MiB to every GitHub Pages deployment.
-    compact_qc_evidence(payload)
     board_text=json.dumps(payload,separators=(",",":"),ensure_ascii=False)+"\n"
     if len(board_text.encode("utf-8"))>=95*1024*1024:
         raise SystemExit("Canonical QC board exceeds 95 MiB after evidence deduplication; publication stopped before Git push")
@@ -1467,14 +1479,7 @@ def main():
     # Machine state is intentionally minified. At thousands of live offered POMs,
     # pretty-print whitespace alone can push the state artifact over the CI size guard.
     EVAL_STATE.write_text(json.dumps(state_payload,separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
-    synthetic_events=[]; synthetic_count=0
-    for event in payload.get("events") or []:
-        props=[p for p in (event.get("props") or []) if p.get("synthetic") or p.get("model_generated")]
-        if not props: continue
-        synthetic_count += len(props)
-        synthetic_events.append({"league":event.get("league"),"source_event_id":event.get("source_event_id") or event.get("event_id"),"commence_time":event.get("commence_time"),"away":event.get("away"),"home":event.get("home"),"away_aliases":event.get("away_aliases") or [],"home_aliases":event.get("home_aliases") or [],"source":"LEGZ_SYNTHETIC_BOOK","sweep_status":"LEGZ_SYNTHETIC_EVALUATED","props":props})
-    synthetic_payload={"schema_version":"LSI-LEGZ-SYNTHETIC-BOOK-1","generated_at_utc":datetime.now(timezone.utc).isoformat(),"stage":"POST_SPECTRUM_EVALUATED","policy":"Verified external POMs outrank synthetic lines. Synthetic rows are internal shadow-book thresholds and never external offers.","event_count":len(synthetic_events),"prop_count":synthetic_count,"events":synthetic_events}
-    SYNTHETIC_BOOK.write_text(json.dumps(synthetic_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    SYNTHETIC_BOOK.write_text(json.dumps(synthetic_payload,separators=(",",":"),ensure_ascii=False)+"\n",encoding="utf-8")
     print(f"LEGZ Statistical Spectrum v3: evaluated={evaluated}; awaiting_evidence={waiting}; projected={projection_summary['projected']}/{projection_summary['total_props']}; alias_resolved={projection_summary['identity_alias']}; durable_live_states={len(records_by_id)}; compacted_from={before_compaction}; synthetic_persisted={synthetic_count}")
 
 if __name__=="__main__": main()
