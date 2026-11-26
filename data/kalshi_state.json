@@ -1,17 +1,16 @@
 {
   "schema_version": "LSI-KALSHI-STATE-1",
-  "checked_at_utc": "2026-11-25T14:53:43.077054+00:00",
+  "checked_at_utc": "2026-11-26T08:53:03.229008+00:00",
   "status": "OK",
-  "raw_market_count": 6695,
-  "normalized_props": 2220,
-  "history_rows_added": 2220,
+  "raw_market_count": 5829,
+  "normalized_props": 72,
+  "history_rows_added": 72,
   "skip_reasons": {
-    "ambiguous_matchup": 215,
-    "ambiguous_participant_threshold": 787,
-    "no_current_yes_price": 60,
-    "ok": 2220,
-    "unknown_sport": 3082,
-    "unsupported_market": 331
+    "ambiguous_matchup": 116,
+    "ambiguous_participant_threshold": 2279,
+    "ok": 72,
+    "unknown_sport": 3095,
+    "unsupported_market": 267
   },
   "skip_samples": {
     "unknown_sport": {
@@ -65,71 +64,58 @@
       "floor_strike": null,
       "functional_strike": null,
       "occurrence_datetime": "2026-12-02T01:00:00Z"
-    },
-    "no_current_yes_price": {
-      "ticker": "KXNBASTLPROT-26NOV25BKNMIL-BKNMBROWN0-1",
-      "event_ticker": "KXNBASTLPROT-26NOV25BKNMIL",
-      "series_ticker": "KXNBASTLPROT",
-      "event_title": "Brooklyn vs Milwaukee: Steals",
-      "title": "Mikel Brown Jr.: 1+ steals",
-      "subtitle": null,
-      "yes_sub_title": "Mikel Brown Jr.: 1+",
-      "primary_participant_key": "basketball_player",
-      "floor_strike": 0.5,
-      "functional_strike": null,
-      "occurrence_datetime": "2026-11-26T04:00:00Z"
     }
   },
   "targeted_series": {
     "selected": [
       "KXBOXINGOCCUR",
-      "KXMLBHIT",
-      "KXUFCOCCUR",
-      "KXNBAWHATTEND",
-      "KXNCAAFFIRSTTDTEAM",
-      "KXNFLRSHYDSPRECISE",
-      "KXNHLPTS",
-      "KXATPACES",
-      "KXWNBA3PTROUND",
-      "KXMLBHRDERBYMATCHUP",
+      "KXMLBHRDERBYSEMI",
       "KXUFCWHITEHOUSE",
-      "KXNBAH2HTEAM3PT",
-      "KXNCAAFOCCUR",
-      "KXNFLRSHATT",
-      "KXNHLSEASONGOALS",
+      "KXNBABLKPROT",
+      "KXNCAAF1HTEAMTOTAL",
+      "KXNFLFFPTS",
+      "KXNHLPTS",
       "KXWTAACES",
       "KXWNBA3PTCONTESTOU",
-      "KXMLBASGHR",
-      "KXNBAPTS",
-      "KXNCAAFGO",
-      "KXNFLLADDERREC",
-      "KXNHLFIRSTGOAL",
-      "KXWNBA3PTCONTEST",
-      "KXMLBWALKOFFS",
-      "KXNBASTLPROT",
-      "KXNCAAFTEAMTO",
-      "KXNFLLONGESTFG",
-      "KXNHLPSEASONPOINTS",
-      "KXWNBAAST",
-      "KXMLBSEASONHR",
-      "KXNBAAST",
-      "KXNCAAFTEAMREC",
-      "KXNFLLADDERRECYDS",
-      "KXNHLSEASONPPTS",
-      "KXWNBAH2HPTS",
-      "KXMLBPLAYOFFHRS",
-      "KXNBAREBPROT",
-      "KXNCAAFTEAMRSHATT",
-      "KXNFLTEAMPTS",
-      "KXNHLTOTAL",
-      "KXWNBAREB",
+      "KXMLBHRDERBYDISTANCE",
+      "KXUFCOCCUR",
+      "KXNBABLK",
+      "KXNCAAFTOTAL",
+      "KXNFLPASSATT",
+      "KXNHLSEASONGOALS",
+      "KXATPACES",
+      "KXWNBA3PT",
       "KXMLBHRDERBYVELO",
-      "KXNBARA",
-      "KXNCAAFTOTALFG",
-      "KXNFLCAREERPASSYDS",
-      "KXNHLAST",
+      "KXNBA3PTPROT",
+      "KXNCAAFFIRSTTDTEAM",
+      "KXNFL1HTOTAL",
+      "KXNHLSEASONPTS",
       "KXWNBAPTS",
-      "KXMLBHRDERBYOU"
+      "KXMLBASGHIT",
+      "KXNBA3PTALLGAMES",
+      "KXNCAAFTOTALFG",
+      "KXNFLTOTAL",
+      "KXNHLAST",
+      "KXWNBAAST",
+      "KXMLBHRDERBYOU",
+      "KXNBAH2HPTS",
+      "KXNCAAFTEAMREC",
+      "KXNFLSEASONRSHYDS",
+      "KXNHLTOTAL",
+      "KXWNBAH2HPTS",
+      "KXMLBASGHR",
+      "KXNBASTOCK",
+      "KXNCAAFTEAMRECYDS",
+      "KXNFLLONGESTFG",
+      "KXNHLF10G",
+      "KXWNBA3PTCONTEST",
+      "KXMLBPLAYOFFHRS",
+      "KXNBAPTSPROT",
+      "KXNCAAFTEAMRSHYDS",
+      "KXNFLSEASONPASSYDS",
+      "KXNHLFIRSTGOAL",
+      "KXWNBA3PTROUND",
+      "KXMLBOUTS"
     ],
     "by_league": {
       "Boxing": 1,
@@ -144,7 +130,8 @@
     },
     "forced": [
       "KXNHLPTS"
-    ]
+    ],
+    "error": "HTTP Error 429: Too Many Requests"
   },
   "targeted_series_diagnostics": {
     "KXATPACES": {
@@ -174,19 +161,19 @@
         }
       }
     },
+    "KXMLBASGHIT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXMLBASGHR": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBHIT": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXMLBHRDERBYMATCHUP": {
+    "KXMLBHRDERBYDISTANCE": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -198,7 +185,19 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
+    "KXMLBHRDERBYSEMI": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
     "KXMLBHRDERBYVELO": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXMLBOUTS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -210,94 +209,66 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBSEASONHR": {
+    "KXNBA3PTALLGAMES": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXMLBWALKOFFS": {
+    "KXNBA3PTPROT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAAST": {
-      "raw": 328,
-      "normalized": 328,
-      "skip_reasons": {
-        "ok": 328
-      },
-      "skip_samples": {}
-    },
-    "KXNBAH2HTEAM3PT": {
+    "KXNBABLK": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAPTS": {
-      "raw": 404,
-      "normalized": 404,
-      "skip_reasons": {
-        "ok": 404
-      },
-      "skip_samples": {}
-    },
-    "KXNBARA": {
+    "KXNBABLKPROT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBAREBPROT": {
-      "raw": 414,
-      "normalized": 414,
-      "skip_reasons": {
-        "ok": 414
-      },
+    "KXNBAH2HPTS": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNBASTLPROT": {
-      "raw": 218,
-      "normalized": 158,
-      "skip_reasons": {
-        "no_current_yes_price": 60,
-        "ok": 158
-      },
-      "skip_samples": {
-        "no_current_yes_price": {
-          "ticker": "KXNBASTLPROT-26NOV25BKNMIL-BKNMBROWN0-1",
-          "event_ticker": "KXNBASTLPROT-26NOV25BKNMIL",
-          "event_title": "Brooklyn vs Milwaukee: Steals",
-          "title": "Mikel Brown Jr.: 1+ steals",
-          "subtitle": null,
-          "yes_sub_title": "Mikel Brown Jr.: 1+",
-          "primary_participant_key": "basketball_player",
-          "floor_strike": 0.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-26T04:00:00Z"
-        }
-      }
+    "KXNBAPTSPROT": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
-    "KXNBAWHATTEND": {
-      "raw": 1,
+    "KXNBASTOCK": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNCAAF1HTEAMTOTAL": {
+      "raw": 381,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 1
+        "ambiguous_participant_threshold": 381
       },
       "skip_samples": {
         "ambiguous_participant_threshold": {
-          "ticker": "KXNBAWHATTEND-26NYK-Y",
-          "event_ticker": "KXNBAWHATTEND-26NYK",
-          "event_title": "Will the New York Pro Basketball team visit the White House?",
-          "title": "Will the New York Pro Basketball team visit the White House before Dec 31, 2026?",
+          "ticker": "KXNCAAF1HTEAMTOTAL-26NOV26TCUTTU-TTU5",
+          "event_ticker": "KXNCAAF1HTEAMTOTAL-26NOV26TCUTTU",
+          "event_title": "TCU vs Texas Tech: 1st Half Team Total",
+          "title": "Texas Tech over 4.5 1H points scored",
           "subtitle": null,
-          "yes_sub_title": "New York Pro Basketball team to visit the White House",
+          "yes_sub_title": "Texas Tech over 4.5 points",
           "primary_participant_key": null,
-          "floor_strike": null,
+          "floor_strike": 4.5,
           "functional_strike": null,
-          "occurrence_datetime": "2026-12-31T15:00:00Z"
+          "occurrence_datetime": "2026-11-27T04:00:00Z"
         }
       }
     },
@@ -322,35 +293,44 @@
         }
       }
     },
-    "KXNCAAFGO": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
-    "KXNCAAFOCCUR": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
     "KXNCAAFTEAMREC": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMRSHATT": {
+    "KXNCAAFTEAMRECYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNCAAFTEAMTO": {
+    "KXNCAAFTEAMRSHYDS": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
+    },
+    "KXNCAAFTOTAL": {
+      "raw": 1372,
+      "normalized": 0,
+      "skip_reasons": {
+        "ambiguous_participant_threshold": 1372
+      },
+      "skip_samples": {
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNCAAFTOTAL-26NOV26TCUTTU-28",
+          "event_ticker": "KXNCAAFTOTAL-26NOV26TCUTTU",
+          "event_title": "TCU vs Texas Tech: Total Points",
+          "title": "Full Game: Over 27.5 points scored",
+          "subtitle": null,
+          "yes_sub_title": "Over 27.5 points",
+          "primary_participant_key": null,
+          "floor_strike": 27.5,
+          "functional_strike": null,
+          "occurrence_datetime": "2026-11-27T04:00:00Z"
+        }
+      }
     },
     "KXNCAAFTOTALFG": {
       "raw": 0,
@@ -358,181 +338,89 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLCAREERPASSYDS": {
-      "raw": 13,
+    "KXNFL1HTOTAL": {
+      "raw": 202,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 13
+        "ambiguous_participant_threshold": 202
       },
       "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNFLCAREERPASSYDS-PMAHOMES-40000",
-          "event_ticker": "KXNFLCAREERPASSYDS-PMAHOMES",
-          "event_title": "Patrick Mahomes Career Regular Season Passing Yards",
-          "title": "Patrick Mahomes: 40,000+ Passing Yards",
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNFL1HTOTAL-26NOV26CHIDET-4",
+          "event_ticker": "KXNFL1HTOTAL-26NOV26CHIDET",
+          "event_title": "Chicago vs Detroit: 1st Half Total",
+          "title": "Will there be over 3.5 1H points scored?",
           "subtitle": null,
-          "yes_sub_title": "40,000+ passing yards",
+          "yes_sub_title": "Over 3.5 points",
           "primary_participant_key": null,
-          "floor_strike": 39999.5,
+          "floor_strike": 3.5,
           "functional_strike": null,
-          "occurrence_datetime": "2040-03-01T15:00:00Z"
+          "occurrence_datetime": "2026-11-26T21:00:00Z"
         }
       }
     },
-    "KXNFLLADDERREC": {
-      "raw": 28,
-      "normalized": 0,
+    "KXNFLFFPTS": {
+      "raw": 48,
+      "normalized": 48,
       "skip_reasons": {
-        "ambiguous_participant_threshold": 28
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLLADDERREC-26NOV25GBLAR-GBMGOLDEN0",
-          "event_ticker": "KXNFLLADDERREC-26NOV25GBLAR",
-          "event_title": "Green Bay vs Los Angeles R: Receptions Ladder",
-          "title": "Matthew Golden Receptions Ladder",
-          "subtitle": null,
-          "yes_sub_title": "Matthew Golden",
-          "primary_participant_key": "football_player",
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-26T04:00:00Z"
-        }
-      }
-    },
-    "KXNFLLADDERRECYDS": {
-      "raw": 28,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 28
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLLADDERRECYDS-26NOV25GBLAR-GBMGOLDEN0",
-          "event_ticker": "KXNFLLADDERRECYDS-26NOV25GBLAR",
-          "event_title": "Green Bay vs Los Angeles R: Receiving Yards Ladder",
-          "title": "Matthew Golden receiving yards ladder",
-          "subtitle": null,
-          "yes_sub_title": "Matthew Golden",
-          "primary_participant_key": "football_player",
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-26T04:00:00Z"
-        }
-      }
-    },
-    "KXNFLLONGESTFG": {
-      "raw": 4,
-      "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 4
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNFLLONGESTFG-27-66",
-          "event_ticker": "KXNFLLONGESTFG-27",
-          "event_title": "Longest Field Goal in the Regular Season",
-          "title": "Longest field goal in 2026-27 regular season: 66+ yards",
-          "subtitle": null,
-          "yes_sub_title": "66+ yards",
-          "primary_participant_key": null,
-          "floor_strike": 66,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-01-31T15:00:00Z"
-        }
-      }
-    },
-    "KXNFLRSHATT": {
-      "raw": 51,
-      "normalized": 51,
-      "skip_reasons": {
-        "ok": 51
+        "ok": 48
       },
       "skip_samples": {}
     },
-    "KXNFLRSHYDSPRECISE": {
+    "KXNFLLONGESTFG": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXNFLTEAMPTS": {
-      "raw": 64,
-      "normalized": 0,
+    "KXNFLPASSATT": {
+      "raw": 24,
+      "normalized": 24,
       "skip_reasons": {
-        "unsupported_market": 64
-      },
-      "skip_samples": {
-        "unsupported_market": {
-          "ticker": "KXNFLTEAMPTS-LEAST27-ARI",
-          "event_ticker": "KXNFLTEAMPTS-LEAST27",
-          "event_title": "Pro Football Lowest Scoring Team",
-          "title": "Will Arizona be the lowest scoring team?",
-          "subtitle": "Arizona",
-          "yes_sub_title": "Arizona",
-          "primary_participant_key": null,
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-01-11T15:00:00Z"
-        }
-      }
-    },
-    "KXNHLAST": {
-      "raw": 374,
-      "normalized": 374,
-      "skip_reasons": {
-        "ok": 374
+        "ok": 24
       },
       "skip_samples": {}
     },
-    "KXNHLFIRSTGOAL": {
-      "raw": 461,
+    "KXNFLSEASONPASSYDS": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 461
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNHLFIRSTGOAL-26NOV25CARTB-CARANIKISHIN21",
-          "event_ticker": "KXNHLFIRSTGOAL-26NOV25CARTB",
-          "event_title": "Carolina vs Tampa Bay: First Goalscorer",
-          "title": "Alexander Nikishin: First Goalscorer",
-          "subtitle": null,
-          "yes_sub_title": "Alexander Nikishin",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": null,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-26T03:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
-    "KXNHLPSEASONPOINTS": {
-      "raw": 9,
+    "KXNFLSEASONRSHYDS": {
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_matchup": 9
-      },
-      "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNHLPSEASONPOINTS-27CMCDAVID97-120",
-          "event_ticker": "KXNHLPSEASONPOINTS-27CMCDAVID97",
-          "event_title": "Connor McDavid: Regular Season Points",
-          "title": "Connor McDavid: 120+ Points in 2026-27 NHL regular season?",
-          "subtitle": "Connor McDavid",
-          "yes_sub_title": "120+ Points",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": 119.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2027-04-11T14:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNFLTOTAL": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLAST": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLF10G": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXNHLFIRSTGOAL": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXNHLPTS": {
-      "raw": 491,
-      "normalized": 491,
-      "skip_reasons": {
-        "ok": 491
-      },
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
       "skip_samples": {}
     },
     "KXNHLSEASONGOALS": {
@@ -556,47 +444,32 @@
         }
       }
     },
-    "KXNHLSEASONPPTS": {
-      "raw": 90,
+    "KXNHLSEASONPTS": {
+      "raw": 320,
       "normalized": 0,
       "skip_reasons": {
-        "ambiguous_matchup": 90
+        "ambiguous_participant_threshold": 320
       },
       "skip_samples": {
-        "ambiguous_matchup": {
-          "ticker": "KXNHLSEASONPPTS-27C100-NKUCHEROV86",
-          "event_ticker": "KXNHLSEASONPPTS-27C100",
-          "event_title": "NHL: 100+ Points Season",
-          "title": "Nikita Kucherov: 100+ points in 2026-27 NHL regular season?",
-          "subtitle": "Nikita Kucherov:: Tampa Bay Lightning",
-          "yes_sub_title": "Nikita Kucherov",
-          "primary_participant_key": "hockey_player",
-          "floor_strike": 99.5,
+        "ambiguous_participant_threshold": {
+          "ticker": "KXNHLSEASONPTS-27ANA-70",
+          "event_ticker": "KXNHLSEASONPTS-27ANA",
+          "event_title": "NHL: ANA Ducks Total Points",
+          "title": "Will the ANA Ducks NHL team earn at least 70 points in the 2026-27 regular season?",
+          "subtitle": null,
+          "yes_sub_title": "70+ points",
+          "primary_participant_key": null,
+          "floor_strike": 70,
           "functional_strike": null,
-          "occurrence_datetime": "2027-04-11T14:00:00Z"
+          "occurrence_datetime": "2027-04-18T14:00:00Z"
         }
       }
     },
     "KXNHLTOTAL": {
-      "raw": 261,
+      "raw": 0,
       "normalized": 0,
-      "skip_reasons": {
-        "ambiguous_participant_threshold": 261
-      },
-      "skip_samples": {
-        "ambiguous_participant_threshold": {
-          "ticker": "KXNHLTOTAL-26NOV25CARTB-2",
-          "event_ticker": "KXNHLTOTAL-26NOV25CARTB",
-          "event_title": "Carolina vs Tampa Bay: Total Goals",
-          "title": "Full Game: Over 1.5 goals scored",
-          "subtitle": null,
-          "yes_sub_title": "Over 1.5 goals scored",
-          "primary_participant_key": null,
-          "floor_strike": 1.5,
-          "functional_strike": null,
-          "occurrence_datetime": "2026-11-26T03:00:00Z"
-        }
-      }
+      "skip_reasons": {},
+      "skip_samples": {}
     },
     "KXUFCOCCUR": {
       "raw": 0,
@@ -605,6 +478,12 @@
       "skip_samples": {}
     },
     "KXUFCWHITEHOUSE": {
+      "raw": 0,
+      "normalized": 0,
+      "skip_reasons": {},
+      "skip_samples": {}
+    },
+    "KXWNBA3PT": {
       "raw": 0,
       "normalized": 0,
       "skip_reasons": {},
@@ -646,12 +525,6 @@
       "skip_reasons": {},
       "skip_samples": {}
     },
-    "KXWNBAREB": {
-      "raw": 0,
-      "normalized": 0,
-      "skip_reasons": {},
-      "skip_samples": {}
-    },
     "KXWTAACES": {
       "raw": 0,
       "normalized": 0,
@@ -660,9 +533,7 @@
     }
   },
   "leagues": {
-    "NBA": 1304,
-    "NFL": 51,
-    "NHL": 865
+    "NFL": 72
   },
   "policy": "Externally offered exact Kalshi contracts only; prices are economic/market evidence and never LJPC."
 }
