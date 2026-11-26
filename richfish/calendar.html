@@ -8,6 +8,21 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="rwt-theme.css?v=20261008-calendar" />
+  <style>
+.rwt-tides{margin-block:12px 20px}
+.rwt-tide-row{display:grid;grid-template-columns:170px minmax(0,1fr);gap:12px}
+.rwt-tide-buttons{display:grid;align-content:center;gap:8px}
+.rwt-tide-buttons button{padding:10px;background:#153d48;color:white;border:1px solid #70d3d0;border-radius:5px}
+.rwt-tide-buttons button[aria-pressed=true]{background:#70d3d0;color:#092934}
+#home-tide-chart{background:#f7fafb;color:#172b35;min-height:180px}
+#home-tide-chart svg{width:100%;display:block}
+#home-tide-chart p{padding:5px 12px;margin:0;font-size:12px}
+.rwt-tides details{margin-top:12px}
+.rwt-tides summary{cursor:pointer;font-weight:700}
+#home-solunar ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));list-style:none;gap:10px;padding:0}
+#home-solunar li{background:#102c36;padding:10px;border-radius:6px}
+@media(max-width:650px){.rwt-tide-row{grid-template-columns:1fr}.rwt-tide-buttons{grid-template-columns:1fr 1fr}}
+  </style>
 </head>
 <body class="focus-calendar">
   <div class="rwt-calendar-banner"><img src="../assets/rwt-calendar-header.png?v=f01efd07" alt="Richmond Ray, Kida and their dog fishing along the Richmond waterfront at sunset — Rich Water Tavern" width="1981" height="201"></div>
@@ -106,6 +121,8 @@
         </div>
         <span class="sync" id="calendar-sync">NOAA-backed tide calendar · local astronomical calculations</span>
       </div>
+
+      <section class="rwt-tides" aria-labelledby="calendar-tides-title"><h3 id="calendar-tides-title">Richmond tides · next and previous 24 hours</h3><div class="rwt-tide-row"><div class="rwt-tide-buttons"><button id="tide-height" aria-pressed="true">48-hour tidal chart</button><button id="tide-coeff" aria-pressed="false">48-hour local tidal coefficient</button></div><div id="home-tide-chart" aria-live="polite">Loading NOAA predictions…</div></div><details><summary>Solunar periods · major and minor activity windows</summary><div id="home-solunar"></div><p>Major periods center on lunar transit and opposing transit; minor periods center on moonrise and moonset. Coincidence with sunrise or sunset is a traditional activity indicator, not a validated catch probability.</p></details></section>
 
       <div class="calendar-toolbar">
         <div class="calendar-planning-controls">
@@ -298,5 +315,6 @@
   <script src="local-advisor.js" defer></script>
   <script src="conditions-panel.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="home-tides.js?v=20261125-rwt" defer></script>
 </body>
 </html>
