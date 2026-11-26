@@ -92,7 +92,7 @@
 </div>
 <div class="mapwrap"><div id="map" aria-label="RichFish interactive nautical fishing map"></div>
 <div class="mapbar"><button id="depth-btn" type="button" class="primary" title="Toggle neutral GEBCO 2026 bathymetric contours">Depth contours</button><button id="heat-btn" type="button" class="primary">Opportunity heat</button><button id="spots-btn" type="button">Spot pins</button></div>
-<div class="legend"><b id="heat-title">Striped bass · relative opportunity</b><div class="ramp"></div><div style="display:flex;justify-content:space-between"><span>Lower support</span><span>Higher support</span></div><div style="margin-top:4px">★ Gold fish = a newly modeled water target outside your saved fishing waypoints; shore access must be checked.<br>Colors are habitat suitability, not measured catch odds. GEBCO contours are separate, coarse depth references.</div></div></div>
+<div class="legend"><b id="heat-title">Striped bass · relative opportunity</b><div class="ramp"></div><div style="display:flex;justify-content:space-between"><span>Lower support</span><span>Higher support</span></div><div style="margin-top:4px">★ Gold fish = a newly modeled water target outside your saved fishing waypoints; shore access must be checked.<br>Heat shows habitat within 200 yards of mapped shoreline. Check access to piers, docks, jetties and kayak launch points before fishing. GEBCO contours are separate, coarse depth references.</div></div></div>
 </div>
 <section class="planner" hidden inert aria-label="Fishing range planner"><div class="toplevel"><h2>4 · Plan my fishing range</h2><span class="small">Two locations · two targets · bait</span></div>
 <div class="planner-grid"><div class="field"><label for="start">Start (local date and time)</label><input type="datetime-local" id="start"></div><div class="field"><label for="end">End (local date and time)</label><input type="datetime-local" id="end"></div><button class="primary" id="plan" type="button">Find my best two options</button></div><div id="plan-errors" class="invalid small"></div><div id="plan-results" class="planner-results" aria-live="polite"></div>
@@ -248,6 +248,6 @@
   
   <script src="bait-intelligence.js" defer></script>
   <script src="app.js" defer></script>
-  <script src="trip-builder.js" defer></script><script src="water-opportunity.js" defer></script><script src="home-map.js?v=20261125-rwt" defer></script><script src="home-tides.js?v=20261125-rwt" defer></script>
+  <script src="trip-builder.js" defer></script><script src="water-opportunity.js?v=20261125-nearshore" defer></script><script src="home-map.js?v=20261125-nearshore" defer></script><script src="home-tides.js?v=20261125-rwt" defer></script>
 </body>
 </html>

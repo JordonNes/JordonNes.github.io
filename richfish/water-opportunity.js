@@ -1,11 +1,13 @@
 /* RICHFISH water opportunity layer v1.0
    Waterbody geometry is independent of personal fishing waypoints.
    Model estimates relative habitat suitability; it does NOT predict catch odds.
-   Shoreline clipping: USGS 3DHP / USGS NHD water polygons only.
+   Heat is limited to water within 200 yards of mapped shoreline.
 */
 (function(root){
 "use strict";
-const MODEL_VERSION="water-opportunity-1.0";
+const MODEL_VERSION="water-opportunity-1.1";
+const CAST_RANGE_M=182.88;
+const METERS_PER_DEGREE=111195;
 const BAY=["striped bass","california halibut","surfperch","english sole","starry flounder"];
 const FRESH=["largemouth bass","smallmouth bass","rainbow trout","channel catfish","bluegill"];
 const TYPES={
@@ -53,10 +55,57 @@ function scoreAt(feature,pt,species,points){
  return{score,confidence:matchedCatch?"Nearby firsthand catch":observations?"Nearby field observation":"Habitat inference only",
   basis:nearshore?"Waterbody and nearby shoreline habitat":"Waterbody habitat (open water)",nearshore,observations};
 }
-function featureBounds(feature){
- let x1=Infinity,y1=Infinity,x2=-Infinity,y2=-Infinity;
- (function walk(a){if(!Array.isArray(a))return;if(typeof a[0]==="number"&&typeof a[1]==="number"){x1=Math.min(x1,a[0]);y1=Math.min(y1,a[1]);x2=Math.max(x2,a[0]);y2=Math.max(y2,a[1]);return}a.forEach(walk)})(feature.geometry.coordinates);
- return {west:x1,south:y1,east:x2,north:y2};
+function shorelineSegments(features){
+ const segments=[];
+ for(const feature of features){
+   const g=feature.geometry,polygons=g.type==="Polygon"?[g.coordinates]:g.coordinates;
+   for(const polygon of polygons)for(const ring of polygon)for(let i=1;i<ring.length;i++){
+     const a=ring[i-1],b=ring[i],x=(a[0]+b[0])/2,y=(a[1]+b[1])/2;
+     const lngScale=Math.cos(y*Math.PI/180);
+     const dx=(b[0]-a[0])*lngScale,dy=b[1]-a[1],length=Math.hypot(dx,dy);
+     if(!length)continue;
+     // Reject internal boundaries between neighboring water polygons.
+     const probe=8/METERS_PER_DEGREE;
+     const ox=probe*dy/length/lngScale,oy=probe*dx/length;
+     if(locate(features,[x+ox,y-oy])>=0&&locate(features,[x-ox,y+oy])>=0)continue;
+     segments.push([a,b]);
+   }
+ }
+ return segments;
+}
+function withinCastingRange(pt,segments){
+ const lngScale=METERS_PER_DEGREE*Math.cos(pt[1]*Math.PI/180);
+ return segments.some(([a,b])=>{
+   const x=(a[0]-pt[0])*lngScale,y=(a[1]-pt[1])*METERS_PER_DEGREE;
+   const bx=(b[0]-pt[0])*lngScale,by=(b[1]-pt[1])*METERS_PER_DEGREE;
+   if(Math.min(x,bx)>CAST_RANGE_M||Math.max(x,bx)<-CAST_RANGE_M||
+      Math.min(y,by)>CAST_RANGE_M||Math.max(y,by)<-CAST_RANGE_M)return false;
+   const dx=bx-x,dy=by-y,t=clamp(-(x*dx+y*dy)/(dx*dx+dy*dy),0,1);
+   return Math.hypot(x+t*dx,y+t*dy)<=CAST_RANGE_M;
+ });
+}
+function maskShoreline(ctx,map,segments,mask,dpr){
+ mask.width=ctx.canvas.width;
+ mask.height=ctx.canvas.height;
+ const ink=mask.getContext("2d");
+ ink.setTransform(dpr,0,0,dpr,0,0);
+ ink.lineCap="round";
+ ink.beginPath();
+ for(const [a,b] of segments){
+   const start=map.latLngToContainerPoint([a[1],a[0]]);
+   const end=map.latLngToContainerPoint([b[1],b[0]]);
+   ink.moveTo(start.x,start.y);
+   ink.lineTo(end.x,end.y);
+ }
+ const center=map.getSize().divideBy(2),a=map.containerPointToLatLng(center);
+ const b=map.containerPointToLatLng(center.add([100,0]));
+ ink.lineWidth=2*CAST_RANGE_M*100/map.distance(a,b);
+ ink.stroke();
+ ctx.save();
+ ctx.globalCompositeOperation="destination-in";
+ ctx.setTransform(1,0,0,1,0,0);
+ ctx.drawImage(mask,0,0);
+ ctx.restore();
 }
 function clipFeature(ctx,map,feature){
  const g=feature.geometry;const parts=g.type==="Polygon"?[g.coordinates]:g.type==="MultiPolygon"?g.coordinates:[];
@@ -69,18 +118,19 @@ function makeGoldIcon(){return L.divIcon({className:"",html:'<div class="gold-ma
 function create(map,opts){
  if(!map||!root.L)throw Error("RichFish water map requires Leaflet");
  opts=opts||{};
- let features=[],coverage=[],candidates=[],enabled=true,canvas=null,ctx=null,layer=L.layerGroup().addTo(map),drawPending=false,lastStatus="No water coverage loaded",dynamicBusy=false;const queriedViewports=new Set();
+ let features=[],shoreline=[],candidates=[],enabled=true,canvas=null,ctx=null,layer=L.layerGroup().addTo(map),drawPending=false,lastStatus="No water coverage loaded",dynamicBusy=false;const queriedViewports=new Set();
  const pane=map.createPane("richfishOpportunityPane");
  pane.style.zIndex="355";pane.style.pointerEvents="none";
  canvas=L.DomUtil.create("canvas","richfish-opportunity-canvas",pane);
  canvas.style.position="absolute";canvas.style.pointerEvents="none";canvas.style.opacity="0.94";
  ctx=canvas.getContext("2d");
+ const mask=document.createElement("canvas");
  const getPoints=()=>opts.getPoints?.()||[];
  const getSpecies=()=>opts.getSpecies?.()||"striped bass";
  const getRegion=()=>opts.getRegion?.()||"";
- function at(p){let pt=Array.isArray(p)?p:[p.lng,p.lat],i=locate(features,pt);return i<0?null:{feature:features[i],score:scoreAt(features[i],pt,getSpecies(),getPoints()),index:i,pt}};
+ function at(p){let pt=Array.isArray(p)?p:[p.lng,p.lat],i=locate(features,pt);return i<0||!withinCastingRange(pt,shoreline)?null:{feature:features[i],score:scoreAt(features[i],pt,getSpecies(),getPoints()),index:i,pt}};
  function speciesAt(latlng){
-   const pt=[latlng.lng,latlng.lat],idx=locate(features,pt);if(idx<0)return [];
+   const pt=[latlng.lng,latlng.lat],idx=locate(features,pt);if(idx<0||!withinCastingRange(pt,shoreline))return [];
    const f=features[idx],list=f.properties.water_type==="freshwater"?FRESH:f.properties.water_type==="river"?BAY.concat(FRESH):BAY;
    return list.map(s=>({species:s,...scoreAt(f,pt,s,getPoints())})).filter(x=>x.score>=25).sort((a,b)=>b.score-a.score).slice(0,3);
  }
@@ -125,7 +175,7 @@ function create(map,opts){
     features.push({type:"Feature",geometry:f.geometry,properties:{id:"dynamic-water-"+id,name:p.gnisidlabel||p.featuretypelabel||"Mapped waterbody",
     water_type,source_oid:p.OBJECTID,source:"USGS 3DHP on-demand",dynamic:true}});seen.add(id);count++;
   });
-  if(count){lastStatus="USGS water coverage expanded to "+features.length+" areas";schedule()}
+  if(count){shoreline=shorelineSegments(features);lastStatus="USGS water coverage expanded to "+features.length+" areas";schedule()}
  }).catch(err=>console.warn("Optional RichFish on-demand water geometry unavailable:",err.message)).finally(()=>{dynamicBusy=false});
 }
 function schedule(){if(drawPending)return;drawPending=true;root.requestAnimationFrame?root.requestAnimationFrame(()=>{drawPending=false;draw();queryUnmappedWaters()}):(drawPending=false,draw(),queryUnmappedWaters())}
@@ -135,7 +185,7 @@ function schedule(){if(drawPending)return;drawPending=true;root.requestAnimation
    const size=canvasSize();ctx.clearRect(0,0,size.x,size.y);layer.clearLayers();candidates=[];
    if(!features.length){opts.onRecommendations?.([],false);return}
    if(!enabled){opts.onRecommendations?.([],true);return}
-   const bounds=map.getBounds(),species=getSpecies(),pts=getPoints(),step=32;
+   const species=getSpecies(),pts=getPoints(),step=32;
    const cells=[];
    for(let y=step/2;y<size.y;y+=step)for(let x=step/2;x<size.x;x+=step){
       let ll=map.containerPointToLatLng([x,y]),pt=[ll.lng,ll.lat],fi=locate(features,pt);
@@ -155,24 +205,25 @@ function schedule(){if(drawPending)return;drawPending=true;root.requestAnimation
      }
      ctx.restore();
    }
+   maskShoreline(ctx,map,shoreline,mask,Math.min(root.devicePixelRatio||1,2));
    // Gold recommendations are generated from water cells, not copied from saved fishing pins.
    const pins=pts.filter(p=>["saved","casting_point","spot","catch"].includes(p.kind)).map(position).filter(Boolean);
-   const suggested=cells.filter(c=>c.meta.nearshore&&c.score>=59).sort((a,b)=>b.score-a.score);
+   const suggested=cells.filter(c=>c.score>=59&&withinCastingRange([c.lng,c.lat],shoreline)).sort((a,b)=>b.score-a.score);
    for(const c of suggested){
       if(candidates.length>=4)break;
       const pt=[c.lng,c.lat],nearKnown=pins.some(p=>km(pt,p)<.48),nearChosen=candidates.some(p=>km(pt,[p.lng,p.lat])<1.7);
       if(nearKnown||nearChosen)continue;
       const item={lat:c.lat,lng:c.lng,score:c.score,basis:c.meta.confidence,water:labelFor(c.feature),
-        species:species,nearshore:c.meta.nearshore};
+        species:species,nearshore:true};
       const icon=makeGoldIcon(),marker=L.marker([c.lat,c.lng],{icon,zIndexOffset:1600});
       const html='<div class="pophead">🐟 Richmond Ray · New Water Target</div><div class="poprule"></div><div><b>'+species+'</b> · relative habitat index <b>'+c.score+'/100</b></div><div class="popfoot">'+item.water+' · '+item.basis+'</div><div class="popfoot">Modeled water target, not a saved spot or verified shoreline access point. This is NOT a measured catch probability. Confirm safe, public access before fishing.</div>';
       marker.bindPopup(html,{maxWidth:290}).addTo(layer);item.marker=marker;candidates.push(item);
    }
    opts.onRecommendations?.(candidates,true);
-   lastStatus="Water-clipped habitat layer loaded from "+features.length+" hydrographic areas";
+   lastStatus="200-yd shoreline band · "+features.length+" hydrographic areas";
    opts.onStatus?.(lastStatus);
  }
- function setData(geo){features=Array.isArray(geo?.features)?geo.features.filter(f=>f.geometry&&(f.geometry.type==="Polygon"||f.geometry.type==="MultiPolygon")):[];coverage=features.map(featureBounds);schedule();return features.length}
+ function setData(geo){features=Array.isArray(geo?.features)?geo.features.filter(f=>f.geometry&&(f.geometry.type==="Polygon"||f.geometry.type==="MultiPolygon")):[];shoreline=shorelineSegments(features);schedule();return features.length}
  async function load(url){const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw Error("Water geometry HTTP "+r.status);const data=await r.json();setData(data);return features.length}
  function setVisible(v){enabled=!!v;canvas.style.display=enabled?"block":"none";schedule()}
  function refresh(){schedule()}
