@@ -109,7 +109,9 @@ if(typeof document!=="undefined"){
     const byId=new Map(fixtures.filter(e=>e.league===league).map(e=>[String(e.event_id),e]));
     const labels={pass_yards:"passing yards",rush_yards:"rushing yards",receiving_yards:"receiving yards",
       threes_made:"threes",shots_on_goal:"shots on goal"};
+    const watchlist=[];
     for(const row of document.querySelectorAll(".qc-row[data-event-id]")){
+      const samples=[];
       const fixture=byId.get(row.dataset.eventId);
       if(!fixture||Date.parse(fixture.start_utc)<=Date.now()||!/^STATUS_SCHEDULED$/.test(fixture.status)) continue;
       const panel=document.createElement("div");
@@ -132,6 +134,11 @@ if(typeof document!=="undefined"){
           }
         }
         for(const [metric,players] of Object.entries(metrics||{})){
+          for(const [name,mean,count,date,values] of players){
+            if(Array.isArray(values)&&values.length===count&&count>=3&&values.every(Number.isFinite)){
+              samples.push({name,mean,count,date,values:[...values].sort((a,b)=>a-b),metric:labels[metric]||metric,code});
+            }
+          }
           const [name,mean,count,date]=players[0];
           const line=document.createElement("div");
           line.textContent=code+" · "+name+" · "+mean+" "+(labels[metric]||metric)+" (last "+count+" games through "+date+")";
@@ -152,6 +159,59 @@ if(typeof document!=="undefined"){
         panel.append(details);
       }
       if(panel.childElementCount>1) row.append(panel);
+      const modes=[["qc-sns1",0.25],["qc-sns2",0.25],["qc-normal",0.5],["qc-demon",0.75]];
+      const usedGoblin=new Set();
+      for(const [selector,quantile] of modes){
+        const cell=row.querySelector("."+selector+".qc-pending");
+        if(!cell) continue;
+        const chosen=new Set();
+        const list=document.createElement("ul");
+        for(const team of fixture.teams){
+          for(const sample of samples.filter(s=>s.code===team.abbreviation)){
+            const {name,values,metric}=sample;
+            const goal=Math.floor(values[Math.round((values.length-1)*quantile)]);
+            if(goal<1||chosen.has(name)||(quantile===0.25&&usedGoblin.has(name))) continue;
+            const hits=values.filter(v=>v>=goal).length;
+            const item=document.createElement("li");
+            item.textContent=name+" · "+goal+"+ "+metric+" · reached in "+hits+"/"+values.length+" recent games";
+            list.append(item);
+            chosen.add(name);
+            if(quantile===0.25) usedGoblin.add(name);
+            break;
+          }
+        }
+        if(list.children.length){
+          cell.querySelector(".qc-foot").textContent="Historical target · unpriced forecast";
+          cell.append(list);
+          cell.classList.remove("qc-pending");
+        }
+      }
+      watchlist.push(...samples);
+    }
+    const section=document.querySelector(".twenty-section");
+    if(section){
+      const published=new Set([...section.querySelectorAll(".twenty-player-name")].map(el=>el.textContent.trim()));
+      const needed=Math.max(0,20-published.size);
+      const list=document.createElement("ol");
+      // Favor larger samples, then smaller relative ranges, then more recent appearances.
+      const spread=s=>(s.values.at(-1)-s.values[0])/s.mean;
+      watchlist.sort((a,b)=>b.count-a.count||spread(a)-spread(b)||b.date.localeCompare(a.date));
+      for(const sample of watchlist){
+        if(list.children.length>=needed) break;
+        if(published.has(sample.name)) continue;
+        const item=document.createElement("li");
+        item.textContent=sample.name+" ("+sample.code+") · "+sample.mean+" "+sample.metric+" projected · last "+sample.count+" games";
+        list.append(item);
+        published.add(sample.name);
+      }
+      if(list.children.length){
+        const card=document.createElement("div");
+        card.className="card card-body twenty-forecasts";
+        const heading=document.createElement("h3");
+        heading.textContent="Player projections · unpriced";
+        card.append(heading,list);
+        section.querySelector(".card").before(card);
+      }
     }
   }
   await import("./recaplink.js?v=20260917-microstatus1");

@@ -160,9 +160,9 @@ for (const [page, league] of Object.entries(PAGES)) {
     continue;
   }
   const boardEvents=(ctx.window.LJ_FUTURE_MARKET_BOARD?.events||[]).filter(e=>e?.league===league);
-  const evaluatedBoardProps=boardEvents.flatMap(e=>(e.props||[])).filter(p=>
+  const evaluatedBoardProps=boardEvents.filter(e=>Date.parse(e.commence_time||e.event_start_pt)>Date.now()).flatMap(e=>(e.props||[])).filter(p=>
     String(p?.evaluation_status||'').toUpperCase()==='LJ_EVALUATED' &&
-    p?.synthetic!==true && p?.model_generated!==true &&
+    p?.synthetic!==true && p?.model_generated!==true && p?.market_verified===true && p?.market_freshness!=='STALE_RECHECK_REQUIRED' &&
     String(p?.market_verification||'').toUpperCase()==='EXACT_MARKET_MATCH' &&
     Number.isFinite(Number(p?.ljpc))
   );
