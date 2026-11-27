@@ -556,8 +556,8 @@
       : `<div class="qc-cell qc-hot qc-pending qc-cfb-saturday-hot"><h4>LEGZ HOT TOP — SATURDAY CFB</h4><div class="qc-hot-list"><p>Awaiting at least two qualified Normal/Demon POMs.</p></div></div>`;
     return `<div class="qc-row qc-cfb-saturday" data-qc-index="${index}" data-away="${esc(r.away)}" data-home="${esc(r.home)}" data-event-id="${esc(r._propEventId||'')}" style="grid-template-columns:minmax(250px,1fr) minmax(360px,1.55fr)">${game}${hot}</div>`;
   }
-  function cfbQcs(title,rows){
-    const visible=(rows||[]).filter(r=>{
+  function cfbQcs(title,rows,showScheduled=false){
+    const visible=showScheduled?(rows||[]):(rows||[]).filter(r=>{
       if(cfbIsSaturday(r)) return qcStatusOnly(r)||cfbSaturdayLegs(r).length>=2;
       return qcStatusOnly(r)||qcHasPublishedPregame(r);
     });
@@ -1266,7 +1266,7 @@
     ensureGameWinners(s);
     document.title = `LEGZ & JINX — ${s.title}`;
     const scheduleBound=key===window.LJ_SCHEDULE_LEAGUE;
-    const quickies = !scheduleBound&&s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : key==="NCAA_Football" ? cfbQcs(s.qcTitle,s.qcs) : qcs(scheduleBound?`PER-GAME ${key} QUICKIE CARDS`:s.qcTitle,s.qcs,scheduleBound));
+    const quickies = !scheduleBound&&s.qcGroups ? groupedQcs(s.qcGroups) : (key==="NFL" ? nflQcs(s.qcTitle,s.qcs) : key==="NCAA_Football" ? cfbQcs(s.qcTitle,s.qcs,scheduleBound) : qcs(scheduleBound?`PER-GAME ${key} QUICKIE CARDS`:s.qcTitle,s.qcs,scheduleBound));
     const headliners=headlineSection(s.hotTop,s.winners,false,s.hotTopLabel,s.winnerLabel);
     const twentyPiece=twenty(s.twenty,s.twentyNote,false,key);
     // Sport page order is locked: L&J Headliners → 20 Piece → Per-Game QCs.
