@@ -41,5 +41,7 @@ def main():
         limit=(12 if league=='ALL' else 5)*1024*1024
         if size>limit:raise SystemExit(f'{league} DP payload exceeds {limit//(1024*1024)} MiB budget: {size}')
         p=out/(league+'.js');tmp=p.with_suffix('.js.tmp');tmp.write_text(text,encoding='utf-8');tmp.replace(p)
+    from lsi_player_forecasts import publish
+    publish(DATA)
     print('DP display bytes:',sizes)
 if __name__=='__main__':main()

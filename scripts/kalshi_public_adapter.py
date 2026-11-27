@@ -54,6 +54,7 @@ MARKET_FIELDS=[
 LEAGUE_PREFIXES=[
   (re.compile(r"^KXNFL",re.I),"NFL","Football"),
   (re.compile(r"^(KXNCAAF|KXCFB)",re.I),"NCAA_Football","Football"),
+  (re.compile(r"^(KXNCAAMB|KXNCAAB|KXCBB)",re.I),"NCAA_Basketball","Basketball"),
   (re.compile(r"^KXMLB",re.I),"MLB","Baseball"),
   (re.compile(r"^KXWNBA",re.I),"WNBA","Basketball"),
   (re.compile(r"^KXNBA",re.I),"NBA","Basketball"),
@@ -202,7 +203,7 @@ def fetch_open_markets():
 
         # Verified Kalshi NHL player-points series. Keep it in the targeted queue
         # even when Kalshi's /series ordering or title metadata does not surface it.
-        forced={"NHL":["KXNHLPTS"]}
+        forced={"NHL":["KXNHLPTS"], "NBA":["KXNBAPTS","KXNBAREB","KXNBAAST"]}
         for league,tickers in forced.items():
             for ticker in reversed(tickers):
                 # A forced series must be first even when it was already discovered.
@@ -238,7 +239,11 @@ def fetch_open_markets():
                   "series_ticker":series_ticker,"min_close_ts":int(NOW.timestamp())
                 }
                 if scursor:params["cursor"]=scursor
-                payload=get_json("/events",params)
+                try:
+                    payload=get_json("/events",params)
+                except (OSError, ValueError) as exc:
+                    targeted_diag.setdefault("series_errors", {})[series_ticker] = str(exc)
+                    break
                 batch=payload.get("events") or []
                 for event in batch:append_event(event)
                 scursor=payload.get("cursor")
