@@ -1,7 +1,7 @@
 /* Official FIBA fixture-only import. No generated betting lines or model predictions. */
 window.LJ_FIBA_FIXTURES={
   "schema": "FIBA-FIXTURE-SNAPSHOT-1",
-  "verifiedOn": "2026-11-26",
+  "verifiedOn": "2026-11-27",
   "publishedBy": "LJDP scheduled official FIBA calendar fetch",
   "warning": "Official scheduled matchups only; clocks use unspecified FIBA display zone. Source does not validate odds, live status, scores or LJPC.",
   "sources": [
@@ -25,19 +25,19 @@ window.LJ_FIBA_FIXTURES={
     {
       "competition": "2027 World Cup Qualifiers — Americas",
       "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-americas-qualifiers",
-      "parsed_fixtures": 12,
+      "parsed_fixtures": 9,
       "status": "FIXTURES_VERIFIED"
     },
     {
       "competition": "2027 World Cup Qualifiers — Asia",
       "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
-      "parsed_fixtures": 9,
+      "parsed_fixtures": 6,
       "status": "FIXTURES_VERIFIED"
     },
     {
       "competition": "2027 World Cup Qualifiers — Europe",
       "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-european-qualifiers",
-      "parsed_fixtures": 18,
+      "parsed_fixtures": 12,
       "status": "FIXTURES_VERIFIED"
     },
     {
@@ -72,174 +72,6 @@ window.LJ_FIBA_FIXTURES={
     }
   ],
   "events": [
-    {
-      "id": "FIBA-2026-11-26-2027WORLDCUPQUALIFIERSAMERICAS-URU-CAN",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Americas",
-      "date": "2026-11-26",
-      "publishedTime": "22:10",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "URU",
-      "away": "CAN",
-      "group": "F",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-americas-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSAMERICAS-ARG-BAH",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Americas",
-      "date": "2026-11-27",
-      "publishedTime": "00:40",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "ARG",
-      "away": "BAH",
-      "group": "F",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-americas-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSAMERICAS-PAN-PUR",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Americas",
-      "date": "2026-11-27",
-      "publishedTime": "01:40",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "PAN",
-      "away": "PUR",
-      "group": "F",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-americas-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSASIA-JOR-NZL",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Asia",
-      "date": "2026-11-27",
-      "publishedTime": "06:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "JOR",
-      "away": "NZL",
-      "group": "E",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSASIA-IRI-AUS",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Asia",
-      "date": "2026-11-27",
-      "publishedTime": "09:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "IRI",
-      "away": "AUS",
-      "group": "E",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSASIA-SYR-PHI",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Asia",
-      "date": "2026-11-27",
-      "publishedTime": "12:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "SYR",
-      "away": "PHI",
-      "group": "E",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-asian-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSEUROPE-EST-FRA",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Europe",
-      "date": "2026-11-27",
-      "publishedTime": "17:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "EST",
-      "away": "FRA",
-      "group": "L",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-european-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSEUROPE-LAT-GER",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Europe",
-      "date": "2026-11-27",
-      "publishedTime": "17:30",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "LAT",
-      "away": "GER",
-      "group": "K",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-european-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSEUROPE-SWE-HUN",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Europe",
-      "date": "2026-11-27",
-      "publishedTime": "18:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "SWE",
-      "away": "HUN",
-      "group": "L",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-european-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSEUROPE-NED-ISR",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Europe",
-      "date": "2026-11-27",
-      "publishedTime": "19:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "NED",
-      "away": "ISR",
-      "group": "K",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-european-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSEUROPE-SLO-FIN",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Europe",
-      "date": "2026-11-27",
-      "publishedTime": "19:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "SLO",
-      "away": "FIN",
-      "group": "L",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-european-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
-      "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSEUROPE-POL-CRO",
-      "track": "men",
-      "competition": "2027 World Cup Qualifiers — Europe",
-      "date": "2026-11-27",
-      "publishedTime": "19:45",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "POL",
-      "away": "CRO",
-      "group": "K",
-      "source": "https://www.fiba.basketball/en/events/fiba-basketball-world-cup-2027-european-qualifiers",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
     {
       "id": "FIBA-2026-11-27-2027WORLDCUPQUALIFIERSAMERICAS-CHI-MEX",
       "track": "men",
@@ -1459,20 +1291,6 @@ window.LJ_FIBA_FIXTURES={
       "marketStatus": "NOT_VERIFIED"
     },
     {
-      "id": "FIBA-2026-12-09-FIBAEUROPECUP-SPL-TRIER",
-      "track": "men",
-      "competition": "FIBA Europe Cup",
-      "date": "2026-12-09",
-      "publishedTime": "18:00",
-      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
-      "home": "SPL",
-      "away": "TRIER",
-      "group": "A",
-      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
-      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
-      "marketStatus": "NOT_VERIFIED"
-    },
-    {
       "id": "FIBA-2026-12-09-BASKETBALLCHAMPIONSLEAGUE-NTR-SAB",
       "track": "men",
       "competition": "Basketball Champions League",
@@ -1510,6 +1328,20 @@ window.LJ_FIBA_FIXTURES={
       "home": "MCR",
       "away": "KRFZ",
       "group": "F",
+      "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
+      "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
+      "marketStatus": "NOT_VERIFIED"
+    },
+    {
+      "id": "FIBA-2026-12-09-FIBAEUROPECUP-SPL-TRIER",
+      "track": "men",
+      "competition": "FIBA Europe Cup",
+      "date": "2026-12-09",
+      "publishedTime": "19:00",
+      "timeZone": "FIBA_SITE_DISPLAY_NOT_INDEPENDENTLY_VERIFIED",
+      "home": "SPL",
+      "away": "TRIER",
+      "group": "A",
       "source": "https://www.fiba.basketball/en/events/fiba-europe-cup-26-27",
       "evidence": "OFFICIAL_FIBA_FIXTURE_LIST",
       "marketStatus": "NOT_VERIFIED"
