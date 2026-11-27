@@ -523,19 +523,22 @@
     const inventoryCount=twentyCandidates.length;
     let target=inventoryCount ? Math.max(Math.min(4,inventoryCount),Math.ceil(inventoryCount*.20)) : 0;
     target=Math.min(60,target);
-    let twenty=twentyCandidates.slice(0,target);
-    if(inventoryCount>40){
-      const selected=new Set(twenty.map(r=>norm(r[1])).filter(Boolean));
-      for(const row of twentyCandidates.slice(target)){
-        if(twenty.length>=60 || selected.size>=20) break;
-        const player=norm(row[1]); if(!player||selected.has(player)) continue;
-        twenty.push(row); selected.add(player);
-      }
+    const firstByPlayer=new Map();
+    for(const row of twentyCandidates){
+      const player=norm(row[1]);
+      if(player&&!firstByPlayer.has(player)) firstByPlayer.set(player,row);
     }
+    const required=new Set([...firstByPlayer.values()].slice(0,20));
+    const selected=new Set(required);
+    for(const row of twentyCandidates){
+      if(selected.size>=target) break;
+      selected.add(row);
+    }
+    const twenty=twentyCandidates.filter(row=>selected.has(row));
     s.twenty=twenty;
     const uniquePlayers=new Set(twenty.map(r=>norm(r[1])).filter(Boolean)).size;
     const staleSelected=twenty.filter(r=>/LINE RECHECK REQUIRED/i.test(String(r?.[3]||''))).length;
-    s.twentyNote=`L&J 20 Piece • top 20% of ${inventoryCount} elite-eligible, market-verified L&J POMs • TROLL/Goblin and ≥80% implied-probability low-payout lines excluded • ${twenty.length} selected props • ${uniquePlayers} unique players • ${staleSelected?staleSelected+' retained evaluated line(s) require live line recheck • ':''}minimum 4 when available • 20 unique-player floor above 40 inventory POMs • maximum 60 props.`;
+    s.twentyNote=`L&J 20 Piece • top 20% of ${inventoryCount} elite-eligible, market-verified L&J POMs • TROLL/Goblin and ≥80% implied-probability low-payout lines excluded • ${twenty.length} selected props • ${uniquePlayers} unique players • ${staleSelected?staleSelected+' retained evaluated line(s) require live line recheck • ':''}minimum 4 when available • up to 20 unique players whenever inventory allows • maximum 60 props.`;
   }
 
   const canonical=R.predictions.map(p=>({

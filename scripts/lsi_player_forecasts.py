@@ -41,7 +41,7 @@ def publish(data):
             continue
         mean = round(sum(games[d] for d in dates) / len(dates), 1)
         if mean > 0:
-            teams[player[0]][team][metric].append([name, mean, len(dates), dates[0][:10]])
+            teams[player[0]][team][metric].append([name, mean, len(dates), dates[0][:10], [games[d] for d in dates]])
     for league in METRICS:
         output = {team: {metric: sorted(players, key=lambda p: (-p[1], p[0]))[:2]
                          for metric, players in metrics.items()} for team, metrics in teams[league].items()}
